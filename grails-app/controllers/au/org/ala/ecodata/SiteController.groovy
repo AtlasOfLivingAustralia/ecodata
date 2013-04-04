@@ -106,6 +106,14 @@ class SiteController {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
+        mapOfProperties.remove("activites")
+        mapOfProperties.activities = site.activities.collect {
+            def a = [activityId: it.activityId, siteId: it.siteId,
+                    types: it.types,
+                    startDate: it.startDate, endDate: it.endDate]
+            a
+        }
+
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -115,9 +123,11 @@ class SiteController {
             if (tokens[2] == 'Bushbids') {
                 Site s = new Site(name: tokens[4],
                         // todo: make siteId a true guid
-                        siteId: tokens[4].encodeAsMD5(), // base on name for now
+                        siteId: Identifiers.getNew(
+                                grailsApplication.config.ecodata.use.uuids, tokens[4]),
                         description: tokens[15],
                         notes: tokens[13])
+                s.save(flush: true)
                 s['organisationName'] = tokens[1]
                 s['projectName'] = tokens[2]
                 def lat = tokens[10]
@@ -134,6 +144,22 @@ class SiteController {
                 } else {
                     s.location = []
                 }
+
+                if (s.name == 'ASH-MACC-A - 1') {
+                    Activity a1 = new Activity(
+                            activityId: Identifiers.getNew(
+                               grailsApplication.config.ecodata.use.uuids, ''),
+                            siteId: s.siteId,
+                            types: ['DECCW vegetation assessment',
+                                   'Weed control',
+                                   'Bird survey']
+                    )
+                    a1.save(flush: true)
+
+                    //def a = Activity.findByActivityId(a1.activityId)
+                    s.addToActivities(a1)
+                }
+
                 s.save()
             }
         }

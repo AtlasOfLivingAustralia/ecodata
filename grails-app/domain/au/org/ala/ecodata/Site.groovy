@@ -24,13 +24,11 @@ class Site {
     String recordingMethod
     String landTenure
     String protectionMechanism
-    Map activities = [:] // activityId, activity
     String notes
-
     Date dateCreated
     Date lastUpdated
 
-    static embedded = ['location']
+    static hasMany = [activities: Activity]
 
     static constraints = {
         externalSiteId nullable:true
