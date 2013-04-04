@@ -24,7 +24,7 @@ class ProjectController {
             list << toMap(prj)
         }
         list.sort {it.name}
-        log.debug list
+        //log.debug list
         render list as JSON
     }
 
@@ -35,7 +35,7 @@ class ProjectController {
                 list << toMap(prj)
             }
             list.sort {it.name}
-            log.debug list
+            //log.debug list
             asJson([list: list])
         } else {
             def p = Project.findByProjectId(id)
@@ -81,7 +81,7 @@ class ProjectController {
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
         mapOfProperties.sites = prj.sites.collect {
-            log.debug "Project site location: " + it.location
+            //log.debug "Project site location: " + it.location
             def s = [siteId: it.siteId, name: it.name, location: it.location]
             s
         }
@@ -99,9 +99,10 @@ class ProjectController {
                 if (!p) {
                     p = new Project(name: tokens[2],
                             organisationName: tokens[1],
-                            projectId: tokens[2].encodeAsMD5()) // base on name for now
+                            projectId: Identifiers.getNew(
+                                    grailsApplication.config.ecodata.use.uuids, tokens[2]))
+                    if (p.name == 'Bushbids') { p.description = bushbidsDescription }
                 }
-                if (projectName == 'Bushbids') { p.desciption = bushbidsDescription }
                 Site s = Site.findByName(siteName)
                 if (s) {
                     s.projectId = p.projectId
