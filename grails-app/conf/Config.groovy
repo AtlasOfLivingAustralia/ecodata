@@ -73,7 +73,7 @@ environments {
     test {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        grails.serverURL = "http://testweb1.ala.org.au:8089/ecodata"
+        grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
     }
     production {
         grails.logging.jul.usebridge = false
