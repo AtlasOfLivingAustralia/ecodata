@@ -62,6 +62,7 @@ grails.hibernate.cache.queries = false
 environments {
     development {
         grails.logging.jul.usebridge = true
+        ecodata.use.uuids = false
         /*grails.hostname = "localhost"
         //grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
@@ -69,9 +70,15 @@ environments {
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context*/
     }
+    test {
+        grails.logging.jul.usebridge = false
+        ecodata.use.uuids = false
+        grails.serverURL = "http://testweb1.ala.org.au:8089/ecodata"
+    }
     production {
         grails.logging.jul.usebridge = false
-        // TODO: grails.serverURL = "http://www.changeme.com"
+        ecodata.use.uuids = false
+        grails.serverURL = "http://ecodata.ala.org.au"
     }
 }
 
