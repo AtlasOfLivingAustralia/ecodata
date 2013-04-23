@@ -29,6 +29,8 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
+    Date dateCreated
+    Date lastUpdated
 
     static hasMany = [sites:Site]
 
