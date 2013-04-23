@@ -109,7 +109,7 @@ class SiteController {
         mapOfProperties.remove("activites")
         mapOfProperties.activities = site.activities.collect {
             def a = [activityId: it.activityId, siteId: it.siteId,
-                    types: it.types,
+                    type: it.type,
                     startDate: it.startDate, endDate: it.endDate]
             a
         }
@@ -122,7 +122,6 @@ class SiteController {
         testFile.eachCsvLine { tokens ->
             if (tokens[2] == 'Bushbids') {
                 Site s = new Site(name: tokens[4],
-                        // todo: make siteId a true guid
                         siteId: Identifiers.getNew(
                                 grailsApplication.config.ecodata.use.uuids, tokens[4]),
                         description: tokens[15],
@@ -146,18 +145,34 @@ class SiteController {
                 }
 
                 if (s.name == 'ASH-MACC-A - 1') {
+                    // add an activity
                     Activity a1 = new Activity(
                             activityId: Identifiers.getNew(
                                grailsApplication.config.ecodata.use.uuids, ''),
                             siteId: s.siteId,
-                            types: ['DECCW vegetation assessment',
-                                   'Weed control',
-                                   'Bird survey']
+                            type: 'DECCW vegetation assessment'
                     )
-                    a1.save(flush: true)
-
-                    //def a = Activity.findByActivityId(a1.activityId)
+                    a1.save(flush: true, failOnError: true)
                     s.addToActivities(a1)
+
+                    // add an output
+                    Output o = new Output(
+                            outputId: Identifiers.getNew(
+                                    grailsApplication.config.ecodata.use.uuids, ''),
+                            activityId: a1.activityId,
+                            assessmentDate: a1.startDate,
+                            collector: 'Wally'
+                    )
+                    o.save(flush: true, failOnError: true)
+                    o.errors.each {
+                        log.debug it
+                    }
+                    o.data = [weedAbundanceAndThreatScore: [
+                            [name: 'Blackberry', areaCovered: '30%', coverRating: 4, invasiveThreatCategory: 5],
+                            [name: 'Bridal Creeper', areaCovered: '3 plants', coverRating: 1, invasiveThreatCategory: 5]
+                    ]]
+                    a1.addToOutputs(o)
+                    a1.save(failOnError: true)
                 }
 
                 s.save()
