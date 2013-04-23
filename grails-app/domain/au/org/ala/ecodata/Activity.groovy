@@ -6,6 +6,7 @@ class Activity {
 
     static mapping = {
         activityId index: true
+        siteId index: true
         version false
     }
 
@@ -13,42 +14,24 @@ class Activity {
     String activityId
     String siteId
     String description
-    List types = []  // type id? and name
+    String type
     Date startDate
     Date endDate
     String collector
     String censusMethod
     String methodAccuracy
-    List actualOutputs = []  // type and value (and units?)
     String fieldNotes
     String notes
     Date dateCreated
     Date lastUpdated
 
-    static activityTypes = [
-            [name:'Site condition survey', list: [
-                [key:'', name:'DECCW vegetation assessment']
-            ]],
-            [name:'Biological survey', list: [
-                [key:'birdSurvey', name:'Bird survey'],
-                [key:'reptileSurvey', name:'Reptile survey'],
-                [key:'insectSurvey', name:'Insect survey'],
-                [key:'smallMammalSurvey', name:'Small mammal survey'],
-                [key:'batSurvey', name:'Bat survey'],
-                [key:'koalaSurvey', name:'Koala survey'],
-                [key:'floraSurvey', name:'Flora survey'],
-                [key:'rapidAssessment', name:'Rapid assessment'],
-            ]],
-            [key:'speciesObservation', name:'Species observation'],
-            [key:'weedControl', name:'Weed control'],
-            [key:'pestControl', name:'Pest control'],
-            [key:'planting', name:'Planting']
-    ]
+    static hasMany = [outputs: Output]
 
     static constraints = {
         description nullable: true
         startDate nullable: true
         endDate nullable: true
+        type nullable: true
         collector nullable: true
         censusMethod nullable: true
         methodAccuracy nullable: true
