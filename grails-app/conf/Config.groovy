@@ -59,6 +59,10 @@ grails.exceptionresolver.params.exclude = ['password']
 // configure auto-caching of queries by default (if false you can cache individual queries with 'cache: true')
 grails.hibernate.cache.queries = false
 
+grails.mongo.default.mapping = {
+    version false
+}
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -74,6 +78,11 @@ environments {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
+    }
+    nectar {
+        grails.logging.jul.usebridge = false
+        ecodata.use.uuids = false
+        grails.serverURL = "http://115.146.94.201:8080/ecodata"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -100,6 +109,16 @@ log4j = {
                         file: "/var/log/tomcat6/ecodata-stacktrace.log"
             }
             test {
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: "/var/log/tomcat6/ecodata.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
+            }
+            nectar {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
                         file: "/var/log/tomcat6/ecodata.log",
