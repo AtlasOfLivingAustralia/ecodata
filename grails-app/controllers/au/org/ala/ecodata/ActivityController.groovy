@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 
 class ActivityController {
 
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'")
+    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -53,7 +53,7 @@ class ActivityController {
 
     def update(String id) {
         def props = request.JSON
-        println props
+        log.debug props
         if (id) {
             def a = Activity.findByActivityId(id)
             if (a) {
@@ -90,12 +90,25 @@ class ActivityController {
         }
     }
 
+    /**
+     * Updates all properties other than 'id' and converts date strings to BSON dates.
+     *
+     * Note that dates are assumed to be ISO8601 in UTC
+     * @param a the activity
+     * @param props the properties to use
+     */
     def updateProperties(Activity a, props) {
         def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE, 'au.org.ala.ecodata.Activity')
         props.remove('id')
         props.each { k,v ->
-            if (domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
-                v = v ? dateFormat.parse(v as String) : null
+            /*
+             * Checks the domain for properties of type Date and converts them.
+             * Expects dates as strings in the form 'yyyy-MM-ddThh:mm:ssZ'. As indicated by the 'Z' these must be
+             * UTC time. They are converted to java dates by forcing a zero time offset so that local timezone is
+             * not used. All conversions to and from local time is the responsibility of the service consumer.
+             */
+            if (domainDescriptor.hasProperty(k) && domainDescriptor.getPropertyByName(k).getType() == Date) {
+                v = v ? dateFormat.parse(v.replace("Z", "+0000")) : null
             }
             a[k] = v
         }
@@ -108,6 +121,22 @@ class ActivityController {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
+        mapOfProperties.remove("outputs")
+        mapOfProperties.outputs = act.outputs.collect {
+            [outputId: it.outputId,
+             assessmentDate: it.assessmentDate,
+             collector: it.collector]
+        }
+        /*mapOfProperties.outputs = outputList.collect {
+            def o = Output.findByOutputId(it)
+            if (o) {
+                [outputId: o.outputId,
+                 assessmentDate: o.assessmentDate,
+                 collector: o.collector]
+            } else {
+                [:]
+            }
+        }*/
         mapOfProperties.findAll {k,v -> v != null}
     }
 
