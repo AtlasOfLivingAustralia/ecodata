@@ -61,6 +61,7 @@ class ActivityController {
                     updateProperties(a, props)
                     asJson([message: 'updated'])
                 } catch (Exception e) {
+                    Activity.withSession { session -> session.clear() }
                     log.error "Error updating activity ${id} - ${e.message}"
                     render status:400, text: e.message
                 }
@@ -80,6 +81,7 @@ class ActivityController {
                     site.save()
                     asJson([message: 'created', activityId: a.activityId])
                 } catch (Exception e) {
+                    Activity.withSession { session -> session.clear() }
                     log.error "Error creating activity ${id} - ${e.message}"
                     render status:400, text: e.message
                 }
@@ -112,7 +114,8 @@ class ActivityController {
             }
             a[k] = v
         }
-        a.save()
+        // always flush the update so that that any exceptions are caught before the service returns
+        a.save(flush: true)
     }
 
     def toMap = { act ->
