@@ -84,6 +84,7 @@ class OutputController {
                     updateProperties(a, props)
                     asJson([message: 'updated'])
                 } catch (Exception e) {
+                    Output.withSession { session -> session.clear() }
                     log.error "Error updating output ${id} - ${e.message}"
                     render status:400, text: e.message
                 }
@@ -104,6 +105,8 @@ class OutputController {
                     activity.save()
                     asJson([message: 'created', outputId: o.outputId])
                 } catch (Exception e) {
+                    // clear session to avoid exception when GORM tries to autoflush the changes
+                    Output.withSession { session -> session.clear() }
                     log.error "Error creating output for ${props.activityId} - ${e.message}"
                     render status:400, text: e.message
                 }
@@ -117,7 +120,7 @@ class OutputController {
     /**
      * Updates all properties other than 'id' and converts date strings to BSON dates.
      *
-     * Note that dates are assumed to be ISO8601 in UTC
+     * Note that dates are assumed to be ISO8601 in UTC with no millisecs
      * @param o the output
      * @param props the properties to use
      */
@@ -137,8 +140,10 @@ class OutputController {
             }
             o[k] = v
         }
-        o.save(failOnError:true)
+        // always flush the update so that that any exceptions are caught before the service returns
+        o.save(flush:true,failOnError:true)
         if (o.hasErrors()) {
+            log.debug("has errors:")
             o.errors.each { log.debug it }
             throw new Exception(o.errors[0] as String);
         }
