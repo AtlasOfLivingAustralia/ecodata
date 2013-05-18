@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat
 
 class OutputController {
 
+    def outputService, commonService
+
     static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     // JSON response is returned as the unconverted model with the appropriate
@@ -25,7 +27,7 @@ class OutputController {
         if (!id) {
             def list = []
             Output.list().each { act ->
-                list << toMap(act)
+                list << outputService.toMap(act)
             }
             list.sort {it.name}
             //log.debug list
@@ -33,7 +35,7 @@ class OutputController {
         } else {
             def a = Output.findByOutputId(id)
             if (a) {
-                asJson toMap(a)
+                asJson outputService.toMap(a)
             } else {
                 render status:404, text: 'No such id'
             }
@@ -51,29 +53,6 @@ class OutputController {
         }
     }
 
-    /*def update(String id) {
-        def props = request.JSON
-        def p = Output.findByOutputId(id)
-        if (p) {
-            props.each { k,v ->
-                if (k != 'id') {
-                    p[k] = v
-                }
-            }
-            p.save()
-            render (status: 200, text: 'updated')
-        } else {
-            def t = new Output(outputId: props.outputId)
-            try {
-                updateProperties(t, props)
-                asJson([message: 'created', outputId: t.outputId])
-            } catch (Exception e) {
-                log.error "Error creating output - ${e.message}"
-                render status:400, text: e.message
-            }
-        }
-    }*/
-
     def update(String id) {
         def props = request.JSON
         log.debug props
@@ -81,7 +60,7 @@ class OutputController {
             def a = Output.findByOutputId(id)
             if (a) {
                 try {
-                    updateProperties(a, props)
+                    commonService.updateProperties(a, props)
                     asJson([message: 'updated'])
                 } catch (Exception e) {
                     Output.withSession { session -> session.clear() }
@@ -99,7 +78,7 @@ class OutputController {
             if (activity) {
                 def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
                 try {
-                    updateProperties(o, props)
+                    commonService.updateProperties(o, props)
                     activity.addToOutputs(o)
                     //activity.outputs << o.outputId
                     activity.save()
@@ -116,46 +95,4 @@ class OutputController {
             }
         }
     }
-
-    /**
-     * Updates all properties other than 'id' and converts date strings to BSON dates.
-     *
-     * Note that dates are assumed to be ISO8601 in UTC with no millisecs
-     * @param o the output
-     * @param props the properties to use
-     */
-    def updateProperties(o, props) {
-        def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE, 'au.org.ala.ecodata.Output')
-        props.remove('id')
-        props.each { k,v ->
-            log.debug "updating ${k} to ${v}"
-            /*
-             * Checks the domain for properties of type Date and converts them.
-             * Expects dates as strings in the form 'yyyy-MM-ddThh:mm:ssZ'. As indicated by the 'Z' these must be
-             * UTC time. They are converted to java dates by forcing a zero time offset so that local timezone is
-             * not used. All conversions to and from local time are the responsibility of the service consumer.
-             */
-            if (domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
-                v = v ? dateFormat.parse(v.replace("Z", "+0000")) : null
-            }
-            o[k] = v
-        }
-        // always flush the update so that that any exceptions are caught before the service returns
-        o.save(flush:true,failOnError:true)
-        if (o.hasErrors()) {
-            log.debug("has errors:")
-            o.errors.each { log.debug it }
-            throw new Exception(o.errors[0] as String);
-        }
-    }
-
-    def toMap = { act ->
-        def dbo = act.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-        mapOfProperties.remove("_id")
-        mapOfProperties.findAll {k,v -> v != null}
-    }
-
 }

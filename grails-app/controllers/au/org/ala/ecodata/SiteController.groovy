@@ -4,6 +4,8 @@ import grails.converters.JSON
 
 class SiteController {
 
+    def siteService, commonService
+
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
@@ -22,7 +24,7 @@ class SiteController {
     def list() {
         def list = []
         Site.list().each { site ->
-            list << toMap(site)
+            list << siteService.toMap(site)
         }
         list.sort {it.name}
         render list as JSON
@@ -32,14 +34,14 @@ class SiteController {
         if (!id) {
             def list = []
             Site.list().each { site ->
-                list << toMap(site)
+                list << siteService.toMap(site)
             }
             list.sort {it.name}
             asJson([list:list])
         } else {
             def s = Site.findBySiteId(id)
             if (s) {
-                asJson toMap(s)
+                asJson siteService.toMap(s)
             } else {
                 render (status: 404, text: 'No such id')
             }
@@ -64,57 +66,45 @@ class SiteController {
      */
     def update(String id) {
         def props = request.JSON
-        props.each { println it }
-        def s = Site.findBySiteId(id)
-        if (s) {
-            props.remove('id')
-            props.each { k,v ->
-                /*if (!(k in ignore)) {
-                    if (k.indexOf('.') > 0) {
-                        // treat as a nested object
-                        nest = loadNested(k,v,nest)
-                    } else {
-                        s[k] = v
-                    }
+        log.debug props
+        if (id) {
+            def a = Site.findBySiteId(id)
+            if (a) {
+                try {
+                    commonService.updateProperties(a, props)
+                    asJson([message: 'updated'])
+                } catch (Exception e) {
+                    Site.withSession { session -> session.clear() }
+                    log.error "Error updating site ${id} - ${e.message}"
+                    render status:400, text: e.message
                 }
+            } else {
+                log.error "Error updating site - no such id ${id}"
+                render status:404, text: 'No such id'
             }
-            nest.each { k,v ->*/
-                s[k] = v
+        }
+        else {
+            // no id - create the resource
+            def project = Project.findByProjectId(props.projectId)
+            if (project) {
+                def o = new Site(projectId: project.projectId, siteId: Identifiers.getNew(true,''))
+                try {
+                    commonService.updateProperties(o, props)
+                    project.addToSites(o)
+                    //activity.outputs << o.outputId
+                    project.save()
+                    asJson([message: 'created', siteId: o.siteId])
+                } catch (Exception e) {
+                    // clear session to avoid exception when GORM tries to autoflush the changes
+                    Site.withSession { session -> session.clear() }
+                    log.error "Error creating site for ${props.projectId} - ${e.message}"
+                    render status:400, text: e.message
+                }
+            } else {
+                log.error "Error creating site - no project with id = ${props.projectId}"
+                render status:400, text: 'No such project'
             }
-            s.save()
-            render (status: 200, text: 'updated')
-        } else {
-            render (status: 404, text: 'No such id')
         }
-    }
-
-    def loadNested(k, v, nest) {
-        def path = k.tokenize('.')
-        def context = path[0]
-        def c = nest[context]
-        if (!c) {
-            c = [:]
-            nest[context] = c
-        }
-        c[path[1]] = v
-        nest
-    }
-
-    def toMap = { site ->
-        def dbo = site.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-        mapOfProperties.remove("_id")
-        mapOfProperties.remove("activites")
-        mapOfProperties.activities = site.activities.collect {
-            def a = [activityId: it.activityId, siteId: it.siteId,
-                    type: it.type,
-                    startDate: it.startDate, endDate: it.endDate]
-            a
-        }
-
-        mapOfProperties.findAll {k,v -> v != null}
     }
 
     def loadTestData() {

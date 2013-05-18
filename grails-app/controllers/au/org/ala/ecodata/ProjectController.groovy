@@ -4,6 +4,8 @@ import grails.converters.JSON
 
 class ProjectController {
 
+    def projectService, commonService
+
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
@@ -21,7 +23,7 @@ class ProjectController {
     def list() {
         def list = []
         Project.list().each { prj ->
-            list << toMap(prj)
+            list << projectService.toMap(prj)
         }
         list.sort {it.name}
         //log.debug list
@@ -32,7 +34,7 @@ class ProjectController {
         if (!id) {
             def list = []
             Project.list().each { prj ->
-                list << toMap(prj)
+                list << projectService.toMap(prj)
             }
             list.sort {it.name}
             //log.debug list
@@ -40,7 +42,7 @@ class ProjectController {
         } else {
             def p = Project.findByProjectId(id)
             if (p) {
-                asJson toMap(p)
+                asJson projectService.toMap(p)
             } else {
                 render (status: 404, text: 'No such id')
             }
@@ -59,34 +61,36 @@ class ProjectController {
 
     def update(String id) {
         def props = request.JSON
-        def p = Project.findByProjectId(id)
-        if (p) {
-            props.each { k,v ->
-                if (k != 'id') {
-                    p[k] = v
+        log.debug props
+        if (id) {
+            def p = Project.findByProjectId(id)
+            if (p) {
+                try {
+                    commonService.updateProperties(p, props)
+                    asJson([message: 'updated'])
+                } catch (Exception e) {
+                    Project.withSession { session -> session.clear() }
+                    log.error "Error updating project ${id} - ${e.message}"
+                    render status:400, text: e.message
                 }
+            } else {
+                log.error "Error updating project - no such id ${id}"
+                render status:404, text: 'No such id'
             }
-            p.save()
-            render (status: 200, text: 'updated')
-        } else {
-            render (status: 404, text: 'No such id')
         }
-    }
-
-    def toMap = { prj ->
-        def dbo = prj.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-        mapOfProperties.remove("_id")
-        mapOfProperties.remove("sites")
-        mapOfProperties.sites = prj.sites.collect {
-            //log.debug "Project site location: " + it.location
-            def s = [siteId: it.siteId, name: it.name, location: it.location]
-            s
+        else {
+            // no id - create the resource
+            def p = new Project(projectId: Identifiers.getNew(true,''))
+            try {
+                commonService.updateProperties(p, props)
+                asJson([message: 'created', projectId: p.projectId])
+            } catch (Exception e) {
+                // clear session to avoid exception when GORM tries to autoflush the changes
+                Project.withSession { session -> session.clear() }
+                log.error "Error creating project - ${e.message}"
+                render status:400, text: e.message
+            }
         }
-        // remove nulls
-        mapOfProperties.findAll {k,v -> v != null}
     }
 
     def loadTestData() {
