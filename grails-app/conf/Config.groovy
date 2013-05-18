@@ -29,6 +29,11 @@ grails.mime.types = [
     xml:           ['text/xml', 'application/xml']
 ]
 
+/******************************************************************************\
+ *  RELOADABLE CONFIG
+\******************************************************************************/
+reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
+
 // URL Mapping Cache Max Size, defaults to 5000
 //grails.urlmapping.cache.maxsize = 1000
 
@@ -62,6 +67,9 @@ grails.hibernate.cache.queries = false
 grails.mongo.default.mapping = {
     version false
 }
+
+// application config
+app.dump.location = "/data/ecodata/dump/"
 
 environments {
     development {
