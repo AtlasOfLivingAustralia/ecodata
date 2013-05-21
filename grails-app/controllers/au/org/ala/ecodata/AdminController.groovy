@@ -7,9 +7,17 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 class AdminController {
 
-    def projectService, outputService, activityService, siteService
-
     def index() {}
+
+    def outputService, activityService, siteService, projectService
+
+    // JSON response is returned as the unconverted model with the appropriate
+    // content-type. The JSON conversion is handled in the filter. This allows
+    // for universal JSONP support.
+    def asJson = { model ->
+        response.setContentType("application/json")
+        model
+    }
 
     def reloadConfig = {
         // clear any cached external config
@@ -85,10 +93,40 @@ class AdminController {
      * Imports all data from files in the format written by dump().
      */
     def load() {
-        [/*'Project','Site','Activity',*/'Output'].each { collection ->
-            def f = new File("/data/ecodata/${collection}s.json")
-            def serviceClass = grailsApplication.getServiceClass("au.org.ala.ecodata.${collection}Service").newInstance()
-            serviceClass.loadAll(JSON.parse(f.text))
+        if (params.drop) {
+            dropDB()
         }
+        ['project','site','activity','output'].each { collection ->
+            def f = new File("/data/ecodata/${collection}s.json")
+            switch (collection) {
+                case 'output': outputService.loadAll(JSON.parse(f.text)); break
+                case 'activity': activityService.loadAll(JSON.parse(f.text)); break
+                case 'site': siteService.loadAll(JSON.parse(f.text)); break
+                case 'project': projectService.loadAll(JSON.parse(f.text)); break
+            }
+        }
+        forward action: 'count'
+    }
+
+    def count() {
+        def res = [
+            projects: Project.collection.count(),
+            sites: Site.collection.count(),
+            activities: Activity.collection.count(),
+            outputs: Output.collection.count()
+        ]
+        render res
+    }
+
+    def drop() {
+        dropDB()
+        forward action: 'count'
+    }
+
+    def dropDB() {
+        Output.collection.drop()
+        Activity.collection.drop()
+        Site.collection.drop()
+        Project.collection.drop()
     }
 }
