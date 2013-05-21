@@ -2,6 +2,14 @@ package au.org.ala.ecodata
 
 class OutputService {
 
+    static transactional = false
+
+    def grailsApplication
+
+    def getCommonService() {
+        grailsApplication.mainContext.commonService
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -19,12 +27,57 @@ class OutputService {
 
     def loadAll(list) {
         list.each {
-            load(it)
+            create(it)
         }
     }
 
-    def load(props) {
-        def o = new Output(props)
-
+    def create(props) {
+        assert getCommonService()
+        def activity = Activity.findByActivityId(props.activityId)
+        if (activity) {
+            def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
+            try {
+                getCommonService().updateProperties(o, props)
+                activity.addToOutputs(o)
+                activity.save()
+                return [status:'ok',outputId:o.outputId]
+            } catch (Exception e) {
+                // clear session to avoid exception when GORM tries to autoflush the changes
+                Output.withSession { session -> session.clear() }
+                def error = "Error creating output for activity ${props.activityId} - ${e.message}"
+                log.error error
+                return [status:'error',error:error]
+            }
+        } else {
+            def error = "Error creating output - no activity with id = ${props.activityId}"
+            log.error error
+            return [status:'error',error:error]
+        }
     }
+
+    def update(props, id) {
+        def a = Output.findByOutputId(id)
+        if (a) {
+            try {
+                getCommonService().updateProperties(a, props)
+                return [status:'ok']
+            } catch (Exception e) {
+                Output.withSession { session -> session.clear() }
+                def error = "Error updating output ${id} - ${e.message}"
+                log.error error
+                return [status:'error',error:error]
+            }
+        } else {
+            def error = "Error updating output - no such id ${id}"
+            log.error error
+            return [status:'error',error:error]
+        }
+    }
+
+    def testGrailsApplication() {
+        assert grailsApplication
+        assert grailsApplication.mainContext.commonService
+        return "ok"
+    }
+
 }

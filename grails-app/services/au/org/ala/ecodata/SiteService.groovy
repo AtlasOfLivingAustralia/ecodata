@@ -2,6 +2,14 @@ package au.org.ala.ecodata
 
 class SiteService {
 
+    static transactional = false
+
+    def grailsApplication
+
+    def getCommonService() {
+        grailsApplication.mainContext.commonService
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -23,6 +31,55 @@ class SiteService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    def loadAll(list) {
+        list.each {
+            create(it)
+        }
+    }
+
+    def create(props) {
+        assert getCommonService()
+        def project = Project.findByProjectId(props.projectId)
+        if (project) {
+            def o = new Site(projectId: project.projectId, siteId: Identifiers.getNew(true,''))
+            try {
+                getCommonService().updateProperties(o, props)
+                project.addToSites(o)
+                project.save()
+                return [status:'ok',siteId:o.siteId]
+            } catch (Exception e) {
+                // clear session to avoid exception when GORM tries to autoflush the changes
+                Site.withSession { session -> session.clear() }
+                def error = "Error creating site for project ${props.projectId} - ${e.message}"
+                log.error error
+                return [status:'error',error:error]
+            }
+        } else {
+            def error = "Error creating site - no project with id = ${props.projectId}"
+            log.error error
+            return [status:'error',error:error]
+        }
+    }
+
+    def update(props, id) {
+        def a = Site.findBySiteId(id)
+        if (a) {
+            try {
+                getCommonService().updateProperties(a, props)
+                return [status:'ok']
+            } catch (Exception e) {
+                Site.withSession { session -> session.clear() }
+                def error = "Error updating site ${id} - ${e.message}"
+                log.error error
+                return [status:'error',error:error]
+            }
+        } else {
+            def error = "Error updating site - no such id ${id}"
+            log.error error
+            return [status:'error',error:error]
+        }
     }
 
 }

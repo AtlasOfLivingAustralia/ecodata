@@ -56,44 +56,22 @@ class ActivityController {
     def update(String id) {
         def props = request.JSON
         log.debug props
+        def result
+        def message
         if (id) {
-            def a = Activity.findByActivityId(id)
-            if (a) {
-                try {
-                    commonService.updateProperties(a, props)
-                    asJson([message: 'updated'])
-                } catch (Exception e) {
-                    Activity.withSession { session -> session.clear() }
-                    log.error "Error updating activity ${id} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error updating activity - no such id ${id}"
-                render status:404, text: 'No such id'
-            }
+            result = activityService.update(props,id)
+            message = [message: 'updated']
         }
         else {
-            // no id - create the resource
-            def site = Site.findBySiteId(props.siteId)
-            if (site) {
-                def a = new Activity(siteId: site.siteId, activityId: Identifiers.getNew(true,''))
-                try {
-                    commonService.updateProperties(a, props)
-                    site.addToActivities(a)
-                    site.save()
-                    asJson([message: 'created', activityId: a.activityId])
-                } catch (Exception e) {
-                    Activity.withSession { session -> session.clear() }
-                    log.error "Error creating activity ${id} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error creating activity - no site with id = ${id}"
-                render status:400, text: 'No such site'
-            }
+            result = activityService.create(props)
+            message = [message: 'created', activityId: result.activityId]
         }
-    }
-
-    def loadTestData() {
+        if (result.status == 'ok') {
+            asJson(message)
+        } else {
+            //Activity.withSession { session -> session.clear() }
+            log.error result.error
+            render status:400, text: result.error
+        }
     }
 }

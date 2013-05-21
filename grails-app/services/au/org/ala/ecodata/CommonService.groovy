@@ -2,9 +2,14 @@ package au.org.ala.ecodata
 
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 
+import java.text.SimpleDateFormat
+
 class CommonService {
 
+    //static transactional = false
     def grailsApplication
+
+    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     /**
      * Updates all properties other than 'id' and converts date strings to BSON dates.

@@ -8,8 +8,6 @@ class OutputController {
 
     def outputService, commonService
 
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
-
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
@@ -56,43 +54,22 @@ class OutputController {
     def update(String id) {
         def props = request.JSON
         log.debug props
+        def result
+        def message
         if (id) {
-            def a = Output.findByOutputId(id)
-            if (a) {
-                try {
-                    commonService.updateProperties(a, props)
-                    asJson([message: 'updated'])
-                } catch (Exception e) {
-                    Output.withSession { session -> session.clear() }
-                    log.error "Error updating output ${id} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error updating output - no such id ${id}"
-                render status:404, text: 'No such id'
-            }
+            result = outputService.update(props,id)
+            message = [message: 'updated']
         }
         else {
-            // no id - create the resource
-            def activity = Activity.findByActivityId(props.activityId)
-            if (activity) {
-                def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
-                try {
-                    commonService.updateProperties(o, props)
-                    activity.addToOutputs(o)
-                    //activity.outputs << o.outputId
-                    activity.save()
-                    asJson([message: 'created', outputId: o.outputId])
-                } catch (Exception e) {
-                    // clear session to avoid exception when GORM tries to autoflush the changes
-                    Output.withSession { session -> session.clear() }
-                    log.error "Error creating output for ${props.activityId} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error creating output - no activity with id = ${props.activityId}"
-                render status:400, text: 'No such activity'
-            }
+            result = outputService.create(props)
+            message = [message: 'created', outputId: result.outputId]
+        }
+        if (result.status == 'ok') {
+            asJson(message)
+        } else {
+            //Output.withSession { session -> session.clear() }
+            log.error result.error
+            render status:400, text: result.error
         }
     }
 }

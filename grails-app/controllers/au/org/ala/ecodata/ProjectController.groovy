@@ -59,37 +59,30 @@ class ProjectController {
         }
     }
 
+    /**
+     * Update a project.
+     *
+     * @param id - identifies the resource
+     * @return
+     */
     def update(String id) {
         def props = request.JSON
         log.debug props
+        def result
+        def message
         if (id) {
-            def p = Project.findByProjectId(id)
-            if (p) {
-                try {
-                    commonService.updateProperties(p, props)
-                    asJson([message: 'updated'])
-                } catch (Exception e) {
-                    Project.withSession { session -> session.clear() }
-                    log.error "Error updating project ${id} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error updating project - no such id ${id}"
-                render status:404, text: 'No such id'
-            }
+            result = projectService.update(props,id)
+            message = [message: 'updated']
         }
         else {
-            // no id - create the resource
-            def p = new Project(projectId: Identifiers.getNew(true,''))
-            try {
-                commonService.updateProperties(p, props)
-                asJson([message: 'created', projectId: p.projectId])
-            } catch (Exception e) {
-                // clear session to avoid exception when GORM tries to autoflush the changes
-                Project.withSession { session -> session.clear() }
-                log.error "Error creating project - ${e.message}"
-                render status:400, text: e.message
-            }
+            result = projectService.create(props)
+            message = [message: 'created', projectId: result.projectId]
+        }
+        if (result.status == 'ok') {
+            asJson(message)
+        } else {
+            log.error result.error
+            render status:400, text: result.error
         }
     }
 

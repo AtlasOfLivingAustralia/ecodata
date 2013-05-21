@@ -67,43 +67,21 @@ class SiteController {
     def update(String id) {
         def props = request.JSON
         log.debug props
+        def result
+        def message
         if (id) {
-            def a = Site.findBySiteId(id)
-            if (a) {
-                try {
-                    commonService.updateProperties(a, props)
-                    asJson([message: 'updated'])
-                } catch (Exception e) {
-                    Site.withSession { session -> session.clear() }
-                    log.error "Error updating site ${id} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error updating site - no such id ${id}"
-                render status:404, text: 'No such id'
-            }
+            result = siteService.update(props,id)
+            message = [message: 'updated']
         }
         else {
-            // no id - create the resource
-            def project = Project.findByProjectId(props.projectId)
-            if (project) {
-                def o = new Site(projectId: project.projectId, siteId: Identifiers.getNew(true,''))
-                try {
-                    commonService.updateProperties(o, props)
-                    project.addToSites(o)
-                    //activity.outputs << o.outputId
-                    project.save()
-                    asJson([message: 'created', siteId: o.siteId])
-                } catch (Exception e) {
-                    // clear session to avoid exception when GORM tries to autoflush the changes
-                    Site.withSession { session -> session.clear() }
-                    log.error "Error creating site for ${props.projectId} - ${e.message}"
-                    render status:400, text: e.message
-                }
-            } else {
-                log.error "Error creating site - no project with id = ${props.projectId}"
-                render status:400, text: 'No such project'
-            }
+            result = siteService.create(props)
+            message = [message: 'created', siteId: result.siteId]
+        }
+        if (result.status == 'ok') {
+            asJson(message)
+        } else {
+            log.error result.error
+            render status:400, text: result.error
         }
     }
 
