@@ -14,6 +14,7 @@ class Output {
 
     ObjectId id
     String outputId
+    String status = 'active'
     String activityId
     Date assessmentDate
     Date dateCreated

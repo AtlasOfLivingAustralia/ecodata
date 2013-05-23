@@ -24,7 +24,9 @@ class OutputController {
     def get(String id) {
         if (!id) {
             def list = []
-            Output.list().each { act ->
+            def outputs = params.includeDeleted ? Output.list() :
+                Output.findAllByStatus('active')
+            outputs.each { act ->
                 list << outputService.toMap(act)
             }
             list.sort {it.name}
@@ -43,8 +45,13 @@ class OutputController {
     def delete(String id) {
         def a = Output.findByOutputId(id)
         if (a) {
-            a.delete()
-            asJson([message: 'deleted'])
+            if (params.destroy) {
+                a.delete()
+            } else {
+                a.status = 'deleted'
+                a.save(flush: true)
+            }
+            render (status: 200, text: 'deleted')
         } else {
             response.status = 404
             render status:404, text: 'No such id'

@@ -11,9 +11,10 @@ class Project {
     }
 
     ObjectId id
-    String projectId
+    String projectId  // required
+    String status = 'active'
     String externalProjectId
-    String name
+    String name  // required
     String description
     String manager
     String groupId

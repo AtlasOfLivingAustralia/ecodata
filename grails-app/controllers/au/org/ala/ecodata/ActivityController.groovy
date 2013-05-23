@@ -26,7 +26,9 @@ class ActivityController {
     def get(String id) {
         if (!id) {
             def list = []
-            Activity.list().each { act ->
+            def activities = params.includeDeleted ? Activity.list() :
+                Activity.findAllByStatus('active')
+            activities.each { act ->
                 list << activityService.toMap(act)
             }
             list.sort {it.name}
@@ -45,8 +47,13 @@ class ActivityController {
     def delete(String id) {
         def a = Activity.findByActivityId(id)
         if (a) {
-            a.delete()
-            asJson([message: 'deleted'])
+            if (params.destroy) {
+                a.delete()
+            } else {
+                a.status = 'deleted'
+                a.save(flush: true)
+            }
+            render (status: 200, text: 'deleted')
         } else {
             response.status = 404
             render status:404, text: 'No such id'

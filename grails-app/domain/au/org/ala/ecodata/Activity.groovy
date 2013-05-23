@@ -12,6 +12,7 @@ class Activity {
 
     ObjectId id
     String activityId
+    String status = 'active'
     String siteId
     String description
     String type

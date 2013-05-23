@@ -23,7 +23,9 @@ class SiteController {
 
     def list() {
         def list = []
-        Site.list().each { site ->
+        def sites = params.includeDeleted ? Site.list() :
+            Site.findAllByStatus('active')
+        sites.each { site ->
             list << siteService.toMap(site)
         }
         list.sort {it.name}
@@ -33,7 +35,9 @@ class SiteController {
     def get(String id) {
         if (!id) {
             def list = []
-            Site.list().each { site ->
+            def sites = params.includeDeleted ? Site.list() :
+                Site.findAllByStatus('active')
+            sites.each { site ->
                 list << siteService.toMap(site)
             }
             list.sort {it.name}
@@ -51,7 +55,12 @@ class SiteController {
     def delete(String id) {
         def s = Site.findBySiteId(id)
         if (s) {
-            s.delete()
+            if (params.destroy) {
+                s.delete()
+            } else {
+                s.status = 'deleted'
+                s.save(flush: true)
+            }
             render (status: 200, text: 'deleted')
         } else {
             render (status: 404, text: 'No such id')

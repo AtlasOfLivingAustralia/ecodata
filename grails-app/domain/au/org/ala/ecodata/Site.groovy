@@ -12,6 +12,7 @@ class Site {
 
     ObjectId id
     String siteId
+    String status = 'active'
     String externalSiteId
     String projectId
     String projectName

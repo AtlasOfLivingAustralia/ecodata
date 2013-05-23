@@ -22,7 +22,9 @@ class ProjectController {
 
     def list() {
         def list = []
-        Project.list().each { prj ->
+        def projects = params.includeDeleted ? Project.list() :
+            Project.findAllByStatus('active')
+        projects.each { prj ->
             list << projectService.toMap(prj)
         }
         list.sort {it.name}
@@ -33,7 +35,9 @@ class ProjectController {
     def get(String id) {
         if (!id) {
             def list = []
-            Project.list().each { prj ->
+            def projects = params.includeDeleted ? Project.list() :
+                Project.findAllByStatus('active')
+            projects.each { prj ->
                 list << projectService.toMap(prj)
             }
             list.sort {it.name}
@@ -52,8 +56,24 @@ class ProjectController {
     def delete(String id) {
         def p = Project.findByProjectId(id)
         if (p) {
-            p.delete()
+            if (params.destroy) {
+                p.delete()
+            } else {
+                p.status = 'deleted'
+                p.save(flush: true)
+            }
             render (status: 200, text: 'deleted')
+        } else {
+            render (status: 404, text: 'No such id')
+        }
+    }
+
+    def resurrect(String id) {
+        def p = Project.findByProjectId(id)
+        if (p) {
+            p.status = 'active'
+            p.save(flush: true)
+            render (status: 200, text: 'raised from the dead')
         } else {
             render (status: 404, text: 'No such id')
         }
