@@ -15,6 +15,10 @@ class CommonService {
      * Updates all properties other than 'id' and converts date strings to BSON dates.
      *
      * Note that dates are assumed to be ISO8601 in UTC with no millisecs
+     *
+     * Booleans must be handled explicitly because the JSON string "false" will by truthy if just
+     *  assigned to a boolean property.
+     *
      * @param o the domain instance
      * @param props the properties to use
      */
@@ -34,6 +38,9 @@ class CommonService {
              */
             if (domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
                 v = v ? dateFormat.parse(v.replace("Z", "+0000")) : null
+            }
+            if (v == "false") {
+                v = false
             }
             o[k] = v
         }
