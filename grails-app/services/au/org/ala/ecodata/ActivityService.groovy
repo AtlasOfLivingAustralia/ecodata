@@ -10,6 +10,11 @@ class ActivityService {
         grailsApplication.mainContext.commonService
     }
 
+    def get(id) {
+        def o = Activity.findByActivityId(id)
+        return o ? toMap(o) : null
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.

@@ -4,7 +4,7 @@ class ProjectService {
 
     static transactional = false
 
-    def grailsApplication
+    def grailsApplication, siteService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -26,6 +26,26 @@ class ProjectService {
         mapOfProperties.sites = prj.sites.collect {
             def s = [siteId: it.siteId, name: it.name, location: it.location]
             s
+        }
+        // remove nulls
+        mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    /**
+     * Converts the domain object into a highly detailed map of properties, including
+     * dynamic properties, and linked components.
+     * @param prj a Project instance
+     * @return map of properties
+     */
+    def toRichMap(prj) {
+        def dbo = prj.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        def id = mapOfProperties["_id"].toString()
+        mapOfProperties["id"] = id
+        mapOfProperties.remove("_id")
+        mapOfProperties.remove("sites")
+        mapOfProperties.sites = prj.sites.collect {
+            siteService.get it.siteId, true
         }
         // remove nulls
         mapOfProperties.findAll {k,v -> v != null}

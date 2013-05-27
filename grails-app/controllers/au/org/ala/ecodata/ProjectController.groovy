@@ -46,7 +46,11 @@ class ProjectController {
         } else {
             def p = Project.findByProjectId(id)
             if (p) {
-                asJson projectService.toMap(p)
+                if (params.view == 'rich') {
+                    asJson projectService.toRichMap(p)
+                } else {
+                    asJson projectService.toMap(p)
+                }
             } else {
                 render (status: 404, text: 'No such id')
             }

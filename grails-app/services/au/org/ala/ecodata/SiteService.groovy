@@ -4,10 +4,19 @@ class SiteService {
 
     static transactional = false
 
-    def grailsApplication
+    def grailsApplication, activityService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
+    }
+
+    def get(id) {
+        get(id, false)
+    }
+
+    def get(id, rich) {
+        def o = Site.findBySiteId(id)
+        return o ? (rich ? toRichMap(o): toMap(o)) : null
     }
 
     /**
@@ -24,10 +33,34 @@ class SiteService {
         mapOfProperties.remove("_id")
         mapOfProperties.remove("activites")
         mapOfProperties.activities = site.activities.collect {
-            def a = [activityId: it.activityId, siteId: it.siteId,
+            def a = [activityId: it.activityId,
+                    siteId: it.siteId,
                     type: it.type,
-                    startDate: it.startDate, endDate: it.endDate]
+                    startDate: it.startDate,
+                    endDate: it.endDate,
+                    collector: it.collector,
+                    assessment: it.assessment]
             a
+        }
+
+        mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    /**
+     * Converts the domain object into a highly detailed map of properties, including
+     * dynamic properties, and linked components.
+     * @param prj a Project instance
+     * @return map of properties
+     */
+    def toRichMap(site) {
+        def dbo = site.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        def id = mapOfProperties["_id"].toString()
+        mapOfProperties["id"] = id
+        mapOfProperties.remove("_id")
+        mapOfProperties.remove("activites")
+        mapOfProperties.activities = site.activities.collect {
+            activityService.get it.activityId
         }
 
         mapOfProperties.findAll {k,v -> v != null}
