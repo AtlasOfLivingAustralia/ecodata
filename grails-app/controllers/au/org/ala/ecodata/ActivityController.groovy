@@ -26,8 +26,14 @@ class ActivityController {
     def get(String id) {
         if (!id) {
             def list = []
-            def activities = params.includeDeleted ? Activity.list() :
-                Activity.findAllByStatus('active')
+            def activities
+            if (params.type == 'assessment') {
+                activities = params.includeDeleted ? Activity.findAllByAssessment(true) :
+                    Activity.findAllByStatusAndAssessment('active',true)
+            } else {
+                activities = params.includeDeleted ? Activity.findAllByAssessment(false) :
+                    Activity.findAllByStatusAndAssessment('active',false)
+            }
             activities.each { act ->
                 list << activityService.toMap(act)
             }
@@ -35,9 +41,9 @@ class ActivityController {
             //log.debug list
             asJson([list: list])
         } else {
-            def a = Activity.findByActivityId(id)
-            if (a) {
-                asJson activityService.toMap(a)
+            def act = activityService.get(id)
+            if (act) {
+                asJson act
             } else {
                 render status:404, text: 'No such id'
             }

@@ -2,6 +2,9 @@ package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
 
+/**
+ * Currently this holds both activities and assessments.
+ */
 class Activity {
 
     static mapping = {
@@ -13,6 +16,7 @@ class Activity {
     ObjectId id
     String activityId
     String status = 'active'
+    Boolean assessment = false
     String siteId
     String description
     String type
