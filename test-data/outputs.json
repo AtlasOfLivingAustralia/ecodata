@@ -1,0 +1,383 @@
+[
+    {
+        "activityId": "01650eaa-d987-4f97-855e-cdf931a3b9fb",
+        "assessmentDate": "2013-04-03T13:00:00+0000",
+        "dateCreated": "2013-05-19T07:07:17+0000",
+        "lastUpdated": "2013-05-19T07:07:17+0000",
+        "outputId": "46200b82-8b7f-4136-82f4-0c2b03760e47",
+        "collector": "Wally",
+        "data": {
+            "weedAbundanceAndThreatScore": [
+                {
+                    "isUnknownIfWeed": false,
+                    "coverRating": "4",
+                    "areaCovered": "30%",
+                    "name": "Blackberry",
+                    "abundanceAndThreatScore": 20,
+                    "invasiveThreatCategory": 5
+                },
+                {
+                    "isUnknownIfWeed": false,
+                    "coverRating": "1",
+                    "areaCovered": "3 plants",
+                    "name": "Bridal Creeper",
+                    "abundanceAndThreatScore": 5,
+                    "invasiveThreatCategory": 5
+                },
+                {
+                    "isUnknownIfWeed": true,
+                    "coverRating": "2",
+                    "areaCovered": "2%",
+                    "name": "Wild oats",
+                    "abundanceAndThreatScore": 4,
+                    "invasiveThreatCategory": "2"
+                }
+            ],
+            "totalAreaCovered": "34%",
+            "totalAbundanceAndThreatScore": 29
+        },
+        "selectedRow": {
+            "isUnknownIfWeed": false,
+            "coverRating": 4,
+            "areaCovered": "30%",
+            "name": "Blackberry",
+            "abundanceAndThreatScore": 20,
+            "invasiveThreatCategory": 5
+        },
+        "id": "51987a25b957379a108e74de"
+    },
+    {
+        "activityId": "ffe85ddb-c8a7-4abb-a246-06649ee17e6d",
+        "assessmentDate": "2013-04-30T14:00:00+0000",
+        "dateCreated": "2013-05-19T07:07:17+0000",
+        "lastUpdated": "2013-05-19T07:07:17+0000",
+        "outputId": "12c4afe4-16ee-49e9-9c25-cd75f87fb4f5",
+        "collector": "me",
+        "data": {
+            "areaSurveyedInHectares": "0.8",
+            "totalFeralAnimalAbundanceScore": 11.25,
+            "mainTrees": "",
+            "mainSoilType": "",
+            "timeSpentSurveying": 0,
+            "activeSigns": [
+                {
+                    "total": 3,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "fox",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 3.75,
+                    "live": "3",
+                    "soil": "0"
+                },
+                {
+                    "total": 3,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "feralCat",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 3.75,
+                    "live": "0",
+                    "soil": "3"
+                },
+                {
+                    "total": 2,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "2",
+                    "scratchings": "0",
+                    "name": "rabbit",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 2.5,
+                    "live": "0",
+                    "soil": "0"
+                },
+                {
+                    "total": 0,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "hare",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 0,
+                    "live": "0",
+                    "soil": "0"
+                },
+                {
+                    "total": 1,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "1",
+                    "name": "goat",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 1.25,
+                    "live": "0",
+                    "soil": "0"
+                },
+                {
+                    "total": 0,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "deer",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 0,
+                    "live": "0",
+                    "soil": "0"
+                },
+                {
+                    "total": 0,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "other",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 0,
+                    "live": "0",
+                    "soil": "0"
+                }
+            ],
+            "comments": ""
+        },
+        "id": "51987a25b957379a108e74df"
+    },
+    {
+        "activityId": "88d65d73-d0fb-4d09-9736-64bc79caccef",
+        "assessmentDate": "2013-04-30T14:00:00+0000",
+        "dateCreated": "2013-05-19T07:07:17+0000",
+        "lastUpdated": "2013-05-19T07:07:17+0000",
+        "outputId": "a455af80-d211-4e76-bb1f-6879100d3b3c",
+        "collector": "wally",
+        "data": {
+            "areaSurveyedInHectares": "0.8",
+            "totalFeralAnimalAbundanceScore": 36.25,
+            "activeSignsOtherColumnDetail": "blackbird",
+            "mainTrees": "Rough-barked Eucalypts",
+            "mainSoilType": "sandy",
+            "timeSpentSurveying": 0,
+            "activeSignsOtherRowDetail": "dead animal",
+            "activeSigns": [
+                {
+                    "total": 4,
+                    "other": "0",
+                    "dung": "2",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "fox",
+                    "furOrFeathers": "0",
+                    "den": "1",
+                    "abundanceRating": 5,
+                    "live": "1",
+                    "soil": "0"
+                },
+                {
+                    "total": 4,
+                    "other": "1",
+                    "dung": "1",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "1",
+                    "name": "feralCat",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 5,
+                    "live": "1",
+                    "soil": "0"
+                },
+                {
+                    "total": 7,
+                    "other": "0",
+                    "dung": "3",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "2",
+                    "scratchings": "0",
+                    "name": "rabbit",
+                    "furOrFeathers": "1",
+                    "den": "0",
+                    "abundanceRating": 8.75,
+                    "live": "1",
+                    "soil": "0"
+                },
+                {
+                    "total": 1,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "hare",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 1.25,
+                    "live": "1",
+                    "soil": "0"
+                },
+                {
+                    "total": 7,
+                    "other": "0",
+                    "dung": "3",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "goat",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 8.75,
+                    "live": "4",
+                    "soil": "0"
+                },
+                {
+                    "total": 4,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "1",
+                    "tracks": "1",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "deer",
+                    "furOrFeathers": "0",
+                    "den": "0",
+                    "abundanceRating": 5,
+                    "live": "1",
+                    "soil": "1"
+                },
+                {
+                    "total": 2,
+                    "other": "0",
+                    "dung": "0",
+                    "damage": "0",
+                    "tracks": "0",
+                    "warren": "0",
+                    "scratchings": "0",
+                    "name": "other",
+                    "furOrFeathers": "1",
+                    "den": "0",
+                    "abundanceRating": 2.5,
+                    "live": "1",
+                    "soil": "0"
+                }
+            ],
+            "comments": "Some comments"
+        },
+        "template": "feralAnimalAbundanceScore",
+        "id": "51987a25b957379a108e74e0"
+    },
+    {
+        "activityId": "88d65d73-d0fb-4d09-9736-64bc79caccef",
+        "assessmentDate": "2013-05-07T14:00:00+0000",
+        "dateCreated": "2013-05-19T07:07:17+0000",
+        "lastUpdated": "2013-05-19T07:07:17+0000",
+        "outputId": "b9408e8a-2b4b-4397-a685-59a9b69e3863",
+        "collector": "Mark",
+        "data": {
+            "frequencyOtherColumnDetail": "",
+            "frequency": [
+                {
+                    "rabbit": true,
+                    "fox": true,
+                    "other": false,
+                    "goat": false,
+                    "hare": false,
+                    "feralCat": false,
+                    "surveyDate": "2013-04-30T14:00:00Z",
+                    "deer": false
+                },
+                {
+                    "rabbit": false,
+                    "fox": true,
+                    "other": false,
+                    "goat": true,
+                    "hare": false,
+                    "feralCat": false,
+                    "surveyDate": "2013-05-27T14:00:00Z",
+                    "deer": false
+                },
+                {
+                    "rabbit": false,
+                    "fox": true,
+                    "other": false,
+                    "goat": false,
+                    "hare": false,
+                    "feralCat": true,
+                    "surveyDate": "2013-05-30T14:00:00Z",
+                    "deer": false
+                }
+            ],
+            "totalFeralAnimalFrequencyScore": -16,
+            "frequencyTotals": {
+                "rabbit": {
+                    "frequencyScore": -3,
+                    "percentOfSurveys": "33.33",
+                    "totalSurveysWithSigns": 1
+                },
+                "fox": {
+                    "frequencyScore": -7,
+                    "percentOfSurveys": "100",
+                    "totalSurveysWithSigns": 3
+                },
+                "other": {
+                    "frequencyScore": 0,
+                    "percentOfSurveys": "0",
+                    "totalSurveysWithSigns": 0
+                },
+                "goat": {
+                    "frequencyScore": -3,
+                    "percentOfSurveys": "33.33",
+                    "totalSurveysWithSigns": 1
+                },
+                "hare": {
+                    "frequencyScore": 0,
+                    "percentOfSurveys": "0",
+                    "totalSurveysWithSigns": 0
+                },
+                "feralCat": {
+                    "frequencyScore": -3,
+                    "percentOfSurveys": "33.33",
+                    "totalSurveysWithSigns": 1
+                },
+                "deer": {
+                    "frequencyScore": 0,
+                    "percentOfSurveys": "0",
+                    "totalSurveysWithSigns": 0
+                }
+            }
+        },
+        "template": "feralAnimalFrequencyScore",
+        "id": "51987a25b957379a108e74e1"
+    }
+]
