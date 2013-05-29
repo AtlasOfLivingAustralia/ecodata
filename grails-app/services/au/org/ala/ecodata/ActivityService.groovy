@@ -4,15 +4,47 @@ class ActivityService {
 
     static transactional = false
 
-    def grailsApplication
+    def grailsApplication, outputService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
     }
 
-    def get(id) {
+    def get(id, rich = false) {
         def o = Activity.findByActivityId(id)
-        return o ? toMap(o) : null
+        return o ? (rich ? toRichMap(o): toMap(o)) : null
+    }
+
+    def getAll(listOfIds) {
+        Activity.findAllByActivityIdInList(listOfIds).collect { toMap(it) }
+    }
+
+    def findAllForSiteId(id, rich = false) {
+        Activity.findAllBySiteId(id).collect { /*rich ? toRichMap(it) :*/ toMap(it) }
+    }
+
+    def findAssessmentsForSiteId(id, rich = false) {
+        Activity.findAllBySiteIdAndAssessment(id, true).collect { rich ? toRichMap(it) : toLiteMap(it) }
+    }
+
+    def findActivitiesForSiteId(id, rich = false) {
+        Activity.findAllBySiteIdAndAssessment(id, false).collect { rich ? toRichMap(it) : toLiteMap(it) }
+    }
+
+    /**
+     * Converts the domain object into a restricted map of properties.
+     * @param act an Activity instance
+     * @return map of properties
+     */
+    def toLiteMap(act) {
+        def dbo = act.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        [activityId: mapOfProperties.activityId,
+         siteId: mapOfProperties.siteId,
+         type: mapOfProperties.type,
+         startDate: mapOfProperties.startDate,
+         endDate: mapOfProperties.endDate,
+         collector: mapOfProperties.collector]
     }
 
     /**
@@ -28,11 +60,24 @@ class ActivityService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.remove("outputs")
-        mapOfProperties.outputs = act.outputs.collect {
-            [outputId: it.outputId,
-                    assessmentDate: it.assessmentDate,
-                    collector: it.collector]
-        }
+        mapOfProperties.outputs = outputService.getAll(act.outputs)
+        mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    /**
+     * Converts the domain object into a highly detailed map of properties, including
+     * dynamic properties, and linked components.
+     * @param act an Activity instance
+     * @return map of properties
+     */
+    def toRichMap(act) {
+        def dbo = act.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        def id = mapOfProperties["_id"].toString()
+        mapOfProperties["id"] = id
+        mapOfProperties.remove("_id")
+        mapOfProperties.remove("outputs")
+        mapOfProperties.outputs = outputService.getAll(act.outputs, true)
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -49,8 +94,6 @@ class ActivityService {
             def o = new Activity(siteId: site.siteId, activityId: Identifiers.getNew(true,''))
             try {
                 getCommonService().updateProperties(o, props)
-                site.addToActivities(o)
-                site.save()
                 return [status:'ok',activityId:o.activityId]
             } catch (Exception e) {
                 // clear session to avoid exception when GORM tries to autoflush the changes

@@ -4,6 +4,11 @@ import org.bson.types.ObjectId
 
 class Project {
 
+    /*
+    Associations:
+        projects may have 0..n Sites - these are mapped from the Site side
+        Activities - not implemented yet
+    */
     static mapping = {
         name index: true
         projectId index: true
@@ -32,8 +37,6 @@ class Project {
     String projectPlannedOutputValue
     Date dateCreated
     Date lastUpdated
-
-    static hasMany = [sites:Site]
 
     static constraints = {
         externalProjectId nullable:true

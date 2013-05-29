@@ -23,10 +23,13 @@ class ProjectService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
-        mapOfProperties.sites = prj.sites.collect {
+        println siteService
+        if (!siteService) { siteService = grailsApplication.mainContext.siteService}
+        mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, false)
+        /*prj.sites.collect {
             def s = [siteId: it.siteId, name: it.name, location: it.location]
             s
-        }
+        }*/
         // remove nulls
         mapOfProperties.findAll {k,v -> v != null}
     }
@@ -44,9 +47,7 @@ class ProjectService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
-        mapOfProperties.sites = prj.sites.collect {
-            siteService.get it.siteId, true
-        }
+        mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, true)
         // remove nulls
         mapOfProperties.findAll {k,v -> v != null}
     }

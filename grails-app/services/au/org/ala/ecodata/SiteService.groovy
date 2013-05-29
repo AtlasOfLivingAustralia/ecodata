@@ -10,13 +10,13 @@ class SiteService {
         grailsApplication.mainContext.commonService
     }
 
-    def get(id) {
-        get(id, false)
-    }
-
-    def get(id, rich) {
+    def get(id, rich = false) {
         def o = Site.findBySiteId(id)
         return o ? (rich ? toRichMap(o): toMap(o)) : null
+    }
+
+    def findAllForProjectId(id, rich) {
+        Site.findAllByProjects(id).collect { rich ? toRichMap(it) : toMap(it) }
     }
 
     /**
@@ -31,17 +31,8 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.remove("activites")
-        mapOfProperties.activities = site.activities.collect {
-            def a = [activityId: it.activityId,
-                    siteId: it.siteId,
-                    type: it.type,
-                    startDate: it.startDate,
-                    endDate: it.endDate,
-                    collector: it.collector,
-                    assessment: it.assessment]
-            a
-        }
+        mapOfProperties.activities = activityService.findActivitiesForSiteId(site.siteId)
+        mapOfProperties.assessments = activityService.findAssessmentsForSiteId(site.siteId)
 
         mapOfProperties.findAll {k,v -> v != null}
     }
@@ -58,10 +49,8 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.remove("activites")
-        mapOfProperties.activities = site.activities.collect {
-            activityService.get it.activityId
-        }
+        mapOfProperties.activities = activityService.findActivitiesForSiteId(site.siteId, true)
+        mapOfProperties.assessments = activityService.findAssessmentsForSiteId(site.siteId, true)
 
         mapOfProperties.findAll {k,v -> v != null}
     }
@@ -74,23 +63,14 @@ class SiteService {
 
     def create(props) {
         assert getCommonService()
-        def project = Project.findByProjectId(props.projectId)
-        if (project) {
-            def o = new Site(projectId: project.projectId, siteId: Identifiers.getNew(true,''))
-            try {
-                getCommonService().updateProperties(o, props)
-                project.addToSites(o)
-                project.save()
-                return [status:'ok',siteId:o.siteId]
-            } catch (Exception e) {
-                // clear session to avoid exception when GORM tries to autoflush the changes
-                Site.withSession { session -> session.clear() }
-                def error = "Error creating site for project ${props.projectId} - ${e.message}"
-                log.error error
-                return [status:'error',error:error]
-            }
-        } else {
-            def error = "Error creating site - no project with id = ${props.projectId}"
+        def o = new Site(siteId: Identifiers.getNew(true,''))
+        try {
+            getCommonService().updateProperties(o, props)
+            return [status:'ok',siteId:o.siteId]
+        } catch (Exception e) {
+            // clear session to avoid exception when GORM tries to autoflush the changes
+            Site.withSession { session -> session.clear() }
+            def error = "Error creating site for project ${props.projectId} - ${e.message}"
             log.error error
             return [status:'error',error:error]
         }

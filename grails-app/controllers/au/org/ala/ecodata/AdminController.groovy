@@ -74,14 +74,29 @@ class AdminController {
      * Writes all data to files as JSON.
      */
     def dump() {
-        ['Project','Site','Activity','Output'].each { collection ->
+        ['project','site','activity','output'].each { collection ->
             def f = new File("/data/ecodata/${collection}s.json")
             f.createNewFile()
+            def instances = []
+            /* this pattern does not always inject dependencies correctly
             def domainClass = grailsApplication.getDomainClass('au.org.ala.ecodata.'+collection).newInstance()
             def serviceClass = grailsApplication.getServiceClass("au.org.ala.ecodata.${collection}Service").newInstance()
-            def instances = []
             domainClass.list().each {
                 instances << serviceClass.toMap(it)
+            }*/
+            switch (collection) {
+                case 'output':
+                    Output.list().each { instances << outputService.toMap(it) }
+                    break
+                case 'activity':
+                    Activity.list().each { instances << activityService.toMap(it) }
+                    break
+                case 'site':
+                    Site.list().each { instances << siteService.toMap(it) }
+                    break
+                case 'project':
+                    Project.list().each { instances << projectService.toMap(it) }
+                    break
             }
             def pj = new JsonBuilder( instances ).toPrettyString()
             f.withWriter( 'UTF-8' ) { it << pj }

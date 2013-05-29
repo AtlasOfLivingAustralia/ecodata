@@ -10,6 +10,15 @@ class OutputService {
         grailsApplication.mainContext.commonService
     }
 
+    def get(id, rich = false) {
+        def o = Output.findByOutputId(id)
+        return o ? (/*rich ? toRichMap(o):*/ toMap(o)) : null
+    }
+
+    def getAll(listOfIds, rich = false) {
+        Output.findAllByOutputIdInList(listOfIds).collect { toMap(it) }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -35,10 +44,10 @@ class OutputService {
         assert getCommonService()
         def activity = Activity.findByActivityId(props.activityId)
         if (activity) {
-            def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
+            def o = new Output(/*activityId: activity.activityId, */outputId: Identifiers.getNew(true,''))
             try {
                 getCommonService().updateProperties(o, props)
-                activity.addToOutputs(o)
+                activity.outputs << o.outputId
                 activity.save()
                 return [status:'ok',outputId:o.outputId]
             } catch (Exception e) {

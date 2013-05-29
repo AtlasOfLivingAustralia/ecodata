@@ -4,9 +4,16 @@ import org.bson.types.ObjectId
 
 class Site {
 
+    /*
+    Associations:
+        sites may belong to 0..n Projects - a list of projectIds are stored in each site
+        sites may have 0..n Activities/Assessments - mapped from the Activity side
+    */
+
     static mapping = {
         name index: true
         siteId index: true
+        projects index: true
         version false
     }
 
@@ -14,8 +21,7 @@ class Site {
     String siteId
     String status = 'active'
     String externalSiteId
-    String projectId
-    String projectName
+    List projects = []
     String name
     String type
     String description
@@ -29,12 +35,8 @@ class Site {
     Date dateCreated
     Date lastUpdated
 
-    static hasMany = [activities: Activity]
-
     static constraints = {
         externalSiteId nullable:true
-        projectId nullable:true
-        projectName nullable:true
         type nullable:true
         description nullable:true, maxSize: 40000
         habitat nullable:true
@@ -44,4 +46,5 @@ class Site {
         protectionMechanism nullable:true
         notes nullable:true, maxSize: 40000
     }
+
 }
