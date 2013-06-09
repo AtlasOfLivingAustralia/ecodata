@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 class ActivityService {
 
     static transactional = false
+    static final ACTIVE = "active"
 
     def grailsApplication, outputService
 
@@ -10,41 +11,27 @@ class ActivityService {
         grailsApplication.mainContext.commonService
     }
 
-    def get(id, rich = false) {
-        def o = Activity.findByActivityId(id)
-        return o ? (rich ? toRichMap(o): toMap(o)) : null
+    def get(id, levelOfDetail = []) {
+        def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
+        return o ? toMap(o, levelOfDetail) : null
     }
 
-    def getAll(listOfIds) {
-        Activity.findAllByActivityIdInList(listOfIds).collect { toMap(it) }
+    def getAll(boolean includeDeleted = false, levelOfDetail = []) {
+        includeDeleted ?
+            Activity.list().collect { toMap(it, levelOfDetail) } :
+            Activity.findAllByStatus(ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForSiteId(id, rich = false) {
-        Activity.findAllBySiteId(id).collect { /*rich ? toRichMap(it) :*/ toMap(it) }
+    def getAll(List listOfIds, levelOfDetail = []) {
+        Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAssessmentsForSiteId(id, rich = false) {
-        Activity.findAllBySiteIdAndAssessment(id, true).collect { rich ? toRichMap(it) : toLiteMap(it) }
+    def findAllForSiteId(id, levelOfDetail = []) {
+        Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findActivitiesForSiteId(id, rich = false) {
-        Activity.findAllBySiteIdAndAssessment(id, false).collect { rich ? toRichMap(it) : toLiteMap(it) }
-    }
-
-    /**
-     * Converts the domain object into a restricted map of properties.
-     * @param act an Activity instance
-     * @return map of properties
-     */
-    def toLiteMap(act) {
-        def dbo = act.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        [activityId: mapOfProperties.activityId,
-         siteId: mapOfProperties.siteId,
-         type: mapOfProperties.type,
-         startDate: mapOfProperties.startDate,
-         endDate: mapOfProperties.endDate,
-         collector: mapOfProperties.collector]
+    def findAllForProjectId(id, levelOfDetail = []) {
+        Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
     /**
@@ -53,31 +40,14 @@ class ActivityService {
      * @param act an Activity instance
      * @return map of properties
      */
-    def toMap(act) {
+    def toMap(act, levelOfDetail = ['all']) {
         def dbo = act.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.remove("outputs")
-        mapOfProperties.outputs = outputService.getAll(act.outputs)
-        mapOfProperties.findAll {k,v -> v != null}
-    }
-
-    /**
-     * Converts the domain object into a highly detailed map of properties, including
-     * dynamic properties, and linked components.
-     * @param act an Activity instance
-     * @return map of properties
-     */
-    def toRichMap(act) {
-        def dbo = act.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-        mapOfProperties.remove("_id")
-        mapOfProperties.remove("outputs")
-        mapOfProperties.outputs = outputService.getAll(act.outputs, true)
+        mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -89,21 +59,21 @@ class ActivityService {
 
     def create(props) {
         assert getCommonService()
-        def site = Site.findBySiteId(props.siteId)
-        if (site) {
-            def o = new Activity(siteId: site.siteId, activityId: Identifiers.getNew(true,''))
-            try {
-                getCommonService().updateProperties(o, props)
-                return [status:'ok',activityId:o.activityId]
-            } catch (Exception e) {
-                // clear session to avoid exception when GORM tries to autoflush the changes
-                Activity.withSession { session -> session.clear() }
-                def error = "Error creating activity for site ${props.siteId} - ${e.message}"
-                log.error error
-                return [status:'error',error:error]
-            }
-        } else {
-            def error = "Error creating activity - no site with id = ${props.siteId}"
+        def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
+        try {
+            props.remove('id')
+            //println "outputs = " + props.outputs
+            def os = props.outputs?.collect { it instanceof String ? it :  it.outputId }
+            props.remove('outputs')
+            //println os
+            props.outputs = os
+            //println "outputs = " + props.outputs
+            getCommonService().updateProperties(o, props)
+            return [status:'ok',activityId:o.activityId]
+        } catch (Exception e) {
+            // clear session to avoid exception when GORM tries to autoflush the changes
+            Activity.withSession { session -> session.clear() }
+            def error = "Error creating activity for site ${props.siteId} - ${e.message}"
             log.error error
             return [status:'error',error:error]
         }
@@ -126,6 +96,22 @@ class ActivityService {
             log.error error
             return [status:'error',error:error]
         }
+    }
+
+    /**
+     * Converts the domain object into a restricted map of properties.
+     * @param act an Activity instance
+     * @return map of properties
+     */
+    def toLiteMap(act) {
+        def dbo = act.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        [activityId: mapOfProperties.activityId,
+                siteId: mapOfProperties.siteId,
+                type: mapOfProperties.type,
+                startDate: mapOfProperties.startDate,
+                endDate: mapOfProperties.endDate,
+                collector: mapOfProperties.collector]
     }
 
 }
