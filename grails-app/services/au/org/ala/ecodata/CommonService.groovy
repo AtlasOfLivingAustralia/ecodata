@@ -28,6 +28,7 @@ class CommonService {
                 o.getClass().name)
         props.remove('id')
         props.remove('api_key')  // don't ever let this be stored in public data
+        props.remove('lastUpdated') // in case we are loading from dumped data
         props.each { k,v ->
             log.debug "updating ${k} to ${v}"
             /*
@@ -36,7 +37,7 @@ class CommonService {
              * UTC time. They are converted to java dates by forcing a zero time offset so that local timezone is
              * not used. All conversions to and from local time are the responsibility of the service consumer.
              */
-            if (domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
+            if (v instanceof String && domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
                 v = v ? dateFormat.parse(v.replace("Z", "+0000")) : null
             }
             if (v == "false") {
@@ -51,6 +52,20 @@ class CommonService {
             o.errors.each { log.error it }
             throw new Exception(o.errors[0] as String);
         }
+    }
+
+    /**
+     * Converts the domain object into a map of properties with no additions.
+     * @param o a domain instance
+     * @return map of properties
+     */
+    def toBareMap(o) {
+        def dbo = o.getProperty("dbo")
+        def mapOfProperties = dbo.toMap()
+        def id = mapOfProperties["_id"].toString()
+        mapOfProperties["id"] = id
+        mapOfProperties.remove("_id")
+        mapOfProperties.findAll {k,v -> v != null}
     }
 
 }
