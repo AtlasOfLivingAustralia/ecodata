@@ -9,7 +9,8 @@ class AdminController {
 
     def index() {}
 
-    def outputService, activityService, siteService, projectService
+    def outputService, activityService, siteService, projectService,
+            commonService, cacheService, metadataService
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -21,7 +22,7 @@ class AdminController {
 
     def reloadConfig = {
         // clear any cached external config
-        //clearCache()
+        cacheService.clear()
 
         // reload system config
         def resolver = new PathMatchingResourcePatternResolver()
@@ -70,12 +71,32 @@ class AdminController {
         }
     }
 
+    def getBare(String entity, String id) {
+        def map = [:]
+        switch (entity) {
+            case 'activity': map = commonService.toBareMap(Activity.findByActivityId(id)); break
+            case 'assessment': map = commonService.toBareMap(Activity.findByActivityId(id)); break
+            case 'project': map = commonService.toBareMap(Project.findByProjectId(id)); break
+            case 'site': map = commonService.toBareMap(Site.findBySiteId(id)); break
+            case 'output': map = commonService.toBareMap(Output.findByOutputId(id)); break
+        }
+        asJson map
+    }
+
+    def showCache() {
+        render cacheService.cache
+    }
+
+    def test() {
+        render metadataService.getOutputModel('Feral Animal Abundance Score')
+    }
+
     /**
      * Writes all data to files as JSON.
      */
     def dump() {
         ['project','site','activity','output'].each { collection ->
-            def f = new File("/data/ecodata/${collection}s.json")
+            def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
             f.createNewFile()
             def instances = []
             /* this pattern does not always inject dependencies correctly
@@ -86,16 +107,16 @@ class AdminController {
             }*/
             switch (collection) {
                 case 'output':
-                    Output.list().each { instances << outputService.toMap(it) }
+                    Output.list().each { instances << commonService.toBareMap(it) }
                     break
                 case 'activity':
-                    Activity.list().each { instances << activityService.toMap(it) }
+                    Activity.list().each { instances << commonService.toBareMap(it) }
                     break
                 case 'site':
-                    Site.list().each { instances << siteService.toMap(it) }
+                    Site.list().each { instances << commonService.toBareMap(it) }
                     break
                 case 'project':
-                    Project.list().each { instances << projectService.toMap(it) }
+                    Project.list().each { instances << commonService.toBareMap(it) }
                     break
             }
             def pj = new JsonBuilder( instances ).toPrettyString()
@@ -112,7 +133,7 @@ class AdminController {
             dropDB()
         }
         ['project','site','activity','output'].each { collection ->
-            def f = new File("/data/ecodata/${collection}s.json")
+            def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
             switch (collection) {
                 case 'output': outputService.loadAll(JSON.parse(f.text)); break
                 case 'activity': activityService.loadAll(JSON.parse(f.text)); break
