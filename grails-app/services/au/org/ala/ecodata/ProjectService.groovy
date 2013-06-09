@@ -3,11 +3,24 @@ package au.org.ala.ecodata
 class ProjectService {
 
     static transactional = false
+    static final ACTIVE = "active"
+    static final BRIEF = 'brief'
 
     def grailsApplication, siteService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
+    }
+
+    def getBrief(listOfIds) {
+        Project.findAllByProjectIdInListAndStatus(listOfIds, ACTIVE).collect {
+            [projectId: it.projectId, name: it.name]
+        }
+    }
+
+    def list(levelOfDetail = [], includeDeleted = false) {
+        def list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
+        list.collect { toMap(it, levelOfDetail) }
     }
 
     /**
@@ -16,21 +29,17 @@ class ProjectService {
      * @param prj a Project instance
      * @return map of properties
      */
-    def toMap(prj) {
+    def toMap(prj, levelOfDetail = []) {
         def dbo = prj.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
+        if (levelOfDetail == BRIEF) {
+            return [projectId: prj.projectId, name: prj.name]
+        }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
-        println siteService
-        if (!siteService) { siteService = grailsApplication.mainContext.siteService}
-        mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, false)
-        /*prj.sites.collect {
-            def s = [siteId: it.siteId, name: it.name, location: it.location]
-            s
-        }*/
-        // remove nulls
+        mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -62,6 +71,8 @@ class ProjectService {
         assert getCommonService()
         def o = new Project(projectId: Identifiers.getNew(true,''))
         try {
+            props.remove('sites')
+            props.remove('id')
             getCommonService().updateProperties(o, props)
             return [status:'ok',projectId:o.projectId]
         } catch (Exception e) {

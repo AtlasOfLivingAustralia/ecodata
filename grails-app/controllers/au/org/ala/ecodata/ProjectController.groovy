@@ -6,6 +6,9 @@ class ProjectController {
 
     def projectService, commonService
 
+    static final BRIEF = 'brief'
+    static final RICH = 'rich'
+
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
@@ -21,36 +24,24 @@ class ProjectController {
     }
 
     def list() {
-        def list = []
-        def projects = params.includeDeleted ? Project.list() :
-            Project.findAllByStatus('active')
-        projects.each { prj ->
-            list << projectService.toMap(prj)
-        }
+        println 'brief = ' + params.brief
+        def list = projectService.list(params.brief, params.includeDeleted)
         list.sort {it.name}
-        //log.debug list
         render list as JSON
     }
 
     def get(String id) {
+        def levelOfDetail = []
+        if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
+        if (params.view == RICH) { levelOfDetail << RICH }
         if (!id) {
-            def list = []
-            def projects = params.includeDeleted ? Project.list() :
-                Project.findAllByStatus('active')
-            projects.each { prj ->
-                list << projectService.toMap(prj)
-            }
+            def list = projectService.list(levelOfDetail, params.includeDeleted)
             list.sort {it.name}
-            //log.debug list
             asJson([list: list])
         } else {
             def p = Project.findByProjectId(id)
             if (p) {
-                if (params.view == 'rich') {
-                    asJson projectService.toRichMap(p)
-                } else {
-                    asJson projectService.toMap(p)
-                }
+                asJson projectService.toMap(p, levelOfDetail)
             } else {
                 render (status: 404, text: 'No such id')
             }

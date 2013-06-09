@@ -6,6 +6,10 @@ class SiteController {
 
     def siteService, commonService
 
+    static final RICH = "rich"
+    static final BRIEF = 'brief'
+    static final RAW = 'raw'
+
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
@@ -33,19 +37,23 @@ class SiteController {
     }
 
     def get(String id) {
+        def levelOfDetail = []
+        if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
+        if (params.rich || params.view == RICH) { levelOfDetail << RICH }
+        if (params.raw || params.view == RAW) { levelOfDetail << RAW }
         if (!id) {
             def list = []
             def sites = params.includeDeleted ? Site.list() :
                 Site.findAllByStatus('active')
             sites.each { site ->
-                list << siteService.toMap(site)
+                list << siteService.toMap(site, levelOfDetail)
             }
             list.sort {it.name}
             asJson([list:list])
         } else {
-            def s = Site.findBySiteId(id)
+            def s = siteService.get(id, levelOfDetail)
             if (s) {
-                asJson siteService.toMap(s)
+                asJson s
             } else {
                 render (status: 404, text: 'No such id')
             }
@@ -94,7 +102,7 @@ class SiteController {
         }
     }
 
-    def loadTestData() {
+    /*def loadTestData() {
         def testFile = new File('/data/fieldcapture/site-test-data.csv')
         testFile.eachCsvLine { tokens ->
             if (tokens[2] == 'Bushbids') {
@@ -156,7 +164,7 @@ class SiteController {
             }
         }
         render "${Site.count()} sites"
-    }
+    }*/
 
     def testInsert() {
         //def point = new Coordinate(decimalLatitude: '-35.4', decimalLongitude: '145.3')
