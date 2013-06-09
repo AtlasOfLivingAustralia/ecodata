@@ -6,8 +6,7 @@ class Output {
 
     /*
     Associations:
-        outputs must belong to 1 Activity - a list of outputIds is held in the Activity domain
-        this domain currently holds the activityId but it is not used for associations and may be removed
+        outputs must belong to 1 Activity - this is mapped by the activityId in this domain
     */
 
     static mapWith="mongo"
