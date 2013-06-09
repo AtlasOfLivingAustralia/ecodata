@@ -68,8 +68,24 @@ grails.mongo.default.mapping = {
     version false
 }
 
-// application config
+/******************************************************************************\
+ *  APPLICATION CONFIG
+ \******************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
+app.external.model.dir = "/data/ecodata/models/"
+
+/******************************************************************************\
+ *  EXTERNAL SERVERS
+\******************************************************************************/
+if (!ala.baseURL) {
+    ala.baseURL = "http://www.ala.org.au"
+}
+if (!collectory.baseURL) {
+    collectory.baseURL = "http://collections.ala.org.au/"
+}
+if (!headerAndFooter.baseURL) {
+    headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
+}
 
 environments {
     development {
