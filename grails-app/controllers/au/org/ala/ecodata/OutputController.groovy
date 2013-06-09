@@ -1,12 +1,9 @@
 package au.org.ala.ecodata
 
-import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
-
-import java.text.SimpleDateFormat
-
 class OutputController {
 
     def outputService, commonService
+    static final SCORES = 'scores'
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -22,12 +19,13 @@ class OutputController {
     }
 
     def get(String id) {
+        def detail = params.view == SCORES ? [SCORES] : []
         if (!id) {
             def list = []
             def outputs = params.includeDeleted ? Output.list() :
                 Output.findAllByStatus('active')
-            outputs.each { act ->
-                list << outputService.toMap(act)
+            outputs.each { o ->
+                list << outputService.toMap(o, detail)
             }
             list.sort {it.name}
             //log.debug list
@@ -35,7 +33,7 @@ class OutputController {
         } else {
             def a = Output.findByOutputId(id)
             if (a) {
-                asJson outputService.toMap(a)
+                asJson outputService.toMap(a, detail)
             } else {
                 render status:404, text: 'No such id'
             }
