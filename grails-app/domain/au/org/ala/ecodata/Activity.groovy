@@ -11,13 +11,14 @@ class Activity {
     Note:
         activities and assessments are both described by this domain - 'activities' can be used to mean both
     Associations:
-        activities must belong to 1 Site - this is mapped by the siteId in this domain
-        activities may have 0..n Outputs - a list of outputIds is held in this class
+        activities must belong to 1 Site or 1 project - this is mapped by the siteId or projectId in this domain
+        activities may have 0..n Outputs - these are mapped from the Output side
     */
 
     static mapping = {
         activityId index: true
         siteId index: true
+        projectId index: true
         version false
     }
 
@@ -26,6 +27,7 @@ class Activity {
     String status = 'active'
     Boolean assessment = false
     String siteId
+    String projectId
     String description
     String type
     Date startDate
@@ -37,9 +39,10 @@ class Activity {
     String notes
     Date dateCreated
     Date lastUpdated
-    List outputs = []
 
     static constraints = {
+        siteId nullable: true
+        projectId nullable: true
         description nullable: true
         startDate nullable: true
         endDate nullable: true
@@ -51,11 +54,4 @@ class Activity {
         notes nullable: true, maxSize: 4000
     }
 
-    def addToOutputs(output) {
-        outputs << output.outputId
-    }
-
-    def removeFromOutputs(output) {
-        outputs >> output.outputId
-    }
 }
