@@ -4,34 +4,62 @@ class OutputService {
 
     static transactional = false
 
-    def grailsApplication
+    def grailsApplication, metadataService
+
+    static final ACTIVE = "active"
+    static final SCORES = 'scores'
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
     }
 
-    def get(id, rich = false) {
+    def get(id, levelOfDetail = ['all']) {
         def o = Output.findByOutputId(id)
-        return o ? (/*rich ? toRichMap(o):*/ toMap(o)) : null
+        return o ? toMap(o, levelOfDetail) : null
     }
 
-    def getAll(listOfIds, rich = false) {
-        Output.findAllByOutputIdInList(listOfIds).collect { toMap(it) }
+    def getAll(listOfIds, levelOfDetail = ['all']) {
+        Output.findAllByOutputIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    def findAllForActivityId(id, levelOfDetail = []) {
+        Output.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
      * @param output an Output instance
+     * @param levelOfDetail list of features to include
      * @return map of properties
      */
-    def toMap(output) {
+    def toMap(output, levelOfDetail = []) {
         def dbo = output.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
+        if (SCORES in levelOfDetail) {
+            def scores = extractScores mapOfProperties.data, output.name
+            mapOfProperties.scores = scores
+            mapOfProperties.remove 'data'
+        }
         mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    /**
+     * Assumes 1 score per output for now.
+     * @param map
+     * @param name
+     * @return
+     */
+    def extractScores(map, name) {
+        //log.debug "extracting scores for ${name}"
+        def model = metadataService.getOutputModel(name)
+        //log.debug "model is " + model
+        def key = model?.scoreName
+        //log.debug "finding scoreName for ${key}"
+        return key ? ["${key}":map[key]] : [:]
     }
 
     def loadAll(list) {
