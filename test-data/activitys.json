@@ -1,76 +1,73 @@
 [
     {
-        "activityId": "01650eaa-d987-4f97-855e-cdf931a3b9fb",
-        "censusMethod": "",
-        "collector": "",
-        "dateCreated": "2013-05-19T07:07:17+0000",
-        "description": "",
-        "endDate": "2013-04-05T13:00:00+0000",
-        "fieldNotes": "",
-        "lastUpdated": "2013-05-19T07:07:17+0000",
-        "methodAccuracy": "",
-        "notes": "",
-        "siteId": "c7c322e3-6bed-3bbd-aa9b-69d655e5c4c5",
-        "startDate": "2013-04-03T13:00:00+0000",
-        "type": "DECCW vegetation assessment",
-        "id": "51987a25b957379a108e74db",
-        "outputs": [
-            {
-                "outputId": "46200b82-8b7f-4136-82f4-0c2b03760e47",
-                "assessmentDate": "2013-04-03T13:00:00+0000",
-                "collector": "Wally"
-            }
-        ]
-    },
-    {
-        "activityId": "ffe85ddb-c8a7-4abb-a246-06649ee17e6d",
-        "censusMethod": "",
-        "collector": "",
-        "dateCreated": "2013-05-19T07:07:17+0000",
-        "description": "",
-        "endDate": "2013-04-25T14:00:00+0000",
-        "fieldNotes": "",
-        "lastUpdated": "2013-05-19T07:07:17+0000",
-        "methodAccuracy": "",
-        "notes": "",
-        "siteId": "c7c322e3-6bed-3bbd-aa9b-69d655e5c4c5",
-        "startDate": "2013-03-31T13:00:00+0000",
-        "type": "Feral animal assessment",
-        "id": "51987a25b957379a108e74dc",
-        "outputs": [
-            {
-                "outputId": "12c4afe4-16ee-49e9-9c25-cd75f87fb4f5",
-                "assessmentDate": "2013-04-30T14:00:00+0000",
-                "collector": "me"
-            }
-        ]
-    },
-    {
         "activityId": "88d65d73-d0fb-4d09-9736-64bc79caccef",
+        "assessment": true,
         "censusMethod": "",
         "collector": "",
-        "dateCreated": "2013-05-19T07:07:17+0000",
+        "dateCreated": "2013-06-06T03:45:14+0000",
         "description": "test with data",
         "endDate": "2013-05-30T14:00:00+0000",
         "fieldNotes": "",
-        "lastUpdated": "2013-05-19T07:07:17+0000",
+        "lastUpdated": "2013-06-06T03:45:14+0000",
         "methodAccuracy": "",
         "notes": "",
+        "outputs": [
+            "b9408e8a-2b4b-4397-a685-59a9b69e3863",
+            "a455af80-d211-4e76-bb1f-6879100d3b3c",
+            "a455af80-d211-4e76-bb1f-6879100d3b3c",
+            "b9408e8a-2b4b-4397-a685-59a9b69e3863"
+        ],
         "siteId": "c7c322e3-6bed-3bbd-aa9b-69d655e5c4c5",
         "startDate": "2013-04-30T14:00:00+0000",
+        "status": "active",
         "type": "Feral animal assessment",
-        "id": "51987a25b957379a108e74dd",
+        "id": "51b005cab95784267e48f68d"
+    },
+    {
+        "activityId": "01650eaa-d987-4f97-855e-cdf931a3b9fb",
+        "assessment": true,
+        "censusMethod": "",
+        "collector": "",
+        "dateCreated": "2013-06-06T03:45:14+0000",
+        "description": "",
+        "endDate": "2013-04-05T13:00:00+0000",
+        "fieldNotes": "",
+        "lastUpdated": "2013-06-10T04:24:27+0000",
+        "methodAccuracy": "",
+        "notes": "",
         "outputs": [
-            {
-                "outputId": "a455af80-d211-4e76-bb1f-6879100d3b3c",
-                "assessmentDate": "2013-04-30T14:00:00+0000",
-                "collector": "wally"
-            },
-            {
-                "outputId": "b9408e8a-2b4b-4397-a685-59a9b69e3863",
-                "assessmentDate": "2013-05-07T14:00:00+0000",
-                "collector": "Mark"
-            }
-        ]
+            "46200b82-8b7f-4136-82f4-0c2b03760e47",
+            "46200b82-8b7f-4136-82f4-0c2b03760e47",
+            "773d9b5d-6ac4-42a6-a5c7-110002612a3b"
+        ],
+        "siteId": "c7c322e3-6bed-3bbd-aa9b-69d655e5c4c5",
+        "startDate": "2013-04-03T13:00:00+0000",
+        "status": "active",
+        "type": "DECCW vegetation assessment",
+        "id": "51b005cab95784267e48f68b"
+    },
+    {
+        "activityId": "ffe85ddb-c8a7-4abb-a246-06649ee17e6d",
+        "assessment": true,
+        "censusMethod": "",
+        "collector": "",
+        "dateCreated": "2013-06-06T03:45:14+0000",
+        "description": "",
+        "endDate": "2013-04-25T14:00:00+0000",
+        "fieldNotes": "",
+        "lastUpdated": "2013-06-10T04:35:11+0000",
+        "methodAccuracy": "",
+        "notes": "",
+        "outputs": [
+            "12c4afe4-16ee-49e9-9c25-cd75f87fb4f5",
+            "12c4afe4-16ee-49e9-9c25-cd75f87fb4f5",
+            "3ccbc7e0-d9a4-4a95-90fe-8b87c535699b",
+            "120613fd-39f0-4754-b978-572f81829453"
+        ],
+        "siteId": "c7c322e3-6bed-3bbd-aa9b-69d655e5c4c5",
+        "startDate": "2013-03-31T13:00:00+0000",
+        "status": "active",
+        "type": "Feral animal assessment",
+        "id": "51b005cab95784267e48f68c"
     }
 ]
