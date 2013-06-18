@@ -9,6 +9,7 @@ class SiteController {
     static final RICH = "rich"
     static final BRIEF = 'brief'
     static final RAW = 'raw'
+    static final SCORES = 'scores'
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -41,6 +42,7 @@ class SiteController {
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
         if (params.rich || params.view == RICH) { levelOfDetail << RICH }
         if (params.raw || params.view == RAW) { levelOfDetail << RAW }
+        if (params.scores || params.view == SCORES) { levelOfDetail << SCORES }
         if (!id) {
             def list = []
             def sites = params.includeDeleted ? Site.list() :
