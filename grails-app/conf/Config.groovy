@@ -72,7 +72,7 @@ grails.mongo.default.mapping = {
  *  APPLICATION CONFIG
  \******************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
-app.external.model.dir = "/data/ecodata/models/"
+app.external.model.dir = "/data/fieldcapture/models/"
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
