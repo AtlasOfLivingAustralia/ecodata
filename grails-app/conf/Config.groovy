@@ -72,7 +72,6 @@ grails.mongo.default.mapping = {
  *  APPLICATION CONFIG
  \******************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
-app.external.model.dir = "/data/fieldcapture/models/"
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
@@ -91,6 +90,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
+        app.external.model.dir = "/devt/fieldcapture/models/"
         /*grails.hostname = "localhost"
         //grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
@@ -101,16 +101,20 @@ environments {
     test {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
+        app.external.model.dir = "/data/fieldcapture/models/"
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
     }
     nectar {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
+        app.external.model.dir = "/data/fieldcapture/models/"
         grails.serverURL = "http://115.146.94.201:8080/ecodata"
     }
     production {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
+        app.external.model.dir = "/data/fieldcapture/models/"
+        grails.serverURL = "http://ecodata.ala.org.au"
         grails.serverURL = "http://ecodata.ala.org.au"
     }
 }
