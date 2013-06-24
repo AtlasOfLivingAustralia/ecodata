@@ -75,6 +75,9 @@ class OutputService {
             def o = new Output(/*activityId: activity.activityId, */outputId: Identifiers.getNew(true,''))
             try {
                 getCommonService().updateProperties(o, props)
+                if (!activity.outputs) {
+                    activity.outputs = []
+                }
                 activity.outputs << o.outputId
                 activity.save()
                 return [status:'ok',outputId:o.outputId]
