@@ -30,9 +30,14 @@ class CacheService {
             return cached.resp
         }
         println "refreshing cache data for " + key
-        def results = source.call()
-        synchronized (LOCK_1) {
-            cache.put key, [resp: results, time: new Date()]
+        def results
+        try {
+            results = source.call()
+            synchronized (LOCK_1) {
+                cache.put key, [resp: results, time: new Date()]
+            }
+        } catch (Exception e) {
+            results = [error: e.message]
         }
         return results
     }
