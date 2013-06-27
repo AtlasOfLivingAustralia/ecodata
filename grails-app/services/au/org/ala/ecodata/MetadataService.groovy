@@ -9,8 +9,7 @@ class MetadataService {
     def activitiesModel() {
         return cacheService.get('activities-model',{
             String filename = (grailsApplication.config.app.external.model.dir as String) + 'activities-model.json'
-            def text = new File(filename).text
-            return JSON.parse(text)
+            JSON.parse(new File(filename).text)
         })
     }
 

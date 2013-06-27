@@ -1,0 +1,77 @@
+{
+"modelName":"feralAnimalFrequencyScore",
+"dataModel":[
+    {"name":"frequencyOtherColumnDetail","dataType":"text"},
+    {"name":"frequency","dataType":"list","columnValues":"animals","rowValues":"surveyDates",
+        "columns": [
+            {"name":"surveyDate","dataType":"simpleDate","noTotal":"true"},
+            {"name":"fox","dataType":"boolean"},
+            {"name":"feralCat","dataType":"boolean"},
+            {"name":"rabbit","dataType":"boolean"},
+            {"name":"hare","dataType":"boolean"},
+            {"name":"goat","dataType":"boolean"},
+            {"name":"deer","dataType":"boolean"},
+            {"name":"other","dataType":"boolean"}
+        ],
+        "userAddedRows":"true",
+        "columnTotals":{"name":"frequencyTotals","source":"frequency",
+            "rows":[
+                {"name":"totalSurveysWithSigns","dataType":"number","computed":{"dependents":"all","operation":"sum"}},
+                {"name":"percentOfSurveys","dataType":"number","computed":{"dependents":["totalSurveysWithSigns","#rowCount"],
+                    "operation":"percent","rounding":"2"}},
+                {"name":"frequencyScore","dataType":"number","computed":{"dependents":["percentOfSurveys"],
+                    "operation":"lookup","lookupMap":"frequencyScoreLookup"}}
+            ]
+        }
+    },
+    {"name":"totalFeralAnimalFrequencyScore","type":"number","primaryResult":"true","computed":{
+        "dependents":{"from":"frequencyTotals","source":"frequencyScore"},"operation":"sum"}
+    },
+    {"name":"frequencyScoreLookup","dataType":"lookupRange","map":[
+        {"inputMin":"0","inputMax":"0","output":"0"},
+        {"inputMin":"0","inputMax":"25","output":"-1"},
+        {"inputMin":"25","inputMax":"50","output":"-3"},
+        {"inputMin":"50","inputMax":"90","output":"-5"},
+        {"inputMin":"90","inputMax":"100","output":"-7"}
+    ]}
+],
+"viewModel":[
+    {
+        "type":"table",
+        "source":"frequency",
+        "userAddedRows":"true",
+        "columns":[
+            {"title":"Survey Date","source":"surveyDate","width":"20%","validate":"required"},
+            {"title":"Fox","source":"fox","width":"10%"},
+            {"title":"Feral cat","source":"feralCat","width":"10%"},
+            {"title":"Rabbit","source":"rabbit","width":"10%"},
+            {"title":"Hare","source":"hare","width":"10%"},
+            {"title":"Goat","source":"goat","width":"10%"},
+            {"title":"Deer","source":"deer","width":"10%"},
+            {"title":"Other","source":"other","width":"10%","pleaseSpecify":
+                {"source":"$frequencyOtherColumnDetail","dataType":"text","output":"concatenate"}}
+        ],
+        "rows":[
+            {"title":"Total No. Surveys with Signs","source":"totalSurveysWithSigns"},
+            {"title":"% of surveys recorded","source":"percentOfSurveys","showPercentSymbol":"true"},
+            {"title":"Frequency Score","source":"frequencyScore"}
+        ],
+        "footer": {
+            "rows": [
+                {"columns":[
+                    {"type":"literal","source":"Feral Animal Frequency Score <small>(Total of all animal frequency scores)</small>",
+                        "colspan":"7","textAlign":"right"},
+                    {"type":"number","source":"totalFeralAnimalFrequencyScore"}
+                ]}
+            ]
+        }
+    },
+    {
+        "type":"row",
+        "items":[
+            {"type":"literal","source":"Your Feral Animal Frequency Score","css":"heavy-border span4 offset4"},
+            {"type":"number","source":"totalFeralAnimalFrequencyScore","css":"heavy-border span1"}
+        ]
+    }
+]
+}

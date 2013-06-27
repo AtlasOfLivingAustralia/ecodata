@@ -90,7 +90,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/devt/fieldcapture/models/"
+        app.external.model.dir = "/devt/ecodata/models/"
         //grails.hostname = "localhost"
         grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
@@ -101,20 +101,19 @@ environments {
     test {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/fieldcapture/models/"
+        app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
     }
     nectar {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/fieldcapture/models/"
+        app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://115.146.94.201:8080/ecodata"
     }
     production {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/fieldcapture/models/"
-        grails.serverURL = "http://ecodata.ala.org.au"
+        app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://ecodata.ala.org.au"
     }
 }

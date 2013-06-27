@@ -1,0 +1,60 @@
+{
+"modelName":"weedAbundanceAndThreatScore",
+"dataModel":[
+    {"name":"weedAbundanceAndThreatScore","dataType":"list",
+        "columns": [
+            {"name":"name","dataType":"text"},
+            {"name":"isUnknownIfWeed","dataType":"boolean"},
+            {"name":"areaCovered","dataType":"text"},
+            {"name":"coverRating","dataType":"number"},
+            {"name":"invasiveThreatCategory","dataType":"number"},
+            {"name":"abundanceAndThreatScore","dataType":"number",
+                "computed":{"dependents":["coverRating","invasiveThreatCategory"],"operation":"times"}}
+        ],
+        "userAddedRows":"true","todo":"//move to view model"
+    },
+    {"name":"totalAreaCovered","dataType":"text","primaryResult":"true"},
+    {"name":"totalAbundanceAndThreatScore","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"weedAbundanceAndThreatScore",
+                "source":"abundanceAndThreatScore"
+            },"operation":"sum"
+        }
+    }
+],
+"viewModel":[
+    {
+        "type":"table",
+        "editableRows":"true",
+        "source":"weedAbundanceAndThreatScore",
+        "userAddedRows":"true",
+        "columns": [
+            {"title":"Weed name","source":"name","width":"25%"},
+            {"title":"Unknown if weed or native","source":"isUnknownIfWeed","width":"8%"},
+            {"title":"% Area covered","source":"areaCovered","width":"17%","textAlign":"center"},
+            {"title":"Cover Rating","source":"coverRating","width":"10%"},
+            {"title":"Invasive Threat Category","source":"invasiveThreatCategory","width":"10%"},
+            {"title":"Abundance & Threat Score","source":"abundanceAndThreatScore","width":"10%"}
+        ],
+        "footer": {
+            "rows": [
+                {"columns":[
+                    {"type":"literal","source":""},
+                    {"type":"literal","source":"Total cover"},
+                    {"type":"text","source":"totalAreaCovered"},
+                    {"type":"literal","source":"Total Abundance & Threat Score","colspan":"2"},
+                    {"type":"number","source":"totalAbundanceAndThreatScore"}
+                ]}
+            ]
+        }
+    },
+    {
+        "type":"row",
+        "items":[
+            {"type":"literal","source":"Your Weed Abundance & Threat Score","width":"17%","css":"heavy-border span5 offset4"},
+            {"type":"number","source":"totalAbundanceAndThreatScore","css":"heavy-border span1"}
+        ]
+    }
+]
+}

@@ -1,0 +1,23 @@
+{
+"modelName":"Fencing",
+"dataModel":[
+
+            {"name":"fenceType","dataType":"text", "constraints":["", "Post & Wire", "Post & Rail", "Post & Netting", "Cyclone", "Solid Sheet", "Other"]},
+            {"name":"lengthOfFence","dataType":"number", "primaryResult":"true"},
+            {"name":"fenceCost","dataType":"number"},
+            {"name":"purposeOfFence","dataType":"stringList", "constraints":["Cattle exclusion", "Sheep or goat exclusion", "Kangaroo and wallaby exclusion", "Rabbit and hare exclusion", "Wombat exclusion", "Wild dog exclusion", "Other"]}
+
+],
+"viewModel":[
+    {
+        "type":"row",
+        "items": [
+            {"type":"selectOne","source":"fenceType","preLabel":"Fence Type:","width":"10%", "validate":"required"},
+            {"type":"number","source":"lengthOfFence","preLabel":"Length of fence:","postLabel":"m", "width":"40%"},
+            {"type":"number","source":"fenceCost","preLabel":"Fence Cost:","width":"25%", "postLabel": "$/m"},
+            {"type":"selectMany","source":"purposeOfFence","preLabel":"Purpose of fence:","width":"25%", "validate":"required"}
+
+        ]
+    }
+]
+}

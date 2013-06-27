@@ -1,0 +1,107 @@
+{
+"modelName":"feralAnimalAbundanceScore",
+"dataModel":[
+    {"name":"timeSpentSurveying","dataType":"number"},
+    {"name":"areaSurveyedInHectares","dataType":"number"},
+    {"name":"mainSoilType","dataType":"text"},
+    {"name":"mainTrees","dataType":"text"},
+    {"name":"activeSignsOtherRowDetail","dataType":"text"},
+    {"name":"activeSignsOtherColumnDetail","dataType":"text"},
+    {"name":"activeSigns","dataType":"matrix","columnValues":"animals","rowValues":"signs",
+        "columns": [
+            {"name":"fox","dataType":"number"},
+            {"name":"feralCat","dataType":"number"},
+            {"name":"rabbit","dataType":"number"},
+            {"name":"hare","dataType":"number"},
+            {"name":"goat","dataType":"number"},
+            {"name":"deer","dataType":"number"},
+            {"name":"other","dataType":"number","label":"user-defined"}
+        ],
+        "rows": [
+            {"name":"live","dataType":"number"},
+            {"name":"tracks","dataType":"number"},
+            {"name":"dung","dataType":"number"},
+            {"name":"furOrFeathers","dataType":"number"},
+            {"name":"warren","dataType":"number"},
+            {"name":"den","dataType":"number"},
+            {"name":"soil","dataType":"number"},
+            {"name":"scratchings","dataType":"number"},
+            {"name":"damage","dataType":"number"},
+            {"name":"other","dataType":"number"},
+            {"name":"total","dataType":"number","computed":{"dependents":["live","tracks","dung","furOrFeathers","warren",
+                "den","soil","scratchings","damage","other"],"operation":"sum"}},
+            {"name":"abundanceRating","dataType":"number","computed":{"dependents":["total","$areaSurveyedInHectares"],
+                "operation":"divide","rounding":"2"}}
+
+        ]
+    },
+    {"name":"totalFeralAnimalAbundanceScore","type":"number","primaryResult":"true","computed":{
+        "dependents":{"fromMatrix":"activeSigns","row":"abundanceRating"},"operation":"sum"}
+    },
+    {"name":"comments","dataType":"text"}
+],
+"viewModel":[
+    {
+        "type":"row",
+        "items":[
+            {"type":"number","source":"timeSpentSurveying","preLabel":"Time spent surveying:","postLabel":"Hrs","width":"10%"},
+            {"type":"number","source":"areaSurveyedInHectares","preLabel":"Approx. Area surveyed:","postLabel":"ha"},
+            {"type":"text","source":"mainSoilType","preLabel":"Main soil type:","width":"25%"},
+            {"type":"text","source":"mainTrees","preLabel":"Main trees:","width":"25%"}
+        ]
+    },
+    {
+        "type":"grid",
+        "source":"activeSigns",
+        "columns": [
+            {"title":"Active Sign","source":"literal","width":"25%"},
+            {"title":"Fox","source":"fox","width":"10%"},
+            {"title":"Feral cat","source":"feralCat","width":"10%"},
+            {"title":"Rabbit","source":"rabbit","width":"10%"},
+            {"title":"Hare","source":"hare","width":"10%"},
+            {"title":"Goat","source":"goat","width":"10%"},
+            {"title":"Deer","source":"deer","width":"10%"},
+            {"title":"Other","source":"other","width":"10%","pleaseSpecify":
+                {"source":"$activeSignsOtherColumnDetail","dataType":"text","output":"concatenate"}}
+        ],
+        "rows": [
+            {"title":"Live Animal","source":"live"},
+            {"title":"Tracks","source":"tracks"},
+            {"title":"Dung or Dung Patch","source":"dung"},
+            {"title":"Identifiable Fur / Feathers","source":"furOrFeathers"},
+            {"title":"Active Warren","source":"warren"},
+            {"title":"Den / Nest","source":"den"},
+            {"title":"Soil Disturbance","source":"soil"},
+            {"title":"Scratchings on Trees","source":"scratchings"},
+            {"title":"Rubbing / Grazing Damage","source":"damage"},
+            {"title":"Other","source":"other","pleaseSpecify":
+                {"source":"$activeSignsOtherRowDetail","dataType":"text","output":"concatenate"}},
+            {"title":"Total","source":"total", "strong":"true"},
+            {"title":"Abundance Rating","source":"abundanceRating", "strong":"true"}
+        ],
+        "footer": {
+            "rows": [
+                {"columns":[
+                    {"type":"literal","source":"Approx ha surveyed =<br><small>(0.8ha when 50m radius used)</small>"},
+                    {"type":"number","source":"areaSurveyedInHectares","validate":"required,number,min[0]"},
+                    {"type":"literal","source":"<b>Feral Animal Abundance Score</b> (total of abundance ratings)","colspan":"5"},
+                    {"type":"number","source":"totalFeralAnimalAbundanceScore"}
+                ]}
+            ]
+        }
+    },
+    {
+        "type":"row",
+        "items":[
+            {"type":"textarea","source":"comments","preLabel":"Comment/Descriptions:","css":"span12"}
+        ]
+    },
+    {
+        "type":"row",
+        "items":[
+            {"type":"literal","source":"Your Feral Animal Abundance Score","css":"heavy-border span4 offset4"},
+            {"type":"number","source":"totalFeralAnimalAbundanceScore","css":"heavy-border span1"}
+        ]
+    }
+]
+}

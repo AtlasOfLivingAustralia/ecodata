@@ -17,6 +17,10 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
+        "/ws/metadata/$action/$id?" {
+            controller = 'metadata'
+        }
+
         "/ws/bare/$entity/$id" {
             controller = 'admin'
             action = 'getBare'
