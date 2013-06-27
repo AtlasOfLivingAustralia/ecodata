@@ -7,10 +7,30 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 class AdminController {
 
-    def index() {}
-
     def outputService, activityService, siteService, projectService,
-            commonService, cacheService, metadataService
+        commonService, cacheService, metadataService
+
+    def index() {}
+    def tools() {}
+    def users() {}
+    def metadata() {}
+
+    def settings() {
+        def settings = [
+                [key:'app.external.model.dir', value: grailsApplication.config.app.external.model.dir,
+                        comment: 'location of the application meta-models such as the list of activities and ' +
+                                'the output data models'],
+                [key:'app.dump.location', value: grailsApplication.config.app.dump.location,
+                        comment: 'directory where DB dump files will be created']
+        ]
+        def config = grailsApplication.config.flatten()
+        ['ala.baseURL','grails.serverURL','grails.config.locations','collectory.baseURL',
+                'headerAndFooter.baseURL','ecodata.use.uuids'
+        ].each {
+            settings << [key: it, value: config[it], comment: '']
+        }
+        [settings: settings]
+    }
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -99,12 +119,6 @@ class AdminController {
             def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
             f.createNewFile()
             def instances = []
-            /* this pattern does not always inject dependencies correctly
-            def domainClass = grailsApplication.getDomainClass('au.org.ala.ecodata.'+collection).newInstance()
-            def serviceClass = grailsApplication.getServiceClass("au.org.ala.ecodata.${collection}Service").newInstance()
-            domainClass.list().each {
-                instances << serviceClass.toMap(it)
-            }*/
             switch (collection) {
                 case 'output':
                     Output.list().each { instances << commonService.toBareMap(it) }
@@ -122,6 +136,14 @@ class AdminController {
             def pj = new JsonBuilder( instances ).toPrettyString()
             f.withWriter( 'UTF-8' ) { it << pj }
         }
+        flash.message = "Database dumped to ${grailsApplication.config.app.dump.location}."
+        render 'done'
+    }
+
+    def clearMetadataCache() {
+        // clear any cached external config
+        cacheService.clear()
+        flash.message = "Metadata cache cleared."
         render 'done'
     }
 
@@ -141,6 +163,7 @@ class AdminController {
                 case 'project': projectService.loadAll(JSON.parse(f.text)); break
             }
         }
+        flash.message = "DB reloaded "
         forward action: 'count'
     }
 
@@ -151,6 +174,7 @@ class AdminController {
             activities: Activity.collection.count(),
             outputs: Output.collection.count()
         ]
+        flash.message += res
         render res
     }
 
