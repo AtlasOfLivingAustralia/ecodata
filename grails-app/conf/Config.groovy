@@ -91,12 +91,12 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "/devt/fieldcapture/models/"
-        /*grails.hostname = "localhost"
-        //grails.hostname = "devt.ala.org.au"
+        //grails.hostname = "localhost"
+        grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
-        serverName = "http://${grails.hostname}:8088"
+        serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
-        grails.serverURL = serverName + "/" + grails.app.context*/
+        grails.serverURL = serverName + "/" + grails.app.context
     }
     test {
         grails.logging.jul.usebridge = false
