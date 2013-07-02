@@ -90,8 +90,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        //app.external.model.dir = "/devt/ecodata/models/"
-        app.external.model.dir = "/Users/god08d/Documents/ala-fieldcapture/FieldCapture/models/"
+        app.external.model.dir = "/devt/ecodata/models/"
         //grails.hostname = "localhost"
         grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
