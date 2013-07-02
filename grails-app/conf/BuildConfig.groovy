@@ -39,10 +39,17 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
 
+    def seleniumVersion = "2.21.0"
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
         // runtime 'mysql:mysql-connector-java:5.1.22'
+        test "org.gebish:geb-spock:0.9.0"
+        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
+            exclude "xml-apis"
+        }
+        test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
+        test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
     }
 
     plugins {
@@ -60,5 +67,8 @@ grails.project.dependency.resolution = {
         build ":tomcat:$grailsVersion"
 
         compile ':cache:1.0.1'
+
+        test ":geb:0.9.0"
+        test ":spock:0.7"
     }
 }

@@ -90,7 +90,8 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/devt/ecodata/models/"
+        //app.external.model.dir = "/devt/ecodata/models/"
+        app.external.model.dir = "/Users/god08d/Documents/ala-fieldcapture/FieldCapture/models/"
         //grails.hostname = "localhost"
         grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
@@ -103,6 +104,11 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
+    }
+    nectartest {
+        grails.logging.jul.usebridge = false
+        ecodata.use.uuids = false
+        grails.serverURL = "http://115.146.94.243/ecodata"
     }
     nectar {
         grails.logging.jul.usebridge = false
@@ -154,6 +160,16 @@ log4j = {
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
                         file: "/var/log/tomcat6/ecodata-stacktrace.log"
+            }
+            nectartest {
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: "/var/log/tomcat7/ecodata.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: "/var/log/tomcat7/ecodata-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
