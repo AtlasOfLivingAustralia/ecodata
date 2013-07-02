@@ -1,0 +1,28 @@
+{
+"modelName":"Revegetation",
+"dataModel":[
+    {"name":"activityPurpose","dataType":"text", "constraints":["Biodiverse plantings","Protecting and enhancing existing native vegetation","Managing threats to biodiversity","Enhancing and enabling technologies & industries"]},
+    {"name":"activityDuration","dataType":"number"},
+    {"name":"revegetationType","dataType":"text", "constraints":["Direct drill seeding","Hand broardcast seeding","Hand planting","Machine planting"]},
+    {"name":"equipmentUsed","dataType":"text"},
+    {"name":"adjacentUse","dataType":"stringList", "constraints":["Conservation","Livestock","Cropping","Residential","Recreational","Rural","Residential","Industrial","Commercial or Business"]},
+    {"name":"connectivityIndex","dataType":"text", "constraints":["Connected to patch of more than 1000 ha","Connected to patch of 100 to 1000 ha","Connected to patch of 25 to 100 ha","Connected to patch of less than 25 ha","Patch linked to other vegetation via riparian link","Isolated forest or woodland remnant","Patch surrounded by native grasses","Isolated grassland","No vegetation within 1km","Only isolated Paddock trees within 1 km","Patch surrounded by grazing","Patch surrounded by cropping"]},
+    {"name":"environmentalBenefits","dataType":"stringList", "constraints":["Groundwater recharge management","Groundwater discharge or salinity management","Soil stabilisation","Riparian rehabilitation","Streambank protection","Nutrient cycling"]},
+    {"name":"photoOfActivity", "dataType":"image"}
+],
+"viewModel":[
+    {
+        "type":"row",
+        "items": [
+            {"type":"selectOne","source":"activityPurpose","preLabel":"Activity purpose:", "validate":"required"},
+            {"type":"number","source":"activityDuration","preLabel":"Activity duration (Hrs)", "validate":"required,min[0]"},
+            {"type":"selectOne","source":"revegetationType","preLabel":"Revegetation type:"},
+            {"type":"selectMany","source":"adjacentUse","preLabel":"Adjacent use:"},
+            {"type":"selectOne","source":"connectivityIndex","preLabel":"Connectivity index:"},
+            {"type":"selectMany","source":"environmentalBenefits","preLabel":"Environmental benefits:"},
+            {"type":"image", "source":"photoOfActivity", "preLabel":"Photo of activity (NB. This is not a photo point)"}
+
+        ]
+    }
+]
+}
