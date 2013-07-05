@@ -26,6 +26,9 @@ class UrlMappings {
             action = 'getBare'
         }
 
+		"/ws/$controller/$action?/$id?" {
+		}
+
 		"/$controller/$action?/$id?" {
 		}
 
