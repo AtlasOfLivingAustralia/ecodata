@@ -65,7 +65,7 @@ class CommonService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.findAll {k,v -> v != null}
+        mapOfProperties.findAll {k,v -> v != null && v != ""}
     }
 
 }
