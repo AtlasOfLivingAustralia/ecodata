@@ -12,8 +12,7 @@ class Identifiers {
     static getNew(useUUID, str) {
         if (useUUID || !str) {
             return UUID.randomUUID().toString()
-        }
-        else {
+        } else {
             return UUID.nameUUIDFromBytes(str as byte[]).toString()
         }
     }
