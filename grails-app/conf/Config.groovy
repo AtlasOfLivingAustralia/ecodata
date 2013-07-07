@@ -97,6 +97,7 @@ environments {
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
+       
     }
     test {
         grails.logging.jul.usebridge = false
@@ -113,12 +114,12 @@ environments {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL = "http://115.146.94.201:8080/ecodata"
+        grails.serverURL = "http://ecodata-dev.ala.org.au"
     }
     production {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
+        app.external.model.dir = "/data/fieldcapture/models/"
         grails.serverURL = "http://ecodata.ala.org.au"
     }
 }
