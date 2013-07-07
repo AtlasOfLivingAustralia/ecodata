@@ -68,6 +68,7 @@ class SiteService {
             getCommonService().updateProperties(o, props)
             return [status:'ok',siteId:o.siteId]
         } catch (Exception e) {
+            e.printStackTrace()
             // clear session to avoid exception when GORM tries to autoflush the changes
             Site.withSession { session -> session.clear() }
             def error = "Error creating site ${props.name} - ${e.message}"
