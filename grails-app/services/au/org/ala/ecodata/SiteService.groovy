@@ -71,8 +71,7 @@ class SiteService {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Site.withSession { session -> session.clear() }
             def error = "Error creating site ${props.name} - ${e.message}"
-            log.error(error)
-            e.printStackTrace()
+            log.error(error, e)
             return [status:'error',error:error]
         }
     }
