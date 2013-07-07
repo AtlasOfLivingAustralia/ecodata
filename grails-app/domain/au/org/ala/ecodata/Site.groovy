@@ -36,6 +36,7 @@ class Site {
     Date lastUpdated
 
     static constraints = {
+        name nullable: true
         externalSiteId nullable:true
         type nullable:true
         description nullable:true, maxSize: 40000
