@@ -96,4 +96,11 @@ class SiteService {
         }
     }
 
+    def addProject(siteId,projectId){
+        def a = Site.findBySiteId(siteId)
+        a.projects << projectId
+        a.projects.unique()
+        a.save()
+        return [status:'ok']
+    }
 }

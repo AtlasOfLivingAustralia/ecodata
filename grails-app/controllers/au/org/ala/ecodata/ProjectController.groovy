@@ -4,7 +4,7 @@ import grails.converters.JSON
 
 class ProjectController {
 
-    def projectService, commonService
+    def projectService, siteService, commonService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -74,6 +74,17 @@ class ProjectController {
         }
     }
 
+    def updateSites(String id){
+        println("Updating the sites for projectID : " + id)
+        def props = request.JSON
+        log.debug props
+        props.sites.each { siteId ->
+            siteService.addProject(siteId, id)
+        }
+        def response = [status: 200]
+        asJson response
+    }
+
     /**
      * Update a project.
      *
@@ -88,8 +99,7 @@ class ProjectController {
         if (id) {
             result = projectService.update(props,id)
             message = [message: 'updated']
-        }
-        else {
+        } else {
             result = projectService.create(props)
             message = [message: 'created', projectId: result.projectId]
         }
