@@ -21,7 +21,7 @@ class UrlMappings {
             controller = 'metadata'
         }
 
-        "/ws/bare/$entity/$id" {
+        "/ws/$entity/$id/raw" {
             controller = 'admin'
             action = 'getBare'
         }
