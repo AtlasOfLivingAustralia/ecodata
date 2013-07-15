@@ -85,6 +85,9 @@ if (!collectory.baseURL) {
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
+if (!security.apikey.serviceUrl) {
+    security.apikey.serviceUrl = "http://auth.ala.org.au/ws/check?apikey="
+}
 
 environments {
     development {
