@@ -86,6 +86,9 @@ class ActivityController {
      * Activities can be directly linked to a project, or more commonly, linked
      * via a site that is associated with the project.
      *
+     * *** Changing this to match the assumption that every activity will be associated with a
+     * project (with or without a site). So there is no need to search via a project's sites.
+     *
      * Main output scores are also included.
      *
      * @param id of the project
@@ -96,9 +99,9 @@ class ActivityController {
             // activities directly linked to project
             activityList.addAll activityService.findAllForProjectId(id, [SCORES])
             // activities via sites
-            siteService.findAllForProjectId(id, BRIEF).each {
+            /*siteService.findAllForProjectId(id, BRIEF).each {
                 activityList.addAll activityService.findAllForSiteId(it.siteId, [SCORES])
-            }
+            }*/
             //log.debug activityList
             asJson([list: activityList])
         } else {
