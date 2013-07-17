@@ -43,4 +43,12 @@ class MetadataService {
         })
     }
 
+    def updateActivitiesModel(model) {
+        //log.debug "Model = ${model}"
+        String filename = (grailsApplication.config.app.external.model.dir as String) + 'activities-model.json'
+        def f = new File(filename)
+        f.renameTo(new File(filename + '.bak'))
+        f.write(model)
+        cacheService.clear('activities-model')
+    }
 }

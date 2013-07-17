@@ -4,10 +4,18 @@ import grails.converters.JSON
 
 class MetadataController {
 
-    def metadataService
+    def metadataService, cacheService
 
     def activitiesModel() {
         render metadataService.activitiesModel()
+    }
+
+    def updateActivitiesModel() {
+        def model = request.JSON
+        //log.debug "Model=${model.getClass()}"
+        metadataService.updateActivitiesModel(model.model.toString(4))
+        def result = [model: metadataService.activitiesModel()]
+        render result as JSON
     }
 
     def dataModel(String id) {
