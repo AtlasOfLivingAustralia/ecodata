@@ -37,6 +37,7 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
     }
 
     def seleniumVersion = "2.21.0"
@@ -50,6 +51,10 @@ grails.project.dependency.resolution = {
         }
         test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
+
+        // ElasticSearch
+        runtime "org.elasticsearch:elasticsearch:0.90.2"
+        runtime "org.elasticsearch:elasticsearch-lang-groovy:1.5.0"
     }
 
     plugins {

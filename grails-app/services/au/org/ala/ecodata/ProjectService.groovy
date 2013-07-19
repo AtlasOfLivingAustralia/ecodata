@@ -5,6 +5,7 @@ class ProjectService {
     static transactional = false
     static final ACTIVE = "active"
     static final BRIEF = 'brief'
+    static final FLAT = 'flat'
 
     def grailsApplication, siteService
 
@@ -38,8 +39,10 @@ class ProjectService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.remove("sites")
-        mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
+        if (levelOfDetail != FLAT) {
+            mapOfProperties.remove("sites")
+            mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
+        }
         mapOfProperties.findAll {k,v -> v != null}
     }
 

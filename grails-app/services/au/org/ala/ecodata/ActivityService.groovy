@@ -4,6 +4,7 @@ class ActivityService {
 
     static transactional = false
     static final ACTIVE = "active"
+    static final FLAT = 'flat'
 
     def grailsApplication, outputService
 
@@ -46,8 +47,12 @@ class ActivityService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        mapOfProperties.remove("outputs")
-        mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
+
+        if (levelOfDetail != FLAT) {
+            mapOfProperties.remove("outputs")
+            mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
+        }
+
         mapOfProperties.findAll {k,v -> v != null}
     }
 

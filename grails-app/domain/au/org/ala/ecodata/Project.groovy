@@ -3,7 +3,8 @@ package au.org.ala.ecodata
 import org.bson.types.ObjectId
 
 class Project {
-
+    def projectService
+    def elasticSearchService
     /*
     Associations:
         projects may have 0..n Sites - these are mapped from the Site side
@@ -55,5 +56,19 @@ class Project {
         reportingMeasuresAddressed nullable:true
         projectPlannedOutputType nullable:true
         projectPlannedOutputValue nullable:true
+    }
+
+    def afterInsert() {
+        indexDoc()
+    }
+
+    def afterUpdate() {
+        indexDoc()
+    }
+
+    def indexDoc() {
+        def thisMap = projectService.toMap(this, "flat")
+        thisMap["class"] = this.getClass().name
+        elasticSearchService.indexDoc(thisMap)
     }
 }
