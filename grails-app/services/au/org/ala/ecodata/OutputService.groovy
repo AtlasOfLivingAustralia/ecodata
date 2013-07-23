@@ -48,7 +48,7 @@ class OutputService {
     }
 
     /**
-     * Assumes 1 score per output for now.
+     * Returns a map of scores based on the output model.
      * @param map
      * @param name
      * @return
@@ -57,9 +57,11 @@ class OutputService {
         //log.debug "extracting scores for ${name}"
         def model = metadataService.getOutputModel(name)
         //log.debug "model is " + model
-        def key = model?.scoreName
-        //log.debug "finding scoreName for ${key}"
-        return key ? ["${key}":map[key]] : [:]
+        def scoreNames = model?.scoreNames ?: []
+        //log.debug "scoreNames = ${scoreNames}"
+        def scores = scoreNames.collectEntries { ["${it}":map[it]] }
+        //log.debug "scores = ${scores}"
+        return scores
     }
 
     def loadAll(list) {
