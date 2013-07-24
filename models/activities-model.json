@@ -16,9 +16,9 @@
         {
             "name": "Weed management",
             "outputs": [
-                "hectaresTreated",
-                "lengthRoadsideCleared",
-                "lengthRiparianAreaCleared"
+                "Hectares Treated",
+                "Length of Roadside Cleared",
+                "Length of Riparian Area Cleared"
             ],
             "type": "Activity"
         },
