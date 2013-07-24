@@ -17,20 +17,22 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
+import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
-import org.elasticsearch.groovy.client.GClient
-import org.elasticsearch.groovy.common.xcontent.GXContentBuilder
-import org.elasticsearch.groovy.node.GNode
+import org.elasticsearch.client.Client
+import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
-import static org.elasticsearch.groovy.node.GNodeBuilder.*
+import static org.elasticsearch.node.NodeBuilder.*
 
 /**
  * ElasticSearch service
@@ -47,15 +49,31 @@ class ElasticSearchService {
     def siteService
     def activityService
 
-    GNode node;
-    GClient client;
+    Node node;
+    Client client;
     def DEFAULT_INDEX = "all"
+    def MAX_FACETS = 10;
 
     def initialize() {
         // see http://www.elasticsearch.org/guide/clients/groovy-api/client/ for details for adding config
         log.info "Setting-up elasticsearch node and client"
         node = nodeBuilder().node();
-        client = node.getClient();
+        client = node.client();
+    }
+
+    def reInitialiseIndex() {
+        log.debug "reInitialiseIndex"
+        try {
+//            CreateIndexResponse createResponse = client.admin().indices().prepareCreate(DEFAULT_INDEX).execute().actionGet();
+//            if (createResponse.acknowledged) {
+//                log.debug "created index ${DEFAULT_INDEX}"
+//            } else {
+//                log.debug "failed to create index ${DEFAULT_INDEX}"
+//            }
+            addMappings()
+        } catch (Exception e) {
+            log.error "Error creating index: ${e}"
+        }
     }
 
     def indexDoc(doc) {
@@ -63,15 +81,86 @@ class ElasticSearchService {
         def docJson = doc as JSON
         log.debug "Indexing doc: ${docJson}"
 
-        def indexR = client.index {
-            index DEFAULT_INDEX
-            type doc["class"]?:"doc"
-            id doc["id"]
-            source {
-                doc
-            }
+//        def indexR = client.index {
+//            index DEFAULT_INDEX
+//            type doc["class"]?:"doc"
+//            id doc["id"]
+//            source {
+//                doc
+//            }
+//        }
+//        log.debug "indexR response: ${indexR.actionGet()}"
+
+        def className = doc.class?:"doc"
+        def docId
+        switch ( className ) {
+            case "au.org.ala.ecodata.Project":
+                docId = doc.projectId; break
+            case "au.org.ala.ecodata.Site":
+                docId = doc.siteId; break
+            case "au.org.ala.ecodata.Activity":
+                docId = doc.activityId; break
+            default:
+                docId = doc.id; break
         }
-        log.debug "indexR response: ${indexR.actionGet()}"
+        log.debug "class = ${className} & id = ${docId}"
+
+        addCustomFields(doc)
+
+        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, className, docId)
+            .setSource(
+                doc as HashMap<String, Object>
+            )
+            .execute()
+            .actionGet();
+        log.debug "index response = " + response.toString()
+    }
+
+    def addCustomFields(doc) {
+        // TODO: remove nasty hack for underscores = spaces
+        doc.organisationFacet = doc.organisationName?.replace(" ", "_")
+        doc.typeFacet = doc.type?.replace(" ", "_")
+    }
+
+    def addMappings() {
+        def analysisJson = '''
+            {
+                "analysis": {
+                    "analyzer": {
+                        "organisationFacet" : {
+                            "type" : "string",
+                            "store" : "yes",
+                            "index" : "not_analyzed"
+                        }
+                    }
+                }
+            }
+        '''
+
+        client.admin().indices().prepareCreate(DEFAULT_INDEX)
+            .setSettings(
+                ImmutableSettings.settingsBuilder().loadFromSource( analysisJson )
+            ).execute().actionGet()
+    }
+
+    def createFieldMappings(indexType) {
+        def mappingsSrc = '''{
+            "analysis": {
+                "analyzer": {
+                    "organisation" : {
+                        "type" : "custom",
+                        "tokenizer" : "standard",
+                        "filter" : ["snowball", "standard", "lowercase"]
+                    }
+                }
+            }
+        }'''
+
+//        client.admin().indices()
+//                .preparePutMapping(DEFAULT_INDEX)
+//                .setType([])
+//                .setSource(mappingsSrc)
+//                .execute().actionGet()
     }
 
     def indexAll() {
@@ -135,14 +224,14 @@ class ElasticSearchService {
         }
 
         // Handle the query, can either be a closure or a string
-        if (query instanceof Closure) {
-            source.query(new GXContentBuilder().buildAsBytes(query))
-        } else {
+        //if (query instanceof Closure) {
+            //source.query(new GXContentBuilder().buildAsBytes(query))
+        //} else {
             source.query(queryString(query))
-        }
+        //}
 
         // add facets
-        addFacets(params.facets).each {
+        addFacets(params.facets, params.fq).each {
             source.facet(it)
         }
 
@@ -167,34 +256,45 @@ class ElasticSearchService {
         return request
     }
 
-    def addFacets(facets) {
+    def addFacets(facets, filters) {
         // use FacetBuilders
         // e.g. FacetBuilders.termsFacet("f1").field("field")
+        log.debug "filters = $filters"
+
         def facetList = []
+        def filterList = getFilterList(filters)
+
         if (facets) {
             facets.each {
                 facetList.add(FacetBuilders.termsFacet(it).field(it).size(5))
             }
         } else {
-            facetList.add(FacetBuilders.termsFacet("status").field("status").size(5))
-            facetList.add(FacetBuilders.termsFacet("type").field("type").size(5))
+            //facetList.add(FacetBuilders.termsFacet("status").field("status").size(MAX_FACETS))
+            facetList.add(FacetBuilders.termsFacet("type").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter("typeFacet", filterList)))
+            facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter("class", filterList)))
+            facetList.add(FacetBuilders.termsFacet("organisation").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter("organisationFacet", filterList)))
         }
 
         return facetList
+    }
+
+    def addFacetFilter(facet, filterList) {
+        def fb
+        filterList.find {
+            def fqs = it.tokenize(":")
+            if (true && facet == fqs[0]) {
+                fb =  FilterBuilders.termFilter(facet, fqs[1])
+            }
+        }
+
+        fb
     }
 
     def buildFilters(filters) {
         // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
         log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
-        def filterList = []
-
-        if (filters instanceof java.lang.String) {
-            filterList.add(filters)
-        } else {
-            // assume a String[] array
-            filterList = filters as List
-        }
+        List filterList = getFilterList(filters)
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
         filterList.each { fq ->
@@ -211,55 +311,16 @@ class ElasticSearchService {
         FilterBuilders.boolFilter().should(boolFilter)
     }
 
-    /**
-     *
-     * @deprecated - groovy way but not able to handle complex searches
-     * @param queryString
-     * @param params
-     * @return
-     */
-    def doSearch (queryString, params) {
-        // see http://www.elasticsearch.org/guide/clients/groovy-api/search/
-        def fqs = []
-        params.each { key, val ->
-            if (key == "fq") {
-                def terms = val.tokenize(":")
-                def map = [:]
-                map[terms[0]] = terms[1]
-                fqs.add(terms: map)
-            }
+    private getFilterList(String filters) {
+        def filterList = []
+
+        if (filters instanceof String) {
+            filterList.add(filters)
+        } else {
+            // assume a String[] array
+            filterList = filters as List
         }
-        log.debug "Search - queryString = ${queryString}"
-        log.debug "Search - fqs = ${fqs}"
-        log.debug "Search - params = ${params}"
-        node.client.search {
-            indices DEFAULT_INDEX
-            types []
-            source {
-                from = 0
-                size = 10
-                query {
-                    query_string(
-                            //fields: [field],
-                            query: queryString)
-                }
-                facets {
-                    status {
-                        terms (
-                            field: "status"
-                        )
-                    }
-                    docType {
-                        terms (
-                                field: "type"
-                        )
-                    }
-                }
-                filters {
-                    term (status:"active")
-                }
-            }
-        }
+        filterList
     }
 
     def deleteDoc(obj) {
@@ -269,7 +330,7 @@ class ElasticSearchService {
 
     public deleteIndex() {
         try {
-            def response = node.client.admin.indices.prepareDelete(DEFAULT_INDEX).execute().get()
+            def response = node.client().admin().indices().prepareDelete(DEFAULT_INDEX).execute().get()
             if (response.acknowledged) {
                 log.info "The index is removed"
             } else {
@@ -278,6 +339,8 @@ class ElasticSearchService {
         } catch (Exception e) {
             log.error "The index you want to delete is missing : ${e.message}"
         }
+
+        reInitialiseIndex()
         return "index removed"
     }
 

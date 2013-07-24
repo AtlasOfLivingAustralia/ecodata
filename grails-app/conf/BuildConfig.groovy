@@ -54,7 +54,7 @@ grails.project.dependency.resolution = {
 
         // ElasticSearch
         runtime "org.elasticsearch:elasticsearch:0.90.2"
-        runtime "org.elasticsearch:elasticsearch-lang-groovy:1.5.0"
+        //runtime "org.elasticsearch:elasticsearch-lang-groovy:1.5.0"
     }
 
     plugins {
