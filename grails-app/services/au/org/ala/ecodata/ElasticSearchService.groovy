@@ -52,6 +52,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def DEFAULT_INDEX = "all"
+    def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10;
 
     def initialize() {
@@ -70,6 +71,14 @@ class ElasticSearchService {
 //            } else {
 //                log.debug "failed to create index ${DEFAULT_INDEX}"
 //            }
+
+//            if (client.admin().indices().prepareExists(DEFAULT_INDEX).execute().actionGet().exists()) {
+//                // update index
+//            } else {
+//                // create index
+//                client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mapping).setSettings(settings).execute().actionGet();
+//            }
+
             addMappings()
         } catch (Exception e) {
             log.error "Error creating index: ${e}"
@@ -107,7 +116,7 @@ class ElasticSearchService {
 
         addCustomFields(doc)
 
-        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, className, docId)
+        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
             .setSource(
                 doc as HashMap<String, Object>
             )
@@ -118,49 +127,33 @@ class ElasticSearchService {
 
     def addCustomFields(doc) {
         // TODO: remove nasty hack for underscores = spaces
-        doc.organisationFacet = doc.organisationName?.replace(" ", "_")
-        doc.typeFacet = doc.type?.replace(" ", "_")
+        doc.organisationFacet = doc.organisationName
+        doc.typeFacet = doc.type
     }
 
     def addMappings() {
-        def analysisJson = '''
+
+        def mappingJson = '''
             {
-                "analysis": {
-                    "analyzer": {
+                "doc": {
+                    "properties": {
                         "organisationFacet" : {
-                            "type" : "string",
-                            "store" : "yes",
-                            "index" : "not_analyzed"
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "typeFacet": {
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "class": {
+                            "type":"string",
+                            "index":"not_analyzed"
                         }
                     }
                 }
             }
         '''
-
-        client.admin().indices().prepareCreate(DEFAULT_INDEX)
-            .setSettings(
-                ImmutableSettings.settingsBuilder().loadFromSource( analysisJson )
-            ).execute().actionGet()
-    }
-
-    def createFieldMappings(indexType) {
-        def mappingsSrc = '''{
-            "analysis": {
-                "analyzer": {
-                    "organisation" : {
-                        "type" : "custom",
-                        "tokenizer" : "standard",
-                        "filter" : ["snowball", "standard", "lowercase"]
-                    }
-                }
-            }
-        }'''
-
-//        client.admin().indices()
-//                .preparePutMapping(DEFAULT_INDEX)
-//                .setType([])
-//                .setSource(mappingsSrc)
-//                .execute().actionGet()
+        client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
     }
 
     def indexAll() {
@@ -223,12 +216,8 @@ class ElasticSearchService {
             source.sort(params.sort, SortOrder.valueOf(params.order?.toUpperCase() ?: "ASC"))
         }
 
-        // Handle the query, can either be a closure or a string
-        //if (query instanceof Closure) {
-            //source.query(new GXContentBuilder().buildAsBytes(query))
-        //} else {
-            source.query(queryString(query))
-        //}
+        // add query
+        source.query(queryString(query))
 
         // add facets
         addFacets(params.facets, params.fq).each {
@@ -324,7 +313,7 @@ class ElasticSearchService {
     }
 
     def deleteDoc(obj) {
-        // see http://www.elasticsearch.org/guide/clients/groovy-api/delete.html
+        // TODO see http://www.elasticsearch.org/guide/clients/groovy-api/delete.html
 
     }
 
