@@ -20,11 +20,15 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
 import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchRequestBuilder
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.QueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -87,22 +91,20 @@ class ElasticSearchService {
 
     def indexDoc(doc) {
         // see http://www.elasticsearch.org/guide/clients/groovy-api/index_/
-        def docJson = doc as JSON
-        log.debug "Indexing doc: ${docJson}"
 
-//        def indexR = client.index {
-//            index DEFAULT_INDEX
-//            type doc["class"]?:"doc"
-//            id doc["id"]
-//            source {
-//                doc
-//            }
-//        }
-//        log.debug "indexR response: ${indexR.actionGet()}"
+        def docId = getEntityId(doc)
 
-        def className = doc.class?:"doc"
+        addCustomFields(doc)
+
+        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
+            .setSource(
+                doc as HashMap<String, Object>
+            ).execute().actionGet();
+    }
+
+    def getEntityId(doc) {
         def docId
-        switch ( className ) {
+        switch ( doc.class ) {
             case "au.org.ala.ecodata.Project":
                 docId = doc.projectId; break
             case "au.org.ala.ecodata.Site":
@@ -112,17 +114,7 @@ class ElasticSearchService {
             default:
                 docId = doc.id; break
         }
-        log.debug "class = ${className} & id = ${docId}"
-
-        addCustomFields(doc)
-
-        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
-            .setSource(
-                doc as HashMap<String, Object>
-            )
-            .execute()
-            .actionGet();
-        log.debug "index response = " + response.toString()
+        docId
     }
 
     def addCustomFields(doc) {
@@ -136,6 +128,10 @@ class ElasticSearchService {
         def mappingJson = '''
             {
                 "doc": {
+                    "_all": {
+                        "enabled": true,
+                        "store": "yes"
+                    },
                     "properties": {
                         "organisationFacet" : {
                             "type":"string",
@@ -181,9 +177,19 @@ class ElasticSearchService {
     }
 
     def search(String query, GrailsParameterMap params) {
-        def req = buildSearchRequest(query, params)
-        doSearch(req)
-        //doSearch(query, params)
+        log.debug "search params: ${params}"
+
+//        SearchRequestBuilder builder = client
+//                .prepareSearch(DEFAULT_INDEX)
+//                .setTypes(DEFAULT_TYPE)
+//                .setQuery(queryString(query))
+//                .setFrom(0)
+//                .setSize(10)
+//                .addHighlightedField("description")
+//        SearchResponse sr = builder.execute().actionGet();
+
+        def request = buildSearchRequest(query, params)
+        client.search(request).actionGet()
     }
 
     def doSearch(SearchRequest request) {
@@ -226,19 +232,11 @@ class ElasticSearchService {
 
         // handle facet filter
         if (params.fq) {
+            log.debug "fq detected: ${params.fq}"
             source.filter(buildFilters(params.fq))
         }
 
-        // Handle highlighting
-        if (params.highlight) {
-            def highlighter = new HighlightBuilder()
-            // params.highlight is expected to provide a Closure.
-            def highlightBuilder = params.highlight
-            highlightBuilder.delegate = highlighter
-            highlightBuilder.resolveStrategy = Closure.DELEGATE_FIRST
-            highlightBuilder.call()
-            source.highlight highlighter
-        }
+        source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
 
         request.source(source)
 
@@ -254,25 +252,26 @@ class ElasticSearchService {
         def filterList = getFilterList(filters)
 
         if (facets) {
-            facets.each {
-                facetList.add(FacetBuilders.termsFacet(it).field(it).size(5))
+            facets.split(",")each {
+                facetList.add(FacetBuilders.termsFacet(it).field(it).size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             }
         } else {
-            //facetList.add(FacetBuilders.termsFacet("status").field("status").size(MAX_FACETS))
-            facetList.add(FacetBuilders.termsFacet("type").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter("typeFacet", filterList)))
-            facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter("class", filterList)))
-            facetList.add(FacetBuilders.termsFacet("organisation").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter("organisationFacet", filterList)))
+            facetList.add(FacetBuilders.termsFacet("type").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("organisation").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
         }
 
         return facetList
     }
 
-    def addFacetFilter(facet, filterList) {
+    def addFacetFilter(filterList) {
         def fb
+
         filterList.find {
-            def fqs = it.tokenize(":")
-            if (true && facet == fqs[0]) {
-                fb =  FilterBuilders.termFilter(facet, fqs[1])
+            if (it) {
+                def fqs = it.tokenize(":")
+                QueryBuilder qb = QueryBuilders.matchQuery(fqs[0], fqs[1]);
+                fb =  FilterBuilders.queryFilter(qb)
             }
         }
 
@@ -281,14 +280,13 @@ class ElasticSearchService {
 
     def buildFilters(filters) {
         // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
-        log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
+        //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
-        List filterList = getFilterList(filters)
+        List filterList = getFilterList(filters) // allow for multiple fq params
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
         filterList.each { fq ->
             def fqs = fq.tokenize(":")
-            log.debug "each filters: $fq - $fqs"
             // support SOLR style filters (-) for exclude
             if (fqs[0].getAt(0) == "-") {
                 boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
@@ -300,21 +298,24 @@ class ElasticSearchService {
         FilterBuilders.boolFilter().should(boolFilter)
     }
 
-    private getFilterList(String filters) {
+    private getFilterList(filters) {
         def filterList = []
 
-        if (filters instanceof String) {
-            filterList.add(filters)
-        } else {
+        if (filters instanceof String[]) {
             // assume a String[] array
             filterList = filters as List
+        } else {
+            filterList.add(filters)
         }
+
         filterList
     }
 
     def deleteDoc(obj) {
-        // TODO see http://www.elasticsearch.org/guide/clients/groovy-api/delete.html
-
+        // see http://www.elasticsearch.org/guide/reference/java-api/delete/
+        client.prepareDelete(DEFAULT_INDEX, DEFAULT_TYPE, getEntityId(obj))
+                .execute()
+                .actionGet();
     }
 
     public deleteIndex() {
@@ -329,8 +330,9 @@ class ElasticSearchService {
             log.error "The index you want to delete is missing : ${e.message}"
         }
 
+        // recreate the index and mappings
         reInitialiseIndex()
-        return "index removed"
+        return "index cleared"
     }
 
     def destroy() {
