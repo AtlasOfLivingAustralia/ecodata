@@ -57,18 +57,4 @@ class Project {
         projectPlannedOutputType nullable:true
         projectPlannedOutputValue nullable:true
     }
-
-    def afterInsert() {
-        indexDoc()
-    }
-
-    def afterUpdate() {
-        indexDoc()
-    }
-
-    def indexDoc() {
-        def thisMap = projectService.toMap(this, "flat")
-        thisMap["class"] = this.getClass().name
-        elasticSearchService.indexDoc(thisMap)
-    }
 }

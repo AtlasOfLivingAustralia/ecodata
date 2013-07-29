@@ -15,16 +15,10 @@
 
 package au.org.ala.ecodata
 
-import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
-import org.elasticsearch.action.admin.indices.create.CreateIndexResponse
-import org.elasticsearch.action.index.IndexResponse
 import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.search.SearchRequestBuilder
-import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
-import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
@@ -59,6 +53,9 @@ class ElasticSearchService {
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10;
 
+    /**
+     * Init method to be called on service creation (currently Bootstrap.groovy)
+     */
     def initialize() {
         // see http://www.elasticsearch.org/guide/clients/groovy-api/client/ for details for adding config
         log.info "Setting-up elasticsearch node and client"
@@ -66,6 +63,11 @@ class ElasticSearchService {
         client = node.client();
     }
 
+    /**
+     * Create a new index with custom mappings
+     *
+     * TODO add code to check if index exists and only add/update mappings if required
+     */
     def reInitialiseIndex() {
         log.debug "reInitialiseIndex"
         try {
@@ -89,19 +91,34 @@ class ElasticSearchService {
         }
     }
 
+    /**
+     * Index a single document (toMap representation not domain class)
+     * Does a check to see if doc has been marked as deleted.
+     *
+     * @param doc
+     * @return IndexResponse
+     */
     def indexDoc(doc) {
-        // see http://www.elasticsearch.org/guide/clients/groovy-api/index_/
-
         def docId = getEntityId(doc)
+
+        if (checkForDelete(doc, docId)) {
+            return null
+        }
 
         addCustomFields(doc)
 
-        IndexResponse response = client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
+        client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
             .setSource(
                 doc as HashMap<String, Object>
             ).execute().actionGet();
     }
 
+    /**
+     * Get the doc identifier, which differs for each domain class
+     *
+     * @param doc
+     * @return docId (String)
+     */
     def getEntityId(doc) {
         def docId
         switch ( doc.class ) {
@@ -117,12 +134,47 @@ class ElasticSearchService {
         docId
     }
 
+    /**
+     * Check if a doc has been marked as deleted.
+     * Returns false if the doc to be indexed exists in the search index
+     * and has {status: "deleted"}. Doc is deleted from search index.
+     *
+     * @param doc
+     * @param docId
+     * @return isDeleted (Boolean)
+     */
+    def checkForDelete(doc, docId) {
+        def isDeleted = false
+        def resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
+                .execute()
+                .actionGet();
+
+        if (resp && doc.status == "deleted") {
+            try {
+                deleteDocById(docId)
+                isDeleted = true
+            } catch (Exception e) {
+                log.error "Error deleting doc with ID ${docId}: ${e.message}"
+            }
+        }
+
+        return isDeleted
+    }
+
+    /**
+     * Add extra (custom) fields to doc in search index.
+     *
+     * @param doc
+     */
     def addCustomFields(doc) {
-        // TODO: remove nasty hack for underscores = spaces
+        // hand-coded copy fields with different analysers
         doc.organisationFacet = doc.organisationName
         doc.typeFacet = doc.type
     }
 
+    /**
+     * Add custom mapping for ES index.
+     */
     def addMappings() {
 
         def mappingJson = '''
@@ -152,6 +204,36 @@ class ElasticSearchService {
         client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
     }
 
+    /**
+     * Index any document type using the toMap representation of it
+     *
+     * @param doc
+     */
+    def indexDocType(doc) {
+        log.debug "doc has class: ${doc.getClass().name}"
+        def docClass = doc.getClass()
+        switch(docClass) {
+            case au.org.ala.ecodata.Project:
+                def projectMap = projectService.toMap(doc, "flat")
+                projectMap["class"] = docClass.name
+                indexDoc(projectMap)
+                break;
+            case au.org.ala.ecodata.Site:
+                def siteMap = siteService.toMap(doc, "brief")
+                siteMap["class"] = docClass.name
+                indexDoc(siteMap)
+                break;
+            case au.org.ala.ecodata.Activity:
+                def activityMap = activityService.toMap(doc, "flat")
+                activityMap["class"] = docClass.name
+                indexDoc(activityMap)
+                break;
+        }
+    }
+
+    /**
+     * Index all documents. Index is cleared first.
+     */
     def indexAll() {
         log.debug "Clearing index first"
         deleteIndex()
@@ -176,6 +258,13 @@ class ElasticSearchService {
         }
     }
 
+    /**
+     * Search with a query string
+     *
+     * @param query
+     * @param params
+     * @return IndexResponse
+     */
     def search(String query, GrailsParameterMap params) {
         log.debug "search params: ${params}"
 
@@ -192,6 +281,13 @@ class ElasticSearchService {
         client.search(request).actionGet()
     }
 
+    /**
+     * Full text search with just a query (String)
+     *
+     * @deprecated
+     * @param request
+     * @return IndexResponse
+     */
     def doSearch(SearchRequest request) {
         def response = client.search(request).actionGet()
         //def searchHits = response.hits()
@@ -201,6 +297,13 @@ class ElasticSearchService {
         return response
     }
 
+    /**
+     * Build the search request object from query and params
+     *
+     * @param query
+     * @param params
+     * @return SearchRequest
+     */
     def buildSearchRequest(query, GrailsParameterMap params) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
@@ -243,6 +346,13 @@ class ElasticSearchService {
         return request
     }
 
+    /**
+     * Generate list of facets for search request
+     *
+     * @param facets
+     * @param filters
+     * @return facetList
+     */
     def addFacets(facets, filters) {
         // use FacetBuilders
         // e.g. FacetBuilders.termsFacet("f1").field("field")
@@ -264,6 +374,12 @@ class ElasticSearchService {
         return facetList
     }
 
+    /**
+     * Generate FilterBuilders from the fq request params
+     *
+     * @param filterList
+     * @return FilterBuilders
+     */
     def addFacetFilter(filterList) {
         def fb
 
@@ -278,6 +394,12 @@ class ElasticSearchService {
         fb
     }
 
+    /**
+     * Build up the fq filter (builders)
+     *
+     * @param filters
+     * @return
+     */
     def buildFilters(filters) {
         // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
         //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
@@ -298,6 +420,12 @@ class ElasticSearchService {
         FilterBuilders.boolFilter().should(boolFilter)
     }
 
+    /**
+     * Helper method to return a List give either a String or String[]
+     *
+     * @param filters
+     * @return filterList
+     */
     private getFilterList(filters) {
         def filterList = []
 
@@ -311,13 +439,36 @@ class ElasticSearchService {
         filterList
     }
 
+    /**
+     * Delete a doc given the toMap version of it
+     *
+     * @param obj
+     * @return
+     */
     def deleteDoc(obj) {
         // see http://www.elasticsearch.org/guide/reference/java-api/delete/
-        client.prepareDelete(DEFAULT_INDEX, DEFAULT_TYPE, getEntityId(obj))
+        def id = obj[getEntityId(obj)]
+        log.debug "deleting doc with id: ${id}"
+        deleteDocById(id)
+    }
+
+    /**
+     * Delete a doc given its ID
+     *
+     * @param id
+     * @return
+     */
+    def deleteDocById(id) {
+        client.prepareDelete(DEFAULT_INDEX, DEFAULT_TYPE, id)
                 .execute()
                 .actionGet();
     }
 
+    /**
+     * Delete the (default) ES index
+     *
+     * @return
+     */
     public deleteIndex() {
         try {
             def response = node.client().admin().indices().prepareDelete(DEFAULT_INDEX).execute().get()
@@ -335,6 +486,9 @@ class ElasticSearchService {
         return "index cleared"
     }
 
+    /**
+     * Shutdown ES server (called by Bootstrap.groovy)
+     */
     def destroy() {
         node.close();
     }
