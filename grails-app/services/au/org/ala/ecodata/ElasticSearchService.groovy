@@ -170,6 +170,13 @@ class ElasticSearchService {
         // hand-coded copy fields with different analysers
         doc.organisationFacet = doc.organisationName
         doc.typeFacet = doc.type
+        if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
+            String lat = doc.extent.geometry.decimalLatitude as String
+            String lon = doc.extent.geometry.decimalLongitude as String
+            doc.location = [:]
+            doc.location.lat = lat.toFloat()
+            doc.location.lon = lon.toFloat()
+        }
     }
 
     /**
@@ -367,6 +374,7 @@ class ElasticSearchService {
             }
         } else {
             facetList.add(FacetBuilders.termsFacet("type").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("organisation").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
         }
