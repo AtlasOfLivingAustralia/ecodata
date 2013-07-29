@@ -27,7 +27,8 @@
             "type": "Activity",
             "outputs": [
                 "Fencing",
-                "Participant Information"
+                "Participant Information",
+                "Revegetation"
             ]
         },
         {
@@ -73,6 +74,11 @@
             "template": "participation",
             "name": "Participant Information",
             "scoreNames": ["totalParticipants","numberOfVolunteers","numberOfIndigenousParticipants"]
+        },
+        {
+            "template":"revegetation",
+            "name": "Revegetation",
+            "scoreName":"totalSeedPlanted"
         }
     ]
 }
