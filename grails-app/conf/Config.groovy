@@ -70,7 +70,7 @@ grails.mongo.default.mapping = {
 
 /******************************************************************************\
  *  APPLICATION CONFIG
- \******************************************************************************/
+ \*****************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
 
 /******************************************************************************\
@@ -93,37 +93,41 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
+        app.external.model.dir = "/devt/ecodata/models/"
         //grails.hostname = "localhost"
         grails.hostname = "devt.ala.org.au"
         //grails.hostname = "192.168.0.15"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
-       
+        app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
     }
     test {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
+        app.uploads.url = "http://testweb1.ala.org.au/uploads/"
     }
     nectartest {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         grails.serverURL = "http://115.146.94.243/ecodata"
+        app.uploads.url = grails.serverURL + "/uploads/"
     }
     nectar {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://ecodata-dev.ala.org.au"
+        app.uploads.url = grails.serverURL + "/uploads/"
     }
     production {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         app.external.model.dir = "/data/fieldcapture/models/"
         grails.serverURL = "http://ecodata.ala.org.au"
+        app.uploads.url = grails.serverURL + "/uploads/"
     }
 }
 
