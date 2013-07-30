@@ -145,6 +145,24 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId) {
         def isDeleted = false
+        def indexIsReady = false
+        def maxTries = 60
+        def tries = 0
+
+        while (!indexIsReady) {
+            log.debug "$docId - indexIsReady = ${indexIsReady}"
+            tries++
+            if (client.admin().indices().prepareExists(DEFAULT_INDEX).execute().actionGet().isExists()) {
+                indexIsReady = true
+                log.debug "${tries}. Index IS ready - proceed"
+            } else if (tries >= maxTries) {
+                break
+            } else {
+                log.debug "${tries}. Index not ready - sleep"
+                sleep(1000)
+            }
+        }
+
         def resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
                 .execute()
                 .actionGet();
@@ -170,6 +188,20 @@ class ElasticSearchService {
         // hand-coded copy fields with different analysers
         doc.organisationFacet = doc.organisationName
         doc.typeFacet = doc.type
+
+        if (doc.extent?.geometry) {
+            doc.stateFacet = doc.extent.geometry.state
+            doc.lgaFacet = doc.extent.geometry.lga
+            doc.nrmFacet = doc.extent.geometry.nrm
+        }
+
+        if (!doc.name && doc.type) {
+            // activities have no name so we'll use the type
+            doc.name = doc.type
+        }
+
+        doc.nameSort = doc.name
+
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
             String lat = doc.extent.geometry.decimalLatitude as String
             String lon = doc.extent.geometry.decimalLongitude as String
@@ -201,6 +233,22 @@ class ElasticSearchService {
                             "index":"not_analyzed"
                         },
                         "class": {
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "stateFacet": {
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "lgaFacet": {
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "nrmFacet": {
+                            "type":"string",
+                            "index":"not_analyzed"
+                        },
+                        "nameSort": {
                             "type":"string",
                             "index":"not_analyzed"
                         }
@@ -373,10 +421,13 @@ class ElasticSearchService {
                 facetList.add(FacetBuilders.termsFacet(it).field(it).size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             }
         } else {
-            facetList.add(FacetBuilders.termsFacet("type").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("organisation").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
         }
 
         return facetList
