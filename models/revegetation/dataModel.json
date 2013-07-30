@@ -13,7 +13,10 @@
         {"name":"species", "dataType":"species", "speciesList":"project"},
         {"name":"number", "dataType":"number"},
         {"name":"seedSown", "dataType":"number"},
-        {"name":"structuralLayer", "dataType":"text"}
+        {"name":"structuralLayer", "dataType":"text", "constraints":["Overstory", "Midstory", "Understory", "Ground stratum"]},
+        {"name":"typeOfStock", "dataType":"text", "constraints":["Seed", "Tube", "Advanced", "Cutting", "Other"]},
+        {"name":"stockProvenance", "dataType":"text"},
+        {"name":"typeOfGuard", "dataType":"text", "constraints":["None", "Gro-guard", "Carton", "Other"]}
     ]
     }
 ],
@@ -47,18 +50,19 @@
         "editableRows":"true",
         "userAddedRows":true,
         "columns": [
-            {"title":"Species", "width":"40%", "type":"autocomplete", "source":"species"},
-            {"title":"No. Planted", "width":"15%","type":"number", "source":"number"},
-            {"title":"Seed Sown (Kg)", "width":"15%","type":"number", "source":"seedSown"},
-            {"title":"Structural Layer", "width":"15%","type":"text", "source":"structuralLayer"}
+            {"title":"Species", "width":"25%", "type":"autocomplete", "source":"species"},
+            {"title":"No. Planted", "width":"10%","type":"number", "source":"number"},
+            {"title":"Seed Sown (Kg)", "width":"10%","type":"number", "source":"seedSown"},
+            {"title":"Structural Layer", "width":"10%","type":"selectOne", "source":"structuralLayer"},
+            {"title":"Type of stock", "width":"10%","type":"selectOne", "source":"typeOfStock"},
+            {"title":"Stock Provenance", "width":"10%","type":"text", "source":"stockProvenance"},
+            {"title":"Type of Guard", "width":"10%","type":"selectOne", "source":"typeOfGuard"}
+
 
         ],
         "footer": {
             "rows":[{"columns":[
-                {"type":"literal","source":""},
-                {"type":"literal","source":""},
-                {"type":"literal","source":""},
-                {"type":"literal","source":""}
+                {"type":"literal","source":"", "colspan":"7"}
             ]}]
         }
     },
