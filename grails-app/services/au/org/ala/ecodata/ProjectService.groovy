@@ -7,7 +7,7 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
 
-    def grailsApplication, siteService
+    def grailsApplication, siteService, documentService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -42,6 +42,7 @@ class ProjectService {
         if (levelOfDetail != FLAT) {
             mapOfProperties.remove("sites")
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
+            mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
         }
         mapOfProperties.findAll {k,v -> v != null}
     }

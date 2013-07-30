@@ -35,6 +35,10 @@ class DocumentService {
             Document.findAllByStatus(ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    def findAllForProjectId(id, levelOfDetail = []) {
+        Document.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
     /**
      * todo: NOTE that this does not yet copy the file - it assumes the file has
      * been placed in the uploads directory
