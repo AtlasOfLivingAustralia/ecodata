@@ -1,5 +1,6 @@
 import au.org.ala.ecodata.GormEventListener
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
+import org.grails.datastore.mapping.core.Datastore
 
 
 class BootStrap {
@@ -9,8 +10,10 @@ class BootStrap {
 
     def init = { servletContext ->
         // Add custom GORM event listener for ES indexing
-        def applicationContext = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
-        applicationContext.addApplicationListener new GormEventListener(applicationContext.mongoDatastore)
+        def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
+        ctx.getBeansOfType(Datastore).values().each { Datastore d ->
+            ctx.addApplicationListener new GormEventListener(d)
+        }
 
         // Index all docs
         elasticSearchService.initialize()
