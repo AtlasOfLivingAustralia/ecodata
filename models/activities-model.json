@@ -28,7 +28,8 @@
             "outputs": [
                 "Fencing",
                 "Participant Information",
-                "Revegetation"
+                "Revegetation",
+                "Photo Points"
             ]
         },
         {
@@ -79,6 +80,11 @@
             "template":"revegetation",
             "name": "Revegetation",
             "scoreName":"totalSeedPlanted"
+        },
+        {
+            "template":"photoPoints",
+            "name":"Photo Points",
+            "scoreName":"photo"
         }
     ]
 }

@@ -1,0 +1,29 @@
+{
+    "modelName":"Revegetation",
+    "dataModel":[
+        {"name":"photoPoints", "dataType":"photoPoints", "columns": [
+                {"name":"name", "dataType":"text"},
+                {"name":"photo", "dataType":"embeddedImage"},
+                {"name":"comment", "dataType":"text"}
+            ],
+            "userAddedRows":"false"}
+    ],
+    "viewModel":[{
+        "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
+        "editableRows":"true",
+        "source":"photoPoints",
+        "userAddedRows":false,
+        "columns": [
+            {"title":"Photo point", "width":"25%","type":"photopoint", "source":"name", "readOnly":"true"},
+            {"title":"Photo", "width":"40%","source":"photo"},
+            {"title":"Comment", "width":"20%","source":"comment"}
+        ],
+        "footer": {
+            "rows":[{"columns":[
+                {"type":"literal","source":""},
+                {"type":"literal","source":""},
+                {"type":"literal","source":""},
+            ]}]
+        }
+    }
+    ]}

@@ -9,13 +9,6 @@
     {"name":"connectivityIndex","dataType":"text", "constraints":["Connected to patch of more than 1000 ha","Connected to patch of 100 to 1000 ha","Connected to patch of 25 to 100 ha","Connected to patch of less than 25 ha","Patch linked to other vegetation via riparian link","Isolated forest or woodland remnant","Patch surrounded by native grasses","Isolated grassland","No vegetation within 1km","Only isolated Paddock trees within 1 km","Patch surrounded by grazing","Patch surrounded by cropping"]},
     {"name":"environmentalBenefits","dataType":"stringList", "constraints":["Groundwater recharge management","Groundwater discharge or salinity management","Soil stabilisation","Riparian rehabilitation","Streambank protection","Nutrient cycling"]},
     {"name":"photoOfActivity", "dataType":"image"},
-    {"name":"photoPoints", "dataType":"photoPoints",
-     "columns": [
-         {"name":"name", "dataType":"text"},
-         {"name":"photo", "dataType":"embeddedImage"},
-         {"name":"comment", "dataType":"text"}
-     ],
-    "userAddedRows":"false"},
     {"name":"planting", "dataType":"list", "columns": [
         {"name":"species", "dataType":"species", "speciesList":"project"},
         {"name":"number", "dataType":"number"},
@@ -25,7 +18,8 @@
     }
 ],
 "viewModel":[
-    {   "type":"row",
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Revegetation Information</h4>"}]},
+    {   "type":"row", "class": "output-section",
         "items": [
             {
                 "type":"col",
@@ -33,42 +27,23 @@
                     {"type":"selectOne","source":"activityPurpose","preLabel":"Activity purpose:", "validate":"required"},
                     {"type":"number","source":"activityDuration","preLabel":"Activity duration (Hrs)", "validate":"required,min[0]"},
                     {"type":"selectOne","source":"revegetationType","preLabel":"Revegetation type:"},
-                    {"type":"selectMany","source":"adjacentUse","preLabel":"Adjacent use:"}
+                    {"type":"selectMany","source":"environmentalBenefits","preLabel":"Environmental benefits:"}
                 ]
             },
             {
                 "type":"col",
                 "items": [
+                    {"type":"textarea", "source":"equipmentUsed", "preLabel":"Equipment used:"},
                     {"type":"selectOne","source":"connectivityIndex","preLabel":"Connectivity index:"},
-                    {"type":"selectMany","source":"environmentalBenefits","preLabel":"Environmental benefits:"}
+                    {"type":"selectMany","source":"adjacentUse","preLabel":"Adjacent use:"}
                 ]
             }
         ]
     },
+
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Planting Details</h4>"}]},
     {
-        "type":"row",
-        "items": [{"type":"image", "source":"photoOfActivity", "preLabel":"Photo of activity (NB. This is not a photo point)"}]
-    },
-    {
-        "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
-        "editableRows":"true",
-        "source":"photoPoints",
-        "userAddedRows":false,
-        "columns": [
-            {"title":"Photo point", "width":"25%","type":"photopoint", "source":"name", "readOnly":"true"},
-            {"title":"Photo", "width":"40%","source":"photo"},
-            {"title":"Comment", "width":"20%","source":"comment"}
-        ],
-        "footer": {
-            "rows":[{"columns":[
-                {"type":"literal","source":""},
-                {"type":"literal","source":""},
-                {"type":"literal","source":""},
-            ]}]
-        }
-    },
-    {
-        "type":"table", "source":"planting",
+        "type":"table", "source":"planting", "class": "output-section",
         "editableRows":"true",
         "userAddedRows":true,
         "columns": [
@@ -86,8 +61,11 @@
                 {"type":"literal","source":""}
             ]}]
         }
+    },
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photos</h4>"}]},
+    {
+        "type":"row", "class": "output-section",
+        "items": [{"type":"image", "source":"photoOfActivity"}]
     }
-
-
 ]
 }
