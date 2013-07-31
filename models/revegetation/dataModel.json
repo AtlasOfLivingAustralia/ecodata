@@ -10,15 +10,16 @@
     {"name":"environmentalBenefits","dataType":"stringList", "constraints":["Groundwater recharge management","Groundwater discharge or salinity management","Soil stabilisation","Riparian rehabilitation","Streambank protection","Nutrient cycling"]},
     {"name":"photoOfActivity", "dataType":"image"},
     {"name":"planting", "dataType":"list", "columns": [
-        {"name":"species", "dataType":"species", "speciesList":"project"},
+        {"name":"species", "dataType":"species", "speciesList":"project", "noTotal":"true"},
         {"name":"number", "dataType":"number"},
         {"name":"seedSown", "dataType":"number"},
-        {"name":"structuralLayer", "dataType":"text", "constraints":["Overstory", "Midstory", "Understory", "Ground stratum"]},
-        {"name":"typeOfStock", "dataType":"text", "constraints":["Seed", "Tube", "Advanced", "Cutting", "Other"]},
-        {"name":"stockProvenance", "dataType":"text"},
-        {"name":"typeOfGuard", "dataType":"text", "constraints":["None", "Gro-guard", "Carton", "Other"]}
-    ]
-    }
+        {"name":"structuralLayer", "dataType":"text", "constraints":["Overstory", "Midstory", "Understory", "Ground stratum"], "noTotal":"true"},
+        {"name":"typeOfStock", "dataType":"text", "constraints":["Seed", "Tube", "Advanced", "Cutting", "Other"], "noTotal":"true"},
+        {"name":"stockProvenance", "dataType":"text", "noTotal":"true"},
+        {"name":"typeOfGuard", "dataType":"text", "constraints":["None", "Gro-guard", "Carton", "Other"], "noTotal":"true"}],
+     "columnTotals":{"name":"totals","source":"planting", "rows":[
+        {"name":"totals","dataType":"number","computed":{"dependents":"all","operation":"sum"}}]}},
+    {"name":"totalNumberPlanted", "dataType":"number", "primaryResult":"true", "computed": {"dependents":{"fromList":"planting", "source":"number"}, "operation":"sum"}}
 ],
 "viewModel":[
     {   "type": "row", "items": [{"type": "literal", "source":"<h4>Revegetation Information</h4>"}]},
