@@ -6,6 +6,8 @@ class ECTagLib {
 
     static namespace = "ec"
 
+    def userService
+
     /**
      * @attr active
      * @attr title
@@ -24,6 +26,13 @@ class ECTagLib {
                 i(class:'icon-chevron-right') { mkp.yieldUnescaped('&nbsp;')}
                 mkp.yield(attrs.title)
             }
+        }
+    }
+
+    def currentUserDisplayName = { attrs, body ->
+        def mb = new MarkupBuilder(out)
+        mb.span(class:'username') {
+            mkp.yield(userService.currentUserDisplayName)
         }
     }
 

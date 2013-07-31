@@ -8,6 +8,6 @@
 
     <body>
         <content tag="pageTitle">Users</content>
-        <div class="hero-unit">All users are mark.woolston@csiro.au.</div>
+        <div class="hero-unit">All users are <ec:currentUserDisplayName />.</div>
     </body>
 </html>
