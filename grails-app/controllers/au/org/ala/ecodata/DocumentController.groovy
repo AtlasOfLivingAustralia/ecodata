@@ -62,8 +62,7 @@ class DocumentController {
         if (id) {
             result = documentService.update(props,id)
             message = [message: 'updated']
-        }
-        else {
+        } else {
             result = documentService.create(props)
             message = [message: 'created', documentId: result.documentId]
         }

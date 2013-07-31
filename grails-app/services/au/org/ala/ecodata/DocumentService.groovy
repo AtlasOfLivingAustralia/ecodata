@@ -47,6 +47,7 @@ class DocumentService {
      */
     def create(props) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
+        props.remove 'documentId'
         try {
             commonService.updateProperties(d, props)
             return [status:'ok',documentId:d.documentId]
