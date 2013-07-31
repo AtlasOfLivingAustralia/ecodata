@@ -29,6 +29,8 @@ import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 
+import javax.annotation.PostConstruct
+
 import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.node.NodeBuilder.*
 
@@ -54,8 +56,9 @@ class ElasticSearchService {
     def MAX_FACETS = 10;
 
     /**
-     * Init method to be called on service creation (currently Bootstrap.groovy)
+     * Init method to be called on service creation
      */
+    @PostConstruct
     def initialize() {
         // see http://www.elasticsearch.org/guide/clients/groovy-api/client/ for details for adding config
         log.info "Setting-up elasticsearch node and client"
@@ -274,7 +277,7 @@ class ElasticSearchService {
                 indexDoc(projectMap)
                 break;
             case au.org.ala.ecodata.Site:
-                def siteMap = siteService.toMap(doc, "brief")
+                def siteMap = siteService.toMap(doc, "flat")
                 siteMap["class"] = docClass.name
                 indexDoc(siteMap)
                 break;
@@ -301,7 +304,7 @@ class ElasticSearchService {
         log.debug "Indexing all sites"
         def sites = Site.findAll()
         sites.each {
-            def siteMap = siteService.toMap(it, "brief")
+            def siteMap = siteService.toMap(it, "flat")
             siteMap["class"] = new Site().getClass().name
             indexDoc(siteMap)
         }
@@ -384,7 +387,7 @@ class ElasticSearchService {
         source.query(queryString(query))
 
         // add facets
-        addFacets(params.facets, params.fq).each {
+        addFacets(params.facets, params.fq, params.maxFacets ? params.maxFacets as int : MAX_FACETS).each {
             source.facet(it)
         }
 
@@ -394,7 +397,9 @@ class ElasticSearchService {
             source.filter(buildFilters(params.fq))
         }
 
-        source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
+        if (params.highlight) {
+            source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
+        }
 
         request.source(source)
 
@@ -408,26 +413,26 @@ class ElasticSearchService {
      * @param filters
      * @return facetList
      */
-    def addFacets(facets, filters) {
+    def addFacets(facets, filters, maxFacets = MAX_FACETS) {
         // use FacetBuilders
         // e.g. FacetBuilders.termsFacet("f1").field("field")
-        log.debug "filters = $filters"
+        log.debug "filters = $filters; maxFacets = ${maxFacets}"
 
         def facetList = []
         def filterList = getFilterList(filters)
 
         if (facets) {
             facets.split(",")each {
-                facetList.add(FacetBuilders.termsFacet(it).field(it).size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+                facetList.add(FacetBuilders.termsFacet(it).field(it).size(maxFacets).facetFilter(addFacetFilter(filterList)))
             }
         } else {
-            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("class").field("class").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(MAX_FACETS).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("class").field("class").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
         }
 
         return facetList

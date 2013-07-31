@@ -16,7 +16,7 @@ class BootStrap {
         }
 
         // Index all docs
-        elasticSearchService.initialize()
+        //elasticSearchService.initialize()
         elasticSearchService.indexAll()
     }
 
