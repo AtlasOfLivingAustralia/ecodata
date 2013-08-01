@@ -9,8 +9,9 @@
 
 ],
 "viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Fence Details</h4>"}]},
     {
-        "type":"row",
+        "type":"row", "class": "output-section",
         "items": [
             {"type":"selectOne","source":"fenceType","preLabel":"Fence Type:","width":"10%", "validate":"required"},
             {"type":"number","source":"lengthOfFence","preLabel":"Length of fence:","postLabel":"m", "width":"40%"},

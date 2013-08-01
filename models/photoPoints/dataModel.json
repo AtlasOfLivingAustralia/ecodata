@@ -8,7 +8,10 @@
             ],
             "userAddedRows":"false"}
     ],
-    "viewModel":[{
+    "viewModel":[
+
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photo Points</h4>"}]},
+        {
         "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
         "editableRows":"true",
         "source":"photoPoints",

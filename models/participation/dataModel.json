@@ -9,8 +9,9 @@
 
 ],
 "viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Participation</h4>"}]},
     {
-        "type":"row",
+        "type":"row", "class":"output-section",
         "items": [
             {"type":"number","source":"totalParticipants","preLabel":"Total No. of participants:","width":"20%", "validate":"required,min[0]"},
             {"type":"number","source":"numberOfVolunteers","preLabel":"No. of volunteers:", "width":"20%", "validate":"required,min[0]"},
