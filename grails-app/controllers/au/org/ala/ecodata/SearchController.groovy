@@ -1,11 +1,9 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 
 class SearchController {
-    def projectService
-    def siteService
-    def activityService
     def searchService
     def elasticSearchService
 
@@ -20,6 +18,21 @@ class SearchController {
         render res
     }
 
+    def elasticPost() {
+        def paramsObj = request.JSON
+        def paramMap = new GrailsParameterMap(paramsObj, request)
+        log.debug "paramMap = ${paramMap}"
+
+        if (paramMap) {
+            def res = elasticSearchService.search(paramMap.query, paramMap)
+            response.setContentType("application/json")
+            render res
+        } else {
+            def msg = [error: "Required JSON body not found"]
+            render msg as JSON
+        }
+    }
+
     def clearIndex() {
         log.debug "Clearing index"
         render elasticSearchService.deleteIndex()
@@ -27,7 +40,5 @@ class SearchController {
 
     def indexAll() {
         elasticSearchService.indexAll()
-
-
     }
 }

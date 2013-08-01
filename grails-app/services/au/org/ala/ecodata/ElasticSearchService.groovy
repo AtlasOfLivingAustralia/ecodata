@@ -16,6 +16,7 @@
 package au.org.ala.ecodata
 
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.get.MultiGetRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
@@ -153,15 +154,13 @@ class ElasticSearchService {
         def tries = 0
 
         while (!indexIsReady) {
-            log.debug "$docId - indexIsReady = ${indexIsReady}"
+            //log.debug "$docId - indexIsReady = ${indexIsReady}"
             tries++
             if (client.admin().indices().prepareExists(DEFAULT_INDEX).execute().actionGet().isExists()) {
                 indexIsReady = true
-                log.debug "${tries}. Index IS ready - proceed"
             } else if (tries >= maxTries) {
                 break
             } else {
-                log.debug "${tries}. Index not ready - sleep"
                 sleep(1000)
             }
         }
@@ -475,9 +474,9 @@ class ElasticSearchService {
             def fqs = fq.tokenize(":")
             // support SOLR style filters (-) for exclude
             if (fqs[0].getAt(0) == "-") {
-                boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
+                boolFilter.mustNot(FilterBuilders.prefixFilter(fqs[0][1..-1], fqs[1]))
             } else {
-                boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
             }
         }
 
