@@ -31,13 +31,14 @@ import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 
 import javax.annotation.PostConstruct
+import javax.annotation.PreDestroy
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.node.NodeBuilder.*
 
 /**
  * ElasticSearch service
- * Note: initialize and destroy methods are called by Bootstrap.groovy
+ *
  * Code gist taken from
  *   https://github.com/mstein/elasticsearch-grails-plugin/blob/master/grails-app/services/org/grails/plugins/elasticsearch/ElasticSearchService.groovy
  *
@@ -52,6 +53,7 @@ class ElasticSearchService {
 
     Node node;
     Client client;
+
     def DEFAULT_INDEX = "all"
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10;
@@ -497,7 +499,7 @@ class ElasticSearchService {
     }
 
     /**
-     * Helper method to return a List give either a String or String[]
+     * Helper method to return a List given either a String or String[]
      *
      * @param filters
      * @return filterList
@@ -563,8 +565,9 @@ class ElasticSearchService {
     }
 
     /**
-     * Shutdown ES server (called by Bootstrap.groovy)
+     * Shutdown ES server
      */
+    @PreDestroy
     def destroy() {
         node.close();
     }

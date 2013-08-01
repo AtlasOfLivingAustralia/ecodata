@@ -22,6 +22,6 @@ class BootStrap {
 
     def destroy = {
         // shutdown ES server
-        elasticSearchService.destroy()
+        //elasticSearchService.destroy()
     }
 }
