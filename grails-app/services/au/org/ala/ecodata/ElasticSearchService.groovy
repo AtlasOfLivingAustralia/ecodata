@@ -214,7 +214,12 @@ class ElasticSearchService {
             //log.debug "data = ${doc.location.data}"
             def lat = doc.location.data.decimalLatitude.getAt(0) as String
             def lon = doc.location.data.decimalLongitude.getAt(0) as String
-            //log.debug "lat = ${lat} || type = ${lat.getClass().name}"
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
+        } else if (doc.extent?.geometry?.centre?.size() ==2) {
+            def lat = doc.extent.geometry.centre[1] as String
+            def lon = doc.extent.geometry.centre[0] as String
             doc.geo = [:]
             doc.geo.lat = lat.toFloat()
             doc.geo.lon = lon.toFloat()
