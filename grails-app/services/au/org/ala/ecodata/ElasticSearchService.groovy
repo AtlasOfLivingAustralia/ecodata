@@ -207,9 +207,17 @@ class ElasticSearchService {
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
             String lat = doc.extent.geometry.decimalLatitude as String
             String lon = doc.extent.geometry.decimalLongitude as String
-            doc.location = [:]
-            doc.location.lat = lat.toFloat()
-            doc.location.lon = lon.toFloat()
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
+        } else if (doc.location?.data?.decimalLatitude && doc.location?.data?.decimalLongitude) {
+            //log.debug "data = ${doc.location.data}"
+            def lat = doc.location.data.decimalLatitude.getAt(0) as String
+            def lon = doc.location.data.decimalLongitude.getAt(0) as String
+            //log.debug "lat = ${lat} || type = ${lat.getClass().name}"
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
         }
     }
 
