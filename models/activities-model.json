@@ -1,25 +1,52 @@
 {
     "activities": [
         {
-            "name": "DECCW vegetation assessment",
-            "type": "Assessment",
-            "outputs": ["Weed Abundance & Threat Score"]
+            "name": "Aboriginal heritage site protection",
+            "type": "Activity"
         },
         {
-            "name": "Feral animal assessment",
-            "type": "Assessment",
+            "name": "Community activity",
+            "type": "Activity"
+        },
+        {
+            "name": "Erosion control",
+            "type": "Activity"
+        },
+        {
+            "name": "Fire management",
+            "type": "Activity"
+        },
+        {
+            "name": "Grazing management",
+            "type": "Activity",
             "outputs": [
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
+                "hectaresManaged",
+                "lengthOfRiparianAreaProtected"
             ]
         },
         {
-            "name": "Weed management",
+            "name": "Infrastructure works",
+            "type": "Activity"
+        },
+        {
+            "name": "Management plan development",
+            "type": "Activity"
+        },
+        {
+            "name": "Pest animal management",
+            "type": "Activity"
+        },
+        {
+            "name": "Pest management",
+            "type": "Activity",
             "outputs": [
-                "Hectares Treated",
-                "Length of Roadside Cleared",
-                "Length of Riparian Area Cleared"
-            ],
+                "hectaresTreated",
+                "hectaresProtected",
+                "kilometersFencing"
+            ]
+        },
+        {
+            "name": "Research",
             "type": "Activity"
         },
         {
@@ -33,58 +60,101 @@
             ]
         },
         {
-            "name": "Pest management",
-            "outputs": [
-                "hectaresTreated",
-                "hectaresProtected",
-                "kilometersFencing"
-            ],
+            "name": "Stream/waterway protection",
             "type": "Activity"
         },
         {
-            "name": "Grazing management",
-            "outputs": [
-                "hectaresManaged",
-                "lengthOfRiparianAreaProtected"
-            ],
+            "name": "Water management",
             "type": "Activity"
+        },
+        {
+            "name": "Weed management",
+            "type": "Activity",
+            "outputs": [
+                "Hectares Treated",
+                "Length of Roadside Cleared",
+                "Length of Riparian Area Cleared"
+            ]
+        },
+        {
+            "name": "Site assessment",
+            "type": "Assessment"
+        },
+        {
+            "name": "Fauna (biological) survey",
+            "type": "Assessment"
+        },
+        {
+            "name": "Flora (biological) survey",
+            "type": "Assessment"
+        },
+        {
+            "name": "Pest animal survey",
+            "type": "Assessment"
+        },
+        {
+            "name": "Weed Infestation & Monitoring",
+            "type": "Activity"
+        },
+        {
+            "name": "Feral animal assessment",
+            "type": "Assessment",
+            "outputs": [
+                "Feral Animal Abundance Score",
+                "Feral Animal Frequency Score"
+            ]
+        },
+        {
+            "name": "DECCW vegetation assessment",
+            "type": "Assessment",
+            "outputs": ["Weed Abundance & Threat Score"]
         }
     ],
     "outputs": [
         {
             "template": "weedAbundanceAndThreatScore",
-            "name": "Weed Abundance & Threat Score",
-            "scoreNames": ["totalWeedAbundanceAndThreatScore"]
+            "scoreNames": ["totalWeedAbundanceAndThreatScore"],
+            "name": "Weed Abundance & Threat Score"
         },
         {
             "template": "feralAnimalAbundanceScore",
-            "name": "Feral Animal Abundance Score",
-            "scoreNames": ["totalFeralAnimalAbundanceScore"]
+            "scoreNames": ["totalFeralAnimalAbundanceScore"],
+            "name": "Feral Animal Abundance Score"
         },
         {
             "template": "feralAnimalFrequencyScore",
-            "name": "Feral Animal Frequency Score",
-            "scoreNames": ["totalFeralAnimalFrequencyScore"]
+            "scoreNames": ["totalFeralAnimalFrequencyScore"],
+            "name": "Feral Animal Frequency Score"
         },
         {
             "template": "fencing",
-            "name": "Fencing",
-			"scoreNames": ["lengthOfFence","purposeOfFence","fenceCost","fenceType"]
+            "scoreNames": [
+                "lengthOfFence",
+                "purposeOfFence",
+                "fenceCost",
+                "fenceType"
+            ],
+            "name": "Fencing"
         },
         {
             "template": "participation",
-            "name": "Participant Information",
-            "scoreNames": ["totalParticipants","numberOfVolunteers","numberOfIndigenousParticipants"]
+            "scoreNames": [
+                "totalParticipants",
+                "numberOfVolunteers",
+                "numberOfIndigenousParticipants"
+            ],
+            "name": "Participant Information"
         },
         {
             "template":"revegetation",
             "name": "Revegetation",
             "scoreNames":["totalNumberPlanted"]
+            "template": "revegetation",
+            "name": "Revegetation"
         },
         {
-            "template":"photoPoints",
-            "name":"Photo Points",
-            "scoreName":"photo"
+            "template": "photoPoints",
+            "name": "Photo Points"
         }
     ]
 }
