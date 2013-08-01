@@ -149,8 +149,6 @@
             "template":"revegetation",
             "name": "Revegetation",
             "scoreNames":["totalNumberPlanted"]
-            "template": "revegetation",
-            "name": "Revegetation"
         },
         {
             "template": "photoPoints",
