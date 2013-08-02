@@ -20,6 +20,7 @@ import org.elasticsearch.action.get.MultiGetRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
+import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.QueryBuilder
@@ -46,7 +47,7 @@ import static org.elasticsearch.node.NodeBuilder.*
  */
 class ElasticSearchService {
     static transactional = false
-
+    def grailsApplication
     def projectService
     def siteService
     def activityService
@@ -63,10 +64,14 @@ class ElasticSearchService {
      */
     @PostConstruct
     def initialize() {
-        // see http://www.elasticsearch.org/guide/clients/groovy-api/client/ for details for adding config
         log.info "Setting-up elasticsearch node and client"
-        node = nodeBuilder().node();
+        ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
+        settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
+        settings.put("number_of_shards",1);
+        settings.put("number_of_replicas",0);
+        node = nodeBuilder().settings(settings).node();
         client = node.client();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
     }
 
     /**
@@ -151,21 +156,6 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId) {
         def isDeleted = false
-        def indexIsReady = false
-        def maxTries = 60
-        def tries = 0
-
-        while (!indexIsReady) {
-            //log.debug "$docId - indexIsReady = ${indexIsReady}"
-            tries++
-            if (client.admin().indices().prepareExists(DEFAULT_INDEX).execute().actionGet().isExists()) {
-                indexIsReady = true
-            } else if (tries >= maxTries) {
-                break
-            } else {
-                sleep(1000)
-            }
-        }
 
         def resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
                 .execute()
