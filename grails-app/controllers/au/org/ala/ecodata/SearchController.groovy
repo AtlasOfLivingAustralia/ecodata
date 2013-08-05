@@ -13,7 +13,13 @@ class SearchController {
     }
 
     def elastic() {
-        def res = elasticSearchService.search(params.query, params)
+        def res = elasticSearchService.search(params.query, params, "")
+        response.setContentType("application/json")
+        render res
+    }
+
+    def elasticHome() {
+        def res = elasticSearchService.search(params.query, params, "homepage")
         response.setContentType("application/json")
         render res
     }
@@ -24,7 +30,7 @@ class SearchController {
         log.debug "paramMap = ${paramMap}"
 
         if (paramMap) {
-            def res = elasticSearchService.search(paramMap.query, paramMap)
+            def res = elasticSearchService.search(paramMap.query, paramMap, "")
             response.setContentType("application/json")
             render res
         } else {
@@ -39,6 +45,6 @@ class SearchController {
     }
 
     def indexAll() {
-        elasticSearchService.indexAll()
+        render elasticSearchService.indexAll() as JSON
     }
 }

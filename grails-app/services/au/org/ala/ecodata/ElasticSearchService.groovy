@@ -15,6 +15,7 @@
 
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.get.MultiGetRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
@@ -56,7 +57,8 @@ class ElasticSearchService {
     Node node;
     Client client;
 
-    def DEFAULT_INDEX = "all"
+    def DEFAULT_INDEX = "search"
+    def HOMEPAGE_INDEX = "homepage"
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10;
 
@@ -110,19 +112,20 @@ class ElasticSearchService {
      * @param doc
      * @return IndexResponse
      */
-    def indexDoc(doc) {
+    def indexDoc(doc, index) {
         def docId = getEntityId(doc)
+        index = index?:DEFAULT_INDEX
 
         if (checkForDelete(doc, docId)) {
             return null
         }
 
         addCustomFields(doc)
+        def docJson = doc as JSON
 
-
-        client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
+        client.prepareIndex(index, DEFAULT_TYPE, docId)
             .setSource(
-                doc as HashMap<String, Object>
+                docJson.toString(false)
             ).execute().actionGet();
     }
 
@@ -185,24 +188,25 @@ class ElasticSearchService {
      *
      * @param doc
      */
-    def addCustomFields(HashMap doc) {
+    def addCustomFields(Map doc) {
         // hand-coded copy fields with different analysers
         doc.docType = getDocType(doc)
-        doc.organisationFacet = doc.organisationName
-        doc.typeFacet = doc.type
+        //doc.organisationFacet = doc.organisationName
+        //doc.typeFacet = doc.type
 
-        if (doc.extent?.geometry) {
-            doc.stateFacet = doc.extent.geometry.state
-            doc.lgaFacet = doc.extent.geometry.lga
-            doc.nrmFacet = doc.extent.geometry.nrm
-        }
+//        if (doc.extent?.geometry) {
+//            doc.stateFacet = doc.extent.geometry.state
+//            doc.lgaFacet = doc.extent.geometry.lga
+//            doc.nrmFacet = doc.extent.geometry.nrm
+//        }
 
         if (!doc.name && doc.type) {
             // activities have no name so we'll use the type
             doc.name = doc.type
         }
 
-        doc.nameSort = doc.name
+        //doc.nameSort = doc.name
+
 
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
             String lat = doc.extent.geometry.decimalLatitude as String
@@ -240,33 +244,92 @@ class ElasticSearchService {
                         "store": "yes"
                     },
                     "properties": {
-                        "organisationFacet" : {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
+                        "organisationName": {
+                            "type" : "multi_field",
+                            "fields" : {
+                                "organisationName" : {"type" : "string", "index" : "analyzed"},
+                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
+                            }
                         },
-                        "typeFacet": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
+                        "type": {
+                            "type" : "multi_field",
+                            "fields" : {
+                                "type" : {"type" : "string", "index" : "analyzed"},
+                                "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
+                            }
                         },
                         "class": {
                             "type":"string",
                             "analyzer":"facetKeyword"
                         },
-                        "stateFacet": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
+                        "name": {
+                            "type" : "multi_field",
+                            "fields" : {
+                                "name" : {"type" : "string", "index" : "analyzed"},
+                                "nameSort" : {"type" : "string", "index" : "not_analyzed"}
+                            }
                         },
-                        "lgaFacet": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
+                        "extent":{
+                            "properties": {
+                                "geometry": {
+                                    "properties": {
+                                        "state": {
+                                            "type" : "multi_field",
+                                            "fields" : {
+                                                "state" : {"type" : "string", "index" : "analyzed"},
+                                                "stateFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                            }
+                                        },
+                                        "lga": {
+                                            "type" : "multi_field",
+                                            "fields" : {
+                                                "lga" : {"type" : "string", "index" : "analyzed"},
+                                                "lgaFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                            }
+                                        },
+                                        "nrm": {
+                                            "type" : "multi_field",
+                                            "fields" : {
+                                                "nrm" : {"type" : "string", "index" : "analyzed"},
+                                                "nrmFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         },
-                        "nrmFacet": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
-                        },
-                        "nameSort": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
+                        "sites":{
+                            "properties":{
+                                "extent":{
+                                    "properties": {
+                                        "geometry": {
+                                            "properties": {
+                                                "state": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "states" : {"type" : "string", "index" : "analyzed"},
+                                                        "statesFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+                                                "lga": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "lgas" : {"type" : "string", "index" : "analyzed"},
+                                                        "lgasFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+                                                "nrm": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "nrms" : {"type" : "string", "index" : "analyzed"},
+                                                        "nrmsFacets" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -288,6 +351,7 @@ class ElasticSearchService {
         '''
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
         client.admin().indices().prepareCreate(DEFAULT_INDEX).setSource(mappingJson).execute().actionGet()
+        client.admin().indices().prepareCreate(HOMEPAGE_INDEX).setSource(mappingJson).execute().actionGet()
     }
 
     /**
@@ -302,17 +366,21 @@ class ElasticSearchService {
             case au.org.ala.ecodata.Project:
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["class"] = docClass.name
-                indexDoc(projectMap)
+                indexDoc(projectMap, DEFAULT_INDEX)
+                // homepage index
+                def projectMapDeep = projectService.toMap(doc, "")
+                projectMapDeep["class"] = docClass.name
+                indexDoc(projectMapDeep, HOMEPAGE_INDEX)
                 break;
             case au.org.ala.ecodata.Site:
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["class"] = docClass.name
-                indexDoc(siteMap)
+                indexDoc(siteMap, DEFAULT_INDEX)
                 break;
             case au.org.ala.ecodata.Activity:
                 def activityMap = activityService.toMap(doc, "flat")
                 activityMap["class"] = docClass.name
-                indexDoc(activityMap)
+                indexDoc(activityMap, DEFAULT_INDEX)
                 break;
         }
     }
@@ -327,21 +395,29 @@ class ElasticSearchService {
         def list = projectService.list("flat", false)
         list.each {
             it["class"] = new Project().getClass().name
-            indexDoc(it)
+            indexDoc(it, DEFAULT_INDEX)
+        }
+        // homepage index
+        def listDeep = projectService.list("", false)
+        listDeep.each {
+            it["class"] = new Project().getClass().name
+            //log.debug "project (deep) = ${it as JSON}"
+            indexDoc(it, HOMEPAGE_INDEX)
         }
         log.debug "Indexing all sites"
         def sites = Site.findAll()
         sites.each {
             def siteMap = siteService.toMap(it, "flat")
             siteMap["class"] = new Site().getClass().name
-            indexDoc(siteMap)
+            indexDoc(siteMap, DEFAULT_INDEX)
         }
         log.debug "Indexing all activities"
         def acts = activityService.getAll(false, "flat")
         acts.each {
             it["class"] = new Activity().getClass().name
-            indexDoc(it)
+            indexDoc(it, DEFAULT_INDEX)
         }
+
     }
 
     /**
@@ -351,7 +427,7 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params) {
+    def search(String query, GrailsParameterMap params, index) {
         log.debug "search params: ${params}"
 
 //        SearchRequestBuilder builder = client
@@ -363,7 +439,8 @@ class ElasticSearchService {
 //                .addHighlightedField("description")
 //        SearchResponse sr = builder.execute().actionGet();
 
-        def request = buildSearchRequest(query, params)
+        index = index?:DEFAULT_INDEX
+        def request = buildSearchRequest(query, params, index)
         client.search(request).actionGet()
     }
 
@@ -390,12 +467,12 @@ class ElasticSearchService {
      * @param params
      * @return SearchRequest
      */
-    def buildSearchRequest(query, GrailsParameterMap params) {
+    def buildSearchRequest(query, GrailsParameterMap params, index) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
         // set indices and types
-        request.indices(DEFAULT_INDEX)
+        request.indices(index)
         def types = []
         if (params.types && params.types instanceof Collection<String>) {
             types = params.types
@@ -462,7 +539,7 @@ class ElasticSearchService {
         def filterList = getFilterList(filters)
 
         if (facets) {
-            facets.split(",")each {
+            facets.split(",").each {
                 facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).facetFilter(addFacetFilter(filterList)))
             }
         } else {
@@ -575,7 +652,7 @@ class ElasticSearchService {
      */
     public deleteIndex() {
         try {
-            def response = node.client().admin().indices().prepareDelete(DEFAULT_INDEX).execute().get()
+            def response = node.client().admin().indices().prepareDelete(DEFAULT_INDEX, HOMEPAGE_INDEX).execute().get()
             if (response.acknowledged) {
                 log.info "The index is removed"
             } else {
