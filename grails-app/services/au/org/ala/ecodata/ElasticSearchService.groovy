@@ -28,6 +28,7 @@ import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
+import org.elasticsearch.search.facet.terms.TermsFacet
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 
@@ -98,7 +99,7 @@ class ElasticSearchService {
 
             addMappings()
         } catch (Exception e) {
-            log.error "Error creating index: ${e}"
+            log.error "Error creating index: ${e}", e
         }
     }
 
@@ -117,6 +118,7 @@ class ElasticSearchService {
         }
 
         addCustomFields(doc)
+
 
         client.prepareIndex(DEFAULT_INDEX, DEFAULT_TYPE, docId)
             .setSource(
@@ -143,6 +145,11 @@ class ElasticSearchService {
                 docId = doc.id; break
         }
         docId
+    }
+
+    def getDocType(doc) {
+        def className = doc.class?:"au.org.ala.ecodata.doc"
+        className.tokenize(".")[-1].toLowerCase()
     }
 
     /**
@@ -178,8 +185,9 @@ class ElasticSearchService {
      *
      * @param doc
      */
-    def addCustomFields(doc) {
+    def addCustomFields(HashMap doc) {
         // hand-coded copy fields with different analysers
+        doc.docType = getDocType(doc)
         doc.organisationFacet = doc.organisationName
         doc.typeFacet = doc.type
 
@@ -224,7 +232,8 @@ class ElasticSearchService {
     def addMappings() {
 
         def mappingJson = '''
-            {
+        {
+            mappings:{
                 "doc": {
                     "_all": {
                         "enabled": true,
@@ -233,37 +242,52 @@ class ElasticSearchService {
                     "properties": {
                         "organisationFacet" : {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "typeFacet": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "class": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "stateFacet": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "lgaFacet": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "nrmFacet": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
                         },
                         "nameSort": {
                             "type":"string",
-                            "index":"not_analyzed"
+                            "analyzer":"facetKeyword"
+                        }
+                    }
+                }
+            },
+            settings:{
+                "analysis":{
+                    "analyzer":{
+                        "facetKeyword":{
+                           "filter":[
+                              "trim"
+                           ],
+                           "type":"custom",
+                           "tokenizer":"keyword"
                         }
                     }
                 }
             }
+        }
         '''
-        client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
+        //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
+        client.admin().indices().prepareCreate(DEFAULT_INDEX).setSource(mappingJson).execute().actionGet()
     }
 
     /**
@@ -391,7 +415,7 @@ class ElasticSearchService {
         source.query(queryString(query))
 
         // add facets
-        addFacets(params.facets, params.fq, params.maxFacets ? params.maxFacets as int : MAX_FACETS).each {
+        addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
             source.facet(it)
         }
 
@@ -417,26 +441,38 @@ class ElasticSearchService {
      * @param filters
      * @return facetList
      */
-    def addFacets(facets, filters, maxFacets = MAX_FACETS) {
+    def addFacets(facets, filters, flimit, fsort) {
         // use FacetBuilders
         // e.g. FacetBuilders.termsFacet("f1").field("field")
-        log.debug "filters = $filters; maxFacets = ${maxFacets}"
+        log.debug "filters = $filters; flimit = ${flimit}"
+        try {
+            flimit = (flimit) ? flimit as int : MAX_FACETS
+        } catch (Exception e) {
+            log.warn "addFacets error: ${e.message}"
+            flimit = MAX_FACETS
+        }
+        try {
+            fsort = (fsort) ? TermsFacet.ComparatorType.fromString(fsort) : TermsFacet.ComparatorType.COUNT
+        } catch (Exception e) {
+            log.warn "addFacets error: ${e.message}"
+            fsort = TermsFacet.ComparatorType.COUNT
+        }
 
         def facetList = []
         def filterList = getFilterList(filters)
 
         if (facets) {
             facets.split(",")each {
-                facetList.add(FacetBuilders.termsFacet(it).field(it).size(maxFacets).facetFilter(addFacetFilter(filterList)))
+                facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).facetFilter(addFacetFilter(filterList)))
             }
         } else {
-            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("class").field("class").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(maxFacets).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("class").field("class").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").order(fsort).size(flimit).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
         }
 
         return facetList
