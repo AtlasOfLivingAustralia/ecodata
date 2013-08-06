@@ -73,6 +73,7 @@ grails.mongo.default.mapping = {
  \*****************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
 app.elasticsearch.location = "/data/ecodata/elasticsearch/"
+app.elasticsearch.indexAllOnStartup = true
 
 /******************************************************************************\
  *  EXTERNAL SERVERS

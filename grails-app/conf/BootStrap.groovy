@@ -17,7 +17,9 @@ class BootStrap {
 
         // Index all docs
         //elasticSearchService.initialize()
-        elasticSearchService.indexAll()
+        if (grailsApplication.config.app.elasticsearch.indexAllOnStartup) {
+            elasticSearchService.indexAll()
+        }
     }
 
     def destroy = {

@@ -70,8 +70,8 @@ class ElasticSearchService {
         log.info "Setting-up elasticsearch node and client"
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
-        settings.put("number_of_shards",1);
-        settings.put("number_of_replicas",0);
+        //settings.put("number_of_shards",1);
+        //settings.put("number_of_replicas",0);
         node = nodeBuilder().settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
@@ -115,6 +115,7 @@ class ElasticSearchService {
     def indexDoc(doc, index) {
         def docId = getEntityId(doc)
         index = index?:DEFAULT_INDEX
+        //client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
 
         if (checkForDelete(doc, docId)) {
             return null
@@ -352,6 +353,7 @@ class ElasticSearchService {
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
         client.admin().indices().prepareCreate(DEFAULT_INDEX).setSource(mappingJson).execute().actionGet()
         client.admin().indices().prepareCreate(HOMEPAGE_INDEX).setSource(mappingJson).execute().actionGet()
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
     }
 
     /**
@@ -368,9 +370,15 @@ class ElasticSearchService {
                 projectMap["class"] = docClass.name
                 indexDoc(projectMap, DEFAULT_INDEX)
                 // homepage index
-                def projectMapDeep = projectService.toMap(doc, "")
-                projectMapDeep["class"] = docClass.name
-                indexDoc(projectMapDeep, HOMEPAGE_INDEX)
+//                try {
+//                    def projectMapDeep = projectService.toMap(doc, "")
+//                    projectMapDeep["class"] = docClass.name
+//                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
+//                } catch (StackOverflowError e) {
+//                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
+//                } catch (Exception e)  {
+//                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
+//                }
                 break;
             case au.org.ala.ecodata.Site:
                 def siteMap = siteService.toMap(doc, "flat")
@@ -398,12 +406,12 @@ class ElasticSearchService {
             indexDoc(it, DEFAULT_INDEX)
         }
         // homepage index
-        def listDeep = projectService.list("", false)
-        listDeep.each {
-            it["class"] = new Project().getClass().name
-            //log.debug "project (deep) = ${it as JSON}"
-            indexDoc(it, HOMEPAGE_INDEX)
-        }
+//        def listDeep = projectService.list("", false)
+//        listDeep.each {
+//            it["class"] = new Project().getClass().name
+//            //log.debug "project (deep) = ${it as JSON}"
+//            indexDoc(it, HOMEPAGE_INDEX)
+//        }
         log.debug "Indexing all sites"
         def sites = Site.findAll()
         sites.each {
