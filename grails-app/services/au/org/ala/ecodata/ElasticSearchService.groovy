@@ -19,6 +19,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.get.MultiGetRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
+import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
@@ -192,22 +193,11 @@ class ElasticSearchService {
     def addCustomFields(Map doc) {
         // hand-coded copy fields with different analysers
         doc.docType = getDocType(doc)
-        //doc.organisationFacet = doc.organisationName
-        //doc.typeFacet = doc.type
-
-//        if (doc.extent?.geometry) {
-//            doc.stateFacet = doc.extent.geometry.state
-//            doc.lgaFacet = doc.extent.geometry.lga
-//            doc.nrmFacet = doc.extent.geometry.nrm
-//        }
 
         if (!doc.name && doc.type) {
             // activities have no name so we'll use the type
             doc.name = doc.type
         }
-
-        //doc.nameSort = doc.name
-
 
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
             String lat = doc.extent.geometry.decimalLatitude as String
@@ -222,9 +212,31 @@ class ElasticSearchService {
             doc.geo = [:]
             doc.geo.lat = lat.toFloat()
             doc.geo.lon = lon.toFloat()
-        } else if (doc.extent?.geometry?.centre?.size() ==2) {
+        } else if (doc.extent?.geometry?.centre?.size() == 2) {
             def lat = doc.extent.geometry.centre[1] as String
             def lon = doc.extent.geometry.centre[0] as String
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
+        }
+
+        // Homepage index is nested TODO: remove duplicate code from above
+        if (doc.sites?.size() > 0 && doc.sites[0].extent?.geometry?.decimalLatitude && doc.sites[0].extent?.geometry?.decimalLatitude) {
+            String lat = doc.sites[0].extent.geometry.decimalLatitude as String
+            String lon = doc.sites[0].extent.geometry.decimalLongitude as String
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
+        } else if (doc.sites?.size() > 0 && doc.sites[0].location?.data?.decimalLatitude && doc.sites[0].location?.data?.decimalLongitude) {
+            //log.debug "data = ${doc.location.data}"
+            def lat = doc.sites[0].location.data.decimalLatitude.getAt(0) as String
+            def lon = doc.sites[0].location.data.decimalLongitude.getAt(0) as String
+            doc.geo = [:]
+            doc.geo.lat = lat.toFloat()
+            doc.geo.lon = lon.toFloat()
+        } else if (doc.sites?.size() > 0 && doc.sites[0].extent?.geometry?.centre?.size() == 2) {
+            def lat = doc.sites[0].extent.geometry.centre[1] as String
+            def lon = doc.sites[0].extent.geometry.centre[0] as String
             doc.geo = [:]
             doc.geo.lat = lat.toFloat()
             doc.geo.lon = lon.toFloat()
@@ -323,7 +335,7 @@ class ElasticSearchService {
                                                     "type" : "multi_field",
                                                     "fields" : {
                                                         "nrms" : {"type" : "string", "index" : "analyzed"},
-                                                        "nrmsFacets" : {"type" : "string", "index" : "not_analyzed"}
+                                                        "nrmsFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 }
                                             }
@@ -370,15 +382,15 @@ class ElasticSearchService {
                 projectMap["class"] = docClass.name
                 indexDoc(projectMap, DEFAULT_INDEX)
                 // homepage index
-//                try {
-//                    def projectMapDeep = projectService.toMap(doc, "")
-//                    projectMapDeep["class"] = docClass.name
-//                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
-//                } catch (StackOverflowError e) {
-//                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
-//                } catch (Exception e)  {
-//                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
-//                }
+                try {
+                    def projectMapDeep = projectService.toMap(doc, "")
+                    projectMapDeep["class"] = docClass.name
+                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
+                } catch (StackOverflowError e) {
+                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
+                } catch (Exception e)  {
+                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
+                }
                 break;
             case au.org.ala.ecodata.Site:
                 def siteMap = siteService.toMap(doc, "flat")
@@ -406,12 +418,12 @@ class ElasticSearchService {
             indexDoc(it, DEFAULT_INDEX)
         }
         // homepage index
-//        def listDeep = projectService.list("", false)
-//        listDeep.each {
-//            it["class"] = new Project().getClass().name
-//            //log.debug "project (deep) = ${it as JSON}"
-//            indexDoc(it, HOMEPAGE_INDEX)
-//        }
+        def listDeep = projectService.list(LevelOfDetail.NO_OUTPUTS.name(), false)
+        listDeep.each {
+            it["class"] = new Project().getClass().name
+            //log.debug "project (deep) = ${it as JSON}"
+            indexDoc(it, HOMEPAGE_INDEX)
+        }
         log.debug "Indexing all sites"
         def sites = Site.findAll()
         sites.each {

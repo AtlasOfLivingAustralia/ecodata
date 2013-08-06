@@ -48,7 +48,7 @@ class ActivityService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
-        if (levelOfDetail != FLAT) {
+        if (levelOfDetail != FLAT && levelOfDetail != LevelOfDetail.NO_OUTPUTS.name()) {
             mapOfProperties.remove("outputs")
             mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
         }
