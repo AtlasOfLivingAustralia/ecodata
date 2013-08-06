@@ -8,7 +8,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 class AdminController {
 
     def outputService, activityService, siteService, projectService,
-        commonService, cacheService, metadataService
+        commonService, cacheService, metadataService, elasticSearchService
 
     def index() {}
     def tools() {}
@@ -137,6 +137,12 @@ class AdminController {
             f.withWriter( 'UTF-8' ) { it << pj }
         }
         flash.message = "Database dumped to ${grailsApplication.config.app.dump.location}."
+        render 'done'
+    }
+
+    def reIndexAll() {
+        def resp = elasticSearchService.indexAll()
+        flash.message = "Search index re-indexed"
         render 'done'
     }
 

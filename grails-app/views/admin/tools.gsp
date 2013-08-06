@@ -45,6 +45,15 @@
                     });
                 });
 
+                $("#btnReIndexAll").click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'search', action:'indexAll')}").done(function(result) {
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
+
             });
 
         </script>
@@ -92,6 +101,14 @@
                         Reads any defined config files and merges new config with old. Usually used after a change is
                         made to external config files. Note that this cannot remove a config item as the result is a
                         union of the old and new config.
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="btnReIndexAll" class="btn btn-small btn-info" title="External config not set up yet">Reindex&nbsp;All&nbsp;(ElasticSearch)</button>
+                    </td>
+                    <td>
+                        Re-index all data. This action re-creates the ElasticSearch index.
                     </td>
                 </tr>
 
