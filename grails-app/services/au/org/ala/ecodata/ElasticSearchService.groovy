@@ -195,47 +195,60 @@ class ElasticSearchService {
             doc.name = doc.type
         }
 
+        // Add some processed lat/lon data to doc
+        doc.geo = []
+        def lat, lon
+
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
-            String lat = doc.extent.geometry.decimalLatitude as String
-            String lon = doc.extent.geometry.decimalLongitude as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
+            lat = doc.extent.geometry.decimalLatitude as String
+            lon = doc.extent.geometry.decimalLongitude as String
         } else if (doc.location?.data?.decimalLatitude && doc.location?.data?.decimalLongitude) {
             //log.debug "data = ${doc.location.data}"
-            def lat = doc.location.data.decimalLatitude.getAt(0) as String
-            def lon = doc.location.data.decimalLongitude.getAt(0) as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
+            lat = doc.location.data.decimalLatitude.getAt(0) as String
+            lon = doc.location.data.decimalLongitude.getAt(0) as String
         } else if (doc.extent?.geometry?.centre?.size() == 2) {
-            def lat = doc.extent.geometry.centre[1] as String
-            def lon = doc.extent.geometry.centre[0] as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
+            lat = doc.extent.geometry.centre[1] as String
+            lon = doc.extent.geometry.centre[0] as String
+        }
+
+        if (lat && lon) {
+            def geoObj = [:]
+            geoObj.siteName = doc.name
+            geoObj.siteId = doc.siteId
+            def loc = [:]
+            loc.lat = lat.toFloat()
+            loc.lon = lon.toFloat()
+            geoObj.loc = loc
+            doc.geo.add(geoObj)
         }
 
         // Homepage index is nested TODO: remove duplicate code from above
-        if (doc.sites?.size() > 0 && doc.sites[0].extent?.geometry?.decimalLatitude && doc.sites[0].extent?.geometry?.decimalLatitude) {
-            String lat = doc.sites[0].extent.geometry.decimalLatitude as String
-            String lon = doc.sites[0].extent.geometry.decimalLongitude as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
-        } else if (doc.sites?.size() > 0 && doc.sites[0].location?.data?.decimalLatitude && doc.sites[0].location?.data?.decimalLongitude) {
-            //log.debug "data = ${doc.location.data}"
-            def lat = doc.sites[0].location.data.decimalLatitude.getAt(0) as String
-            def lon = doc.sites[0].location.data.decimalLongitude.getAt(0) as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
-        } else if (doc.sites?.size() > 0 && doc.sites[0].extent?.geometry?.centre?.size() == 2) {
-            def lat = doc.sites[0].extent.geometry.centre[1] as String
-            def lon = doc.sites[0].extent.geometry.centre[0] as String
-            doc.geo = [:]
-            doc.geo.lat = lat.toFloat()
-            doc.geo.lon = lon.toFloat()
+        if (doc.sites?.size() > 0) {
+            // one or more sites to a project (deep copy)
+
+            doc.sites.each { site ->
+
+                if (site.extent?.geometry?.decimalLatitude && site.extent?.geometry?.decimalLatitude) {
+                    lat = site.extent.geometry.decimalLatitude as String
+                    lon = site.extent.geometry.decimalLongitude as String
+                } else if (site.location?.data?.decimalLatitude && site.location?.data?.decimalLongitude) {
+                    lat = site.location.data.decimalLatitude.getAt(0) as String
+                    lon = site.location.data.decimalLongitude.getAt(0) as String
+                } else if (site.extent?.geometry?.centre?.size() == 2) {
+                    lat = site.extent.geometry.centre[1] as String
+                    lon = site.extent.geometry.centre[0] as String
+                }
+                if (lat && lon) {
+                    def geoObj = [:]
+                    geoObj.siteName = site.name
+                    geoObj.siteId = site.siteId
+                    def loc = [:]
+                    loc.lat = lat.toFloat()
+                    loc.lon = lon.toFloat()
+                    geoObj.loc = loc
+                    doc.geo.add(geoObj)
+                }
+            }
         }
     }
 
