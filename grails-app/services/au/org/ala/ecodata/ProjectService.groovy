@@ -74,6 +74,8 @@ class ProjectService {
     def create(props) {
         assert getCommonService()
         def o = new Project(projectId: Identifiers.getNew(true,''))
+        o.name = props.name // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
+
         try {
             props.remove('sites')
             props.remove('id')
