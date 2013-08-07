@@ -6,5 +6,5 @@ package au.org.ala.ecodata
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
 enum LevelOfDetail {
-    flat, brief, NO_OUTPUTS
+    flat, brief, NO_OUTPUTS, NO_ACTIVITIES
 }

@@ -42,7 +42,7 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        if (!levelOfDetail.contains(BRIEF)) {
+        if (!levelOfDetail.contains(BRIEF) && levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
             def projects = projectService.getBrief(mapOfProperties.projects)
             mapOfProperties.projects = projects
             mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)

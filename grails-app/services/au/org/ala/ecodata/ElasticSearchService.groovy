@@ -17,9 +17,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
-import org.elasticsearch.action.get.MultiGetRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
-import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
@@ -50,13 +48,11 @@ import static org.elasticsearch.node.NodeBuilder.*
  */
 class ElasticSearchService {
     static transactional = false
-    def grailsApplication
-    def projectService
-    def siteService
-    def activityService
+    def grailsApplication, projectService, siteService, activityService
 
     Node node;
     Client client;
+    def indexingTempInactive = false // can be set to true for loading of dump files, etc
 
     def DEFAULT_INDEX = "search"
     def HOMEPAGE_INDEX = "homepage"
@@ -374,6 +370,10 @@ class ElasticSearchService {
      * @param doc
      */
     def indexDocType(doc) {
+        log.debug "Indexing switch is ${indexingTempInactive}"
+        if (indexingTempInactive) {
+            return null
+        }
         log.debug "doc has class: ${doc.getClass().name}"
         def docClass = doc.getClass()
         switch(docClass) {
@@ -383,7 +383,7 @@ class ElasticSearchService {
                 indexDoc(projectMap, DEFAULT_INDEX)
                 // homepage index
                 try {
-                    def projectMapDeep = projectService.toMap(doc, "")
+                    def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_OUTPUTS.name())
                     projectMapDeep["class"] = docClass.name
                     indexDoc(projectMapDeep, HOMEPAGE_INDEX)
                 } catch (StackOverflowError e) {
@@ -418,7 +418,7 @@ class ElasticSearchService {
             indexDoc(it, DEFAULT_INDEX)
         }
         // homepage index
-        def listDeep = projectService.list(LevelOfDetail.NO_OUTPUTS.name(), false)
+        def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
         listDeep.each {
             it["class"] = new Project().getClass().name
             //log.debug "project (deep) = ${it as JSON}"
@@ -671,15 +671,18 @@ class ElasticSearchService {
      * @return
      */
     public deleteIndex() {
-        try {
-            def response = node.client().admin().indices().prepareDelete(DEFAULT_INDEX, HOMEPAGE_INDEX).execute().get()
-            if (response.acknowledged) {
-                log.info "The index is removed"
-            } else {
-                log.error "The index could not be removed"
+        [DEFAULT_INDEX, HOMEPAGE_INDEX].each {
+            log.info "trying to delete $it"
+            try {
+                def response = node.client().admin().indices().prepareDelete(it).execute().get()
+                if (response.acknowledged) {
+                    log.info "The index is removed"
+                } else {
+                    log.error "The index could not be removed"
+                }
+            } catch (Exception e) {
+                log.error "The index you want to delete is missing : ${e.message}"
             }
-        } catch (Exception e) {
-            log.error "The index you want to delete is missing : ${e.message}"
         }
 
         // recreate the index and mappings

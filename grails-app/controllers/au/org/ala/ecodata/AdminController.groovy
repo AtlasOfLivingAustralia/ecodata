@@ -140,10 +140,13 @@ class AdminController {
         render 'done'
     }
 
+    /**
+     * Re-index all docs with ElasticSearch
+     */
     def reIndexAll() {
         def resp = elasticSearchService.indexAll()
-        flash.message = "Search index re-indexed"
-        render 'done'
+        flash.message = "Search index re-indexed - ${resp?.size()} docs"
+        render "Indexing done"
     }
 
     def clearMetadataCache() {
@@ -160,16 +163,27 @@ class AdminController {
         if (params.drop) {
             dropDB()
         }
+        def errorMsg
         ['project','site','activity','output'].each { collection ->
-            def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
-            switch (collection) {
-                case 'output': outputService.loadAll(JSON.parse(f.text)); break
-                case 'activity': activityService.loadAll(JSON.parse(f.text)); break
-                case 'site': siteService.loadAll(JSON.parse(f.text)); break
-                case 'project': projectService.loadAll(JSON.parse(f.text)); break
+            try {
+                elasticSearchService.indexingTempInactive = true // turn off search indexing
+                def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
+                switch (collection) {
+                    case 'output': outputService.loadAll(JSON.parse(f.text)); break
+                    case 'activity': activityService.loadAll(JSON.parse(f.text)); break
+                    case 'site': siteService.loadAll(JSON.parse(f.text)); break
+                    case 'project': projectService.loadAll(JSON.parse(f.text)); break
+                }
+            } catch (Exception e) {
+                errorMsg = "Load error: ${e}"
+                log.error errorMsg, e
+            } finally {
+                log.debug "Turning elasticSearch indexing ON"
+                elasticSearchService.indexingTempInactive = false // turn on search indexing
             }
         }
-        flash.message = "DB reloaded "
+        elasticSearchService.indexAll()
+        flash.message = errorMsg?:"DB reloaded "
         forward action: 'count'
     }
 
