@@ -71,6 +71,7 @@
             "name": "Weed management",
             "type": "Activity",
             "outputs": [
+                "Weed Management",
                 "Hectares Treated",
                 "Length of Roadside Cleared",
                 "Length of Riparian Area Cleared"
@@ -153,6 +154,11 @@
         {
             "template": "photoPoints",
             "name": "Photo Points"
+        },
+        {
+            "template":"weedManagement",
+            "name":"Weed Management",
+            "scoreNames": ["areaTreatedHa"]
         }
     ]
 }

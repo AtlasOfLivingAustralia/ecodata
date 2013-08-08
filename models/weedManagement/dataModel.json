@@ -1,0 +1,50 @@
+{
+"modelName":"Weed Management",
+"dataModel":[
+    {"name":"activityPurpose","dataType":"text", "constraints":["Biodiverse plantings","Protecting and enhancing existing native vegetation","Managing threats to biodiversity","Enhancing and enabling technologies & industries"]},
+    {"name":"targetSpecies","dataType":"species"},
+    {"name":"infestationStatus","dataType":"text", "constraints":["New infestation","Active infestation","Under control","Under monitoring","Closed","Unknown"]},
+    {"name":"typeOfTreatment","dataType":"text", "constraints":["Initial treatment", "Follow-up treatment"]},
+    {"name":"treatmentStatus","dataType":"text", "constraints":["Proposed (PROW)","Completed (COMW)","Abandoned (ABNW)","Evident (EVNW)","Not recorded (NRAS)"]},
+    {"name":"howEffectiveWasLastTreatment","dataType":"text", "constraints":["0% - Ineffective","10% -"]},
+    {"name":"areaTreatedHa","dataType":"number", "primaryResult":"true"},
+    {"name":"treatmentMethod", "dataType":"text", "constraints":[]},
+    {"name":"bioControlAgent", "dataType":"text", "constraints":[]},
+    {"name":"detailsOfControlMethod", "dataType":"text"},
+    {"name":"notes", "dataType":"text"}
+],
+"viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Weed Treatment Information</h4>"}]},
+    {   "type":"row", "class": "output-section",
+        "items": [
+            {
+                "type":"col",
+                "items": [
+                    {"type":"selectOne","source":"activityPurpose","preLabel":"Activity purpose:", "validate":"required"},
+                    {"type":"species","source":"targetSpecies","preLabel":"Target species", "validate":"required"},
+                    {"type":"selectOne","source":"infestationStatus","preLabel":"Infestation status:"},
+                    {"type":"selectOne","source":"typeOfTreatment","preLabel":"Type of treatment:"},
+                    {"type":"selectOne","source":"treatmentStatus","preLabel":"Treatment status:"}
+                ]
+            },
+            {
+                "type":"col",
+                "items": [
+                    {"type":"selectOne", "source":"howEffectiveWasLastTreatment", "preLabel":"How effective was the last treatment?"},
+                    {"type":"number","source":"areaTreatedHa","preLabel":"Area Treated (Ha):"},
+                    {"type":"selectOne","source":"treatmentMethod","preLabel":"Treatment method:"},
+                    {"type":"selectOne","source":"bioControlAgent","preLabel":"Bio-control agent:"}
+                ]
+            }
+
+        ]
+    },
+    {
+        "type": "row", "items":[{"type":"textarea", "source":"detailsOfControlMethod", "span":"12", "preLabel":"Details of control method:"}]
+    },
+    {
+        "type": "row", "items":[{"type":"textarea", "source":"notes", "width":"100%", "preLabel":"Notes:"}]
+    }
+
+]
+}
