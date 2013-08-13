@@ -21,7 +21,7 @@
                 "type":"col",
                 "items": [
                     {"type":"selectOne","source":"activityPurpose","preLabel":"Activity purpose:", "validate":"required"},
-                    {"type":"species","source":"targetSpecies","preLabel":"Target species", "validate":"required"},
+                    {"type":"autocomplete","source":"targetSpecies","preLabel":"Target species", "validate":"required"},
                     {"type":"selectOne","source":"infestationStatus","preLabel":"Infestation status:"},
                     {"type":"selectOne","source":"typeOfTreatment","preLabel":"Type of treatment:"},
                     {"type":"selectOne","source":"treatmentStatus","preLabel":"Treatment status:"}
