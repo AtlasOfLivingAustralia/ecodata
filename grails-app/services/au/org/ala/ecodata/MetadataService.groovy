@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+import java.text.SimpleDateFormat
+
 class MetadataService {
 
     def grailsApplication, webService, cacheService
@@ -44,11 +46,21 @@ class MetadataService {
     }
 
     def updateActivitiesModel(model) {
-        //log.debug "Model = ${model}"
+        // get the existing model
         String filename = (grailsApplication.config.app.external.model.dir as String) + 'activities-model.json'
         def f = new File(filename)
-        f.renameTo(new File(filename + '.bak'))
+
+        // create a backup of the file appending the current timestamp to the name
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+        def backupFilename = (grailsApplication.config.app.external.model.dir as String) + 'activities-model' +
+                "-" + sdf.format(date) + ".json"
+        f.renameTo(new File(backupFilename))
+
+        // write the new model
         f.write(model)
+
+        // make sure it gets reloaded
         cacheService.clear('activities-model')
     }
 }
