@@ -21,11 +21,12 @@ import org.springframework.context.ApplicationEvent
 class GormEventListener extends AbstractPersistenceEventListener {
 
     ElasticSearchService elasticSearchService
-    //CommonService commonService
+    AuditService auditService
 
-    public GormEventListener(final Datastore datastore, serviceClass) {
+    public GormEventListener(final Datastore datastore, ElasticSearchService serviceClass, AuditService auditService) {
         super(datastore)
         elasticSearchService = serviceClass
+        this.auditService = auditService
     }
 
     @Override
@@ -35,14 +36,15 @@ class GormEventListener extends AbstractPersistenceEventListener {
         if (event.eventType == EventType.PostInsert) {
             log.debug "POST INSERT ${event.entityObject}"
             elasticSearchService.indexDocType(event.entityObject)
-            //commonService.dummyMethod(null, true)
+            auditService.logGormEvent(event)
         } else if (event.eventType == EventType.PostUpdate) {
             log.debug "POST UPDATE "
-            //commonService.dummyMethod(null, true)
             elasticSearchService.indexDocType(event.entityObject)
-        } else if (vent.eventType == EventType.PostDelete) {
+            auditService.logGormEvent(event)
+        } else if (event.eventType == EventType.PostDelete) {
             log.debug "POST DELETE ${event.entityObject}"
             elasticSearchService.indexDocType(event.entityObject)
+            auditService.logGormEvent(event)
         }
 
         log.debug "onPersistenceEvent END"
@@ -50,6 +52,6 @@ class GormEventListener extends AbstractPersistenceEventListener {
 
     @Override
     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
-        return (eventType in  [PostInsertEvent, PostUpdateEvent, PostDeleteEvent])
+        return true
     }
 }
