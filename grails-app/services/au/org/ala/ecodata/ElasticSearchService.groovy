@@ -419,16 +419,16 @@ class ElasticSearchService {
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["class"] = docClass.name
                 indexDoc(projectMap, DEFAULT_INDEX)
-                // homepage index
-                try {
-                    def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_OUTPUTS.name())
-                    projectMapDeep["class"] = docClass.name
-                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
-                } catch (StackOverflowError e) {
-                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
-                } catch (Exception e)  {
-                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
-                }
+                // homepage index - turned off due to triggering recursive POST INSERT events for some reason
+//                try {
+//                    def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_ACTIVITIES.name())
+//                    projectMapDeep["class"] = docClass.name
+//                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
+//                } catch (StackOverflowError e) {
+//                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}"
+//                } catch (Exception e)  {
+//                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}"
+//                }
                 break;
             case au.org.ala.ecodata.Site:
                 def siteMap = siteService.toMap(doc, "flat")

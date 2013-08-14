@@ -4,13 +4,11 @@ import groovy.util.logging.Log4j
 import org.grails.datastore.mapping.core.Datastore
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEventListener
+import org.grails.datastore.mapping.engine.event.EventType
+import org.grails.datastore.mapping.engine.event.PostDeleteEvent
+import org.grails.datastore.mapping.engine.event.PostInsertEvent
+import org.grails.datastore.mapping.engine.event.PostUpdateEvent
 import org.springframework.context.ApplicationEvent
-import org.codehaus.groovy.grails.web.context.ServletContextHolder as SCH
-import org.codehaus.groovy.grails.web.servlet.GrailsApplicationAttributes as GA
-
-
-
-import javax.persistence.PostUpdate
 
 /**
  * GORM event listener to trigger ElasticSearch updates when domain classes change
@@ -22,33 +20,36 @@ import javax.persistence.PostUpdate
 @Log4j
 class GormEventListener extends AbstractPersistenceEventListener {
 
-    public GormEventListener(final Datastore datastore) {
+    ElasticSearchService elasticSearchService
+    //CommonService commonService
+
+    public GormEventListener(final Datastore datastore, serviceClass) {
         super(datastore)
+        elasticSearchService = serviceClass
     }
+
     @Override
     protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
-        def ctx = SCH.servletContext.getAttribute(GA.APPLICATION_CONTEXT)
+        log.debug "onPersistenceEvent START || elasticSearchService = ${elasticSearchService}"
 
-        ElasticSearchService elasticSearchService = ctx.elasticSearchService
-
-        switch(event.eventType) {
-            case org.grails.datastore.mapping.engine.event.EventType.PostInsert:
-                log.debug "POST INSERT ${event.entityObject}"
-                elasticSearchService.indexDocType(event.entityObject)
-                break
-            case org.grails.datastore.mapping.engine.event.EventType.PostUpdate:
-                log.debug "POST UPDATE ${event.entityObject}"
-                elasticSearchService.indexDocType(event.entityObject)
-                break;
-            case org.grails.datastore.mapping.engine.event.EventType.PostDelete:
-                log.debug "POST DELETE ${event.entityObject}"
-                elasticSearchService.indexDocType(event.entityObject)
-                break;
+        if (event.eventType == EventType.PostInsert) {
+            log.debug "POST INSERT ${event.entityObject}"
+            elasticSearchService.indexDocType(event.entityObject)
+            //commonService.dummyMethod(null, true)
+        } else if (event.eventType == EventType.PostUpdate) {
+            log.debug "POST UPDATE "
+            //commonService.dummyMethod(null, true)
+            elasticSearchService.indexDocType(event.entityObject)
+        } else if (vent.eventType == EventType.PostDelete) {
+            log.debug "POST DELETE ${event.entityObject}"
+            elasticSearchService.indexDocType(event.entityObject)
         }
+
+        log.debug "onPersistenceEvent END"
     }
 
     @Override
     public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
-        return true
+        return (eventType in  [PostInsertEvent, PostUpdateEvent, PostDeleteEvent])
     }
 }

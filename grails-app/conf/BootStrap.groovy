@@ -12,7 +12,8 @@ class BootStrap {
         // Add custom GORM event listener for ES indexing
         def ctx = servletContext.getAttribute(ApplicationAttributes.APPLICATION_CONTEXT)
         ctx.getBeansOfType(Datastore).values().each { Datastore d ->
-            ctx.addApplicationListener new GormEventListener(d)
+            println "Adding listener for datastore: ${d}"
+            ctx.addApplicationListener new GormEventListener(d, elasticSearchService)
         }
 
         // Index all docs
