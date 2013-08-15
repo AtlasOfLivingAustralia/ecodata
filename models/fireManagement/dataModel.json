@@ -9,7 +9,7 @@
         {"name":"lastBurnDate", "dataType":"date"},
         {"name":"timeSinceLastBurn", "dataType":"text"},
         {"name":"temperatureOfBurn", "dataType":"text"},
-        {"name":"machineryUsed","dataType":"stringList", "constraints":["Light tanker","Heavy tanker","Bulldozer / tractor / grader","Hand tools","Aircraft - fixed wing","Aircraft - helicopter"},
+        {"name":"machineryUsed","dataType":"stringList", "constraints":["Light tanker","Heavy tanker","Bulldozer / tractor / grader","Hand tools","Aircraft - fixed wing","Aircraft - helicopter"]},
         {"name":"totalMachineryHours", "dataType":"number"},
         {"name":"lengthOfControlLineMachineryKms", "dataType":"number"},
         {"name":"lengthOfControlLineHandToolKms", "dataType":"number"},
@@ -26,7 +26,7 @@
                     {"type":"selectMany", "source":"reasonsForBurn", "preLabel":"Reason(s) for burn:", "validate":"required"},
                     {"type":"number", "source":"areaOfBurnHa", "preLabel":"Area of burn (Ha):", "validate":"required"},
                     {"type":"date", "source":"timeSinceLastBurn", "preLabel":"Time since last burn:"},
-                    {"type":"selectOne", "source":"temperatureOfBurn", "preLabel":"Temperature of burn"},
+                    {"type":"selectOne", "source":"temperatureOfBurn", "preLabel":"Temperature of burn"}
                 ]},
                 {"type":"col", "items": [
                     {"type":"selectMany", "source":"machineryUsed", "preLabel":"Machinery used"},
