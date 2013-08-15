@@ -6,7 +6,11 @@
         },
         {
             "name": "Community activity",
-            "type": "Activity"
+            "type": "Activity",
+            "outputs": [
+                "Community Activity",
+                "Participant Information"
+            ]
         },
         {
             "name": "Erosion control",
@@ -14,7 +18,11 @@
         },
         {
             "name": "Fire management",
-            "type": "Activity"
+            "type": "Activity",
+            "outputs":[
+                "Fire Management",
+                "Participant Information"
+            ]
         },
         {
             "name": "Grazing management",
@@ -159,6 +167,16 @@
             "template":"weedManagement",
             "name":"Weed Management",
             "scoreNames": ["areaTreatedHa"]
+        },
+        {
+            "template":"communityActivity",
+            "name":"Community Activity",
+            "scoreNames": ["eventDuration"]
+        },
+        {
+            "template":"fireManagement",
+            "name":"Fire Management",
+            "scoreNames": ["areaOfBurnHa"]
         }
     ]
 }

@@ -1,0 +1,38 @@
+{
+    "modelName":"Community Activity",
+    "dataModel":[
+        {"name":"activityPurpose","dataType":"text", "constraints":["Biodiverse plantings","Protecting and enhancing existing native vegetation","Managing threats to biodiversity","Enhancing and enabling technologies & industries"]},
+        {"name":"topicsCovered","dataType":"text"},
+        {"name":"eventDuration","dataType":"number"},
+        {"name":"notes","dataType":"text"},
+        {"name":"typesOfMaterials","dataType":"stringList", "constraints":["Brochures, newsletters and fact sheets", "Workbooks and course notes"]},
+        {"name":"numberOfReadingMaterials", "dataType":"number"},
+        {"name":"numberOfWorkingMaterials", "dataType":"number"},
+        {"name":"numberOfRecipientsOfMaterials", "dataType":"number"},
+        {"name":"numberOfDisplays", "dataType":"number"}
+
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Event Details</h4>"}]},
+        {
+            "type":"row", "class": "output-section",
+            "items": [
+                {"type":"selectOne","source":"activityPurpose","preLabel":"Purpose of event:","validate":"required"},
+                {"type":"text","source":"topicsCovered","preLabel":"Topics covered:"},
+                {"type":"number","source":"eventDuration","preLabel":"Event duration (hrs):"},
+                {"type":"textarea","source":"notes","preLabel":"Notes:"}
+            ]
+        },
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Information Provided to Participants</h4>"}]},
+        {
+            "type":"row", "class": "output-section",
+            "items": [
+                {"type":"selectMany","source":"typesOfMaterials","preLabel":"Types of Materials:"},
+                {"type":"number","source":"numberOfReadingMaterials","preLabel":"No. of reading materials (eg. brochure):"},
+                {"type":"number","source":"numberOfWorkingMaterials","preLabel":"No. of written materials (eg. workbooks):"},
+                {"type":"number","source":"numberOfRecipientsOfMaterials","preLabel":"No. of recipients of materials:"},
+                {"type":"number","source":"numberOfDisplays","preLabel":"No. of displays:"}
+            ]
+        }
+    ]
+}

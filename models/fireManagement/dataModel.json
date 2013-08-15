@@ -1,0 +1,44 @@
+{
+    "modelName":"Fire Management",
+    "dataModel":[
+        {"name":"activityPurpose","dataType":"text", "constraints":["Biodiverse plantings","Protecting and enhancing existing native vegetation","Managing threats to biodiversity","Enhancing and enabling technologies & industries"]},
+        {"name":"burnDate","dataType":"date"},
+        {"name":"typeOfFireEvent","dataType":"text", "constraints":["Managed controlled burn", "Escaped controlled burn", "Wildfire"]},
+        {"name":"reasonsForBurn","dataType":"stringList", "constraints":["Fire fuel reduction","Asset protection","Weed management","Pest animal management","Ecology management","Unplanned fire event"]},
+        {"name":"areaOfBurnHa", "dataType":"number"},
+        {"name":"lastBurnDate", "dataType":"date"},
+        {"name":"timeSinceLastBurn", "dataType":"text"},
+        {"name":"temperatureOfBurn", "dataType":"text"},
+        {"name":"machineryUsed","dataType":"stringList", "constraints":["Light tanker","Heavy tanker","Bulldozer / tractor / grader","Hand tools","Aircraft - fixed wing","Aircraft - helicopter"},
+        {"name":"totalMachineryHours", "dataType":"number"},
+        {"name":"lengthOfControlLineMachineryKms", "dataType":"number"},
+        {"name":"lengthOfControlLineHandToolKms", "dataType":"number"},
+        {"name":"didFireStayInControlLines", "dataType":"boolean"},
+        {"name":"notes", "type":"text"}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Fire Management Details</h4>"}]},
+        {
+            "type":"row", "class": "output-section", "items": [
+                {"type":"col", "items": [
+                    {"type":"date", "source":"burnDate", "preLabel":"Burn date:", "validate":"required"},
+                    {"type":"selectOne", "source":"typeOfFireEvent", "preLabel":"Type of file event:", "validate":"required"},
+                    {"type":"selectMany", "source":"reasonsForBurn", "preLabel":"Reason(s) for burn:", "validate":"required"},
+                    {"type":"number", "source":"areaOfBurnHa", "preLabel":"Area of burn (Ha):", "validate":"required"},
+                    {"type":"date", "source":"timeSinceLastBurn", "preLabel":"Time since last burn:"},
+                    {"type":"selectOne", "source":"temperatureOfBurn", "preLabel":"Temperature of burn"},
+                ]},
+                {"type":"col", "items": [
+                    {"type":"selectMany", "source":"machineryUsed", "preLabel":"Machinery used"},
+                    {"type":"number", "source":"totalMachineryHours", "preLabel":"Total machinery hours"},
+                    {"type":"number", "source":"lengthOfControlLineMachineryKms", "preLabel":"Length of control line - machinery (km)"},
+                    {"type":"number", "source":"lengthOfControlLineHandToolKms", "preLabel":"Length of control line - hand tools (km)"},
+                    {"type":"checkbox", "source":"didFireStayInControlLines", "preLabel":"Did the fire stay with initial control lines"}
+                ]}]
+        },
+        {   "type":"row", "class": "output-section", "items": [
+                {"type":"textarea", "source":"notes", "preLabel":"Notes"}
+            ]
+        }
+    ]
+}
