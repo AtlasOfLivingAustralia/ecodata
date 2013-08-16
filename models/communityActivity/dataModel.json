@@ -13,16 +13,17 @@
 
     ],
     "viewModel":[
-        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Event Details</h4>"}]},
-        {
-            "type":"row", "class": "output-section",
-            "items": [
-                {"type":"selectOne","source":"activityPurpose","preLabel":"Purpose of event:","validate":"required"},
-                {"type":"text","source":"topicsCovered","preLabel":"Topics covered:"},
-                {"type":"number","source":"eventDuration","preLabel":"Event duration (hrs):"},
-                {"type":"textarea","source":"notes","preLabel":"Notes:"}
-            ]
-        },
+        {   "type":"section", "title":"Event Details", "items":[
+            {
+                "type":"row", "class": "output-section",
+                "items": [
+                    {"type":"selectOne","source":"activityPurpose","preLabel":"Purpose of event:","validate":"required"},
+                    {"type":"text","source":"topicsCovered","preLabel":"Topics covered:"},
+                    {"type":"number","source":"eventDuration","preLabel":"Event duration (hrs):"},
+                    {"type":"textarea","source":"notes","preLabel":"Notes:"}
+                ]
+            }
+        ]},
         {   "type": "row", "items": [{"type": "literal", "source":"<h4>Information Provided to Participants</h4>"}]},
         {
             "type":"row", "class": "output-section",

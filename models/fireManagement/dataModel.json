@@ -7,14 +7,23 @@
         {"name":"reasonsForBurn","dataType":"stringList", "constraints":["Fire fuel reduction","Asset protection","Weed management","Pest animal management","Ecology management","Unplanned fire event"]},
         {"name":"areaOfBurnHa", "dataType":"number"},
         {"name":"lastBurnDate", "dataType":"date"},
-        {"name":"timeSinceLastBurn", "dataType":"text"},
-        {"name":"temperatureOfBurn", "dataType":"text"},
+        {"name":"temperatureOfBurn", "dataType":"text", "constraints":["Cool", "Moderately hot", "Very hot", "Extreme"]},
         {"name":"machineryUsed","dataType":"stringList", "constraints":["Light tanker","Heavy tanker","Bulldozer / tractor / grader","Hand tools","Aircraft - fixed wing","Aircraft - helicopter"]},
         {"name":"totalMachineryHours", "dataType":"number"},
         {"name":"lengthOfControlLineMachineryKms", "dataType":"number"},
         {"name":"lengthOfControlLineHandToolKms", "dataType":"number"},
         {"name":"didFireStayInControlLines", "dataType":"boolean"},
-        {"name":"notes", "type":"text"}
+        {"name":"notes", "type":"text"},
+        {"name":"timeSinceLastBurnDays", "type":"number", "computed":{"operation":"difference", "dependents":["burnDate", "lastBurnDate"]}},
+        {"name":"timeSinceLastBurn", "dataType":"text", "computed":{"dependents":["data.timeSinceLastBurnDays"],
+            "operation":"lookup","lookupMap":"timeSinceLastBurnLookup"}},
+        {"name":"timeSinceLastBurnLookup","dataType":"lookupRange","map":[
+            {"inputMin":"0","inputMax":"3","output":"\"1 - 3 years\""},
+            {"inputMin":"4","inputMax":"6","output":"\"4 -6 years\""},
+            {"inputMin":"7","inputMax":"10","output":"\"1 - 10 years\""},
+            {"inputMin":"11","inputMax":"999999999","output":"\"> 10 years\""}
+        ]}
+
     ],
     "viewModel":[
         {   "type": "row", "items": [{"type": "literal", "source":"<h4>Fire Management Details</h4>"}]},
@@ -25,10 +34,11 @@
                     {"type":"selectOne", "source":"typeOfFireEvent", "preLabel":"Type of file event:", "validate":"required"},
                     {"type":"selectMany", "source":"reasonsForBurn", "preLabel":"Reason(s) for burn:", "validate":"required"},
                     {"type":"number", "source":"areaOfBurnHa", "preLabel":"Area of burn (Ha):", "validate":"required"},
-                    {"type":"date", "source":"timeSinceLastBurn", "preLabel":"Time since last burn:"},
-                    {"type":"selectOne", "source":"temperatureOfBurn", "preLabel":"Temperature of burn"}
+                    {"type":"date", "source":"lastBurnDate", "preLabel":"Last burn date:"},
+                    {"type":"text", "source":"timeSinceLastBurn", "preLabel":"Time since last burn:"}
                 ]},
                 {"type":"col", "items": [
+                    {"type":"selectOne", "source":"temperatureOfBurn", "preLabel":"Temperature of burn"},
                     {"type":"selectMany", "source":"machineryUsed", "preLabel":"Machinery used"},
                     {"type":"number", "source":"totalMachineryHours", "preLabel":"Total machinery hours"},
                     {"type":"number", "source":"lengthOfControlLineMachineryKms", "preLabel":"Length of control line - machinery (km)"},
