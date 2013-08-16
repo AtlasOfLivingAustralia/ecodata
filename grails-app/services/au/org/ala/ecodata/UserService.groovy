@@ -2,11 +2,17 @@ package au.org.ala.ecodata
 
 class UserService {
 
+    static transactional = false
+
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
     def getCurrentUserDisplayName() {
         UserDetails currentUser = _currentUser.get()
         return currentUser ? currentUser.displayName : '<anonymous>'
+    }
+
+    def getCurrentUserDetails() {
+        return _currentUser.get();
     }
 
     def UserDetails lookupUserDetails(String userId) {

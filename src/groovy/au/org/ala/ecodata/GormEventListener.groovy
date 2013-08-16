@@ -31,7 +31,7 @@ class GormEventListener extends AbstractPersistenceEventListener {
 
     @Override
     protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
-        log.debug "onPersistenceEvent START || elasticSearchService = ${elasticSearchService}"
+//        log.debug "onPersistenceEvent START || elasticSearchService = ${elasticSearchService}"
 
         if (event.eventType == EventType.PostInsert) {
             log.debug "POST INSERT ${event.entityObject}"
@@ -47,7 +47,7 @@ class GormEventListener extends AbstractPersistenceEventListener {
             auditService.logGormEvent(event)
         }
 
-        log.debug "onPersistenceEvent END"
+//        log.debug "onPersistenceEvent END"
     }
 
     @Override

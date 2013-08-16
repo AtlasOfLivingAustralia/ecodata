@@ -3,8 +3,7 @@ package au.org.ala.ecodata
 import org.bson.types.ObjectId
 
 class Project {
-    def projectService
-    def elasticSearchService
+
     /*
     Associations:
         projects may have 0..n Sites - these are mapped from the Site side
