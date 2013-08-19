@@ -18,12 +18,27 @@ class MetadataController {
         render result as JSON
     }
 
+    /** Returns the json data/view model for a specified output.
+     *
+     * @param id an output template name
+     * @return json model
+     */
     def dataModel(String id) {
-        def result = metadataService.getDataModel(id)
+        def result = metadataService.getOutputDataModel(id)
         if (result && result.error) {
             render result as JSON
         } else {
             render result
         }
+    }
+
+    def updateOutputDataModel(String id) {
+        //log.debug "id=${id}"
+        def model = request.JSON
+        def modelStr = model.model.toString(4);
+        //log.debug "modelStr = ${modelStr}"
+        metadataService.updateOutputDataModel(modelStr, id)
+        def result = [model: metadataService.getOutputDataModel(id)]
+        render result as JSON
     }
 }
