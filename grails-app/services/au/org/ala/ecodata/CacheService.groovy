@@ -29,7 +29,7 @@ class CacheService {
             //println "using cache for " + key
             return cached.resp
         }
-        println "refreshing cache data for " + key
+        log.debug "refreshing cache data for " + key
         def results
         try {
             results = source.call()
