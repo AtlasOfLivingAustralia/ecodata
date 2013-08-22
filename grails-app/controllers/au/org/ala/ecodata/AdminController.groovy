@@ -209,4 +209,9 @@ class AdminController {
         Site.collection.drop()
         Project.collection.drop()
     }
+
+    def audit() { }
+    def auditMessagesByEntity() { }
+    def auditMessagesByProject() { }
+
 }

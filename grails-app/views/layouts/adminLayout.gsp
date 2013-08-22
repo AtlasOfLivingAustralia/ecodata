@@ -53,6 +53,7 @@
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'tools')}" title="Tools" />
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'settings')}" title="Settings" />
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}" title="Metadata" />
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'audit')}" title="Audit" />
                 </ul>
             </div>
 

@@ -68,6 +68,7 @@ grails.project.dependency.resolution = {
         //runtime ":yui-minify-resources:0.1.5"
 
         compile ":mongodb:1.3.0"
+        compile ":quartz:1.0-RC9"
 
         build ":tomcat:$grailsVersion"
 

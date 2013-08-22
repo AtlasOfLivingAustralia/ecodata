@@ -30,7 +30,6 @@ class UserService {
 
         def userDetails = lookupUserDetails(userId)
         if (userDetails) {
-            log.debug("Setting user details for id ${userId} on thread local.")
             _currentUser.set(userDetails)
             return userDetails
         } else {
@@ -40,7 +39,6 @@ class UserService {
 
     def clearCurrentUser() {
         if (_currentUser) {
-            log.debug("Clearing user details from thread local.")
             _currentUser.remove()
         }
     }
