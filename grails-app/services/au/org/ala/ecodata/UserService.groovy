@@ -17,7 +17,7 @@ class UserService {
 
     def UserDetails lookupUserDetails(String userId) {
         // TODO: lookup user details from AUTH
-        def userDetails = new UserDetails(userId: userId, userName: 'mark.woolston@csiro.au', displayName: 'Mark Woolston')
+        def userDetails = new UserDetails(userId: userId ?: 'mark.woolston@csiro.au', userName: 'mark.woolston@csiro.au', displayName: 'Mark Woolston')
         return userDetails
     }
 
