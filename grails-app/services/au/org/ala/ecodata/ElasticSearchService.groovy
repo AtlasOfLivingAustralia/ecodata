@@ -409,9 +409,12 @@ class ElasticSearchService {
      */
     def indexDocType(doc) {
         log.debug "Indexing switch is ${indexingTempInactive}"
-        if (indexingTempInactive) {
+
+        // skip indexing
+        if (indexingTempInactive || !grailsApplication.config.app.elasticsearch.indexOnGormEvents) {
             return null
         }
+
         log.debug "doc has class: ${doc.getClass().name}"
         def docClass = doc.getClass()
         switch(docClass) {

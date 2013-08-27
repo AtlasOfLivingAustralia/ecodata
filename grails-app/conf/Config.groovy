@@ -74,6 +74,7 @@ grails.mongo.default.mapping = {
 app.dump.location = "/data/ecodata/dump/"
 app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 app.elasticsearch.indexAllOnStartup = true
+app.elasticsearch.indexOnGormEvents = true
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
@@ -91,6 +92,16 @@ if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = "http://auth.ala.org.au/ws/check?apikey="
 }
 
+// CAS security conf
+security.cas.casServerName = 'https://auth.ala.org.au'
+security.cas.uriFilterPattern = "/user/.*" // pattern for pages that require authentication
+security.cas.uriExclusionFilterPattern = '/images.*,/css.*,/js.*,/less.*'
+security.cas.authenticateOnlyIfLoggedInPattern = "" // pattern for pages that can optionally display info about the logged-in user
+security.cas.loginUrl = 'https://auth.ala.org.au/cas/login'
+security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
+security.cas.casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+security.cas.bypass = false
+
 environments {
     development {
         grails.logging.jul.usebridge = true
@@ -102,7 +113,11 @@ environments {
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
+        security.cas.appServerName = serverName
+        security.cas.contextPath = "/" + appName
         app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
+        app.elasticsearch.indexAllOnStartup = false
+        app.elasticsearch.indexOnGormEvents = false
     }
     test {
         grails.logging.jul.usebridge = false
@@ -110,12 +125,16 @@ environments {
         app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
         app.uploads.url = "http://testweb1.ala.org.au/uploads/"
+        security.cas.appServerName = "http://testweb1.ala.org.au:8080"
+        security.cas.contextPath = "/" + "ecodata"
     }
     nectartest {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         grails.serverURL = "http://115.146.94.243/ecodata"
         app.uploads.url = grails.serverURL + "/uploads/"
+        security.cas.appServerName = "http://115.146.94.243"
+        security.cas.contextPath = "/" + "ecodata"
     }
     nectar {
         grails.logging.jul.usebridge = false
@@ -123,6 +142,8 @@ environments {
         app.external.model.dir = "/data/ecodata/models/"
         grails.serverURL = "http://ecodata-dev.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
+        security.cas.appServerName = grails.serverURL
+        security.cas.contextPath = "/" + "ecodata"
     }
     production {
         grails.logging.jul.usebridge = false
@@ -130,6 +151,8 @@ environments {
         app.external.model.dir = "/data/fieldcapture/models/"
         grails.serverURL = "http://ecodata.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
+        security.cas.appServerName = grails.serverURL
+        security.cas.contextPath = ""
     }
 }
 
