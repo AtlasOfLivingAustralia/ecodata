@@ -1,0 +1,52 @@
+{
+"modelName":"Crown Type - MERI",
+"dataModel":[
+    {"name":"crownTypeSamples", "dataType":"list","columns":[
+        {"name":"sampleName","dataType":"text"},
+        {"name":"distanceAlongTransect","dataType":"number"},
+        {"name":"crownType","dataType":"number"}
+    ],
+    "defaultRows":[
+        {"sampleName":"Tree canopy 1", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 2", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 3", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 4", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 5", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 6", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 7", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 8", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 9", "distanceAlongTransect":"", "crownType":""},
+        {"sampleName":"Tree canopy 10", "distanceAlongTransect":"", "crownType":""}
+    ]},
+    {"name":"averageCrownType","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"crownTypeSamples",
+                "source":"crownType"
+            },"operation":"average"
+        }
+    }
+
+],
+"viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h2>Field Sheet 4: Crown Type</h2>"}]},
+    {   "type": "row", "items": [{"type": "literal", "source":"<b>Only complete this part if the vegetation type has a distinctive overstorey</b>"}]},
+
+    {   "type": "table", "source":"crownTypeSamples",
+        "columns": [
+        {"title":"","source":"sampleName", "type":"text", "noEdit":true},
+        {"title":"Distance along transect (m)","source":"distanceAlongTransect", "type":"number"},
+        {"title":"CT (%)","source":"crownType", "type":"number", "validate":"min[0],max[100]"}
+        ],
+        "footer": {
+            "rows": [
+                {"columns":[
+                    {"type":"literal","source":"Average crown type (%)", "colspan":"2"},
+                    {"type":"text","source":"averageCrownType"}
+
+                ]}
+            ]
+        }
+    }
+]
+}

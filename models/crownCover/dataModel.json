@@ -1,0 +1,157 @@
+{
+"modelName":"Crown Cover - MERI",
+"dataModel":[
+    {"name":"nativeOverstoreyCoverSamples", "dataType":"list","columns":[
+        {"name":"start","dataType":"number"},
+        {"name":"end","dataType":"number"},
+        {"name":"width","dataType":"number", "computed":{"operation":"difference", "dependents":["end", "start"]}}
+    ],
+    "defaultRows":[]},
+    {"name":"totalNativeOverstoreyCover","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"nativeOverstoreyCoverSamples",
+                "source":"width"
+            },"operation":"sum"
+        }
+    },
+    {"name":"exoticOverstoreyCoverSamples", "dataType":"list","columns":[
+        {"name":"start","dataType":"number"},
+        {"name":"end","dataType":"number"},
+        {"name":"width","dataType":"number", "computed":{"operation":"difference", "dependents":["end", "start"]}}
+    ],
+    "defaultRows":[]},
+    {"name":"totalExoticOverstoreyCover","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"exoticOverstoreyCoverSamples",
+                "source":"width"
+            },"operation":"sum"
+        }
+    },
+    {"name":"nativeMidstoreyCoverSamples", "dataType":"list","columns":[
+        {"name":"start","dataType":"number"},
+        {"name":"end","dataType":"number"},
+        {"name":"width","dataType":"number", "computed":{"operation":"difference", "dependents":["end", "start"]}}
+    ],
+        "defaultRows":[]},
+    {"name":"totalNativeMidstoreyCover","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"nativeMidstoreyCoverSamples",
+                "source":"width"
+            },"operation":"sum"
+        }
+    },
+    {"name":"exoticMidstoreyCoverSamples", "dataType":"list","columns":[
+        {"name":"start","dataType":"number"},
+        {"name":"end","dataType":"number"},
+        {"name":"width","dataType":"number", "computed":{"operation":"difference", "dependents":["end", "start"]}}
+    ],
+        "defaultRows":[]},
+    {"name":"totalExoticMidstoreyCover","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"exoticMidstoreyCoverSamples",
+                "source":"width"
+            },"operation":"sum"
+        }
+    }
+],
+"viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h2>Field Sheet 3: Overstorey and midstorey projected crown cover</h2>"}]},
+    {   "type": "row", "items": [{"type": "literal", "source":"<h3>Transect (projected crown cover - overstorey species)</h3>"}]},
+
+    {   "type": "row", "items": [
+
+        {"type": "col", "items": [
+            {   "type":"literal", "source":"<h4>Native overstorey</h4>"},
+
+            {   "type": "table", "source":"nativeOverstoreyCoverSamples",
+                "userAddedRows":"true",
+                "columns": [
+                {"title":"Start (m)","source":"start", "type":"number"},
+                {"title":"End (m)","source":"end", "type":"number"},
+                {"title":"Width (m)","source":"width", "type":"number", "noEdit":true, "validate":"min[0]"}
+                ],
+                "footer": {
+                    "rows": [
+                        {"columns":[
+                            {"type":"literal","source":"Total native overstorey width (m)", "colspan":"2"},
+                            {"type":"text","source":"totalNativeOverstoreyCover"}
+
+                        ]}
+                    ]
+                }
+            }
+        ]},
+        {"type": "col", "items": [
+            {   "type":"literal", "source":"<h4>Exotic overstorey</h4>"},
+            {   "type": "table", "source":"exoticOverstoreyCoverSamples",
+                "userAddedRows":"true",
+                "columns": [
+                    {"title":"Start (m)","source":"start", "type":"number"},
+                    {"title":"End (m)","source":"end", "type":"number"},
+                    {"title":"Width (m)","source":"width", "type":"number", "noEdit":true, "validate":"min[0]"}
+                ],
+                "footer": {
+                    "rows": [
+                        {"columns":[
+                            {"type":"literal","source":"Total exotic overstorey width (m)", "colspan":"2"},
+                            {"type":"text","source":"totalExoticOverstoreyCover"}
+
+                        ]}
+                    ]
+                }
+
+            }
+        ]}
+    ]},
+    {   "type": "row", "items": [{"type": "literal", "source":"<h3>Transect (projected crown cover - midstorey species)</h3>"}]},
+
+    {   "type": "row", "items": [
+
+        {"type": "col", "items": [
+            {   "type":"literal", "source":"<h4>Native midstorey</h4>"},
+
+            {   "type": "table", "source":"nativeMidstoreyCoverSamples",
+                "userAddedRows":"true",
+                "columns": [
+                    {"title":"Start (m)","source":"start", "type":"number"},
+                    {"title":"End (m)","source":"end", "type":"number"},
+                    {"title":"Width (m)","source":"width", "type":"number", "noEdit":true, "validate":"min[0]"}
+                ],
+                "footer": {
+                    "rows": [
+                        {"columns":[
+                            {"type":"literal","source":"Total native midstorey width (m)", "colspan":"2"},
+                            {"type":"text","source":"totalNativeMidstoreyCover"}
+
+                        ]}
+                    ]
+                }
+            }
+        ]},
+        {"type": "col", "items": [
+            {   "type":"literal", "source":"<h4>Exotic midstorey</h4>"},
+            {   "type": "table", "source":"exoticMidstoreyCoverSamples",
+                "userAddedRows":"true",
+                "columns": [
+                    {"title":"Start (m)","source":"start", "type":"number"},
+                    {"title":"End (m)","source":"end", "type":"number"},
+                    {"title":"Width (m)","source":"width", "type":"number", "noEdit":true, "validate":"min[0]"}
+                ],
+                "footer": {
+                    "rows": [
+                        {"columns":[
+                            {"type":"literal","source":"Total exotic midstorey width (m)", "colspan":"2"},
+                            {"type":"text","source":"totalExoticMidstoreyCover"}
+
+                        ]}
+                    ]
+                }
+            }
+        ]}
+    ]},
+]
+}

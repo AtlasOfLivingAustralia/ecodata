@@ -87,7 +87,10 @@
         },
         {
             "name": "Site assessment",
-            "type": "Assessment"
+            "type": "Assessment",
+            "outputs":[
+                "Vegetation Assessment"
+            ]
         },
         {
             "name": "Fauna (biological) survey",
@@ -117,7 +120,13 @@
             "name": "DECCW vegetation assessment",
             "type": "Assessment",
             "outputs": ["Weed Abundance & Threat Score"]
+        },
+        {
+            "name": "MERI Site Assessment",
+            "type": "Assessment",
+            "outputs": ["Ground Cover - MERI", "Crown Cover - MERI", "Crown Type - MERI"]
         }
+
     ],
     "outputs": [
         {
@@ -177,6 +186,24 @@
             "template":"fireManagement",
             "name":"Fire Management",
             "scoreNames": ["areaOfBurnHa"]
+        },
+        {
+            "template":"siteAssessment",
+            "name":"Vegetation Assessment",
+            "scoreNames":[]
+        },
+        {
+            "template":"groundCover",
+            "name":"Ground Cover - MERI"
+        },
+        {
+            "template":"crownCover",
+            "name":"Crown Cover - MERI"
+        }
+        ,
+        {
+            "template":"crownType",
+            "name":"Crown Type - MERI"
         }
     ]
 }
