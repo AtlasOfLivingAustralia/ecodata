@@ -31,14 +31,17 @@ class ECTagLib {
 
     def currentUserDisplayName = { attrs, body ->
         def mb = new MarkupBuilder(out)
+
         mb.span(class:'username') {
-            UserDetails userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
+            def userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
+
             if (userDetails) {
                 mkp.yield(userDetails.displayName)
+            } else if (request.userPrincipal) {
+                mkp.yield(request.userPrincipal)
             } else {
                 mkp.yield(userService.currentUserDisplayName)
             }
         }
     }
-
 }

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 class UserService {
 
     static transactional = false
+    def authService
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
@@ -15,10 +16,25 @@ class UserService {
         return _currentUser.get();
     }
 
-    def UserDetails lookupUserDetails(String userId) {
-        // TODO: lookup user details from AUTH
-        def userDetails = new UserDetails(userId: userId ?: 'mark.woolston@csiro.au', userName: 'mark.woolston@csiro.au', displayName: 'Mark Woolston')
-        return userDetails
+    def lookupUserDetails(String userId) {
+        // DONE: lookup user details from AUTH
+        def userDetails = new UserDetails(userId: '9999', userName: 'mark.woolston@csiro.au', displayName: 'Mark Woolston')
+        getUserForUserId(userId)?:userDetails
+    }
+
+    def getUserForUserId(String userId) {
+        def um = authService.getAllUserNameMap() // cached by eh-cache
+        def ud = null;
+
+        if (um && um.containsKey(userId)) {
+            ud = um.get(userId)
+        }
+
+        return ud
+    }
+
+    def getAllUsers() {
+        // casService.getAllUserNameList()
     }
 
     /**

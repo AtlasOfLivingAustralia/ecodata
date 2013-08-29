@@ -37,6 +37,7 @@ grails.project.dependency.resolution = {
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenRepo "http://maven.ala.org.au/repository"
         mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
     }
 
@@ -55,12 +56,16 @@ grails.project.dependency.resolution = {
         // ElasticSearch
         runtime "org.elasticsearch:elasticsearch:0.90.2"
         //runtime "org.elasticsearch:elasticsearch-lang-groovy:1.5.0"
+        compile('org.codehaus.groovy.modules.http-builder:http-builder:0.5.0') {
+            excludes "commons-logging", "xml-apis", "groovy"
+        }
     }
 
     plugins {
         runtime ":jquery:1.8.3"
         runtime ":resources:1.1.6"
         runtime ":csv:0.3.1"
+        runtime ":ala-web-theme:0.1.11"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"

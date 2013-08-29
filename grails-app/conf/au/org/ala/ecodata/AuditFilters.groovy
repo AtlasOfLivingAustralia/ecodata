@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.springframework.web.context.request.RequestContextHolder
+
 class AuditFilters {
 
     def userService
@@ -9,7 +11,10 @@ class AuditFilters {
         all(controller: '*', action: '*') {
 
             before = {
-                def userDetails = userService.setCurrentUser(params.userId)
+                // userId is set from either the request param userId or failing that it tries to get it from
+                // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
+                def userId = params.userId?:RequestContextHolder.currentRequestAttributes()?.getUserPrincipal()?.attributes?.userid
+                def userDetails = userService.setCurrentUser(userId)
                 if (userDetails) {
                     // We set the current user details in the request scope because
                     // the 'afterView' hook can be called prior to the actual rendering (despite the name)

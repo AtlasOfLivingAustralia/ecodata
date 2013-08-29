@@ -28,7 +28,7 @@
                 <div class="nav-collapse collapse">
                     <div class="navbar-text pull-right">
                         <span id="buttonBar">
-                            <ec:currentUserDisplayName />&nbsp;<button class="btn btn-small" id="btnLogout"><i class="icon-off"></i>&nbsp;Logout</button>
+                            <ec:currentUserDisplayName />&nbsp;<hf:loginLogout cssClass="btn btn-small" logoutUrl="${createLink(controller:'logout', action:'logout')}"/>
                             <button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>
                             <button class="btn btn-warning btn-small" id="btnAdministration"><i class="icon-cog icon-white"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
