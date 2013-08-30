@@ -18,31 +18,7 @@
             {"name":"treeCanopyMeasureMetres", "dataType":"number"}
         ],
         "userAddedRows":"true"
-    },
-    {"name":"largeTreesPerHectare", "dataType":"number"},
-    {"name":"largeTreeCanopyHealth", "dataType":"text", "constraints":["No large trees present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"numHollowBearingTrees", "dataType":"number"},
-    {"name":"totalTreeCanopyCover", "dataType":"text", "constraints":["No trees present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"totalTreeCanopyHealth", "dataType":"text", "constraints":["No trees present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"nativeUnderstorySpecies", "dataType":"species"},
-    {"name":"exoticUnderstorySpecies", "dataType":"species"},
-    {"name":"nativeOrganicLitter", "dataType":"text", "constraints":["No organic litter present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"nonNativeOrganicLitter", "dataType":"text", "constraints":["No organic litter present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"largeLogsPresent", "dataType":"boolean"},
-    {"name":"abundanceOfLargeLogs", "dataType":"text", "constraints":["No logs present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"averageLengthOfLogs", "dataType":"number"},
-    {"name":"recruitmentDiversity", "dataType":"text", "constraints":["No evidence of a recruitment cohort", "Single age cohort with low species diversity", "Single age cohort with high species diversity", "Multiple age cohorts with low species diversity", "Multiple age cohorts with high species diversity"]},
-    {"name":"originOfRecruitmentCohorts", "dataType":"stringList", "constraints":["Grazing removal (stock/pest animals/native wildlife)", "Flood event", "Fire event", "Direct drilled", "Hand sown", "Planted seedlings"]},
-    {"name":"recruitmentCohortAgeClasses", "dataType":"stringList", "constraints":["0-2 years", "3-5 years", "6-10 years", "11-15 years", "16-20 years"]},
-    {"name":"woodySpeciesRecruitedToSite", "dataType":"text"},
-    {"name":"recruitmentNotes", "dataType":"text"},
-    {"name":"weedCoverPercent", "dataType":"text", "constraints":["No weeds present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]},
-    {"name":"coverOfHighThreatWeeds", "dataType":"text", "constraints":["No weeds present", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%"]}
-
-
-
-
-
+    }
 ],
 "viewModel":[
     {
@@ -68,7 +44,7 @@
         "source":"vegetationAssessment",
         "userAddedRows":"true",
         "columns": [
-            {"title":"Measurement Unit","source":"poiId","width":"10%", "type":"selectOne", "optionsSource":{"options":"siteViewModel.poi", "optionsText":"name", "optionsValue":"name"}},
+            {"title":"Measurement Unit","source":"poiId","width":"10%", "type":"selectOne", "options":{}},
             {"title":"Species","source":"species","width":"15%", "type":"autocomplete"},
             {"title":"Lifeform","source":"lifeform","width":"15%","textAlign":"center", "type":"selectOne"},
             {"title":"Native/Exotic","source":"native","width":"10%", "type":"selectOne"},
@@ -78,34 +54,6 @@
             {"title":"Tree canopy measure (m)","source":"treeCanopyMeasureMetres","width":"10%", "type":"number"}
 
         ]
-    },
-    {   "type":"section", "title":"Site Condition", "items": [
-        {
-            "type":"row", "items":[
-            {"type":"col", "items":[
-                {"type":"number", "source":"largeTreesPerHectare", "preLabel":"Large trees per hectare"},
-                {"type":"selectOne", "source":"largeTreeCanopyHealth", "preLabel":"Large tree canopy health"},
-                {"type":"number", "source":"numHollowBearingTrees", "preLabel":"Number of hollow bearing trees"},
-                {"type":"selectOne", "source":"totalTreeCanopyCover", "preLabel":"Total tree canopy cover"},
-                {"type":"selectOne", "source":"totalTreeCanopyHealth", "preLabel":"Total tree canopy health"},
-                {"type":"autocomplete", "source":"nativeUnderstorySpecies", "preLabel":"Native understory species"},
-                {"type":"autocomplete", "source":"exoticUnderstorySpecies", "preLabel":"Exotic understory species"},
-                {"type":"selectOne", "source":"nativeOrganicLitter", "preLabel":"Native organic litter"},
-                {"type":"selectOne", "source":"nonNativeOrganicLitter", "preLabel":"Non-native organic litter"},
-                {"type":"checkbox", "source":"largeLogsPresent", "preLabel":"Large logs present"},
-                {"type":"selectOne", "source":"abundanceOfLargeLogs", "preLabel":"Abundance of large logs"},
-                {"type":"number", "source":"averageLengthOfLogs", "preLabel":"Average length of logs"}
-            ]},
-            {"type":"col", "items":[
-                {"type":"selectOne", "source":"recruitmentDiversity", "preLabel":"Recruitment diversity"},
-                {"type":"selectMany", "source":"originOfRecruitmentCohorts", "preLabel":"Origin of recruitment cohort"},
-                {"type":"selectMany", "source":"recruitmentCohortAgeClasses", "preLabel":"Recruitment cohort age classes"},
-                {"type":"textarea", "source":"woodySpeciesRecruitedToSite", "preLabel":"Woody species recruited to site (separate with commas)"},
-                {"type":"textarea", "source":"recruitmentNotes", "preLabel":"Recruitment notes"},
-                {"type":"selectOne", "source":"weedCoverPercent", "preLabel":"Weed cover %"},
-                {"type":"selectOne", "source":"coverOfHighThreatWeeds", "preLabel":"Cover of high threat weeds %"}
-            ]}
-        ]}
-    ]}
+    }
 ]
 }

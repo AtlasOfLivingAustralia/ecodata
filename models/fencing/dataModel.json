@@ -1,24 +1,83 @@
 {
-"modelName":"Fencing",
-"dataModel":[
-
-            {"name":"fenceType","dataType":"text", "constraints":["", "Post & Wire", "Post & Rail", "Post & Netting", "Cyclone", "Solid Sheet", "Other"]},
-            {"name":"lengthOfFence","dataType":"number", "primaryResult":"true"},
-            {"name":"fenceCost","dataType":"number"},
-            {"name":"purposeOfFence","dataType":"stringList", "constraints":["Cattle exclusion", "Sheep or goat exclusion", "Kangaroo and wallaby exclusion", "Rabbit and hare exclusion", "Wombat exclusion", "Wild dog exclusion", "Other"]}
-
-],
-"viewModel":[
-    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Fence Details</h4>"}]},
-    {
-        "type":"row", "class": "output-section",
-        "items": [
-            {"type":"selectOne","source":"fenceType","preLabel":"Fence Type:","width":"10%", "validate":"required"},
-            {"type":"number","source":"lengthOfFence","preLabel":"Length of fence:","postLabel":"m", "width":"40%"},
-            {"type":"number","source":"fenceCost","preLabel":"Fence Cost:","width":"25%", "postLabel": "$/m"},
-            {"type":"selectMany","source":"purposeOfFence","preLabel":"Purpose of fence:","width":"25%", "validate":"required"}
-
-        ]
-    }
-]
+    "modelName": "Fencing",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "fenceType",
+            "constraints": [
+                "",
+                "Post & Wire",
+                "Post & Rail",
+                "Post & Netting",
+                "Cyclone",
+                "Solid Sheet",
+                "Other"
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "lengthOfFence"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceCost"
+        },
+        {
+            "dataType": "stringList",
+            "name": "purposeOfFence",
+            "constraints": [
+                "Cattle exclusion",
+                "Sheep or goat exclusion",
+                "Kangaroo and wallaby exclusion",
+                "Rabbit and hare exclusion",
+                "Wombat exclusion",
+                "Wild dog exclusion",
+                "Other"
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Fence Details<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "fenceType",
+                    "preLabel": "Fence Type:",
+                    "width": "10%",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "lengthOfFence",
+                    "preLabel": "Length of fence:",
+                    "width": "40%",
+                    "type": "number",
+                    "postLabel": "m"
+                },
+                {
+                    "source": "fenceCost",
+                    "preLabel": "Fence jjjCost:",
+                    "width": "25%",
+                    "type": "number",
+                    "postLabel": "$/m"
+                },
+                {
+                    "source": "purposeOfFence",
+                    "preLabel": "Purpose of fence:",
+                    "width": "25%",
+                    "type": "selectMany",
+                    "validate": "required"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

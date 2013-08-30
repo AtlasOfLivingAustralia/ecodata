@@ -2,111 +2,154 @@
     "activities": [
         {
             "name": "Aboriginal heritage site protection",
-            "type": "Activity"
+            "type": "Activity",
+            "outputs": []
         },
         {
             "name": "Community activity",
             "type": "Activity",
             "outputs": [
-                "Community Activity",
-                "Participant Information"
+                "Activity Context",
+                "Community Activity Details",
+                "Participant Information",
+                "Stock Management Details"
             ]
         },
         {
-            "name": "Erosion control",
-            "type": "Activity"
+            "name": "Install/construct erosion control structure",
+            "type": "Activity",
+            "outputs": ["Activity Context"]
         },
         {
             "name": "Fire management",
             "type": "Activity",
-            "outputs":[
-                "Fire Management",
-                "Participant Information"
+            "outputs": [
+                "Activity Context",
+                "Fire Information",
+                "Participant Information",
+                "Photo Points"
             ]
         },
         {
             "name": "Grazing management",
             "type": "Activity",
             "outputs": [
-                "hectaresManaged",
-                "lengthOfRiparianAreaProtected"
+                "Activity Context",
+                "Stock Management Details",
+                "Photo Points"
             ]
         },
         {
             "name": "Infrastructure works",
-            "type": "Activity"
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Infrastructure Details"
+            ]
         },
         {
             "name": "Management plan development",
-            "type": "Activity"
-        },
-        {
-            "name": "Pest animal management",
-            "type": "Activity"
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Planning Activity Details",
+                "Participant Information"
+            ]
         },
         {
             "name": "Pest management",
             "type": "Activity",
             "outputs": [
-                "hectaresTreated",
-                "hectaresProtected",
-                "kilometersFencing"
+                "Activity Context",
+                "Pest Management Details",
+                "Fence Details",
+                "Participant Information",
+                "Photo Points"
             ]
-        },
-        {
-            "name": "Research",
-            "type": "Activity"
         },
         {
             "name": "Revegetation",
             "type": "Activity",
             "outputs": [
+                "Activity Context",
+                "Revegetation",
                 "Fencing",
                 "Participant Information",
-                "Revegetation",
                 "Photo Points"
             ]
         },
         {
-            "name": "Stream/waterway protection",
-            "type": "Activity"
+            "name": "Weed Infestation & Monitoring",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Weed Treatment Details"
+            ]
         },
         {
-            "name": "Water management",
-            "type": "Activity"
+            "name": "Weed treatment",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Weed Treatment Details",
+                "Photo Points"
+            ]
         },
         {
             "name": "Weed management",
             "type": "Activity",
+            "outputs": ["Activity Context"]
+        },
+        {
+            "name": "Water management",
+            "type": "Activity",
             "outputs": [
-                "Weed Management",
-                "Hectares Treated",
-                "Length of Roadside Cleared",
-                "Length of Riparian Area Cleared"
+                "Activity Context",
+                "Water Management Details",
+                "Infrastructure Details"
             ]
         },
         {
-            "name": "Site assessment",
-            "type": "Assessment",
-            "outputs":[
-                "Vegetation Assessment"
+            "name": "Fencing",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Fence Details",
+                "Participant Information"
             ]
         },
         {
-            "name": "Fauna (biological) survey",
-            "type": "Assessment"
+            "name": "Site Preparation",
+            "type": "Activity",
+            "outputs": ["Activity Context"]
+        },
+        {
+            "name": "Seed Collection",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Seed Collection Details",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Site Planning",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Planning Activity Details",
+                "Participant Information"
+            ]
         },
         {
             "name": "Flora (biological) survey",
-            "type": "Assessment"
+            "type": "Assessment",
+            "outputs": []
         },
         {
-            "name": "Pest animal survey",
-            "type": "Assessment"
-        },
-        {
-            "name": "Weed Infestation & Monitoring",
-            "type": "Activity"
+            "name": "Fauna (biological) survey",
+            "type": "Assessment",
+            "outputs": []
         },
         {
             "name": "Feral animal assessment",
@@ -117,9 +160,28 @@
             ]
         },
         {
-            "name": "DECCW vegetation assessment",
+            "name": "Pest animal survey",
+            "type": "Assessment",
+            "outputs": []
+        },
+        {
+            "name": "Site assessment",
+            "type": "Assessment",
+            "outputs": ["Vegetation Assessment"]
+        },
+        {
+            "name": "Site assessment",
             "type": "Assessment",
             "outputs": ["Weed Abundance & Threat Score"]
+        },
+        {
+            "name": "Research",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Research Information",
+                "Participant Information"
+            ]
         },
         {
             "name": "MERI Site Assessment",
@@ -131,7 +193,6 @@
             "type": "Assessment",
             "outputs": ["Site Condition", "Landscape Context"]
         }
-
     ],
     "outputs": [
         {
@@ -157,40 +218,98 @@
                 "fenceCost",
                 "fenceType"
             ],
-            "name": "Fencing"
+            "name": "Fence Details"
         },
         {
             "template": "participation",
             "scoreNames": [
                 "totalParticipants",
                 "numberOfVolunteers",
-                "numberOfIndigenousParticipants"
+                "numberOfIndigenousParticipants",
+                ""
             ],
             "name": "Participant Information"
         },
         {
-            "template":"revegetation",
-            "name": "Revegetation",
-            "scoreNames":["totalNumberPlanted"]
+            "template": "revegetation",
+            "scoreNames": ["totalNumberPlanted"],
+            "name": "Revegetation"
         },
         {
             "template": "photoPoints",
+            "scoreNames": [],
             "name": "Photo Points"
         },
         {
-            "template":"weedManagement",
-            "name":"Weed Management",
-            "scoreNames": ["areaTreatedHa"]
+            "template": "weedManagement",
+            "scoreNames": ["areaTreatedHa"],
+            "name": "Weed Management"
         },
         {
-            "template":"communityActivity",
-            "name":"Community Activity",
-            "scoreNames": ["eventDuration"]
+            "template": "communityActivityDetails",
+            "scoreNames": ["eventDuration"],
+            "name": "Community Activity Details"
         },
         {
-            "template":"fireManagement",
-            "name":"Fire Management",
-            "scoreNames": ["areaOfBurnHa"]
+            "template": "fireInformation",
+            "scoreNames": ["areaOfBurnHa"],
+            "name": "Fire Information"
+        },
+        {
+            "template": "siteAssessment",
+            "scoreNames": [],
+            "name": "Vegetation Assessment"
+        },
+        {
+            "template": "Weed",
+            "scoreNames": ["Area treated (Ha)"],
+            "name": "Weed Treatment Details"
+        },
+        {
+            "template": "activityContext",
+            "scoreNames": [
+                "associatedProgram",
+                "projectStage"
+            ],
+            "name": "Activity Context"
+        },
+        {
+            "template": "stockManagementDetails",
+            "scoreNames": [
+                "stockingStrategy",
+                "areaManaged"
+            ],
+            "name": "Stock Management Details"
+        },
+        {
+            "template": "infrastructureDetails",
+            "scoreNames": ["infrastructureType"],
+            "name": "Infrastructure Details"
+        },
+        {
+            "template": "planningActivityDetails",
+            "scoreNames": [],
+            "name": "Planning Activity Details"
+        },
+        {
+            "template": "pestManagementDetails",
+            "scoreNames": ["pestManagementMethod"],
+            "name": "Pest Management Details"
+        },
+        {
+            "template": "researchInformation",
+            "scoreNames": [],
+            "name": "Research Information"
+        },
+        {
+            "template": "waterManagementDetails",
+            "scoreNames": [],
+            "name": "Water Management Details"
+        },
+        {
+            "template": "seedCollectionDetails",
+            "scoreNames": ["seedCollectedKg"],
+            "name": "Seed Collection Details"
         },
         {
             "template":"siteAssessment",
@@ -221,6 +340,5 @@
             "template":"habitatHectaresLandscapeContext",
             "name":"Landscape Context"
         }
-
     ]
 }
