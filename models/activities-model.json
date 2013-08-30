@@ -124,7 +124,12 @@
         {
             "name": "MERI Site Assessment",
             "type": "Assessment",
-            "outputs": ["Ground Cover - MERI", "Crown Cover - MERI", "Crown Type - MERI"]
+            "outputs": ["Ground Cover - MERI", "Exotic Fauna - MERI", "Crown Cover - MERI", "Crown Type - MERI"]
+        },
+        {
+            "name": "Habitat Hectares Site Assessment",
+            "type": "Assessment",
+            "outputs": ["Site Condition", "Landscape Context"]
         }
 
     ],
@@ -199,11 +204,23 @@
         {
             "template":"crownCover",
             "name":"Crown Cover - MERI"
-        }
-        ,
+        },
         {
             "template":"crownType",
             "name":"Crown Type - MERI"
+        },
+        {
+            "template":"exoticFauna",
+            "name":"Exotic Fauna - MERI"
+        },
+        {
+            "template":"habitatHectaresSiteCondition",
+            "name":"Site Condition"
+        },
+        {
+            "template":"habitatHectaresLandscapeContext",
+            "name":"Landscape Context"
         }
+
     ]
 }

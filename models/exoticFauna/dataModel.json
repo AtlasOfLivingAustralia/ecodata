@@ -1,0 +1,22 @@
+{
+"modelName":"Exotic Fauna - MERI",
+"dataModel":[
+    {"name":"evidenceOfExoticFauna", "dataType":"list","columns":[
+        {"name":"sampleLocation","dataType":"number"},
+        {"name":"evidence","dataType":"text", "constraints":["", "Hole", "Scats", "Live", "Tracks", "Fur or feathers", "Warren", "Den", "Soil", "Scratchings", "Damage", "Other"]},
+        {"name":"comment","dataType":"text"}
+    ],
+    "defaultRows":[{"sampleLocation":"", "evidence":"", "comment":""}]
+    }
+
+],
+"viewModel":[
+    {   "type": "row", "items": [{"type": "literal", "source":"<h2>Field Sheet 2: Evidence of exotic fauna</h2>"}]},
+    {   "type": "table", "source":"evidenceOfExoticFauna","userAddedRows":true,
+        "columns": [
+            {"title":"Point (m)","source":"sampleLocation","width":"10%", "validate":"required,min[0],max[50]"},
+            {"title":"Evidence","source":"evidence","width":"20%", "type":"selectOne", "validate":"required"},
+            {"title":"Comment","source":"comment","width":"60%", "type":"textarea"}
+    ]}
+]
+}
