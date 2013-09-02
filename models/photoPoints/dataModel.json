@@ -11,10 +11,10 @@
     "viewModel":[
 
         {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photo Points</h4>"}]},
-        {   "type": "row", "visibility":"site.siteId && !data.photoPoints().length", "items": [
+        {   "type": "row", "visibility":"transients.site.siteId && !data.photoPoints().length", "items": [
                 {"type": "literal", "source":"<span>There are no photo points defined for this site.</span>"},
                 {"type": "link", "properties":{"controller":"site", "action":"edit", "id":"#siteId"}, "source":"Add a Photo Point"}]},
-        {   "type": "row", "visibility":"!site.siteId", "items": [{"type": "literal", "source":"<span>This activity was not undertaken on a site.</span>"}]},
+        {   "type": "row", "visibility":"!transients.site.siteId", "items": [{"type": "literal", "source":"<span>This activity was not undertaken on a site.</span>"}]},
         {
             "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
             "editableRows":"true",
@@ -24,13 +24,8 @@
                 {"title":"Photo point", "width":"25%","type":"photopoint", "source":"name", "readOnly":"true"},
                 {"title":"Photo", "width":"40%","source":"photo"},
                 {"title":"Comment", "width":"20%","source":"comment"}
-            ],
-            "footer": {
-                "rows":[{"columns":[
-                    {"type":"literal","source":""},
-                    {"type":"literal","source":""},
-                    {"type":"literal","source":""},
-                ]}]
-            }
+            ]
         }
-    ]}
+
+    ]
+}
