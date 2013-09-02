@@ -1,7 +1,9 @@
 package au.org.ala.ecodata
 
-class AuditController {
+import grails.converters.JSON
 
+class AuditController {
+    def userService
     def entityAuditMessageTableFragment() {
         def entityId = params.entityId
         def messages = []
@@ -35,6 +37,18 @@ class AuditController {
         def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'asc'])
 
         [projectInstance: projectInstance, auditMessages: auditMessages]
+    }
+
+    def getRecentProjectsForUserId() {
+        def userId = params.id
+        def user = userService.getUserForUserId(userId) // checks auth for userid
+        log.debug "user = $user"
+        if (user) {
+            def auditMessages = AuditMessage.findAllByUserId(userId, [sort:'date', order:'asc',max: 10])
+            render auditMessages as JSON
+        } else {
+            render status:404, text: "User not found for userId: ${userId}"
+        }
     }
 
 }

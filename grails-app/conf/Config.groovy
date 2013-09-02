@@ -116,8 +116,8 @@ environments {
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
         app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
-        app.elasticsearch.indexAllOnStartup = false
-        app.elasticsearch.indexOnGormEvents = false
+        app.elasticsearch.indexAllOnStartup = true
+        app.elasticsearch.indexOnGormEvents = true
     }
     test {
         grails.logging.jul.usebridge = false

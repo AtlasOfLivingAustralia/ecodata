@@ -80,7 +80,51 @@ class PermissionsController {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:404, text: 'Required params not provided: userId, role, projectId'
+            render status:400, text: 'Required params not provided: userId, role, projectId'
+        }
+    }
+
+    def getStarredProjectForUserId() {
+        String projectId = params.projectId
+        String userId = params.userId
+        AccessLevel role = AccessLevel.starred
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
+                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Error adding editor: ${ps}"
+                }
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    def starProjectForUser() {
+        def projectId = params.projectId
+        def userId = params.userId
+        AccessLevel role = AccessLevel.starred
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
+                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Error adding editor: ${ps}"
+                }
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, projectId'
         }
     }
 
@@ -93,6 +137,52 @@ class PermissionsController {
             render userList as JSON
         } else {
             render status:404, text: "Project not found for projectId: ${projectId}"
+        }
+    }
+
+    def getProjectsForUserId() {
+        def userId = params.id
+        if (userId) {
+            def up = UserPermission.findAllByUserId(userId, params)
+            def out  = []
+            up.each {
+                def t = [:]
+                t.project = Project.get(it.project.id)
+                t.accessLevel = it.accessLevel
+                out.add t
+            }
+            render out as JSON
+        } else {
+            render status:400, text: "Required params not provided: userId"
+        }
+    }
+
+    def getStarredProjectsForUserId() {
+        String userId = params.id
+
+        if (userId) {
+            def up = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
+            render up.collect { Project.get(it.project.id) } as JSON
+        } else {
+            render status:400, text: "Required params not provided: id"
+        }
+    }
+
+    def isProjectStarredByUser() {
+        def userId = params.userId
+        def projectId = params.projectId
+
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, AccessLevel.starred)
+                render up.collect { Project.get(it.project.id) } as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+
+        } else {
+            render status:400, text: "Required params not provided: id"
         }
     }
 
@@ -109,7 +199,7 @@ class PermissionsController {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:404, text: 'Required params not provided: adminId, userId, projectId'
+            render status:400, text: 'Required params not provided: adminId, userId, projectId'
         }
     }
 }

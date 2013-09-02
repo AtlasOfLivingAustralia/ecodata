@@ -44,6 +44,11 @@ class PermissionService {
         up.collect { it.userId } // return just a list of userIds
     }
 
+    def getProjectsForUserAndAccessLevel(String userId, AccessLevel accessLevel, Project project) {
+        def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, accessLevel)
+        up.collect { Project.get(it.project.id) } // return just a list of userIds
+    }
+
     def addUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
         def up = new UserPermission(userId: userId, project: project, accessLevel: accessLevel)
         try {

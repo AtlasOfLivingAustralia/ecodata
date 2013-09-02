@@ -7,4 +7,9 @@ class UserDetails {
     String displayName
     String userName
     String userId
+
+    @Override
+    public String toString() {
+        "[ userId: ${userId}, userName: ${userName}, displayName: ${displayName} ]"
+    }
 }
