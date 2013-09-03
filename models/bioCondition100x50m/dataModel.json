@@ -1,0 +1,66 @@
+{
+    "modelName":"100 x 50m area - Ecologically Dominant Layer",
+    "dataModel":[
+        {"name":"eucalyptLargeTreeDBH","dataType":"number"},
+        {"name":"numLargeEucalypt","dataType":"number"},
+        {"name":"nonEucalyptLargeTreeDBH","dataType":"number"},
+        {"name":"numLargeNonEucalypt","dataType":"number"},
+        {"name":"totalLargeTrees","dataType":"number"},
+        {"name":"treeCanopyHeight","dataType":"number"},
+        {"name":"subcanopyHeight","dataType":"number"},
+        {"name":"emergentHeight","dataType":"number"},
+        {"name":"proportionDominantCanopySpeciesWithEvidenceOfRecruitment","dataType":"number"},
+        {"name":"totalTreeSpeciesRichness","dataType":"number"}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h3>100 x 50m area - Ecologically Dominant Layer</h3>"}]},
+
+        {   "type":"row",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"eucalyptLargeTreeDBH","preLabel":"Eucalypt Large Tree DBH", "validate":"required,min[0]"},
+                        {"type":"number","source":"numLargeEucalypt","preLabel":"Number of large eucalypt trees:", "validate":"required,min[0]"}
+                    ]
+                },
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"nonEucalyptLargeTreeDBH","preLabel":"Non-Eucalypt Large Tree DBH", "validate":"required,min[0]"},
+                        {"type":"number","source":"numLargeNonEucalypt","preLabel":"Number of large non-eucalypt trees:", "validate":"required,min[0]"}
+                    ]
+                },
+            ]
+        },
+
+        {   "type": "row", "items": [{"type":"number","source":"totalLargeTrees","preLabel":"Total large trees:", "validate":"required,min[0]"}]},
+
+        {   "type":"row",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"treeCanopyHeight","preLabel":"Tree Canopy (EDL) Height (m):", "validate":"required,min[0]"}
+                    ]
+                },
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"subcanopyHeight","preLabel":"Tree subcanopy height (m):", "validate":"min[0]"}
+                    ]
+                },
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"emergentHeight","preLabel":"Emergent height (m):", "validate":"min[0]"}
+                    ]
+                }
+            ]
+        },
+
+        {   "type": "row", "items": [{"type":"number","source":"proportionDominantCanopySpeciesWithEvidenceOfRecruitment","preLabel":"Proportion of dominant canopy EDL species with evidence of recruitment (%):", "validate":"required,min[0],max[100]"}]},
+
+        {   "type": "row", "items": [{"type":"number","source":"totalTreeSpeciesRichness","preLabel":"Total tree (defined as single stemmed over 2m) tree species richness (all trees species - not just EDL species):", "validate":"required,min[0]"}]}
+    ]
+}

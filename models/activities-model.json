@@ -192,6 +192,11 @@
             "name": "Habitat Hectares Site Assessment",
             "type": "Assessment",
             "outputs": ["Site Condition", "Landscape Context"]
+        },
+        {
+            "name": "BioCondition Site Assessment (v2.1)",
+            "type": "Assessment",
+            "outputs": ["100 x 50m area - Ecologically Dominant Layer", "50 x 10m area", "50 x 20m area - Coarse Woody Debris", "Five 1 x 1m plots", "100m Transect"]
         }
     ],
     "outputs": [
@@ -339,6 +344,31 @@
         {
             "template":"habitatHectaresLandscapeContext",
             "name":"Landscape Context"
+        }
+        ,
+        {
+            "template":"bioCondition100x50m",
+            "name":"100 x 50m area - Ecologically Dominant Layer"
+        }
+        ,
+        {
+            "template":"bioCondition50x10m",
+            "name":"50 x 10m area"
+        }
+        ,
+        {
+            "template":"bioCondition50x20m",
+            "name":"50 x 20m area - Coarse Woody Debris"
+        }
+        ,
+        {
+            "template":"bioCondition1x1m",
+            "name":"Five 1 x 1m plots"
+        }
+        ,
+        {
+            "template":"bioCondition100mTransect",
+            "name":"100m Transect"
         }
     ]
 }
