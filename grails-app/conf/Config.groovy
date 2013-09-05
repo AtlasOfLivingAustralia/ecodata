@@ -140,7 +140,7 @@ environments {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL = "http://ecodata-dev.ala.org.au:8080"
+        grails.serverURL = "http://ecodata-dev.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
         security.cas.appServerName = grails.serverURL
         security.cas.contextPath = "/" + "ecodata"
