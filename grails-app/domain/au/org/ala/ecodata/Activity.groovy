@@ -7,6 +7,12 @@ import org.bson.types.ObjectId
  */
 class Activity {
 
+    /**
+     * Values for activity progress.  An enum would probably be better but doesn't seem to
+     * work out of the box with mongo/GORM
+     */
+    public static final String PLANNED = 'planned'
+    public static final String STARTED = 'started'
     /*
     Note:
         activities and assessments are both described by this domain - 'activities' can be used to mean both
@@ -25,6 +31,7 @@ class Activity {
     ObjectId id
     String activityId
     String status = 'active'
+    String progress = PLANNED
     Boolean assessment = false
     String siteId
     String projectId
@@ -32,6 +39,10 @@ class Activity {
     String type
     Date startDate
     Date endDate
+    Date plannedStartDate
+    Date plannedEndDate
+
+
     String collector
     String censusMethod
     String methodAccuracy
@@ -52,6 +63,9 @@ class Activity {
         methodAccuracy nullable: true
         fieldNotes nullable: true, maxSize: 4000
         notes nullable: true, maxSize: 4000
+        plannedStartDate nullable: true
+        plannedEndDate nullable: true
+        progress nullable: true
     }
 
 }
