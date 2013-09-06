@@ -6,7 +6,7 @@ class ECTagLib {
 
     static namespace = "ec"
 
-    def userService
+    def userService, authService
 
     /**
      * @attr active
@@ -33,10 +33,9 @@ class ECTagLib {
         def mb = new MarkupBuilder(out)
 
         mb.span(class:'username') {
-            def userDetails = request.getAttribute(UserDetails.REQUEST_USER_DETAILS_KEY)
-
-            if (userDetails) {
-                mkp.yield(userDetails.displayName)
+            def displayName = authService.displayName
+            if (displayName) {
+                mkp.yield(displayName)
             } else if (request.userPrincipal) {
                 mkp.yield(request.userPrincipal)
             } else {

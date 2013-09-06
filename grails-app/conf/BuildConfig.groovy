@@ -54,18 +54,14 @@ grails.project.dependency.resolution = {
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
 
         // ElasticSearch
-        runtime "org.elasticsearch:elasticsearch:0.90.2"
-        //runtime "org.elasticsearch:elasticsearch-lang-groovy:1.5.0"
-        compile('org.codehaus.groovy.modules.http-builder:http-builder:0.5.0') {
-            excludes "commons-logging", "xml-apis", "groovy"
-        }
+        compile "org.elasticsearch:elasticsearch:0.90.2"
     }
 
     plugins {
         runtime ":jquery:1.8.3"
         runtime ":resources:1.1.6"
         runtime ":csv:0.3.1"
-        runtime ":ala-web-theme:0.1.11"
+        runtime ":ala-web-theme:0.1.12"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
