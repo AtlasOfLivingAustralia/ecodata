@@ -19,7 +19,7 @@ class AuditService {
     private static Queue<AuditMessage> _messageQueue = new ConcurrentLinkedQueue<AuditMessage>()
 
     // Do not log GORM events for the AuditMessage class, otherwise we'll recurse off into the sunset...
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [ AuditMessage.class ]
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [ AuditMessage.class, UserPermission.class ]
 
     // If any particular properties are not to be logged, their names should be added to this list
     private static List<String> EXCLUDED_ENTITY_PROPERTIES = []

@@ -84,29 +84,29 @@ class PermissionsController {
         }
     }
 
-    def getStarredProjectForUserId() {
-        String projectId = params.projectId
-        String userId = params.userId
-        AccessLevel role = AccessLevel.starred
-        if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
-            if (project) {
-                log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
-                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
-                if (ps.status == "ok") {
-                    render "success: ${ps.id}"
-                } else {
-                    render status:500, text: "Error adding editor: ${ps}"
-                }
-            } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
-            }
-        } else {
-            render status:400, text: 'Required params not provided: userId, projectId'
-        }
-    }
+//    def getStarredProjectForUserId() {
+//        String projectId = params.projectId
+//        String userId = params.userId
+//        AccessLevel role = AccessLevel.starred
+//        if (userId && projectId) {
+//            def project = Project.findByProjectId(projectId)
+//            if (project) {
+//                log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
+//                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
+//                if (ps.status == "ok") {
+//                    render "success: ${ps.id}"
+//                } else {
+//                    render status:500, text: "Error adding editor: ${ps}"
+//                }
+//            } else {
+//                render status:404, text: "Project not found for projectId: ${projectId}"
+//            }
+//        } else {
+//            render status:400, text: 'Required params not provided: userId, projectId'
+//        }
+//    }
 
-    def starProjectForUser() {
+    def addStarProjectForUser() {
         def projectId = params.projectId
         def userId = params.userId
         AccessLevel role = AccessLevel.starred
@@ -124,26 +124,53 @@ class PermissionsController {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, projectId'
+            render status:400, text: 'Required params not provided: userId, projectId.'
+        }
+    }
+
+    def removeStarProjectForUser() {
+        def projectId = params.projectId
+        def userId = params.userId
+        AccessLevel role = AccessLevel.starred
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def ps = permissionService.removeUserAsRoleToProject(userId, role, project)
+                if (ps && ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else if (ps) {
+                    render status:500, text: "Error removing star: ${ps}"
+                } else {
+                    render status:404, text: "Project: ${projectId} not starred for userId: ${userId}"
+                }
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, projectId.'
         }
     }
 
     def getEditorsForProject() {
         def projectId = params.id
         log.debug "projectId = ${projectId}"
-        def project = Project.findByProjectId(projectId)
-        if (project) {
-            def userList = permissionService.getUsersForProject(project)
-            render userList as JSON
+        if (projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def userList = permissionService.getUsersForProject(project)
+                render userList as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
         } else {
-            render status:404, text: "Project not found for projectId: ${projectId}"
+            render status:400, text: 'Required path not provided: projectId.'
         }
     }
 
     def getProjectsForUserId() {
         def userId = params.id
         if (userId) {
-            def up = UserPermission.findAllByUserId(userId, params)
+            def up = UserPermission.findAllByUserIdAndAccessLevelNotEqual(userId, AccessLevel.starred, params)
             def out  = []
             up.each {
                 def t = [:]
@@ -176,7 +203,8 @@ class PermissionsController {
             def project = Project.findByProjectId(projectId)
             if (project) {
                 def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, AccessLevel.starred)
-                render up.collect { Project.get(it.project.id) } as JSON
+                def outMap = [ isProjectStarredByUser: !up.isEmpty()]
+                render outMap as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
@@ -193,8 +221,8 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                boolean ps = permissionService.isUserEditorForProject(userId, project)
-                render ps
+                def out = [userIsEditor: permissionService.isUserEditorForProject(userId, project)]
+                render out as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }

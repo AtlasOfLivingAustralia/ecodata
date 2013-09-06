@@ -75,6 +75,7 @@ app.dump.location = "/data/ecodata/dump/"
 app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 app.elasticsearch.indexAllOnStartup = true
 app.elasticsearch.indexOnGormEvents = true
+app.http.header.userId = "X-ALA-userId"
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
@@ -116,8 +117,8 @@ environments {
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
         app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
-        app.elasticsearch.indexAllOnStartup = true
-        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = false
+        app.elasticsearch.indexOnGormEvents = false
     }
     test {
         grails.logging.jul.usebridge = false

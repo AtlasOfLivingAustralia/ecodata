@@ -42,9 +42,8 @@ class AuditController {
     def getRecentProjectsForUserId() {
         def userId = params.id
         def user = userService.getUserForUserId(userId) // checks auth for userid
-        log.debug "user = $user"
         if (user) {
-            def auditMessages = AuditMessage.findAllByUserId(userId, [sort:'date', order:'asc',max: 10])
+            def auditMessages = AuditMessage.findAllByUserId(userId, [sort:'date', order:'desc',max: 10])
             render auditMessages as JSON
         } else {
             render status:404, text: "User not found for userId: ${userId}"

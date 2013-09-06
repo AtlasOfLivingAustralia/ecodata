@@ -4,7 +4,7 @@ import org.springframework.web.context.request.RequestContextHolder
 
 class AuditFilters {
 
-    def userService
+    def grailsApplication, userService
 
     def filters = {
 
@@ -13,7 +13,7 @@ class AuditFilters {
             before = {
                 // userId is set from either the request param userId or failing that it tries to get it from
                 // the UserPrincipal (assumes ecodata is being accessed directly via admin page)
-                def userId = request.getHeader("ALA-userId")?:RequestContextHolder.currentRequestAttributes()?.getUserPrincipal()?.attributes?.userid
+                def userId = request.getHeader(grailsApplication.config.app.http.header.userId)?:RequestContextHolder.currentRequestAttributes()?.getUserPrincipal()?.attributes?.userid
                 def userDetails = userService.setCurrentUser(userId)
                 if (userDetails) {
                     // We set the current user details in the request scope because

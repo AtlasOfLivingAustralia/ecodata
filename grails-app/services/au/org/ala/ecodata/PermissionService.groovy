@@ -60,4 +60,18 @@ class PermissionService {
             return [status:'error', error: msg]
         }
     }
+
+    def removeUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
+        def up = UserPermission.findByUserIdAndProjectAndAccessLevel(userId, project, accessLevel)
+        if (up) {
+            try {
+                up.delete(flush: true)
+                return [status:'ok', id: up.id]
+            } catch (Exception e) {
+                def msg = "Failed to delete UserPermission: ${e.message}"
+                log.error msg, e
+                return [status:'error', error: msg]
+            }
+        }
+    }
 }
