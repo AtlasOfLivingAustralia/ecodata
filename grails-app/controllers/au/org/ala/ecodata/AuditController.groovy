@@ -39,11 +39,11 @@ class AuditController {
         [projectInstance: projectInstance, auditMessages: auditMessages]
     }
 
-    def getRecentProjectsForUserId() {
+    def getRecentEditsForUserId() {
         def userId = params.id
         def user = userService.getUserForUserId(userId) // checks auth for userid
         if (user) {
-            def auditMessages = AuditMessage.findAllByUserId(userId, [sort:'date', order:'desc',max: 10])
+            def auditMessages = AuditMessage.findAllByUserIdAndEntityTypeNotEqual(userId, "au.org.ala.ecodata.UserPermission", [sort:'date', order:'desc',max: 10])
             render auditMessages as JSON
         } else {
             render status:404, text: "User not found for userId: ${userId}"
