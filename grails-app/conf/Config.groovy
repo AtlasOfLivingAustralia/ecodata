@@ -144,7 +144,7 @@ environments {
         grails.serverURL = "http://ecodata-dev.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
         security.cas.appServerName = grails.serverURL
-        security.cas.contextPath = "/" + "ecodata"
+        security.cas.contextPath = ""
     }
     production {
         grails.logging.jul.usebridge = false
