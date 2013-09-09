@@ -1,0 +1,34 @@
+{
+    "modelName":"Stock Management",
+    "dataModel":[
+        {"name":"stockManagementReason","dataType":"text","constraints":["Reduce competition & shading for revegetation areas", "Promote woody plant growth", "Reduce wildfile risk & intensity", "Other (describe in notes)"]},
+        {"name":"areaOfStockManagementHa","dataType":"number"},
+        {"name":"stockingStrategy","dataType":"text"},
+        {"name":"stockingDetails","dataType":"list",
+            "columns": [
+            {"name":"stockingManagementSpecies","dataType":"species"},
+            {"name":"stockingDensity","dataType":"number"} ]
+        }
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Stock Management</h4>"}]},
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"selectOne","source":"stockManagementReason","preLabel":"What land management issue(s) are you using stock grazing to manage?", "validate":"required"},
+                        {"type":"number","source":"areaOfStockManagementHa","preLabel":"Area managed (Ha)", "validate":"required"},
+                        {"type":"text","source":"stockingStrategy","preLabel":"Stocking strategy", "validate":"required"}
+                    ]
+                }
+            ]
+        },
+        {   "type": "table", "source":"stockingDetails", "userAddedRows":"true",
+            "columns": [
+                {"title":"Type of stock used", "source":"stockingManagementSpecies","type":"autoComplete","validate":"required"},
+                {"title":"Stocking density (DSE)","source":"stockingDensity","type":"number","validate":"required"}
+            ]
+        }
+    ]
+}

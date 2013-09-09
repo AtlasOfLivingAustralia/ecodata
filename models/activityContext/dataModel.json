@@ -1,0 +1,29 @@
+{
+    "modelName":"Activity Context",
+    "dataModel":[
+        {"name":"associatedProgram","dataType":"text"},
+        {"name":"associatedSubProgram","dataType":"text"},
+        {"name":"projectStage","dataType":"text"},
+        {"name":"activityContextType","dataType":"text", "constraints":["planned","implemented","????"]},
+        {"name":"activityStartDate","dataType":"date"},
+        {"name":"activityEndDate","dataType":"date"}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Activity Context</h4>"}]},
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"text","source":"associatedProgram","preLabel":"Associated Program", "validate":"required"},
+                        {"type":"text","source":"associatedSubProgram","preLabel":"Sub-program", "validate":"required"},
+                        {"type":"text","source":"projectStage","preLabel":"Project Stage", "validate":"required"},
+                        {"type":"selectOne","source":"activityContextType","preLabel":"Purpose of event:","validate":"required"},
+                        {"type":"date","source":"activityStartDate","preLabel":"Activity start date", "validate":"required"},
+                        {"type":"date","source":"activityEndDate","preLabel":"Activity end date", "validate":"required"}
+                    ]
+                }
+            ]
+        },
+    ]
+}

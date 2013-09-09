@@ -1,25 +1,35 @@
 {
 "modelName":"Revegetation",
 "dataModel":[
-    {"name":"activityPurpose","dataType":"text", "constraints":["Biodiverse plantings","Protecting and enhancing existing native vegetation","Managing threats to biodiversity","Enhancing and enabling technologies & industries"]},
-    {"name":"activityDuration","dataType":"number"},
     {"name":"revegetationType","dataType":"text", "constraints":["Direct drill seeding","Hand broardcast seeding","Hand planting","Machine planting"]},
     {"name":"equipmentUsed","dataType":"text"},
-    {"name":"adjacentUse","dataType":"stringList", "constraints":["Conservation","Livestock","Cropping","Residential","Recreational","Rural","Industrial","Commercial or Business"]},
-    {"name":"connectivityIndex","dataType":"text", "constraints":["Connected to patch of more than 1000 ha","Connected to patch of 100 to 1000 ha","Connected to patch of 25 to 100 ha","Connected to patch of less than 25 ha","Patch linked to other vegetation via riparian link","Isolated forest or woodland remnant","Patch surrounded by native grasses","Isolated grassland","No vegetation within 1km","Only isolated Paddock trees within 1 km","Patch surrounded by grazing","Patch surrounded by cropping"]},
-    {"name":"environmentalBenefits","dataType":"stringList", "constraints":["Groundwater recharge management","Groundwater discharge or salinity management","Soil stabilisation","Riparian rehabilitation","Streambank protection","Nutrient cycling"]},
-    {"name":"photoOfActivity", "dataType":"image"},
     {"name":"planting", "dataType":"list", "columns": [
         {"name":"species", "dataType":"species", "speciesList":"project", "noTotal":"true"},
-        {"name":"number", "dataType":"number"},
-        {"name":"seedSown", "dataType":"number"},
+        {"name":"numberPlanted", "dataType":"number"},
+        {"name":"seedSownKg", "dataType":"number"},
+        {"name":"stockType", "dataType":"text", "constraints":["Seed", "Tube", "Advanced", "Cutting", "Other"], "noTotal":"true"},
         {"name":"structuralLayer", "dataType":"text", "constraints":["Overstory", "Midstory", "Understory", "Ground stratum"], "noTotal":"true"},
-        {"name":"typeOfStock", "dataType":"text", "constraints":["Seed", "Tube", "Advanced", "Cutting", "Other"], "noTotal":"true"},
         {"name":"stockProvenance", "dataType":"text", "noTotal":"true"},
-        {"name":"typeOfGuard", "dataType":"text", "constraints":["None", "Gro-guard", "Carton", "Other"], "noTotal":"true"}],
-     "columnTotals":{"name":"totals","source":"planting", "rows":[
-        {"name":"totals","dataType":"number","computed":{"dependents":"all","operation":"sum"}}]}},
-    {"name":"totalNumberPlanted", "dataType":"number", "primaryResult":"true", "computed": {"dependents":{"fromList":"planting", "source":"number"}, "operation":"sum"}}
+        {"name":"guardType", "dataType":"text", "constraints":["None", "Gro-guard", "Carton", "Other"], "noTotal":"true"}]},
+
+
+    {"name":"totalNumberPlanted","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"planted",
+                "source":"numberPlanted"
+            },"operation":"sum"
+        }
+    },
+
+    {"name":"totalSeedSownKg","dataType":"number","primaryResult":"true",
+        "computed":{
+            "dependents":{
+                "fromList":"planted",
+                "source":"seedSownKg"
+            },"operation":"sum"
+        }
+    }
 ],
 "viewModel":[
     {   "type": "row", "items": [{"type": "literal", "source":"<h4>Revegetation Information</h4>"}]},
@@ -28,18 +38,8 @@
             {
                 "type":"col",
                 "items": [
-                    {"type":"selectOne","source":"activityPurpose","preLabel":"Activity purpose:", "validate":"required"},
-                    {"type":"number","source":"activityDuration","preLabel":"Activity duration (Hrs)", "validate":"required,min[0]"},
                     {"type":"selectOne","source":"revegetationType","preLabel":"Revegetation type:"},
-                    {"type":"selectMany","source":"environmentalBenefits","preLabel":"Environmental benefits:"}
-                ]
-            },
-            {
-                "type":"col",
-                "items": [
-                    {"type":"textarea", "source":"equipmentUsed", "preLabel":"Equipment used:"},
-                    {"type":"selectOne","source":"connectivityIndex","preLabel":"Connectivity index:"},
-                    {"type":"selectMany","source":"adjacentUse","preLabel":"Adjacent use:"}
+                    {"type":"textarea", "source":"equipmentUsed", "preLabel":"Equipment used:"}
                 ]
             }
         ]
@@ -52,25 +52,23 @@
         "userAddedRows":true,
         "columns": [
             {"title":"Species", "width":"25%", "type":"autocomplete", "source":"species"},
-            {"title":"No. Planted", "width":"10%","type":"number", "source":"number"},
-            {"title":"Seed Sown (Kg)", "width":"10%","type":"number", "source":"seedSown"},
+            {"title":"No. Planted", "width":"10%","type":"number", "source":"numberPlanted"},
+            {"title":"Seed Sown (Kg)", "width":"10%","type":"number", "source":"seedSownKg"},
+            {"title":"Type of stock", "width":"10%","type":"selectOne", "source":"stockType"},
             {"title":"Structural Layer", "width":"10%","type":"selectOne", "source":"structuralLayer"},
-            {"title":"Type of stock", "width":"10%","type":"selectOne", "source":"typeOfStock"},
             {"title":"Stock Provenance", "width":"10%","type":"text", "source":"stockProvenance"},
-            {"title":"Type of Guard", "width":"10%","type":"selectOne", "source":"typeOfGuard"}
+            {"title":"Type of Guard", "width":"10%","type":"selectOne", "source":"guardType"}
 
 
         ],
         "footer": {
             "rows":[{"columns":[
-                {"type":"literal","source":"", "colspan":"7"}
+                {"type":"literal","source":"Total Seedlings Planted"},
+                {"type":"number","source":"totalNumberPlanted"},
+                {"type":"literal","source":"Total Seed Sown (Kg)"},
+                {"type":"number","source":"totalSeedSownKg"}
             ]}]
         }
-    },
-    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photos</h4>"}]},
-    {
-        "type":"row", "class": "output-section",
-        "items": [{"type":"image", "source":"photoOfActivity"}]
     }
 ]
 }

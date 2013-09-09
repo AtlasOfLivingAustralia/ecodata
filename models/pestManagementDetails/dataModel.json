@@ -1,0 +1,76 @@
+{
+    "modelName":"Pest Management Details",
+    "dataModel":[
+        {
+            "dataType": "date",
+            "name": "activityStartDate"
+        },
+        {
+            "dataType": "date",
+            "name": "activityEndDate"
+        },
+        {
+            "dataType": "number",
+            "name": "activityDuration"
+        },
+        {
+            "dataType": "text",
+            "name": "pestManagementMethod",
+            "constraints": [
+                "",
+                "one",
+                "two",
+                "three"
+            ]
+        },
+        {
+            "dataType": "species",
+            "name": "targetSpecies"
+        },
+        {
+            "dataType": "number",
+            "name": "pestAnimalDensity"
+        },
+        {
+            "dataType": "number",
+            "name": "pestAnimalsTreatedNo"
+        },
+        {
+            "dataType": "number",
+            "name": "treatmentCostPerHa"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Pest Management Details</h4>"}]},
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"date","source":"activityStartDate","preLabel":"Activity start date", "validate":"required"},
+                        {"type":"date","source":"activityEndDate","preLabel":"When did you complete this activity?", "validate":"required"},
+                        {"type":"number","source":"activityDuration","preLabel":"Activity duration (Hrs)", "validate":"required,min[0]"},
+                        {"type":"selectOne","source":"pestManagementMethod","preLabel":"Pest management method", "validate":"required"}
+                    ]
+                },
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"autocomplete","source":"targetSpecies","preLabel":"Target species", "validate":"required"},
+                        {"type":"number","source":"pestAnimalsTreatedNo","preLabel":"No. of individuals killed/removed", "validate":"required,digits"},
+                        {"type":"number","source":"areaTreatedHa","preLabel":"No. Ha. covered by treatment", "validate":"required"},
+                        {"type":"number","source":"treatmentCostPerHa","preLabel":"Cost of treatment / Ha.", "validate":"required,min[0]"}
+                    ]
+                }
+            ]
+        },
+        {
+            "type":"row", "class": "output-section",
+            "items": [{"type":"text", "source":"notes", "preLabel":"Comments / notes"}]
+        }
+    ]
+}

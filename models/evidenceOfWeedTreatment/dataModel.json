@@ -1,0 +1,26 @@
+{
+    "modelName":"Evidence of Weed Treatment",
+    "dataModel":[
+        {"name":"evidenceOfPreviousWeedTreatment", "dataType":"text"},
+        {"name":"effectivenessOfPreviousWeedTreatment", "dataType":"text"},
+        {"name":"recommendedWeedTreatment", "dataType":"text", "constraints":["one","two","three"]},
+        {"name":"proposedWeedTreatmentDate", "dataType":"date"},
+        {"name":"proposedReinspectDate", "dataType":"date"}
+    ],
+    "viewModel":[
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"text","source":"evidenceOfPreviousWeedTreatment","preLabel":"Evidence of Previous Treatment", "validate":"required"},
+                        {"type":"number","source":"effectivenessOfPreviousWeedTreatment","preLabel":"Effectiveness of Previous Treatment (% killed)", "validate":"required,min[0],max[100]"},
+                        {"type":"selectOne","source":"recommendedWeedTreatment","preLabel":"Recommended treatment", "validate":"required"},
+                        {"type":"date","source":"proposedWeedTreatmentDate","preLabel":"Planned start date", "validate":"required"},
+                        {"type":"date","source":"proposedWeedTreatmentDate","preLabel":"Planned end date", "validate":"required"}
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,37 @@
+{
+    "modelName":"Weed Treatment Details",
+    "dataModel":[
+        {"name":"targetSpecies","dataType":"species"},
+        {"name":"reproductiveStatus","dataType":"text","constraints":["one","two","three"]},
+        {"name":"plantHealth","dataType":"text","constraints":["one","two","three"]},
+        {"name":"controlStatus","dataType":"text","constraints":["one","two","three"]},
+        {"name":"areaTreatedHa","dataType":"number"},
+        {"name":"treatmentEventType","dataType":"text","constraints":["one","two","three"]},
+        {"name":"treatmentMethod","dataType":"text","constraints":["one","two","three"]},
+        {"name":"chemicalDetails","dataType":"text"},
+        {"name":"treatmentCostPerHa","dataType":"number"},
+        {"name":"notes","dataType":"text"}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Weed Treatment Details</h4>"}]},
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"autoComplete","source":"targetSpecies","preLabel":"Target details", "validate":"required"},
+                        {"type":"selectOne","source":"reproductiveStatus","preLabel":"Reproductive status at the time of treatment", "validate":"required"},
+                        {"type":"selectOne","source":"plantHealth","preLabel":"Plant health at the time of treatment", "validate":"required"},
+                        {"type":"selectOne","source":"controlStatus","preLabel":"Control status", "validate":"required"},
+                        {"type":"number","source":"areaTreatedHa","preLabel":"Treatment area (Ha)","validate":"required"},
+                        {"type":"selectOne","source":"treatmentEventType","preLabel":"Type of treatment event", "validate":"required"},
+                        {"type":"selectOne","source":"treatmentMethod","preLabel":"Treatment method", "validate":"required"},
+                        {"type":"text","source":"chemicalDetails","preLabel":"If chemical treatment, please provide details (chemical & application rate)", "validate":"required"},
+                        {"type":"number","source":"treatmentCostPerHa","preLabel":"Cost of treatment / Ha.", "validate":"required"},
+                        {"type":"text","source":"notes","preLabel":"Comments / Notes.", "validate":"required"}
+                    ]
+                }
+            ]
+        }
+    ]
+}

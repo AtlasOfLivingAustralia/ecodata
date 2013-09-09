@@ -1,7 +1,10 @@
 {
     "modelName":"Photopoints",
     "dataModel":[
+
+
         {"name":"photoPoints", "dataType":"photoPoints", "columns": [
+                {"name":"photoPointId", "dataType":"integer"},
                 {"name":"name", "dataType":"text"},
                 {"name":"photo", "dataType":"embeddedImage"},
                 {"name":"comment", "dataType":"text"}

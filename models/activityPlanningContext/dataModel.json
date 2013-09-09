@@ -1,0 +1,23 @@
+{
+    "modelName":"Activity Planning Context",
+    "dataModel":[
+        {"name":"plannedStartDate","dataType":"date"},
+        {"name":"plannedEndDate","dataType":"date"},
+        {"name":"projectStage","dataType":"text"}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Activity Planning Context</h4>"}]},
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"date","source":"plannedStartDate","preLabel":"Planned start date", "validate":"required"},
+                        {"type":"date","source":"plannedEndDate","preLabel":"Planned end date", "validate":"required"},
+                        {"type":"text","source":"projectStage","preLabel":"Project Stage", "validate":"required"}
+                    ]
+                }
+            ]
+        }
+    ]
+}

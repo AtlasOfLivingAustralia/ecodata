@@ -1,0 +1,28 @@
+{
+    "modelName":"Weed Observation / Monitoring Details",
+    "dataModel":[
+        {"name":"weedObservationMonitoringDetails", "dataType":"list","columns":[
+            {"name":"weedSpecies","dataType":"species"},
+            {"name":"weedCoverHa","dataType":"number"},
+            {"name":"weedInfestationDensity","dataType":"text","constaints":["one","two","three"]},
+            {"name":"weedHealth","dataType":"text","constaints":["one","two","three"]},
+            {"name":"weedReproductiveStatus","dataType":"text","constaints":["one","two","three"]},
+            {"name":"weedStatus","dataType":"text","constaints":["one","two","three"]},
+            {"name":"weedInspectionNotes","dataType":"text"}
+        ]}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h2>Weed Observation / Monitoring Details</h2>"}]},
+        {   "type": "table", "source":"weedObservationMonitoringDetails", "userAddedRows":"true",
+            "columns": [
+                {"title":"Weed species", "source":"weedSpecies","type":"autoComplete","validate":"required"},
+                {"title":"Weed cover (Ha)","source":"weedCoverHa","type":"number","validate":"required"},
+                {"title":"Infestation Density","source":"weedInfestationDensity","type":"selectOne","validate":"required"},
+                {"title":"Health","source":"weedHealth","type":"selectOne","validate":"required"},
+                {"title":"Reproductive status","source":"weedReproductiveStatus","type":"selectOne","validate":"required"},
+                {"title":"Weed Status","source":"weedStatus","type":"selectOne","validate":"required"},
+                {"title":"Notes","source":"weedInspectionNotes","type":"selectOne","validated":"required"}
+            ]
+        }
+    ]
+}

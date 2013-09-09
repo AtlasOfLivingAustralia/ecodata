@@ -2,7 +2,7 @@
 "modelName":"Ground Cover - MERI",
 "dataModel":[
     {"name":"groundCoverSamples", "dataType":"list","columns":[
-        {"name":"sampleLocation","dataType":"number"},
+        {"name":"nativePerennial","dataType":"number"},
         {"name":"numberOfNativePlants","dataType":"number"},
         {"name":"numberOfExoticPlants","dataType":"number"},
         {"name":"cryptogramPresent","dataType":"boolean"},

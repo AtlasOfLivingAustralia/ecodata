@@ -62,7 +62,6 @@
             "outputs": [
                 "Activity Context",
                 "Pest Management Details",
-                "Fence Details",
                 "Participant Information",
                 "Photo Points"
             ]
@@ -369,6 +368,12 @@
         {
             "template":"bioCondition100mTransect",
             "name":"100m Transect"
+        },
+        {
+            "template": "pestManagementDetails",
+            "scoreNames": [
+            ],
+            "name": "Pest Management Details"
         }
     ]
 }
