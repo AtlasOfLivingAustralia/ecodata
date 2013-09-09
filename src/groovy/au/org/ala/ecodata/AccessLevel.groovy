@@ -9,5 +9,5 @@ package au.org.ala.ecodata
  * @author "Nick dos Remedios <Nick.dosRemedios@csiro.au>"
  */
 public enum AccessLevel {
-    admin, validator, editor, starred
+    admin, approver, editor, starred
 }
