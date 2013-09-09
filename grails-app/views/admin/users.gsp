@@ -50,28 +50,31 @@
     </script>
         <content tag="pageTitle">Users</content>
         <div class="hero-unit">Logged in user is <ec:currentUserDisplayName />.</div>
-        <div class="hide">
-            Search for user: <input type="text" data-provide="typeahead" autocomplete="off" id="userName" placeholder="type a name or email address">
-        </div>
         <div>
             <h4>Add Permissions</h4>
             <form class="form-horizontal">
                 <div class="control-group">
                     <label class="control-label" for="userId">User</label>
                     <div class="controls">
-                        <g:select name="user" id="userId" class="input-xlarge combobox" from="${userNamesList}" optionValue="${{it.displayName + " <" + it.userName +">"}}" optionKey="userId" noSelection="['':'']"/>
+                        <g:select name="user" id="userId" class="input-xlarge combobox" from="${userNamesList}" optionValue="${{it.displayName + " <" + it.userName +">"}}" optionKey="userId" noSelection="['':'start typing a user name']"/>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="role">Permission level</label>
                     <div class="controls">
-                        <g:select name="role" id="role" from="${AccessLevel}" value="editor" />
+                        <select name="role" id="role" >
+                            <g:each var="l" in="${AccessLevel}">
+                                <g:if test="${l != AccessLevel.starred}">
+                                    <option value="${l}">${l}</option>
+                                </g:if>
+                            </g:each>
+                        </select>
                     </div>
                 </div>
                 <div class="control-group">
                     <label class="control-label" for="projectId">Project</label>
                     <div class="controls">
-                        <g:select name="project" id="projectId" class="input-xlarge combobox" from="${Project.list()}" optionValue="name" optionKey="projectId" noSelection="['':'']" />
+                        <g:select name="project" id="projectId" class="input-xlarge combobox" from="${Project.list()}" optionValue="name" optionKey="projectId" noSelection="['':'start typing a project name']" />
                     </div>
                 </div>
                 <div class="control-group">
