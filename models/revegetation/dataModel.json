@@ -16,7 +16,7 @@
     {"name":"totalNumberPlanted","dataType":"number","primaryResult":"true",
         "computed":{
             "dependents":{
-                "fromList":"planted",
+                "fromList":"planting",
                 "source":"numberPlanted"
             },"operation":"sum"
         }
@@ -25,7 +25,7 @@
     {"name":"totalSeedSownKg","dataType":"number","primaryResult":"true",
         "computed":{
             "dependents":{
-                "fromList":"planted",
+                "fromList":"planting",
                 "source":"seedSownKg"
             },"operation":"sum"
         }
