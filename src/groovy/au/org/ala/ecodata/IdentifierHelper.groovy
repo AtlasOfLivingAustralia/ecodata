@@ -14,6 +14,9 @@ class IdentifierHelper {
             case Activity.class.name:
                 entityId = domainObject.activityId
                 break
+            case Output.class.name:
+                entityId = domainObject.outputId
+                break
             default:
                 entityId = domainObject.id
                 break
