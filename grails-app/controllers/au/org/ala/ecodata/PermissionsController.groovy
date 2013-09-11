@@ -84,6 +84,36 @@ class PermissionsController {
         }
     }
 
+    def removeUserWithRoleFromProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+        String role = params.role
+
+        if (userId && projectId && role) {
+            def project = Project.findByProjectId(projectId)
+            AccessLevel ac
+            try {
+                ac = AccessLevel.valueOf(role)
+            } catch (Exception e) {
+                render status:500, text: "Error determining role: ${e.message}"
+            }
+
+            if (project) {
+                log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
+                def ps = permissionService.removeUserAsRoleToProject(userId, ac, project)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Error removing user/role: ${ps}"
+                }
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, role, projectId'
+        }
+    }
+
 //    def getStarredProjectForUserId() {
 //        String projectId = params.projectId
 //        String userId = params.userId
@@ -159,6 +189,22 @@ class PermissionsController {
             if (project) {
                 def userList = permissionService.getUsersForProject(project)
                 render userList as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required path not provided: projectId.'
+        }
+    }
+
+    def getMembersForProject() {
+        def projectId = params.id
+
+        if (projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def members = permissionService.getMembersForProject(project)
+                render members as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }

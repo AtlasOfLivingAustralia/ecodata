@@ -44,6 +44,21 @@ class PermissionService {
         up.collect { it.userId } // return just a list of userIds
     }
 
+    def getMembersForProject(project) {
+        def up = UserPermission.findAllByProjectAndAccessLevelNotEqual(project, AccessLevel.starred)
+        def out = []
+        up.each {
+            def rec = [:]
+            def u = authService.getUserForUserId(it.userId?:"0")
+            rec.role = it.accessLevel?.toString()
+            rec.userId = it.userId
+            rec.displayName = u?.displayName
+            rec.userName = u?.userName
+            out.add(rec)
+        }
+        out
+    }
+
     def getProjectsForUserAndAccessLevel(String userId, AccessLevel accessLevel, Project project) {
         def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, accessLevel)
         up.collect { Project.get(it.project.id) } // return just a list of userIds
