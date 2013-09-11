@@ -276,4 +276,21 @@ class PermissionsController {
             render status:400, text: 'Required params not provided: adminId, userId, projectId'
         }
     }
+
+    def isUserAdminForProject() {
+        def userId = params.userId
+        def projectId = params.projectId
+
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def out = [userIsEditor: permissionService.isUserAdminForProject(userId, project)]
+                render out as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+        }
+    }
 }

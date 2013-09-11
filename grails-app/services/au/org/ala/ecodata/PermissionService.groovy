@@ -6,7 +6,7 @@ package au.org.ala.ecodata
 class PermissionService {
 
     static transactional = false
-    def authService // found in ala-web-theme plugin
+    def authService, userService // found in ala-web-theme plugin
 
     public boolean isUserEditorForProject(String userId, Project project) {
         def isEditor = false
@@ -49,7 +49,7 @@ class PermissionService {
         def out = []
         up.each {
             def rec = [:]
-            def u = authService.getUserForUserId(it.userId?:"0")
+            def u = userService.getUserForUserId(it.userId?:"0")
             rec.role = it.accessLevel?.toString()
             rec.userId = it.userId
             rec.displayName = u?.displayName
@@ -65,15 +65,39 @@ class PermissionService {
     }
 
     def addUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
-        def up = new UserPermission(userId: userId, project: project, accessLevel: accessLevel)
-        try {
-            up.save(flush: true, failOnError: true)
+        def prevRoles = UserPermission.findAllByUserIdAndProjectAndAccessLevelNotEqual(userId, project, AccessLevel.starred)
+        log.debug "0. prevRoles = ${prevRoles}"
+        //def highestRoleCode = prevRoles.findAll{ it.accessLevel.code }.max()
+
+        //if (accessLevel.code > highestRoleCode) {
+            def up = new UserPermission(userId: userId, project: project, accessLevel: accessLevel)
+            try {
+                up.save(flush: true, failOnError: true)
+                //return [status:'ok', id: up.id]
+            } catch (Exception e) {
+                def msg = "Failed to save UserPermission: ${e.message}"
+                log.error msg, e
+                return [status:'error', error: msg]
+            }
+            // remove any lower roles
+            prevRoles.each {
+                log.debug "1. prevRole = ${it}"
+                if (it != up) {
+                    try {
+                        it.delete(flush: true)
+                        //return [status:'ok', id: it.id]
+                    } catch (Exception e) {
+                        def msg = "Failed to delete (previous) UserPermission: ${e.message}"
+                        log.error msg, e
+                        return [status:'error', error: msg]
+                    }
+                }
+
+            }
             return [status:'ok', id: up.id]
-        } catch (Exception e) {
-            def msg = "Failed to save UserPermission: ${e.message}"
-            log.error msg, e
-            return [status:'error', error: msg]
-        }
+        //} else {
+        //    return [status:'error', error: "User already has a higher access level (role) for this project"]
+        //}
     }
 
     def removeUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
