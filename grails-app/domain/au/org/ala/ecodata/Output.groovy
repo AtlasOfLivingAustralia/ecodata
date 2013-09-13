@@ -22,10 +22,12 @@ class Output {
     String status = 'active'
     String activityId
     Date assessmentDate
+    String name
     Date dateCreated
     Date lastUpdated
 
     static constraints = {
         assessmentDate nullable: true
+        name nullable: true
     }
 }

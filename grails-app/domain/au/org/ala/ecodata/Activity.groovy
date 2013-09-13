@@ -39,10 +39,17 @@ class Activity {
     String type
     Date startDate
     Date endDate
+    /**
+     * Allows grouping of project activities into stages or milestones for planning and reporting purposes.
+     * Biodiversity & CFOC projects plan activities in six monthly groups (Stage 1, Stage 2...)
+     */
+    String projectStage
     Date plannedStartDate
     Date plannedEndDate
-
-
+    /** The program sponsoring or funding this Activity (e.g. Biodiversity Fund Round 1) */
+    String associatedProgram
+    /** Allows for breakdown of a program into separately reportable units (e.g. Biodiversity Fund Round 1 has three themes) */
+    String associatedSubProgram
     String collector
     String censusMethod
     String methodAccuracy
@@ -66,6 +73,9 @@ class Activity {
         plannedStartDate nullable: true
         plannedEndDate nullable: true
         progress nullable: true
+        associatedProgram nullable: true
+        associatedSubProgram nullable: true
+        projectStage nullable: true
     }
 
 }

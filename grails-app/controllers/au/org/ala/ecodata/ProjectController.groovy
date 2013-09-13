@@ -1,10 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.Score
 import grails.converters.JSON
 
 class ProjectController {
 
-    def projectService, siteService, commonService
+    def projectService, siteService, commonService, reportService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -109,6 +110,20 @@ class ProjectController {
             log.error result.error
             render status:400, text: result.error
         }
+    }
+
+    def projectMetrics(String id) {
+
+        // TODO this is temporarily hardcoded, but we can maybe define a meta model
+        // or pull out all useful outputs?
+        // Need to add targets to this also.
+        Score score = new Score([aggregationType:Score.AGGREGATION_TYPE.SUM, outputName: "Revegetation", name:"totalNumberPlanted", label:"Number of plants planted"])
+        Map grouping = [title:'By Theme', entity:'activity', property:'associatedSubProgram']
+        List scores = [score]
+        Map grouping2 = [title:'By Collector' ,entity:'output', property:'collector']
+
+        render reportService.projectSummary(id, [(grouping):scores, (grouping2):scores]) as JSON
+
     }
 
     def loadTestData() {
