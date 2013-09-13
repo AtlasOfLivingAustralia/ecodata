@@ -59,7 +59,7 @@ class OutputService {
         //log.debug "model is " + model
         def scoreNames = model?.scoreNames ?: []
         //log.debug "scoreNames = ${scoreNames}"
-        def scores = scoreNames.collectEntries { ["${it}":map[it]] }
+        def scores = scoreNames.collectEntries { [("${it}".toString()):map[it]] }
         //log.debug "scores = ${scores}"
         return scores
     }
