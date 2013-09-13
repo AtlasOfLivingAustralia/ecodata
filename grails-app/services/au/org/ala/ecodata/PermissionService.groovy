@@ -29,6 +29,30 @@ class PermissionService {
         return isEditor
     }
 
+    /**
+     * Does the request userId have permission to edit the requested projectId?
+     *
+     * @param userId
+     * @param project
+     * @return
+     */
+    def canUserEditProject(String userId, Project project) {
+        def isEditor = false
+
+        if (userId && project) {
+            def ups = UserPermission.findAllByUserIdAndProject(userId, project)
+            ups.findAll {
+                if (it.accessLevel.code >= AccessLevel.editor.code) {
+                    isEditor = true
+                }
+            }
+
+            log.debug "userCanEdit = ${isEditor}"
+        }
+
+        return isEditor // bolean
+    }
+
     def addUserAsEditorToProject(currentUserId, targetUserId, project) {
         if ((isUserAdminForProject(currentUserId, project) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
             addUserAsRoleToProject(targetUserId, AccessLevel.editor, project)

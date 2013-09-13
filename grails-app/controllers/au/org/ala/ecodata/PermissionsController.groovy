@@ -260,6 +260,28 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Does the request userId have permission to edit the requested projectId?
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def canUserEditProject() {
+        def userId = params.userId
+        def projectId = params.projectId
+
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def out = [userCanEdit: permissionService.canUserEditProject(userId, project)]
+                render out as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+        }
+    }
+
     def isUserEditorForProject() {
         def userId = params.userId
         def projectId = params.projectId
