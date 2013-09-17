@@ -1,33 +1,22 @@
 {
-    "modelName":"Photo Points",
+    "modelName":"Photopoints",
     "dataModel":[
 
 
-        {"name":"photoPointsList", "dataType":"list", "columns": [
-                {"name":"photoPointId", "dataType":"integer"},
-                {"name":"decimalLatitude","dataType":"number"},
-                {"name":"decimalLongitude","dataType":"number"},
-                {"name":"compassBearing","dataType":"number"},
-                {"name":"image", "dataType":"embeddedImage"}
-            ],
-            "userAddedRows":"true"},
-
-        {"name":"numberOfPoints","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"photoPointsList",
-                    "source":"numberPlanted"
-                },"operation":"sum"
-            }
-        },
-
+        {"name":"photoPoints", "dataType":"photoPoints", "columns": [
+            {"name":"photoPointId", "dataType":"integer"},
+            {"name":"name", "dataType":"text"},
+            {"name":"photo", "dataType":"embeddedImage"},
+            {"name":"comment", "dataType":"text"}
+        ],
+            "userAddedRows":"false"}
     ],
     "viewModel":[
 
         {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photo Points</h4>"}]},
         {   "type": "row", "visibility":"transients.site.siteId && !data.photoPoints().length", "items": [
-                {"type": "literal", "source":"<span>There are no photo points defined for this site.</span>"},
-                {"type": "link", "properties":{"controller":"site", "action":"edit", "id":"#siteId"}, "source":"Add a Photo Point"}]},
+            {"type": "literal", "source":"<span>There are no photo points defined for this site.</span>"},
+            {"type": "link", "properties":{"controller":"site", "action":"edit", "id":"#siteId"}, "source":"Add a Photo Point"}]},
         {   "type": "row", "visibility":"!transients.site.siteId", "items": [{"type": "literal", "source":"<span>This activity was not undertaken on a site.</span>"}]},
         {
             "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
