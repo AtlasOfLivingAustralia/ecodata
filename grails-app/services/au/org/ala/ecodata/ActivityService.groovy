@@ -84,17 +84,57 @@ class ActivityService {
         }
     }
 
+    /**
+     * Updates an activity and also updates/creates any outputs that are passed in the 'outputs' property
+     * of the activity. The activity itself is optional and will only be updated if the activityId
+     * property is present (in the props).
+     *
+     * @param props the activity properties and the list of outputs
+     * @param id the activity id
+     * @return json status
+     */
     def update(props, id) {
+        log.debug "props = ${props}"
         def a = Activity.findByActivityId(id)
+        def errors = []
         if (a) {
-            try {
-                getCommonService().updateProperties(a, props)
+            // do updates for each attached output
+            props.outputs.each { output ->
+                if (output.outputId) {
+                    // update
+                    log.debug "Updating output ${output.name}"
+                    def result = outputService.update(output, output.outputId)
+                    if (result.error) {
+                        errors << result.error
+                    }
+                } else {
+                    // create
+                    log.debug "Creating output ${output.name}"
+                    output.remove('outputId')   // in case a blank one is supplied
+                    output.activityId = id
+                    def result = outputService.create(output)
+                    if (result.error) {
+                        errors << result.error
+                    }
+                }
+            }
+            // see if the activity itself has updates
+            if (props.activityId) {
+                try {
+                    props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
+                    getCommonService().updateProperties(a, props)
+                } catch (Exception e) {
+                    Activity.withSession { session -> session.clear() }
+                    def error = "Error updating Activity ${id} - ${e.message}"
+                    log.error error
+                    errors << error
+                }
+            }
+            // aggregate errors
+            if (errors) {
+                return [status:'error', error: errors]
+            } else {
                 return [status:'ok']
-            } catch (Exception e) {
-                Activity.withSession { session -> session.clear() }
-                def error = "Error updating Activity ${id} - ${e.message}"
-                log.error error
-                return [status:'error',error:error]
             }
         } else {
             def error = "Error updating Activity - no such id ${id}"
