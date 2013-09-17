@@ -1,11 +1,13 @@
 {
 "modelName":"Participant Information",
 "dataModel":[
-
+            {"name":"assessorName","dataType":"text"},
             {"name":"totalParticipants","dataType":"number", "primaryResult":"true"},
             {"name":"numberOfVolunteers","dataType":"number"},
             {"name":"numberOfIndigenousParticipants","dataType":"number"},
-            {"name":"notes","dataType":"text"}
+            {"name":"totalVolunteerDays","dataType":"number"},
+            {"name":"totalIndigenousDays","dataType":"number"}
+
 
 ],
 "viewModel":[
@@ -13,11 +15,12 @@
     {
         "type":"row", "class":"output-section",
         "items": [
+            {"type":"text","source":"assessorName","preLabel":"Assessor Name:"},
             {"type":"number","source":"totalParticipants","preLabel":"Total No. of participants:","width":"20%", "validate":"required,min[0]"},
             {"type":"number","source":"numberOfVolunteers","preLabel":"No. of volunteers:", "width":"20%", "validate":"required,min[0]"},
             {"type":"number","source":"numberOfIndigenousParticipants","preLabel":"No. of indigenous participants:","width":"20%", "validate":"required,min[0]"},
-            {"type":"textarea","source":"notes","preLabel":"Notes:","width":"40%"}
-
+            {"type":"number","source":"totalVolunteerDays","preLabel":"Total no. of Volunteer Days:","width":"20%", "validate":"required,min[0]"},
+            {"type":"number","source":"totalIndigenousDays","preLabel":"Total no. of Indigenous Days:","width":"20%", "validate":"required,min[0]"}
         ]
     }
 ]

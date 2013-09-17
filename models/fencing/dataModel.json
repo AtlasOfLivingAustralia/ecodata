@@ -1,27 +1,28 @@
 {
-    "modelName": "Fencing",
+    "modelName": "fenceDetails",
     "dataModel": [
         {
             "dataType": "text",
             "name": "fenceType",
             "constraints": [
                 "",
-                "Post & Wire",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
+                "Post & Netting (net or ringlock) - non-electified",
+                "Post & Netting (net or ringlock) - electified",
                 "Post & Rail",
-                "Post & Netting",
                 "Cyclone",
-                "Solid Sheet",
-                "Other"
+                "Solid Sheet (pailing, pickets, sheet metal, etc.)",
+                "Other (specify in notes)"
             ]
         },
         {
             "dataType": "number",
-            "primaryResult": "true",
             "name": "lengthOfFence"
         },
         {
             "dataType": "number",
-            "name": "fenceCost"
+            "name": "fenceCostPerKm"
         },
         {
             "dataType": "stringList",
@@ -33,22 +34,30 @@
                 "Rabbit and hare exclusion",
                 "Wombat exclusion",
                 "Wild dog exclusion",
-                "Other"
+                "Other (specify in notes)"
             ]
+        },
+        {
+            "dataType": "textarea",
+            "name": "fenceNotes"
         }
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "<h4>Fence Details<\/h4>",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Fence Details</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
             "items": [
                 {
                     "source": "fenceType",
+                    "computed": null,
                     "preLabel": "Fence Type:",
                     "width": "10%",
                     "type": "selectOne",
@@ -56,24 +65,31 @@
                 },
                 {
                     "source": "lengthOfFence",
-                    "preLabel": "Length of fence:",
+                    "computed": null,
+                    "preLabel": "Length of fence (Km):",
                     "width": "40%",
-                    "type": "number",
-                    "postLabel": "m"
+                    "type": "number"
                 },
                 {
-                    "source": "fenceCost",
-                    "preLabel": "Fence jjjCost:",
+                    "source": "fenceCostPerKm",
+                    "computed": null,
+                    "preLabel": "Fence cost ($/Km):",
                     "width": "25%",
-                    "type": "number",
-                    "postLabel": "$/m"
+                    "type": "number"
                 },
                 {
                     "source": "purposeOfFence",
+                    "computed": null,
                     "preLabel": "Purpose of fence:",
                     "width": "25%",
-                    "type": "selectMany",
-                    "validate": "required"
+                    "type": "selectMany"
+                },
+                {
+                    "source": "fenceNotes",
+                    "computed": null,
+                    "preLabel": "Notes:",
+                    "width": "100%",
+                    "type": "textarea"
                 }
             ],
             "class": "output-section",

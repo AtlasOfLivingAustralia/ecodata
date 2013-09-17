@@ -1,0 +1,25 @@
+{
+    "modelName":"Indigenous Employment Details",
+    "dataModel":[
+        {"name":"indigenousRangersFt", "dataType":"number"},
+        {"name":"indigenousRangersPt", "dataType":"number"},
+        {"name":"indigenousEmployeesMale", "dataType":"number"},
+        {"name":"indigenousEmployeesFemale", "dataType":"number"}
+     ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Indigenous Employment Details</h4>"}]},
+        {
+            "type":"row", "class": "output-section", "items": [
+            {"type":"col", "items": [
+                {"type":"number", "source":"indigenousRangersFt", "preLabel":"No. of indigenous rangers (full time) participating in this project:", "validate":"required"},
+                {"type":"number", "source":"indigenousRangersPt", "preLabel":"No. of indigenous rangers (part time) participating in this project:", "validate":"required"},
+                {"type":"number", "source":"indigenousEmployeesMale", "preLabel":"No of Indigenous male employees working on the project:", "validate":"required"},
+                {"type":"number", "source":"indigenousEmployeesFemale", "preLabel":"No of Indigenous female employees working on the project:", "validate":"required"}
+            ]}]
+        }
+    ]
+}
+
+
+
+

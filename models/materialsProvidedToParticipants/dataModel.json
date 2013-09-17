@@ -1,0 +1,25 @@
+{
+    "modelName":"Materials Provided to Participants",
+    "dataModel":[
+        {"name":"numberOfBrochures","dataType":"number"},
+        {"name":"numberOfWrittenMaterials","dataType":"number"},
+        {"name":"numberOfMaterialRecipients","dataType":"number"},
+        {"name":"numberOfDisplays","dataType":"number"}
+
+    ],
+    "viewModel":[
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"number","source":"numberOfBrochures","preLabel":"No. of Brochures","validate":"required"},
+                        {"type":"number","source":"numberOfWrittenMaterials","preLabel":"No. of Written Materials","validate":"required"},
+                        {"type":"number","source":"numberOfMaterialRecipients","preLabel":"No. of Material Recipients","validate":"required"},
+                        {"type":"number","source":"numberOfDisplays","preLabel":"No. of Displays","validate":"required"}
+                    ]
+                }
+            ]
+        }
+    ]
+}

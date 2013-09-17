@@ -1,0 +1,23 @@
+{
+    "modelName":"Threatening Processes & Site Condition Risks",
+    "dataModel":[
+        {"name":"riskType","dataType":"text","consequences":["one","two","three"]},
+        {"name":"riskDescription","dataType":"text"},
+        {"name":"riskLikelihood","dataType":"text","consequences":["one","two","three"]},
+        {"name":"riskConsequence","dataType":"text","consequences":["one","two","three"]},
+        {"name":"riskRating","dataType":"text","consequences":["one","two","three"]}
+    ],
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Participation</h4>"}]},
+        {
+            "type":"row", "class":"output-section",
+            "items": [
+                {"title":"Type of threat/risk", "source":"riskType","type":"selectOne","validate":"required"},
+                {"title":"Description", "source":"riskDescription","type":"textarea","validate":"required"},
+                {"title":"Likelihood", "source":"riskLikelihood","type":"selectOne","validate":"required"},
+                {"title":"Consequence", "source":"riskConsequence","type":"selectOne","validate":"required"},
+                {"title":"Risk rating", "source":"riskRating","type":"selectOne","validate":"required"}
+            ]
+        }
+    ]
+}

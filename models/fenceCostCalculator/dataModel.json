@@ -1,0 +1,180 @@
+{
+    "modelName": "Fence Cost Calculator",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "fenceCostCalculator"
+        },
+        {
+            "dataType": "text",
+            "name": "fenceMaterial",
+            "constraints": [
+                " ",
+                "Strainer posts (each)",
+                "Stays (each)",
+                "Intermediate posts (each)",
+                "Post caps (each)",
+                "Rails (each)",
+                "Plain wire (roll)",
+                "Barbed wire (roll)",
+                "Ringlock wire - or similar (roll)",
+                "Wire netting - or similar (roll)",
+                "Cyclone mesh - or similar (roll)",
+                "Tie wire (roll)",
+                "Clips (each)",
+                "Gates (each)",
+                "Gate hinges & accessories",
+                "Stock grid (each)",
+                "Insulators",
+                "Electric stand-off brackets",
+                "Battery",
+                "Solar panel",
+                "Other (describe in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "fenceNoOfItems"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceRollLength"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceUnitCost"
+        },
+        {
+            "dataType": "text",
+            "name": "treatmentInfo"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "areaTreatedHa"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceMaterialCost"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceTotalCost"
+        },
+        {
+            "dataType": "number",
+            "name": "fenceNoOfStrandsPlain",
+            "constraints": []
+        },
+        {
+            "dataType": "number",
+            "name": "fenceNoOfStrandsBarbed",
+            "constraints": []
+        },
+        {
+            "dataType": "number",
+            "name": "lengthOfFence",
+            "constraints": []
+        },
+        {
+            "dataType": "number",
+            "name": "fenceCostPerKm"
+        }
+    ],
+    "viewModel": [
+        {
+            "title": "Weed Treatment Details",
+            "items": [
+                {
+                    "items": [
+                        {
+                            "items": [
+                                {
+                                    "source": "<h4>Fence Cost Calculator</h4>",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "Please enter a row for each different item of fence material purchased.",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "fenceMaterial",
+                                    "computed": null,
+                                    "preLabel": "Material:",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "source": "fenceNoOfItems",
+                                    "computed": null,
+                                    "preLabel": "No. of items of material:",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceRollLength",
+                                    "computed": null,
+                                    "preLabel": "Length of roll (m):",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceUnitCost",
+                                    "computed": null,
+                                    "preLabel": "Cost per material item ($/unit):",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceMaterialCost",
+                                    "computed": null,
+                                    "preLabel": "Cost ($):",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceTotalCost",
+                                    "computed": null,
+                                    "preLabel": "Total cost ($):",
+                                    "type": "number"
+                                }
+                            ],
+                            "computed": null,
+                            "type": "col"
+                        },
+                        {
+                            "items": [
+                                {
+                                    "source": "fenceNoOfStrandsPlain",
+                                    "computed": null,
+                                    "preLabel": "No. of plain wire strands:",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceNoOfStrandsBarbed",
+                                    "computed": null,
+                                    "preLabel": "No. of barbed wire strands:",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "lengthOfFence",
+                                    "computed": null,
+                                    "preLabel": "Length of fence (Km):",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "fenceCostPerKm",
+                                    "computed": null,
+                                    "preLabel": "Cost / Km:",
+                                    "type": "number"
+                                }
+                            ],
+                            "computed": null,
+                            "type": "col"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "row"
+                }
+            ],
+            "type": "section"
+        }
+    ]
+}

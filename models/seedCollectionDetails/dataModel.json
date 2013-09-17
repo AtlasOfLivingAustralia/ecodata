@@ -1,0 +1,37 @@
+{
+    "modelName":"Seed Collection Details",
+    "dataModel":[
+        {"name":"seedsList","dataType":"list",
+            "columns": [
+                {"name":"seedSourceSpecies","dataType":"species"},
+                {"name":"seedCollectedKg","dataType":"number"},
+                {"name":"sourcePlantHealth","dataType":"text","constraints":["one","two","three"]},
+            ]
+        },
+        {"name":"seedSourceProvenance","dataType":"text"},
+        {"name":"seedBankRepository","dataType":"text"},
+        {"name":"notes","dataType":"text"}
+    ],
+    "viewModel":[
+        {   "type": "table", "source":"seedsList", "userAddedRows":"true",
+            "columns": [
+                {"title":"Species", "source":"seedSourceSpecies","type":"autoComplete","validate":"required"},
+                {"title":"Seed collected (Kg)","source":"seedCollectedKg","type":"number","validate":"required"},
+                {"title":"Health of source plant(s)","source":"sourcePlantHealth","type":"selectOne","validate":"required"}
+            ]
+        },
+
+        {   "type":"row", "class": "output-section",
+            "items": [
+                {
+                    "type":"col",
+                    "items": [
+                        {"type":"text","source":"seedSourceProvenance","preLabel":"Provenance of source plant(s)", "validate":"required"},
+                        {"type":"text","source":"seedBankRepository","preLabel":"Name of seed bank storing the seed", "validate":"required"},
+                        {"type":"textArea","source":"notes","preLabel":"Comments / Notes", "validate":"required"}
+                    ]
+                }
+            ]
+        },
+    ]
+}

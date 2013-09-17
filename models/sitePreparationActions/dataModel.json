@@ -1,0 +1,21 @@
+{
+    "modelName":"Site Preparation Actions",
+    "dataModel":[
+        {"name":"actionsList","dataType":"list",
+            "columns": [
+                {"name":"groundPreparationWorks","dataType":"text","constraints":["No preparation","Rip only","Herbicide only","Herbicide and rip","Physical clearing","Scalping","Scarifying","Mound and swale","Ring levy"]},
+                {"name":"preparationArea","dataType":"number"},
+                {"name":"notes","dataType":"text"}
+            ]
+        }
+    ],
+    "viewModel":[
+        {   "type": "table", "source":"seedsList", "userAddedRows":"true",
+            "columns": [
+                {"title":"Ground preparation works", "source":"groundPreparationWorks","type":"selectOne","validate":"required"},
+                {"title":"Area prepared (Ha)","source":"preparationArea","type":"number","validate":"required"},
+                {"title":"Notes","source":"notes","type":"textArea","validate":"required"}
+            ]
+        }
+    ]
+}

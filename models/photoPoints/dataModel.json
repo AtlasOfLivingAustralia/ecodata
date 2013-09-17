@@ -1,15 +1,26 @@
 {
-    "modelName":"Photopoints",
+    "modelName":"Photo Points",
     "dataModel":[
 
 
-        {"name":"photoPoints", "dataType":"photoPoints", "columns": [
+        {"name":"photoPointsList", "dataType":"list", "columns": [
                 {"name":"photoPointId", "dataType":"integer"},
-                {"name":"name", "dataType":"text"},
-                {"name":"photo", "dataType":"embeddedImage"},
-                {"name":"comment", "dataType":"text"}
+                {"name":"decimalLatitude","dataType":"number"},
+                {"name":"decimalLongitude","dataType":"number"},
+                {"name":"compassBearing","dataType":"number"},
+                {"name":"image", "dataType":"embeddedImage"}
             ],
-            "userAddedRows":"false"}
+            "userAddedRows":"true"},
+
+        {"name":"numberOfPoints","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"photoPointsList",
+                    "source":"numberPlanted"
+                },"operation":"sum"
+            }
+        },
+
     ],
     "viewModel":[
 
