@@ -6,11 +6,7 @@ class ActivityService {
     static final ACTIVE = "active"
     static final FLAT = 'flat'
 
-    def grailsApplication, outputService
-
-    def getCommonService() {
-        grailsApplication.mainContext.commonService
-    }
+    def grailsApplication, outputService, commonService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -62,18 +58,20 @@ class ActivityService {
         }
     }
 
+    /**
+     * Creates an activity.
+     *
+     * NOTE embedded output data is not expected here and will be discarded.
+     *
+     * @param props the activity properties
+     * @return json status
+     */
     def create(props) {
-        assert getCommonService()
         def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
         try {
             props.remove('id')
-            //println "outputs = " + props.outputs
-            def os = props.outputs?.collect { it instanceof String ? it :  it.outputId }
             props.remove('outputs')
-            //println os
-            props.outputs = os
-            //println "outputs = " + props.outputs
-            getCommonService().updateProperties(o, props)
+            commonService.updateProperties(o, props)
             return [status:'ok',activityId:o.activityId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -122,7 +120,7 @@ class ActivityService {
             if (props.activityId) {
                 try {
                     props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
-                    getCommonService().updateProperties(a, props)
+                    commonService.updateProperties(a, props)
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"
