@@ -103,7 +103,7 @@ class ActivityService {
                     log.debug "Updating output ${output.name}"
                     def result = outputService.update(output, output.outputId)
                     if (result.error) {
-                        errors << result.error
+                        errors << [error: result.error, name: output.name]
                     }
                 } else {
                     // create
@@ -112,7 +112,7 @@ class ActivityService {
                     output.activityId = id
                     def result = outputService.create(output)
                     if (result.error) {
-                        errors << result.error
+                        errors << [error: result.error, name: output.name]
                     }
                 }
             }
@@ -125,12 +125,12 @@ class ActivityService {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"
                     log.error error
-                    errors << error
+                    errors << [error: error, name: 'activity']
                 }
             }
             // aggregate errors
             if (errors) {
-                return [status:'error', error: errors]
+                return [status:'error', errorList: errors]
             } else {
                 return [status:'ok']
             }

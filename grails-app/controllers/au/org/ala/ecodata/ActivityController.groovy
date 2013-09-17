@@ -71,13 +71,18 @@ class ActivityController {
             result = activityService.create(props)
             message = [message: 'created', activityId: result.activityId]
         }
-        if (result.status == 'ok') {
-            asJson(message)
-        } else {
+        if (result.status != 'ok') {
             //Activity.withSession { session -> session.clear() }
-            log.error result.error
-            render status:400, text: result.error
+            def errors = result.errorList ?: []
+            if (result.error) {
+                errors << [error: result.error]
+            }
+            errors.each {
+                log.error it
+            }
+            message = [message: 'error', errors: errors]
         }
+        asJson(message)
     }
 
     /**
