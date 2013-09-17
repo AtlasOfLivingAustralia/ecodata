@@ -8,16 +8,6 @@ class PermissionService {
     static transactional = false
     def authService, userService // found in ala-web-theme plugin
 
-    public boolean isUserEditorForProject(String userId, Project project) {
-        def isEditor = false
-
-        if (userId && project) {
-            isEditor = ( UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, AccessLevel.editor) )
-        }
-
-        return isEditor
-    }
-
     public boolean isUserAdminForProject(String userId, Project project) {
         def isEditor = false
 
@@ -29,14 +19,7 @@ class PermissionService {
         return isEditor
     }
 
-    /**
-     * Does the request userId have permission to edit the requested projectId?
-     *
-     * @param userId
-     * @param project
-     * @return
-     */
-    def canUserEditProject(String userId, Project project) {
+    def isUserEditorForProject(String userId, Project project) {
         def isEditor = false
 
         if (userId && project) {

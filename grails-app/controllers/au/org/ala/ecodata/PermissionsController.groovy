@@ -2,6 +2,12 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+/**
+ * Controller for getting and setting user <-> project
+ * ({@link UserPermission}) access permissions.
+ *
+ * @see au.org.ala.ecodata.UserPermission
+ */
 class PermissionsController {
     def permissionService
 
@@ -10,6 +16,10 @@ class PermissionsController {
         render msg as JSON
     }
 
+    /**
+     * @deprecated for generic {@link #addUserAsRoleToProject()}
+     * @return
+     */
     def addEditorToProject() {
         def adminId = params.adminId
         def userId = params.userId
@@ -33,6 +43,10 @@ class PermissionsController {
 
     }
 
+    /**
+     * @deprecated for generic {@link #addUserAsRoleToProject()}
+     * @return
+     */
     def addUserAsAdminToProject() {
         def userId = params.userId
         def projectId = params.projectId
@@ -54,6 +68,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Create a {@link UserDetails user}-{@link Project project}-{@link UserPermission role}
+     * {@link UserPermission} object
+     *
+     * @return
+     */
     def addUserAsRoleToProject() {
         String userId = params.userId
         String projectId = params.projectId
@@ -84,6 +104,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Delete a {@link UserDetails user}-{@link Project project}-{@link UserPermission role}
+     * {@link UserPermission} object
+     *
+     * @return
+     */
     def removeUserWithRoleFromProject() {
         String userId = params.userId
         String projectId = params.projectId
@@ -114,28 +140,11 @@ class PermissionsController {
         }
     }
 
-//    def getStarredProjectForUserId() {
-//        String projectId = params.projectId
-//        String userId = params.userId
-//        AccessLevel role = AccessLevel.starred
-//        if (userId && projectId) {
-//            def project = Project.findByProjectId(projectId)
-//            if (project) {
-//                log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
-//                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
-//                if (ps.status == "ok") {
-//                    render "success: ${ps.id}"
-//                } else {
-//                    render status:500, text: "Error adding editor: ${ps}"
-//                }
-//            } else {
-//                render status:404, text: "Project not found for projectId: ${projectId}"
-//            }
-//        } else {
-//            render status:400, text: 'Required params not provided: userId, projectId'
-//        }
-//    }
-
+    /**
+     * Create a {@link AccessLevel#starred starred} role user-project {@link UserPermission}
+     *
+     * @return
+     */
     def addStarProjectForUser() {
         def projectId = params.projectId
         def userId = params.userId
@@ -158,6 +167,11 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Delete a {@link AccessLevel#starred starred} role user-project {@link UserPermission}
+     *
+     * @return
+     */
     def removeStarProjectForUser() {
         def projectId = params.projectId
         def userId = params.userId
@@ -181,6 +195,11 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Get a list of users with {@link AccessLevel#editor editor} role access to the given projectId
+     *
+     * @return
+     */
     def getEditorsForProject() {
         def projectId = params.id
         log.debug "projectId = ${projectId}"
@@ -197,6 +216,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Get a list of users with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link Project project} (via {@link Project#projectId projectId})
+     *
+     * @return
+     */
     def getMembersForProject() {
         def projectId = params.id
 
@@ -213,6 +238,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Get a list of {@link Project projects} with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
     def getProjectsForUserId() {
         def userId = params.id
         if (userId) {
@@ -230,6 +261,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Get a list of {@link Project projects} with {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
     def getStarredProjectsForUserId() {
         String userId = params.id
 
@@ -241,6 +278,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Does a given {@link Project project} have {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
     def isProjectStarredByUser() {
         def userId = params.userId
         def projectId = params.projectId
@@ -261,28 +304,12 @@ class PermissionsController {
     }
 
     /**
-     * Does the request userId have permission to edit the requested projectId?
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#editor editor}
+     * level access or higher for a given {@link Project project}
      *
      * @return JSON object with a single property representing a boolean value
      */
     def canUserEditProject() {
-        def userId = params.userId
-        def projectId = params.projectId
-
-        if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
-            if (project) {
-                def out = [userCanEdit: permissionService.canUserEditProject(userId, project)]
-                render out as JSON
-            } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
-            }
-        } else {
-            render status:400, text: 'Required params not provided: adminId, userId, projectId'
-        }
-    }
-
-    def isUserEditorForProject() {
         def userId = params.userId
         def projectId = params.projectId
 
@@ -299,6 +326,12 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Does a given {@link UserDetails#userId userId} have {@link AccessLevel#admin admin} level access
+     * for a given {@link Project project}
+     *
+     * @return
+     */
     def isUserAdminForProject() {
         def userId = params.userId
         def projectId = params.projectId
@@ -314,5 +347,15 @@ class PermissionsController {
         } else {
             render status:400, text: 'Required params not provided: adminId, userId, projectId'
         }
+    }
+
+    /**
+     * Return a list of all the {@link AccessLevel} enum values
+     * See the custom JSON serializer in Bootstrap.groovy
+     *
+     * @return JSON representation of AccessLevel values
+     */
+    def getAllAccessLevels() {
+        render AccessLevel.values() as JSON
     }
 }

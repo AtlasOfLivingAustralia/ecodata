@@ -1,10 +1,11 @@
+import au.org.ala.ecodata.AccessLevel
 import au.org.ala.ecodata.GormEventListener
+import grails.converters.JSON
 import org.bson.BSON
 import org.bson.Transformer
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
-
 
 class BootStrap {
 
@@ -33,6 +34,16 @@ class BootStrap {
             }
         });
 
+        /**
+         * Custom JSON serializer for {@link AccessLevel} enum
+         */
+        JSON.registerObjectMarshaller( AccessLevel ) { AccessLevel al ->
+            return [
+                    class: al.getClass().canonicalName,
+                    name : al.name(),
+                    code : al.getCode()
+            ]
+        }
     }
 
     def destroy = {
