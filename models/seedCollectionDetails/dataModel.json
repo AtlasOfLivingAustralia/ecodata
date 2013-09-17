@@ -15,7 +15,7 @@
     "viewModel":[
         {   "type": "table", "source":"seedsList", "userAddedRows":"true",
             "columns": [
-                {"title":"Species", "source":"seedSourceSpecies","type":"autoComplete","validate":"required"},
+                {"title":"Species", "source":"seedSourceSpecies","type":"autocomplete","validate":"required"},
                 {"title":"Seed collected (Kg)","source":"seedCollectedKg","type":"number","validate":"required"},
                 {"title":"Health of source plant(s)","source":"sourcePlantHealth","type":"selectOne","validate":"required"}
             ]

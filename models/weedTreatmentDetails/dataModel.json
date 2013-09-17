@@ -19,7 +19,7 @@
                 {
                     "type":"col",
                     "items": [
-                        {"type":"autoComplete","source":"targetSpecies","preLabel":"Target details", "validate":"required"},
+                        {"type":"autocomplete","source":"targetSpecies","preLabel":"Target details", "validate":"required"},
                         {"type":"selectOne","source":"reproductiveStatus","preLabel":"Reproductive status at the time of treatment", "validate":"required"},
                         {"type":"selectOne","source":"plantHealth","preLabel":"Plant health at the time of treatment", "validate":"required"},
                         {"type":"selectOne","source":"controlStatus","preLabel":"Control status", "validate":"required"},

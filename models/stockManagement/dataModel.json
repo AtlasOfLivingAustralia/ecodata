@@ -26,7 +26,7 @@
         },
         {   "type": "table", "source":"stockingDetails", "userAddedRows":"true",
             "columns": [
-                {"title":"Type of stock used", "source":"stockingManagementSpecies","type":"autoComplete","validate":"required"},
+                {"title":"Type of stock used", "source":"stockingManagementSpecies","type":"autocomplete","validate":"required"},
                 {"title":"Stocking density (DSE)","source":"stockingDensity","type":"number","validate":"required"}
             ]
         }
