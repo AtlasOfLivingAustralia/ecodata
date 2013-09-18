@@ -18,6 +18,17 @@ class MetadataController {
         render result as JSON
     }
 
+    def programsModel() {
+        render metadataService.programsModel()
+    }
+
+    def updateProgramsModel() {
+        def model = request.JSON
+        metadataService.updateProgramsModel(model.model.toString(4))
+        def result = [model: metadataService.programsModel()]
+        render result as JSON
+    }
+
     /** Returns the json data/view model for a specified output.
      *
      * @param id an output template name

@@ -15,6 +15,13 @@ class MetadataService {
         })
     }
 
+    def programsModel() {
+        return cacheService.get('programs-model',{
+            String filename = (grailsApplication.config.app.external.model.dir as String) + 'programs-model.json'
+            JSON.parse(new File(filename).text)
+        })
+    }
+
     def getOutputModel(name) {
         return activitiesModel().outputs.find { it.name == name }
     }
@@ -80,6 +87,12 @@ class MetadataService {
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'activities-model', 'json')
         // make sure it gets reloaded
         cacheService.clear('activities-model')
+    }
+
+    def updateProgramsModel(model) {
+        writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'programs-model', 'json')
+        // make sure it gets reloaded
+        cacheService.clear('programs-model')
     }
 
 }
