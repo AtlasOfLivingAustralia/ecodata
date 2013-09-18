@@ -1,11 +1,10 @@
 {
     "selectedActivity": {
-        "name": "Fire Management",
+        "name": "Debris Removal",
         "type": "Activity",
         "outputs": [
-            "Fire Information",
-            "Participant Information",
-            "Photo Points"
+            "Debris Removal Details",
+            "Participant Information"
         ]
     },
     "activities": [
@@ -57,7 +56,6 @@
             "name": "Weed Treatment",
             "type": "Activity",
             "outputs": [
-                "Activity Planning Context",
                 "Weed Treatment Details",
                 "Participant Information",
                 "Photo Points"
@@ -67,7 +65,6 @@
             "name": "Pest Management",
             "type": "Activity",
             "outputs": [
-                "Activity Planning Context",
                 "Pest Management Details",
                 "Fence Details",
                 "Participant Information",
@@ -87,7 +84,6 @@
             "name": "Grazing Management",
             "type": "Activity",
             "outputs": [
-                "Activity Planning Context",
                 "Stock Management Details",
                 "Photo Points"
             ]
@@ -96,7 +92,6 @@
             "name": "Water Management",
             "type": "Activity",
             "outputs": [
-                "Activity Planning Context",
                 "Water Management Details",
                 "Infrastructure Details"
             ]
@@ -105,7 +100,6 @@
             "name": "Infrastructure Works",
             "type": "Activity",
             "outputs": [
-                "Activity Planning Context",
                 "Infrastructure Details"
             ]
         },
@@ -169,20 +163,12 @@
             "name": "Site assessment",
             "type": "Assessment",
             "outputs": [
-                "Activity Planning Context",
                 "Participant Information",
                 "Vegetation Assessment",
                 "Site Condition Components",
                 "Landscape Context Components",
                 "Threatening Processes & Site Condition Risks",
                 "Photo Points"
-            ]
-        },
-        {
-            "name": "Site assessment",
-            "type": "Assessment",
-            "outputs": [
-                "Weed Abundance & Threat Score"
             ]
         },
         {
@@ -255,10 +241,10 @@
             ]
         },
         {
-            "name": "Indigenous Employment",
+            "name": "Project Employment",
             "type": "Activity",
             "outputs": [
-                "Indigenous Employment Details"
+                "Employment Details"
             ]
         },
         {
@@ -533,9 +519,9 @@
             "name": "100m Transect"
         },
         {
-            "template": "indigenousEmploymentDetails",
+            "template": "employmentDetails",
             "scoreNames": [],
-            "name": "Indigenous Employment Details"
+            "name": "Employment Details"
         },
         {
             "template": "debrisRemovalDetails",
