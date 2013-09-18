@@ -21,10 +21,7 @@
     }
 ],
 "viewModel":[
-    {
-       "type":"template",
-        "source":"assessmentArea"
-    },
+
     {   "type":"section", "title":"Vegetation Assessment", "items": [
         {
             "type":"row", "items":[
