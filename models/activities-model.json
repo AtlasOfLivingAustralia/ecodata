@@ -308,7 +308,7 @@
             "name": "Fence Cost Calculator"
         },
         {
-            "template": "participationInformation",
+            "template": "participantInformation",
             "scoreNames": [
                 "totalParticipants",
                 "numberOfVolunteers",
