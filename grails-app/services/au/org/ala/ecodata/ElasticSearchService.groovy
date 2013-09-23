@@ -69,7 +69,7 @@ class ElasticSearchService {
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
         //settings.put("number_of_shards",1);
         //settings.put("number_of_replicas",0);
-        node = nodeBuilder().settings(settings).node();
+        node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
     }
