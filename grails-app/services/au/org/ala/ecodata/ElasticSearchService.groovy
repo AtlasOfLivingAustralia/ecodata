@@ -53,7 +53,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-
+    def allowedDocTypes = ['au.org.ala.ecodata.Project','au.org.ala.ecodata.Site','au.org.ala.ecodata.Activity']
     def DEFAULT_INDEX = "search"
     def HOMEPAGE_INDEX = "homepage"
     def DEFAULT_TYPE = "doc"
@@ -79,7 +79,7 @@ class ElasticSearchService {
      *
      * TODO add code to check if index exists and only add/update mappings if required
      */
-    def reInitialiseIndex() {
+    def reInitialiseIndex(index) {
         log.debug "reInitialiseIndex"
         try {
 //            CreateIndexResponse createResponse = client.admin().indices().prepareCreate(DEFAULT_INDEX).execute().actionGet();
@@ -96,7 +96,7 @@ class ElasticSearchService {
 //                client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mapping).setSettings(settings).execute().actionGet();
 //            }
 
-            addMappings()
+            addMappings(index)
         } catch (Exception e) {
             log.error "Error creating index: ${e}", e
         }
@@ -120,11 +120,16 @@ class ElasticSearchService {
 
         addCustomFields(doc)
         def docJson = doc as JSON
+        //log.debug "indexing docId: ${docId}"
 
-        client.prepareIndex(index, DEFAULT_TYPE, docId)
-            .setSource(
-                docJson.toString(false)
-            ).execute().actionGet();
+        try {
+            client.prepareIndex(index, DEFAULT_TYPE, docId)
+                .setSource(
+                    docJson.toString(false)
+                ).execute().actionGet();
+        } catch (Exception e) {
+            log.error "ES prepareIndex error: ${e}", e
+        }
     }
 
     /**
@@ -164,10 +169,14 @@ class ElasticSearchService {
      */
     def checkForDelete(doc, docId) {
         def isDeleted = false
-
-        def resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
-                .execute()
-                .actionGet();
+        def resp
+        try {
+            resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
+                    .execute()
+                    .actionGet();
+        } catch (Exception e) {
+            log.error "ES prepareGet error: ${e}", e
+        }
 
         if (resp && doc.status == "deleted") {
             try {
@@ -255,7 +264,7 @@ class ElasticSearchService {
     /**
      * Add custom mapping for ES index.
      */
-    def addMappings() {
+    def addMappings(index) {
 
         def mappingJson = '''
         {
@@ -396,22 +405,28 @@ class ElasticSearchService {
             }
         }
         '''
+
+        def indexes = (index) ? [ index ] : [DEFAULT_INDEX, HOMEPAGE_INDEX]
+        indexes.each {
+            client.admin().indices().prepareCreate(it).setSource(mappingJson).execute().actionGet()
+        }
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
-        client.admin().indices().prepareCreate(DEFAULT_INDEX).setSource(mappingJson).execute().actionGet()
-        client.admin().indices().prepareCreate(HOMEPAGE_INDEX).setSource(mappingJson).execute().actionGet()
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
     }
 
     /**
-     * Index any document type using the toMap representation of it
+     * Index any document type using the toMap representation of it.
+     * Called by {@link GormEventListener GormEventListener}.
      *
-     * @param doc
+     * @param doc (domain object)
      */
     def indexDocType(doc) {
         log.debug "Indexing switch is ${indexingTempInactive}"
 
         // skip indexing
-        if (indexingTempInactive || !grailsApplication.config.app.elasticsearch.indexOnGormEvents) {
+        if (indexingTempInactive
+                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !allowedDocTypes.contains(doc.getClass().name)) {
             return null
         }
 
@@ -447,6 +462,18 @@ class ElasticSearchService {
     }
 
     /**
+     * Delete doc from search main index.
+     *
+     * @param doc (domain object)
+     */
+    def deleteDocType(doc) {
+        def docId = getEntityId(doc)
+        // delete from index
+        def resp = checkForDelete(doc, docId)
+        log.info "Delete from index for ${doc}: ${resp} "
+    }
+
+    /**
      * Index all documents. Index is cleared first.
      */
     def indexAll() {
@@ -479,6 +506,24 @@ class ElasticSearchService {
             indexDoc(it, DEFAULT_INDEX)
         }
 
+    }
+
+    /**
+     * Regenerate the HOMEPAGE_INDEX index only
+     *
+     * @return
+     */
+    def generateHomePageIndex() {
+        log.debug "generateHomePageIndex"
+        // clear index
+        deleteIndex(HOMEPAGE_INDEX)
+        // homepage index
+        def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
+        listDeep.each {
+            it["class"] = new Project().getClass().name
+            //log.debug "project (deep) = ${it as JSON}"
+            indexDoc(it, HOMEPAGE_INDEX)
+        }
     }
 
     /**
@@ -711,8 +756,10 @@ class ElasticSearchService {
      *
      * @return
      */
-    public deleteIndex() {
-        [DEFAULT_INDEX, HOMEPAGE_INDEX].each {
+    public deleteIndex(index) {
+        def indexes = (index) ? [ index ] : [DEFAULT_INDEX, HOMEPAGE_INDEX]
+
+        indexes.each {
             log.info "trying to delete $it"
             try {
                 def response = node.client().admin().indices().prepareDelete(it).execute().get()
@@ -727,7 +774,7 @@ class ElasticSearchService {
         }
 
         // recreate the index and mappings
-        reInitialiseIndex()
+        reInitialiseIndex(index)
         return "index cleared"
     }
 

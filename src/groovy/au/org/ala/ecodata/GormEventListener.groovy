@@ -43,7 +43,7 @@ class GormEventListener extends AbstractPersistenceEventListener {
             auditService.logGormEvent(event)
         } else if (event.eventType == EventType.PostDelete) {
             log.debug "POST DELETE ${event.entityObject}"
-            elasticSearchService.indexDocType(event.entityObject)
+            elasticSearchService.deleteDocType(event.entityObject)
             auditService.logGormEvent(event)
         }
 
