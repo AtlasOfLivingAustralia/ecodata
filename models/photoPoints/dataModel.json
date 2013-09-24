@@ -1,34 +1,77 @@
 {
-    "modelName":"Photopoints",
-    "dataModel":[
-
-
-        {"name":"photoPoints", "dataType":"photoPoints", "columns": [
-            {"name":"photoPointId", "dataType":"integer"},
-            {"name":"name", "dataType":"text"},
-            {"name":"photo", "dataType":"embeddedImage"},
-            {"name":"comment", "dataType":"text"}
+    "modelName": "Photopoints",
+    "dataModel": [{
+        "dataType": "photoPoints",
+        "name": "photoPoints",
+        "columns": [
+            {
+                "dataType": "integer",
+                "name": "photoPointId"
+            },
+            {
+                "dataType": "text",
+                "name": "name"
+            },
+            {
+                "dataType": "embeddedImage",
+                "name": "photo"
+            },
+            {
+                "dataType": "text",
+                "name": "comment"
+            }
         ],
-            "userAddedRows":"false"}
-    ],
-    "viewModel":[
-
-        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photo Points</h4>"}]},
-        {   "type": "row", "visibility":"transients.site.siteId && !data.photoPoints().length", "items": [
-            {"type": "literal", "source":"<span>There are no photo points defined for this site.</span>"},
-            {"type": "link", "properties":{"controller":"site", "action":"edit", "id":"#siteId"}, "source":"Add a Photo Point"}]},
-        {   "type": "row", "visibility":"!transients.site.siteId", "items": [{"type": "literal", "source":"<span>This activity was not undertaken on a site.</span>"}]},
+        "userAddedRows": "false"
+    }],
+    "viewModel": [
         {
-            "type":"photoPoints", "source":"photoPoints", "preLabel":"Photo points at the time of the activity",
-            "editableRows":"true",
-            "source":"photoPoints",
-            "userAddedRows":false,
+            "items": [{
+                "source": "Photo points are created and managed as a part of the site definition.  A row for each photo point will appear in the table below.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "visibility": "transients.site.siteId && !data.photoPoints().length",
+            "items": [{
+                "source": "<span>There are no photo points defined for this site.<\/span>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "visibility": "!transients.site.siteId",
+            "items": [{
+                "source": "<span>This activity was not undertaken on a site.<\/span>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "photoPoints",
+            "preLabel": "Photo points at the time of the activity",
             "columns": [
-                {"title":"Photo point", "width":"25%","type":"photopoint", "source":"name", "readOnly":"true"},
-                {"title":"Photo", "width":"40%","source":"photo"},
-                {"title":"Comment", "width":"20%","source":"comment"}
-            ]
+                {
+                    "title": "Photo point",
+                    "readOnly": "true",
+                    "source": "name",
+                    "width": "25%",
+                    "type": "photopoint"
+                },
+                {
+                    "title": "Photo",
+                    "source": "photo",
+                    "width": "40%"
+                },
+                {
+                    "title": "Comment",
+                    "source": "comment",
+                    "width": "20%"
+                }
+            ],
+            "userAddedRows": false,
+            "editableRows": "true",
+            "type": "photoPoints"
         }
-
     ]
 }
