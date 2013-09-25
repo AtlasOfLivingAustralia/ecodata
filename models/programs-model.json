@@ -1,4 +1,35 @@
-{"programs":[
-    {"name":"Biodiversity Fund", "subprograms":["Round 1","Round 2"]},
-    {"name":"Caring for our Country", "subprograms":[]}
+{"programs": [
+    {
+        "name": "Biodiversity Fund",
+        "subprograms": [
+            {
+                "name": "Round 1",
+                "themes": [
+                    {"name": "test2"},
+                    {"name": "test"}
+                ]
+            },
+            {
+                "name": "Round 2",
+                "themes": []
+            },
+            {
+                "name": "Round 3",
+                "themes": []
+            }
+        ]
+    },
+    {
+        "name": "Caring for our Country",
+        "subprograms": [
+            {
+                "name": "Regional Funding",
+                "themes": []
+            },
+            {
+                "name": "Targeted Area Grants",
+                "themes": []
+            }
+        ]
+    }
 ]}
