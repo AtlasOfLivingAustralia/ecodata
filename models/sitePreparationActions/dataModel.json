@@ -10,11 +10,11 @@
         }
     ],
     "viewModel":[
-        {   "type": "table", "source":"seedsList", "userAddedRows":"true",
+        {   "type": "table", "source":"actionsList", "userAddedRows":"true",
             "columns": [
                 {"title":"Ground preparation works", "source":"groundPreparationWorks","type":"selectOne","validate":"required"},
                 {"title":"Area prepared (Ha)","source":"preparationArea","type":"number","validate":"required"},
-                {"title":"Notes","source":"notes","type":"textArea","validate":"required"}
+                {"title":"Notes","source":"notes","type":"textarea","validate":"required"}
             ]
         }
     ]

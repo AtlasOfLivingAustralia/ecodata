@@ -3,7 +3,7 @@
     "dataModel":[
         {"name":"evidenceOfPreviousWeedTreatment", "dataType":"text"},
         {"name":"effectivenessOfPreviousWeedTreatment", "dataType":"text"},
-        {"name":"recommendedWeedTreatment", "dataType":"text", "constraints":["one","two","three"]},
+        {"name":"recommendedWeedTreatment", "dataType":"text", "constraints":["Environmental management - Fire","Environmental management - moisture & nutrient control","Environmental management - over-planting","Chemical control - Foliar spraying","Chemical control - Basal bark spraying","Chemical control - Stem injection","Chemical control - Cut stump","Chemical control - Cut and swab","Chemical control - Stem scraper","Chemical control - Wick applicators","Mechanical control - Slashing","Mechanical control - Mowing","Mechanical control - Dozing","Mechanical control - Pushing","Mechanical control - Felling","Biological control - Biological agents (indicate in notes)","Manual control - Hand pulling","Manual control - Grubbing/chipping","-- Other (please specify in notes) --"]},
         {"name":"proposedWeedTreatmentDate", "dataType":"date"},
         {"name":"proposedReinspectDate", "dataType":"date"}
     ],

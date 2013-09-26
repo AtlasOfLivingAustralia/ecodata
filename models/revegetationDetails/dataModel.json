@@ -29,7 +29,8 @@
                 "source":"seedSownKg"
             },"operation":"sum"
         }
-    }
+    },
+    {"name":"photoOfActivity", "dataType":"image"}
 ],
 "viewModel":[
     {   "type": "row", "items": [{"type": "literal", "source":"<h4>Revegetation Information</h4>"}]},
@@ -70,6 +71,11 @@
                 {"type":"literal", "source":"", "colspan":3}
             ]}]
         }
+    },
+    {   "type": "row", "items": [{"type": "literal", "source":"<h4>Photos of activity (NB these are not photo points)</h4>"}]},
+    {
+        "type":"row", "class": "output-section",
+        "items": [{"type":"image", "source":"photoOfActivity"}]
     }
 ]
 }

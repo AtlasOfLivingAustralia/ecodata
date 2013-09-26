@@ -28,7 +28,7 @@
                     "items": [
                         {"type":"text","source":"seedSourceProvenance","preLabel":"Provenance of source plant(s)", "validate":"required"},
                         {"type":"text","source":"seedBankRepository","preLabel":"Name of seed bank storing the seed", "validate":"required"},
-                        {"type":"textArea","source":"notes","preLabel":"Comments / Notes", "validate":"required"}
+                        {"type":"textarea","source":"notes","preLabel":"Comments / Notes", "validate":"required"}
                     ]
                 }
             ]

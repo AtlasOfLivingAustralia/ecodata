@@ -19,7 +19,7 @@
                 "items": [
                     {"type":"selectOne","source":"activityPurpose","preLabel":"Purpose of event:","validate":"required"},
                     {"type":"text","source":"topicsCovered","preLabel":"Topics covered:"},
-                    {"type":"number","source":"eventDuration","preLabel":"Event duration (hrs):"},
+                    {"type":"number","source":"eventDuration","preLabel":"Event duration (hrs):","validate":"required"},
                     {"type":"textarea","source":"notes","preLabel":"Notes:"}
                 ]
             }

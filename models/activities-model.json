@@ -242,7 +242,7 @@
             "name": "Project Employment",
             "type": "Activity",
             "outputs": [
-                "Employment Details"
+                "Indigenous Employment and Enterprise Details"
             ]
         },
         {
@@ -340,7 +340,7 @@
             "name": "Community Activity Details"
         },
         {
-            "template": "communicationMaterialsSupplied",
+            "template": "materialsProvidedToParticipants",
             "scoreNames": [
                 "numberOfBrochures",
                 "numberOfWrittenMaterials",
@@ -353,9 +353,9 @@
             "template": "fireInformation",
             "scoreNames": [
                 "areaOfBurnHa",
-                "burnReason",
+                "fireReason",
                 "fireEventType",
-                "totalMachineHrs",
+                "totalMachineHours",
                 "controlLineKmMachine",
                 "controlLineKmHand"
             ],
@@ -372,12 +372,12 @@
             "name": "Evidence of Weed Treatment"
         },
         {
-            "template": "weedObservationDetails",
+            "template": "weedObservationMonitoringDetails",
             "scoreNames": [],
             "name": "Weed Observation / Monitoring Details"
         },
         {
-            "template": "Weed",
+            "template": "weedTreatmentDetails",
             "scoreNames": [
                 "Area treated (Ha)"
             ],
@@ -436,7 +436,7 @@
             "name": "Landscape Context Components"
         },
         {
-            "template": "riskAssessment",
+            "template": "threateningProcessesAndSiteConditionRisks",
             "scoreNames": [],
             "name": "Threatening Processes & Site Condition Risks"
         },
@@ -517,12 +517,12 @@
             "name": "100m Transect"
         },
         {
-            "template": "employmentDetails",
+            "template": "indigenousEmploymentAndEnterpriseDetails",
             "scoreNames": [],
-            "name": "Employment Details"
+            "name": "Indigenous Employment and Enterprise Details"
         },
         {
-            "template": "debrisRemovalDetails",
+            "template": "DebrisRemovalDetails",
             "scoreNames": [],
             "name": "Debris Removal Details"
         }

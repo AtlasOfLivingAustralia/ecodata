@@ -8,7 +8,6 @@
         {"name":"riskRating","dataType":"text","consequences":["one","two","three"]}
     ],
     "viewModel":[
-        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Participation</h4>"}]},
         {
             "type":"row", "class":"output-section",
             "items": [
