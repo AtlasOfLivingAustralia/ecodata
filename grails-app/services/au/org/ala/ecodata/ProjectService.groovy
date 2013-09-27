@@ -131,10 +131,6 @@ class ProjectService {
                 }
             }
 
-            metadataService.activitiesModel().outputs?.each{it.scoreNames.each{
-                scoreName -> toAggregate << [score:new Score(name:scoreName, outputName:it.name)]}
-            }
-
             def outputSummary = reportService.projectSummary(id, toAggregate)
 
             // Add project output target information where it exists.
