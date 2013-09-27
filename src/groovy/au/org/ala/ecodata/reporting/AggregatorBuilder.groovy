@@ -20,10 +20,14 @@ class AggregatorBuilder {
         this
     }
 
+    public AggregatorBuilder score(score) {
+        this.scores = [score]
+        this
+    }
+
 
     public Aggregator build() {
         def groupingFunction = createGroupingFunction(groupingSpec)
-
         return new Aggregator(groupingSpec.title, groupingFunction, scores, this)
     }
 
@@ -35,19 +39,25 @@ class AggregatorBuilder {
      */
     def createAggregator(score, group) {
 
+        def params = [score:score, group:group]
         switch (score.aggregationType) {
             case Score.AGGREGATION_TYPE.SUM:
-                return new Aggregators.SummingAggegrator([score:score, group:group])
+                return new Aggregators.SummingAggegrator(params)
                 break;
             case Score.AGGREGATION_TYPE.COUNT:
-                return new Aggregators.CountingAggregator([score:score, group:group])
+                return new Aggregators.CountingAggregator(params)
                 break;
             case Score.AGGREGATION_TYPE.AVERAGE:
-                return new Aggregators.AverageAggregator([score:score, group:group])
+                return new Aggregators.AverageAggregator(params)
                 break;
             case Score.AGGREGATION_TYPE.HISTOGRAM:
-                throw new RuntimeException("Not supported yet!")
+                return new Aggregators.HistogramAggregator(params)
                 break;
+            case Score.AGGREGATION_TYPE.SET:
+                return new Aggregators.SetAggregator(params)
+                break;
+            default:
+                throw new IllegalAccessException('Invalid aggregation type: '+score.aggregationType)
         }
 
 
@@ -56,7 +66,6 @@ class AggregatorBuilder {
     /**
      * Creates and returns a function capable of classifying an Output/Activity pair according to the
      * supplied grouping specification.
-     * TODO we need to support sites & projects as grouping entities.  Nested properties are also not yet supported.
      * @param groupingSpec specifies the grouping criteria.  Should be of the format:
      * {
      *     entity : String <one of 'activity', 'output', '*'>
@@ -72,6 +81,10 @@ class AggregatorBuilder {
                 return {activity, output -> activity[property]}
             case 'output':
                 return {activity, output -> output[property]}
+            case 'site':
+                return {activity, output -> activity.site ? Eval.x(activity.site, 'x.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
+            case 'project':
+                return {activity, output -> activity.project ? Eval.x(activity.project, 'x.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
             case '*':
                 return {activity, output -> ""}  // No grouping required.
             default:

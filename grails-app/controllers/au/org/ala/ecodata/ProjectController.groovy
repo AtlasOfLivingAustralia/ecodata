@@ -1,11 +1,12 @@
 package au.org.ala.ecodata
-
+import au.com.bytecode.opencsv.CSVReader
 import au.org.ala.ecodata.reporting.Score
 import grails.converters.JSON
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 class ProjectController {
 
-    def projectService, siteService, commonService, reportService
+    def projectService, siteService, commonService, reportService, metadataService, activityService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -112,18 +113,19 @@ class ProjectController {
         }
     }
 
+
     def projectMetrics(String id) {
 
-        // TODO this is temporarily hardcoded, but we can maybe define a meta model
-        // or pull out all useful outputs?
+        // TODO this is temporarily hardcoded, but we can maybe define a meta model for reporting
         // Need to add targets to this also.
-        Score score = new Score([aggregationType:Score.AGGREGATION_TYPE.SUM, outputName: "Revegetation", name:"totalNumberPlanted", label:"Number of plants planted"])
-        Map grouping = [title:'By Theme', entity:'activity', property:'associatedSubProgram']
-        List scores = [score]
-        Map grouping2 = [title:'By Collector' ,entity:'output', property:'collector']
+        def p = Project.findByProjectId(id)
 
-        render reportService.projectSummary(id, [(grouping):scores, (grouping2):scores]) as JSON
+        if (p) {
+            render projectService.projectMetrics(id) as JSON
 
+        } else {
+            render (status: 404, text: 'No such id')
+        }
     }
 
     def loadTestData() {

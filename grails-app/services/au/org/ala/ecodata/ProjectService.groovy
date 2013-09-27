@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.Score
+
 class ProjectService {
 
     static transactional = false
@@ -7,7 +9,7 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
 
-    def grailsApplication, siteService, documentService
+    def grailsApplication, siteService, documentService, metadataService, reportService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -108,4 +110,50 @@ class ProjectService {
             return [status:'error',error:error]
         }
     }
+
+    /**
+     * Returns the reportable metrics for a project as determined by the project output targets and activities
+     * that have been undertaken.
+     * @param id identifies the project.
+     * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
+     *
+     */
+    def projectMetrics(String id) {
+        def p = Project.findByProjectId(id)
+        if (p) {
+            def project = toMap(p, ProjectService.FLAT)
+
+            def toAggregate = []
+
+            metadataService.activitiesModel().outputs?.each{
+                Score.outputScores(it).each { score ->
+                    toAggregate << [score:score]
+                }
+            }
+
+            metadataService.activitiesModel().outputs?.each{it.scoreNames.each{
+                scoreName -> toAggregate << [score:new Score(name:scoreName, outputName:it.name)]}
+            }
+
+            def outputSummary = reportService.projectSummary(id, toAggregate)
+
+            // Add project output target information where it exists.
+            project.targets?.each { target ->
+
+                def score = outputSummary.find{it.outputLabel == target.outputName && it.scoreLabel == target.scoreLabel}
+                if (score) {
+                    score['target'] = target.targetValue
+                }
+            }
+            return outputSummary
+        }
+        else {
+            def error = "Error retrieving metrics for project - no such id ${id}"
+            log.error error
+            return [status:'error',error:error]
+        }
+
+    }
+
+
 }

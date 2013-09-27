@@ -62,24 +62,22 @@ class Aggregator {
     def results() {
         def results = []
         aggregatorsByGroup.values().each { aggregatorList ->
-            results.addAll(aggregatorList.collect {aggregator -> aggregator.result()})
+            results.addAll(aggregatorList.collect {
+                aggregator -> aggregator.result()
+            })
         }
 
         def moreResults = []
         def aggregatorsByScore = results.groupBy({it.score})
         aggregatorsByScore.keySet().each{
-            moreResults << [scoreLabel:it, outputLabel:getOutput(it), values:aggregatorsByScore[it].collect{ value-> [aggregatedResult:value.result, groupValue:value.group]} ]
+            moreResults << [scoreLabel:it, outputLabel:getOutput(it), values:aggregatorsByScore[it].collect{ value-> [aggregatedResult:value.result, count:value.count, groupValue:value.group]} ]
         }
 
         return [groupName:title, scores:moreResults]
     }
 
-    def getOutput(score) {
-        scores.find({it.name = score}).outputName
-    }
-
-    def getResults(results) {
-        return [(results.group):results.result]
+    def getOutput(scoreLabel) {
+        return scores.find({it.label == scoreLabel}).outputName
     }
 
     /**
