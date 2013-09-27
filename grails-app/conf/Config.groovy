@@ -132,10 +132,11 @@ environments {
     nectartest {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        grails.serverURL = "http://115.146.94.243/ecodata"
+        app.external.model.dir = "/data/ecodata/models/"
+        grails.serverURL = "http://ecodata-test.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
-        security.cas.appServerName = "http://115.146.94.243"
-        security.cas.contextPath = "/" + "ecodata"
+        security.cas.appServerName = grails.serverURL
+        security.cas.contextPath = ""
     }
     nectar {
         grails.logging.jul.usebridge = false
