@@ -22,6 +22,7 @@ class Project {
     String name  // required
     String description
     String manager
+    String grantId
     String groupId
     String groupName
     String organisationName
@@ -55,5 +56,6 @@ class Project {
         reportingMeasuresAddressed nullable:true
         projectPlannedOutputType nullable:true
         projectPlannedOutputValue nullable:true
+        grantId nullable:true
     }
 }

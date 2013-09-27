@@ -1,5 +1,4 @@
 package au.org.ala.ecodata
-
 import grails.converters.JSON
 
 import java.text.SimpleDateFormat
@@ -57,6 +56,17 @@ class MetadataService {
         return cacheService.get('institutions',{
             webService.getJson(grailsApplication.config.collectory.baseURL + '/ws/institution')
         })
+    }
+
+    /**
+     * Returns the institution from the institutionList() that matches the supplied
+     * name (using a case-insensitive match).
+     * @param name the name of the institution to find.
+     * @return the institution with the supplied name, or null if it cannot be found.
+     */
+    def findInstitutionByName(String name) {
+        def lowerCaseName = name.toLowerCase()
+        return institutionList().find{ it.name.toLowerCase() == lowerCaseName }
     }
 
     def writeWithBackup(content, modelPathRoot, path, filename, extension) {
