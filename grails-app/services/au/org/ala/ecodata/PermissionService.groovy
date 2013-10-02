@@ -1,29 +1,29 @@
 package au.org.ala.ecodata
 
 /**
- * Service to set and get permissions on projects
+ * Service to set and get permissions on projects for each user
  */
 class PermissionService {
 
     static transactional = false
     def authService, userService // found in ala-web-theme plugin
 
-    public boolean isUserAdminForProject(String userId, Project project) {
+    public boolean isUserAdminForProject(String userId, String projectId) {
         def isEditor = false
 
-        if (userId && project) {
-            isEditor = ( UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, AccessLevel.admin) )
+        if (userId && projectId) {
+            isEditor = ( UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.admin) )
             log.debug "isEditor = ${isEditor}"
         }
 
         return isEditor
     }
 
-    def isUserEditorForProject(String userId, Project project) {
+    def isUserEditorForProject(String userId, String projectId) {
         def isEditor = false
 
-        if (userId && project) {
-            def ups = UserPermission.findAllByUserIdAndProject(userId, project)
+        if (userId && projectId) {
+            def ups = UserPermission.findAllByUserIdAndProjectId(userId, projectId)
             ups.findAll {
                 if (it.accessLevel.code >= AccessLevel.editor.code) {
                     isEditor = true
@@ -36,23 +36,23 @@ class PermissionService {
         return isEditor // bolean
     }
 
-    def addUserAsEditorToProject(currentUserId, targetUserId, project) {
-        if ((isUserAdminForProject(currentUserId, project) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
-            addUserAsRoleToProject(targetUserId, AccessLevel.editor, project)
+    def addUserAsEditorToProject(currentUserId, targetUserId, projectId) {
+        if ((isUserAdminForProject(currentUserId, projectId) || authService.userInRole("ROLE_ADMIN")) && targetUserId) {
+            addUserAsRoleToProject(targetUserId, AccessLevel.editor, projectId)
         }
     }
 
-    def addUserAsAdminToProject(userId, project) {
-        addUserAsRoleToProject(userId, AccessLevel.admin, project)
+    def addUserAsAdminToProject(String userId, String projectId) {
+        addUserAsRoleToProject(userId, AccessLevel.admin, projectId)
     }
 
-    def getUsersForProject(project) {
-        def up = UserPermission.findAllByProjectAndAccessLevel(project, AccessLevel.editor)
+    def getUsersForProject(String projectId) {
+        def up = UserPermission.findAllByProjectIdAndAccessLevel(projectId, AccessLevel.editor)
         up.collect { it.userId } // return just a list of userIds
     }
 
-    def getMembersForProject(project) {
-        def up = UserPermission.findAllByProjectAndAccessLevelNotEqual(project, AccessLevel.starred)
+    def getMembersForProject(String projectId) {
+        def up = UserPermission.findAllByProjectIdAndAccessLevelNotEqual(projectId, AccessLevel.starred)
         def out = []
         up.each {
             def rec = [:]
@@ -66,18 +66,18 @@ class PermissionService {
         out
     }
 
-    def getProjectsForUserAndAccessLevel(String userId, AccessLevel accessLevel, Project project) {
-        def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, accessLevel)
-        up.collect { Project.get(it.project.id) } // return just a list of userIds
+    def getProjectsForUserAndAccessLevel(String userId, AccessLevel accessLevel, String projectId) {
+        def up = UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, accessLevel)
+        up.collect { Project.findByProjectId(it.projectId) } // return just a list of userIds
     }
 
-    def addUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
-        def prevRoles = UserPermission.findAllByUserIdAndProjectAndAccessLevelNotEqual(userId, project, AccessLevel.starred)
+    def addUserAsRoleToProject(String userId, AccessLevel accessLevel, String projectId) {
+        def prevRoles = UserPermission.findAllByUserIdAndProjectIdAndAccessLevelNotEqual(userId, projectId, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
         //def highestRoleCode = prevRoles.findAll{ it.accessLevel.code }.max()
 
         //if (accessLevel.code > highestRoleCode) {
-            def up = new UserPermission(userId: userId, project: project, accessLevel: accessLevel)
+            def up = new UserPermission(userId: userId, projectId: projectId, accessLevel: accessLevel)
             try {
                 up.save(flush: true, failOnError: true)
                 //return [status:'ok', id: up.id]
@@ -107,8 +107,8 @@ class PermissionService {
         //}
     }
 
-    def removeUserAsRoleToProject(String userId, AccessLevel accessLevel, Project project) {
-        def up = UserPermission.findByUserIdAndProjectAndAccessLevel(userId, project, accessLevel)
+    def removeUserAsRoleToProject(String userId, AccessLevel accessLevel, String projectId) {
+        def up = UserPermission.findByUserIdAndProjectIdAndAccessLevel(userId, projectId, accessLevel)
         if (up) {
             try {
                 up.delete(flush: true)

@@ -17,6 +17,11 @@ modules = {
         resource url: '/css/bootstrap-combobox.css'
     }
 
+    bootbox {
+        dependsOn 'app_bootstrap'
+        resource url: 'js/bootbox.min.js'
+    }
+
     app_bootstrap_responsive {
         dependsOn 'app_bootstrap'
         resource url: '/bootstrap/css/bootstrap-responsive.min.css'

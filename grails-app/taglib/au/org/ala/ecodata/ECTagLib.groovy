@@ -43,4 +43,19 @@ class ECTagLib {
             }
         }
     }
+
+    /**
+     * Check if the logged in user has the requested role
+     *
+     * @attr role REQUIRED
+     */
+    def userInRole = { attrs ->
+        if (authService.userInRole(attrs.role)) {
+            out << true
+        }
+    }
+
+    def currentUserId = { attrs, body ->
+        out << authService.userDetails()?.userId
+    }
 }

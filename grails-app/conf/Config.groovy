@@ -102,6 +102,7 @@ security.cas.loginUrl = 'https://auth.ala.org.au/cas/login'
 security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
 security.cas.casServerUrlPrefix = 'https://auth.ala.org.au/cas'
 security.cas.bypass = false
+security.cas.adminRole = "ROLE_ADMIN" // TODO change to ROLE_FC_ADMIN or equiv. (NdR)
 
 environments {
     development {
@@ -117,8 +118,8 @@ environments {
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
         app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
-        app.elasticsearch.indexAllOnStartup = false
-        app.elasticsearch.indexOnGormEvents = false
+        app.elasticsearch.indexAllOnStartup = true
+        app.elasticsearch.indexOnGormEvents = true
     }
     test {
         grails.logging.jul.usebridge = false

@@ -28,7 +28,7 @@ class PermissionsController {
         if (adminId && userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.addUserAsEditorToProject(adminId, userId, project)
+                def ps = permissionService.addUserAsEditorToProject(adminId, userId, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
@@ -54,7 +54,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.addUserAsAdminToProject(userId, project)
+                def ps = permissionService.addUserAsAdminToProject(userId, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
@@ -90,7 +90,7 @@ class PermissionsController {
 
             if (project) {
                 log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
-                def ps = permissionService.addUserAsRoleToProject(userId, ac, project)
+                def ps = permissionService.addUserAsRoleToProject(userId, ac, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
@@ -126,7 +126,7 @@ class PermissionsController {
 
             if (project) {
                 log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
-                def ps = permissionService.removeUserAsRoleToProject(userId, ac, project)
+                def ps = permissionService.removeUserAsRoleToProject(userId, ac, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
@@ -153,7 +153,7 @@ class PermissionsController {
             def project = Project.findByProjectId(projectId)
             if (project) {
                 log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
-                def ps = permissionService.addUserAsRoleToProject(userId, role, project)
+                def ps = permissionService.addUserAsRoleToProject(userId, role, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
@@ -179,7 +179,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.removeUserAsRoleToProject(userId, role, project)
+                def ps = permissionService.removeUserAsRoleToProject(userId, role, projectId)
                 if (ps && ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else if (ps) {
@@ -206,7 +206,7 @@ class PermissionsController {
         if (projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def userList = permissionService.getUsersForProject(project)
+                def userList = permissionService.getUsersForProject(projectId)
                 render userList as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
@@ -228,7 +228,7 @@ class PermissionsController {
         if (projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def members = permissionService.getMembersForProject(project)
+                def members = permissionService.getMembersForProject(projectId)
                 render members as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
@@ -251,7 +251,8 @@ class PermissionsController {
             def out  = []
             up.each {
                 def t = [:]
-                t.project = Project.get(it.project.id)
+                log.debug "it.projectId = ${it.projectId}"
+                t.project = Project.findByProjectId(it.projectId)
                 t.accessLevel = it.accessLevel
                 out.add t
             }
@@ -272,7 +273,7 @@ class PermissionsController {
 
         if (userId) {
             def up = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
-            render up.collect { Project.get(it.project.id) } as JSON
+            render up.collect { Project.findByProjectId(it.projectId) } as JSON
         } else {
             render status:400, text: "Required params not provided: id"
         }
@@ -291,7 +292,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def up = UserPermission.findAllByUserIdAndProjectAndAccessLevel(userId, project, AccessLevel.starred)
+                def up = UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.starred)
                 def outMap = [ isProjectStarredByUser: !up.isEmpty()]
                 render outMap as JSON
             } else {
@@ -316,7 +317,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def out = [userIsEditor: permissionService.isUserEditorForProject(userId, project)]
+                def out = [userIsEditor: permissionService.isUserEditorForProject(userId, projectId)]
                 render out as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
@@ -339,13 +340,64 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def out = [userIsEditor: permissionService.isUserAdminForProject(userId, project)]
+                def out = [userIsEditor: permissionService.isUserAdminForProject(userId, projectId)]
                 render out as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
             render status:400, text: 'Required params not provided: adminId, userId, projectId'
+        }
+    }
+
+    /**
+     * Admin function to clear all UserPermissions entries for the
+     * specified user.
+     *
+     * @return
+     */
+    def clearAllPermissionsForUserId() {
+        def userId = params.id // REST style URL (no params)
+        def up = UserPermission.findAllByUserId(userId)
+        if (up.size() > 0) {
+            up.each {
+                log.debug "it = ${it}"
+                try {
+                    it.delete(flush: true)
+                    //return [status:'ok', id: it.id]
+                } catch (Exception e) {
+                    def msg = "Failed to delete UserPermission: ${e.message}"
+                    log.error msg, e
+                    render status: 500, text: msg
+                }
+            }
+            render text: "OK"
+        } else {
+            render status:400, text: "No UserPermissions found for userId: ${userId}"
+        }
+    }
+
+    /**
+     * Admin function to clear all UserPermissions entries for
+     * ALL users in the system.
+     *
+     * @return
+     */
+    def clearAllPermissionsForAllUsers() {
+        def up = UserPermission.list()
+        if (up.size() > 0) {
+            up.each {
+                try {
+                    it.delete(flush: true)
+                } catch (Exception e) {
+                    def msg = "Failed to delete UserPermission: ${e.message}"
+                    log.error msg, e
+                    render status: 500, text: msg
+                }
+            }
+            render text: "OK"
+        } else {
+            render status:400, text: "No UserPermissions found"
         }
     }
 
