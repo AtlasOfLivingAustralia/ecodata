@@ -468,6 +468,12 @@ class ElasticSearchService {
      */
     def deleteDocType(doc) {
         def docId = getEntityId(doc)
+        // skip indexing
+        if (indexingTempInactive
+                || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
+                || !allowedDocTypes.contains(doc.getClass().name)) {
+            return null
+        }
         // delete from index
         def resp = checkForDelete(doc, docId)
         log.info "Delete from index for ${doc}: ${resp} "
