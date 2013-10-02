@@ -14,7 +14,6 @@
  */
 
 package au.org.ala.ecodata
-
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchRequest
@@ -36,8 +35,7 @@ import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
-import static org.elasticsearch.node.NodeBuilder.*
-
+import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
  * ElasticSearch service
  *
@@ -300,6 +298,20 @@ class ElasticSearchService {
                                 "fundingSourceFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
+                        "associatedProgram": {
+                            "type" : "multi_field",
+                            "fields" : {
+                                "associatedProgram" : {"type" : "string", "index" : "analyzed"},
+                                "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
+                            }
+                        },
+                        "associatedSubProgram": {
+                            "type" : "multi_field",
+                            "fields" : {
+                                "associatedSubProgram" : {"type" : "string", "index" : "analyzed"},
+                                "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
+                            }
+                        },
                         "reportingThemes": {
                             "type" : "multi_field",
                             "fields" : {
@@ -421,7 +433,6 @@ class ElasticSearchService {
      * @param doc (domain object)
      */
     def indexDocType(doc) {
-        log.debug "Indexing switch is ${indexingTempInactive}"
 
         // skip indexing
         if (indexingTempInactive
