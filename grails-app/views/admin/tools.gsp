@@ -54,40 +54,6 @@
                     });
                 });
 
-                $("#btnLoadProjectData").click(function(e) {
-                    e.preventDefault();
-
-                    // HTML 5 only...
-                    %{--var data = new FormData();--}%
-                    %{--data.append('projectData', $('#fileSelector')[0].files[0]);--}%
-
-                    %{--$.ajax({--}%
-                        %{--url: "${createLink(controller: 'project', action:'loadProjectData')}",--}%
-                        %{--done: function(result) {--}%
-                            %{--document.location.reload();--}%
-                        %{--},--}%
-                        %{--error: function (result) {--}%
-                            %{--var error = JSON.parse(result.responseText)--}%
-                            %{--alert(error.error);--}%
-                        %{--},--}%
-                        %{--type:"POST",--}%
-                        %{--processData: false,--}%
-                        %{--contentType: false,--}%
-                        %{--cache: false,--}%
-                        %{--data: data--}%
-                    %{--});--}%
-                    $('form.loadProjectData').submit();
-                });
-
-                $("#projectData").change(function() {
-                    if ($("#projectData").val()) {
-                        $("#btnLoadProjectData").removeAttr("disabled");
-                    }
-                    else {
-                        $("#btnLoadProjectData").attr("disabled", "disabled");
-                    }
-
-                }).trigger('change');
             });
         </script>
         <content tag="pageTitle">Tools</content>
@@ -142,15 +108,6 @@
                     </td>
                     <td>
                         Re-index all data. This action re-creates the ElasticSearch index.
-                    </td>
-                </tr>
-
-                <tr>
-                    <td><button disabled id="btnLoadProjectData" class="btn btn-small btn-info" title="Load project data">Load Projects from CSV</button>
-                    </td>
-                    <td>
-                        Loads (or reloads) project information from a csv file.
-                        <p><g:uploadForm class="loadProjectData" controller="admin" action="importProjectData"><input id="projectData" type="file" accept="text/csv" name="projectData"/></g:uploadForm></p>
                     </td>
                 </tr>
             </tbody>
