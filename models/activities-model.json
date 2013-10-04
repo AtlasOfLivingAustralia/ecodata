@@ -273,7 +273,29 @@
             "scoreNames": [
                 "totalNumberPlanted",
                 "totalSeedSownKg",
-                "revegetationType"
+                "stockType"
+            ],
+            "scores":[
+                {
+                    "name":"totalNumberPlanted",
+                    "label":"Number of plants planted",
+                    "units":"",
+                    "aggregationType":"SUM"
+
+                },
+                {
+                    "name":"totalSeedSownKg",
+                    "label":"Kilos of seed sown",
+                    "units":"kg",
+                    "aggregationType":"SUM"
+
+                },
+                {
+                    "name":"stockType",
+                    "label":"Stock type",
+                    "units":"",
+                    "aggregationType":"HISTOGRAM"
+                }
             ],
             "name": "Revegetation Details"
         },
@@ -296,6 +318,14 @@
                 "purposeOfFence",
                 "fenceCostPerKm",
                 "fenceType"
+            ],
+            "scores":[
+                {
+                    "name":"lengthOfFence",
+                    "label":"Total length of fence",
+                    "units":"Km",
+                    "aggregationType":"SUM"
+                }
             ],
             "name": "Fence Details"
         },
@@ -329,6 +359,15 @@
             "template": "weedManagement",
             "scoreNames": [
                 "areaTreatedHa"
+            ],
+            "scores":[
+                {
+                    "name":"areaTreatedHa",
+                    "label":"Total area treated",
+                    "units":"Ha",
+                    "aggregationType":"SUM"
+
+                }
             ],
             "name": "Weed Management"
         },
@@ -365,6 +404,7 @@
             "template": "evidenceOfWeedTreatment",
             "scoreNames": [
                 "effectivenessOfPreviousTreatment",
+                "effectivenessOfPreviousWeedTreatment",
                 "weedCoverHa",
                 "weedStatus",
                 ""
@@ -379,7 +419,15 @@
         {
             "template": "weedTreatmentDetails",
             "scoreNames": [
-                "Area treated (Ha)"
+                "areaTreatedHa"
+            ],
+            "scores":[
+                {
+                    "name":"areaTreatedHa",
+                    "label":"Total area treated",
+                    "units":"Ha",
+                    "aggregationType":"SUM"
+                }
             ],
             "name": "Weed Treatment Details"
         },
