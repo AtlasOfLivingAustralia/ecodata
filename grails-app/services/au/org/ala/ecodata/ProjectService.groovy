@@ -134,11 +134,11 @@ class ProjectService {
             def outputSummary = reportService.projectSummary(id, toAggregate)
 
             // Add project output target information where it exists.
-            project.targets?.each { target ->
+            project.outputTargets?.each { target ->
 
-                def score = outputSummary.find{it.outputLabel == target.outputName && it.scoreLabel == target.scoreLabel}
+                def score = outputSummary.find{it.outputLabel == target.outputLabel && it.scoreLabel == target.scoreLabel}
                 if (score) {
-                    score['target'] = target.targetValue
+                    score['target'] = target.target
                 }
             }
             return outputSummary
