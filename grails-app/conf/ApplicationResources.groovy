@@ -26,4 +26,9 @@ modules = {
         dependsOn 'app_bootstrap'
         resource url: '/bootstrap/css/bootstrap-responsive.min.css'
     }
+
+    vkbeautify {
+        dependsOn 'jquery'
+        resource url: 'js/vkbeautify.0.99.00.beta.js'
+    }
 }
