@@ -71,10 +71,10 @@ class ReportService {
         aggregators.each {
 
             def results = it.results()
+
             if (!results.groupName) {
-                results.scores.each { score ->
-                    allScores << [outputLabel: score.outputLabel, count:score.values[0].count, scoreLabel:score.scoreLabel, aggregatedResult:score.values[0].aggregatedResult]
-                }
+                allScores.addAll results.scores
+
             }
             else {
                 results.scores.each { score ->

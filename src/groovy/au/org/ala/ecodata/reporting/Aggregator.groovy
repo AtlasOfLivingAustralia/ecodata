@@ -67,17 +67,19 @@ class Aggregator {
             })
         }
 
-        def moreResults = []
-        def aggregatorsByScore = results.groupBy({it.score})
+        // Combine histogram based scores into a single result.
+        def combinedResults = []
+        def aggregatorsByScore = results.groupBy({it.outputName+':'+it.score})
         aggregatorsByScore.keySet().each{
-            moreResults << [scoreLabel:it, outputLabel:getOutput(it), values:aggregatorsByScore[it].collect{ value-> [aggregatedResult:value.result, count:value.count, groupValue:value.group]} ]
+            def value = aggregatorsByScore[it]
+            if (value.size() == 1) {
+                combinedResults << [outputLabel: value[0].outputName, scoreLabel:value[0].score, count:value[0].count,  aggregatedResult:value[0].result]
+            } else {
+                combinedResults << [outputLabel: value[0].outputName, scoreLabel:value[0].score, values:value.collect{ groupValue-> [aggregatedResult:groupValue.result, count:groupValue.count, groupValue:groupValue.group]} ]
+            }
         }
 
-        return [groupName:title, scores:moreResults]
-    }
-
-    def getOutput(scoreLabel) {
-        return scores.find({it.label == scoreLabel}).outputName
+        return [groupName:title, scores:combinedResults]
     }
 
     /**

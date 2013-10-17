@@ -11,10 +11,12 @@ class Aggregators {
         int count;
 
         public void aggregate(output) {
-            def value = output.scores[score.name];
-            if (value != null) {
-                count++;
-                doAggregation(value);
+            if (output.name == score.outputName) {
+                def value = output.scores[score.name];
+                if (value != null) {
+                    count++;
+                    doAggregation(value);
+                }
             }
         }
 
@@ -131,6 +133,10 @@ class Aggregators {
             this.score = score.label
             this.units = score.units
             this.outputName = score.outputName
+        }
+
+        public String toString() {
+            return "$outputName:$score:,count=$count,result=$result"
         }
     }
 

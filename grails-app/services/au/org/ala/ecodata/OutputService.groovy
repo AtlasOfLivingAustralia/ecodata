@@ -57,9 +57,9 @@ class OutputService {
         //log.debug "extracting scores for ${name}"
         def model = metadataService.getOutputModel(name)
         //log.debug "model is " + model
-        def scoreNames = model?.scoreNames ?: []
+        def scoreDefinitions = model?.scores ?: []
         //log.debug "scoreNames = ${scoreNames}"
-        def scores = scoreNames.collectEntries { [("${it}".toString()):map[it]] }
+        def scores = scoreDefinitions.collectEntries { [(it.name):map[it.name]] }
         //log.debug "scores = ${scores}"
         return scores
     }
