@@ -140,6 +140,12 @@ class ProjectService {
                 if (score) {
                     score['target'] = target.target
                 }
+                // If there are no Outputs recorded containing the score, the results won't be returned, so add
+                // one in containing the target.
+                else {
+                    score = toAggregate.find{it.score?.outputName == target.outputLabel && it.score?.label == target.scoreLabel}
+                    outputSummary << [outputLabel:target.outputLabel, scoreLabel:target.scoreLabel, target:target.target, aggregatedResult:0, units:score.units]
+                }
             }
             return outputSummary
         }
