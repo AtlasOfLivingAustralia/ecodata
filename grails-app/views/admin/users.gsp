@@ -79,9 +79,6 @@
 
             });
 
-            var namesArray = [];
-            <g:each var="it" in="${userNamesList}" status="s">namesArray[${s}] = "${it.userId} -- ${it.displayName?.toLowerCase()} -- ${it.userName?.toLowerCase()}";</g:each>
-
             $(".combobox").combobox();
 
             $('.tooltips').tooltip();
