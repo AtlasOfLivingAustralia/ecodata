@@ -1,26 +1,69 @@
 {
-    "modelName":"Evidence of Weed Treatment",
-    "dataModel":[
-        {"name":"evidenceOfPreviousWeedTreatment", "dataType":"text"},
-        {"name":"effectivenessOfPreviousWeedTreatment", "dataType":"text"},
-        {"name":"recommendedWeedTreatment", "dataType":"text", "constraints":["Environmental management - Fire","Environmental management - moisture & nutrient control","Environmental management - over-planting","Chemical control - Foliar spraying","Chemical control - Basal bark spraying","Chemical control - Stem injection","Chemical control - Cut stump","Chemical control - Cut and swab","Chemical control - Stem scraper","Chemical control - Wick applicators","Mechanical control - Slashing","Mechanical control - Mowing","Mechanical control - Dozing","Mechanical control - Pushing","Mechanical control - Felling","Biological control - Biological agents (indicate in notes)","Manual control - Hand pulling","Manual control - Grubbing/chipping","-- Other (please specify in notes) --"]},
-        {"name":"proposedWeedTreatmentDate", "dataType":"date"},
-        {"name":"proposedReinspectDate", "dataType":"date"}
+    "modelName": "Evidence of Weed Treatment",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "evidenceOfPreviousWeedTreatment"
+        },
+        {
+            "dataType": "text",
+            "name": "effectivenessOfPreviousWeedTreatment"
+        },
+        {
+            "dataType": "text",
+            "name": "recommendedWeedTreatment",
+            "constraints": [
+                "one",
+                "two",
+                "three"
+            ]
+        },
+        {
+            "dataType": "date",
+            "name": "proposedWeedTreatmentDate"
+        },
+        {
+            "dataType": "date",
+            "name": "proposedReinspectDate"
+        }
     ],
-    "viewModel":[
-        {   "type":"row", "class": "output-section",
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "type":"col",
-                    "items": [
-                        {"type":"text","source":"evidenceOfPreviousWeedTreatment","preLabel":"Evidence of Previous Treatment", "validate":"required"},
-                        {"type":"number","source":"effectivenessOfPreviousWeedTreatment","preLabel":"Effectiveness of Previous Treatment (% killed)", "validate":"required,min[0],max[100]"},
-                        {"type":"selectOne","source":"recommendedWeedTreatment","preLabel":"Recommended treatment", "validate":"required"},
-                        {"type":"date","source":"proposedWeedTreatmentDate","preLabel":"Planned start date", "validate":"required"},
-                        {"type":"date","source":"proposedWeedTreatmentDate","preLabel":"Planned end date", "validate":"required"}
-                    ]
+                    "source": "evidenceOfPreviousWeedTreatment",
+                    "preLabel": "Evidence of Previous Treatment",
+                    "type": "text",
+                    "validate": "required"
+                },
+                {
+                    "source": "effectivenessOfPreviousWeedTreatment",
+                    "preLabel": "Effectiveness of Previous Treatment (% killed)",
+                    "type": "number",
+                    "validate": "required,min[0],max[100]"
+                },
+                {
+                    "source": "recommendedWeedTreatment",
+                    "preLabel": "Recommended treatment",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "proposedWeedTreatmentDate",
+                    "preLabel": "Planned start date",
+                    "type": "date",
+                    "validate": "required"
+                },
+                {
+                    "source": "proposedWeedTreatmentDate",
+                    "preLabel": "Planned end date",
+                    "type": "date",
+                    "validate": "required"
                 }
-            ]
-        }
-    ]
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

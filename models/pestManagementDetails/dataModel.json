@@ -1,6 +1,6 @@
 {
-    "modelName":"Pest Management Details",
-    "dataModel":[
+    "modelName": "Pest Management Details",
+    "dataModel": [
         {
             "dataType": "date",
             "name": "activityStartDate"
@@ -44,33 +44,86 @@
             "name": "notes"
         }
     ],
-    "viewModel":[
-        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Pest Management Details</h4>"}]},
-        {   "type":"row", "class": "output-section",
-            "items": [
-                {
-                    "type":"col",
-                    "items": [
-                        {"type":"date","source":"activityStartDate","preLabel":"Activity start date", "validate":"required"},
-                        {"type":"date","source":"activityEndDate","preLabel":"When did you complete this activity?", "validate":"required"},
-                        {"type":"number","source":"activityDuration","preLabel":"Activity duration (Hrs)", "validate":"required,min[0]"},
-                        {"type":"selectOne","source":"pestManagementMethod","preLabel":"Pest management method", "validate":"required"}
-                    ]
-                },
-                {
-                    "type":"col",
-                    "items": [
-                        {"type":"autocomplete","source":"targetSpecies","preLabel":"Target species", "validate":"required"},
-                        {"type":"number","source":"pestAnimalsTreatedNo","preLabel":"No. of individuals killed/removed", "validate":"required,digits"},
-                        {"type":"number","source":"areaTreatedHa","preLabel":"No. Ha. covered by treatment", "validate":"required"},
-                        {"type":"number","source":"treatmentCostPerHa","preLabel":"Cost of treatment / Ha.", "validate":"required,min[0]"}
-                    ]
-                }
-            ]
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Pest Management Details<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-            "type":"row", "class": "output-section",
-            "items": [{"type":"text", "source":"notes", "preLabel":"Comments / notes"}]
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "activityStartDate",
+                            "preLabel": "Activity start date",
+                            "type": "date",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "activityEndDate",
+                            "preLabel": "When did you complete this activity?",
+                            "type": "date",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "activityDuration",
+                            "preLabel": "Activity duration (Hrs)",
+                            "type": "number",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "source": "pestManagementMethod",
+                            "preLabel": "Pest management method",
+                            "type": "selectOne",
+                            "validate": "required"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "targetSpecies",
+                            "preLabel": "Target species",
+                            "type": "autocomplete",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "pestAnimalsTreatedNo",
+                            "preLabel": "No. of individuals killed/removed",
+                            "type": "number",
+                            "validate": "required,digits"
+                        },
+                        {
+                            "source": "areaTreatedHa",
+                            "preLabel": "No. Ha. covered by treatment",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "treatmentCostPerHa",
+                            "preLabel": "Cost of treatment / Ha.",
+                            "type": "number",
+                            "validate": "required,min[0]"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "preLabel": "Comments / notes",
+                "type": "text"
+            }],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

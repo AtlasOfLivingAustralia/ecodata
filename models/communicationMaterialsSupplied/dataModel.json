@@ -1,0 +1,54 @@
+{
+    "modelName": "Materials Provided to Participants",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "name": "numberOfBrochures"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfWrittenMaterials"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfMaterialRecipients"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfDisplays"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "numberOfBrochures",
+                    "preLabel": "No. of Brochures",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "numberOfWrittenMaterials",
+                    "preLabel": "No. of Written Materials",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "numberOfMaterialRecipients",
+                    "preLabel": "No. of Material Recipients",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "numberOfDisplays",
+                    "preLabel": "No. of Displays",
+                    "type": "number",
+                    "validate": "required"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

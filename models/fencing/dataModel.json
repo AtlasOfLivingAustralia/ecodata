@@ -42,18 +42,8 @@
             "name": "fenceNotes"
         }
     ],
-    "viewModel": [
-        {
-            "items": [
-                {
-                    "source": "<h4>Fence Details</h4>",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
                     "source": "fenceType",
@@ -67,33 +57,26 @@
                     "source": "lengthOfFence",
                     "computed": null,
                     "preLabel": "Length of fence (Km):",
-                    "width": "40%",
+                    "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "fenceCostPerKm",
                     "computed": null,
                     "preLabel": "Fence cost ($/Km):",
-                    "width": "25%",
+                    "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "purposeOfFence",
                     "computed": null,
                     "preLabel": "Purpose of fence:",
-                    "width": "25%",
+                    "width": "20%",
                     "type": "selectMany"
-                },
-                {
-                    "source": "fenceNotes",
-                    "computed": null,
-                    "preLabel": "Notes:",
-                    "width": "100%",
-                    "type": "textarea"
                 }
             ],
-            "class": "output-section",
             "type": "row"
-        }
-    ]
+        }],
+        "type": "section"
+    }]
 }

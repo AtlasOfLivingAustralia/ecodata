@@ -2,112 +2,117 @@
     "modelName": "Water Management Details",
     "dataModel": [
         {
-            "name": "hydrologicalRegimeChangeFrom",
             "dataType": "text",
-            "constraints": ["one", "two", "three"]
+            "name": "hydrologicalRegimeChangeFrom"
         },
         {
-            "name": "hydrologicalRegimeChangeTo",
             "dataType": "text",
-            "constraints": ["one", "two", "three"]
+            "name": "hydrologicalRegimeChangeTo"
         },
         {
+            "dataType": "stringlist",
             "name": "hydrologicalStructuresOnsite",
-            "dataType": "stringList",
-            "constraints": ["Barrage / Weir (with fish ladder)", "Barrage / Weir (without fish ladder)", "Hinged flap gates", "Check valves", "Dike", "Retarding structures", "Sluice gate", "Tidal gate", "Constructed channel", "Natural channel", "Pipes", "Flow splitters", "Water supply tank", "Groundwater pump (wind, solar, other)", "Flume", "Dam", "Vanes", "Head & cross regulators", "Stilling basin"]
+            "constraints": [
+                "Barrage / Weir (with fish ladder)",
+                "Barrage / Weir (without fish ladder)",
+                "Hinged flap gates",
+                "Check valves",
+                "Dike",
+                "Retarding structures",
+                "Sluice gate",
+                "Tidal gate",
+                "Constructed channel",
+                "Natural channel",
+                "Pipes",
+                "Flow splitters",
+                "Water supply tank",
+                "Groundwater pump (wind, solar, other)",
+                "Flume",
+                "Dam",
+                "Vanes",
+                "Head & cross regulators",
+                "Stilling basin"
+            ]
         },
         {
-            "name": "hydrologicalStructuresInstalled",
-            "dataType": "boolean"
+            "dataType": "boolean",
+            "name": "hydrologicalStructuresInstalled"
         },
         {
-            "name": "isCurrentFlowNatural",
-            "dataType": "boolean"
+            "dataType": "boolean",
+            "name": "isCurrentFlowNatural"
         },
         {
-            "name": "isWaterBeingTransported",
-            "dataType": "boolean"
+            "dataType": "boolean",
+            "name": "isWaterBeingTransported"
         },
         {
-            "name": "waterTransportMethod",
-            "dataType": "stringList",
-            "constraints": ["one", "two", "three"]
+            "dataType": "stringlist",
+            "name": "waterTransportMethod"
         },
         {
-            "name": "transportedWaterUse",
-            "dataType": "stringList",
-            "constraints": ["one", "two", "three"]
+            "dataType": "stringlist",
+            "name": "transportedWaterUse"
         },
         {
-            "name": "waterMgtEnvironBenefit",
-            "dataType": "stringList",
-            "constraints": ["one", "two", "three"]
+            "dataType": "stringlist",
+            "name": "waterMgtEnvironBenefit"
         }
     ],
     "viewModel": [
         {
-            "type": "row",
-            "items": [
-                {
-                    "type": "col",
-                    "items": [
-                        {
-                            "preLabel": "Hydrological regime changed from",
-                            "source": "hydrologicalRegimeChangeFrom",
-                            "type": "selectOne",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "Hydrological regime changed to",
-                            "source": "hydrologicalRegimeChangeTo",
-                            "type": "selectOne",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "What structures are in place to manage water at this site?",
-                            "source": "hydrologicalStructuresOnsite",
-                            "type": "selectMany",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "Have new structures been installed to manage the new hydrological regime at this site?",
-                            "source": "hydrologicalStructuresInstalled",
-                            "type": "checkBox",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "Is the current flow regime considered to be natural?",
-                            "source": "isCurrentFlowNatural",
-                            "type": "checkBox",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "Is water being extracted from/imported to the site?",
-                            "source": "isWaterBeingTransported",
-                            "type": "checkBox",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "How is extracted/imported water being transported?",
-                            "source": "waterTransportMethod",
-                            "type": "selectMany",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "What is extracted/imported water being used for?",
-                            "source": "transportedWaterUse",
-                            "type": "selectMany",
-                            "validate": "required"
-                        },
-                        {
-                            "preLabel": "What environmental benefits are gained by the new water management regime on this site?",
-                            "source": "waterMgtEnvironBenefit",
-                            "type": "selectMany",
-                            "validate": "required"
-                        }
-                    ]
-                }
-            ]
+            "title": "Hydrological regime changed from",
+            "source": "hydrologicalRegimeChangeFrom",
+            "type": "selectOne",
+            "validate": "required"
+        },
+        {
+            "title": "Hydrological regime changed to",
+            "source": "hydrologicalRegimeChangeTo",
+            "type": "selectOne",
+            "validate": "required"
+        },
+        {
+            "title": "What structures are in place to manage water at this site?",
+            "source": "hydrologicalStructuresOnsite",
+            "type": "selectMany",
+            "validate": "required"
+        },
+        {
+            "title": "Have new structures been installed to manage the new hydrological regime at this site?",
+            "source": "hydrologicalStructuresInstalled",
+            "type": "checkbox",
+            "validate": "required"
+        },
+        {
+            "title": "Is the current flow regime considered to be natural?",
+            "source": "isCurrentFlowNatural",
+            "type": "checkbox",
+            "validate": "required"
+        },
+        {
+            "title": "Is water being extracted from/imported to the site?",
+            "source": "isWaterBeingTransported",
+            "type": "checkbox",
+            "validate": "required"
+        },
+        {
+            "title": "How is extracted/imported water being transported?",
+            "source": "waterTransportMethod",
+            "type": "selectMany",
+            "validate": "required"
+        },
+        {
+            "title": "What is extracted/imported water being used for?",
+            "source": "transportedWaterUse",
+            "type": "selectMany",
+            "validate": "required"
+        },
+        {
+            "title": "What environmental benefits are gained by the new water management regime on this site?",
+            "source": "waterMgtEnvironBenefit",
+            "type": "selectMany",
+            "validate": "required"
         }
     ]
 }

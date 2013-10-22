@@ -1,0 +1,65 @@
+{
+    "modelName": "Debris Removal Details",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "name": "debrisType",
+            "constraints": [
+                "Mixed inorganic waste",
+                "Organic waste",
+                "Metals (eg. car bodies, shopping trolleys, etc.)",
+                "Plastics",
+                "-- Other (please specify in notes) --"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "debrisWeightTonnes"
+        },
+        {
+            "dataType": "number",
+            "name": "debrisVolumeM3"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Debris Removal Details<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "debrisType",
+                        "computed": null,
+                        "preLabel": "Type of material removed:",
+                        "type": "selectMany",
+                        "validate": "required"
+                    },
+                    {
+                        "source": "debrisWeightTonnes",
+                        "computed": null,
+                        "preLabel": "Weight of debris removed (Tonnes):",
+                        "type": "number",
+                        "validate": "required"
+                    },
+                    {
+                        "source": "debrisVolumeM3",
+                        "computed": null,
+                        "preLabel": "Volume of debris removed (m3):",
+                        "type": "number",
+                        "validate": "required"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

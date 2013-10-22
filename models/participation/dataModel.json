@@ -1,0 +1,63 @@
+{
+    "modelName": "Participant Information",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalParticipantsNotEmployed"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfIndigenousParticipants"
+        },
+        {
+            "dataType": "number",
+            "name": "totalParticipantsNew"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfFarmingEntitiesNew"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "totalParticipantsNotEmployed",
+                    "computed": null,
+                    "preLabel": "Total No. of Participants (not employed on project):",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "source": "numberOfIndigenousParticipants",
+                    "computed": null,
+                    "preLabel": "No of Indigenous Participants (not employed on project):",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "source": "totalParticipantsNew",
+                    "computed": null,
+                    "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project):",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "source": "numberOfFarmingEntitiesNew",
+                    "computed": null,
+                    "preLabel": "No of farming entities not previously attending events for this project:",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                }
+            ],
+            "computed": null,
+            "type": "row"
+        }],
+        "type": "section"
+    }]
+}

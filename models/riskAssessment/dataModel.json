@@ -1,0 +1,90 @@
+{
+    "modelName": "Threatening Processes & Site Condition Risks",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "consequences": [
+                "one",
+                "two",
+                "three"
+            ],
+            "name": "riskType"
+        },
+        {
+            "dataType": "text",
+            "name": "riskDescription"
+        },
+        {
+            "dataType": "text",
+            "consequences": [
+                "one",
+                "two",
+                "three"
+            ],
+            "name": "riskLikelihood"
+        },
+        {
+            "dataType": "text",
+            "consequences": [
+                "one",
+                "two",
+                "three"
+            ],
+            "name": "riskConsequence"
+        },
+        {
+            "dataType": "text",
+            "consequences": [
+                "one",
+                "two",
+                "three"
+            ],
+            "name": "riskRating"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Participation<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "title": "Type of threat/risk",
+                    "source": "riskType",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Description",
+                    "source": "riskDescription",
+                    "type": "textarea",
+                    "validate": "required"
+                },
+                {
+                    "title": "Likelihood",
+                    "source": "riskLikelihood",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Consequence",
+                    "source": "riskConsequence",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Risk rating",
+                    "source": "riskRating",
+                    "type": "selectOne",
+                    "validate": "required"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

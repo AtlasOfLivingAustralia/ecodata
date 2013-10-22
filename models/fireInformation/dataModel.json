@@ -1,39 +1,199 @@
 {
-    "modelName":"Fire Information",
-    "dataModel":[
-        {"name":"fireIgnitionSource","dataType":"text", "constraints":["Lightning", "Fire lighters", "Aerial incendiary", "Accidental human", "Arson", "Other", "Unknown"]},
-        {"name":"fireEventType","dataType":"text", "constraints":["Managed controlled burn", "Escaped controlled burn", "Wildfire"]},
-        {"name":"fireReason","dataType":"stringList", "constraints":["Fire fuel reduction","Asset protection","Weed management","Pest animal management","Ecology management","Unplanned fire event"]},
-        {"name":"areaOfFireHa", "dataType":"number"},
-        {"name":"fireLastBurnDate", "dataType":"date"},
-        {"name":"fireTimeSinceLastBurn","dataType":"text", "constraints":["1-3 years", "4-6 years", "7-10 years", "> 10 years"]},
-        {"name":"fireBurnTemp", "dataType":"text", "constraints":["Cool", "Moderately hot", "Very hot", "Extreme"]},
-        {"name":"fireMachineryUsed","dataType":"stringList", "constraints":["Light tanker","Heavy tanker","Bulldozer / tractor / grader","Hand tools","Aircraft - fixed wing","Aircraft - helicopter"]},
-        {"name":"totalMachineHours", "dataType":"number"},
-        {"name":"controlLineKmMachine", "dataType":"number"},
-        {"name":"controlLineKmHand", "dataType":"number"},
-        {"name":"fireContainment", "dataType":"boolean"}
-        ],
-    "viewModel":[
-        {   "type": "row", "items": [{"type": "literal", "source":"<h4>Fire Management Details</h4>"}]},
+    "modelName": "Fire Information",
+    "dataModel": [
         {
-            "type":"row", "class": "output-section", "items": [
-                {"type":"col", "items": [
-                    {"type":"selectOne", "source":"fireIgnitionSource", "preLabel":"Ignition source:", "validate":"required"},
-                    {"type":"selectOne", "source":"fireEventType", "preLabel":"Type of file event:", "validate":"required"},
-                    {"type":"selectMany", "source":"fireReason", "preLabel":"Reason(s) for burn:", "validate":"required"},
-                    {"type":"number", "source":"areaOfFireHa", "preLabel":"Area of burn (Ha):", "validate":"required"},
-                    {"type":"date", "source":"fireLastBurnDate", "preLabel":"Last burn date:"},
-                    {"type":"selectOne", "source":"fireTimeSinceLastBurn", "preLabel":"Time since last burn:"}
-                ]},
-                {"type":"col", "items": [
-                    {"type":"selectOne", "source":"fireBurnTemp", "preLabel":"Temperature of burn"},
-                    {"type":"selectMany", "source":"fireMachineryUsed", "preLabel":"Machinery used"},
-                    {"type":"number", "source":"totalMachineHours", "preLabel":"Total machinery hours"},
-                    {"type":"number", "source":"controlLineKmMachine", "preLabel":"Length of control line - machinery (km)"},
-                    {"type":"number", "source":"controlLineKmHand", "preLabel":"Length of control line - hand tools (km)"},
-                    {"type":"checkbox", "source":"fireContainment", "preLabel":"Did the fire stay with initial control lines?"}
-                ]}]
+            "dataType": "text",
+            "name": "fireIgnitionSource",
+            "constraints": [
+                "Lightning",
+                "Fire lighters",
+                "Aerial incendiary",
+                "Accidental human",
+                "Arson",
+                "Other",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "fireEventType",
+            "constraints": [
+                "Managed controlled burn",
+                "Escaped controlled burn",
+                "Wildfire"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "fireReason",
+            "constraints": [
+                "Fire fuel reduction",
+                "Asset protection",
+                "Weed management",
+                "Pest animal management",
+                "Ecology management",
+                "Unplanned fire event"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfFireHa"
+        },
+        {
+            "dataType": "date",
+            "name": "fireLastBurnDate"
+        },
+        {
+            "dataType": "text",
+            "name": "fireTimeSinceLastBurn",
+            "constraints": [
+                "1-3 years",
+                "4-6 years",
+                "7-10 years",
+                "> 10 years"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "fireBurnTemp",
+            "constraints": [
+                "Cool",
+                "Moderately hot",
+                "Very hot",
+                "Extreme"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "fireMachineryUsed",
+            "constraints": [
+                "Light tanker",
+                "Heavy tanker",
+                "Bulldozer / tractor / grader",
+                "Hand tools",
+                "Aircraft - fixed wing",
+                "Aircraft - helicopter"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "totalMachineHours"
+        },
+        {
+            "dataType": "number",
+            "name": "controlLineKmMachine"
+        },
+        {
+            "dataType": "number",
+            "name": "controlLineKmHand"
+        },
+        {
+            "dataType": "boolean",
+            "name": "fireContainment"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Fire Management Details<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "fireIgnitionSource",
+                            "computed": null,
+                            "preLabel": "Ignition source:",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "fireEventType",
+                            "computed": null,
+                            "preLabel": "Type of fire event *:",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "fireReason",
+                            "computed": null,
+                            "preLabel": "Reason(s) for burn *:",
+                            "type": "selectMany",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "areaOfFireHa",
+                            "computed": null,
+                            "preLabel": "Area of burn (Ha):",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "fireLastBurnDate",
+                            "computed": null,
+                            "preLabel": "Last burn date:",
+                            "type": "date"
+                        },
+                        {
+                            "source": "fireTimeSinceLastBurn",
+                            "computed": null,
+                            "preLabel": "Time since last burn:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "fireBurnTemp",
+                            "computed": null,
+                            "preLabel": "Temperature of burn",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "fireMachineryUsed",
+                            "computed": null,
+                            "preLabel": "Machinery used",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "totalMachineHours",
+                            "computed": null,
+                            "preLabel": "Total machinery hours",
+                            "type": "number"
+                        },
+                        {
+                            "source": "controlLineKmMachine",
+                            "computed": null,
+                            "preLabel": "Length of control line - machinery (km)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "controlLineKmHand",
+                            "computed": null,
+                            "preLabel": "Length of control line - hand tools (km)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "fireContainment",
+                            "computed": null,
+                            "preLabel": "Did the fire stay with initial control lines",
+                            "type": "checkbox"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

@@ -1,15 +1,7 @@
 {
-    "selectedActivity": {
-        "name": "Debris Removal",
-        "type": "Activity",
-        "outputs": [
-            "Debris Removal Details",
-            "Participant Information"
-        ]
-    },
     "activities": [
         {
-            "name": "Community activity",
+            "name": "Community Participation and Engagement",
             "type": "Activity",
             "outputs": [
                 "Community Activity Details",
@@ -99,19 +91,21 @@
         {
             "name": "Infrastructure Works",
             "type": "Activity",
-            "outputs": [
-                "Infrastructure Details"
-            ]
+            "outputs": ["Infrastructure Details"]
         },
         {
             "name": "Install/construct erosion control structure",
             "type": "Activity",
-            "outputs": []
+            "outputs": [
+                "Erosion Management Details",
+                "Participant Information"
+            ]
         },
         {
             "name": "Site Planning",
             "type": "Activity",
             "outputs": [
+                "Planning Activity Details",
                 "Threatening Processes & Site Condition Risks",
                 "Participant Information",
                 "Photo Points"
@@ -121,6 +115,7 @@
             "name": "Management plan development",
             "type": "Activity",
             "outputs": [
+                "Planning Activity Details",
                 "Participant Information"
             ]
         },
@@ -158,18 +153,6 @@
             "outputs": []
         },
         {
-            "name": "Site assessment",
-            "type": "Assessment",
-            "outputs": [
-                "Participant Information",
-                "Vegetation Assessment",
-                "Site Condition Components",
-                "Landscape Context Components",
-                "Threatening Processes & Site Condition Risks",
-                "Photo Points"
-            ]
-        },
-        {
             "name": "Aboriginal heritage site protection",
             "type": "Activity",
             "outputs": []
@@ -183,9 +166,22 @@
             ]
         },
         {
-            "name": "Site Assessment - Biodiversity Fund",
+            "name": "Site assessment",
             "type": "Assessment",
             "outputs": [
+                "Participant Information",
+                "Vegetation Assessment",
+                "Site Condition Components",
+                "Landscape Context Components",
+                "Threatening Processes & Site Condition Risks",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Site Assessment - Biodiversity Fund (SEWPaC)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment",
                 "Ground Cover - MERI",
                 "Exotic Fauna - MERI",
                 "Crown Cover - MERI",
@@ -193,44 +189,48 @@
             ]
         },
         {
-            "name": "Site Assessment - Habitat Hectares",
+            "name": "Site Assessment - Habitat Hectares (VIC)",
             "type": "Assessment",
             "outputs": [
+                "Vegetation Assessment",
                 "Site Condition",
                 "Landscape Context"
             ]
         },
         {
-            "name": "Site Assessment - TasVeg",
+            "name": "Site Assessment - TasVeg (TAS)",
             "type": "Assessment",
             "outputs": [
+                "Vegetation Assessment",
                 "Site Condition",
                 "Landscape Context"
             ]
         },
         {
-            "name": "Site Assessment - BioMetric",
+            "name": "Site Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "outputs": []
+            "outputs": ["Vegetation Assessment"]
         },
         {
-            "name": "Site Assessment - Bushland Condition Monitoring",
+            "name": "Site Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
             "outputs": [
+                "Vegetation Assessment",
                 "Weed Abundance & Threat Score",
                 "Feral Animal Abundance Score",
                 "Feral Animal Frequency Score"
             ]
         },
         {
-            "name": "Site Assessment - Native Vegetation Condition Assessment and Monitoring for WA",
+            "name": "Site Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "outputs": []
+            "outputs": ["Vegetation Assessment"]
         },
         {
-            "name": "BioCondition Site Assessment (v2.1)",
+            "name": "Site Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "outputs": [
+                "Vegetation Assessment",
                 "100 x 50m area - Ecologically Dominant Layer",
                 "50 x 10m area",
                 "50 x 20m area - Coarse Woody Debris",
@@ -242,337 +242,680 @@
             "name": "Project Employment",
             "type": "Activity",
             "outputs": [
-                "Indigenous Employment and Enterprise Details"
+                "Activity Context",
+                "Activity Planning Context",
+                "Employment Details"
             ]
         },
         {
             "name": "Debris Removal",
             "type": "Activity",
             "outputs": [
+                "Activity Context",
                 "Debris Removal Details",
                 "Participant Information"
             ]
+        },
+        {
+            "name": "Public Access Management",
+            "type": "Activity",
+            "outputs": [
+                "Activity Context",
+                "Activity Planning Context",
+                "Access Control Details",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Sundry MERI Plan Information",
+            "type": "Activity",
+            "outputs": ["Miscellaneous Information"]
         }
     ],
     "outputs": [
         {
-            "template": "activityContext",
-            "scoreNames": [
-                "associatedProgram",
-                "projectStage"
-            ],
-            "name": "Activity Context"
-        },
-        {
-            "template": "activityPlanningContext",
-            "scoreNames": [],
-            "name": "Activity Planning Context"
-        },
-        {
             "template": "revegetationDetails",
-            "scoreNames": [
-                "totalNumberPlanted",
-                "totalSeedSownKg",
-                "stockType"
-            ],
-            "scores":[
+            "scores": [
                 {
-                    "name":"totalNumberPlanted",
-                    "label":"Number of plants planted",
-                    "units":"",
-                    "aggregationType":"SUM"
-
+                    "name": "areaOfWorks",
+                    "aggregationType": "SUM",
+                    "label": "Area of works",
+                    "units": "Ha",
+                    "isOutputTarget":true
                 },
                 {
-                    "name":"totalSeedSownKg",
-                    "label":"Kilos of seed sown",
-                    "units":"kg",
-                    "aggregationType":"SUM"
-
+                    "name": "totalNumberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "Number of plants planted",
+                    "units": "",
+                    "isOutputTarget":true
                 },
                 {
-                    "name":"stockType",
-                    "label":"Stock type",
-                    "units":"",
-                    "aggregationType":"HISTOGRAM"
+                    "name": "totalSeedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kgs of seed sown",
+                    "units": "kg",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "stockType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Stock type",
+                    "units": ""
+                },
+                {
+                    "name": "structuralLayer",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Structural Layer",
+                    "units": ""
+                },
+                {
+                    "name": "revegPurpose",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Revegetation purpose"
+                },
+                {
+                    "name": "revegMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Revegetation method"
+                },
+                {
+                    "name": "ecosystemType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Ecosystem type(s)"
                 }
             ],
             "name": "Revegetation Details"
         },
         {
             "template": "seedCollectionDetails",
-            "scoreNames": [
-                "seedCollectedKg"
-            ],
+            "scores": [{
+                "name": "seedCollectedKg",
+                "aggregationType": "SUM",
+                "label": "Seed collected (Kg)",
+                "units": "Kg",
+                "isOutputTarget":true
+            }],
             "name": "Seed Collection Details"
         },
         {
             "template": "sitePreparationActions",
-            "scoreNames": [],
+            "scores": [],
             "name": "Site Preparation Actions"
         },
         {
             "template": "fencing",
-            "scoreNames": [
-                "lengthOfFence",
-                "purposeOfFence",
-                "fenceCostPerKm",
-                "fenceType"
-            ],
-            "scores":[
+            "scores": [
                 {
-                    "name":"lengthOfFence",
-                    "label":"Total length of fence",
-                    "units":"Km",
-                    "aggregationType":"SUM"
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Total length of fence",
+                    "units": "Km",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "purposeOfFence",
+                    "aggregationType": "SET",
+                    "label": "Purpose of fence",
+                    "units": ""
+                },
+                {
+                    "name": "fenceCostPerKm",
+                    "aggregationType": "AVERAGE",
+                    "label": "Fence cost/Km",
+                    "units": "$/Km"
+                },
+                {
+                    "name": "fenceType",
+                    "aggregationType": "SET",
+                    "label": "Fence type",
+                    "units": ""
                 }
             ],
             "name": "Fence Details"
         },
         {
             "template": "fenceCostCalculator",
-            "scoreNames": [
-                "fenceCostPerKm",
-                "lengthOfFence"
+            "scores": [
+                {
+                    "name": "fenceCostPerKm",
+                    "aggregationType": "AVERAGE",
+                    "label": "Fence cost/Km",
+                    "units": "$/Km"
+                },
+                {
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Length of fence (Km)",
+                    "units": "Km",
+                    "isOutputTarget":true
+                }
             ],
             "name": "Fence Cost Calculator"
         },
         {
-            "template": "participantInformation",
-            "scoreNames": [
-                "totalParticipants",
-                "numberOfVolunteers",
-                "numberOfIndigenousParticipants",
-                "totalVolunteerDays",
-                "totalIndigenousDays"
+            "template": "participation",
+            "scores": [
+                {
+                    "name": "totalParticipants",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of participants",
+                    "units": "",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "numberOfVolunteers",
+                    "aggregationType": "SUM",
+                    "label": "No of volunteers",
+                    "units": "",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "numberOfIndigenousParticipants",
+                    "aggregationType": "SUM",
+                    "label": "No of indigenous participants",
+                    "units": "",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "totalVolunteerDays",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of volunteer days",
+                    "units": "",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "totalIndigenousDays",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of indigenous participation days",
+                    "units": "",
+                    "isOutputTarget":true
+                }
             ],
             "name": "Participant Information"
         },
         {
             "template": "photoPoints",
-            "scoreNames": [
-                "numberOfPoints"
-            ],
+            "scores": [{
+                "name": "numberOfPoints",
+                "aggregationType": "SUM",
+                "label": "No. of photo points",
+                "units": ""
+            }],
             "name": "Photo Points"
         },
         {
             "template": "weedManagement",
-            "scoreNames": [
-                "areaTreatedHa"
-            ],
-            "scores":[
-                {
-                    "name":"areaTreatedHa",
-                    "label":"Total area treated",
-                    "units":"Ha",
-                    "aggregationType":"SUM"
-
-                }
-            ],
+            "scores": [{
+                "name": "areaTreatedHa",
+                "aggregationType": "SUM",
+                "label": "Total area treated (Ha)",
+                "units": "Ha",
+                "isOutputTarget":true
+            }],
             "name": "Weed Management"
         },
         {
             "template": "communityActivityDetails",
-            "scoreNames": [
-                "eventDurationHrs"
+            "scores": [
+                {
+                    "name": "eventPurpose",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Purpose of event",
+                    "units": ""
+                },
+                {
+                    "name": "eventDurationHrs",
+                    "aggregationType": "SUM",
+                    "label": "Event Duration (Hrs)",
+                    "units": "",
+                    "isOutputTarget":true
+                }
             ],
-            "name": "Community Activity Details"
+            "name": "Event Details"
         },
         {
-            "template": "materialsProvidedToParticipants",
-            "scoreNames": [
-                "numberOfBrochures",
-                "numberOfWrittenMaterials",
-                "numberOfMaterialRecipients",
-                "numberOfDisplays"
+            "template": "communicationMaterialsSupplied",
+            "scores": [
+                {
+                    "name": "numberOfBrochures",
+                    "aggregationType": "COUNT",
+                    "label": "No. of brochures",
+                    "units": ""
+                },
+                {
+                    "name": "numberOfWrittenMaterials",
+                    "aggregationType": "COUNT",
+                    "label": "No. of written materials",
+                    "units": ""
+                },
+                {
+                    "name": "numberOfMaterialRecipients",
+                    "aggregationType": "COUNT",
+                    "label": "No. of recipients of materials",
+                    "units": ""
+                },
+                {
+                    "name": "numberOfDisplays",
+                    "aggregationType": "COUNT",
+                    "label": "No. of displays",
+                    "units": ""
+                }
             ],
             "name": "Materials Provided to Participants"
         },
         {
             "template": "fireInformation",
-            "scoreNames": [
-                "areaOfBurnHa",
-                "fireReason",
-                "fireEventType",
-                "totalMachineHours",
-                "controlLineKmMachine",
-                "controlLineKmHand"
+            "scores": [
+                {
+                    "name": "areaOfFireHa",
+                    "aggregationType": "SUM",
+                    "label": "Area of burn (Ha)",
+                    "units": "Ha",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "burnReason",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Reason for burn",
+                    "units": ""
+                },
+                {
+                    "name": "fireEventType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Type of fire event",
+                    "units": ""
+                },
+                {
+                    "name": "totalMachineHrs",
+                    "aggregationType": "SUM",
+                    "label": "Total machinery Hrs",
+                    "units": "Hrs"
+                },
+                {
+                    "name": "controlLineKmMachine",
+                    "aggregationType": "SUM",
+                    "label": "Control line constructed by machine (Km)",
+                    "units": "Km",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "controlLineKmHand",
+                    "aggregationType": "SUM",
+                    "label": "Control line constructed by hand tools (Km)",
+                    "units": "Km",
+                    "isOutputTarget":true
+                }
             ],
             "name": "Fire Information"
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scoreNames": [
-                "effectivenessOfPreviousTreatment",
-                "effectivenessOfPreviousWeedTreatment",
-                "weedCoverHa",
-                "weedStatus",
-                ""
-            ],
+            "scores": [{
+                "name": "effectivenessOfPreviousTreatment",
+                "aggregationType": "AVERAGE",
+                "label": "Effectiveness of Previous Treatment (% killed)",
+                "units": "%"
+            }],
             "name": "Evidence of Weed Treatment"
         },
         {
-            "template": "weedObservationMonitoringDetails",
-            "scoreNames": [],
+            "template": "weedObservationDetails",
+            "scores": [
+                {
+                    "name": "weedCoverHa",
+                    "aggregationType": "SUM",
+                    "label": "Weed Cover (Ha)",
+                    "units": "Ha",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "weedStatus",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Weed Status"
+                }
+            ],
             "name": "Weed Observation / Monitoring Details"
         },
         {
-            "template": "weedTreatmentDetails",
-            "scoreNames": [
-                "areaTreatedHa"
-            ],
-            "scores":[
+            "template": "Weed",
+            "scores": [
                 {
-                    "name":"areaTreatedHa",
-                    "label":"Total area treated",
-                    "units":"Ha",
-                    "aggregationType":"SUM"
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Total area treated (Ha)",
+                    "units": "Ha",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "targetSpecies",
+                    "aggregationType": "SET",
+                    "label": "Target species",
+                    "units": ""
+                },
+                {
+                    "name": "treatmentMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Treatment method"
                 }
             ],
             "name": "Weed Treatment Details"
         },
         {
             "template": "stockManagementDetails",
-            "scoreNames": [
-                "stockingStrategy",
-                "areaManaged"
+            "scores": [
+                {
+                    "name": "stockManagementReason",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Stock management reason",
+                    "units": ""
+                },
+                {
+                    "name": "areaOfStockManagmentHa",
+                    "aggregationType": "SUM",
+                    "label": "Area managed with stock (Ha)",
+                    "units": "Ha",
+                    "isOutputTarget":true
+                }
             ],
             "name": "Stock Management Details"
         },
         {
             "template": "infrastructureDetails",
-            "scoreNames": [
-                "infrastructureType"
-            ],
+            "scores": [{
+                "name": "infrastructureType",
+                "aggregationType": "SET",
+                "label": "Type of infrastructure",
+                "units": ""
+            }],
             "name": "Infrastructure Details"
         },
         {
             "template": "planningActivityDetails",
-            "scoreNames": [],
+            "scores": [
+                {
+                    "name": "typeOfPlan",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Type of plan"
+                },
+                {
+                    "name": "noOfPlanActionsAddressed",
+                    "aggregationType": "SUM",
+                    "label": "No. of Plan actions addressed",
+                    "isOutputTarget":true
+                }
+            ],
             "name": "Planning Activity Details"
         },
         {
             "template": "pestManagementDetails",
-            "scoreNames": [
-                "pestManagementMethod"
+            "scores": [
+                {
+                    "name": "activityDuration",
+                    "aggregationType": "SUM",
+                    "label": "Duration of activity ",
+                    "units": "",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "pestManagementMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Pest management method",
+                    "units": ""
+                },
+                {
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals killed/removed",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "areaTreatedForPests",
+                    "aggregationType": "SUM",
+                    "label": "Area covered by pest treatment (Ha)",
+                    "units": "Ha",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "pestTreatmentCostPerHa",
+                    "aggregationType": "AVERAGE",
+                    "label": "Cost of treatment / Ha.",
+                    "units": "$/Ha"
+                }
             ],
             "name": "Pest Management Details"
         },
         {
             "template": "researchInformation",
-            "scoreNames": [],
+            "scores": [],
             "name": "Research Information"
         },
         {
             "template": "waterManagementDetails",
-            "scoreNames": [],
+            "scores": [
+                {
+                    "name": "hydrologicalStructuresInstalled",
+                    "aggregationType": "SUM",
+                    "label": "No. of hydrological structures installed",
+                    "isOutputTarget":true
+                },
+                {
+                    "name": "isCurrentFlowNatural",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Current flow regime"
+                }
+            ],
             "name": "Water Management Details"
         },
         {
             "template": "siteAssessment",
-            "scoreNames": [],
+            "scores": [{
+                "name": "assessmentMethod",
+                "aggregationType": "SET",
+                "label": "Assessment Method"
+            }],
             "name": "Vegetation Assessment"
         },
         {
             "template": "siteConditionComponents",
-            "scoreNames": [],
+            "scores": [],
             "name": "Site Condition Components"
         },
         {
             "template": "landscapeContextComponents",
-            "scoreNames": [],
+            "scores": [],
             "name": "Landscape Context Components"
         },
         {
-            "template": "threateningProcessesAndSiteConditionRisks",
-            "scoreNames": [],
+            "template": "riskAssessment",
+            "scores": [],
             "name": "Threatening Processes & Site Condition Risks"
         },
         {
             "template": "weedAbundanceAndThreatScore",
-            "scoreNames": [
-                "totalWeedAbundanceAndThreatScore"
-            ],
+            "scores": [{
+                "name": "totalWeedAbundanceAndThreatScore",
+                "aggregationType": "SET",
+                "label": "totalWeedAbundanceAndThreatScore",
+                "units": ""
+            }],
             "name": "Weed Abundance & Threat Score"
         },
         {
             "template": "feralAnimalAbundanceScore",
-            "scoreNames": [
-                "totalFeralAnimalAbundanceScore"
-            ],
+            "scores": [{
+                "name": "totalFeralAnimalAbundanceScore",
+                "aggregationType": "SET",
+                "label": "totalFeralAnimalAbundanceScore",
+                "units": ""
+            }],
             "name": "Feral Animal Abundance Score"
         },
         {
             "template": "feralAnimalFrequencyScore",
-            "scoreNames": [
-                "totalFeralAnimalFrequencyScore"
-            ],
+            "scores": [{
+                "name": "totalFeralAnimalFrequencyScore",
+                "aggregationType": "SET",
+                "label": "totalFeralAnimalFrequencyScore",
+                "units": ""
+            }],
             "name": "Feral Animal Frequency Score"
         },
         {
             "template": "groundCover",
-            "scoreNames": [],
+            "scores": [],
             "name": "Ground Cover - MERI"
         },
         {
             "template": "crownCover",
-            "scoreNames": [],
+            "scores": [],
             "name": "Crown Cover - MERI"
         },
         {
             "template": "crownType",
-            "scoreNames": [],
+            "scores": [],
             "name": "Crown Type - MERI"
         },
         {
             "template": "exoticFauna",
-            "scoreNames": [],
+            "scores": [],
             "name": "Exotic Fauna - MERI"
         },
         {
             "template": "habitatHectaresSiteCondition",
-            "scoreNames": [],
+            "scores": [],
             "name": "Site Condition"
         },
         {
             "template": "habitatHectaresLandscapeContext",
-            "scoreNames": [],
+            "scores": [],
             "name": "Landscape Context"
         },
         {
             "template": "bioCondition100x50m",
-            "scoreNames": [],
+            "scores": [],
             "name": "100 x 50m area - Ecologically Dominant Layer"
         },
         {
             "template": "bioCondition50x10m",
-            "scoreNames": [],
+            "scores": [],
             "name": "50 x 10m area"
         },
         {
             "template": "bioCondition50x20m",
-            "scoreNames": [],
+            "scores": [],
             "name": "50 x 20m area - Coarse Woody Debris"
         },
         {
             "template": "bioCondition1x1m",
-            "scoreNames": [],
+            "scores": [],
             "name": "Five 1 x 1m plots"
         },
         {
             "template": "bioCondition100mTransect",
-            "scoreNames": [],
+            "scores": [],
             "name": "100m Transect"
         },
         {
-            "template": "indigenousEmploymentAndEnterpriseDetails",
-            "scoreNames": [],
-            "name": "Indigenous Employment and Enterprise Details"
+            "template": "employmentDetails",
+            "scores": [
+                {
+                    "name": "noOfIndigenousRangersFt",
+                    "aggregationType": "SUM",
+                    "label": "No. of full time indigenous rangers employed on project"
+                },
+                {
+                    "name": "noOfIndigenousRangersPt",
+                    "aggregationType": "SUM",
+                    "label": "No. of part time indigenous rangers employed on project"
+                },
+                {
+                    "name": "noOfIndigenousRangersMale",
+                    "aggregationType": "SUM",
+                    "label": "No. of male indigenous rangers employed on project"
+                },
+                {
+                    "name": "noOfIndigenousRangersFemale",
+                    "aggregationType": "SUM",
+                    "label": "No. of female indigenous rangers employed on project"
+                },
+                {
+                    "name": "noOfIndigenousNon-rangersFt",
+                    "aggregationType": "SUM",
+                    "label": "No. of indigenous people who are not rangers employed full time on project"
+                },
+                {
+                    "name": "noOfIndigenousNon-rangersPt",
+                    "aggregationType": "SUM",
+                    "label": "No. of indigenous people who are not rangers employed part time on project"
+                },
+                {
+                    "name": "noOfIndigenousNon-rangersMale",
+                    "aggregationType": "SUM",
+                    "label": "No. of male indigenous people who are employed on project, but are not rangers"
+                },
+                {
+                    "name": "noOfIndigenousNon-rangersFemale",
+                    "aggregationType": "SUM",
+                    "label": "No. of female indigenous people who are employed on project, but are not rangers"
+                }
+            ],
+            "name": "Employment Details"
         },
         {
-            "template": "DebrisRemovalDetails",
-            "scoreNames": [],
+            "template": "debrisRemovalDetails",
+            "scores": [
+                {
+                    "name": "debrisType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Types of material removed"
+                },
+                {
+                    "name": "debrisWeightTonnes",
+                    "aggregationType": "SUM",
+                    "label": "Weight of debris removed (Tonnes)",
+                    "units": "Tonnes"
+                },
+                {
+                    "name": "debrisVolumeM3",
+                    "aggregationType": "SUM",
+                    "label": "Volume of debris removed (m3)"
+                }
+            ],
             "name": "Debris Removal Details"
+        },
+        {
+            "template": "accessControlDetails",
+            "scores": [],
+            "name": "Access Control Details"
+        },
+        {
+            "template": "miscellaneousInformation",
+            "scores": [],
+            "name": "Miscellaneous Information"
+        },
+        {
+            "template": "erosionManagementDetails",
+            "scores": [
+                {
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Erosion area treated (Ha)",
+                    "units": "Ha"
+                },
+                {
+                    "name": "erosionLength",
+                    "aggregationType": "SUM",
+                    "label": "Length of stream/coastline treated (m)",
+                    "units": "metres"
+                },
+                {
+                    "name": "erosionControlStructures",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Erosion control structure installed"
+                }
+            ],
+            "name": "Erosion Management Details"
         }
     ]
 }
