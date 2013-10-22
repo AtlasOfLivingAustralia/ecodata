@@ -144,7 +144,14 @@ class ProjectService {
                 // one in containing the target.
                 else {
                     score = toAggregate.find{it.score?.outputName == target.outputLabel && it.score?.label == target.scoreLabel}
-                    outputSummary << [outputLabel:target.outputLabel, scoreLabel:target.scoreLabel, target:target.target, aggregatedResult:0, units:score.units]
+                    if (score) {
+                        outputSummary << [outputLabel:target.outputLabel, scoreLabel:target.scoreLabel, target:target.target, aggregatedResult:0, units:score.units]
+                    }
+                    else {
+                        // This can happen if the meta-model is changed after targets have already been defined for a project.
+                        // Once the project output targets are re-edited and saved, the old targets will be deleted.
+                        log.warn "Can't find a score for existing output target: $target.outputLabel $target.scoreLabel, projectId: $project.projectId"
+                    }
                 }
             }
             return outputSummary

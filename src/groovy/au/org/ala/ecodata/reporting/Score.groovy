@@ -21,6 +21,9 @@ class Score {
     /** The label for this score when displayed */
     String label
 
+    /** Whether or not this score is suitable for use as a project output target */
+    boolean isOutputTarget
+
     /**
      * The units this score is measured in.  May not make sense for all scores or for an aggregrated result
      * (e.g. units don't make sense for a count based aggregation).
