@@ -9,20 +9,45 @@ class Aggregators {
         String group
         Score score
         int count;
+        boolean scoreNested = false
+
+        public void setScore(Score score) {
+            this.score = score
+            if (score.name.contains('.')) {
+                scoreNested = true
+            }
+
+        }
 
         public void aggregate(output) {
             if (output.name == score.outputName) {
-                def value = output.scores[score.name];
-                if (value != null) {
-                    count++;
-                    doAggregation(value);
+                if (score.listName) {
+                    output.data[score.listName].each{aggregateValue(getValue(output))}
+                }
+                else {
+                    aggregateValue(getValue(output))
                 }
             }
+        }
+
+        public void aggregateValue(value) {
+            if (value != null) {
+                count++;
+                doAggregation(value);
+            }
+        }
+
+        def getValue(output) {
+            if (scoreNested) {
+                return Eval.x(output.data, 'x.'+score.name.replace('.', '?.'))
+            }
+            return output.data[score.name]
         }
 
         public abstract void doAggregation(output);
 
         public abstract AggregrationResult result();
+
 
 
     }
@@ -81,7 +106,7 @@ class Aggregators {
         Map histogram = [:].withDefault { 0 };
 
         public void doAggregation(value) {
-            histogram[value] = histogram[value]++
+            histogram[value]++
         }
 
         public AggregrationResult result() {
@@ -128,12 +153,6 @@ class Aggregators {
          * The result of the aggregation. Normally will be a numerical value (e.g. for a sum etc) or a List (for a collecting aggregator)
          */
         def result
-
-        public void setScore(Score score) {
-            this.score = score.label
-            this.units = score.units
-            this.outputName = score.outputName
-        }
 
         public String toString() {
             return "$outputName:$score:,count=$count,result=$result"

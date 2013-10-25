@@ -130,13 +130,17 @@ class ProjectService {
                     toAggregate << [score:score]
                 }
             }
+            toAggregate << [score:new Score([outputName:'Revegetation Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'totalNumberPlanted', label:'Number of plants planted', units:'kg'] ), groupBy:[groupTitle: 'Plants By Type', entity:'activity', property:'mainTheme']]
+            toAggregate << [score:new Score([outputName:'Weed Treatment Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'areaTreatedHa', label:'Area treated', units:'ha'] ), groupBy:[groupTitle: 'Area treated by species', entity:'output', property:'targetSpecies.name']]
 
             def outputSummary = reportService.projectSummary(id, toAggregate)
 
+
             // Add project output target information where it exists.
+
             project.outputTargets?.each { target ->
 
-                def score = outputSummary.find{it.outputLabel == target.outputLabel && it.scoreLabel == target.scoreLabel}
+                def score = outputSummary.find{it.score.isOutputTarget && it.score.outputName == target.outputLabel && it.score.label == target.scoreLabel}
                 if (score) {
                     score['target'] = target.target
                 }
@@ -145,7 +149,7 @@ class ProjectService {
                 else {
                     score = toAggregate.find{it.score?.outputName == target.outputLabel && it.score?.label == target.scoreLabel}
                     if (score) {
-                        outputSummary << [outputLabel:target.outputLabel, scoreLabel:target.scoreLabel, target:target.target, aggregatedResult:0, units:score.units]
+                        outputSummary << [score:score.score, target:target.target]
                     }
                     else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
@@ -154,6 +158,7 @@ class ProjectService {
                     }
                 }
             }
+
             return outputSummary
         }
         else {

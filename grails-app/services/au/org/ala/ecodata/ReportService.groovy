@@ -6,7 +6,7 @@ import au.org.ala.ecodata.reporting.AggregatorBuilder
  */
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService
+    def activityService, elasticSearchService, projectService, siteService, outputService
 
     /**
      * Returns aggregated scores for a specified project.
@@ -23,35 +23,25 @@ class ReportService {
 
        // We definitely could be smarter about this query - only getting activities with outputs of particular
         // types or containing particular scores for example.
-        List activities = activityService.findAllForProjectId(projectId, OutputService.SCORES)
+        List activities = activityService.findAllForProjectId(projectId, 'FLAT')
+        List outputs = Output.findAllByActivityIdInList(activities.collect{it.activityId}).collect {outputService.toMap(it)}
+        Map outputsByActivityId = outputs.groupBy{it.activityId}
 
-        return aggregate(aggregationSpec, activities)
+        return aggregate(aggregationSpec, activities, outputsByActivityId)
     }
 
 
-    def aggregate(aggregationSpec, List<Activity> activities) {
-
-        // If there are duplicate grouping functions it'll be better to run them once.
-        def scoresByGroup = [:]
-        aggregationSpec.each{
-            def groupBy = it.groupBy ?: [entity:'*']
-            if (groupBy) {
-
-                if (!scoresByGroup[groupBy]) {
-                    scoresByGroup[groupBy] = []
-                }
-                scoresByGroup[groupBy] << it.score
-            }
-        }
+    def aggregate(aggregationSpec, List<Activity> activities, Map outputsByActivityId) {
 
         // Determine if we need to group by site or project properties, if not we can avoid a lot of queries.
-        boolean projectGrouping = scoresByGroup.keySet().find {it.entity == 'project'}
-        boolean siteGrouping = scoresByGroup.keySet().find {it.entity == 'site'}
+        boolean projectGrouping = aggregationSpec.find {it.groupBy?.entity == 'project'}
+        boolean siteGrouping = aggregationSpec.find {it.groupBy?.entity == 'site'}
+
 
         List<Aggregator> aggregators = []
 
-        scoresByGroup.each {
-            aggregators << new AggregatorBuilder().scores(it.value).groupBy(it.key).build()
+        aggregationSpec.each {
+            aggregators << new AggregatorBuilder().score(it.score).groupBy(it.groupBy?:it.groupBy ?: [entity:'*']).build()
         }
 
         activities.each { activity ->
@@ -64,27 +54,12 @@ class ReportService {
             if (siteGrouping && activity.siteId) {
                 activity['site'] = siteService.toMap(Site.findBySiteId(activity.siteId), SiteService.BRIEF)
             }
+            activity['outputs'] = outputsByActivityId[activity.activityId]
             aggregators.each { it.aggregate(activity) }
         }
 
-        def allScores = []
-        aggregators.each {
+        aggregators.collect {it.results()}
 
-            def results = it.results()
-
-            if (!results.groupName) {
-                allScores.addAll results.scores
-
-            }
-            else {
-                results.scores.each { score ->
-                    score << [group:results.groupName]
-                    allScores << score
-                }
-            }
-
-        }
-        allScores
     }
 
 

@@ -8,32 +8,36 @@ class Aggregator {
 
     static String DEFAULT_GROUP = ""
 
-    Map<String, List<Aggregators.OutputAggregator>> aggregatorsByGroup
-    List<Score> scores
+    Map<String, Aggregators.OutputAggregator> aggregatorsByGroup
+    Score score
     Closure groupingFunction
     String title
+    String outputListName
 
-    public Aggregator(String title, groupingFunction, List<Score> scores, AggregatorBuilder builder) {
+    public Aggregator(String title, groupingFunction, Score score, AggregatorBuilder builder) {
 
         this.groupingFunction = groupingFunction
-        this.scores = scores
+        this.score = score
         this.title = title
 
         aggregatorsByGroup = [:].withDefault { key ->
-            def aggregators = []
-            scores.each { score ->
-                aggregators << builder.createAggregator(score, key)
-            }
-            aggregators
+            builder.createAggregator(score, key)
         }
     }
 
     def aggregate(activity) {
 
         activity.outputs?.each { output ->
-            List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, output)
-            aggregators.each{it.aggregate(output)}
-
+            if (outputListName) {
+                output.data[outputListName].each{
+                    Aggregators.OutputAggregator aggregator = aggregatorFor(activity, it)
+                    aggregator.aggregate(output)
+                }
+            }
+            else {
+                Aggregators.OutputAggregator aggregator = aggregatorFor(activity, output)
+                aggregator.aggregate(output)
+            }
         }
 
     }
@@ -42,44 +46,13 @@ class Aggregator {
      *  Returns the results of the aggregation.
      *  The results will be formatted like:
      *     {
-     *         groupName: <title of grouping category>
-     *         scores: [
-     *             // For each score to by grouped by the criteria
-     *             {
-     *                 scoreLabel: <label of score>
-     *                 outputLabel: <name of the output the score is collected under>
-     *             },
-     *             values: [
-     *                 // For each unique value returned by the grouping criteria
-     *                 {
-     *                     aggregatedResult: <the result of aggregrating each value of the score for each group value>
-     *                     groupValue: <the value of the grouping function>
-     *                 }
-     *             ]
-     *         ]
+     *        //TODO document me
      *     }
      */
     def results() {
-        def results = []
-        aggregatorsByGroup.values().each { aggregatorList ->
-            results.addAll(aggregatorList.collect {
-                aggregator -> aggregator.result()
-            })
-        }
+        def results = aggregatorsByGroup.values().collect { it.result() }.findAll{ it.count > 0 }
 
-        // Combine histogram based scores into a single result.
-        def combinedResults = []
-        def aggregatorsByScore = results.groupBy({it.outputName+':'+it.score})
-        aggregatorsByScore.keySet().each{
-            def value = aggregatorsByScore[it]
-            if (value.size() == 1) {
-                combinedResults << [outputLabel: value[0].outputName, scoreLabel:value[0].score, count:value[0].count,  aggregatedResult:value[0].result]
-            } else {
-                combinedResults << [outputLabel: value[0].outputName, scoreLabel:value[0].score, values:value.collect{ groupValue-> [aggregatedResult:groupValue.result, count:groupValue.count, groupValue:groupValue.group]} ]
-            }
-        }
-
-        return [groupName:title, scores:combinedResults]
+        return [groupTitle:title, score:score, results:results]
     }
 
     /**
@@ -89,7 +62,7 @@ class Aggregator {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    List<Aggregators.OutputAggregator> aggregatorFor(activity, output) {
+    Aggregators.OutputAggregator aggregatorFor(activity, output) {
 
         // TODO the grouping function should probably specify the default group.
         String group = groupingFunction(activity, output)

@@ -7,28 +7,22 @@ package au.org.ala.ecodata.reporting
 class AggregatorBuilder {
 
     Map groupingSpec
-    List<Score> scores
+    Score score
 
     public AggregatorBuilder groupBy(groupingSpec) {
         this.groupingSpec = groupingSpec
         this
     }
 
-
-    public AggregatorBuilder scores(scores) {
-        this.scores = scores
-        this
-    }
-
     public AggregatorBuilder score(score) {
-        this.scores = [score]
+        this.score = score
         this
     }
 
 
     public Aggregator build() {
         def groupingFunction = createGroupingFunction(groupingSpec)
-        return new Aggregator(groupingSpec.title, groupingFunction, scores, this)
+        return new Aggregator(groupingSpec.groupTitle, groupingFunction, score, this)
     }
 
     /**
@@ -37,7 +31,7 @@ class AggregatorBuilder {
      * @param group the value of the group that the Aggregator is aggregating.
      * @return a new instance of OutputAggregator
      */
-    def createAggregator(score, group) {
+    def createAggregator(score, group = '') {
 
         def params = [score:score, group:group]
         switch (score.aggregationType) {
@@ -76,11 +70,13 @@ class AggregatorBuilder {
     Closure createGroupingFunction(groupingSpec) {
 
         final String property = groupingSpec.property
+
         switch (groupingSpec.entity) {
+
             case 'activity':
-                return {activity, output -> activity[property]}
+                return {activity, output -> Eval.x(activity, 'x.'+property.replace('.', '?.'))}
             case 'output':
-                return {activity, output -> output[property]}
+                return {activity, output -> Eval.x(output.data, 'x.'+property.replace('.', '?.'))}
             case 'site':
                 return {activity, output -> activity.site ? Eval.x(activity.site, 'x.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
             case 'project':

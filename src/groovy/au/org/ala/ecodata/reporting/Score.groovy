@@ -15,6 +15,8 @@ class Score {
     /** The name of the score (as defined in the OutputModel */
     String name
 
+    String listName
+
     /** Defines how this score should be aggregated */
     AGGREGATION_TYPE aggregationType
 
@@ -29,16 +31,6 @@ class Score {
      * (e.g. units don't make sense for a count based aggregation).
      */
     String units
-
-    public void setName(String name) {
-        // Setting a few defaults...
-
-        this.name = name
-        this.label = name
-        this.units = ""
-        this.aggregationType = AGGREGATION_TYPE.SUM
-        this.outputName = 'undefined'
-    }
 
     /**
      * Returns a List of Scores as defined for the supplied output metadata.
