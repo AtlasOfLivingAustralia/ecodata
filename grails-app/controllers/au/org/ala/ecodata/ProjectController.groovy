@@ -76,13 +76,41 @@ class ProjectController {
         }
     }
 
+    def deleteSites(String id){
+        log.debug("Deleting the sites for projectID : " + id)
+        //def siteList = siteService.findAllForProjectId(id, siteService.BRIEF)
+        def siteList = Site.findAllByProjects(id)
+        siteList.each { site ->
+            site.projects.remove(id)
+            site.save()
+        }
+    }
+
+    /**
+     * Update the site for project.
+     * @param id
+     * @return
+     */
     def updateSites(String id){
-        println("Updating the sites for projectID : " + id)
+        log.debug("Updating the sites for projectID : " + id)
         def props = request.JSON
         log.debug props
-        props.sites.each { siteId ->
-            siteService.addProject(siteId, id)
+        def allCurrentSites = []
+        Site.findAllByProjects(id).each{
+          allCurrentSites << it.siteId
         }
+        //sites to remove...
+
+        log.debug("Current sites: " + allCurrentSites)
+
+        def doNothings = allCurrentSites.intersect(props.sites)
+
+        def toAdd = props.sites.minus(doNothings)
+        def toRemove = allCurrentSites.minus(doNothings)
+
+        //sites to remove
+        toAdd.each { siteId -> siteService.addProject(siteId, id) }
+        toRemove.each { siteId -> siteService.removeProject(siteId, id) }
         def response = [status: 200]
         asJson response
     }
