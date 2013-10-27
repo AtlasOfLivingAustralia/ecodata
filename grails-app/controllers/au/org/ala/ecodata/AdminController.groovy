@@ -15,7 +15,6 @@ class AdminController {
         def userList = authService.getAllUserNameList()
         [ userNamesList: userList ]
     }
-    def metadata() {}
 
     def settings() {
         def settings = [
