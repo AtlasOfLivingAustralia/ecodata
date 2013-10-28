@@ -77,12 +77,11 @@ class ProjectController {
     }
 
     def deleteSites(String id){
-        log.debug("Deleting the sites for projectID : " + id)
-        //def siteList = siteService.findAllForProjectId(id, siteService.BRIEF)
-        def siteList = Site.findAllByProjects(id)
-        siteList.each { site ->
-            site.projects.remove(id)
-            site.save()
+        def status = siteService.deleteSitesFromProject(id)
+        if(status.status == 'ok'){
+            render (status: 200, text: 'raised from the dead')
+        } else {
+            render (status: 500, text: 'No such id')
         }
     }
 
