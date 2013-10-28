@@ -6,6 +6,7 @@ class SiteService {
     static final ACTIVE = "active"
     static final BRIEF = 'brief'
     static final RAW = 'raw'
+    static final FLAT = 'flat'
 
     def grailsApplication, activityService, projectService, commonService
 
@@ -42,7 +43,8 @@ class SiteService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        if (!levelOfDetail.contains(BRIEF) && levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
+
+        if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF) && levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
             def projects = projectService.getBrief(mapOfProperties.projects)
             mapOfProperties.projects = projects
             mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)
@@ -78,10 +80,10 @@ class SiteService {
     }
 
     def update(props, id) {
-        def a = Site.findBySiteId(id)
-        if (a) {
+        def site = Site.findBySiteId(id)
+        if (site) {
             try {
-                getCommonService().updateProperties(a, props)
+                getCommonService().updateProperties(site, props)
                 return [status:'ok']
             } catch (Exception e) {
                 Site.withSession { session -> session.clear() }
@@ -96,11 +98,32 @@ class SiteService {
         }
     }
 
-    def addProject(siteId,projectId){
-        def a = Site.findBySiteId(siteId)
-        a.projects << projectId
-        a.projects.unique()
-        a.save()
-        return [status:'ok']
+    def deleteSitesFromProject(String projectId){
+        log.debug("Deleting the sites for projectID : " + projectId)
+        //def siteList = siteService.findAllForProjectId(id, siteService.BRIEF)
+        def siteList = Site.findAllByProjects(projectId)
+        siteList.each { site ->
+            site.projects.remove(projectId)
+            site.save()
+        }
+        [status:'ok']
+    }
+
+
+    def removeProject(siteId, projectId){
+        log.debug("Removing project $projectId from site $siteId" +
+                "")
+        def site = Site.findBySiteId(siteId)
+        site.projects.remove(projectId)
+        site.save()
+        [status:'ok']
+    }
+
+    def addProject(siteId, projectId){
+        def site = Site.findBySiteId(siteId)
+        site.projects << projectId
+        site.projects.unique()
+        site.save()
+        [status:'ok']
     }
 }

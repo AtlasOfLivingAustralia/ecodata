@@ -143,31 +143,24 @@ class ProjectService {
                 def score = outputSummary.find{it.score.isOutputTarget && it.score.outputName == target.outputLabel && it.score.label == target.scoreLabel}
                 if (score) {
                     score['target'] = target.target
-                }
-                // If there are no Outputs recorded containing the score, the results won't be returned, so add
-                // one in containing the target.
-                else {
+                } else {
+               		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
+               			// one in containing the target.
                     score = toAggregate.find{it.score?.outputName == target.outputLabel && it.score?.label == target.scoreLabel}
                     if (score) {
                         outputSummary << [score:score.score, target:target.target]
-                    }
-                    else {
+                    } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
                         log.warn "Can't find a score for existing output target: $target.outputLabel $target.scoreLabel, projectId: $project.projectId"
                     }
                 }
             }
-
             return outputSummary
-        }
-        else {
+        } else {
             def error = "Error retrieving metrics for project - no such id ${id}"
             log.error error
             return [status:'error',error:error]
         }
-
     }
-
-
 }
