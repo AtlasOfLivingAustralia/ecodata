@@ -75,7 +75,8 @@
                     }
                 ],
                 "userAddedRows": "true",
-                "type": "table"
+                "type": "table",
+                "printRows" : 6
             },
             {
                 "source": "notes",
