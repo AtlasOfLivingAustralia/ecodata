@@ -74,13 +74,13 @@ class AggregatorBuilder {
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return {activity, output -> Eval.x(activity, 'x.'+property.replace('.', '?.'))}
+                return {activity, output -> Eval.x(activity, 'x?.'+property.replace('.', '?.'))}
             case 'output':
-                return {activity, output -> Eval.x(output.data, 'x.'+property.replace('.', '?.'))}
+                return {activity, output -> Eval.x(output.data, 'x?.'+property.replace('.', '?.'))}
             case 'site':
-                return {activity, output -> activity.site ? Eval.x(activity.site, 'x.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
+                return {activity, output -> activity.site ? Eval.x(activity.site, 'x?.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
             case 'project':
-                return {activity, output -> activity.project ? Eval.x(activity.project, 'x.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
+                return {activity, output -> activity.project ? Eval.x(activity.project, 'x?.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
             case '*':
                 return {activity, output -> ""}  // No grouping required.
             default:
