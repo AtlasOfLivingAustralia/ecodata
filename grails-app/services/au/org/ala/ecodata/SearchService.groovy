@@ -8,6 +8,7 @@ package au.org.ala.ecodata
  * @author "Nick dos Remedios <nick.dosremedios@csiro.au>"
  */
 class SearchService {
+
     static transactional = false
 
     def findForQuery(String query, params) {
@@ -84,4 +85,51 @@ class SearchService {
             results: finalList
         ]
     }
+
+    def findProjectsForQuery(String query, params) {
+        def likeQuery = "%" + query + "%"
+        def offset = params.offset?.toInteger()?:0
+        def max = params.max?.toInteger()?:10
+        params.offset = null // force full list
+        params.max = null    // force full list
+
+        // Projects
+        def pc = Project.createCriteria()
+        def pList = pc.list (params) {
+            or {
+                ilike('name', likeQuery )
+                ilike('description', likeQuery )
+                ilike('organisationName', likeQuery )
+            }
+        }
+        //def pCount = pList.getTotalCount()
+
+        def finalList = []
+        def totalCount = 0
+
+        // manually paginate results
+        if (pList.size() > 0) {
+            totalCount = pList.size()
+            def lowerRange = offset
+            def upperRange = ((offset + max) < totalCount) ? (offset + max) -1 : totalCount - 1
+            log.error "totalCount = " + totalCount + " || lowerRange = " + lowerRange + " || upperRange = " + upperRange
+            finalList = pList[lowerRange..upperRange]
+        }
+
+        // reset param values
+        params.offset = offset
+        params.max = max
+
+        // return data structure
+        [
+            query: likeQuery,
+            totalRecords: totalCount,
+            max: params.max,
+            offset: params.offset,
+            sort: params.sort,
+            order: params.order,
+            results: finalList
+        ]
+    }
+
 }
