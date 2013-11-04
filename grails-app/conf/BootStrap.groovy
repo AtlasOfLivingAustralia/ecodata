@@ -1,8 +1,10 @@
 import au.org.ala.ecodata.AccessLevel
+import au.org.ala.ecodata.AuditEventType
 import au.org.ala.ecodata.GormEventListener
 import grails.converters.JSON
 import org.bson.BSON
 import org.bson.Transformer
+import org.bson.types.ObjectId
 import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
@@ -44,6 +46,15 @@ class BootStrap {
                     code : al.getCode()
             ]
         }
+
+        JSON.registerObjectMarshaller(ObjectId) { ObjectId objId ->
+            return objId.toStringMongod()
+        }
+
+        JSON.registerObjectMarshaller(AuditEventType) { AuditEventType eventType ->
+            return eventType.toString()
+        }
+
     }
 
     def destroy = {

@@ -69,4 +69,16 @@ class AuditController {
         render(retVal as JSON)
     }
 
+    def ajaxGetAuditMessage() {
+        def auditMessage = AuditMessage.get(params.id)
+        def results = [success:true, errorMessage:'']
+        if (auditMessage) {
+            results.message = auditMessage
+        } else {
+            results.success = false
+            results.errorMessage = "Could not find audit message with specified id!"
+        }
+        render(results as JSON)
+    }
+
 }
