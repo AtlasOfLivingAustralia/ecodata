@@ -76,6 +76,7 @@ app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 app.elasticsearch.indexAllOnStartup = true
 app.elasticsearch.indexOnGormEvents = true
 app.http.header.userId = "X-ALA-userId"
+app.file.upload.path = "/data/ecodata/uploads"
 
 /******************************************************************************\
  *  EXTERNAL SERVERS

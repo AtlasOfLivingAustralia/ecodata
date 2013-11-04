@@ -1,6 +1,6 @@
 package au.org.ala.ecodata
 
-import org.springframework.dao.DataIntegrityViolationException
+import grails.converters.JSON
 
 class DocumentController {
 
@@ -54,16 +54,34 @@ class DocumentController {
         }
     }
 
+    /**
+     * Creates or updates a Document object via an HTTP multipart request.
+     * This method currently expects:
+     * 1) For an update, the document ID should be in the URL path.
+     * 2) The document metadata is supplied (JSON encoded) as the value of the
+     * "document" HTTP parameter
+     * 3) The file contents to be supplied as the value of the "file" HTTP parameter.  This is optional for
+     * an update.
+     * @param id The ID of an existing document to update.  If not present, a new Document will be created.
+     */
     def update(String id) {
-        def props = request.JSON
+        def props = JSON.parse(params.document)
         log.debug props
         def result
         def message
+
+        def file = null
+        // Include the file attachment if one exists - it is not currently mandatory as there might be a case
+        // for changing metadata without changing the file content.
+        if (request.respondsTo('getFile')) {
+            file = request.getFile('file')
+        }
+
         if (id) {
-            result = documentService.update(props,id)
+            result = documentService.update(props,id, file?.inputStream)
             message = [message: 'updated']
         } else {
-            result = documentService.create(props)
+            result = documentService.create(props, file?.inputStream)
             message = [message: 'created', documentId: result.documentId]
         }
         if (result.status == 'ok') {
