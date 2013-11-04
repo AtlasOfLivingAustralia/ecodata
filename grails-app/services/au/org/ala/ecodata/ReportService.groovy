@@ -24,7 +24,7 @@ class ReportService {
        // We definitely could be smarter about this query - only getting activities with outputs of particular
         // types or containing particular scores for example.
         List activities = activityService.findAllForProjectId(projectId, 'FLAT')
-        List outputs = Output.findAllByActivityIdInList(activities.collect{it.activityId}).collect {outputService.toMap(it)}
+        List outputs = Output.findAllByActivityIdInListAndStatus(activities.collect{it.activityId}, OutputService.ACTIVE).collect {outputService.toMap(it)}
         Map outputsByActivityId = outputs.groupBy{it.activityId}
 
         return aggregate(aggregationSpec, activities, outputsByActivityId)
