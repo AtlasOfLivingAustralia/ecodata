@@ -9,7 +9,11 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
 
-    def grailsApplication, siteService, documentService, metadataService, reportService
+    def grailsApplication
+    def siteService
+    def documentService
+    def metadataService
+    def reportService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -163,4 +167,20 @@ class ProjectService {
             return [status:'error',error:error]
         }
     }
+
+    public List<String> getActivityIdsForProject(String projectId) {
+        def c = Activity.createCriteria()
+        def list = c {
+            eq("projectId", projectId)
+            projections {
+                property("activityId")
+            }
+        }
+        List<String> results = new ArrayList<String>()
+        list.each {
+            results << it.toString()
+        }
+        return results
+    }
+
 }

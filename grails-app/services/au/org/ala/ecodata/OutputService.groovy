@@ -117,4 +117,15 @@ class OutputService {
         return "ok"
     }
 
+    def getAllOutputIdsForActivity(String activityId) {
+        def c = Output.createCriteria()
+        def list = c {
+            eq("activityId", activityId)
+            projections {
+                property("outputId")
+            }
+        }
+        return list*.toString()
+    }
+
 }

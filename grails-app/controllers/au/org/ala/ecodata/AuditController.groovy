@@ -5,6 +5,7 @@ import grails.converters.JSON
 class AuditController {
 
     def userService
+    def auditService
 
     def entityAuditMessageTableFragment() {
         def entityId = params.entityId
@@ -59,7 +60,8 @@ class AuditController {
         if (!projectInstance) {
             retVal.message = "Invalid project id ${params.projectId}"
         } else {
-            def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'asc'])
+            def auditMessages = auditService.getAllMessagesForProject(projectInstance.projectId)
+            // def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'asc'])
             if (auditMessages) {
                 retVal.success = true
                 retVal.messages = auditMessages

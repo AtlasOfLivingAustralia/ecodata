@@ -9,6 +9,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 class AuditService {
 
     def userService
+    def projectService
+    def outputService
+    def siteService
 
     static transactional = false
 
@@ -25,7 +28,7 @@ class AuditService {
     private static List<String> EXCLUDED_ENTITY_PROPERTIES = []
 
     /**
-     * Logs a GORM event Audit Message to the persistant store. Audit Messages contain information about insert, updates or deletes of
+     * Logs a GORM event Audit Message to the persistent store. Audit Messages contain information about insert, updates or deletes of
      * domain objects in the system. Any changes made to a domain object, therefore, should be traceable through the collection of AuditEvents tied
      * to that object via its unique id.
      *
@@ -131,6 +134,34 @@ class AuditService {
         }
 
         return auditEventType
+    }
+
+    def getAllMessagesForProject(String projectId) {
+        def results = []
+        // Find all the primary messages (messages that have an explicit project id that matches
+        results.addAll(AuditMessage.findAllByProjectId(projectId))
+        // Now add all the messages for objects that are indirectly linked to the project...
+
+        // Outputs are linked by activity id - get a distinct list of activity id's for this project
+        def outputIds = []
+        def activityIds = projectService.getActivityIdsForProject(projectId)
+        activityIds.each { activityId ->
+            outputIds.addAll(outputService.getAllOutputIdsForActivity(activityId))
+        }
+
+        outputIds?.each { outputId ->
+            def outputMessages = AuditMessage.findAllByEntityId(outputId)
+            results.addAll(outputMessages)
+        }
+
+        // Sites have a collection of projects to which they belong
+        def sites = siteService.findAllForProjectId(projectId)
+        sites.each { site ->
+            def siteMessages = AuditMessage.findAllByEntityId(site.siteId)
+            results.addAll(siteMessages)
+        }
+
+        return results.sort { it.date }
     }
 
 }
