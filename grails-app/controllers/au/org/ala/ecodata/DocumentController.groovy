@@ -79,10 +79,10 @@ class DocumentController {
 
         if (id) {
             result = documentService.update(props,id, file?.inputStream)
-            message = [message: 'updated']
+            message = [message: 'updated', documentId: result.documentId, url:result.url]
         } else {
             result = documentService.create(props, file?.inputStream)
-            message = [message: 'created', documentId: result.documentId]
+            message = [message: 'created', documentId: result.documentId, url:result.url]
         }
         if (result.status == 'ok') {
             asJson(message)

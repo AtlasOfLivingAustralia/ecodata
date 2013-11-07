@@ -21,7 +21,7 @@ class DocumentService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         // construct document url based on the current configuration
-        mapOfProperties.url = grailsApplication.config.app.uploads.url + mapOfProperties.filename
+        mapOfProperties.url = urlFor(mapOfProperties)
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -51,7 +51,7 @@ class DocumentService {
         try {
             props.filename = saveFile(props.filename, fileIn, false)
             commonService.updateProperties(d, props)
-            return [status:'ok',documentId:d.documentId]
+            return [status:'ok',documentId:d.documentId, url:urlFor(d)]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
 
@@ -74,7 +74,7 @@ class DocumentService {
             try {
                 props.filename = saveFile(props.filename, fileIn, true)
                 commonService.updateProperties(d, props)
-                return [status:'ok']
+                return [status:'ok',documentId:d.documentId, url:urlFor(d)]
             } catch (Exception e) {
                 Document.withSession { session -> session.clear() }
                 def error = "Error updating document ${id} - ${e.message}"
@@ -127,6 +127,13 @@ class DocumentService {
 
     private String fullPath(filename) {
         return grailsApplication.config.app.file.upload.path + '/' +filename
+    }
+
+    /**
+     * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
+     */
+    def urlFor(document) {
+        return grailsApplication.config.app.uploads.url + document.filename
     }
 
 
