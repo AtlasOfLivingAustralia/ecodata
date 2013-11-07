@@ -136,6 +136,12 @@ class AuditService {
         return auditEventType
     }
 
+    /**
+     * Retrieves all audit messages for a project, and any associated objects linked to that project.
+     *
+     * @param projectId
+     * @return A list of audit messages, sorted by date.
+     */
     def getAllMessagesForProject(String projectId) {
         def results = []
         // Find all the primary messages (messages that have an explicit project id that matches
@@ -160,6 +166,28 @@ class AuditService {
             def siteMessages = AuditMessage.findAllByEntityId(site.siteId)
             results.addAll(siteMessages)
         }
+
+        // Documents are funny. They have multiple foreign key ids (siteId, outputId, projectId and activityId), although usually only one
+        // will be populated at any time.
+        // Project documents will already in the list as a direct association. We already have lists of associated sites, outputs and activities,
+        // so we can use those to query for associated documents
+        def siteIds = sites*.siteId
+
+        println siteIds
+        def c = Document.createCriteria()
+        def documentIds = c {
+            or {
+                inList("activityId", activityIds)
+                inList("outputId", outputIds)
+                inList("siteId", siteIds)
+            }
+            projections {
+                property("documentId")
+            }
+        }
+
+        def documentMessages = AuditMessage.findAllByEntityIdInList(documentIds)
+        results.addAll(documentMessages)
 
         return results.sort { it.date }
     }
