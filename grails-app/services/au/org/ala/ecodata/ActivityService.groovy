@@ -6,7 +6,7 @@ class ActivityService {
     static final ACTIVE = "active"
     static final FLAT = 'flat'
 
-    def grailsApplication, outputService, commonService
+    def grailsApplication, outputService, commonService, documentService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -43,10 +43,10 @@ class ActivityService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-
         if (levelOfDetail != FLAT && levelOfDetail != LevelOfDetail.NO_OUTPUTS.name()) {
             mapOfProperties.remove("outputs")
             mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
+            mapOfProperties.documents = documentService.findAllForActivityId(act.activityId)
         }
 
         mapOfProperties.findAll {k,v -> v != null}
