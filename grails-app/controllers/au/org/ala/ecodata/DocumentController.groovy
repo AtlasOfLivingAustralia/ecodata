@@ -60,13 +60,13 @@ class DocumentController {
      * 1) For an update, the document ID should be in the URL path.
      * 2) The document metadata is supplied (JSON encoded) as the value of the
      * "document" HTTP parameter
-     * 3) The file contents to be supplied as the value of the "file" HTTP parameter.  This is optional for
+     * 3) The file contents to be supplied as the value of the "files" HTTP parameter.  This is optional for
      * an update.
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
      */
     def update(String id) {
         def props = JSON.parse(params.document)
-        log.debug props
+        log.debug props + 'ffdfd'
         def result
         def message
 
@@ -74,7 +74,7 @@ class DocumentController {
         // Include the file attachment if one exists - it is not currently mandatory as there might be a case
         // for changing metadata without changing the file content.
         if (request.respondsTo('getFile')) {
-            file = request.getFile('file')
+            file = request.getFile('files')
         }
 
         if (id) {
@@ -91,6 +91,34 @@ class DocumentController {
             log.error result.error
             render status:400, text: result.error
         }
+    }
+
+    /**
+     * Serves up a file named by the supplied filename HTTP parameter.  It is mostly as a convenience for development
+     * as the files will be served by Apache in prod.
+     */
+    def download() {
+
+        if (!params.filename) {
+            response.status = 400
+            return null
+        }
+
+        File file = new File(documentService.fullPath(params.filename))
+
+        if (!file.exists()) {
+            response.status = 404
+            return null
+        }
+
+        // Probably should store the mime type in the document, however in prod the files will be served up by
+        // Apache so this doesn't have to be perfect.
+        def contentType = URLConnection.guessContentTypeFromName(file.name)
+        response.setContentType(contentType?:'application/octet-stream')
+        response.outputStream << new FileInputStream(file)
+        response.outputStream.flush()
+
+        return null
     }
 
 }

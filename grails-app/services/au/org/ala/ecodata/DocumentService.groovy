@@ -125,7 +125,7 @@ class DocumentService {
         return newFilename;
     }
 
-    private String fullPath(filename) {
+    String fullPath(filename) {
         return grailsApplication.config.app.file.upload.path + '/' +filename
     }
 
@@ -133,7 +133,7 @@ class DocumentService {
      * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
      */
     def urlFor(document) {
-        return grailsApplication.config.app.uploads.url + document.filename
+        return grailsApplication.config.app.uploads.url + URLEncoder.encode(document.filename, 'UTF-8')
     }
 
 

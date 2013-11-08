@@ -118,7 +118,7 @@ environments {
         grails.serverURL = serverName + "/" + grails.app.context
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
-        app.uploads.url = "http://" + grails.hostname + "/ecodata/uploads/"
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.indexOnGormEvents = true
     }
