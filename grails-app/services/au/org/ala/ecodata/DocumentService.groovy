@@ -49,11 +49,14 @@ class DocumentService {
         def d = new Document(documentId: Identifiers.getNew(true,''))
         props.remove 'documentId'
         try {
-            props.filename = saveFile(props.filename, fileIn, false)
+            if (fileIn) {
+                props.filename = saveFile(props.filename, fileIn, false)
+            }
             commonService.updateProperties(d, props)
             return [status:'ok',documentId:d.documentId, url:urlFor(d)]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
+            e.printStackTrace()
 
             Document.withSession { session -> session.clear() }
             def error = "Error creating document for ${props.filename} - ${e.message}"
@@ -72,7 +75,9 @@ class DocumentService {
         def d = Document.findByDocumentId(id)
         if (d) {
             try {
-                props.filename = saveFile(props.filename, fileIn, true)
+                if (fileIn) {
+                    props.filename = saveFile(props.filename, fileIn, true)
+                }
                 commonService.updateProperties(d, props)
                 return [status:'ok',documentId:d.documentId, url:urlFor(d)]
             } catch (Exception e) {
@@ -133,6 +138,9 @@ class DocumentService {
      * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
      */
     def urlFor(document) {
+        if (!document.filename) {
+            return ''
+        }
         return grailsApplication.config.app.uploads.url + URLEncoder.encode(document.filename, 'UTF-8')
     }
 

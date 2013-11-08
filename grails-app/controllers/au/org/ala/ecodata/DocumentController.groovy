@@ -67,17 +67,16 @@ class DocumentController {
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
      */
     def update(String id) {
-        def props = JSON.parse(params.document)
-        log.debug props
-        def result
-        def message
-
-        def file = null
-        // Include the file attachment if one exists - it is not currently mandatory as there might be a case
-        // for changing metadata without changing the file content.
+        def props, file = null
         if (request.respondsTo('getFile')) {
             file = request.getFile('files')
+            props = JSON.parse(params.document)
         }
+        else {
+            props = request.JSON
+        }
+        def result
+        def message
 
         if (id) {
             result = documentService.update(props,id, file?.inputStream)

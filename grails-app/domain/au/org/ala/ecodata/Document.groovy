@@ -43,5 +43,6 @@ class Document {
         siteId nullable: true
         activityId nullable: true
         outputId nullable: true
+        filename nullable: true
     }
 }
