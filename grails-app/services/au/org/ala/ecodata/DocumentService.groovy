@@ -104,7 +104,7 @@ class DocumentService {
                 if (!overwrite) {
                     filename = nextUniqueFileName(filename)
                 }
-                new FileOutputStream(fullPath(filename)).withWriter { it << fileIn }
+                new FileOutputStream(fullPath(filename)).withStream { it << fileIn }
             }
         }
         return filename
