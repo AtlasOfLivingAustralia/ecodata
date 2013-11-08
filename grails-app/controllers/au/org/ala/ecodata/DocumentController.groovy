@@ -6,7 +6,7 @@ class DocumentController {
 
     def documentService
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -42,7 +42,9 @@ class DocumentController {
         def a = Document.findByDocumentId(id)
         if (a) {
             if (params.destroy) {
+                documentService.deleteFile(a)
                 a.delete()
+
             } else {
                 a.status = 'deleted'
                 a.save(flush: true)
@@ -66,7 +68,7 @@ class DocumentController {
      */
     def update(String id) {
         def props = JSON.parse(params.document)
-        log.debug props + 'ffdfd'
+        log.debug props
         def result
         def message
 

@@ -136,5 +136,17 @@ class DocumentService {
         return grailsApplication.config.app.uploads.url + URLEncoder.encode(document.filename, 'UTF-8')
     }
 
+    /**
+     * Deletes the file associated with the supplied Document from the file system.
+     * @param document identifies the file to delete.
+     * @return true if the delete operation was successful.
+     */
+    def deleteFile(document) {
+
+        File f = fullPath(document.filename)
+        return f.delete();
+
+    }
+
 
 }
