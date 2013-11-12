@@ -149,7 +149,8 @@ class DocumentService {
         if (!document.filename) {
             return ''
         }
-        return grailsApplication.config.app.uploads.url + URLEncoder.encode(document.filename, 'UTF-8')
+        URI uri = new URI(grailsApplication.config.app.uploads.url + document.filename.replace(' ','%20'))
+        return uri.toURL();
     }
 
     /**
