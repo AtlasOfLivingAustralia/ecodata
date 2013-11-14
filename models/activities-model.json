@@ -1,12 +1,21 @@
 {
+    "selectedActivity": {
+        "name": "Water Management",
+        "type": "Activity",
+        "outputs": [
+            "Water Management Details",
+            "Activity Outcomes"
+        ]
+    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
             "type": "Activity",
             "outputs": [
-                "Community Activity Details",
+                "Event Details",
                 "Participant Information",
-                "Materials Provided to Participants"
+                "Materials Provided to Participants",
+                "Activity Outcomes"
             ]
         },
         {
@@ -15,7 +24,8 @@
             "outputs": [
                 "Revegetation Details",
                 "Participant Information",
-                "Photo Points"
+                "Photo Points",
+                "Activity Outcomes"
             ]
         },
         {
@@ -50,7 +60,7 @@
             "outputs": [
                 "Weed Treatment Details",
                 "Participant Information",
-                "Photo Points"
+                "Activity Outcomes"
             ]
         },
         {
@@ -60,7 +70,7 @@
                 "Pest Management Details",
                 "Fence Details",
                 "Participant Information",
-                "Photo Points"
+                "Activity Outcomes"
             ]
         },
         {
@@ -69,7 +79,8 @@
             "outputs": [
                 "Fire Information",
                 "Participant Information",
-                "Photo Points"
+                "Photo Points",
+                "Activity Outcomes"
             ]
         },
         {
@@ -85,7 +96,7 @@
             "type": "Activity",
             "outputs": [
                 "Water Management Details",
-                "Infrastructure Details"
+                "Activity Outcomes"
             ]
         },
         {
@@ -94,7 +105,7 @@
             "outputs": ["Infrastructure Details"]
         },
         {
-            "name": "Install/construct erosion control structure",
+            "name": "Manage Erosion",
             "type": "Activity",
             "outputs": [
                 "Erosion Management Details",
@@ -239,19 +250,18 @@
             ]
         },
         {
-            "name": "Project Employment",
+            "name": "Indigenous Employment & Enterprise",
             "type": "Activity",
             "outputs": [
-                "Activity Context",
-                "Activity Planning Context",
-                "Employment Details"
+                "Indigenous Employment",
+                "Indigenous Enterprise",
+                "Activity Outcomes"
             ]
         },
         {
             "name": "Debris Removal",
             "type": "Activity",
             "outputs": [
-                "Activity Context",
                 "Debris Removal Details",
                 "Participant Information"
             ]
@@ -260,16 +270,19 @@
             "name": "Public Access Management",
             "type": "Activity",
             "outputs": [
-                "Activity Context",
-                "Activity Planning Context",
                 "Access Control Details",
                 "Participant Information"
             ]
         },
         {
-            "name": "Sundry MERI Plan Information",
+            "name": "Planned Site Monitoring",
             "type": "Activity",
-            "outputs": ["Miscellaneous Information"]
+            "outputs": ["Planned Monitoring Approach"]
+        },
+        {
+            "name": "Project Administration",
+            "type": "Activity",
+            "outputs": ["Participant Information"]
         }
     ],
     "outputs": [
@@ -277,27 +290,28 @@
             "template": "revegetationDetails",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "name": "areaOfWorks",
                     "aggregationType": "SUM",
                     "label": "Area of works",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
                     "label": "Number of plants planted",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
                     "label": "Kgs of seed sown",
-                    "units": "kg",
-                    "isOutputTarget":true
+                    "units": "kg"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "stockType",
                     "aggregationType": "HISTOGRAM",
                     "label": "Stock type",
@@ -310,6 +324,7 @@
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "revegPurpose",
                     "aggregationType": "HISTOGRAM",
                     "label": "Revegetation purpose"
@@ -320,6 +335,7 @@
                     "label": "Revegetation method"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "ecosystemType",
                     "aggregationType": "HISTOGRAM",
                     "label": "Ecosystem type(s)"
@@ -330,11 +346,11 @@
         {
             "template": "seedCollectionDetails",
             "scores": [{
+                "isOutputTarget": true,
                 "name": "seedCollectedKg",
                 "aggregationType": "SUM",
                 "label": "Seed collected (Kg)",
-                "units": "Kg",
-                "isOutputTarget":true
+                "units": "Kg"
             }],
             "name": "Seed Collection Details"
         },
@@ -347,11 +363,11 @@
             "template": "fencing",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "lengthOfFence",
                     "aggregationType": "SUM",
                     "label": "Total length of fence",
-                    "units": "Km",
-                    "isOutputTarget":true
+                    "units": "Km"
                 },
                 {
                     "name": "purposeOfFence",
@@ -360,6 +376,7 @@
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "fenceCostPerKm",
                     "aggregationType": "AVERAGE",
                     "label": "Fence cost/Km",
@@ -387,8 +404,7 @@
                     "name": "lengthOfFence",
                     "aggregationType": "SUM",
                     "label": "Length of fence (Km)",
-                    "units": "Km",
-                    "isOutputTarget":true
+                    "units": "Km"
                 }
             ],
             "name": "Fence Cost Calculator"
@@ -397,39 +413,39 @@
             "template": "participation",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "totalParticipants",
                     "aggregationType": "SUM",
                     "label": "Total No. of participants",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfVolunteers",
                     "aggregationType": "SUM",
                     "label": "No of volunteers",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfIndigenousParticipants",
                     "aggregationType": "SUM",
                     "label": "No of indigenous participants",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 },
                 {
-                    "name": "totalVolunteerDays",
+                    "isOutputTarget": false,
+                    "name": "totalParticipantsNew",
                     "aggregationType": "SUM",
-                    "label": "Total No. of volunteer days",
-                    "units": "",
-                    "isOutputTarget":true
+                    "label": "Total No. of unique participants attending project events",
+                    "units": ""
                 },
                 {
-                    "name": "totalIndigenousDays",
+                    "isOutputTarget": false,
+                    "name": "numberOfFarmingEntitiesNew",
                     "aggregationType": "SUM",
-                    "label": "Total No. of indigenous participation days",
-                    "units": "",
-                    "isOutputTarget":true
+                    "label": "Total No. of unique farming entities engaged",
+                    "units": ""
                 }
             ],
             "name": "Participant Information"
@@ -437,6 +453,7 @@
         {
             "template": "photoPoints",
             "scores": [{
+                "isOutputTarget": false,
                 "name": "numberOfPoints",
                 "aggregationType": "SUM",
                 "label": "No. of photo points",
@@ -447,11 +464,11 @@
         {
             "template": "weedManagement",
             "scores": [{
+                "isOutputTarget": true,
                 "name": "areaTreatedHa",
                 "aggregationType": "SUM",
                 "label": "Total area treated (Ha)",
-                "units": "Ha",
-                "isOutputTarget":true
+                "units": "Ha"
             }],
             "name": "Weed Management"
         },
@@ -459,6 +476,7 @@
             "template": "communityActivityDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "eventPurpose",
                     "aggregationType": "HISTOGRAM",
                     "label": "Purpose of event",
@@ -468,8 +486,7 @@
                     "name": "eventDurationHrs",
                     "aggregationType": "SUM",
                     "label": "Event Duration (Hrs)",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 }
             ],
             "name": "Event Details"
@@ -478,26 +495,30 @@
             "template": "communicationMaterialsSupplied",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfBrochures",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "SUM",
                     "label": "No. of brochures",
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfWrittenMaterials",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "SUM",
                     "label": "No. of written materials",
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfMaterialRecipients",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "SUM",
                     "label": "No. of recipients of materials",
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "numberOfDisplays",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "SUM",
                     "label": "No. of displays",
                     "units": ""
                 }
@@ -508,13 +529,14 @@
             "template": "fireInformation",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "name": "areaOfFireHa",
                     "aggregationType": "SUM",
                     "label": "Area of burn (Ha)",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "burnReason",
                     "aggregationType": "HISTOGRAM",
                     "label": "Reason for burn",
@@ -527,24 +549,24 @@
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "totalMachineHrs",
                     "aggregationType": "SUM",
                     "label": "Total machinery Hrs",
                     "units": "Hrs"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "controlLineKmMachine",
                     "aggregationType": "SUM",
                     "label": "Control line constructed by machine (Km)",
-                    "units": "Km",
-                    "isOutputTarget":true
+                    "units": "Km"
                 },
                 {
                     "name": "controlLineKmHand",
                     "aggregationType": "SUM",
                     "label": "Control line constructed by hand tools (Km)",
-                    "units": "Km",
-                    "isOutputTarget":true
+                    "units": "Km"
                 }
             ],
             "name": "Fire Information"
@@ -552,6 +574,7 @@
         {
             "template": "evidenceOfWeedTreatment",
             "scores": [{
+                "isOutputTarget": false,
                 "name": "effectivenessOfPreviousTreatment",
                 "aggregationType": "AVERAGE",
                 "label": "Effectiveness of Previous Treatment (% killed)",
@@ -563,11 +586,11 @@
             "template": "weedObservationDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "weedCoverHa",
                     "aggregationType": "SUM",
                     "label": "Weed Cover (Ha)",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 },
                 {
                     "name": "weedStatus",
@@ -581,19 +604,21 @@
             "template": "Weed",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
                     "label": "Total area treated (Ha)",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "targetSpecies",
-                    "aggregationType": "SET",
+                    "aggregationType": "HISTOGRAM",
                     "label": "Target species",
                     "units": ""
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "treatmentMethod",
                     "aggregationType": "HISTOGRAM",
                     "label": "Treatment method"
@@ -605,17 +630,18 @@
             "template": "stockManagementDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "stockManagementReason",
                     "aggregationType": "HISTOGRAM",
                     "label": "Stock management reason",
                     "units": ""
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "areaOfStockManagmentHa",
                     "aggregationType": "SUM",
                     "label": "Area managed with stock (Ha)",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 }
             ],
             "name": "Stock Management Details"
@@ -634,15 +660,16 @@
             "template": "planningActivityDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "typeOfPlan",
                     "aggregationType": "HISTOGRAM",
                     "label": "Type of plan"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfPlanActionsAddressed",
                     "aggregationType": "SUM",
-                    "label": "No. of Plan actions addressed",
-                    "isOutputTarget":true
+                    "label": "No. of Plan actions addressed"
                 }
             ],
             "name": "Planning Activity Details"
@@ -654,8 +681,7 @@
                     "name": "activityDuration",
                     "aggregationType": "SUM",
                     "label": "Duration of activity ",
-                    "units": "",
-                    "isOutputTarget":true
+                    "units": ""
                 },
                 {
                     "name": "pestManagementMethod",
@@ -664,17 +690,17 @@
                     "units": ""
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "pestAnimalsTreatedNo",
                     "aggregationType": "SUM",
-                    "label": "No. of individual animals killed/removed",
-                    "isOutputTarget":true
+                    "label": "No. of individual animals killed/removed"
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "areaTreatedForPests",
                     "aggregationType": "SUM",
                     "label": "Area covered by pest treatment (Ha)",
-                    "units": "Ha",
-                    "isOutputTarget":true
+                    "units": "Ha"
                 },
                 {
                     "name": "pestTreatmentCostPerHa",
@@ -687,22 +713,36 @@
         },
         {
             "template": "researchInformation",
-            "scores": [],
+            "scores": [{
+                "name": "typeOfResearch",
+                "aggregationType": "HISTOGRAM",
+                "label": "Type of research"
+            }],
             "name": "Research Information"
         },
         {
             "template": "waterManagementDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "hydrologicalStructuresInstalled",
                     "aggregationType": "SUM",
-                    "label": "No. of hydrological structures installed",
-                    "isOutputTarget":true
+                    "label": "No. of hydrological structures installed"
                 },
                 {
                     "name": "isCurrentFlowNatural",
                     "aggregationType": "HISTOGRAM",
                     "label": "Current flow regime"
+                },
+                {
+                    "name": "waterMgtEnvironBenefit",
+                    "aggregationType": "SET",
+                    "label": "Environmental benefits"
+                },
+                {
+                    "name": "transportedWaterUse",
+                    "aggregationType": "SET",
+                    "label": "Uses of managed water"
                 }
             ],
             "name": "Water Management Details"
@@ -820,47 +860,55 @@
             "template": "employmentDetails",
             "scores": [
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousRangersFt",
                     "aggregationType": "SUM",
                     "label": "No. of full time indigenous rangers employed on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousRangersPt",
                     "aggregationType": "SUM",
                     "label": "No. of part time indigenous rangers employed on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousRangersMale",
                     "aggregationType": "SUM",
                     "label": "No. of male indigenous rangers employed on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousRangersFemale",
                     "aggregationType": "SUM",
                     "label": "No. of female indigenous rangers employed on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousNon-rangersFt",
                     "aggregationType": "SUM",
                     "label": "No. of indigenous people who are not rangers employed full time on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousNon-rangersPt",
                     "aggregationType": "SUM",
                     "label": "No. of indigenous people who are not rangers employed part time on project"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousNon-rangersMale",
                     "aggregationType": "SUM",
                     "label": "No. of male indigenous people who are employed on project, but are not rangers"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "noOfIndigenousNon-rangersFemale",
                     "aggregationType": "SUM",
                     "label": "No. of female indigenous people who are employed on project, but are not rangers"
                 }
             ],
-            "name": "Employment Details"
+            "name": "Indigenous Employment"
         },
         {
             "template": "debrisRemovalDetails",
@@ -871,51 +919,71 @@
                     "label": "Types of material removed"
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "debrisWeightTonnes",
                     "aggregationType": "SUM",
                     "label": "Weight of debris removed (Tonnes)",
                     "units": "Tonnes"
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "debrisVolumeM3",
                     "aggregationType": "SUM",
-                    "label": "Volume of debris removed (m3)"
+                    "label": "Volume of debris removed (m3)",
+                    "units": "m3"
                 }
             ],
             "name": "Debris Removal Details"
         },
         {
             "template": "accessControlDetails",
-            "scores": [],
+            "scores": [{
+                "name": "structuresInstalled",
+                "aggregationType": "HISTOGRAM",
+                "label": "Types of structures installed for access management"
+            }],
             "name": "Access Control Details"
         },
         {
-            "template": "miscellaneousInformation",
+            "template": "plannedMonitoring",
             "scores": [],
-            "name": "Miscellaneous Information"
+            "name": "Planned Monitoring Approach"
         },
         {
             "template": "erosionManagementDetails",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "name": "erosionAreaTreated",
                     "aggregationType": "SUM",
                     "label": "Erosion area treated (Ha)",
                     "units": "Ha"
                 },
                 {
+                    "isOutputTarget": true,
                     "name": "erosionLength",
                     "aggregationType": "SUM",
                     "label": "Length of stream/coastline treated (m)",
                     "units": "metres"
                 },
                 {
+                    "isOutputTarget": false,
                     "name": "erosionControlStructures",
                     "aggregationType": "HISTOGRAM",
                     "label": "Erosion control structure installed"
                 }
             ],
             "name": "Erosion Management Details"
+        },
+        {
+            "template": "activityOutcomes",
+            "scores": [],
+            "name": "Activity Outcomes"
+        },
+        {
+            "template": "indigenousEnterprise",
+            "scores": [],
+            "name": "Indigenous Enterprise"
         }
     ]
 }
