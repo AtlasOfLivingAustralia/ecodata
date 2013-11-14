@@ -1,0 +1,80 @@
+{
+    "modelName": "Research Information",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "typeOfResearch",
+            "constraints": [
+                "Environmental resilience",
+                "Species population studies",
+                "Eco-economic studies",
+                "Socio-environmental studies",
+                "Soils studies",
+                "Fire management studies",
+                "Water management studies",
+                "Grazing regime impacts",
+                "Cropping regime impacts",
+                "Farm productivity",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nameOfResearchProject"
+        },
+        {
+            "dataType": "textarea",
+            "name": "researchObjectives"
+        },
+        {
+            "dataType": "textarea",
+            "name": "researchCollaborators"
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "typeOfResearch",
+                    "computed": null,
+                    "preLabel": "Type of research being undertaken: *",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "nameOfResearchProject",
+                    "computed": null,
+                    "preLabel": "Name of the research project: *",
+                    "type": "text",
+                    "validate": "required"
+                },
+                {
+                    "source": "researchObjectives",
+                    "computed": null,
+                    "preLabel": "Research objectives:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "researchCollaborators",
+                    "computed": null,
+                    "preLabel": "List the project collaborators:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

@@ -3,22 +3,108 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "hydrologicalRegimeChangeFrom"
+            "name": "waterbodyType",
+            "constraints": [
+                "Natural channel / waterway / floodway",
+                "Natural riparian waterbody / wetland - connected to channel",
+                "Natural riparian waterbody / wetland - disconnected from channel",
+                "Natural off-stream waterbody / wetland - connected to channel",
+                "Natural off-stream waterbody / wetland - disconnected from channel",
+                "Modified natural channel / waterway",
+                "Modified natural riparian waterbody / wetland - connected to channel",
+                "Modified natural riparian waterbody / wetland - disconnected from channel",
+                "Modified natural off-stream waterbody / wetland - connected to channel",
+                "Modified natural off-stream waterbody / wetland - disconnected from channel",
+                "Constructed channel / waterway",
+                "Constructed riparian waterbody / wetland - connected to channel",
+                "Constructed riparian waterbody / wetland - disconnected from channel",
+                "Constructed off-stream waterbody / wetland - connected to channel",
+                "Constructed off-stream waterbody / wetland - disconnected from channel",
+                "Groundwater"
+            ]
         },
         {
             "dataType": "text",
-            "name": "hydrologicalRegimeChangeTo"
+            "name": "hydrologicalRegimeChangeFrom",
+            "constraints": [
+                "Perennial uniform flow",
+                "Perennial mid-late spring peak",
+                "Perennial late spring-early summer peak",
+                "Perennial extreme early summer peak",
+                "Perennial moderate early summer peak",
+                "Perennial mid-summer peak",
+                "Perennial extreme late summer peak",
+                "Perennial moderate late summer peak",
+                "Perennial early autumn peak",
+                "Perennial mid-autumn peak",
+                "Perennial moderate autumn peak",
+                "Perennial moderate winter peak",
+                "Perennial extreme winter peak",
+                "Perennial early spring peak",
+                "Perennial moderate spring peak",
+                "Ephemeral mid-late spring peak",
+                "Ephemeral late spring-early summer peak",
+                "Ephemeral extreme early summer peak",
+                "Ephemeral moderate early summer peak",
+                "Ephemeral mid-summer peak",
+                "Ephemeral extreme late summer peak",
+                "Ephemeral moderate late summer peak",
+                "Ephemeral early autumn peak",
+                "Ephemeral mid-autumn peak",
+                "Ephemeral moderate autumn peak",
+                "Ephemeral moderate winter peak",
+                "Ephemeral extreme winter peak",
+                "Ephemeral early spring peak",
+                "Ephemeral moderate spring peak",
+                "Groundwater"
+            ]
         },
         {
-            "dataType": "stringlist",
+            "dataType": "text",
+            "name": "hydrologicalRegimeChangeTo",
+            "constraints": [
+                "Perennial uniform flow",
+                "Perennial mid-late spring peak",
+                "Perennial late spring-early summer peak",
+                "Perennial extreme early summer peak",
+                "Perennial moderate early summer peak",
+                "Perennial mid-summer peak",
+                "Perennial extreme late summer peak",
+                "Perennial moderate late summer peak",
+                "Perennial early autumn peak",
+                "Perennial mid-autumn peak",
+                "Perennial moderate autumn peak",
+                "Perennial moderate winter peak",
+                "Perennial extreme winter peak",
+                "Perennial early spring peak",
+                "Perennial moderate spring peak",
+                "Ephemeral mid-late spring peak",
+                "Ephemeral late spring-early summer peak",
+                "Ephemeral extreme early summer peak",
+                "Ephemeral moderate early summer peak",
+                "Ephemeral mid-summer peak",
+                "Ephemeral extreme late summer peak",
+                "Ephemeral moderate late summer peak",
+                "Ephemeral early autumn peak",
+                "Ephemeral mid-autumn peak",
+                "Ephemeral moderate autumn peak",
+                "Ephemeral moderate winter peak",
+                "Ephemeral extreme winter peak",
+                "Ephemeral early spring peak",
+                "Ephemeral moderate spring peak"
+            ]
+        },
+        {
+            "dataType": "stringList",
             "name": "hydrologicalStructuresOnsite",
             "constraints": [
                 "Barrage / Weir (with fish ladder)",
                 "Barrage / Weir (without fish ladder)",
                 "Hinged flap gates",
                 "Check valves",
-                "Dike",
-                "Retarding structures",
+                "Dike / Flood levee",
+                "Stilling / Retarding structures",
+                "Flow interception structures (eg. contour banks)",
                 "Sluice gate",
                 "Tidal gate",
                 "Constructed channel",
@@ -31,88 +117,171 @@
                 "Dam",
                 "Vanes",
                 "Head & cross regulators",
-                "Stilling basin"
+                "Other (specify in notes)"
             ]
         },
         {
-            "dataType": "boolean",
+            "dataType": "number",
             "name": "hydrologicalStructuresInstalled"
         },
         {
-            "dataType": "boolean",
-            "name": "isCurrentFlowNatural"
+            "dataType": "text",
+            "name": "isCurrentFlowNatural",
+            "constraints": [
+                "Natural",
+                "Modified",
+                "Fully artificial"
+            ]
         },
         {
-            "dataType": "boolean",
-            "name": "isWaterBeingTransported"
+            "dataType": "text",
+            "name": "isWaterBeingTransported",
+            "constraints": [
+                "Extracted from",
+                "Imported to",
+                "Passing through (non-resident)",
+                "No transport occurring"
+            ]
         },
         {
-            "dataType": "stringlist",
-            "name": "waterTransportMethod"
+            "dataType": "stringList",
+            "name": "waterTransportMethod",
+            "constraints": [
+                "Open channel - lined",
+                "Open channel - unlined",
+                "Piped",
+                "Mole or similar subterranean drain",
+                "Gravity drainage",
+                "Pumped",
+                "Other (specify in notes)"
+            ]
         },
         {
-            "dataType": "stringlist",
-            "name": "transportedWaterUse"
+            "dataType": "stringList",
+            "name": "transportedWaterUse",
+            "constraints": [
+                "Stock & domestic",
+                "Irrigated cropping",
+                "Irrigated pasture",
+                "Irrigated horticulture",
+                "Industrial",
+                "Urban potable water",
+                "Other (specify in notes)"
+            ]
         },
         {
-            "dataType": "stringlist",
-            "name": "waterMgtEnvironBenefit"
+            "dataType": "stringList",
+            "name": "waterMgtEnvironBenefit",
+            "constraints": [
+                "Salinity management",
+                "Waterlogging management",
+                "Erosion management",
+                "Habitat management for enhancing species resilience & breeding",
+                "Flood mitigation - flow retention / buffering",
+                "Flood mitigation - enhanced drainage / increased flow rate",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
         }
     ],
     "viewModel": [
         {
-            "title": "Hydrological regime changed from",
-            "source": "hydrologicalRegimeChangeFrom",
-            "type": "selectOne",
-            "validate": "required"
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "waterbodyType",
+                            "computed": null,
+                            "preLabel": "Type of water-body being managed: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "hydrologicalRegimeChangeFrom",
+                            "computed": null,
+                            "preLabel": "Hydrological regime changed from:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "hydrologicalRegimeChangeTo",
+                            "computed": null,
+                            "preLabel": "Hydrological regime changed to:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "hydrologicalStructuresOnsite",
+                            "computed": null,
+                            "preLabel": "What structure(s) are in place to manage water at this site?:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "hydrologicalStructuresInstalled",
+                            "computed": null,
+                            "preLabel": "How many new structures been installed to manage the hydrological regime at this site?: *",
+                            "type": "number",
+                            "validate": "required"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "isCurrentFlowNatural",
+                            "computed": null,
+                            "preLabel": "What is the current flow regime?: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "isWaterBeingTransported",
+                            "computed": null,
+                            "preLabel": "Is water being extracted from / imported to the site?: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "waterTransportMethod",
+                            "computed": null,
+                            "preLabel": "How is extracted / imported water being transported?:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "transportedWaterUse",
+                            "computed": null,
+                            "preLabel": "What is extracted / imported water being used for?: *",
+                            "type": "selectMany",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "waterMgtEnvironBenefit",
+                            "computed": null,
+                            "preLabel": "What environmental benefits are gained by the new water management regime on this site?: *",
+                            "type": "selectMany",
+                            "validate": "required"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "title": "Hydrological regime changed to",
-            "source": "hydrologicalRegimeChangeTo",
-            "type": "selectOne",
-            "validate": "required"
-        },
-        {
-            "title": "What structures are in place to manage water at this site?",
-            "source": "hydrologicalStructuresOnsite",
-            "type": "selectMany",
-            "validate": "required"
-        },
-        {
-            "title": "Have new structures been installed to manage the new hydrological regime at this site?",
-            "source": "hydrologicalStructuresInstalled",
-            "type": "checkbox",
-            "validate": "required"
-        },
-        {
-            "title": "Is the current flow regime considered to be natural?",
-            "source": "isCurrentFlowNatural",
-            "type": "checkbox",
-            "validate": "required"
-        },
-        {
-            "title": "Is water being extracted from/imported to the site?",
-            "source": "isWaterBeingTransported",
-            "type": "checkbox",
-            "validate": "required"
-        },
-        {
-            "title": "How is extracted/imported water being transported?",
-            "source": "waterTransportMethod",
-            "type": "selectMany",
-            "validate": "required"
-        },
-        {
-            "title": "What is extracted/imported water being used for?",
-            "source": "transportedWaterUse",
-            "type": "selectMany",
-            "validate": "required"
-        },
-        {
-            "title": "What environmental benefits are gained by the new water management regime on this site?",
-            "source": "waterMgtEnvironBenefit",
-            "type": "selectMany",
-            "validate": "required"
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

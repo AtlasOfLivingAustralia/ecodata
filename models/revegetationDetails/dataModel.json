@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "",
             "name": "revegetationMethod",
             "constraints": [
                 "Direct drill seeding",
@@ -13,6 +14,7 @@
         },
         {
             "dataType": "text",
+            "description": "",
             "name": "vegDescriptionAtPlanting",
             "constraints": [
                 "Bare substrate",
@@ -24,10 +26,12 @@
         },
         {
             "dataType": "text",
+            "description": "",
             "name": "equipmentUsed"
         },
         {
             "dataType": "text",
+            "description": "",
             "name": "adjacentLanduse",
             "constraints": [
                 "Conservation",
@@ -43,6 +47,7 @@
         },
         {
             "dataType": "text",
+            "description": "",
             "name": "connectivityIndex",
             "constraints": [
                 "Connected to patch of more than 1000 ha",
@@ -61,10 +66,13 @@
         },
         {
             "dataType": "stringList",
+            "description": "",
             "name": "environmentalBenefits",
             "constraints": [
                 "Groundwater recharge management",
                 "Groundwater discharge or salinity management",
+                "Habitat restoration - home range improvement",
+                "Habitat enhancement - improved migration paths",
                 "Soil stabilisation",
                 "Riparian rehabilitation",
                 "Streambank protection",
@@ -73,25 +81,30 @@
         },
         {
             "dataType": "list",
+            "description": "",
             "name": "planting",
             "columns": [
                 {
                     "dataType": "species",
                     "speciesList": "project",
                     "noTotal": "true",
+                    "description": "",
                     "name": "species"
                 },
                 {
                     "dataType": "number",
+                    "description": "",
                     "name": "numberPlanted"
                 },
                 {
                     "dataType": "number",
+                    "description": "",
                     "name": "seedSownKg"
                 },
                 {
                     "dataType": "text",
                     "noTotal": "true",
+                    "description": "",
                     "name": "stockType",
                     "constraints": [
                         "Seed",
@@ -104,6 +117,7 @@
                 {
                     "dataType": "text",
                     "noTotal": "true",
+                    "description": "",
                     "name": "structuralLayer",
                     "constraints": [
                         "Overstory",
@@ -115,11 +129,13 @@
                 {
                     "dataType": "text",
                     "noTotal": "true",
+                    "description": "",
                     "name": "stockProvenance"
                 },
                 {
                     "dataType": "text",
                     "noTotal": "true",
+                    "description": "",
                     "name": "guardType",
                     "constraints": [
                         "None",
@@ -133,6 +149,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "",
             "name": "totalNumberPlanted",
             "computed": {
                 "operation": "sum",
@@ -145,6 +162,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "",
             "name": "totalSeedSownKg",
             "computed": {
                 "operation": "sum",
@@ -156,68 +174,6 @@
         }
     ],
     "viewModel": [
-        {
-            "items": [{
-                "source": "<h4>Revegetation Information<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "items": [
-                    {
-                        "source": "vegDescriptionAtPlanting",
-                        "computed": null,
-                        "preLabel": "Vegetation at time of planting:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "revegetationMethod",
-                        "computed": null,
-                        "preLabel": "Revegetation method:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "equipmentUsed",
-                        "computed": null,
-                        "preLabel": "Equipment used:",
-                        "type": "textarea"
-                    },
-                    {
-                        "source": "adjacentLanduse",
-                        "computed": null,
-                        "preLabel": "Adjacent landuse:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "connectivityIndex",
-                        "computed": null,
-                        "preLabel": "Landscape connectivity:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "environmentalBenefits",
-                        "computed": null,
-                        "preLabel": "Environmental benefits:",
-                        "type": "selectMany"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            }],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "<h4>Planting Details<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
         {
             "footer": {"rows": [{"columns": [
                 {
@@ -250,21 +206,21 @@
             "source": "planting",
             "columns": [
                 {
-                    "title": "Species",
+                    "title": "Species *",
                     "source": "species",
                     "computed": null,
                     "width": "25%",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "No. Planted",
+                    "title": "No. Planted *",
                     "source": "numberPlanted",
                     "computed": null,
                     "width": "10%",
                     "type": "number"
                 },
                 {
-                    "title": "Seed Sown (Kg)",
+                    "title": "Seed Sown (Kg) *",
                     "source": "seedSownKg",
                     "computed": null,
                     "width": "10%",
@@ -303,6 +259,71 @@
             "userAddedRows": true,
             "editableRows": "true",
             "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "vegDescriptionAtPlanting",
+                            "computed": null,
+                            "preLabel": "Vegetation at time of planting: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "revegetationMethod",
+                            "computed": null,
+                            "preLabel": "Revegetation method:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "equipmentUsed",
+                            "computed": null,
+                            "preLabel": "Equipment used:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "adjacentLanduse",
+                            "computed": null,
+                            "preLabel": "Adjacent landuse:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "connectivityIndex",
+                            "computed": null,
+                            "preLabel": "Landscape connectivity: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "environmentalBenefits",
+                        "computed": null,
+                        "preLabel": "Environmental benefits:",
+                        "type": "selectMany"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

@@ -1,0 +1,113 @@
+{
+    "modelName": "Access Control Details",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "name": "accessManagementMethod",
+            "constraints": [
+                "Traffic exclusion",
+                "Traffic confinement / containment",
+                "Traffic flow management",
+                "Speed management",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "structuresInstalled",
+            "constraints": [
+                "Bollards & barriers",
+                "Fencing, styles, gates & grids",
+                "Formed trafficways",
+                "Constructed parking bays",
+                "Signage",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "accessControlPurpose",
+            "constraints": [
+                "Manage public safety issues",
+                "Protect sensitive species / habitats",
+                "Contain vehicle traffic",
+                "Manage off-road vehicle damage",
+                "Manage pedestrian traffic damage",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "accessControlIssues",
+            "constraints": [
+                "Bollards",
+                "Fencing",
+                "Formed / paved trafficways (pedestrian or vehicular)",
+                "Parking bays",
+                "Fencing",
+                "Fencing",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "accessManagementMethod",
+                            "computed": null,
+                            "preLabel": "Access control method used:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "structuresInstalled",
+                            "computed": null,
+                            "preLabel": "Structure(s) installed: *",
+                            "type": "selectMany",
+                            "validate": "required"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "accessControlPurpose",
+                            "computed": null,
+                            "preLabel": "Purpose of undertaking access management works:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "accessControlIssues",
+                            "computed": null,
+                            "preLabel": "Description of issue(s) requiring access management:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

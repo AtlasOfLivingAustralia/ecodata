@@ -87,85 +87,75 @@
             "name": "notes"
         }
     ],
-    "viewModel": [
-        {
-            "items": [{
-                "source": "<h4>Weed Treatment Details<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "items": [
-                    {
-                        "source": "targetSpecies",
-                        "computed": null,
-                        "preLabel": "Target species:",
-                        "type": "autocomplete",
-                        "validate": "required"
-                    },
-                    {
-                        "source": "reproductiveStatus",
-                        "computed": null,
-                        "preLabel": "Reproductive status at the time of treatment:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "plantHealth",
-                        "computed": null,
-                        "preLabel": "Plant health at the time of treatment:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "controlStatus",
-                        "computed": null,
-                        "preLabel": "Control status:",
-                        "type": "selectOne",
-                        "validate": "required"
-                    },
-                    {
-                        "source": "areaTreatedHa",
-                        "computed": null,
-                        "preLabel": "Treatment area (Ha):",
-                        "type": "number",
-                        "validate": "required"
-                    },
-                    {
-                        "source": "treatmentEventType",
-                        "computed": null,
-                        "preLabel": "Type of treatment event:",
-                        "type": "selectOne",
-                        "validate": "required"
-                    },
-                    {
-                        "source": "treatmentMethod",
-                        "computed": null,
-                        "preLabel": "Treatment method:",
-                        "type": "selectOne",
-                        "validate": "required"
-                    },
-                    {
-                        "source": "chemicalDetails",
-                        "computed": null,
-                        "preLabel": "If chemical treatment, please provide details (chemical & application rate):",
-                        "width": "60%",
-                        "type": "textarea"
-                    },
-                    {
-                        "source": "notes",
-                        "computed": null,
-                        "preLabel": "Comments / Notes:",
-                        "width": "60%",
-                        "type": "textarea"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            }],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "targetSpecies",
+                    "computed": null,
+                    "preLabel": "Target species: *",
+                    "type": "autocomplete",
+                    "validate": "required"
+                },
+                {
+                    "source": "reproductiveStatus",
+                    "computed": null,
+                    "preLabel": "Reproductive status at the time of treatment:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "plantHealth",
+                    "computed": null,
+                    "preLabel": "Plant health at the time of treatment:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "controlStatus",
+                    "computed": null,
+                    "preLabel": "Control status: *",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "areaTreatedHa",
+                    "computed": null,
+                    "preLabel": "Treatment area (Ha): *",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "treatmentEventType",
+                    "computed": null,
+                    "preLabel": "Type of treatment event: *",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "treatmentMethod",
+                    "computed": null,
+                    "preLabel": "Treatment method: *",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "chemicalDetails",
+                    "computed": null,
+                    "preLabel": "If chemical treatment, please provide details (chemical & application rate):",
+                    "width": "60%",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "width": "60%",
+                    "type": "textarea"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

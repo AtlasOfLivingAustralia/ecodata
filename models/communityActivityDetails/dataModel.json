@@ -20,7 +20,7 @@
             "name": "eventDurationHrs"
         },
         {
-            "dataType": "text",
+            "dataType": "textarea",
             "name": "eventNotes"
         }
     ],
@@ -29,29 +29,33 @@
             "items": [
                 {
                     "source": "eventPurpose",
-                    "preLabel": "Purpose of event",
+                    "computed": null,
+                    "preLabel": "Purpose of event: *",
                     "type": "text",
                     "validate": "required"
                 },
                 {
                     "source": "eventTopics",
-                    "preLabel": "Topics covered",
+                    "computed": null,
+                    "preLabel": "Topics covered: *",
                     "type": "text",
                     "validate": "required"
                 },
                 {
                     "source": "eventDurationHrs",
-                    "preLabel": "Event Duration (Hrs)",
+                    "computed": null,
+                    "preLabel": "Event Duration (Hrs): *",
                     "type": "number",
                     "validate": "required,min[0]"
                 },
                 {
                     "source": "eventNotes",
-                    "preLabel": "Notes",
-                    "type": "text",
-                    "validate": "required"
+                    "computed": null,
+                    "preLabel": "Notes:",
+                    "type": "textarea"
                 }
             ],
+            "computed": null,
             "type": "col"
         }],
         "class": "output-section",

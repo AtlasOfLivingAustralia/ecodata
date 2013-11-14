@@ -1,90 +1,106 @@
 {
     "modelName": "Threatening Processes & Site Condition Risks",
-    "dataModel": [
-        {
-            "dataType": "text",
-            "consequences": [
-                "one",
-                "two",
-                "three"
-            ],
-            "name": "riskType"
-        },
-        {
-            "dataType": "text",
-            "name": "riskDescription"
-        },
-        {
-            "dataType": "text",
-            "consequences": [
-                "one",
-                "two",
-                "three"
-            ],
-            "name": "riskLikelihood"
-        },
-        {
-            "dataType": "text",
-            "consequences": [
-                "one",
-                "two",
-                "three"
-            ],
-            "name": "riskConsequence"
-        },
-        {
-            "dataType": "text",
-            "consequences": [
-                "one",
-                "two",
-                "three"
-            ],
-            "name": "riskRating"
-        }
-    ],
-    "viewModel": [
-        {
-            "items": [{
-                "source": "<h4>Participation<\/h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "title": "Type of threat/risk",
-                    "source": "riskType",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "title": "Description",
-                    "source": "riskDescription",
-                    "type": "textarea",
-                    "validate": "required"
-                },
-                {
-                    "title": "Likelihood",
-                    "source": "riskLikelihood",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "title": "Consequence",
-                    "source": "riskConsequence",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "title": "Risk rating",
-                    "source": "riskRating",
-                    "type": "selectOne",
-                    "validate": "required"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+    "dataModel": [{
+        "dataType": "list",
+        "name": "riskTable",
+        "columns": [
+            {
+                "dataType": "text",
+                "name": "riskType",
+                "constraints": [
+                    "Cropping & root zone disturbance",
+                    "Defoliation - birds",
+                    "Defoliation - insects",
+                    "Defoliation - other",
+                    "Drainage - prolonged soil profile drying",
+                    "Fire - managed fire frequency",
+                    "Fire - managed fire intensity",
+                    "Fire - wildfire",
+                    "Flood - frequency",
+                    "Flood - intensity",
+                    "Flood - prolonged inundation",
+                    "Grazing pressure - domestic stock",
+                    "Grazing pressure - feral animals",
+                    "Grazing pressure - native wildlife",
+                    "Mistletoe or other parasite/fungal infestations",
+                    "Soil acidification or acid-sulphate soils",
+                    "Soil compaction - animal/human/machinery",
+                    "Soil nutrient enrichment/eutrophication",
+                    "Soil salinity",
+                    "Weedicides/pesticides or chemical contamination",
+                    "-- Other (specify in notes) --"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "riskDescription"
+            },
+            {
+                "dataType": "text",
+                "name": "riskLikelihood",
+                "constraints": [
+                    "Almost certain",
+                    "Likely",
+                    "Likely",
+                    "Possible",
+                    "Unlikely",
+                    "Remote"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "riskConsequence",
+                "constraints": [
+                    "Insignificant",
+                    "Minor",
+                    "Moderate",
+                    "Major",
+                    "Extreme"
+                ]
+            },
+            {
+                "dataType": "text",
+                "name": "riskRating",
+                "constraints": [
+                    "High",
+                    "Significant",
+                    "Medium",
+                    "Low"
+                ]
+            }
+        ]
+    }],
+    "viewModel": [{
+        "source": "riskTable",
+        "columns": [
+            {
+                "title": "Type of threat/risk",
+                "source": "riskType",
+                "type": "selectOne"
+            },
+            {
+                "title": "Description",
+                "source": "riskDescription",
+                "type": "textarea"
+            },
+            {
+                "title": "Likelihood",
+                "source": "riskLikelihood",
+                "type": "selectOne"
+            },
+            {
+                "title": "Consequence",
+                "source": "riskConsequence",
+                "type": "selectOne"
+            },
+            {
+                "title": "Risk rating",
+                "source": "riskRating",
+                "computed": null,
+                "type": "selectOne"
+            }
+        ],
+        "userAddedRows": true,
+        "type": "table"
+    }]
 }

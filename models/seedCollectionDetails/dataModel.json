@@ -44,43 +44,46 @@
         "items": [
             {
                 "source": "seedSourceProvenance",
-                "preLabel": "Provenance of source plant(s)",
+                "computed": null,
+                "preLabel": "Provenance of source plant(s): *",
                 "type": "text",
                 "validate": "required"
             },
             {
                 "source": "seedBankRepository",
-                "preLabel": "Name of seed bank storing the seed",
+                "computed": null,
+                "preLabel": "Name of seed bank storing the seed:",
                 "type": "text"
             },
             {
                 "source": "seedsList",
+                "computed": null,
                 "columns": [
                     {
-                        "title": "Species",
+                        "title": "Species: *",
                         "source": "seedSourceSpecies",
                         "type": "autocomplete",
                         "validate": "required"
                     },
                     {
-                        "title": "Seed collected (Kg)",
+                        "title": "Seed collected (Kg): *",
                         "source": "seedCollectedKg",
                         "type": "number",
                         "validate": "required"
                     },
                     {
-                        "title": "Health of source plant(s)",
+                        "title": "Health of source plant(s):",
                         "source": "sourcePlantHealth",
                         "type": "selectOne"
                     }
                 ],
                 "userAddedRows": "true",
-                "type": "table",
-                "printRows" : 6
+                "type": "table"
             },
             {
                 "source": "notes",
-                "preLabel": "Comments / Notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
                 "width": "60%",
                 "type": "textarea"
             }

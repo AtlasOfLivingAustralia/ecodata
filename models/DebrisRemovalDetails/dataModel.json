@@ -2,14 +2,17 @@
     "modelName": "Debris Removal Details",
     "dataModel": [
         {
-            "dataType": "stringList",
+            "dataType": "text",
             "name": "debrisType",
             "constraints": [
-                "Mixed inorganic waste",
-                "Organic waste",
-                "Metals (eg. car bodies, shopping trolleys, etc.)",
-                "Plastics",
-                "-- Other (please specify in notes) --"
+                "Building & industrial waste - Mixed organic & inorganic",
+                "Building & industrial waste - Organic only",
+                "Building & industrial waste - Inorganic only",
+                "Domestic waste - Mixed organic & inorganic",
+                "Domestic waste - Organic only",
+                "Domestic waste - Inorganic only",
+                "Other green waste (eg. plant & tree prunings)",
+                "Other (specify in notes)"
             ]
         },
         {
@@ -19,47 +22,53 @@
         {
             "dataType": "number",
             "name": "debrisVolumeM3"
-        }
-    ],
-    "viewModel": [
-        {
-            "items": [{
-                "source": "<h4>Debris Removal Details<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
         },
         {
-            "items": [{
+            "dataType": "textarea",
+            "name": "debrisNotes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
                 "items": [
                     {
                         "source": "debrisType",
                         "computed": null,
                         "preLabel": "Type of material removed:",
-                        "type": "selectMany",
-                        "validate": "required"
+                        "type": "selectOne"
                     },
                     {
                         "source": "debrisWeightTonnes",
                         "computed": null,
-                        "preLabel": "Weight of debris removed (Tonnes):",
+                        "preLabel": "Weight of debris removed (Tonnes): *",
                         "type": "number",
                         "validate": "required"
                     },
                     {
                         "source": "debrisVolumeM3",
                         "computed": null,
-                        "preLabel": "Volume of debris removed (m3):",
+                        "preLabel": "Volume of debris removed (m3): *",
                         "type": "number",
                         "validate": "required"
                     }
                 ],
                 "computed": null,
                 "type": "col"
-            }],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            },
+            {
+                "items": [{
+                    "source": "debrisNotes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "computed": null,
+        "class": "output-section",
+        "type": "row"
+    }]
 }

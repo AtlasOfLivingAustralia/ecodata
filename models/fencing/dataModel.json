@@ -48,7 +48,7 @@
                 {
                     "source": "fenceType",
                     "computed": null,
-                    "preLabel": "Fence Type:",
+                    "preLabel": "Fence Type: *",
                     "width": "10%",
                     "type": "selectOne",
                     "validate": "required"
@@ -56,7 +56,7 @@
                 {
                     "source": "lengthOfFence",
                     "computed": null,
-                    "preLabel": "Length of fence (Km):",
+                    "preLabel": "Length of fence (Km): *",
                     "width": "20%",
                     "type": "number"
                 },
@@ -75,6 +75,7 @@
                     "type": "selectMany"
                 }
             ],
+            "computed": null,
             "type": "row"
         }],
         "type": "section"

@@ -2,25 +2,26 @@
     "modelName": "Pest Management Details",
     "dataModel": [
         {
-            "dataType": "date",
-            "name": "activityStartDate"
-        },
-        {
-            "dataType": "date",
-            "name": "activityEndDate"
-        },
-        {
-            "dataType": "number",
-            "name": "activityDuration"
+            "dataType": "stringList",
+            "name": "pestManagementMethod",
+            "constraints": [
+                "Trap & remove",
+                "Trap & cull",
+                "Spotlight cull",
+                "Bait & trap",
+                "Bait only",
+                "Fumigation",
+                "Exclusion fencing (please specify fence details)",
+                "Other (specify in notes)"
+            ]
         },
         {
             "dataType": "text",
-            "name": "pestManagementMethod",
+            "name": "treatmentIncentiveMethod",
             "constraints": [
-                "",
-                "one",
-                "two",
-                "three"
+                "Bounty-based cull",
+                "Non-bounty-based cull",
+                "-- Other (specify in notes) --"
             ]
         },
         {
@@ -40,76 +41,74 @@
             "name": "treatmentCostPerHa"
         },
         {
-            "dataType": "text",
+            "dataType": "textarea",
             "name": "notes"
         }
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "<h4>Pest Management Details<\/h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
             "items": [
                 {
                     "items": [
                         {
-                            "source": "activityStartDate",
-                            "preLabel": "Activity start date",
-                            "type": "date",
-                            "validate": "required"
-                        },
-                        {
-                            "source": "activityEndDate",
-                            "preLabel": "When did you complete this activity?",
-                            "type": "date",
-                            "validate": "required"
-                        },
-                        {
-                            "source": "activityDuration",
-                            "preLabel": "Activity duration (Hrs)",
-                            "type": "number",
-                            "validate": "required,min[0]"
-                        },
-                        {
-                            "source": "pestManagementMethod",
-                            "preLabel": "Pest management method",
-                            "type": "selectOne",
-                            "validate": "required"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
                             "source": "targetSpecies",
-                            "preLabel": "Target species",
+                            "computed": null,
+                            "preLabel": "Target species: *",
                             "type": "autocomplete",
                             "validate": "required"
                         },
                         {
+                            "source": "treatmentIncentiveMethod",
+                            "computed": null,
+                            "preLabel": "Treatment incentive method:",
+                            "type": "selectOne"
+                        },
+                        {
                             "source": "pestAnimalsTreatedNo",
-                            "preLabel": "No. of individuals killed/removed",
+                            "computed": null,
+                            "preLabel": "No. of individuals killed/removed: *",
                             "type": "number",
                             "validate": "required,digits"
                         },
                         {
                             "source": "areaTreatedHa",
-                            "preLabel": "No. Ha. covered by treatment",
+                            "computed": null,
+                            "preLabel": "No. Ha. covered by treatment: *",
                             "type": "number",
                             "validate": "required"
-                        },
-                        {
-                            "source": "treatmentCostPerHa",
-                            "preLabel": "Cost of treatment / Ha.",
-                            "type": "number",
-                            "validate": "required,min[0]"
                         }
                     ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "pestManagementMethod",
+                        "computed": null,
+                        "preLabel": "Pest management method: *",
+                        "type": "selectMany",
+                        "validate": "required"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "treatmentCostPerHa",
+                            "computed": null,
+                            "preLabel": "Cost of treatment / Ha.:",
+                            "type": "number",
+                            "validate": "min[0]"
+                        },
+                        {
+                            "source": "activityDuration",
+                            "computed": null,
+                            "preLabel": "Activity duration (Hrs):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -119,8 +118,10 @@
         {
             "items": [{
                 "source": "notes",
+                "computed": null,
                 "preLabel": "Comments / notes",
-                "type": "text"
+                "width": "90%",
+                "type": "textarea"
             }],
             "class": "output-section",
             "type": "row"

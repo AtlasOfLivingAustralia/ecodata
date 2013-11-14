@@ -3,7 +3,18 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "evidenceOfPreviousWeedTreatment"
+            "name": "evidenceOfPreviousWeedTreatment",
+            "constraints": [
+                "Bio-control agents active",
+                "Dead plants",
+                "Foliar reduction",
+                "Death of growing tips",
+                "Leaf yellowing",
+                "Reduced seed production",
+                "Root/stem rot present",
+                "No evidence",
+                "Other (specify in notes)"
+            ]
         },
         {
             "dataType": "text",
@@ -13,9 +24,25 @@
             "dataType": "text",
             "name": "recommendedWeedTreatment",
             "constraints": [
-                "one",
-                "two",
-                "three"
+                "Environmental management - Fire",
+                "Environmental management - moisture & nutrient control",
+                "Environmental management - over-planting",
+                "Chemical control - Foliar spraying",
+                "Chemical control - Basal bark spraying",
+                "Chemical control - Stem injection",
+                "Chemical control - Cut stump",
+                "Chemical control - Cut and swab",
+                "Chemical control - Stem scraper",
+                "Chemical control - Wick applicators",
+                "Mechanical control - Slashing",
+                "Mechanical control - Mowing",
+                "Mechanical control - Dozing",
+                "Mechanical control - Pushing",
+                "Mechanical control - Felling",
+                "Manual control - Hand pulling",
+                "Manual control - Grubbing/chipping",
+                "Biological control - Biological agents (indicate in notes)",
+                "-- Other (please specify in notes) --"
             ]
         },
         {
@@ -25,6 +52,10 @@
         {
             "dataType": "date",
             "name": "proposedReinspectDate"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
         }
     ],
     "viewModel": [{
@@ -32,35 +63,44 @@
             "items": [
                 {
                     "source": "evidenceOfPreviousWeedTreatment",
-                    "preLabel": "Evidence of Previous Treatment",
-                    "type": "text",
+                    "computed": null,
+                    "preLabel": "Evidence of Previous Treatment: *",
+                    "type": "selectOne",
                     "validate": "required"
                 },
                 {
                     "source": "effectivenessOfPreviousWeedTreatment",
-                    "preLabel": "Effectiveness of Previous Treatment (% killed)",
+                    "computed": null,
+                    "preLabel": "Effectiveness of Previous Treatment (% killed): *",
                     "type": "number",
                     "validate": "required,min[0],max[100]"
                 },
                 {
                     "source": "recommendedWeedTreatment",
-                    "preLabel": "Recommended treatment",
-                    "type": "selectOne",
-                    "validate": "required"
+                    "computed": null,
+                    "preLabel": "Recommended treatment:",
+                    "type": "selectOne"
                 },
                 {
                     "source": "proposedWeedTreatmentDate",
-                    "preLabel": "Planned start date",
-                    "type": "date",
-                    "validate": "required"
+                    "computed": null,
+                    "preLabel": "Planned start date:",
+                    "type": "date"
                 },
                 {
                     "source": "proposedWeedTreatmentDate",
+                    "computed": null,
                     "preLabel": "Planned end date",
-                    "type": "date",
-                    "validate": "required"
+                    "type": "date"
+                },
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Notes:",
+                    "type": "textarea"
                 }
             ],
+            "computed": null,
             "type": "col"
         }],
         "class": "output-section",

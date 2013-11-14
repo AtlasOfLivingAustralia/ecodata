@@ -17,7 +17,7 @@
                     "Rip only",
                     "Scalping",
                     "Scarifying",
-                    "-- Other (please specify in notes) --"
+                    "Other (specify in notes)"
                 ]
             },
             {
@@ -25,7 +25,7 @@
                 "name": "preparationArea"
             },
             {
-                "dataType": "text",
+                "dataType": "textarea",
                 "name": "notes"
             }
         ]
@@ -34,21 +34,21 @@
         "source": "actionsList",
         "columns": [
             {
-                "title": "Ground preparation works",
+                "title": "Ground preparation works: *",
                 "source": "groundPreparationWorks",
                 "type": "selectOne",
                 "validate": "required"
             },
             {
-                "title": "Area prepared (Ha)",
+                "title": "Area prepared (Ha): *",
                 "source": "preparationArea",
                 "type": "number",
                 "validate": "required"
             },
             {
-                "title": "Notes",
+                "title": "Comments / Notes:",
                 "source": "notes",
-                "type": "textArea"
+                "type": "textarea"
             }
         ],
         "userAddedRows": "true",

@@ -1,0 +1,80 @@
+{
+    "modelName": "Planning Details",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "typeOfPlanning",
+            "constraints": [
+                "Implementation works design",
+                "Project arrangements and governance",
+                "Regional plan",
+                "Catchment plan",
+                "Resource management plan",
+                "Marine protection plan",
+                "Property or Reserve plan",
+                "Recovery plan",
+                "Indigenous Protected Area plan",
+                "Burn plan (fire management)",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "nameOfPlan"
+        },
+        {
+            "dataType": "number",
+            "name": "planCoverageArea"
+        },
+        {
+            "dataType": "textarea",
+            "name": "activityOutline"
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "typeOfPlanning",
+                    "computed": null,
+                    "preLabel": "Type of planning being undertaken: *",
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "nameOfPlan",
+                    "computed": null,
+                    "preLabel": "Name of the plan being developed: *",
+                    "type": "text",
+                    "validate": "required"
+                },
+                {
+                    "source": "planCoverageArea",
+                    "computed": null,
+                    "preLabel": "Area of plan coverage (km2):",
+                    "type": "number"
+                },
+                {
+                    "source": "activityOutline",
+                    "computed": null,
+                    "preLabel": "Describe what you are doing in this planning activity:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

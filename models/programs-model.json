@@ -1,130 +1,78 @@
-{
-    "programs": [
+{"programs": [
     {
         "name": "Biodiversity Fund",
         "subprograms": [
             {
                 "name": "Round 1",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
                 "name": "Round 2 - 2013/14",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
                 "name": "Round 2 - Northern Landscape Strategy",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
                 "name": "Round 2 - Tasmania's Native Forests 2013/14",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
-                "name": "Cumberland Plains",
+                "name": "Cumberland Plain Projects",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
                 "name": "Working on Country 1318",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
                 "name": "Reef Rescue 2013/14",
                 "themes": [
-                    {
-                        "name": "Biodiverse plantings"
-                    },
-                    {
-                        "name": "Protecting and enhancing existing native vegetation"
-                    },
-                    {
-                        "name": "Managing invasive species in a connected landscape"
-                    },
-                    {
-                        "name": "Enabling technologies"
-                    }
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ]
             },
             {
-                "name": "Round 2 - EoI 2013/14",
-                "themes": []
+                "name": "Round 2 - Expression of Interest 2013/14",
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ]
             }
         ]
     },
@@ -134,28 +82,16 @@
             {
                 "name": "Regional Delivery 1318",
                 "themes": [
-                    {
-                        "name": "Conserving and protecting species and ecosystems"
-                    },
-                    {
-                        "name": "Urban waterways and coastal environments"
-                    },
-                    {
-                        "name": "Protecting Ramsar sites and values"
-                    },
-                    {
-                        "name": "Protecting world heritage sites"
-                    },
-                    {
-                        "name": "Building NRM skills and engagement"
-                    },
-                    {
-                        "name": "Enhancing indigenous capacity for NRM"
-                    }
+                    {"name": "Conserving and protecting species and ecosystems"},
+                    {"name": "Urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting world heritage sites"},
+                    {"name": "Building NRM skills and engagement"},
+                    {"name": "Enhancing indigenous capacity for NRM"}
                 ]
             },
             {
-                "name": "Targeted Area Grants - 2013/14",
+                "name": "Target Area Grants - 2013/14",
                 "themes": []
             },
             {
@@ -183,7 +119,7 @@
                 "themes": []
             },
             {
-                "name": "Targeted Area Grants - EoI 2013/14",
+                "name": "Target Area Grants - Expression of Interest 2013/14",
                 "themes": []
             }
         ]
@@ -242,12 +178,9 @@
     },
     {
         "name": "Natural Heritage Trust",
-        "subprograms": [
-            {
-                "name": "Working on Country 1318",
-                "themes": []
-            }
-        ]
+        "subprograms": [{
+            "name": "Working on Country 1318",
+            "themes": []
+        }]
     }
-]
-}
+]}
