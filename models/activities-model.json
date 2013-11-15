@@ -1,11 +1,8 @@
 {
     "selectedActivity": {
-        "name": "Water Management",
+        "name": "Project Administration",
         "type": "Activity",
-        "outputs": [
-            "Water Management Details",
-            "Activity Outcomes"
-        ]
+        "outputs": ["Participant Information"]
     },
     "activities": [
         {
@@ -96,7 +93,7 @@
             "type": "Activity",
             "outputs": [
                 "Water Management Details",
-                "Activity Outcomes"
+                "Infrastructure Details"
             ]
         },
         {
@@ -462,17 +459,6 @@
             "name": "Photo Points"
         },
         {
-            "template": "weedManagement",
-            "scores": [{
-                "isOutputTarget": true,
-                "name": "areaTreatedHa",
-                "aggregationType": "SUM",
-                "label": "Total area treated (Ha)",
-                "units": "Ha"
-            }],
-            "name": "Weed Management"
-        },
-        {
             "template": "communityActivityDetails",
             "scores": [
                 {
@@ -733,16 +719,6 @@
                     "name": "isCurrentFlowNatural",
                     "aggregationType": "HISTOGRAM",
                     "label": "Current flow regime"
-                },
-                {
-                    "name": "waterMgtEnvironBenefit",
-                    "aggregationType": "SET",
-                    "label": "Environmental benefits"
-                },
-                {
-                    "name": "transportedWaterUse",
-                    "aggregationType": "SET",
-                    "label": "Uses of managed water"
                 }
             ],
             "name": "Water Management Details"
