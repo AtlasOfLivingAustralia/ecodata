@@ -2,15 +2,15 @@
     "modelName": "Activity Outcomes",
     "dataModel": [
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "activityEnvironmentalOutcomes"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "activitySocialOutcomes"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "activityEconomicOutcomes"
         }
     ],

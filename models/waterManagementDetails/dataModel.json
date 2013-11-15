@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The type of water body, waterway or wetland which is the subject of this management action",
             "name": "waterbodyType",
             "constraints": [
                 "Natural channel / waterway / floodway",
@@ -25,6 +26,7 @@
         },
         {
             "dataType": "text",
+            "description": "The hydrological regime which typified the flow characteristics of the subject water body prior to this management action",
             "name": "hydrologicalRegimeChangeFrom",
             "constraints": [
                 "Perennial uniform flow",
@@ -61,6 +63,7 @@
         },
         {
             "dataType": "text",
+            "description": "The hydrological regime which will typify the flow characteristics of the subject water body after implementation of this management action",
             "name": "hydrologicalRegimeChangeTo",
             "constraints": [
                 "Perennial uniform flow",
@@ -96,6 +99,7 @@
         },
         {
             "dataType": "stringList",
+            "description": "Operationally functional water management structures installed on the site of the subject water body (both pre-existing and new)",
             "name": "hydrologicalStructuresOnsite",
             "constraints": [
                 "Barrage / Weir (with fish ladder)",
@@ -122,10 +126,12 @@
         },
         {
             "dataType": "number",
+            "description": "The number of new hydrology management structures installed on the site of the subject water body resulting from this management action",
             "name": "hydrologicalStructuresInstalled"
         },
         {
             "dataType": "text",
+            "description": "The naturalness of the hydrological regime of the subject water body immediately prior to undertaking this management action",
             "name": "isCurrentFlowNatural",
             "constraints": [
                 "Natural",
@@ -135,6 +141,7 @@
         },
         {
             "dataType": "text",
+            "description": "The direction of 'managed' water transportation in relation to the subject water body in respect to this management action",
             "name": "isWaterBeingTransported",
             "constraints": [
                 "Extracted from",
@@ -145,6 +152,7 @@
         },
         {
             "dataType": "stringList",
+            "description": "The transport medium for 'managed' water to/from the subject water body in respect to this management action",
             "name": "waterTransportMethod",
             "constraints": [
                 "Open channel - lined",
@@ -157,7 +165,18 @@
             ]
         },
         {
+            "dataType": "text",
+            "description": "The purpose for which water is being managed under this management action",
+            "name": "waterUsePurpose",
+            "constraints": [
+                "Water storage for later use",
+                "Water extraction for current use",
+                "Environmental outcomes on the current site"
+            ]
+        },
+        {
             "dataType": "stringList",
+            "description": "The use(s) for which managed water under this management action will be applied",
             "name": "transportedWaterUse",
             "constraints": [
                 "Stock & domestic",
@@ -166,11 +185,13 @@
                 "Irrigated horticulture",
                 "Industrial",
                 "Urban potable water",
+                "Environmental outcomes",
                 "Other (specify in notes)"
             ]
         },
         {
             "dataType": "stringList",
+            "description": "The environmental benefits/outcomes expected to be realised as a result of this water management action",
             "name": "waterMgtEnvironBenefit",
             "constraints": [
                 "Salinity management",
@@ -184,6 +205,7 @@
         },
         {
             "dataType": "textarea",
+            "description": "General comments and notes about this management action, the subject site, etc.",
             "name": "notes"
         }
     ],
@@ -233,22 +255,29 @@
                         {
                             "source": "isCurrentFlowNatural",
                             "computed": null,
-                            "preLabel": "What is the current flow regime?: *",
+                            "preLabel": "What is the current flow regime of the subject water body?: *",
                             "type": "selectOne",
                             "validate": "required"
                         },
                         {
                             "source": "isWaterBeingTransported",
                             "computed": null,
-                            "preLabel": "Is water being extracted from / imported to the site?: *",
+                            "preLabel": "Is the management action extracting water from / importing water to the site?: *",
                             "type": "selectOne",
                             "validate": "required"
                         },
                         {
                             "source": "waterTransportMethod",
                             "computed": null,
-                            "preLabel": "How is extracted / imported water being transported?:",
+                            "preLabel": "How is extracted / imported water being transported under this management action?:",
                             "type": "selectMany"
+                        },
+                        {
+                            "source": "waterUsePurpose",
+                            "computed": null,
+                            "preLabel": "What is the purpose of this water management action?: *",
+                            "type": "selectOne",
+                            "validate": "required"
                         },
                         {
                             "source": "transportedWaterUse",
@@ -260,7 +289,7 @@
                         {
                             "source": "waterMgtEnvironBenefit",
                             "computed": null,
-                            "preLabel": "What environmental benefits are gained by the new water management regime on this site?: *",
+                            "preLabel": "What environmental benefits are expected to be gained by this water management action?: *",
                             "type": "selectMany",
                             "validate": "required"
                         }

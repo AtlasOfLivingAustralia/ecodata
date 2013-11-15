@@ -6,6 +6,7 @@
         "columns": [
             {
                 "dataType": "text",
+                "description": "Type of ground preparation works undertaken",
                 "name": "groundPreparationWorks",
                 "constraints": [
                     "Herbicide only",
@@ -22,6 +23,7 @@
             },
             {
                 "dataType": "number",
+                "description": "Area in hectares subject to the associated site preparation works",
                 "name": "preparationArea"
             },
             {

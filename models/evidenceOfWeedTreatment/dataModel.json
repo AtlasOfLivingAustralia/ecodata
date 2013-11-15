@@ -2,7 +2,8 @@
     "modelName": "Evidence of Weed Treatment",
     "dataModel": [
         {
-            "dataType": "text",
+            "dataType": "stringList",
+            "description": "Type of evidence visible on treated target plants",
             "name": "evidenceOfPreviousWeedTreatment",
             "constraints": [
                 "Bio-control agents active",
@@ -18,10 +19,12 @@
         },
         {
             "dataType": "text",
+            "description": "The effectiveness of the last treatment activity as a proportion of the area and density of the infestation that existed before the previous treatment activity, expressed as the percentage killed",
             "name": "effectivenessOfPreviousWeedTreatment"
         },
         {
             "dataType": "text",
+            "description": "The type of treatment method recommended for follow up treatment",
             "name": "recommendedWeedTreatment",
             "constraints": [
                 "Environmental management - Fire",
@@ -42,67 +45,54 @@
                 "Manual control - Hand pulling",
                 "Manual control - Grubbing/chipping",
                 "Biological control - Biological agents (indicate in notes)",
-                "-- Other (please specify in notes) --"
+                "Other (specify in notes)"
             ]
         },
         {
-            "dataType": "date",
-            "name": "proposedWeedTreatmentDate"
-        },
-        {
-            "dataType": "date",
-            "name": "proposedReinspectDate"
-        },
-        {
             "dataType": "text",
+            "description": "General observational notes applicable to the site, treatment, conditions, etc.",
             "name": "notes"
         }
     ],
     "viewModel": [{
-        "items": [{
-            "items": [
-                {
+        "items": [
+            {
+                "items": [{
                     "source": "evidenceOfPreviousWeedTreatment",
                     "computed": null,
                     "preLabel": "Evidence of Previous Treatment: *",
-                    "type": "selectOne",
+                    "type": "selectMany",
                     "validate": "required"
-                },
-                {
-                    "source": "effectivenessOfPreviousWeedTreatment",
-                    "computed": null,
-                    "preLabel": "Effectiveness of Previous Treatment (% killed): *",
-                    "type": "number",
-                    "validate": "required,min[0],max[100]"
-                },
-                {
-                    "source": "recommendedWeedTreatment",
-                    "computed": null,
-                    "preLabel": "Recommended treatment:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "proposedWeedTreatmentDate",
-                    "computed": null,
-                    "preLabel": "Planned start date:",
-                    "type": "date"
-                },
-                {
-                    "source": "proposedWeedTreatmentDate",
-                    "computed": null,
-                    "preLabel": "Planned end date",
-                    "type": "date"
-                },
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Notes:",
-                    "type": "textarea"
-                }
-            ],
-            "computed": null,
-            "type": "col"
-        }],
+                }],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "effectivenessOfPreviousWeedTreatment",
+                        "computed": null,
+                        "preLabel": "Effectiveness of Previous Treatment (% killed): *",
+                        "type": "number",
+                        "validate": "required,min[0],max[100]"
+                    },
+                    {
+                        "source": "recommendedWeedTreatment",
+                        "computed": null,
+                        "preLabel": "Recommended treatment:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Notes:",
+                        "type": "textarea"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
         "class": "output-section",
         "type": "row"
     }]

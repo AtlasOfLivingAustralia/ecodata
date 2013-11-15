@@ -4,18 +4,22 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "The number of participants involved in an activity who are not employed in the project",
             "name": "totalParticipantsNotEmployed"
         },
         {
             "dataType": "number",
+            "description": "The number of indigenous people participating in an activity who are not employed in the project",
             "name": "numberOfIndigenousParticipants"
         },
         {
             "dataType": "number",
+            "description": "The number of participants involved in an activity who have not attended other activities associated with the project",
             "name": "totalParticipantsNew"
         },
         {
             "dataType": "number",
+            "description": "The number of farm entities represented by participants in an activity, which have not previously been represented at other project activities",
             "name": "numberOfFarmingEntitiesNew"
         }
     ],

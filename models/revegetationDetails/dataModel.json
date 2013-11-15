@@ -3,7 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "",
+            "description": "The method used for planting",
             "name": "revegetationMethod",
             "constraints": [
                 "Direct drill seeding",
@@ -14,24 +14,25 @@
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "General description of the vegetative cover on the planting site at the time of planting",
             "name": "vegDescriptionAtPlanting",
             "constraints": [
                 "Bare substrate",
                 "Exotic grassland/pasture",
                 "Native grassland/pasture",
                 "Sparse/scattered shrubland",
-                "Open grassy woodland"
+                "Open grassy woodland",
+                "Other (specify in notes)"
             ]
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Simple description of the type of planting equipment used",
             "name": "equipmentUsed"
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "The predominant land use adjoining the planting site",
             "name": "adjacentLanduse",
             "constraints": [
                 "Conservation",
@@ -47,7 +48,7 @@
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Estimate of the 'connectedness' of the planting site with other native vegetation around it. Choose the most representative category.",
             "name": "connectivityIndex",
             "constraints": [
                 "Connected to patch of more than 1000 ha",
@@ -66,7 +67,7 @@
         },
         {
             "dataType": "stringList",
-            "description": "",
+            "description": "Environmental benefits /outcomes expected to be achieved through implementing the activity.",
             "name": "environmentalBenefits",
             "constraints": [
                 "Groundwater recharge management",
@@ -81,30 +82,29 @@
         },
         {
             "dataType": "list",
-            "description": "",
             "name": "planting",
             "columns": [
                 {
                     "dataType": "species",
                     "speciesList": "project",
                     "noTotal": "true",
-                    "description": "",
+                    "description": "The species planted / sown",
                     "name": "species"
                 },
                 {
                     "dataType": "number",
-                    "description": "",
+                    "description": "Number of plants planted",
                     "name": "numberPlanted"
                 },
                 {
                     "dataType": "number",
-                    "description": "",
+                    "description": "Weight of seed direct sown in kilograms",
                     "name": "seedSownKg"
                 },
                 {
                     "dataType": "text",
                     "noTotal": "true",
-                    "description": "",
+                    "description": "The type of plantstock used for plantings",
                     "name": "stockType",
                     "constraints": [
                         "Seed",
@@ -117,7 +117,7 @@
                 {
                     "dataType": "text",
                     "noTotal": "true",
-                    "description": "",
+                    "description": "The structural layer of vegetation that planted plants will occupy when mature",
                     "name": "structuralLayer",
                     "constraints": [
                         "Overstory",
@@ -129,13 +129,13 @@
                 {
                     "dataType": "text",
                     "noTotal": "true",
-                    "description": "",
+                    "description": "The name of the locality from which the seedstock was collected",
                     "name": "stockProvenance"
                 },
                 {
                     "dataType": "text",
                     "noTotal": "true",
-                    "description": "",
+                    "description": "Type of guard used to protect planted seedlings",
                     "name": "guardType",
                     "constraints": [
                         "None",
@@ -149,7 +149,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": "",
+            "description": "Aggregate total of plants planted",
             "name": "totalNumberPlanted",
             "computed": {
                 "operation": "sum",
@@ -162,7 +162,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": "",
+            "description": "Aggregate total of seed sown",
             "name": "totalSeedSownKg",
             "computed": {
                 "operation": "sum",
@@ -203,10 +203,11 @@
                     "type": "literal"
                 }
             ]}]},
+            "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
             "source": "planting",
             "columns": [
                 {
-                    "title": "Species *",
+                    "title": "Species *  <i>(start typing a species name)<\/i>",
                     "source": "species",
                     "computed": null,
                     "width": "25%",
@@ -304,7 +305,7 @@
                     "items": [{
                         "source": "environmentalBenefits",
                         "computed": null,
-                        "preLabel": "Environmental benefits:",
+                        "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
                         "type": "selectMany"
                     }],
                     "computed": null,

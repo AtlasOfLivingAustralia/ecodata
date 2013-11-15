@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The source of fire ignition",
             "name": "fireIgnitionSource",
             "constraints": [
                 "Lightning",
@@ -16,6 +17,7 @@
         },
         {
             "dataType": "text",
+            "description": "Type of fire event",
             "name": "fireEventType",
             "constraints": [
                 "Managed controlled burn",
@@ -26,6 +28,7 @@
         },
         {
             "dataType": "stringList",
+            "description": "Purpose of undertaking the fire management activity",
             "name": "fireReason",
             "constraints": [
                 "Fire fuel reduction",
@@ -39,14 +42,17 @@
         },
         {
             "dataType": "number",
+            "description": "Area in hectares of the fire ground",
             "name": "areaOfFireHa"
         },
         {
             "dataType": "date",
+            "description": "Date at which the last known fire occurred on the subject fire ground",
             "name": "fireLastBurnDate"
         },
         {
             "dataType": "text",
+            "description": "Approximate time period since the  last known fire occurred on the subject fire ground",
             "name": "fireTimeSinceLastBurn",
             "constraints": [
                 "1-3 years",
@@ -57,6 +63,7 @@
         },
         {
             "dataType": "text",
+            "description": "Generalised indicator of the intensity of the fire event",
             "name": "fireBurnTemp",
             "constraints": [
                 "Cool",
@@ -67,6 +74,7 @@
         },
         {
             "dataType": "stringList",
+            "description": "Classes of machinery deployed onto the fire ground to manage the fire event",
             "name": "fireMachineryUsed",
             "constraints": [
                 "Light tanker",
@@ -79,18 +87,22 @@
         },
         {
             "dataType": "number",
+            "description": "Total aggregate number of hours for all machinery deployed onto the fire ground",
             "name": "totalMachineHours"
         },
         {
             "dataType": "number",
+            "description": "Length in kilometres of fire breaks and back burn lines implemented by machinery to manage the fire event",
             "name": "controlLineKmMachine"
         },
         {
             "dataType": "number",
+            "description": "Length in kilometres of fire breaks and back burn lines implemented by hand tools and manual labor to manage the fire event",
             "name": "controlLineKmHand"
         },
         {
             "dataType": "text",
+            "description": "Indicator as to whether the fire total fire ground was contained within the initial control lines",
             "name": "fireContainment",
             "constraints": [
                 "Yes",

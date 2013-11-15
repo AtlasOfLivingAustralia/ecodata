@@ -3,10 +3,12 @@
     "dataModel": [
         {
             "dataType": "species",
+            "description": "The plant species being targeted for treatment",
             "name": "targetSpecies"
         },
         {
             "dataType": "text",
+            "description": "The reproductive status of the target species being treated",
             "name": "reproductiveStatus",
             "constraints": [
                 "Flowering (FLWG)",
@@ -18,6 +20,7 @@
         },
         {
             "dataType": "text",
+            "description": "The general health of the patch of the target species being treated",
             "name": "plantHealth",
             "constraints": [
                 "Healthy",
@@ -27,6 +30,7 @@
         },
         {
             "dataType": "text",
+            "description": "The control status of the patch of the target species being treated",
             "name": "controlStatus",
             "constraints": [
                 "New Infestation",
@@ -39,10 +43,12 @@
         },
         {
             "dataType": "number",
+            "description": "The area in hectares of the patch of the target species being treated",
             "name": "areaTreatedHa"
         },
         {
             "dataType": "text",
+            "description": "The stage of treatment for the patch of the target species being treated",
             "name": "treatmentEventType",
             "constraints": [
                 "Initial treatment",
@@ -51,6 +57,7 @@
         },
         {
             "dataType": "text",
+            "description": "The method used to treat the patch of the target species",
             "name": "treatmentMethod",
             "constraints": [
                 "Environmental management - Fire",
@@ -70,20 +77,22 @@
                 "Mechanical control - Felling",
                 "Manual control - Hand pulling",
                 "Manual control - Grubbing/chipping",
-                "Biological control - Biological agents (indicate in notes)",
-                "-- Other (please specify in notes) --"
+                "Biological control - Biological agents (specify in notes)",
+                "Other (specify in notes)"
             ]
         },
         {
             "dataType": "textarea",
+            "description": "Details of chemical treatment including chemical agent and rate of application",
             "name": "chemicalDetails"
         },
         {
             "dataType": "number",
+            "description": "The cost per hectare of the treatment",
             "name": "treatmentCostPerHa"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],
@@ -93,7 +102,7 @@
                 {
                     "source": "targetSpecies",
                     "computed": null,
-                    "preLabel": "Target species: *",
+                    "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
                     "type": "autocomplete",
                     "validate": "required"
                 },

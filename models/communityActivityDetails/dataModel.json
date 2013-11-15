@@ -2,62 +2,77 @@
     "modelName": "Community Event Details",
     "dataModel": [
         {
-            "dataType": "text",
+            "dataType": "stringList",
+            "description": "The purpose for which the event is being conducted",
             "name": "eventPurpose",
             "constraints": [
                 "Awareness raising event (eg. demonstration, field day, or study tour)",
                 "Training session, workshop or other skills/training event",
                 "Knowledge Evaluation Events",
+                "Works implementation",
+                "Planning",
                 "Other (describe in notes)"
             ]
         },
         {
             "dataType": "text",
+            "description": "The theme or topic covered during the event. Add in notes if more than one",
             "name": "eventTopics"
         },
         {
             "dataType": "number",
+            "description": "The duration of the event in hours. Part hour expressed as a decimal",
             "name": "eventDurationHrs"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "eventNotes"
         }
     ],
     "viewModel": [{
-        "items": [{
-            "items": [
-                {
+        "items": [
+            {
+                "items": [{
                     "source": "eventPurpose",
                     "computed": null,
                     "preLabel": "Purpose of event: *",
-                    "type": "text",
+                    "type": "selectMany",
                     "validate": "required"
-                },
-                {
-                    "source": "eventTopics",
-                    "computed": null,
-                    "preLabel": "Topics covered: *",
-                    "type": "text",
-                    "validate": "required"
-                },
-                {
-                    "source": "eventDurationHrs",
-                    "computed": null,
-                    "preLabel": "Event Duration (Hrs): *",
-                    "type": "number",
-                    "validate": "required,min[0]"
-                },
-                {
+                }],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "eventTopics",
+                        "computed": null,
+                        "preLabel": "Topics covered: *",
+                        "type": "text",
+                        "validate": "required"
+                    },
+                    {
+                        "source": "eventDurationHrs",
+                        "computed": null,
+                        "preLabel": "Event Duration (Hrs): *",
+                        "type": "number",
+                        "validate": "required,min[0]"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [{
                     "source": "eventNotes",
                     "computed": null,
-                    "preLabel": "Notes:",
+                    "preLabel": "Comments / Notes:",
                     "type": "textarea"
-                }
-            ],
-            "computed": null,
-            "type": "col"
-        }],
+                }],
+                "computed": null,
+                "type": "col"
+            }
+        ],
         "class": "output-section",
         "type": "row"
     }]

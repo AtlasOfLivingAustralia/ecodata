@@ -7,14 +7,17 @@
             "columns": [
                 {
                     "dataType": "species",
+                    "description": "The species providing source seedstock",
                     "name": "seedSourceSpecies"
                 },
                 {
                     "dataType": "number",
+                    "description": "The weight of seed collected in kilograms",
                     "name": "seedCollectedKg"
                 },
                 {
                     "dataType": "text",
+                    "description": "The health of the plant(s) providing source seedstock",
                     "name": "sourcePlantHealth",
                     "constraints": [
                         "Healthy young plant",
@@ -29,14 +32,17 @@
         },
         {
             "dataType": "text",
+            "description": "The locality from which the source seedstock was collected",
             "name": "seedSourceProvenance"
         },
         {
             "dataType": "text",
+            "description": "The name of the seedbank repository in which collected seedstock is stored",
             "name": "seedBankRepository"
         },
         {
             "dataType": "text",
+            "description": "General comments and notes about the seed collection activity and related observations",
             "name": "notes"
         }
     ],
@@ -60,7 +66,7 @@
                 "computed": null,
                 "columns": [
                     {
-                        "title": "Species: *",
+                        "title": "Species: *  <i>(start typing a species name)<\/i>",
                         "source": "seedSourceSpecies",
                         "type": "autocomplete",
                         "validate": "required"

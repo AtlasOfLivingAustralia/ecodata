@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The type of method used in this management action to manage erosion on the subject area",
             "name": "erosionTreatmentMethod",
             "constraints": [
                 "Farming practice change - reduced stocking",
@@ -27,6 +28,7 @@
         },
         {
             "dataType": "text",
+            "description": "The type of erosion evident on the site",
             "name": "erosionType",
             "constraints": [
                 "Dune erosion - direct human traffic",
@@ -46,6 +48,7 @@
         },
         {
             "dataType": "text",
+            "description": "The type(s) of structure installed during this activity to control erosion on the subject site",
             "name": "erosionControlStructures",
             "constraints": [
                 "Flow interception structures (eg. contour banks & swales)",
@@ -65,18 +68,22 @@
         },
         {
             "dataType": "number",
+            "description": "Area in hectares affected by erosion",
             "name": "erosionAffectedArea"
         },
         {
             "dataType": "number",
+            "description": "Area in hectares of erosion treated by this activity",
             "name": "erosionAreaTreated"
         },
         {
             "dataType": "number",
+            "description": "Length in lineal metres of the longest axis of the treatment area",
             "name": "erosionLength"
         },
         {
             "dataType": "number",
+            "description": "The number of individual erosion management structures installed during this activity",
             "name": "erosionStructuresInstalled"
         },
         {

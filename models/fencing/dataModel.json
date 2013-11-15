@@ -3,9 +3,9 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The type of fence erected",
             "name": "fenceType",
             "constraints": [
-                "",
                 "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
                 "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
                 "Post & Netting (net or ringlock) - non-electified",
@@ -18,14 +18,17 @@
         },
         {
             "dataType": "number",
+            "description": "Length of fence erected in kilometres",
             "name": "lengthOfFence"
         },
         {
             "dataType": "number",
+            "description": "Cost of the erected fence in $ per kilometre",
             "name": "fenceCostPerKm"
         },
         {
             "dataType": "stringList",
+            "description": "The purpose for which the fence has been erected",
             "name": "purposeOfFence",
             "constraints": [
                 "Cattle exclusion",
@@ -38,7 +41,7 @@
             ]
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "fenceNotes"
         }
     ],
