@@ -58,4 +58,80 @@ class ECTagLib {
     def currentUserId = { attrs, body ->
         out << authService.userDetails()?.userId
     }
+
+    /**
+     * Renders a textual description of the constraints applied to the value of a property (as described in the
+     * supplied schema).
+     * @attr property the property description from the schema.
+     */
+    def outputPropertyConstraints = { attrs, body ->
+        def property = attrs.property
+        if (property.format == 'date-time') {
+            out << g.message(code: 'api.constraints.date.time')
+        }
+        else if (property.format == 'base64') {
+            out << g.message(code: 'api.constraints.base64')
+        }
+        else if (property.enum) {
+            out << g.message(code: 'api.constraints.enum')
+            writeConstraints(property.enum)
+        }
+        else if (property.type == 'array') {
+            if (property.items?.enum) {
+                out << g.message(code: 'api.constraints.array.enum')
+                writeConstraints(property.items.enum)
+            }
+            else if (property.items.type == 'object') {
+                def ref
+                if (property.items.oneOf) {
+                    ref = property.items.oneOf[0].$ref
+                    def anchor = buildAnchor(ref)
+                    out << g.message(code: 'api.constraints.array.object', args:[anchor.href, anchor.name])
+                }
+                else if (property.items.anyOf) {
+                    out << g.message(code: 'api.constraints.array.objects')
+                    def constraints = []
+                    property.items.anyOf.each{
+                        def anchor = buildAnchor(it.$ref)
+                        constraints << g.message(code:'api.constraints.object.ref', args:[anchor.href, anchor.name])
+                    }
+                    writeConstraints(constraints, false, false)
+                }
+
+
+            }
+        }
+        else if (property.type == 'object') {
+
+        }
+    }
+
+    private def buildAnchor(ref) {
+
+        int lastIndex = ref.lastIndexOf('.') > 0 ? ref.lastIndexOf('.') : ref.length()
+        def name = ref.substring(ref.lastIndexOf('/')+1, lastIndex)
+        def href = ref.startsWith('http')?ref:'#'+name
+        [href:href, name:name]
+
+    }
+
+    private void writeConstraints(constraints, quote = true, escape = true) {
+        def mb = new MarkupBuilder(out)
+        mb.setEscapeAttributes(escape)
+        mb.ul {
+            constraints.each { value ->
+                if (quote) {
+                    value = "'${value}'"
+                }
+                mb.li {
+                    if (escape) {
+                        mkp.yield(value)
+                    }
+                    else {
+                        mkp.yieldUnescaped(value)
+                    }
+                }
+            }
+        }
+    }
 }

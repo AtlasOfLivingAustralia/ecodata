@@ -78,6 +78,8 @@ app.elasticsearch.indexOnGormEvents = true
 app.http.header.userId = "X-ALA-userId"
 app.file.upload.path = "/data/ecodata/uploads"
 
+app.external.api.version = 'v1'
+
 /******************************************************************************\
  *  EXTERNAL SERVERS
 \******************************************************************************/
