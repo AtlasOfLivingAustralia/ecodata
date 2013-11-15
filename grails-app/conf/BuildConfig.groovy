@@ -52,9 +52,11 @@ grails.project.dependency.resolution = {
         }
         test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
+        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 
         // ElasticSearch
         compile "org.elasticsearch:elasticsearch:0.90.2"
+        compile "com.github.fge:json-schema-validator:2.0.1"
     }
 
     plugins {
@@ -76,6 +78,8 @@ grails.project.dependency.resolution = {
         compile ':cache:1.0.1'
 
         test ":geb:0.9.0"
-        test ":spock:0.7"
+        test(":spock:0.7") {
+            exclude "spock-grails-support"
+        }
     }
 }
