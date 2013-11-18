@@ -6,18 +6,22 @@
         "columns": [
             {
                 "dataType": "integer",
+                "description": "Unique ID for the photo point record",
                 "name": "photoPointId"
             },
             {
                 "dataType": "text",
+                "description": "Short descriptive name for the photo point",
                 "name": "name"
             },
             {
                 "dataType": "embeddedImage",
+                "description": "Photo point image",
                 "name": "photo"
             },
             {
                 "dataType": "text",
+                "description": "Comments or notes about the photo point condition, marker(s), lighting, etc.",
                 "name": "comment"
             }
         ],

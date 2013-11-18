@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "Category of research being undertaken",
             "name": "typeOfResearch",
             "constraints": [
                 "Environmental resilience",
@@ -20,14 +21,17 @@
         },
         {
             "dataType": "text",
+            "description": "Name of the research project",
             "name": "nameOfResearchProject"
         },
         {
             "dataType": "textarea",
+            "description": "Description of the objectives of the research project",
             "name": "researchObjectives"
         },
         {
             "dataType": "textarea",
+            "description": "List of the collaborators involved in the research project",
             "name": "researchCollaborators"
         },
         {

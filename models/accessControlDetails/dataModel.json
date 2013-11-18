@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "stringList",
+            "description": "Generalised method employed to manage access on the subject area",
             "name": "accessManagementMethod",
             "constraints": [
                 "Traffic exclusion",
@@ -14,10 +15,12 @@
         },
         {
             "dataType": "stringList",
+            "description": "Type of structure(s) installed to manage access on the subject area",
             "name": "structuresInstalled",
             "constraints": [
                 "Bollards & barriers",
                 "Fencing, styles, gates & grids",
+                "Boardwalks",
                 "Formed trafficways",
                 "Constructed parking bays",
                 "Signage",
@@ -26,6 +29,26 @@
         },
         {
             "dataType": "stringList",
+            "description": "Type of structure(s) installed to manage access on the subject area",
+            "name": "structuresInstalled",
+            "constraints": [
+                "Bollards & barriers",
+                "Fencing, styles, gates & grids",
+                "Boardwalks",
+                "Formed trafficways",
+                "Constructed parking bays",
+                "Signage",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The number of access management structures installed during this activity",
+            "name": "numberOfInstallations"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Purpose for managing access on the subject area",
             "name": "accessControlPurpose",
             "constraints": [
                 "Manage public safety issues",
@@ -33,21 +56,19 @@
                 "Contain vehicle traffic",
                 "Manage off-road vehicle damage",
                 "Manage pedestrian traffic damage",
+                "Public education",
                 "Other (specify in notes)"
             ]
         },
         {
-            "dataType": "text",
-            "name": "accessControlIssues",
-            "constraints": [
-                "Bollards",
-                "Fencing",
-                "Formed / paved trafficways (pedestrian or vehicular)",
-                "Parking bays",
-                "Fencing",
-                "Fencing",
-                "Other (specify in notes)"
-            ]
+            "dataType": "number",
+            "description": "Length in kilometres of fences and boardwalks installed during this activity",
+            "name": "lengthOfLinealStructures"
+        },
+        {
+            "dataType": "number",
+            "description": "Total number of visitors managed for access during this activity",
+            "name": "visitationNumber"
         },
         {
             "dataType": "textarea",
@@ -71,6 +92,13 @@
                             "preLabel": "Structure(s) installed: *",
                             "type": "selectMany",
                             "validate": "required"
+                        },
+                        {
+                            "source": "numberOfInstallations",
+                            "computed": null,
+                            "preLabel": "No. of access management structures installed: *",
+                            "type": "number",
+                            "validate": "required"
                         }
                     ],
                     "computed": null,
@@ -85,10 +113,24 @@
                             "type": "selectMany"
                         },
                         {
+                            "source": "lengthOfLinealStructures",
+                            "computed": null,
+                            "preLabel": "Length of fences and boardwalks installed (Km): *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
                             "source": "accessControlIssues",
                             "computed": null,
                             "preLabel": "Description of issue(s) requiring access management:",
                             "type": "textarea"
+                        },
+                        {
+                            "source": "visitationNumber",
+                            "computed": null,
+                            "preLabel": "No. of visitors (people managed for access): *",
+                            "type": "number",
+                            "validate": "required"
                         }
                     ],
                     "computed": null,

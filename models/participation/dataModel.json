@@ -14,8 +14,18 @@
         },
         {
             "dataType": "number",
+            "description": "The number of unique indigenous on-country visits undertaken as part of this activity",
+            "name": "numberOnCountryVisits"
+        },
+        {
+            "dataType": "number",
             "description": "The number of participants involved in an activity who have not attended other activities associated with the project",
             "name": "totalParticipantsNew"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of different community groups participating in this activity",
+            "name": "numberOfCommunityGroups"
         },
         {
             "dataType": "number",
@@ -46,6 +56,22 @@
                     "source": "totalParticipantsNew",
                     "computed": null,
                     "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project): *",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "source": "numberOnCountryVisits",
+                    "computed": null,
+                    "preLabel": "Total No. of indigenous on-country visits: *",
+                    "width": "20%",
+                    "type": "number",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "source": "numberOfCommunityGroups",
+                    "computed": null,
+                    "preLabel": "No of community groups participating: *",
                     "width": "20%",
                     "type": "number",
                     "validate": "required,min[0]"

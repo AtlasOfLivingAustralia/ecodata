@@ -1,8 +1,12 @@
 {
     "selectedActivity": {
-        "name": "Project Administration",
+        "name": "Indigenous Employment & Enterprise",
         "type": "Activity",
-        "outputs": ["Participant Information"]
+        "outputs": [
+            "Indigenous Employment",
+            "Indigenous Enterprise",
+            "Activity Outcomes"
+        ]
     },
     "activities": [
         {
@@ -158,11 +162,6 @@
         {
             "name": "Pest animal survey",
             "type": "Assessment",
-            "outputs": []
-        },
-        {
-            "name": "Aboriginal heritage site protection",
-            "type": "Activity",
             "outputs": []
         },
         {
@@ -958,7 +957,23 @@
         },
         {
             "template": "indigenousEnterprise",
-            "scores": [],
+            "scores": [
+                {
+                    "name": "totalNewEnterprises",
+                    "aggregationType": "SUM",
+                    "label": "No. of new enterprises established"
+                },
+                {
+                    "name": "totalIndigenousEnterprisesEngaged",
+                    "aggregationType": "SUM",
+                    "label": "No of formal (contractual) engagements of an Indigenous enterprises"
+                },
+                {
+                    "name": "numberOfIndigenousCommunities",
+                    "aggregationType": "SUM",
+                    "label": "No. of indigenous communities in which new enterprises have been established"
+                }
+            ],
             "name": "Indigenous Enterprise"
         }
     ]

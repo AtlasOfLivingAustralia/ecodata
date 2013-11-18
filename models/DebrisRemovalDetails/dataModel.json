@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "Type(s) of debris removed during the activity",
             "name": "debrisType",
             "constraints": [
                 "Building & industrial waste - Mixed organic & inorganic",
@@ -17,10 +18,12 @@
         },
         {
             "dataType": "number",
+            "description": "Weight in tonnes of debris removed during the activity",
             "name": "debrisWeightTonnes"
         },
         {
             "dataType": "number",
+            "description": "Volume in cubic metres of debris removed during the activity",
             "name": "debrisVolumeM3"
         },
         {

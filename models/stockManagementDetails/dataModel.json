@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "Purpose for which grazing is being used as a management tool",
             "name": "stockManagementReason",
             "constraints": [
                 "Reduce competition & shading for revegetation areas",
@@ -13,10 +14,12 @@
         },
         {
             "dataType": "number",
+            "description": "Area in hectares where grazing is used as a management tool under this activity",
             "name": "areaOfStockManagementHa"
         },
         {
             "dataType": "text",
+            "description": "Description of the grazing strategy/methodology being used to facilitate the purpose of the activity",
             "name": "stockingStrategy"
         },
         {
@@ -25,6 +28,7 @@
             "columns": [
                 {
                     "dataType": "text",
+                    "description": "Type of stock species being used to achieve the purpose of the activity",
                     "name": "stockingManagementSpecies",
                     "constraints": [
                         "Cattle",
@@ -37,6 +41,7 @@
                 },
                 {
                     "dataType": "number",
+                    "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
                     "name": "stockingDensity"
                 },
                 {

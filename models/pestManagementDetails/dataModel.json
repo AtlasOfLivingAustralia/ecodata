@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "stringList",
+            "description": "The method used in this activity to manage pests",
             "name": "pestManagementMethod",
             "constraints": [
                 "Trap & remove",
@@ -17,27 +18,28 @@
         },
         {
             "dataType": "text",
+            "description": "The incentive program applicable to this activity",
             "name": "treatmentIncentiveMethod",
             "constraints": [
                 "Bounty-based cull",
                 "Non-bounty-based cull",
-                "-- Other (specify in notes) --"
+                "No incentive program applicable",
+                "Other (specify in notes)"
             ]
         },
         {
             "dataType": "species",
+            "description": "Pest species targeted for treatment",
             "name": "targetSpecies"
         },
         {
             "dataType": "number",
-            "name": "pestAnimalDensity"
-        },
-        {
-            "dataType": "number",
+            "description": "Number of target pest animals removed during this activity",
             "name": "pestAnimalsTreatedNo"
         },
         {
             "dataType": "number",
+            "description": "Cost of this treatment on a per hectare basis",
             "name": "treatmentCostPerHa"
         },
         {
@@ -53,7 +55,7 @@
                         {
                             "source": "targetSpecies",
                             "computed": null,
-                            "preLabel": "Target species: *",
+                            "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
                             "type": "autocomplete",
                             "validate": "required"
                         },

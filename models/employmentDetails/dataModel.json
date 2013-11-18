@@ -3,40 +3,49 @@
     "dataModel": [
         {
             "dataType": "number",
+            "description": "Number of indigenous rangers employed full time on the project",
             "name": "noOfIndigenousRangersFt"
         },
         {
             "dataType": "number",
+            "description": "Number of indigenous rangers employed part time on the project",
             "name": "noOfIndigenousRangersPt"
         },
         {
             "dataType": "number",
+            "description": "Number of male indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersMale"
         },
         {
             "dataType": "number",
+            "description": "Number of female indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersFemale"
         },
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Number of indigenous people employed full time on the project who are not rangers",
             "name": "noOfIndigenousNonRangersFt"
         },
         {
             "dataType": "number",
+            "description": "Number of indigenous people employed part time on the project who are not rangers",
             "name": "noOfIndigenousNonRangersPt"
         },
         {
             "dataType": "number",
+            "description": "Number of indigenous males employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersMale"
         },
         {
             "dataType": "number",
+            "description": "Number of indigenous females employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersFemale"
         },
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Total number of indigenous people employed full time on the project",
             "name": "totalFtEmployees",
             "computed": {
                 "operation": "sum",
@@ -49,6 +58,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Total number of indigenous people employed part time on the project",
             "name": "totalPtEmployees",
             "computed": {
                 "operation": "sum",
@@ -61,6 +71,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Total number of indigenous males employed on the project",
             "name": "totalMaleEmployees",
             "computed": {
                 "operation": "sum",
@@ -73,6 +84,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Total number of indigenous females employed on the project",
             "name": "totalFemaleEmployees",
             "computed": {
                 "operation": "sum",
@@ -85,6 +97,7 @@
         {
             "dataType": "number",
             "primaryResult": "true",
+            "description": "Total number of indigenous people employed on the project",
             "name": "totalEmployees",
             "computed": {
                 "operation": "sum",
