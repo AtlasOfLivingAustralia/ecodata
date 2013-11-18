@@ -108,9 +108,9 @@ class ECTagLib {
 
     private def buildAnchor(ref) {
 
-        int lastIndex = ref.lastIndexOf('.') > 0 ? ref.lastIndexOf('.') : ref.length()
-        def name = ref.substring(ref.lastIndexOf('/')+1, lastIndex)
-        def href = ref.startsWith('http')?ref:'#'+name
+        def name = ref.substring(ref.lastIndexOf('/')+1)
+        name = name.replaceAll('%20', ' ')
+        def href = ref.startsWith('http')?ref+'.html':'#'+name
         [href:href, name:name]
 
     }

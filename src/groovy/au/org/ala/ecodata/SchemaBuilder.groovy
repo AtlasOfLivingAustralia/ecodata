@@ -25,7 +25,7 @@ class SchemaBuilder {
         def allowedOutputs = activity.outputs.collect {[$ref:buildOutputRef(it)]}
 
         def schema = [
-            id:"${urlPrefix}/activity/${activity.name.replace(' ', '%20')}.json#",
+            id:"${urlPrefix}/activity/${activity.name.replace(' ', '%20')}#",
             $schema:'"http://json-schema.org/draft-04/schema#"',
             type:'object',
             properties: [
@@ -46,7 +46,7 @@ class SchemaBuilder {
 
     def buildOutputRef(outputName) {
         def encodedOutput = outputName.replace(' ', '%20')
-        return "${urlPrefix}/output/${encodedOutput}.json#"
+        return "${urlPrefix}/output/${encodedOutput}"
     }
 
     /**
