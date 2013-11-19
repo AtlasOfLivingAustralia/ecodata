@@ -192,4 +192,16 @@ class AuditService {
         return results.sort { it.date }
     }
 
+    def getUserDisplayNamesForMessages(auditMessages) {
+
+        def userMap = [:]
+        auditMessages.each { message ->
+            if (!userMap[message.userId]) {
+                // we haven't already looked up this user...
+                userMap[message.userId] = userService.getUserForUserId(message.userId as String)?.displayName
+            }
+        }
+        return userMap
+    }
+
 }

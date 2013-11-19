@@ -56,7 +56,7 @@ class AuditController {
     def ajaxGetAuditMessagesForProject() {
 
         def projectInstance = Project.findByProjectId(params.projectId)
-        def retVal  = [success:false, errorMessage:'', messages:[]]
+        def retVal  = [success:false, errorMessage:'', messages:[], userMap:[:]]
         if (!projectInstance) {
             retVal.message = "Invalid project id ${params.projectId}"
         } else {
@@ -65,6 +65,7 @@ class AuditController {
             if (auditMessages) {
                 retVal.success = true
                 retVal.messages = auditMessages
+                retVal.userMap = auditService.getUserDisplayNamesForMessages(auditMessages)
             }
         }
 
@@ -80,6 +81,24 @@ class AuditController {
             results.success = false
             results.errorMessage = "Could not find audit message with specified id!"
         }
+        render(results as JSON)
+    }
+
+    def ajaxGetUserDetails() {
+        def results = [success: true, errorMessage:'']
+        if (!params.id) {
+            results.success = false
+            results.errorMessage = "You must supply a userId"
+        } else {
+            def userDetails = userService.getUserForUserId(params.id as String)
+            if (!userDetails) {
+                results.success = false
+                results.errorMessage = "User not found!"
+            } else {
+                results.user = userDetails
+            }
+        }
+
         render(results as JSON)
     }
 
