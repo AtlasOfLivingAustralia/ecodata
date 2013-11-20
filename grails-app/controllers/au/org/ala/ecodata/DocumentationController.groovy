@@ -28,6 +28,14 @@ class DocumentationController {
         [activitiesModel:activitiesModel, outputs:outputs]
     }
 
+    def project() {
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
+        def schema = schemaGenerator.projectSchema(metadataService.activitiesModel(), metadataService.programsModel())
+        withFormat {
+            json {render schema as JSON}
+        }
+    }
+
     def activity(String id) {
         def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
         if (!id) {

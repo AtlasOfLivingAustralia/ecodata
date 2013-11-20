@@ -56,7 +56,9 @@ grails.project.dependency.resolution = {
 
         // ElasticSearch
         compile "org.elasticsearch:elasticsearch:0.90.2"
-        compile "com.github.fge:json-schema-validator:2.0.1"
+
+        // Schema validation for external web service clients
+        compile "com.github.fge:json-schema-validator:2.1.6"
     }
 
     plugins {

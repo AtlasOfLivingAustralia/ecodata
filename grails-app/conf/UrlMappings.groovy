@@ -36,6 +36,10 @@ class UrlMappings {
             controller = 'documentation'
         }
 
+        "/ws/external/$version/$action" {
+            controller = 'external'
+        }
+
 		"/"(view:"/index")
 		"500"(view:'/error')
 	}

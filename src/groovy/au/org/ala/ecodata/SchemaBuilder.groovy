@@ -20,13 +20,50 @@ class SchemaBuilder {
      */
     def referencedDefinitions = [:]
 
+
+    def projectSchema(activitiesModel, programsModel) {
+
+        // TODO To constrain program / subprogram definitions we would need to provide a nested set of definitions
+        // per program.
+
+        def activities = activitiesModel.activities.collect {[$ref:buildActivityRef(it.name)]}
+
+        def programs = programsModel.programs.collect{it.name}
+
+        def schema = [
+            id:"${urlPrefix}/project#",
+            $schema:'http://json-schema.org/draft-04/schema#',
+            type:'object',
+            properties: [
+                projectId:[
+                        type:'object', description:'Identifies the project',
+                        properties:[
+                                type:constrainedTextProperty([constraints:['grantId', 'externalId', 'internalId']]),
+                                value:textProperty(null)
+                        ],
+                        required: ['type', 'value']
+                ],
+                startDate:dateProperty(null),
+                endDate:dateProperty(null),
+                program:constrainedTextProperty([constraints: programs]),
+                subprogram:textProperty(null),
+                //outputTargets:[type:'array', items:[type:'object', anyOf:allowedOutputs]],
+                activities:[type:'array', items:[type:'object', anyOf:activities]]
+            ],
+            required:['projectId']
+        ]
+
+        schema
+
+    }
+
     def schemaForActivity(activity) {
 
         def allowedOutputs = activity.outputs.collect {[$ref:buildOutputRef(it)]}
 
         def schema = [
             id:"${urlPrefix}/activity/${activity.name.replace(' ', '%20')}#",
-            $schema:'"http://json-schema.org/draft-04/schema#"',
+            $schema:'http://json-schema.org/draft-04/schema#',
             type:'object',
             properties: [
                 projectExternalId:[type:'string', description:'Must match the externalId property of an existing project entity'],
@@ -36,8 +73,8 @@ class SchemaBuilder {
                 startDate:dateProperty(null),
                 endDate:dateProperty(null),
                 mainTheme:textProperty(null),
-                status:constrainedTextProperty([constraints:['planned','started','finished']]),
-                outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
+                progress:constrainedTextProperty([constraints:['planned','started','finished']]),
+                // TODO some of the outputs produce invalid schemas (e.g. revegetation has duplicate values) . outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
             ]
         ]
 
@@ -47,6 +84,11 @@ class SchemaBuilder {
     def buildOutputRef(outputName) {
         def encodedOutput = outputName.replace(' ', '%20')
         return "${urlPrefix}/output/${encodedOutput}"
+    }
+
+    def buildActivityRef(activityName) {
+        def encodedOutput = activityName.replace(' ', '%20')
+        return "${urlPrefix}/activity/${encodedOutput}"
     }
 
     /**
@@ -59,7 +101,7 @@ class SchemaBuilder {
         def outputProperties = [:]
         outputProperties << [type:[enum:[output.modelName]]]
         outputProperties << [data:objectSchema(output.dataModel)]
-        def schema = [id:"${urlPrefix}/output#", $schema:'"http://json-schema.org/draft-04/schema#"', type:'object', properties: outputProperties]
+        def schema = [id:"${urlPrefix}/output#", $schema:'http://json-schema.org/draft-04/schema#', type:'object', properties: outputProperties]
 
         def definitions = [:]
 
