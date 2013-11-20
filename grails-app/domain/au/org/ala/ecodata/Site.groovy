@@ -26,7 +26,6 @@ class Site {
     String type
     String description
     String habitat
-    List location = []
     String area
     String recordingMethod
     String landTenure
@@ -48,4 +47,8 @@ class Site {
         notes nullable:true, maxSize: 40000
     }
 
+    def getAssociations(){
+      def map = [:]
+      projects.each { map.put("Project", it)}
+    }
 }

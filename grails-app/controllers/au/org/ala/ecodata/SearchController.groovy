@@ -24,6 +24,24 @@ class SearchController {
         render res
     }
 
+    def elasticGeo() {
+        def res = elasticSearchService.search(params.query, params, "homepage")
+        def geoRes = []
+        res.hits.hits.each { hit ->
+            if(hit.source?.geo){
+                def proj = [:]
+                proj.projectId =hit.source.projectId
+                proj.name = hit.source.name
+                proj.org = hit.source.organisationName
+                proj.geo = hit.source.geo
+                geoRes << proj
+            }
+        }
+        response.setContentType("application/json")
+        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes]
+        render projectsAndTotal as JSON
+    }
+
     def elasticPost() {
         def paramsObj = request.JSON
         def paramMap = new GrailsParameterMap(paramsObj, request)

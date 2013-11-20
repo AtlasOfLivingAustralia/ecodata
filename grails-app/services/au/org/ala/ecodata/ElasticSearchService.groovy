@@ -209,10 +209,6 @@ class ElasticSearchService {
         if (doc.extent?.geometry?.decimalLatitude && doc.extent?.geometry?.decimalLatitude) {
             lat = doc.extent.geometry.decimalLatitude as String
             lon = doc.extent.geometry.decimalLongitude as String
-        } else if (doc.location?.data?.decimalLatitude && doc.location?.data?.decimalLongitude) {
-            //log.debug "data = ${doc.location.data}"
-            lat = doc.location.data.decimalLatitude.getAt(0) as String
-            lon = doc.location.data.decimalLongitude.getAt(0) as String
         } else if (doc.extent?.geometry?.centre?.size() == 2) {
             lat = doc.extent.geometry.centre[1] as String
             lon = doc.extent.geometry.centre[0] as String
@@ -238,9 +234,6 @@ class ElasticSearchService {
                 if (site.extent?.geometry?.decimalLatitude && site.extent?.geometry?.decimalLatitude) {
                     lat = site.extent.geometry.decimalLatitude as String
                     lon = site.extent.geometry.decimalLongitude as String
-                } else if (site.location?.data?.decimalLatitude && site.location?.data?.decimalLongitude) {
-                    lat = site.location.data.decimalLatitude.getAt(0) as String
-                    lon = site.location.data.decimalLongitude.getAt(0) as String
                 } else if (site.extent?.geometry?.centre?.size() == 2) {
                     lat = site.extent.geometry.centre[1] as String
                     lon = site.extent.geometry.centre[0] as String

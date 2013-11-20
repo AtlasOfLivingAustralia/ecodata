@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.apache.commons.io.FileUtils
+
 class DocumentService {
 
     static final ACTIVE = "active"
@@ -114,6 +116,12 @@ class DocumentService {
     private String saveFile(filename, fileIn, overwrite) {
         if (fileIn) {
             synchronized (FILE_LOCK) {
+                //create upload dir if it doesnt exist...
+                def uploadDir = new File(grailsApplication.config.app.file.upload.path)
+                if(!uploadDir.exists()){
+                    FileUtils.forceMkdir(uploadDir)
+                }
+
                 if (!overwrite) {
                     filename = nextUniqueFileName(filename)
                 }
