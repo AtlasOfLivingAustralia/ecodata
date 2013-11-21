@@ -1,0 +1,104 @@
+{
+    "modelName": "Knowledge Integration and Transfer",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Has any indigenous knowledge been documented as part of this activity?",
+            "name": "indigenousKnowledgeDocumented",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Involvement of indigenous decision-making bodies in the project",
+            "name": "indigenousDecisionMakers",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The number of unique indigenous on-country visits undertaken as part of this activity that were attended by older and younger people together",
+            "name": "numberOnCountryVisits"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of datasets collected and shared publicly",
+            "name": "datasetsShared"
+        },
+        {
+            "dataType": "number",
+            "description": "Number of formal partnerships (eg. MOUs, joint delivery, etc.) involved in design, delivery and/or monitoring to guide implementation",
+            "name": "formalPartnerships"
+        },
+        {
+            "dataType": "number",
+            "description": "Cost of this treatment on a per hectare basis",
+            "name": "treatmentCostPerHa"
+        },
+        {
+            "dataType": "number",
+            "description": "Estimated density of pest animals per hectare prior to treatment action",
+            "name": "pestDensityPerHa"
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "numberOnCountryVisits",
+                        "computed": null,
+                        "preLabel": "No. of indigenous on-country visits with older and younger people together: *",
+                        "width": "20%",
+                        "type": "number",
+                        "validate": "required,min[0]"
+                    },
+                    {
+                        "source": "indigenousDecisionMakers",
+                        "computed": null,
+                        "preLabel": "Were indigenous decision-makers involved in organising or running this activity?: *",
+                        "type": "selectOne",
+                        "validate": "required"
+                    },
+                    {
+                        "source": "indigenousKnowledgeDocumented",
+                        "computed": null,
+                        "preLabel": "Has any indigenous knowledge been documented as part of this activity?: *",
+                        "type": "selectOne",
+                        "validate": "required"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "datasetsShared",
+                        "computed": null,
+                        "preLabel": "No. of datasets shared publicly as a result of this activity:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "formalPartnerships",
+                        "computed": null,
+                        "preLabel": "No. of formal partnerships established:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

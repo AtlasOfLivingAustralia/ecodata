@@ -1,0 +1,361 @@
+{
+    "modelName": "Land Management Practice Change Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "practiceChange",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of industry/land use that the subject land area is changing from",
+                    "name": "industryTypeChangeFrom",
+                    "constraints": [
+                        "Nature conservation - Strict nature reserves",
+                        "Nature conservation - Wilderness area",
+                        "Nature conservation - National park",
+                        "Nature conservation - Natural feature protection",
+                        "Nature conservation - Habitat/species management area",
+                        "Nature conservation - Protected landscape",
+                        "Nature conservation - Other conserved area",
+                        "Managed resource protection - Biodiversity",
+                        "Managed resource protection - Surface water supply",
+                        "Managed resource protection - Groundwater",
+                        "Managed resource protection - Landscape",
+                        "Managed resource protection - Traditional indigenous uses",
+                        "Minimal use - Defence land - natural areas",
+                        "Minimal use - Stock route",
+                        "Minimal use - Residual native cover",
+                        "Minimal use - Rehabilitation",
+                        "Relatively Natural Environments - Grazing native vegetation",
+                        "Relatively Natural Environments - Production forestry",
+                        "Dryland  - Plantation forestry",
+                        "Dryland  - Grazing modified pastures",
+                        "Dryland  - Cropping",
+                        "Dryland  - Perennial horticulture",
+                        "Dryland  - Seasonal horticulture",
+                        "Land in transition",
+                        "Irrigated plantation forestry",
+                        "Grazing irrigated modified pastures",
+                        "Irrigated cropping",
+                        "rrigated perennial horticulture",
+                        "Irrigated seasonal horticulture",
+                        "Irrigated land in transition",
+                        "Intensive horticulture",
+                        "Intensive animal husbandry",
+                        "Manufacturing and industrial",
+                        "Residential and farm infrastructure",
+                        "Services",
+                        "Utilities",
+                        "Transport and communication",
+                        "Mining",
+                        "Waste treatment and disposal",
+                        "Water - Lake",
+                        "Water - Reservoir/dam",
+                        "Water - River",
+                        "Water - Channel/aqueduct",
+                        "Water - Marsh/wetland",
+                        "Water - Estuary/coastal waters"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of industry/land use that the subject land area is changing to",
+                    "name": "industryTypeChangeTo",
+                    "constraints": [
+                        "Nature conservation - Strict nature reserves",
+                        "Nature conservation - Wilderness area",
+                        "Nature conservation - National park",
+                        "Nature conservation - Natural feature protection",
+                        "Nature conservation - Habitat/species management area",
+                        "Nature conservation - Protected landscape",
+                        "Nature conservation - Other conserved area",
+                        "Managed resource protection - Biodiversity",
+                        "Managed resource protection - Surface water supply",
+                        "Managed resource protection - Groundwater",
+                        "Managed resource protection - Landscape",
+                        "Managed resource protection - Traditional indigenous uses",
+                        "Minimal use - Defence land - natural areas",
+                        "Minimal use - Stock route",
+                        "Minimal use - Residual native cover",
+                        "Minimal use - Rehabilitation",
+                        "Relatively Natural Environments - Grazing native vegetation",
+                        "Relatively Natural Environments - Production forestry",
+                        "Dryland  - Plantation forestry",
+                        "Dryland  - Grazing modified pastures",
+                        "Dryland  - Cropping",
+                        "Dryland  - Perennial horticulture",
+                        "Dryland  - Seasonal horticulture",
+                        "Land in transition",
+                        "Irrigated plantation forestry",
+                        "Grazing irrigated modified pastures",
+                        "Irrigated cropping",
+                        "rrigated perennial horticulture",
+                        "Irrigated seasonal horticulture",
+                        "Irrigated land in transition",
+                        "Intensive horticulture",
+                        "Intensive animal husbandry",
+                        "Manufacturing and industrial",
+                        "Residential and farm infrastructure",
+                        "Services",
+                        "Utilities",
+                        "Transport and communication",
+                        "Mining",
+                        "Waste treatment and disposal",
+                        "Water - Lake",
+                        "Water - Reservoir/dam",
+                        "Water - River",
+                        "Water - Channel/aqueduct",
+                        "Water - Marsh/wetland",
+                        "Water - Estuary/coastal waters"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of industry from which changed practices are implemented",
+                    "name": "industryTypeFrom",
+                    "constraints": [
+                        "Sugarcane",
+                        "Grazing",
+                        "Grains",
+                        "Grapes",
+                        "Vegetables",
+                        "Fruit trees",
+                        "Berries",
+                        "Dairy",
+                        "Cotton",
+                        "Forestry",
+                        "Aquaculture",
+                        "Fishing",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of industry from which changed practices are implemented",
+                    "name": "industryTypeTo",
+                    "constraints": [
+                        "Sugarcane",
+                        "Grazing",
+                        "Grains",
+                        "Grapes",
+                        "Vegetables",
+                        "Fruit trees",
+                        "Berries",
+                        "Dairy",
+                        "Cotton",
+                        "Forestry",
+                        "Aquaculture",
+                        "Fishing",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "Area of land in hectares on which changed management practices are implemented",
+                    "name": "changePracticeTreatedArea"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of farming entities adopting the specified changed management practices",
+                    "name": "entitiesAdoptingChange"
+                }
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "description": "The type of management action(s) implemented to facilitate the practice change",
+            "name": "managementAction",
+            "constraints": [
+                "Reduce intensity of existing landuse",
+                "Implement conservation farming measures",
+                "Apply improved technologies in management",
+                "Reduce adverse off-farm impacts of current practice",
+                "Fence out / manage stock access to watering points",
+                "Change landuse / industry",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Area of land in hectares over which environmental benefits are attained from the changed management practices",
+            "name": "benefitAreaHa"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Targeted outcomes to be attained from the changed management practices",
+            "name": "targetOutcomes",
+            "constraints": [
+                "Reduced transport of nutrients off-farm",
+                "Reduced transport of soils / sediment off-farm",
+                "Reduced transport of pesticides off-farm",
+                "Reduced transport of farm chemicals off-farm",
+                "Improved soil structure, health and fertility / productivity",
+                "Enhanced habitat for native flora and fauna",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Length of fence in kilometres erected to control stock access to watering points",
+            "name": "lengthOfFenceStockWatering"
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of the area in hectares on which land management practice changes were implemented",
+            "name": "totalChangePracticeTreatedArea",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "changePracticeTreatedArea",
+                    "fromList": "practiceChange"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of the number of farming entities adopting land management practice changes",
+            "name": "totalEntitiesAdoptingChange",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "entitiesAdoptingChange",
+                    "fromList": "practiceChange"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total area of adopted changed practices (Ha)",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalChangePracticeTreatedArea",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"changePracticeTreatedArea\",\"fromList\":\"practiceChange\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total No. of farming entities",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalEntitiesAdoptingChange",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"entitiesAdoptingChange\",\"fromList\":\"practiceChange\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "title": "Please list the details for each type of land management practice change related to this activity and any additional information that you can that is relevant:",
+            "source": "practiceChange",
+            "columns": [
+                {
+                    "title": "Landuse / industry change from: *",
+                    "source": "industryTypeChangeFrom",
+                    "computed": null,
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "industryTypeFrom",
+                    "computed": null,
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Landuse / industry change to: *",
+                    "source": "industryTypeChangeTo",
+                    "computed": null,
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "source": "industryTypeTo",
+                    "computed": null,
+                    "type": "selectOne",
+                    "validate": "required"
+                },
+                {
+                    "title": "Area treated by practice change (Ha): *",
+                    "source": "changePracticeTreatedArea",
+                    "computed": null,
+                    "type": "number",
+                    "validate": "required,digits"
+                },
+                {
+                    "title": "No. of farming entities adopting this practice change: *",
+                    "source": "entitiesAdoptingChange",
+                    "computed": null,
+                    "type": "number",
+                    "validate": "required,digits"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "editableRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "managementAction",
+                            "computed": null,
+                            "preLabel": "Management action(s) implemented for practice change: *",
+                            "type": "selectMany",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "lengthOfFenceStockWatering",
+                            "computed": null,
+                            "preLabel": "Length of fence installed for managing stock access to water:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "targetOutcomes",
+                            "computed": null,
+                            "preLabel": "Expected outcomes from changed practices:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "benefitAreaHa",
+                            "computed": null,
+                            "preLabel": "Area of land directly benefiting from the practice change:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
