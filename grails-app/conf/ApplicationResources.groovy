@@ -32,4 +32,5 @@ modules = {
         dependsOn 'jquery'
         resource url: 'js/vkbeautify.0.99.00.beta.js'
     }
+
 }

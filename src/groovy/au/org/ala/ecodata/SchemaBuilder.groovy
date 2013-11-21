@@ -74,7 +74,8 @@ class SchemaBuilder {
                 endDate:dateProperty(null),
                 mainTheme:textProperty(null),
                 progress:constrainedTextProperty([constraints:['planned','started','finished']]),
-                // TODO some of the outputs produce invalid schemas (e.g. revegetation has duplicate values) . outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
+                // TODO some of the outputs produce invalid schemas (e.g. revegetation has duplicate values) .
+                outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
             ]
         ]
 
@@ -184,7 +185,7 @@ class SchemaBuilder {
 
 
     def textProperty(property) {
-            return [type:'string']
+        return [type:'string']
     }
 
     def constrainedTextProperty(property) {

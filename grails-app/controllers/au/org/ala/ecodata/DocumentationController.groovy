@@ -47,7 +47,7 @@ class DocumentationController {
         def schema = schemaGenerator.schemaForActivity(activityModel)
         withFormat {
             json {render schema as JSON}
-            html {[name: activityModel.name, activity:schema]}
+            html {[name: activityModel.name, activity:schema, overview:schemaOverview(schema)]}
         }
     }
 
@@ -59,14 +59,45 @@ class DocumentationController {
             return
         }
         def outputTemplate = metadataService.getOutputModel(id)?.template
+        def outputName = metadataService.getOutputModel(id)?.name
+
 
         def outputDataModel = metadataService.getOutputDataModel(outputTemplate)
 
         def schema = schemaGenerator.schemaForOutput(outputDataModel)
         withFormat {
             json {render schema as JSON}
-            html {[name: outputDataModel.modelName, output: schema]}
+            html {[name:outputName, outputSchema: schema, overview:schemaOverview(schema)]}
         }
+    }
+
+    def postProjectActivities() {
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
+        def schema = schemaGenerator.projectSchema(metadataService.activitiesModel(), metadataService.programsModel())
+        [schema:schema]
+    }
+
+    def getProjectSites() {
+
+    }
+
+    def schemaOverview(schema) {
+
+        def overview = [:]
+        schema.properties.each{key, value ->
+            if (value.enum || (value.type != 'object' && value.type != 'array' )) {
+                overview << [(key):value.type?:'string']
+            }
+            else if (value.type == 'object' ) {
+                overview << [(key):schemaOverview(value)]
+            }
+            else if (value.type == 'array') {
+                overview << [(key):[schemaOverview(value.items)]]
+            }
+        }
+
+        overview
+
     }
 
 }
