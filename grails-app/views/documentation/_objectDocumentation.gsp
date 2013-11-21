@@ -1,8 +1,9 @@
 
 <r:require module="vkbeautify"/>
 
+<strong>Description</strong>
 <p>
-<g:message code="${'api.'+name+'.description'}"/>
+<g:message code="${'api.'+name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
 </p>
 <ul id="propertiesTabs" class="nav nav-tabs big-tabs">
     <li class="active"><a href="#overview" id="overview-tab" data-toggle="tab">Overview</a></li>

@@ -27,7 +27,9 @@
             </p>
         </div>
     </div>
+
     <div class="row-fluid">
+        <h3>Operations</h3>
 
         <h4>Project activities</h4>
         <p>
@@ -89,6 +91,55 @@
             </tbody>
         </table>
 
+    </div>
+
+    <div class="row-fluid">
+        <h3>Activities and Output Descriptions</h3>
+        <p>
+            In the MERIT system, each project has a collection of Activities.  Each activity in turn has a collection of Outputs.
+        </p>
+        <h4>Activities</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th class="api-method">Name</th><th class="api-description">Description</th>
+            </tr>
+            </thead>
+            <tbody>
+                <g:each in="${activitiesModel.activities}" var="activity">
+                    <tr>
+                        <td>
+                            <g:link action="activity" id="${activity.name+'.html'}">${activity.name}</g:link>
+                        </td>
+                        <td>
+                            <g:message code="${'api.'+activity.name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
+                        </td>
+                    </tr>
+                </g:each>
+
+            </tbody>
+        </table>
+        <h4>Outputs</h4>
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th class="api-method">Name</th><th class="api-description">Description</th>
+            </tr>
+            </thead>
+            <tbody>
+            <g:each in="${activitiesModel.outputs}" var="output">
+                <tr>
+                    <td>
+                        <g:link action="output" id="${output.name+'.html'}">${output.name}</g:link>
+                    </td>
+                    <td>
+                        <g:message code="${'api.'+output.name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
+                    </td>
+                </tr>
+            </g:each>
+
+            </tbody>
+        </table>
     </div>
 </div>
 
