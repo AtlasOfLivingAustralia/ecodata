@@ -3,7 +3,8 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "typeOfPlanning",
+            "description": "Categorisation of the type of plan developed",
+            "name": "typeOfPlan",
             "constraints": [
                 "Implementation works design",
                 "Project arrangements and governance",
@@ -13,21 +14,42 @@
                 "Marine protection plan",
                 "Property or Reserve plan",
                 "Recovery plan",
-                "Indigenous Protected Area plan",
                 "Burn plan (fire management)",
                 "Other (specify in notes)"
             ]
         },
         {
             "dataType": "text",
+            "description": "Version of plan being developed",
+            "name": "versionOfPlan",
+            "constraints": [
+                "New plan",
+                "Revision of an existing plan"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Revision number of the version of plan being developed",
+            "name": "versionRevisionNo"
+        },
+        {
+            "dataType": "text",
+            "description": "The title of the product of the planning process",
             "name": "nameOfPlan"
         },
         {
             "dataType": "number",
+            "description": "The area in square kilometres that the plan covers",
             "name": "planCoverageArea"
         },
         {
+            "dataType": "date",
+            "description": "The date that the plan was completed (not implemented)",
+            "name": "planCompletionDate"
+        },
+        {
             "dataType": "textarea",
+            "description": "Brief description of the planning process, outputs from it, and objectives of the plan",
             "name": "activityOutline"
         },
         {
@@ -35,29 +57,66 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [{
+    "viewModel": [
+        {
             "items": [
                 {
-                    "source": "typeOfPlanning",
+                    "items": [
+                        {
+                            "source": "typeOfPlan",
+                            "computed": null,
+                            "preLabel": "Type of planning being undertaken: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "nameOfPlan",
+                            "computed": null,
+                            "preLabel": "Name of the plan being developed: *",
+                            "type": "text",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "versionOfPlan",
+                            "computed": null,
+                            "preLabel": "Is this a new Plan or a revision of an existing Plan?: *",
+                            "type": "text",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "versionRevisionNo",
+                            "computed": null,
+                            "preLabel": "Version number of the plan being developed:",
+                            "type": "text"
+                        }
+                    ],
                     "computed": null,
-                    "preLabel": "Type of planning being undertaken: *",
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "col"
                 },
                 {
-                    "source": "nameOfPlan",
+                    "items": [
+                        {
+                            "source": "planCoverageArea",
+                            "computed": null,
+                            "preLabel": "Area of plan coverage (km2):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "planCompletionDate",
+                            "computed": null,
+                            "preLabel": "Date that the plan was completed:",
+                            "type": "date"
+                        }
+                    ],
                     "computed": null,
-                    "preLabel": "Name of the plan being developed: *",
-                    "type": "text",
-                    "validate": "required"
-                },
-                {
-                    "source": "planCoverageArea",
-                    "computed": null,
-                    "preLabel": "Area of plan coverage (km2):",
-                    "type": "number"
-                },
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
                 {
                     "source": "activityOutline",
                     "computed": null,
@@ -71,10 +130,10 @@
                     "type": "textarea"
                 }
             ],
-            "computed": null,
-            "type": "col"
-        }],
-        "class": "output-section",
-        "type": "row"
-    }]
+            "class": "output-section",
+            "type": "row"
+        }
+    ],
+    "class": "output-section",
+    "type": "row"
 }

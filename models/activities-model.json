@@ -1,11 +1,11 @@
 {
     "selectedActivity": {
-        "name": "Indigenous Employment & Enterprise",
+        "name": "Research",
         "type": "Activity",
         "outputs": [
-            "Indigenous Employment",
-            "Indigenous Enterprise",
-            "Activity Outcomes"
+            "Research Information",
+            "Participant Information",
+            "Knowledge Integration and Transfer"
         ]
     },
     "activities": [
@@ -16,6 +16,7 @@
                 "Event Details",
                 "Participant Information",
                 "Materials Provided to Participants",
+                "Knowledge Integration and Transfer",
                 "Activity Outcomes"
             ]
         },
@@ -25,6 +26,7 @@
             "outputs": [
                 "Revegetation Details",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Photo Points",
                 "Activity Outcomes"
             ]
@@ -34,6 +36,7 @@
             "type": "Activity",
             "outputs": [
                 "Seed Collection Details",
+                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -44,6 +47,7 @@
                 "Site Preparation Actions",
                 "Weed Treatment Details",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
@@ -52,6 +56,7 @@
             "type": "Activity",
             "outputs": [
                 "Fence Details",
+                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -61,6 +66,7 @@
             "outputs": [
                 "Weed Treatment Details",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Activity Outcomes"
             ]
         },
@@ -71,6 +77,7 @@
                 "Pest Management Details",
                 "Fence Details",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Activity Outcomes"
             ]
         },
@@ -80,6 +87,7 @@
             "outputs": [
                 "Fire Information",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Photo Points",
                 "Activity Outcomes"
             ]
@@ -106,28 +114,31 @@
             "outputs": ["Infrastructure Details"]
         },
         {
-            "name": "Manage Erosion",
+            "name": "Erosion Management",
             "type": "Activity",
             "outputs": [
                 "Erosion Management Details",
+                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
         {
-            "name": "Site Planning",
+            "name": "Works Implementation Planning",
             "type": "Activity",
             "outputs": [
-                "Planning Activity Details",
+                "Site Planning Details",
                 "Threatening Processes & Site Condition Risks",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
         {
-            "name": "Management plan development",
+            "name": "Management Plan Development",
             "type": "Activity",
             "outputs": [
-                "Planning Activity Details",
+                "Plan Development Details",
+                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -138,6 +149,7 @@
                 "Evidence of Weed Treatment",
                 "Weed Observation / Monitoring Details",
                 "Participant Information",
+                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
@@ -169,7 +181,8 @@
             "type": "Activity",
             "outputs": [
                 "Research Information",
-                "Participant Information"
+                "Participant Information",
+                "Knowledge Integration and Transfer"
             ]
         },
         {
@@ -251,6 +264,7 @@
             "outputs": [
                 "Indigenous Employment",
                 "Indigenous Enterprise",
+                "Knowledge Integration and Transfer",
                 "Activity Outcomes"
             ]
         },
@@ -259,7 +273,9 @@
             "type": "Activity",
             "outputs": [
                 "Debris Removal Details",
-                "Participant Information"
+                "Participant Information",
+                "Knowledge Integration and Transfer",
+                "Activity Outcomes"
             ]
         },
         {
@@ -267,7 +283,9 @@
             "type": "Activity",
             "outputs": [
                 "Access Control Details",
-                "Participant Information"
+                "Participant Information",
+                "Knowledge Integration and Transfer",
+                "Activity Outcomes"
             ]
         },
         {
@@ -279,6 +297,24 @@
             "name": "Project Administration",
             "type": "Activity",
             "outputs": ["Participant Information"]
+        },
+        {
+            "name": "Land Management Practice Change",
+            "type": "Activity",
+            "outputs": [
+                "Land Management Practice Change Details",
+                "Knowledge Integration and Transfer"
+            ]
+        },
+        {
+            "name": "Other Conservation Works for Threatened Species",
+            "type": "Activity",
+            "outputs": [
+                "Conservation Works Details",
+                "Participant Information",
+                "Knowledge Integration and Transfer",
+                "Activity Outcomes"
+            ]
         }
     ],
     "outputs": [
@@ -657,7 +693,7 @@
                     "label": "No. of Plan actions addressed"
                 }
             ],
-            "name": "Planning Activity Details"
+            "name": "Plan Development Details"
         },
         {
             "template": "pestManagementDetails",
@@ -975,6 +1011,47 @@
                 }
             ],
             "name": "Indigenous Enterprise"
+        },
+        {
+            "template": "sitePlanningDetails",
+            "scores": [],
+            "name": "Site Planning Details"
+        },
+        {
+            "template": "practiceChangeDetails",
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "name": "totalEntitiesAdoptingChange",
+                    "aggregationType": "SUM",
+                    "label": "Farming entities adopting sustainable practice change by type"
+                },
+                {
+                    "isOutputTarget": true,
+                    "name": "totalChangePracticeTreatedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area of land on which improved management practices are implemented",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": false,
+                    "name": "benefitAreaHa",
+                    "aggregationType": "SUM",
+                    "label": "Area of land benefiting from adoption of sustainable practices",
+                    "units": "Ha"
+                }
+            ],
+            "name": "Land Management Practice Change Details"
+        },
+        {
+            "template": "knowledgeTransfer",
+            "scores": [],
+            "name": "Knowledge Integration and Transfer"
+        },
+        {
+            "template": "otherConservationWorks",
+            "scores": [],
+            "name": "Conservation Works Details"
         }
     ]
 }

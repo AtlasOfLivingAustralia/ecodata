@@ -1,5 +1,5 @@
 {
-    "modelName": "Pest Management Details",
+    "modelName": "Pest and Disease Management Details",
     "dataModel": [
         {
             "dataType": "stringList",
@@ -12,7 +12,25 @@
                 "Bait & trap",
                 "Bait only",
                 "Fumigation",
+                "Harbour destruction",
+                "Positive competition",
+                "Biological control agents",
                 "Exclusion fencing (please specify fence details)",
+                "Animal pest disease management - quarantine",
+                "Animal pest disease management - treatment",
+                "Plant disease management - quarantine",
+                "Plant disease management - treatment",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "The purpose for which this activity is being undertaken",
+            "name": "pestManagementPurpose",
+            "constraints": [
+                "Experimental",
+                "Management",
+                "Research",
                 "Other (specify in notes)"
             ]
         },
@@ -43,6 +61,11 @@
             "name": "treatmentCostPerHa"
         },
         {
+            "dataType": "number",
+            "description": "Estimated density of pest animals per hectare prior to treatment action",
+            "name": "pestDensityPerHa"
+        },
+        {
             "dataType": "textarea",
             "name": "notes"
         }
@@ -70,12 +93,19 @@
                             "computed": null,
                             "preLabel": "No. of individuals killed/removed: *",
                             "type": "number",
-                            "validate": "required,digits"
+                            "validate": "required"
                         },
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
-                            "preLabel": "No. Ha. covered by treatment: *",
+                            "preLabel": "Area covered by treatment (Ha): *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "pestDensityPerHa",
+                            "computed": null,
+                            "preLabel": "Estimated pest density before treatment (No./Ha): *",
                             "type": "number",
                             "validate": "required"
                         }
@@ -96,6 +126,13 @@
                 },
                 {
                     "items": [
+                        {
+                            "source": "pestManagementPurpose",
+                            "computed": null,
+                            "preLabel": "Pest management purpose: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
                         {
                             "source": "treatmentCostPerHa",
                             "computed": null,
@@ -121,7 +158,7 @@
             "items": [{
                 "source": "notes",
                 "computed": null,
-                "preLabel": "Comments / notes",
+                "preLabel": "Comments / Notes",
                 "width": "90%",
                 "type": "textarea"
             }],

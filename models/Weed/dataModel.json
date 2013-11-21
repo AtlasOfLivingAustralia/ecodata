@@ -42,9 +42,19 @@
             ]
         },
         {
+            "dataType": "textarea",
+            "description": "Brief description of the general locality in which the treatment works were undertaken",
+            "name": "locality"
+        },
+        {
             "dataType": "number",
             "description": "The area in hectares of the patch of the target species being treated",
             "name": "areaTreatedHa"
+        },
+        {
+            "dataType": "number",
+            "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area",
+            "name": "linearAreaTreated"
         },
         {
             "dataType": "text",
@@ -96,75 +106,103 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [{
+    "viewModel": [
+        {
             "items": [
                 {
-                    "source": "targetSpecies",
+                    "items": [
+                        {
+                            "source": "targetSpecies",
+                            "computed": null,
+                            "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
+                            "type": "autocomplete",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "reproductiveStatus",
+                            "computed": null,
+                            "preLabel": "Reproductive status at the time of treatment:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "plantHealth",
+                            "computed": null,
+                            "preLabel": "Plant health at the time of treatment:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "controlStatus",
+                            "computed": null,
+                            "preLabel": "Control status: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "locality",
+                            "computed": null,
+                            "preLabel": "Locality of the treatment area:",
+                            "width": "60%",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
-                    "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
-                    "type": "autocomplete",
-                    "validate": "required"
+                    "type": "col"
                 },
                 {
-                    "source": "reproductiveStatus",
+                    "items": [
+                        {
+                            "source": "areaTreatedHa",
+                            "computed": null,
+                            "preLabel": "Treatment area (Ha): *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "linearAreaTreated",
+                            "computed": null,
+                            "preLabel": "Length of riparian or roadside area treated (Km): *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "treatmentEventType",
+                            "computed": null,
+                            "preLabel": "Type of treatment event: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "treatmentMethod",
+                            "computed": null,
+                            "preLabel": "Treatment method: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "chemicalDetails",
+                            "computed": null,
+                            "preLabel": "If chemical treatment, please provide details (chemical & application rate):",
+                            "width": "60%",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
-                    "preLabel": "Reproductive status at the time of treatment:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "plantHealth",
-                    "computed": null,
-                    "preLabel": "Plant health at the time of treatment:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "controlStatus",
-                    "computed": null,
-                    "preLabel": "Control status: *",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "source": "areaTreatedHa",
-                    "computed": null,
-                    "preLabel": "Treatment area (Ha): *",
-                    "type": "number",
-                    "validate": "required"
-                },
-                {
-                    "source": "treatmentEventType",
-                    "computed": null,
-                    "preLabel": "Type of treatment event: *",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "source": "treatmentMethod",
-                    "computed": null,
-                    "preLabel": "Treatment method: *",
-                    "type": "selectOne",
-                    "validate": "required"
-                },
-                {
-                    "source": "chemicalDetails",
-                    "computed": null,
-                    "preLabel": "If chemical treatment, please provide details (chemical & application rate):",
-                    "width": "60%",
-                    "type": "textarea"
-                },
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "width": "60%",
-                    "type": "textarea"
+                    "type": "col"
                 }
             ],
-            "computed": null,
-            "type": "col"
-        }],
-        "class": "output-section",
-        "type": "row"
-    }]
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }
