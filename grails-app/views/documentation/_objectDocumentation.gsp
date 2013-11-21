@@ -60,6 +60,16 @@
         <pre>
             to be supplied....
         </pre>
+
+        <g:if test="${example}">
+            <script>
+                $(function(){
+                    var example = ${example as grails.converters.JSON};
+                    $('#example pre').text(vkbeautify.json(example));
+                });
+            </script>
+        </g:if>
+
     </div>
 </div>
 

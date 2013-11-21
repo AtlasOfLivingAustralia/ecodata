@@ -33,6 +33,10 @@
                 <li>Any sites referenced by the planned activities must have been created in the MERIT system</li>
                 <li>The project must have no activities?  Or do we delete existing activities? Or add new ones?  Or allow updates by referencing an id?</li>
             </ul>
+            <h4>Authentication</h4>
+            <p>
+                Some form of authentication will be required.  The details have not yet been decided.
+            </p>
             <h4>Method / URL</h4>
             POST /external/draft/projectActivities
 
