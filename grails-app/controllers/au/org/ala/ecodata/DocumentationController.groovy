@@ -112,7 +112,7 @@ class DocumentationController {
         // Get demo data from the dev server....
         def url = 'http://ecodata-dev.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
 
-        def activities = get(url)
+        def activities = doGet(url)
         if (!activities.error) {
             def activity = activities.list.find{it.type == activityType}
             if (activity) {
@@ -127,7 +127,7 @@ class DocumentationController {
         return null
     }
 
-    def get(String url) {
+    private def doGet(String url) {
         def conn = new URL(url).openConnection()
         try {
             conn.setConnectTimeout(10000)

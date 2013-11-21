@@ -32,6 +32,10 @@ class UrlMappings {
 		"/$controller/$action?/$id?" {
 		}
 
+        "/ws/documentation/$version" {
+            controller = 'documentation'
+            action = 'index'
+        }
         "/ws/documentation/$version/$action/$id?" {
             controller = 'documentation'
         }
@@ -39,6 +43,8 @@ class UrlMappings {
         "/ws/external/$version/$action" {
             controller = 'external'
         }
+
+
 
 		"/"(view:"/index")
 		"500"(view:'/error')
