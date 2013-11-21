@@ -45,7 +45,8 @@ class DocumentationController {
 
         def activityModel = metadataService.activitiesModel().activities.find{it.name == id}
         def schema = schemaGenerator.schemaForActivity(activityModel)
-
+        def simplifiedSchema = schemaOverview(schema)
+        simplifiedSchema.type = id
         def exampleActivity = exampleActivity(id)
         def activityForm = null
 
@@ -54,7 +55,7 @@ class DocumentationController {
         }
         withFormat {
             json {render schema as JSON}
-            html {[name: activityModel.name, activity:schema, overview:schemaOverview(schema), example:exampleActivity, formUrl:activityForm]}
+            html {[name: activityModel.name, activity:schema, overview:simplifiedSchema, example:exampleActivity, formUrl:activityForm]}
         }
     }
 
@@ -68,13 +69,20 @@ class DocumentationController {
         def outputTemplate = metadataService.getOutputModel(id)?.template
         def outputName = metadataService.getOutputModel(id)?.name
 
+        def example = null
+        if (outputName) {
+            example = exampleOutput(outputName)
+        }
 
         def outputDataModel = metadataService.getOutputDataModel(outputTemplate)
 
         def schema = schemaGenerator.schemaForOutput(outputDataModel)
+        def simplifiedSchema = schemaOverview(schema)
+        simplifiedSchema.name = outputName
+
         withFormat {
             json {render schema as JSON}
-            html {[name:outputName, outputSchema: schema, overview:schemaOverview(schema)]}
+            html {[name:outputName, outputSchema: schema, overview:simplifiedSchema, example:example]}
         }
     }
 
@@ -121,10 +129,37 @@ class DocumentationController {
                 activity.remove('dateCreated')
                 activity.remove('lastUpdated')
                 activity.remove('projectStage')
+                activity.remove('status')
             }
             return activity
         }
         return null
+    }
+
+    def exampleOutput(outputType) {
+        // Get demo data from the dev server....
+        def url = 'http://ecodata-dev.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
+        def output
+
+        def activities = doGet(url)
+        if (!activities.error) {
+            activities.list.find { activity ->
+                output = activity.outputs.find {it.name == outputType}
+                println output
+                output
+            }
+            if (output) {
+                url = 'http://ecodata-dev.ala.org.au/ws/output/'+output.outputId
+                output = doGet(url)
+                if (!output.error) {
+                    output.remove('id')
+                    output.remove('lastUpdated')
+                    output.remove('dateCreated')
+                    output.remove('status')
+                }
+            }
+        }
+        output
     }
 
     private def doGet(String url) {
@@ -146,6 +181,6 @@ class DocumentationController {
             return error
         }
     }
-    
+
 
 }

@@ -100,7 +100,7 @@ class SchemaBuilder {
     def schemaForOutput(output) {
 
         def outputProperties = [:]
-        outputProperties << [type:[enum:[output.modelName]]]
+        outputProperties << [name:[enum:[output.modelName]]]
         outputProperties << [data:objectSchema(output.dataModel)]
         def schema = [id:"${urlPrefix}/output#", $schema:'http://json-schema.org/draft-04/schema#', type:'object', properties: outputProperties]
 
