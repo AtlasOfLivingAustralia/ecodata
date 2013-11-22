@@ -99,9 +99,11 @@ class DocumentationController {
     def schemaOverview(schema) {
 
         def overview = [:]
+        def required = schema.required?:[]
         schema.properties.each{key, value ->
             if (value.enum || (value.type != 'object' && value.type != 'array' )) {
-                overview << [(key):value.type?:'string']
+                def name = required.contains(key)?key+'*':key
+                overview << [(name):value.type?:'string']
             }
             else if (value.type == 'object' ) {
                 overview << [(key):schemaOverview(value)]
@@ -145,7 +147,6 @@ class DocumentationController {
         if (!activities.error) {
             activities.list.find { activity ->
                 output = activity.outputs.find {it.name == outputType}
-                println output
                 output
             }
             if (output) {

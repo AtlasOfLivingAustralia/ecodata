@@ -116,12 +116,23 @@ class SchemaBuilder {
 
     def objectSchema(objectProps) {
         def properties = [:]
+        def required = []
         objectProps.each {
             if (!it.computed) {  // TODO what to do about computed values?
+
+                def validationRules = new ValidationRules(it)
+                if (validationRules.mandatory) {
+                    required << it.name
+                }
                 properties << [(it.name):generatorFor(it).schemaFor(it)]
+
             }
         }
-        [type:'object', properties:properties]
+        def schema = [type:'object', properties:properties]
+        if (required) {
+            schema << [required:required]
+        }
+        schema
     }
 
 
@@ -216,5 +227,52 @@ class SchemaBuilder {
 
     def error(property) {
         return [type:'unsupported']
+    }
+
+    def validation(property) {
+        if (!property.validate) {
+            return
+        }
+        def criteria = property.validate.tokenize(',')
+        criteria = criteria.collect { it.trim() }
+
+        def values = []
+        criteria.each {
+            switch (it) {
+                case 'required':
+                    if (model.type == 'selectMany') {
+                        values << 'minCheckbox[1]'
+                    }
+                    else {
+                        values << it
+                    }
+                    break
+                case 'number':
+                    values << 'custom[number]'
+                    break
+                case it.startsWith('min:'):
+                    values << it
+                    break
+                default:
+                    values << it
+            }
+        }
+    }
+
+    class ValidationRules {
+
+        def validationRules = []
+        public ValidationRules(property) {
+            if (property.validate) {
+                def criteria = property.validate.tokenize(',')
+                validationRules = criteria.collect { it.trim() }
+            }
+
+        }
+
+
+        public boolean isMandatory() {
+            return validationRules.contains('required')
+        }
     }
 }

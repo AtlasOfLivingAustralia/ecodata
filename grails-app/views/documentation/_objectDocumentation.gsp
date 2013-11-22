@@ -33,12 +33,13 @@
                 <g:message code="api.overview.properties.table.caption" args="${[name]}"/>
             </p>
 
-            <div class="span9">
-                <g:render template="objectProperties" model="${[object:target?:object, name:name]}"/>
+            <div class="span11">
+                <g:set var="toDocument" value="${target?:object}"/>
+                <g:render template="objectProperties" model="${[object:toDocument, required:toDocument.required?:[], name:name]}"/>
 
                 <g:each in="${object.definitions}" var="definition">
                     <h5 id="${definition.key}"><g:message code="api.output.definition.heading" args="${[definition.key]}"/></h5>
-                    <g:render template="objectProperties" model="${[object:definition.value, name:name+'.'+definition.key, descriptionKeyPrefix:"api.property.${name}"]}"/>
+                    <g:render template="objectProperties" model="${[object:definition.value, required:definition.value.required?:[], name:name+'.'+definition.key, descriptionKeyPrefix:"api.property.${name}"]}"/>
                 </g:each>
             </div>
         </div>
