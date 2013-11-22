@@ -16,7 +16,14 @@
                 "Recovery plan",
                 "Burn plan (fire management)",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The title of the product of the planning process",
+            "name": "nameOfPlan",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -25,17 +32,13 @@
             "constraints": [
                 "New plan",
                 "Revision of an existing plan"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
             "description": "Revision number of the version of plan being developed",
             "name": "versionRevisionNo"
-        },
-        {
-            "dataType": "text",
-            "description": "The title of the product of the planning process",
-            "name": "nameOfPlan"
         },
         {
             "dataType": "number",
@@ -66,22 +69,19 @@
                             "source": "typeOfPlan",
                             "computed": null,
                             "preLabel": "Type of planning being undertaken: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "nameOfPlan",
                             "computed": null,
                             "preLabel": "Name of the plan being developed: *",
-                            "type": "text",
-                            "validate": "required"
+                            "type": "text"
                         },
                         {
                             "source": "versionOfPlan",
                             "computed": null,
                             "preLabel": "Is this a new Plan or a revision of an existing Plan?: *",
-                            "type": "text",
-                            "validate": "required"
+                            "type": "text"
                         },
                         {
                             "source": "versionRevisionNo",

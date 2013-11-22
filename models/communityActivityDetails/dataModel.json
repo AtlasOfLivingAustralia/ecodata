@@ -12,17 +12,20 @@
                 "Works implementation",
                 "Planning",
                 "Other (describe in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
             "description": "The theme or topic covered during the event. Add in notes if more than one",
-            "name": "eventTopics"
+            "name": "eventTopics",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The duration of the event in hours. Part hour expressed as a decimal",
-            "name": "eventDurationHrs"
+            "name": "eventDurationHrs",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "text",
@@ -36,8 +39,7 @@
                     "source": "eventPurpose",
                     "computed": null,
                     "preLabel": "Purpose of event: *",
-                    "type": "selectMany",
-                    "validate": "required"
+                    "type": "selectMany"
                 }],
                 "computed": null,
                 "type": "col"
@@ -48,15 +50,13 @@
                         "source": "eventTopics",
                         "computed": null,
                         "preLabel": "Topics covered: *",
-                        "type": "text",
-                        "validate": "required"
+                        "type": "text"
                     },
                     {
                         "source": "eventDurationHrs",
                         "computed": null,
                         "preLabel": "Event Duration (Hrs): *",
-                        "type": "number",
-                        "validate": "required,min[0]"
+                        "type": "number"
                     }
                 ],
                 "computed": null,

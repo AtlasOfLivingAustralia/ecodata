@@ -2,7 +2,7 @@
     "modelName": "indigenousEnterprise",
     "dataModel": [
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "Description of the type(s) of enterprises established by indigenous communities as a result of this project",
             "name": "typeOfEnterprise"
         },
@@ -10,19 +10,22 @@
             "dataType": "number",
             "description": "The number of new enterprises established as a result of this project",
             "primaryResult": "true",
-            "name": "totalNewEnterprises"
+            "name": "totalNewEnterprises",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of indigenous communities in which new enterprises have been established as a result of this project",
             "primaryResult": "true",
-            "name": "numberOfIndigenousCommunities"
+            "name": "numberOfIndigenousCommunities",
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of formal (contractual) engagements of an Indigenous enterprise resulting from this project",
             "primaryResult": "true",
-            "name": "totalIndigenousEnterprisesEngaged"
+            "name": "totalIndigenousEnterprisesEngaged",
+            "validate": "required,min[0]"
         }
     ],
     "viewModel": [{
@@ -30,6 +33,7 @@
             "items": [
                 {
                     "source": "typeOfEnterprise",
+                    "computed": null,
                     "preLabel": "type(s) of enterprises established by indigenous communities:",
                     "width": "20%",
                     "type": "textarea"
@@ -38,22 +42,19 @@
                     "source": "totalNewEnterprises",
                     "computed": null,
                     "preLabel": "No. of new enterprises established: *",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "numberOfIndigenousCommunities",
                     "computed": null,
                     "preLabel": "No. of indigenous communities in which new enterprises have been established:",
-                    "type": "number",
-                    "validate": "min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "totalIndigenousEnterprisesEngaged",
                     "computed": null,
                     "preLabel": "No of formal (contractual) engagements of an Indigenous enterprise: *",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 }
             ],
             "computed": null,

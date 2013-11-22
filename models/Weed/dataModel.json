@@ -4,7 +4,8 @@
         {
             "dataType": "species",
             "description": "The plant species being targeted for treatment",
-            "name": "targetSpecies"
+            "name": "targetSpecies",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -39,7 +40,8 @@
                 "Under monitoring",
                 "Closed",
                 "Unknown"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "textarea",
@@ -49,12 +51,14 @@
         {
             "dataType": "number",
             "description": "The area in hectares of the patch of the target species being treated",
-            "name": "areaTreatedHa"
+            "name": "areaTreatedHa",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area",
-            "name": "linearAreaTreated"
+            "name": "linearAreaTreated",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -63,7 +67,8 @@
             "constraints": [
                 "Initial treatment",
                 "Follow-up treatment"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -92,7 +97,7 @@
             ]
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "Details of chemical treatment including chemical agent and rate of application",
             "name": "chemicalDetails"
         },
@@ -115,8 +120,7 @@
                             "source": "targetSpecies",
                             "computed": null,
                             "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
-                            "type": "autocomplete",
-                            "validate": "required"
+                            "type": "autocomplete"
                         },
                         {
                             "source": "reproductiveStatus",
@@ -134,8 +138,7 @@
                             "source": "controlStatus",
                             "computed": null,
                             "preLabel": "Control status: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "locality",
@@ -154,22 +157,19 @@
                             "source": "areaTreatedHa",
                             "computed": null,
                             "preLabel": "Treatment area (Ha): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "linearAreaTreated",
                             "computed": null,
                             "preLabel": "Length of riparian or roadside area treated (Km): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "treatmentEventType",
                             "computed": null,
                             "preLabel": "Type of treatment event: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "treatmentMethod",

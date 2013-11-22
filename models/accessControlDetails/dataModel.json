@@ -25,7 +25,8 @@
                 "Constructed parking bays",
                 "Signage",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -44,7 +45,8 @@
         {
             "dataType": "number",
             "description": "The number of access management structures installed during this activity",
-            "name": "numberOfInstallations"
+            "name": "numberOfInstallations",
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -63,15 +65,17 @@
         {
             "dataType": "number",
             "description": "Length in kilometres of fences and boardwalks installed during this activity",
-            "name": "lengthOfLinealStructures"
+            "name": "lengthOfLinealStructures",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Total number of visitors managed for access during this activity",
-            "name": "visitationNumber"
+            "name": "visitationNumber",
+            "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],
@@ -90,15 +94,13 @@
                             "source": "structuresInstalled",
                             "computed": null,
                             "preLabel": "Structure(s) installed: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         },
                         {
                             "source": "numberOfInstallations",
                             "computed": null,
                             "preLabel": "No. of access management structures installed: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -116,8 +118,7 @@
                             "source": "lengthOfLinealStructures",
                             "computed": null,
                             "preLabel": "Length of fences and boardwalks installed (Km): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "accessControlIssues",
@@ -129,8 +130,7 @@
                             "source": "visitationNumber",
                             "computed": null,
                             "preLabel": "No. of visitors (people managed for access): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         }
                     ],
                     "computed": null,

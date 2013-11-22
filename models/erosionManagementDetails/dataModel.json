@@ -24,7 +24,8 @@
                 "Windbreaks",
                 "Erosion control structures (engineering works)",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -44,7 +45,8 @@
                 "Wind scalding",
                 "Wave action",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -69,25 +71,29 @@
         {
             "dataType": "number",
             "description": "Area in hectares affected by erosion",
-            "name": "erosionAffectedArea"
+            "name": "erosionAffectedArea",
+            "validate": "digits"
         },
         {
             "dataType": "number",
             "description": "Area in hectares of erosion treated by this activity",
-            "name": "erosionAreaTreated"
+            "name": "erosionAreaTreated",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Length in lineal metres of the longest axis of the treatment area",
-            "name": "erosionLength"
+            "name": "erosionLength",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The number of individual erosion management structures installed during this activity",
-            "name": "erosionStructuresInstalled"
+            "name": "erosionStructuresInstalled",
+            "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "erosionNotes"
         }
     ],
@@ -100,29 +106,25 @@
                             "source": "erosionAffectedArea",
                             "computed": null,
                             "preLabel": "Area of erosion on this site (Ha.):",
-                            "type": "number",
-                            "validate": "digits"
+                            "type": "number"
                         },
                         {
                             "source": "erosionAreaTreated",
                             "computed": null,
                             "preLabel": "Area of erosion being treated: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "erosionLength",
                             "computed": null,
                             "preLabel": "Length of stream/coastline treated (m): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "erosionType",
                             "computed": null,
                             "preLabel": "Type(s) of erosion treated: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         }
                     ],
                     "computed": null,
@@ -133,8 +135,7 @@
                         "source": "erosionTreatmentMethod",
                         "computed": null,
                         "preLabel": "Erosion management method(s) used: *",
-                        "type": "selectMany",
-                        "validate": "required"
+                        "type": "selectMany"
                     }],
                     "computed": null,
                     "type": "col"
@@ -151,8 +152,7 @@
                             "source": "erosionStructuresInstalled",
                             "computed": null,
                             "preLabel": "No. of erosion control structures installed: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         }
                     ],
                     "computed": null,

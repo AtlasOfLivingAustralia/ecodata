@@ -38,17 +38,20 @@
                 "Ecology management",
                 "Unplanned fire event",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Area in hectares of the fire ground",
-            "name": "areaOfFireHa"
+            "name": "areaOfFireHa",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Area of the fire ground actually burnt expressed as a percentage of the total fire ground area",
-            "name": "areaBurntPercent"
+            "name": "areaBurntPercent",
+            "validate": "required,min[0],max[100]"
         },
         {
             "dataType": "date",
@@ -136,22 +139,19 @@
                         "source": "fireReason",
                         "computed": null,
                         "preLabel": "Reason(s) for burn: *",
-                        "type": "selectMany",
-                        "validate": "required"
+                        "type": "selectMany"
                     },
                     {
                         "source": "areaOfFireHa",
                         "computed": null,
                         "preLabel": "Area of burn (Ha): *",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     },
                     {
                         "source": "areaBurntPercent",
                         "computed": null,
                         "preLabel": "Actual burnt area (% of fire ground area): *",
-                        "type": "number",
-                        "validate": "required,min[0],max[100]"
+                        "type": "number"
                     },
                     {
                         "source": "fireLastBurnDate",

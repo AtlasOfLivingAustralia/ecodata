@@ -23,7 +23,8 @@
                 "Sparse/scattered shrubland",
                 "Open grassy woodland",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -63,7 +64,8 @@
                 "Only isolated Paddock trees within 1 km",
                 "Patch surrounded by grazing",
                 "Patch surrounded by cropping"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -89,7 +91,8 @@
                     "speciesList": "project",
                     "noTotal": "true",
                     "description": "The species planted / sown",
-                    "name": "species"
+                    "name": "species",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
@@ -269,8 +272,7 @@
                             "source": "vegDescriptionAtPlanting",
                             "computed": null,
                             "preLabel": "Vegetation at time of planting: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "revegetationMethod",
@@ -294,8 +296,7 @@
                             "source": "connectivityIndex",
                             "computed": null,
                             "preLabel": "Landscape connectivity: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         }
                     ],
                     "computed": null,

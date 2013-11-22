@@ -4,43 +4,51 @@
         {
             "dataType": "number",
             "description": "Number of indigenous rangers employed full time on the project",
-            "name": "noOfIndigenousRangersFt"
+            "name": "noOfIndigenousRangersFt",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of indigenous rangers employed part time on the project",
-            "name": "noOfIndigenousRangersPt"
+            "name": "noOfIndigenousRangersPt",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of male indigenous rangers employed on the project",
-            "name": "noOfIndigenousRangersMale"
+            "name": "noOfIndigenousRangersMale",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of female indigenous rangers employed on the project",
-            "name": "noOfIndigenousRangersFemale"
+            "name": "noOfIndigenousRangersFemale",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "primaryResult": "true",
             "description": "Number of indigenous people employed full time on the project who are not rangers",
-            "name": "noOfIndigenousNonRangersFt"
+            "name": "noOfIndigenousNonRangersFt",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of indigenous people employed part time on the project who are not rangers",
-            "name": "noOfIndigenousNonRangersPt"
+            "name": "noOfIndigenousNonRangersPt",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of indigenous males employed on the project who are not rangers",
-            "name": "noOfIndigenousNonRangersMale"
+            "name": "noOfIndigenousNonRangersMale",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of indigenous females employed on the project who are not rangers",
-            "name": "noOfIndigenousNonRangersFemale"
+            "name": "noOfIndigenousNonRangersFemale",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
@@ -118,8 +126,7 @@
                         "computed": null,
                         "preLabel": "Full time: *",
                         "width": "20%",
-                        "type": "number",
-                        "validate": "required,min[0]"
+                        "type": "number"
                     },
                     {
                         "source": "noOfIndigenousRangersPt",

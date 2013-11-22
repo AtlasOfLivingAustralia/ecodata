@@ -21,7 +21,8 @@
                 "Plant disease management - quarantine",
                 "Plant disease management - treatment",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -32,7 +33,8 @@
                 "Management",
                 "Research",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -48,22 +50,32 @@
         {
             "dataType": "species",
             "description": "Pest species targeted for treatment",
-            "name": "targetSpecies"
+            "name": "targetSpecies",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Number of target pest animals removed during this activity",
-            "name": "pestAnimalsTreatedNo"
+            "name": "pestAnimalsTreatedNo",
+            "validate": "required"
+        },
+        {
+            "description": "Area covered by treatment (Ha): *",
+            "name": "areaTreatedHa",
+            "type": "number",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Cost of this treatment on a per hectare basis",
-            "name": "treatmentCostPerHa"
+            "name": "treatmentCostPerHa",
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
             "description": "Estimated density of pest animals per hectare prior to treatment action",
-            "name": "pestDensityPerHa"
+            "name": "pestDensityPerHa",
+            "validate": "required"
         },
         {
             "dataType": "textarea",
@@ -79,8 +91,7 @@
                             "source": "targetSpecies",
                             "computed": null,
                             "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
-                            "type": "autocomplete",
-                            "validate": "required"
+                            "type": "autocomplete"
                         },
                         {
                             "source": "treatmentIncentiveMethod",
@@ -92,22 +103,19 @@
                             "source": "pestAnimalsTreatedNo",
                             "computed": null,
                             "preLabel": "No. of individuals killed/removed: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
                             "preLabel": "Area covered by treatment (Ha): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "pestDensityPerHa",
                             "computed": null,
                             "preLabel": "Estimated pest density before treatment (No./Ha): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -118,8 +126,7 @@
                         "source": "pestManagementMethod",
                         "computed": null,
                         "preLabel": "Pest management method: *",
-                        "type": "selectMany",
-                        "validate": "required"
+                        "type": "selectMany"
                     }],
                     "computed": null,
                     "type": "col"
@@ -130,15 +137,13 @@
                             "source": "pestManagementPurpose",
                             "computed": null,
                             "preLabel": "Pest management purpose: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "treatmentCostPerHa",
                             "computed": null,
                             "preLabel": "Cost of treatment / Ha.:",
-                            "type": "number",
-                            "validate": "min[0]"
+                            "type": "number"
                         },
                         {
                             "source": "activityDuration",

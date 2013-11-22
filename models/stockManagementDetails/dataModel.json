@@ -10,12 +10,14 @@
                 "Promote woody plant growth",
                 "Reduce wildfire risk & intensity",
                 "Other (describe in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "Area in hectares where grazing is used as a management tool under this activity",
-            "name": "areaOfStockManagementHa"
+            "name": "areaOfStockManagementHa",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -37,15 +39,17 @@
                         "Goats",
                         "Llama / Alpaca",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
-                    "name": "stockingDensity"
+                    "name": "stockingDensity",
+                    "validate": "required"
                 },
                 {
-                    "dataType": "textarea",
+                    "dataType": "text",
                     "name": "notes"
                 }
             ]
@@ -60,15 +64,13 @@
                             "source": "stockManagementReason",
                             "computed": null,
                             "preLabel": "What land management issue(s) are you using stock grazing to manage?: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         },
                         {
                             "source": "areaOfStockManagementHa",
                             "computed": null,
                             "preLabel": "Area managed (Ha): *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -102,14 +104,12 @@
                 {
                     "title": "Type of stock used: *",
                     "source": "stockingManagementSpecies",
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "title": "Stocking density (DSE / Ha): *",
                     "source": "stockingDensity",
-                    "type": "number",
-                    "validate": "required"
+                    "type": "number"
                 }
             ],
             "userAddedRows": "true",

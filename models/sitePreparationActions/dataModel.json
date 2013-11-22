@@ -19,15 +19,17 @@
                     "Scalping",
                     "Scarifying",
                     "Other (specify in notes)"
-                ]
+                ],
+                "validate": "required"
             },
             {
                 "dataType": "number",
                 "description": "Area in hectares subject to the associated site preparation works",
-                "name": "preparationArea"
+                "name": "preparationArea",
+                "validate": "required"
             },
             {
-                "dataType": "textarea",
+                "dataType": "text",
                 "name": "notes"
             }
         ]
@@ -38,14 +40,12 @@
             {
                 "title": "Ground preparation works: *",
                 "source": "groundPreparationWorks",
-                "type": "selectOne",
-                "validate": "required"
+                "type": "selectOne"
             },
             {
                 "title": "Area prepared (Ha): *",
                 "source": "preparationArea",
-                "type": "number",
-                "validate": "required"
+                "type": "number"
             },
             {
                 "title": "Comments / Notes:",

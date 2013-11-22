@@ -8,12 +8,14 @@
                 {
                     "dataType": "species",
                     "description": "The species providing source seedstock",
-                    "name": "seedSourceSpecies"
+                    "name": "seedSourceSpecies",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "The weight of seed collected in kilograms",
-                    "name": "seedCollectedKg"
+                    "name": "seedCollectedKg",
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -33,7 +35,8 @@
         {
             "dataType": "text",
             "description": "The locality from which the source seedstock was collected",
-            "name": "seedSourceProvenance"
+            "name": "seedSourceProvenance",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -52,8 +55,7 @@
                 "source": "seedSourceProvenance",
                 "computed": null,
                 "preLabel": "Provenance of source plant(s): *",
-                "type": "text",
-                "validate": "required"
+                "type": "text"
             },
             {
                 "source": "seedBankRepository",
@@ -68,14 +70,12 @@
                     {
                         "title": "Species: *  <i>(start typing a species name)<\/i>",
                         "source": "seedSourceSpecies",
-                        "type": "autocomplete",
-                        "validate": "required"
+                        "type": "autocomplete"
                     },
                     {
                         "title": "Seed collected (Kg): *",
                         "source": "seedCollectedKg",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     },
                     {
                         "title": "Health of source plant(s):",

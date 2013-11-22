@@ -4,22 +4,26 @@
         {
             "dataType": "number",
             "description": "The number of brochures taken by participants at an event",
-            "name": "numberOfBrochures"
+            "name": "numberOfBrochures",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The number of items of written materials (non-brochures) taken by participants at an event",
-            "name": "numberOfWrittenMaterials"
+            "name": "numberOfWrittenMaterials",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The number of individual participants taking materials at an event",
-            "name": "numberOfMaterialRecipients"
+            "name": "numberOfMaterialRecipients",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The number of individual displays and presentations given at an event",
-            "name": "numberOfDisplays"
+            "name": "numberOfDisplays",
+            "validate": "required"
         }
     ],
     "viewModel": [{
@@ -30,15 +34,13 @@
                         "source": "numberOfBrochures",
                         "computed": null,
                         "preLabel": "No. of Brochures",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     },
                     {
                         "source": "numberOfWrittenMaterials",
                         "computed": null,
                         "preLabel": "No. of Written Materials",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     }
                 ],
                 "computed": null,
@@ -50,15 +52,13 @@
                         "source": "numberOfMaterialRecipients",
                         "computed": null,
                         "preLabel": "No. of Material Recipients",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     },
                     {
                         "source": "numberOfDisplays",
                         "computed": null,
                         "preLabel": "No. of Displays",
-                        "type": "number",
-                        "validate": "required"
+                        "type": "number"
                     }
                 ],
                 "computed": null,

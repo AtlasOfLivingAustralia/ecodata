@@ -55,7 +55,8 @@
                         "Water - Channel/aqueduct",
                         "Water - Marsh/wetland",
                         "Water - Estuary/coastal waters"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -107,7 +108,8 @@
                         "Water - Channel/aqueduct",
                         "Water - Marsh/wetland",
                         "Water - Estuary/coastal waters"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -127,7 +129,8 @@
                         "Aquaculture",
                         "Fishing",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -147,17 +150,20 @@
                         "Aquaculture",
                         "Fishing",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "Area of land in hectares on which changed management practices are implemented",
-                    "name": "changePracticeTreatedArea"
+                    "name": "changePracticeTreatedArea",
+                    "validate": "required,digits"
                 },
                 {
                     "dataType": "number",
                     "description": "The number of farming entities adopting the specified changed management practices",
-                    "name": "entitiesAdoptingChange"
+                    "name": "entitiesAdoptingChange",
+                    "validate": "required,digits"
                 }
             ]
         },
@@ -173,7 +179,8 @@
                 "Fence out / manage stock access to watering points",
                 "Change landuse / industry",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -200,7 +207,7 @@
             "name": "lengthOfFenceStockWatering"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         },
         {
@@ -261,41 +268,35 @@
                     "title": "Landuse / industry change from: *",
                     "source": "industryTypeChangeFrom",
                     "computed": null,
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "source": "industryTypeFrom",
                     "computed": null,
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "title": "Landuse / industry change to: *",
                     "source": "industryTypeChangeTo",
                     "computed": null,
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "source": "industryTypeTo",
                     "computed": null,
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "title": "Area treated by practice change (Ha): *",
                     "source": "changePracticeTreatedArea",
                     "computed": null,
-                    "type": "number",
-                    "validate": "required,digits"
+                    "type": "number"
                 },
                 {
                     "title": "No. of farming entities adopting this practice change: *",
                     "source": "entitiesAdoptingChange",
                     "computed": null,
-                    "type": "number",
-                    "validate": "required,digits"
+                    "type": "number"
                 }
             ],
             "class": "output-section",
@@ -311,8 +312,7 @@
                             "source": "managementAction",
                             "computed": null,
                             "preLabel": "Management action(s) implemented for practice change: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         },
                         {
                             "source": "lengthOfFenceStockWatering",

@@ -8,7 +8,8 @@
             "constraints": [
                 "Yes",
                 "No"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -17,12 +18,14 @@
             "constraints": [
                 "Yes",
                 "No"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The number of unique indigenous on-country visits undertaken as part of this activity that were attended by older and younger people together",
-            "name": "numberOnCountryVisits"
+            "name": "numberOnCountryVisits",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
@@ -58,22 +61,19 @@
                         "computed": null,
                         "preLabel": "No. of indigenous on-country visits with older and younger people together: *",
                         "width": "20%",
-                        "type": "number",
-                        "validate": "required,min[0]"
+                        "type": "number"
                     },
                     {
                         "source": "indigenousDecisionMakers",
                         "computed": null,
                         "preLabel": "Were indigenous decision-makers involved in organising or running this activity?: *",
-                        "type": "selectOne",
-                        "validate": "required"
+                        "type": "selectOne"
                     },
                     {
                         "source": "indigenousKnowledgeDocumented",
                         "computed": null,
                         "preLabel": "Has any indigenous knowledge been documented as part of this activity?: *",
-                        "type": "selectOne",
-                        "validate": "required"
+                        "type": "selectOne"
                     }
                 ],
                 "computed": null,

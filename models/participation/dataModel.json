@@ -5,32 +5,38 @@
             "dataType": "number",
             "primaryResult": "true",
             "description": "The number of participants involved in an activity who are not employed in the project",
-            "name": "totalParticipantsNotEmployed"
+            "name": "totalParticipantsNotEmployed",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of indigenous people participating in an activity who are not employed in the project",
-            "name": "numberOfIndigenousParticipants"
+            "name": "numberOfIndigenousParticipants",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of unique indigenous on-country visits undertaken as part of this activity",
-            "name": "numberOnCountryVisits"
+            "name": "numberOnCountryVisits",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of participants involved in an activity who have not attended other activities associated with the project",
-            "name": "totalParticipantsNew"
+            "name": "totalParticipantsNew",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of different community groups participating in this activity",
-            "name": "numberOfCommunityGroups"
+            "name": "numberOfCommunityGroups",
+            "validate": "required,min[0]"
         },
         {
             "dataType": "number",
             "description": "The number of farm entities represented by participants in an activity, which have not previously been represented at other project activities",
-            "name": "numberOfFarmingEntitiesNew"
+            "name": "numberOfFarmingEntitiesNew",
+            "validate": "required,min[0]"
         }
     ],
     "viewModel": [{
@@ -41,48 +47,42 @@
                     "computed": null,
                     "preLabel": "Total No. of Participants (not employed on project): *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "numberOfIndigenousParticipants",
                     "computed": null,
                     "preLabel": "No of Indigenous Participants (not employed on project): *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "totalParticipantsNew",
                     "computed": null,
                     "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project): *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "numberOnCountryVisits",
                     "computed": null,
                     "preLabel": "Total No. of indigenous on-country visits: *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "numberOfCommunityGroups",
                     "computed": null,
                     "preLabel": "No of community groups participating: *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 },
                 {
                     "source": "numberOfFarmingEntitiesNew",
                     "computed": null,
                     "preLabel": "No of farming entities not previously attending events for this project: *",
                     "width": "20%",
-                    "type": "number",
-                    "validate": "required,min[0]"
+                    "type": "number"
                 }
             ],
             "computed": null,

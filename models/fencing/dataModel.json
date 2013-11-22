@@ -14,7 +14,8 @@
                 "Cyclone",
                 "Solid Sheet (pailing, pickets, sheet metal, etc.)",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -53,8 +54,7 @@
                     "computed": null,
                     "preLabel": "Fence Type: *",
                     "width": "10%",
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "source": "lengthOfFence",

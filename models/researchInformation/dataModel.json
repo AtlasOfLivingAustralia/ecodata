@@ -17,20 +17,22 @@
                 "Cropping regime impacts",
                 "Farm productivity",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
             "description": "Name of the research project",
-            "name": "nameOfResearchProject"
+            "name": "nameOfResearchProject",
+            "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "Description of the objectives of the research project",
             "name": "researchObjectives"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "List of the collaborators involved in the research project",
             "name": "researchCollaborators"
         },
@@ -46,15 +48,13 @@
                     "source": "typeOfResearch",
                     "computed": null,
                     "preLabel": "Type of research being undertaken: *",
-                    "type": "selectOne",
-                    "validate": "required"
+                    "type": "selectOne"
                 },
                 {
                     "source": "nameOfResearchProject",
                     "computed": null,
                     "preLabel": "Name of the research project: *",
-                    "type": "text",
-                    "validate": "required"
+                    "type": "text"
                 },
                 {
                     "source": "researchObjectives",
