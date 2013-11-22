@@ -680,11 +680,13 @@ class ElasticSearchService {
     def addFacetFilter(filterList) {
         def fb
 
-        filterList.find {
+        filterList.each {
             if (it) {
+                if (!fb) {
+                    fb = FilterBuilders.boolFilter()
+                }
                 def fqs = it.tokenize(":")
-                QueryBuilder qb = QueryBuilders.matchQuery(fqs[0], fqs[1]);
-                fb =  FilterBuilders.queryFilter(qb)
+                fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
             }
         }
 
