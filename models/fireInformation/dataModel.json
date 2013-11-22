@@ -7,7 +7,7 @@
             "name": "fireIgnitionSource",
             "constraints": [
                 "Lightning",
-                "Fire lighters",
+                "Drip torch",
                 "Aerial incendiary",
                 "Accidental human",
                 "Arson",
@@ -44,6 +44,11 @@
             "dataType": "number",
             "description": "Area in hectares of the fire ground",
             "name": "areaOfFireHa"
+        },
+        {
+            "dataType": "number",
+            "description": "Area of the fire ground actually burnt expressed as a percentage of the total fire ground area",
+            "name": "areaBurntPercent"
         },
         {
             "dataType": "date",
@@ -140,6 +145,13 @@
                         "preLabel": "Area of burn (Ha): *",
                         "type": "number",
                         "validate": "required"
+                    },
+                    {
+                        "source": "areaBurntPercent",
+                        "computed": null,
+                        "preLabel": "Actual burnt area (% of fire ground area): *",
+                        "type": "number",
+                        "validate": "required,min[0],max[100]"
                     },
                     {
                         "source": "fireLastBurnDate",
