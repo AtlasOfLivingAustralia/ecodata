@@ -36,17 +36,18 @@ class SchemaBuilder {
             type:'object',
             properties: [
                 projectId:[
-                        type:'object', description:'Identifies the project',
+                        type:'object',
+                        description:"Identifies the project by one of its unique properties (grantId, externalId, internal guid).  <pre>{type:string, value:string}</pre> Type must be one of ['grantId','externalId','guid'].",
                         properties:[
-                                type:constrainedTextProperty([constraints:['grantId', 'externalId', 'internalId']]),
+                                type:constrainedTextProperty([constraints:['grantId', 'externalId', 'guid']]),
                                 value:textProperty(null)
                         ],
                         required: ['type', 'value']
                 ],
-                startDate:dateProperty(null),
-                endDate:dateProperty(null),
-                program:constrainedTextProperty([constraints: programs]),
-                subprogram:textProperty(null),
+                //startDate:dateProperty(null),
+                //endDate:dateProperty(null),
+                //program:constrainedTextProperty([constraints: programs]),
+                //subprogram:textProperty(null),
                 //outputTargets:[type:'array', items:[type:'object', anyOf:allowedOutputs]],
                 activities:[type:'array', items:[type:'object', anyOf:activities]]
             ],
