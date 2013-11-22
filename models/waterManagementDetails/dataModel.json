@@ -114,6 +114,7 @@
                 "Constructed channel",
                 "Natural channel",
                 "Pipes",
+                "Pump",
                 "Flow splitters",
                 "Water supply tank",
                 "Groundwater pump (wind, solar, other)",
@@ -121,6 +122,12 @@
                 "Dam",
                 "Vanes",
                 "Head & cross regulators",
+                "Pollution trap",
+                "Water-sensitive urban design installation",
+                "Water treatment facility installation",
+                "Water treatment facility upgrade",
+                "Water recycling facility installation",
+                "Desalination plant installation",
                 "Other (specify in notes)"
             ]
         },
@@ -128,6 +135,11 @@
             "dataType": "number",
             "description": "The number of new hydrology management structures installed on the site of the subject water body resulting from this management action",
             "name": "hydrologicalStructuresInstalled"
+        },
+        {
+            "dataType": "number",
+            "description": "The area of catchment in hectares being managed as a result of this management action",
+            "name": "managedArea"
         },
         {
             "dataType": "text",
@@ -234,17 +246,17 @@
                             "type": "selectOne"
                         },
                         {
+                            "source": "isCurrentFlowNatural",
+                            "computed": null,
+                            "preLabel": "Current flow regime of the subject water body?: *",
+                            "type": "selectOne",
+                            "validate": "required"
+                        },
+                        {
                             "source": "hydrologicalStructuresOnsite",
                             "computed": null,
                             "preLabel": "What structure(s) are in place to manage water at this site?:",
                             "type": "selectMany"
-                        },
-                        {
-                            "source": "hydrologicalStructuresInstalled",
-                            "computed": null,
-                            "preLabel": "How many new structures been installed to manage the hydrological regime at this site?: *",
-                            "type": "number",
-                            "validate": "required"
                         }
                     ],
                     "computed": null,
@@ -253,10 +265,10 @@
                 {
                     "items": [
                         {
-                            "source": "isCurrentFlowNatural",
+                            "source": "hydrologicalStructuresInstalled",
                             "computed": null,
-                            "preLabel": "What is the current flow regime of the subject water body?: *",
-                            "type": "selectOne",
+                            "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
+                            "type": "number",
                             "validate": "required"
                         },
                         {
@@ -267,17 +279,24 @@
                             "validate": "required"
                         },
                         {
+                            "source": "hydrologicalStructuresInstalled",
+                            "computed": null,
+                            "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "source": "managedArea",
+                            "computed": null,
+                            "preLabel": "Area of catchment being managed/treated by this activity: *",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
                             "source": "waterTransportMethod",
                             "computed": null,
                             "preLabel": "How is extracted / imported water being transported under this management action?:",
                             "type": "selectMany"
-                        },
-                        {
-                            "source": "waterUsePurpose",
-                            "computed": null,
-                            "preLabel": "What is the purpose of this water management action?: *",
-                            "type": "selectOne",
-                            "validate": "required"
                         },
                         {
                             "source": "transportedWaterUse",
