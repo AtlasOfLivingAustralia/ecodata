@@ -48,7 +48,7 @@
             "name": "pestDensityPerHa"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],

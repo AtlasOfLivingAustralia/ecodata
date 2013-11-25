@@ -2,27 +2,22 @@
     "modelName": "Other Conservation Works for Threatened species",
     "dataModel": [
         {
-            "items": [
-                {
-                    "dataType": "species",
-                    "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)",
-                    "name": "targetSpecies",
-                    "validate": "required"
-                },
-                {
-                    "dataType": "number",
-                    "description": "The number of individual animals in a captive breeding program",
-                    "name": "animalBreedingNos",
-                    "validate": "min[0]"
-                },
-                {
-                    "dataType": "number",
-                    "description": "The number of individual animals released back into the wild",
-                    "name": "animalReleaseNumber",
-                    "validate": "min[0]"
-                }
-            ],
-            "type": "col"
+            "dataType": "species",
+            "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)",
+            "name": "targetSpecies",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of individual animals in a captive breeding program",
+            "name": "animalBreedingNos",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of individual animals released back into the wild",
+            "name": "animalReleaseNumber",
+            "validate": "min[0]"
         },
         {
             "dataType": "list",
@@ -79,7 +74,7 @@
             ]
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],
