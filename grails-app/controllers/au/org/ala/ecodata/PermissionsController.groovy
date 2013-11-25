@@ -328,6 +328,30 @@ class PermissionsController {
     }
 
     /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#caseManager caseManager}
+     * level access for a given {@link Project project}
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserCaseManagerForProject() {
+        def userId = params.userId
+        def projectId = params.projectId
+
+        if (userId && projectId) {
+            def project = Project.findByProjectId(projectId)
+            if (project) {
+                def cm = UserPermission.findByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
+                def out = [userIsCaseManager: (cm) ? true : false]
+                render out as JSON
+            } else {
+                render status:404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+        }
+    }
+
+    /**
      * Does a given {@link UserDetails#userId userId} have {@link AccessLevel#admin admin} level access
      * for a given {@link Project project}
      *
