@@ -1,12 +1,8 @@
 {
     "selectedActivity": {
-        "name": "Research",
+        "name": "Biodiversity Fund - Outcomes and Monitoring",
         "type": "Activity",
-        "outputs": [
-            "Research Information",
-            "Participant Information",
-            "Knowledge Integration and Transfer"
-        ]
+        "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
     },
     "activities": [
         {
@@ -15,9 +11,7 @@
             "outputs": [
                 "Event Details",
                 "Participant Information",
-                "Materials Provided to Participants",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Materials Provided to Participants"
             ]
         },
         {
@@ -26,9 +20,7 @@
             "outputs": [
                 "Revegetation Details",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Photo Points",
-                "Activity Outcomes"
+                "Photo Points"
             ]
         },
         {
@@ -36,7 +28,6 @@
             "type": "Activity",
             "outputs": [
                 "Seed Collection Details",
-                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -47,7 +38,6 @@
                 "Site Preparation Actions",
                 "Weed Treatment Details",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
@@ -56,7 +46,6 @@
             "type": "Activity",
             "outputs": [
                 "Fence Details",
-                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -66,19 +55,17 @@
             "outputs": [
                 "Weed Treatment Details",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Photo Points"
             ]
         },
         {
-            "name": "Pest Management",
+            "name": "Pest and Disease Management",
             "type": "Activity",
             "outputs": [
                 "Pest Management Details",
                 "Fence Details",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Photo Points"
             ]
         },
         {
@@ -87,13 +74,11 @@
             "outputs": [
                 "Fire Information",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Photo Points",
-                "Activity Outcomes"
+                "Photo Points"
             ]
         },
         {
-            "name": "Grazing Management",
+            "name": "Conservation Grazing Management",
             "type": "Activity",
             "outputs": [
                 "Stock Management Details",
@@ -103,22 +88,13 @@
         {
             "name": "Water Management",
             "type": "Activity",
-            "outputs": [
-                "Water Management Details",
-                "Infrastructure Details"
-            ]
-        },
-        {
-            "name": "Infrastructure Works",
-            "type": "Activity",
-            "outputs": ["Infrastructure Details"]
+            "outputs": ["Water Management Details"]
         },
         {
             "name": "Erosion Management",
             "type": "Activity",
             "outputs": [
                 "Erosion Management Details",
-                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
@@ -129,7 +105,6 @@
                 "Site Planning Details",
                 "Threatening Processes & Site Condition Risks",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
@@ -138,18 +113,16 @@
             "type": "Activity",
             "outputs": [
                 "Plan Development Details",
-                "Knowledge Integration and Transfer",
                 "Participant Information"
             ]
         },
         {
-            "name": "Weed Infestation & Monitoring",
+            "name": "Weed Mapping & Monitoring",
             "type": "Assessment",
             "outputs": [
                 "Evidence of Weed Treatment",
                 "Weed Observation / Monitoring Details",
                 "Participant Information",
-                "Knowledge Integration and Transfer",
                 "Photo Points"
             ]
         },
@@ -181,8 +154,7 @@
             "type": "Activity",
             "outputs": [
                 "Research Information",
-                "Participant Information",
-                "Knowledge Integration and Transfer"
+                "Participant Information"
             ]
         },
         {
@@ -198,7 +170,7 @@
             ]
         },
         {
-            "name": "Site Assessment - Biodiversity Fund (SEWPaC)",
+            "name": "Site Assessment - Biodiversity Fund (DoE)",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Assessment",
@@ -263,9 +235,7 @@
             "type": "Activity",
             "outputs": [
                 "Indigenous Employment",
-                "Indigenous Enterprise",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Indigenous Enterprise"
             ]
         },
         {
@@ -273,9 +243,7 @@
             "type": "Activity",
             "outputs": [
                 "Debris Removal Details",
-                "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Participant Information"
             ]
         },
         {
@@ -283,38 +251,61 @@
             "type": "Activity",
             "outputs": [
                 "Access Control Details",
-                "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Participant Information"
             ]
         },
         {
-            "name": "Planned Site Monitoring",
+            "name": "Site Monitoring Planning",
             "type": "Activity",
             "outputs": ["Planned Monitoring Approach"]
         },
         {
             "name": "Project Administration",
             "type": "Activity",
-            "outputs": ["Participant Information"]
+            "outputs": [
+                "Administration Activities",
+                "Participant Information"
+            ]
         },
         {
             "name": "Land Management Practice Change",
             "type": "Activity",
-            "outputs": [
-                "Land Management Practice Change Details",
-                "Knowledge Integration and Transfer"
-            ]
+            "outputs": ["Land Management Practice Change Details"]
         },
         {
             "name": "Other Conservation Works for Threatened Species",
             "type": "Activity",
             "outputs": [
                 "Conservation Works Details",
-                "Participant Information",
-                "Knowledge Integration and Transfer",
-                "Activity Outcomes"
+                "Participant Information"
             ]
+        },
+        {
+            "name": "Training and Skills Development",
+            "type": "Activity",
+            "outputs": [
+                "Formal Training Details",
+                "Skills Development",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Knowledge Integration and Transfer",
+            "type": "Activity",
+            "outputs": ["Knowledge Integration and Transfer"]
+        },
+        {
+            "name": "Outcomes, Learning and Evaluation",
+            "type": "Activity",
+            "outputs": [
+                "Activity and Project Outcomes",
+                "Learning and Evaluation"
+            ]
+        },
+        {
+            "name": "Biodiversity Fund - Outcomes and Monitoring",
+            "type": "Activity",
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         }
     ],
     "outputs": [
@@ -340,7 +331,7 @@
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
                     "label": "Kgs of seed sown",
-                    "units": "kg"
+                    "units": "Kg"
                 },
                 {
                     "isOutputTarget": false,
@@ -987,9 +978,9 @@
             "name": "Erosion Management Details"
         },
         {
-            "template": "activityOutcomes",
+            "template": "outcomes",
             "scores": [],
-            "name": "Activity Outcomes"
+            "name": "Activity and Project Outcomes"
         },
         {
             "template": "indigenousEnterprise",
@@ -1024,7 +1015,7 @@
                     "isOutputTarget": true,
                     "name": "totalEntitiesAdoptingChange",
                     "aggregationType": "SUM",
-                    "label": "Farming entities adopting sustainable practice change by type"
+                    "label": "Farming entities adopting sustainable practice change"
                 },
                 {
                     "isOutputTarget": true,
@@ -1052,6 +1043,31 @@
             "template": "otherConservationWorks",
             "scores": [],
             "name": "Conservation Works Details"
+        },
+        {
+            "template": "adminActivities",
+            "scores": [],
+            "name": "Administration Activities"
+        },
+        {
+            "template": "trainingDetails",
+            "scores": [],
+            "name": "Formal Training Details"
+        },
+        {
+            "template": "skillsDevelopment",
+            "scores": [],
+            "name": "Skills Development"
+        },
+        {
+            "template": "learningAndEvaluation",
+            "scores": [],
+            "name": "Learning and Evaluation"
+        },
+        {
+            "template": "bfOutcomesAndMonitoring",
+            "scores": [],
+            "name": "Biodiversity Fund Outcomes & Monitoring Methodology"
         }
     ]
 }

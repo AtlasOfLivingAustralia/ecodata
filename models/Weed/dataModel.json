@@ -3,7 +3,7 @@
     "dataModel": [
         {
             "dataType": "species",
-            "description": "The plant species being targeted for treatment",
+            "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species)",
             "name": "targetSpecies",
             "validate": "required"
         },
@@ -119,7 +119,7 @@
                         {
                             "source": "targetSpecies",
                             "computed": null,
-                            "preLabel": "Target species: *  <i>(start typing a species name)<\/i>",
+                            "preLabel": "Target species: *",
                             "type": "autocomplete"
                         },
                         {

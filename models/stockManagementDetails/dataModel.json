@@ -21,7 +21,7 @@
         },
         {
             "dataType": "text",
-            "description": "Description of the grazing strategy/methodology being used to facilitate the purpose of the activity",
+            "description": "Description of the grazing strategy/methodology being used to achieve the purpose",
             "name": "stockingStrategy"
         },
         {

@@ -18,6 +18,8 @@
                     "Rip only",
                     "Scalping",
                     "Scarifying",
+                    "Fire - remove overgrowth",
+                    "Fire - prepare ash bed for regeneration",
                     "Other (specify in notes)"
                 ],
                 "validate": "required"

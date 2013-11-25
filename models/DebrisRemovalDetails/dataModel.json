@@ -29,6 +29,18 @@
             "validate": "required"
         },
         {
+            "dataType": "stringList",
+            "description": "Method(s) used to remove debris during the activity",
+            "name": "debrisRemovalMethod",
+            "constraints": [
+                "Trap and screen",
+                "Trap and skim",
+                "Removal by mobile machinery",
+                "Hand removal",
+                "Other (specify in notes)"
+            ]
+        },
+        {
             "dataType": "text",
             "name": "debrisNotes"
         }
@@ -44,6 +56,18 @@
                         "type": "selectOne"
                     },
                     {
+                        "source": "debrisRemovalMethod",
+                        "computed": null,
+                        "preLabel": "Method(s) used to remove debris:",
+                        "type": "selectMany"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
                         "source": "debrisWeightTonnes",
                         "computed": null,
                         "preLabel": "Weight of debris removed (Tonnes): *",
@@ -54,18 +78,14 @@
                         "computed": null,
                         "preLabel": "Volume of debris removed (m3): *",
                         "type": "number"
+                    },
+                    {
+                        "source": "debrisNotes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes:",
+                        "type": "textarea"
                     }
                 ],
-                "computed": null,
-                "type": "col"
-            },
-            {
-                "items": [{
-                    "source": "debrisNotes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
-                }],
                 "computed": null,
                 "type": "col"
             }

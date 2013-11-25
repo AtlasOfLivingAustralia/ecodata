@@ -7,7 +7,7 @@
             "columns": [
                 {
                     "dataType": "species",
-                    "description": "The species providing source seedstock",
+                    "description": "The species providing source seedstock  (start typing a  scientific or common name for a species)",
                     "name": "seedSourceSpecies",
                     "validate": "required"
                 },
@@ -68,7 +68,7 @@
                 "computed": null,
                 "columns": [
                     {
-                        "title": "Species: *  <i>(start typing a species name)<\/i>",
+                        "title": "Species: *",
                         "source": "seedSourceSpecies",
                         "type": "autocomplete"
                     },

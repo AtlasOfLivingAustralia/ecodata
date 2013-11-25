@@ -22,7 +22,7 @@
                 "Revegetation",
                 "Terracing",
                 "Windbreaks",
-                "Erosion control structures (engineering works)",
+                "Erosion control structures (engineering works - see structures installed)",
                 "Other (specify in notes)"
             ],
             "validate": "required"
@@ -53,15 +53,15 @@
             "description": "The type(s) of structure installed during this activity to control erosion on the subject site",
             "name": "erosionControlStructures",
             "constraints": [
-                "Flow interception structures (eg. contour banks & swales)",
+                "Slope reduction - flow interception structures (eg. contour banks & swales)",
+                "Slope reduction - Weirs & connected weir pools",
+                "Stilling ponds & retention basins",
+                "Dams & spillways (flood mitigation)",
+                "Sediment traps & groynes",
+                "Flumes & Chutes",
                 "Reventment structures (bank protection)",
                 "Channel/bank lining - solid barrier",
                 "Channel/bank lining - cellular confinement systems",
-                "Stilling ponds & retention basins",
-                "Weirs & connected weir pools",
-                "Dams & spillways (flooding)",
-                "Sediment traps & groynes",
-                "Flumes & Chutes",
                 "Gabions",
                 "Drift fence",
                 "Sea wall",
@@ -82,7 +82,7 @@
         },
         {
             "dataType": "number",
-            "description": "Length in lineal metres of the longest axis of the treatment area",
+            "description": "Length in lineal kilometres of the longest axis of the treatment area",
             "name": "erosionLength",
             "validate": "required"
         },
@@ -117,7 +117,7 @@
                         {
                             "source": "erosionLength",
                             "computed": null,
-                            "preLabel": "Length of stream/coastline treated (m): *",
+                            "preLabel": "Length of stream/coastline treated (Km): *",
                             "type": "number"
                         },
                         {

@@ -47,7 +47,7 @@
         },
         {
             "dataType": "date",
-            "description": "The date that the plan was completed (not implemented)",
+            "description": "The date that the plan was completed or authorised (not implemented)",
             "name": "planCompletionDate"
         },
         {
@@ -81,7 +81,7 @@
                             "source": "versionOfPlan",
                             "computed": null,
                             "preLabel": "Is this a new Plan or a revision of an existing Plan?: *",
-                            "type": "text"
+                            "type": "selectOne"
                         },
                         {
                             "source": "versionRevisionNo",
@@ -106,6 +106,10 @@
                             "computed": null,
                             "preLabel": "Date that the plan was completed:",
                             "type": "date"
+                        },
+                        {
+                            "source": "<h4>Please attach a copy of the Plan document via the Admin tab<\/h4>",
+                            "type": "literal"
                         }
                     ],
                     "computed": null,

@@ -1,0 +1,171 @@
+{
+    "modelName": "Other Conservation Works for Threatened species",
+    "dataModel": [
+        {
+            "items": [
+                {
+                    "dataType": "species",
+                    "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)",
+                    "name": "targetSpecies",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual animals in a captive breeding program",
+                    "name": "animalBreedingNos",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual animals released back into the wild",
+                    "name": "animalReleaseNumber",
+                    "validate": "min[0]"
+                }
+            ],
+            "type": "col"
+        },
+        {
+            "dataType": "list",
+            "name": "conservationWorks",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of conservation works implemented",
+                    "name": "conservationActionType",
+                    "constraints": [
+                        "Installation of nest boxes or other breeding/refuge structures",
+                        "Restoring niche habitats",
+                        "Seed bank establishment",
+                        "Ex-situ breeding program",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "Area in hectares impacted by the conservation works",
+                    "name": "areaImpactedByWorks",
+                    "validate": "min[0]"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "protectionMechanisms",
+            "columns": [
+                {
+                    "dataType": "stringList",
+                    "description": "The type of agreement mechanism implemented to protect threatened species",
+                    "name": "protectionMechanism",
+                    "constraints": [
+                        "On title in perpetuity (eg Covenant Agreement)",
+                        "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
+                        "Termed agreement not on title binding (eg Land management Agreement)",
+                        "Not on title non-binding (eg Wildlife Refuge)",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of agreement mechanisms implemented as a result of the project",
+                    "name": "numberOfProtectionMechanisms",
+                    "validate": "min[0]"
+                },
+                {
+                    "description": "Area covered by conservation agreement (Ha): *",
+                    "name": "areaUnderAgreement",
+                    "type": "number",
+                    "validate": "min[0]"
+                }
+            ]
+        },
+        {
+            "dataType": "textarea",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "targetSpecies",
+                        "preLabel": "Species: *",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "animalBreedingNos",
+                        "computed": null,
+                        "preLabel": "No. of animals in captive breeding programs:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "animalReleaseNumber",
+                        "computed": null,
+                        "preLabel": "No. of animals released back into the wild:",
+                        "type": "text"
+                    }
+                ],
+                "type": "col"
+            },
+            {
+                "source": "conservationWorks",
+                "computed": null,
+                "columns": [
+                    {
+                        "title": "Conservation Action:",
+                        "source": "conservationActionType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Area impacted by works (Ha):",
+                        "source": "areaImpactedByWorks",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": "true",
+                "type": "table"
+            },
+            {
+                "source": "protectionMechanisms",
+                "computed": null,
+                "columns": [
+                    {
+                        "title": "Type of Agreement mechanism:",
+                        "source": "protectionMechanism",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "No. of Agreement mechanisms:",
+                        "source": "numberOfProtectionMechanisms",
+                        "type": "number"
+                    },
+                    {
+                        "title": "Area under Agreement (Ha):",
+                        "source": "areaUnderAgreement",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": "true",
+                "type": "table"
+            },
+            {
+                "items": [
+                    {
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes:",
+                        "width": "60%",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
+                        "type": "literal"
+                    }
+                ],
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

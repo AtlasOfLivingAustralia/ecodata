@@ -90,7 +90,7 @@
                     "dataType": "species",
                     "speciesList": "project",
                     "noTotal": "true",
-                    "description": "The species planted / sown",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
                     "name": "species",
                     "validate": "required"
                 },
@@ -210,7 +210,7 @@
             "source": "planting",
             "columns": [
                 {
-                    "title": "Species *  <i>(start typing a species name)<\/i>",
+                    "title": "Species *",
                     "source": "species",
                     "computed": null,
                     "width": "25%",

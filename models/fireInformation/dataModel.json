@@ -24,7 +24,8 @@
                 "Escaped controlled burn",
                 "Wildfire",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",

@@ -22,7 +22,8 @@
                 "Constructed off-stream waterbody / wetland - connected to channel",
                 "Constructed off-stream waterbody / wetland - disconnected from channel",
                 "Groundwater"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -134,12 +135,14 @@
         {
             "dataType": "number",
             "description": "The number of new hydrology management structures installed on the site of the subject water body resulting from this management action",
-            "name": "hydrologicalStructuresInstalled"
+            "name": "hydrologicalStructuresInstalled",
+            "validate": "required"
         },
         {
             "dataType": "number",
             "description": "The area of catchment in hectares being managed as a result of this management action",
-            "name": "managedArea"
+            "name": "managedArea",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -149,7 +152,8 @@
                 "Natural",
                 "Modified",
                 "Fully artificial"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -160,7 +164,8 @@
                 "Imported to",
                 "Passing through (non-resident)",
                 "No transport occurring"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -199,7 +204,8 @@
                 "Urban potable water",
                 "Environmental outcomes",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -213,7 +219,8 @@
                 "Flood mitigation - flow retention / buffering",
                 "Flood mitigation - enhanced drainage / increased flow rate",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "textarea",
@@ -230,8 +237,7 @@
                             "source": "waterbodyType",
                             "computed": null,
                             "preLabel": "Type of water-body being managed: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalRegimeChangeFrom",
@@ -249,8 +255,7 @@
                             "source": "isCurrentFlowNatural",
                             "computed": null,
                             "preLabel": "Current flow regime of the subject water body?: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalStructuresOnsite",
@@ -268,29 +273,25 @@
                             "source": "hydrologicalStructuresInstalled",
                             "computed": null,
                             "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "isWaterBeingTransported",
                             "computed": null,
                             "preLabel": "Is the management action extracting water from / importing water to the site?: *",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalStructuresInstalled",
                             "computed": null,
                             "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "managedArea",
                             "computed": null,
                             "preLabel": "Area of catchment being managed/treated by this activity: *",
-                            "type": "number",
-                            "validate": "required"
+                            "type": "number"
                         },
                         {
                             "source": "waterTransportMethod",
@@ -302,15 +303,13 @@
                             "source": "transportedWaterUse",
                             "computed": null,
                             "preLabel": "What is extracted / imported water being used for?: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         },
                         {
                             "source": "waterMgtEnvironBenefit",
                             "computed": null,
                             "preLabel": "What environmental benefits are expected to be gained by this water management action?: *",
-                            "type": "selectMany",
-                            "validate": "required"
+                            "type": "selectMany"
                         }
                     ],
                     "computed": null,

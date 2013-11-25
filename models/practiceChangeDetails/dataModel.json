@@ -37,7 +37,7 @@
                         "Irrigated plantation forestry",
                         "Grazing irrigated modified pastures",
                         "Irrigated cropping",
-                        "rrigated perennial horticulture",
+                        "Irrigated perennial horticulture",
                         "Irrigated seasonal horticulture",
                         "Irrigated land in transition",
                         "Intensive horticulture",
@@ -55,8 +55,7 @@
                         "Water - Channel/aqueduct",
                         "Water - Marsh/wetland",
                         "Water - Estuary/coastal waters"
-                    ],
-                    "validate": "required"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -90,7 +89,7 @@
                         "Irrigated plantation forestry",
                         "Grazing irrigated modified pastures",
                         "Irrigated cropping",
-                        "rrigated perennial horticulture",
+                        "Irrigated perennial horticulture",
                         "Irrigated seasonal horticulture",
                         "Irrigated land in transition",
                         "Intensive horticulture",
@@ -108,8 +107,7 @@
                         "Water - Channel/aqueduct",
                         "Water - Marsh/wetland",
                         "Water - Estuary/coastal waters"
-                    ],
-                    "validate": "required"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -166,6 +164,18 @@
                     "validate": "required,digits"
                 }
             ]
+        },
+        {
+            "dataType": "stringList",
+            "description": "The factors influencing the decision to change practices",
+            "name": "changeReason",
+            "constraints": [
+                "Resource condition - Degraded landscape",
+                "Resource condition - Reduced viability",
+                "Economic factors",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -265,24 +275,26 @@
             "source": "practiceChange",
             "columns": [
                 {
-                    "title": "Landuse / industry change from: *",
-                    "source": "industryTypeChangeFrom",
-                    "computed": null,
-                    "type": "selectOne"
-                },
-                {
+                    "title": "Industry From: *",
                     "source": "industryTypeFrom",
                     "computed": null,
                     "type": "selectOne"
                 },
                 {
-                    "title": "Landuse / industry change to: *",
-                    "source": "industryTypeChangeTo",
+                    "title": "Landuse change from:",
+                    "source": "industryTypeChangeFrom",
                     "computed": null,
                     "type": "selectOne"
                 },
                 {
-                    "source": "industryTypeTo",
+                    "title": "Industry To:*",
+                    "source": "industryTypeTo: *",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Landuse change to:",
+                    "source": "industryTypeChangeTo",
                     "computed": null,
                     "type": "selectOne"
                 },
@@ -308,6 +320,12 @@
             "items": [
                 {
                     "items": [
+                        {
+                            "source": "changeReason",
+                            "computed": null,
+                            "preLabel": "Reason(s) for implementing practice change:",
+                            "type": "selectMany"
+                        },
                         {
                             "source": "managementAction",
                             "computed": null,
