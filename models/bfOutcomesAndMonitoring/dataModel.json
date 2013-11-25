@@ -1,0 +1,292 @@
+{
+    "modelName": "Biodiversity Fund Outcomes and Monitoring Methodology",
+    "dataModel": [
+        {"items": [{
+            "dataType": "number",
+            "description": "Output target for Theme 1 area to be revegetated in hectares",
+            "name": "targetT1Area"
+        }]},
+        {
+            "dataType": "list",
+            "name": "themeOne",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Name of the site being monitored",
+                    "name": "siteName1"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the vegetation on the site being monitored",
+                    "name": "vegetationDescription1"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the current condition of vegetation on the site being monitored",
+                    "name": "vegetationCurrentCondition1"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the intended condition of vegetation on the site being monitored",
+                    "name": "vegetationIntendedCondition1"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Methodology being used to assess condition change on the site being monitored",
+                    "name": "assessmentMethodology1",
+                    "constraints": [
+                        "Biodiversity Fund (DoE)",
+                        "Habitat Hectares (VIC)",
+                        "TasVeg (TAS)",
+                        "BioMetric (NSW)",
+                        "Bushland Condition Monitoring (SA)",
+                        "Native Vegetation Condition Assessment and Monitoring (WA)",
+                        "BioCondition (QLD)"
+                    ]
+                }
+            ]
+        },
+        {"items": [{
+            "dataType": "number",
+            "description": "Output target for Theme 2 area to be revegetated in hectares",
+            "name": "targetT2Area"
+        }]},
+        {
+            "dataType": "list",
+            "name": "themeTwo",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Name of the site being monitored",
+                    "name": "siteName2"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the vegetation on the site being monitored",
+                    "name": "vegetationDescription2"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the current condition of vegetation on the site being monitored",
+                    "name": "vegetationCurrentCondition2"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Description of the intended condition of vegetation on the site being monitored",
+                    "name": "vegetationIntendedCondition2"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Methodology being used to assess condition change on the site being monitored",
+                    "name": "assessmentMethodology2",
+                    "constraints": [
+                        "Biodiversity Fund (DoE)",
+                        "Habitat Hectares (VIC)",
+                        "TasVeg (TAS)",
+                        "BioMetric (NSW)",
+                        "Bushland Condition Monitoring (SA)",
+                        "Native Vegetation Condition Assessment and Monitoring (WA)",
+                        "BioCondition (QLD)"
+                    ]
+                }
+            ]
+        },
+        {"items": [
+            {
+                "dataType": "number",
+                "description": "Output target for Theme 3 area to be managed for invasive species in hectares",
+                "name": "targetT3Area"
+            },
+            {
+                "dataType": "text",
+                "description": "List of Invasive species being targeted for management in the project",
+                "name": "targetT3Species"
+            },
+            {
+                "dataType": "text",
+                "description": "Outcomes expected to be achieved through treatment of weeds and invasive species",
+                "name": "targetT3Outcomes"
+            }
+        ]},
+        {"items": [
+            {
+                "dataType": "number",
+                "description": "Output target for the total number of plants to be planted for the whole project",
+                "name": "targetT4TotalPlants"
+            },
+            {
+                "dataType": "number",
+                "description": "Output target for the total kilograms of seed to be sown for the whole project",
+                "name": "targetT4TotalSeed"
+            },
+            {
+                "dataType": "number",
+                "description": "Output target for the average percentage survival rate for plants planted for the whole project",
+                "name": "targetT4PlantSurvival"
+            },
+            {
+                "dataType": "text",
+                "description": "List of canopy species to be planted for the whole project",
+                "name": "targetT4CanopySpecies"
+            },
+            {
+                "dataType": "text",
+                "description": "List of understorey species to be planted for the whole project",
+                "name": "targetT4UnderstoreySpecies"
+            },
+            {
+                "dataType": "text",
+                "description": "List of ground layer species to be planted for the whole project",
+                "name": "targetT4GroundSpecies"
+            },
+            {
+                "dataType": "number",
+                "description": "Output target for the length of fence to be erected for the whole project",
+                "name": "targetT4TotalFenceKm"
+            },
+            {
+                "dataType": "text",
+                "description": "Description of general outcomes expected to be achieved across the whole project",
+                "name": "targetT3GeneralOutcomes1"
+            },
+            {
+                "dataType": "text",
+                "description": "Description of general outcomes expected to be achieved across the whole project",
+                "name": "targetT3GeneralOutcomes2"
+            }
+        ]},
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "source": "<h4>Theme 2 - Enhance existing areas of native vegetation<\/h4>",
+                "type": "literal"
+            },
+            {
+                "source": "targetT2Area",
+                "computed": null,
+                "preLabel": "Output target for Theme 2 area to be enhanced:",
+                "type": "number"
+            },
+            {
+                "source": "themeTwo",
+                "computed": null,
+                "columns": [
+                    {
+                        "title": "Site Name:",
+                        "source": "siteName2",
+                        "type": "text"
+                    },
+                    {
+                        "title": "Vegetation Description:",
+                        "source": "vegetationDescription2",
+                        "type": "textarea"
+                    },
+                    {
+                        "title": "Vegetation Current Condition:",
+                        "source": "vegetationCurrentCondition2",
+                        "type": "textarea"
+                    },
+                    {
+                        "title": "Vegetation Intended Condition:",
+                        "source": "vegetationIntendedCondition2",
+                        "type": "textarea"
+                    },
+                    {
+                        "title": "Assessment Methodology:",
+                        "source": "assessmentMethodology2",
+                        "type": "selectOne"
+                    }
+                ],
+                "userAddedRows": "true",
+                "class": "output-section",
+                "type": "table"
+            },
+            {
+                "items": [
+                    {
+                        "source": "<h4>Output Targets for Theme 3 - Managing Invasive Species<\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "source": "targetT3Area",
+                        "preLabel": "Area to be managed for invasive species (Ha):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "targetT3Species",
+                        "preLabel": "Weed and nvasive pest species being managed:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "targetT3Outcomes",
+                        "preLabel": "Expected outcomes from weed and invasive pest management activities:",
+                        "type": "textarea"
+                    }
+                ],
+                "class": "output-section",
+                "type": "row"
+            },
+            {
+                "items": [
+                    {
+                        "source": "<h4>Output Targets for items which cannot be placed into one of the above Themes<\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "source": "targetT4TotalPlants",
+                        "preLabel": "Total No. of Plants to be Planted:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "targetT4TotalSeed",
+                        "preLabel": "Total Seed to be Sown (Kg):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "targetT4PlantSurvival",
+                        "preLabel": "Target ave. Survival Rate for Plantings:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "targetT4CanopySpecies",
+                        "preLabel": "Canopy layer species to be planted:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "targetT4UnderstoreySpecies",
+                        "preLabel": "Understorey species to be planted:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "targetT4GroundSpecies",
+                        "preLabel": "Ground layer species to be planted:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "targetT4TotalFenceKm",
+                        "preLabel": "Length of fence to be erected (Km):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "targetT3GeneralOutcomes1",
+                        "preLabel": "General Outcomes:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "targetT3GeneralOutcomes2",
+                        "preLabel": "More General Outcomes:",
+                        "type": "textarea"
+                    }
+                ],
+                "class": "output-section",
+                "type": "row"
+            }
+        ],
+        "type": "row"
+    }]
+}

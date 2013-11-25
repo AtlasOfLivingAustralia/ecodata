@@ -60,9 +60,9 @@
             "validate": "required"
         },
         {
+            "dataType": "number",
             "description": "Area covered by treatment (Ha): *",
             "name": "areaTreatedHa",
-            "type": "number",
             "validate": "required"
         },
         {
@@ -78,7 +78,7 @@
             "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],

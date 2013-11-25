@@ -44,7 +44,7 @@
             "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "Brief description of the general locality in which the treatment works were undertaken",
             "name": "locality"
         },

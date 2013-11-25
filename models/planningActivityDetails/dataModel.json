@@ -51,12 +51,12 @@
             "name": "planCompletionDate"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "Brief description of the planning process, outputs from it, and objectives of the plan",
             "name": "activityOutline"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],

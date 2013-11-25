@@ -37,7 +37,7 @@
             "name": "researchCollaborators"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "name": "notes"
         }
     ],

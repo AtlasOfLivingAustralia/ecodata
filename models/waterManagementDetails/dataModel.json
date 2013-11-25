@@ -223,7 +223,7 @@
             "validate": "required"
         },
         {
-            "dataType": "textarea",
+            "dataType": "text",
             "description": "General comments and notes about this management action, the subject site, etc.",
             "name": "notes"
         }
