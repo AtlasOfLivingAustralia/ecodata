@@ -4,6 +4,8 @@ import com.github.fge.jsonschema.main.JsonSchema
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.github.fge.jsonschema.report.ProcessingReport
 import grails.converters.JSON
+import org.springframework.web.util.UriUtils
+
 /**
  *  Provides a single interface for external (as in not other ALA apps) web service clients.
  *  Not really sure if this is a good idea or should instead just be incorporated into the other clients via a filter
@@ -14,9 +16,31 @@ import grails.converters.JSON
  */
 class ExternalController {
 
-    def grailsApplication, projectService, activityService
+    def grailsApplication, projectService, activityService, metadataService
 
-    def projectPlan() {
+    def validateSchema() {
+
+        def results = [:]
+        metadataService.activitiesModel().outputs.each {
+
+            JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+
+            def encodedName = UriUtils.encodePathSegment(it.name, 'UTF-8')
+            println encodedName
+            JsonSchema schema = factory.getJsonSchema(grailsApplication.config.grails.serverURL+'/ws/documentation/draft/output/'+encodedName)
+            def payload = JsonLoader.fromString("{}")
+
+            ProcessingReport report = schema.validateUnchecked(payload)
+            if (!report.isSuccess()) {
+                println report
+            }
+            results << [(it.name):jacksonToJSON(report)]
+
+        }
+        render results as JSON
+    }
+
+    def projectActivities() {
 
         def payload
         try {

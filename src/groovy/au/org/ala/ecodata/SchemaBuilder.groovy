@@ -75,7 +75,6 @@ class SchemaBuilder {
                 endDate:dateProperty(null),
                 mainTheme:textProperty(null),
                 progress:constrainedTextProperty([constraints:['planned','started','finished']]),
-                // TODO some of the outputs produce invalid schemas (e.g. revegetation has duplicate values) .
                 outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
             ]
         ]
@@ -108,7 +107,7 @@ class SchemaBuilder {
         def definitions = [:]
 
         referencedDefinitions.each { key, value ->
-            definitions << [(key):objectSchema(value.columns)]
+            definitions << [(key):objectSchema(value)]
         }
         schema << [definitions:definitions]
         schema
@@ -118,7 +117,7 @@ class SchemaBuilder {
         def properties = [:]
         def required = []
         objectProps.each {
-            if (!it.computed) {  // TODO what to do about computed values?
+            if (!isComputed(it)) {  // TODO what to do about computed values?
 
                 def validationRules = new ValidationRules(it)
                 if (validationRules.mandatory) {
@@ -133,6 +132,10 @@ class SchemaBuilder {
             schema << [required:required]
         }
         schema
+    }
+
+    def isComputed(property) {
+        return property.computed || (property.dataType == 'lookupByDiscreteValues') || (property.dataType == 'lookupRange')
     }
 
 
@@ -152,6 +155,9 @@ class SchemaBuilder {
                case 'list':
                    typeGenerator = this.&listProperty
                    break
+               case 'matrix':
+                   typeGenerator = this.&matrixProperty
+                   break
                case 'species':
                    typeGenerator = this.&speciesProperty
                    break
@@ -159,12 +165,23 @@ class SchemaBuilder {
                    typeGenerator = this.&numberProperty
                    break
                case 'date':
+               case 'simpleDate':
                    typeGenerator = this.&dateProperty
                    break
-               default:
-                   typeGenerator = this.&error
+               case 'image':
+                   typeGenerator = this.&imageProperty
                    break
-                   //throw new IllegalArgumentException("Unsupported dataType: ${property.dataType} for property: ${property}")
+               case 'photoPoints':
+                   typeGenerator = this.&photoPointProperty
+                   break
+               case 'boolean':
+                   typeGenerator = this.&booleanProperty
+                   break
+
+               default:
+                   //typeGenerator = this.&error
+                   //break
+                   throw new IllegalArgumentException("Unsupported dataType: ${property.dataType} for property: ${property}")
            }
 
            return new PropertySchemaGenerator(typeGenerator)
@@ -209,8 +226,18 @@ class SchemaBuilder {
     }
 
     def listProperty(property) {
-        referencedDefinitions << [(property.name):property]
+        referencedDefinitions << [(property.name):property.columns]
         return [type:'array', items:[type:'object', oneOf:[[$ref:"#/definitions/${property.name}"]]]]
+    }
+
+    def matrixProperty(property) {
+        referencedDefinitions << [(property.name):property.rows]
+
+        def columnProperties = [:]
+        property.columns.each {
+            columnProperties << [(it.name):[type:'object', oneOf:[[$ref:"#/definitions/${property.name}"]]]]
+        }
+        return [type:'object', properties: columnProperties]
     }
 
     def speciesProperty(property) {
@@ -223,6 +250,18 @@ class SchemaBuilder {
 
     def dateProperty(property) {
         [type:'string', format:'date-time']
+    }
+
+    def imageProperty(property) {
+        return [type:'object', properties:[filename:[type:'string'], data:[type:'base64']]]
+    }
+
+    def photoPointProperty(property) {
+        return [type:'array', items:[type:'object', properties:[filename:[type:'string'], data:[type:'string', format:'base64'], photoPointId:[type:'string']]]]
+    }
+
+    def booleanProperty(property) {
+        return [type:'boolean']
     }
 
     def error(property) {
