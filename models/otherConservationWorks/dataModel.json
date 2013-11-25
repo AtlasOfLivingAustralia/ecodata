@@ -66,9 +66,9 @@
                     "validate": "min[0]"
                 },
                 {
+                    "dataType": "number",
                     "description": "Area covered by conservation agreement (Ha): *",
                     "name": "areaUnderAgreement",
-                    "type": "number",
                     "validate": "min[0]"
                 }
             ]
