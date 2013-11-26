@@ -26,6 +26,10 @@
         },
         {
             "dataType": "list",
+            "items": [{
+                "dataType": "text",
+                "name": "totalCompletingCourses"
+            }],
             "name": "courseAttendance",
             "columns": [
                 {
@@ -71,52 +75,44 @@
                     "description": "The number of people who completed the course and received the qualification",
                     "name": "numberCompleted",
                     "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "notes"
                 }
             ]
-        }
+        },
+        {"items": [{
+            "dataType": "text",
+            "name": "notes"
+        }]}
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "stockManagementReason",
-                            "computed": null,
-                            "preLabel": "What land management issue(s) are you using stock grazing to manage?: *",
-                            "type": "selectMany"
-                        },
-                        {
-                            "source": "areaOfStockManagementHa",
-                            "computed": null,
-                            "preLabel": "Area managed (Ha): *",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [{
-                        "source": "notes",
-                        "computed": null,
-                        "preLabel": "Comments / Notes:",
-                        "type": "textarea"
-                    }],
-                    "computed": null,
-                    "type": "col"
-                }
-            ],
-            "class": "output-section",
+            "items": [{
+                "source": "Please enter details of formal training courses attended by project participants.",
+                "type": "literal"
+            }],
+            "computed": null,
             "type": "row"
         },
         {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of attendees completing courses:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalCompletingCourses",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberCompleted\",\"fromList\":\"courseAttendance\"}}",
+                    "type": "number"
+                }
+            ]}]},
             "userEditRows": "true",
-            "source": "stockingDetails",
+            "source": "courseAttendance",
             "columns": [
                 {
                     "title": "Type of course attended:",
@@ -134,8 +130,8 @@
                     "type": "selectOne"
                 },
                 {
-                    "title": "No. of who completed the course:",
-                    "source": "stockingDensity",
+                    "title": "No. of people who completed the course:",
+                    "source": "courseAttendees",
                     "type": "number"
                 }
             ],

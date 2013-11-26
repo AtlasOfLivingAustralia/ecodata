@@ -1,11 +1,11 @@
 {
     "selectedActivity": {
-        "name": "Outcomes, Evaluation and Learning",
+        "name": "Training and Skills Development",
         "type": "Activity",
         "outputs": [
-            "Outcomes",
-            "Evaluation",
-            "Lessons Learned"
+            "Training Details",
+            "Skills Development",
+            "Participant Information"
         ]
     },
     "activities": [
@@ -288,7 +288,7 @@
             "name": "Training and Skills Development",
             "type": "Activity",
             "outputs": [
-                "Formal Training Details",
+                "Training Details",
                 "Skills Development",
                 "Participant Information"
             ]
@@ -1056,8 +1056,19 @@
         },
         {
             "template": "trainingDetails",
-            "scores": [],
-            "name": "Formal Training Details"
+            "scores": [
+                {
+                    "name": "totalCompletingCourses",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of people who completed formal training courses"
+                },
+                {
+                    "name": "totalCompletingCourses",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Course attendance by course type"
+                }
+            ],
+            "name": "Training Details"
         },
         {
             "template": "skillsDevelopment",
