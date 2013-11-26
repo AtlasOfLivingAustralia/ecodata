@@ -46,7 +46,7 @@ class ExternalController {
         def payload
         try {
 
-            String payloadText = request.inputStream.getText(request.characterEncoding?:'ISO-8859-1')
+            String payloadText = request.inputStream.getText()
             log.info("ExternalController::projectPlan with payload: ${payloadText} from: ${request.getRemoteAddr()}")
 
             payload = JsonLoader.fromString(payloadText)
