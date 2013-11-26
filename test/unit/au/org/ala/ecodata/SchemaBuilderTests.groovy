@@ -5,7 +5,7 @@ package au.org.ala.ecodata
  */
 class SchemaBuilderTests {
 
-    def schemaGenerator = new SchemaBuilder()
+    def schemaGenerator = new SchemaBuilder(['grails.serverURL':'http://localhost:8080/', 'app.external.api.version':'test'], [])
 
     void testTextProperty() {
 
@@ -61,7 +61,7 @@ class SchemaBuilderTests {
                 [dataType:'text', name:'TextProperty']
         ]]
 
-        def schema = schemaGenerator.schemaForOutput(input)
+        def schema = schemaGenerator.schemaForOutput(input.modelName, input)
 
 
         assert schema ==  [

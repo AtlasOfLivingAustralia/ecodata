@@ -6,12 +6,15 @@ package au.org.ala.ecodata
 
 class SchemaBuilder {
 
-    /** Prefix for URLs generated for this schema */
-    def urlPrefix
+    /** Builds URLs for various schema */
+    SchemaUrlBuilder urlBuilder
+
+    def activitiesModel
 
 
-    public SchemaBuilder(urlPrefix, apiVersion) {
-        this.urlPrefix = urlPrefix + '/ws/documentation/' +apiVersion
+    public SchemaBuilder(config, activitiesModel) {
+        this.activitiesModel = activitiesModel
+        this.urlBuilder = new SchemaUrlBuilder(config, activitiesModel)
     }
 
     /**
@@ -21,17 +24,17 @@ class SchemaBuilder {
     def referencedDefinitions = [:]
 
 
-    def projectSchema(activitiesModel, programsModel) {
+    def projectActivitiesSchema(programsModel) {
 
         // TODO To constrain program / subprogram definitions we would need to provide a nested set of definitions
         // per program.
 
-        def activities = activitiesModel.activities.collect {[$ref:buildActivityRef(it.name)]}
+        def activities = activitiesModel.activities.collect {[$ref:urlBuilder.activitySchemaUrl(it.name)]}
 
         def programs = programsModel.programs.collect{it.name}
 
         def schema = [
-            id:"${urlPrefix}/project#",
+            id:urlBuilder.projectActivitiesSchemaUrl()+"#",
             $schema:'http://json-schema.org/draft-04/schema#',
             type:'object',
             properties: [
@@ -60,10 +63,10 @@ class SchemaBuilder {
 
     def schemaForActivity(activity) {
 
-        def allowedOutputs = activity.outputs.collect {[$ref:buildOutputRef(it)]}
+        def allowedOutputs = activity.outputs.collect {[$ref:urlBuilder.outputSchemaUrl(it)]}
 
         def schema = [
-            id:"${urlPrefix}/activity/${activity.name.replace(' ', '%20')}#",
+            id:urlBuilder.activitySchemaUrl(activity.name)+'#',
             $schema:'http://json-schema.org/draft-04/schema#',
             type:'object',
             properties: [
@@ -82,34 +85,26 @@ class SchemaBuilder {
         schema
     }
 
-    def buildOutputRef(outputName) {
-        def encodedOutput = outputName.replace(' ', '%20')
-        return "${urlPrefix}/output/${encodedOutput}"
-    }
-
-    def buildActivityRef(activityName) {
-        def encodedOutput = activityName.replace(' ', '%20')
-        return "${urlPrefix}/activity/${encodedOutput}"
-    }
-
     /**
      * This method is not threadsafe.
      * @param output
      * @return
      */
-    def schemaForOutput(output) {
+    def schemaForOutput(name, output) {
 
         def outputProperties = [:]
-        outputProperties << [name:[enum:[output.modelName]]]
+        outputProperties << [name:[enum:[name]]]
         outputProperties << [data:objectSchema(output.dataModel)]
-        def schema = [id:"${urlPrefix}/output#", $schema:'http://json-schema.org/draft-04/schema#', type:'object', properties: outputProperties]
+        def schema = [id:urlBuilder.outputSchemaUrl(name), $schema:'http://json-schema.org/draft-04/schema#', type:'object', properties: outputProperties]
 
         def definitions = [:]
 
-        referencedDefinitions.each { key, value ->
-            definitions << [(key):objectSchema(value)]
+        if (referencedDefinitions.size() > 0) {
+            referencedDefinitions.each { key, value ->
+                definitions << [(key):objectSchema(value)]
+            }
+            schema << [definitions:definitions]
         }
-        schema << [definitions:definitions]
         schema
     }
 

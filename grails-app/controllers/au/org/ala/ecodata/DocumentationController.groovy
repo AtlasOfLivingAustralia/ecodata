@@ -5,45 +5,41 @@ import grails.converters.JSON
 class DocumentationController {
 
     def grailsApplication
-    def metadataService, activityService
-
-    /**
-     * Just looked up in the configuration for now, but we may need a better approach.
-     */
-    def apiVersion() {
-        return grailsApplication.config.app.external.api.version
-    }
+    def metadataService
 
     def index() {
 
-        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL, apiVersion())
         def activitiesModel = metadataService.activitiesModel()
+
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
         def outputs = [:]
         activitiesModel.outputs.each {
             def outputDataModel = metadataService.getOutputDataModel(it.template)
 
-            outputs << [(it.name): schemaGenerator.schemaForOutput(outputDataModel)]
+            outputs << [(it.name): schemaGenerator.schemaForOutput(it.name, outputDataModel)]
         }
 
         [activitiesModel:activitiesModel, outputs:outputs]
     }
 
     def project() {
-        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
-        def schema = schemaGenerator.projectSchema(metadataService.activitiesModel(), metadataService.programsModel())
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, metadataService.activitiesModel())
+        def schema = schemaGenerator.projectActivitiesSchema(metadataService.programsModel())
         withFormat {
             json {render schema as JSON}
         }
     }
 
     def activity(String id) {
-        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
+        def activitiesModel = metadataService.activitiesModel()
+
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
         if (!id) {
             forward index()
             return
         }
 
-        def activityModel = metadataService.activitiesModel().activities.find{it.name == id}
+        def activityModel = activitiesModel.activities.find{it.name == id}
         def schema = schemaGenerator.schemaForActivity(activityModel)
         def simplifiedSchema = schemaOverview(schema)
         simplifiedSchema.type = id
@@ -61,7 +57,9 @@ class DocumentationController {
 
 
     def output(String id) {
-        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
+        def activitiesModel = metadataService.activitiesModel()
+
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
         if (!id) {
             forward index()
             return
@@ -76,7 +74,7 @@ class DocumentationController {
 
         def outputDataModel = metadataService.getOutputDataModel(outputTemplate)
 
-        def schema = schemaGenerator.schemaForOutput(outputDataModel)
+        def schema = schemaGenerator.schemaForOutput(id, outputDataModel)
         def simplifiedSchema = schemaOverview(schema)
         simplifiedSchema.name = outputName
 
@@ -87,8 +85,8 @@ class DocumentationController {
     }
 
     def postProjectActivities() {
-        def schemaGenerator = new SchemaBuilder(grailsApplication.config.grails.serverURL,  apiVersion())
-        def schema = schemaGenerator.projectSchema(metadataService.activitiesModel(), metadataService.programsModel())
+        def schemaGenerator = new SchemaBuilder(grailsApplication.config, metadataService.activitiesModel())
+        def schema = schemaGenerator.projectActivitiesSchema(metadataService.programsModel())
         [schema:schema]
     }
 
