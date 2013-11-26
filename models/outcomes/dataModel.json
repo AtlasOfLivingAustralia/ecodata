@@ -1,5 +1,5 @@
 {
-    "modelName": "Learning and Evaluation",
+    "modelName": "Outcomes",
     "dataModel": [
         {
             "dataType": "text",
@@ -18,61 +18,33 @@
             "description": "Description of the environmental outcomes achieved by the project",
             "name": "projectEconomicOutcomes",
             "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "Description of the project design and/or implementation may have been improved to achieve better results and outcomes",
-            "name": "evaluationNotes",
-            "validate": "required"
         }
     ],
-    "viewModel": [
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [{
-                        "source": "projectEnvironmentalOutcomes",
-                        "computed": null,
-                        "preLabel": "Describe the environmental outcomes achieved by the project:",
-                        "type": "textarea"
-                    }],
+                    "source": "projectEnvironmentalOutcomes",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Describe the environmental outcomes of your project:",
+                    "type": "textarea"
                 },
                 {
-                    "items": [{
-                        "source": "projectSocialOutcomes",
-                        "computed": null,
-                        "preLabel": "Describe the social outcomes achieved by the project:",
-                        "type": "textarea"
-                    }],
+                    "source": "projectSocialOutcomes",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Describe the social outcomes of your project:",
+                    "type": "textarea"
                 },
                 {
-                    "items": [{
-                        "source": "projectEconomicOutcomes",
-                        "computed": null,
-                        "preLabel": "Describe the economic outcomes achieved by the project:",
-                        "type": "textarea"
-                    }],
+                    "source": "projectEconomicOutcomes",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Describe the economic outcomes of your project:",
+                    "type": "textarea"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "evaluationNotes",
-                "computed": null,
-                "preLabel": "How could the project design and/or implementation have been improved to achieve better results?",
-                "width": "90%",
-                "type": "textarea"
-            }],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

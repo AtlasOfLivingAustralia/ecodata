@@ -1,0 +1,63 @@
+{
+    "modelName": "Evaluation",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Description of the effectiveness of the project. Did it deliver what was intended to be delivered? Did it meet, exceed or fall short of expectations?",
+            "name": "projectEffectiveness",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the impacts of the project. Did it ",
+            "name": "projectImpact",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of how efficient the project was in terms of cost vs. outcomes, time vs. outcomes, etc.",
+            "name": "projectEfficiency",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the appropriateness of the methodology used for the project. Was it the right methodology? In hindsight, was there a better methodology available that wasn't used for some reason - explain?",
+            "name": "methodologyAnalysis",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "projectEffectiveness",
+                    "computed": null,
+                    "preLabel": "Describe the effectiveness of the project and whether it delivered what was intended:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectImpact",
+                    "computed": null,
+                    "preLabel": "Describe the impact of the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEfficiency",
+                    "computed": null,
+                    "preLabel": "Describe the efficiency of the delivery mechanism(s) for the project the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "methodologyAnalysis",
+                    "computed": null,
+                    "preLabel": "Describe the appropriateness of the methodology(s) used.",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}

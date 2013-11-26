@@ -1,8 +1,12 @@
 {
     "selectedActivity": {
-        "name": "Biodiversity Fund - Outcomes and Monitoring",
+        "name": "Outcomes, Evaluation and Learning",
         "type": "Activity",
-        "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
+        "outputs": [
+            "Outcomes",
+            "Evaluation",
+            "Lessons Learned"
+        ]
     },
     "activities": [
         {
@@ -295,11 +299,12 @@
             "outputs": ["Knowledge Integration and Transfer"]
         },
         {
-            "name": "Outcomes, Learning and Evaluation",
+            "name": "Outcomes, Evaluation and Learning",
             "type": "Activity",
             "outputs": [
-                "Activity and Project Outcomes",
-                "Learning and Evaluation"
+                "Outcomes",
+                "Evaluation",
+                "Lessons Learned"
             ]
         },
         {
@@ -980,7 +985,7 @@
         {
             "template": "outcomes",
             "scores": [],
-            "name": "Activity and Project Outcomes"
+            "name": "Outcomes"
         },
         {
             "template": "indigenousEnterprise",
@@ -1060,14 +1065,19 @@
             "name": "Skills Development"
         },
         {
-            "template": "learningAndEvaluation",
+            "template": "evaluation",
             "scores": [],
-            "name": "Learning and Evaluation"
+            "name": "Evaluation"
         },
         {
             "template": "bfOutcomesAndMonitoring",
             "scores": [],
             "name": "Biodiversity Fund Outcomes & Monitoring Methodology"
+        },
+        {
+            "template": "lessonsLearned",
+            "scores": [],
+            "name": "Lessons Learned"
         }
     ]
 }
