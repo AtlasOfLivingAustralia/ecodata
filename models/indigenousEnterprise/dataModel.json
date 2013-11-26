@@ -22,7 +22,7 @@
         },
         {
             "dataType": "number",
-            "description": "Number of formal (contractual) engagements of an Indigenous enterprise resulting from this project",
+            "description": "Number of contracts established by an Indigenous enterprise resulting from this project",
             "primaryResult": "true",
             "name": "totalIndigenousEnterprisesEngaged",
             "validate": "required,min[0]"
@@ -53,7 +53,7 @@
                 {
                     "source": "totalIndigenousEnterprisesEngaged",
                     "computed": null,
-                    "preLabel": "No of formal (contractual) engagements of an Indigenous enterprise: *",
+                    "preLabel": "No of contracts that have been established by the Indigenous enterprise: *",
                     "type": "number"
                 }
             ],

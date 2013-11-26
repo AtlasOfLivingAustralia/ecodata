@@ -21,26 +21,29 @@
         }
     ],
     "viewModel": [{
-        "items": [
-            {
-                "source": "assumptions",
-                "computed": null,
-                "preLabel": "Describe the effectiveness of the project and whether it delivered what was intended:",
-                "type": "textarea"
-            },
-            {
-                "source": "projectRiskManagement",
-                "computed": null,
-                "preLabel": "Discuss the effectiveness of your approach to managing project risks:",
-                "type": "textarea"
-            },
-            {
-                "source": "projectLessons",
-                "computed": null,
-                "preLabel": "What other lessons did you or your organisation learn while undertaking this project?:",
-                "type": "textarea"
-            }
-        ],
+        "items": [{
+            "items": [
+                {
+                    "source": "assumptions",
+                    "computed": null,
+                    "preLabel": "Describe the effectiveness of the project and whether it delivered what was intended:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectRiskManagement",
+                    "computed": null,
+                    "preLabel": "Discuss the effectiveness of your approach to managing project risks:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectLessons",
+                    "computed": null,
+                    "preLabel": "What other lessons did you or your organisation learn while undertaking this project?:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
         "class": "output-section",
         "type": "row"
     }]

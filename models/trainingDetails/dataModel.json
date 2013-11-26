@@ -1,0 +1,158 @@
+{
+    "modelName": "Training Details",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Purpose for which grazing is being used as a management tool",
+            "name": "stockManagementReason",
+            "constraints": [
+                "Reduce competition & shading for revegetation areas",
+                "Promote woody plant growth",
+                "Reduce wildfire risk & intensity",
+                "Other (describe in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares where grazing is used as a management tool under this activity",
+            "name": "areaOfStockManagementHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the grazing strategy/methodology being used to achieve the purpose",
+            "name": "stockingStrategy"
+        },
+        {
+            "dataType": "list",
+            "name": "courseAttendance",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Type of course",
+                    "name": "typeOfCourse",
+                    "constraints": [
+                        "Vocational - Occupational Health & Safety",
+                        "Vocational - First aid",
+                        "Other vocational skills - short course (specify)",
+                        "Science degree or higher",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Title of the course attended",
+                    "name": "courseTitle"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
+                    "name": "qualificationLevel",
+                    "constraints": [
+                        "Senior Secondary Certificate of Education",
+                        "AQF Level 1 – Certificate I",
+                        "AQF Level 2 – Certificate II",
+                        "AQF Level 3 – Certificate III",
+                        "AQF Level 4 – Certificate IV",
+                        "AQF Level 5 – Diploma",
+                        "AQF Level 6 – Advanced Diploma, Associate Degree",
+                        "AQF Level 7 – Bachelor Degree",
+                        "AQF Level 8 – Bachelor Honours Degree",
+                        "Graduate Certificate, Graduate Diploma",
+                        "AQF Level 9 – Masters Degree",
+                        "AQF Level 10 – Doctoral Degree",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of people who completed the course and received the qualification",
+                    "name": "numberCompleted",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "notes"
+                }
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "stockManagementReason",
+                            "computed": null,
+                            "preLabel": "What land management issue(s) are you using stock grazing to manage?: *",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "areaOfStockManagementHa",
+                            "computed": null,
+                            "preLabel": "Area managed (Ha): *",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "Comments / Notes:",
+                        "type": "textarea"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "userEditRows": "true",
+            "source": "stockingDetails",
+            "columns": [
+                {
+                    "title": "Type of course attended:",
+                    "source": "typeOfCourse",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Course title:",
+                    "source": "courseTitle",
+                    "type": "text"
+                },
+                {
+                    "title": "Course qualification level:",
+                    "source": "qualificationLevel",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of who completed the course:",
+                    "source": "stockingDensity",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
+            "computed": null,
+            "type": "col"
+        }
+    ],
+    "class": "output-section",
+    "type": "row"
+}
