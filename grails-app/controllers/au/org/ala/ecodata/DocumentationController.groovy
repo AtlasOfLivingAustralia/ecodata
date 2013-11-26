@@ -87,7 +87,7 @@ class DocumentationController {
     def postProjectActivities() {
         def schemaGenerator = new SchemaBuilder(grailsApplication.config, metadataService.activitiesModel())
         def schema = schemaGenerator.projectActivitiesSchema(metadataService.programsModel())
-        [schema:schema]
+        [schema:schema, overview:schemaOverview(schema)]
     }
 
     def getProjectSites() {

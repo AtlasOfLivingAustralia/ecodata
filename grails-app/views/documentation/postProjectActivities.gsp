@@ -35,7 +35,7 @@
             </ul>
             <h4>Authentication</h4>
             <p>
-                Some form of authentication will be required.  The details have not yet been decided.
+                In the short term requests will only be accepted from clients with an IP address appearing on a white list.
             </p>
             <h4>Method / URL</h4>
             POST /external/draft/projectActivities
@@ -44,59 +44,11 @@
             <p>None</p>
 
             <h4>POST body</h4>
-            <ul id="propertiesTabs" class="nav nav-tabs big-tabs">
-                <li class="active"><a href="#overview" id="overview-tab" data-toggle="tab">Overview</a></li>
-                <li><a href="#schema" id="schema-tab" data-toggle="tab">Schema</a></li>
-                <li><a href="#example" id="example-tab" data-toggle="tab">Example</a></li>
+            <p>The POST body must contain a JSON formatted description of the project activities of the form:</p>
+            <g:render template="objectDocumentation" model="${[object:schema, name:'request', overview:overview, omitDescription:true]}"></g:render>
 
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="overview">
-                    <p>The POST body must contain a JSON formatted description of the project activities of the form:</p>
-                    <div class="row-fluid">
-                        <div class="span4">
-                            <pre>
-                                {
-                                projectId: {
-                                type: ,
-                                value:
-                                },
-                                activities: [
-                                {
-                                },
-                                {
-                                }...
-                                ]
-                                }
-                            </pre>
-                        </div>
-                    </div>
-                    <p>
 
-                    </p>
-                    <g:render template="objectProperties" model="${[object:schema, overview:overview]}"></g:render>
-
-                </div>
-                <div class="tab-pane" id="schema">
-                    <pre>
-
-                    </pre>
-
-                    <script>
-
-                        $(function(){$('#schema pre').text(vkbeautify.json('${schema as grails.converters.JSON}'));});
-
-                    </script>
-                </div>
-                <div class="tab-pane" id="example">
-                    <pre>
-                        to be supplied....
-                    </pre>
-                </div>
-            </div>
-         </div>
-
-        <h4>Response</h4>
+            <h4>Response</h4>
 
 
     </div>

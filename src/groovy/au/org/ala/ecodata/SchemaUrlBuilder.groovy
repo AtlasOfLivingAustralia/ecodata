@@ -30,7 +30,7 @@ class SchemaUrlBuilder {
     }
 
     public String projectActivitiesSchemaUrl() {
-        return urlPrefix+'/projectActivities'
+        return urlPrefix+'/project'
     }
 
 

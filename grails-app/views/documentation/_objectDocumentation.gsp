@@ -1,10 +1,11 @@
 
 <r:require module="vkbeautify"/>
-
+<g:if test="${!omitDescription}">
 <strong>Description</strong>
 <p>
 <g:message code="${'api.'+name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
 </p>
+</g:if>
 <ul id="propertiesTabs" class="nav nav-tabs big-tabs">
     <li class="active"><a href="#overview" id="overview-tab" data-toggle="tab">Overview</a></li>
     <li><a href="#schema" id="schema-tab" data-toggle="tab">Schema</a></li>

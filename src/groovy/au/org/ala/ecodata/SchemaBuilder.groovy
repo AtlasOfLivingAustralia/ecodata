@@ -77,11 +77,13 @@ class SchemaBuilder {
                 startDate:dateProperty(null),
                 endDate:dateProperty(null),
                 mainTheme:textProperty(null),
-                progress:constrainedTextProperty([constraints:['planned','started','finished']]),
-                outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]
+                progress:constrainedTextProperty([constraints:['planned','started','finished']])
             ]
         ]
 
+        if (allowedOutputs.size() > 0) {
+            schema.properties << [outputs:[type:'array', items:[type:'object', anyOf:allowedOutputs]]]
+        }
         schema
     }
 
