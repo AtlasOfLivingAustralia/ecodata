@@ -107,7 +107,15 @@ class DocumentationController {
                 overview << [(key):schemaOverview(value)]
             }
             else if (value.type == 'array') {
-                overview << [(key):[schemaOverview(value.items)]]
+                if (value.items.enum) {
+                    overview << [(key):["string", "string..."]]
+                }
+                else if (value.items.anyOf || value.items.oneOf) {
+                    overview << [(key):[schemaOverview(value.items)]]
+                }
+                else {
+                    overview << [(key):[schemaOverview(value.items)]]
+                }
             }
         }
 

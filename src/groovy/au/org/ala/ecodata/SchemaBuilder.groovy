@@ -120,7 +120,12 @@ class SchemaBuilder {
                 if (validationRules.mandatory) {
                     required << it.name
                 }
-                properties << [(it.name):generatorFor(it).schemaFor(it)]
+                def props = generatorFor(it).schemaFor(it)
+                def validationProps = validationRules.validationProperties()
+                if (validationProps) {
+                    props.putAll(validationProps)
+                }
+                properties << [(it.name):props]
 
             }
         }
@@ -310,5 +315,43 @@ class SchemaBuilder {
         public boolean isMandatory() {
             return validationRules.contains('required')
         }
+
+        def validationProperties() {
+            def props = [:]
+            validationRules.each {
+                if (it.startsWith('min')) {
+                    props << minProperty(it)
+                }
+                else if (it.startsWith('max')) {
+                    props << maxProperty(it)
+                }
+            }
+            return props
+        }
+
+        def valueInBrackets(rule) {
+            def matcher = rule =~ /.*\[(.*)\]/
+            if (matcher.matches()) {
+                return matcher[0][1]
+            }
+            return null
+        }
+
+        def minProperty(rule) {
+            def min = valueInBrackets(rule)
+            if (min) {
+                return [minimum: min as BigDecimal]
+            }
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+        }
+
+        def maxProperty(rule) {
+            def max = valueInBrackets(rule)
+            if (max) {
+                return [maximum: max as BigDecimal]
+            }
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+        }
+
     }
 }

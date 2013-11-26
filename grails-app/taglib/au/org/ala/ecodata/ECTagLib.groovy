@@ -101,8 +101,16 @@ class ECTagLib {
 
             }
         }
-        else if (property.type == 'object') {
-
+        else if ((property.minimum != null) || (property.maximum != null)) {
+            if ((property.minimum != null) & (property.maximum != null)) {
+                out << g.message(code: 'api.constraints.property.between', args:[property.minimum, property.maximum])
+            }
+            else if (property.minimum != null) {
+                out << g.message(code: 'api.constraints.property.greaterThan', args:[property.minimum])
+            }
+            else {
+                out << g.message(code: 'api.constraints.property.lessThan', args:[property.maximum])
+            }
         }
     }
 
