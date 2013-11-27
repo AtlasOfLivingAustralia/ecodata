@@ -94,7 +94,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <button disabled id="btnReloadConfig" class="btn btn-small btn-info" title="External config not set up yet">Reload&nbsp;External&nbsp;Config</button>
+                        <button id="btnReloadConfig" class="btn btn-small btn-info" title="Reloads external config">Reload&nbsp;External&nbsp;Config</button>
                     </td>
                     <td>
                         Reads any defined config files and merges new config with old. Usually used after a change is

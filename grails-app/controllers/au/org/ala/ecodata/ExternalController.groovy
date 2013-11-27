@@ -16,6 +16,27 @@ class ExternalController {
 
     def grailsApplication, projectService, activityService, metadataService
 
+    /** Temporary IP based security */
+    def beforeInterceptor = [action:this.&applyWhiteList]
+
+    /** Checks the IP of the client against a white list and returns true if the request is allowed. */
+    private applyWhiteList() {
+        def whiteList = ['127.0.0.1'] // allow calls from localhost to make testing easier.
+        whiteList.addAll(grailsApplication.config.app.api.whiteList)
+
+        def allowed = whiteList.contains(request.getRemoteHost())
+
+        if (!allowed) {
+            log.warn("Rejected request from ${request.getRemoteHost()}, whitelist=${whiteList}")
+        }
+        else {
+            log.info("Allowed request from ${request.getRemoteHost()}")
+
+        }
+
+        return allowed
+    }
+
     def validateSchema() {
 
         def urlBuilder = new SchemaUrlBuilder(grailsApplication.config, metadataService)
