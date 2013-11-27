@@ -4,6 +4,9 @@ import com.github.fge.jsonschema.main.JsonSchema
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.github.fge.jsonschema.report.ProcessingReport
 import grails.converters.JSON
+
+import javax.servlet.http.HttpServletRequest
+
 /**
  *  Provides a single interface for external (as in not other ALA apps) web service clients.
  *  Not really sure if this is a good idea or should instead just be incorporated into the other clients via a filter
@@ -21,20 +24,42 @@ class ExternalController {
 
     /** Checks the IP of the client against a white list and returns true if the request is allowed. */
     private applyWhiteList() {
-        def whiteList = ['127.0.0.1'] // allow calls from localhost to make testing easier.
-        whiteList.addAll(grailsApplication.config.app.api.whiteList)
 
-        def allowed = whiteList.contains(request.getRemoteHost())
+        def whiteList = buildWhiteList()
+        def clientIp = getClientIP(request)
+        def allowed = whiteList.contains(clientIp)
 
         if (!allowed) {
-            log.warn("Rejected request from ${request.getRemoteHost()}, whitelist=${whiteList}")
+            log.warn("Rejected request from ${clientIp}, whitelist=${whiteList}")
         }
         else {
-            log.info("Allowed request from ${request.getRemoteHost()}")
+            log.info("Allowed request from ${clientIp}")
 
         }
 
         return allowed
+    }
+
+    def buildWhiteList() {
+        def whiteList = ['127.0.0.1'] // allow calls from localhost to make testing easier
+        def config = grailsApplication.config.app.api.whiteList
+        if (config) {
+            whiteList.addAll(config.split(',').collect({it.trim()}))
+        }
+        whiteList
+
+    }
+
+    def getClientIP(HttpServletRequest request) {
+
+        // External requests to ecodata are proxied by Apache, which uses X-Forwarded-For to identify the original IP.
+        def ip = request.getHeader("X-Forwarded-For")
+        if (!ip) {
+            ip = request.getRemoteHost()
+        }
+
+        return ip
+
     }
 
     def validateSchema() {
