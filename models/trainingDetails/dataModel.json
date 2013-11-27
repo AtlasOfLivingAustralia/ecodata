@@ -48,7 +48,8 @@
                 {
                     "dataType": "text",
                     "description": "Title of the course attended",
-                    "name": "courseTitle"
+                    "name": "courseTitle",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
@@ -78,15 +79,16 @@
                 }
             ]
         },
-        {"items": [{
+        {
             "dataType": "text",
             "name": "notes"
-        }]}
+        }
     ],
     "viewModel": [
         {
             "items": [{
                 "source": "Please enter details of formal training courses attended by project participants.",
+                "computed": null,
                 "type": "literal"
             }],
             "computed": null,
@@ -111,7 +113,6 @@
                     "type": "number"
                 }
             ]}]},
-            "userEditRows": "true",
             "source": "courseAttendance",
             "columns": [
                 {

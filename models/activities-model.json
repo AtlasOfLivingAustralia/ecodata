@@ -1,13 +1,4 @@
 {
-    "selectedActivity": {
-        "name": "Training and Skills Development",
-        "type": "Activity",
-        "outputs": [
-            "Training Details",
-            "Skills Development",
-            "Participant Information"
-        ]
-    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
@@ -1066,6 +1057,11 @@
                     "name": "totalCompletingCourses",
                     "aggregationType": "HISTOGRAM",
                     "label": "Course attendance by course type"
+                },
+                {
+                    "name": "courseTitle",
+                    "aggregationType": "COUNT",
+                    "label": "No. of courses attended by project participants"
                 }
             ],
             "name": "Training Details"
