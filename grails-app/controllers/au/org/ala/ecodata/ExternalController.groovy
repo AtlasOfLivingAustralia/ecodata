@@ -4,9 +4,6 @@ import com.github.fge.jsonschema.main.JsonSchema
 import com.github.fge.jsonschema.main.JsonSchemaFactory
 import com.github.fge.jsonschema.report.ProcessingReport
 import grails.converters.JSON
-
-import javax.servlet.http.HttpServletRequest
-
 /**
  *  Provides a single interface for external (as in not other ALA apps) web service clients.
  *  Not really sure if this is a good idea or should instead just be incorporated into the other clients via a filter
@@ -40,7 +37,7 @@ class ExternalController {
         return allowed
     }
 
-    def buildWhiteList() {
+    private buildWhiteList() {
         def whiteList = ['127.0.0.1'] // allow calls from localhost to make testing easier
         def config = grailsApplication.config.app.api.whiteList
         if (config) {
@@ -50,7 +47,7 @@ class ExternalController {
 
     }
 
-    def getClientIP(HttpServletRequest request) {
+    private getClientIP(request) {
 
         // External requests to ecodata are proxied by Apache, which uses X-Forwarded-For to identify the original IP.
         def ip = request.getHeader("X-Forwarded-For")
