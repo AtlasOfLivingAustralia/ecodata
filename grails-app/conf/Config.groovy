@@ -217,12 +217,12 @@ log4j = {
             nectartest {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat7/ecodata.log",
+                        file: "/var/log/tomcat6/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat7/ecodata-stacktrace.log"
+                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
