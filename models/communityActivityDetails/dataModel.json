@@ -8,7 +8,7 @@
             "constraints": [
                 "Awareness raising event (eg. demonstration, field day, or study tour)",
                 "Training session, workshop or other skills/training event",
-                "Knowledge Evaluation Events",
+                "Knowledge evaluation event",
                 "Works implementation",
                 "Planning",
                 "Other (describe in notes)"
@@ -29,40 +29,72 @@
         },
         {
             "dataType": "text",
+            "description": "The main industry type that the event is addressing",
+            "name": "industryType",
+            "constraints": [
+                "Sugarcane",
+                "Grazing",
+                "Grains",
+                "Grapes",
+                "Vegetables",
+                "Fruit trees",
+                "Berries",
+                "Dairy",
+                "Cotton",
+                "Forestry",
+                "Aquaculture",
+                "Fishing",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "text",
             "name": "eventNotes"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "items": [{
-                    "source": "eventPurpose",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [{
+                        "source": "eventPurpose",
+                        "computed": null,
+                        "preLabel": "Purpose of event: *",
+                        "type": "selectMany"
+                    }],
                     "computed": null,
-                    "preLabel": "Purpose of event: *",
-                    "type": "selectMany"
-                }],
-                "computed": null,
-                "type": "col"
-            },
-            {
-                "items": [
-                    {
-                        "source": "eventTopics",
-                        "computed": null,
-                        "preLabel": "Topics covered: *",
-                        "type": "text"
-                    },
-                    {
-                        "source": "eventDurationHrs",
-                        "computed": null,
-                        "preLabel": "Event Duration (Hrs): *",
-                        "type": "number"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            },
-            {
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "industryType",
+                            "computed": null,
+                            "preLabel": "Main industry type addressed:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "eventTopics",
+                            "computed": null,
+                            "preLabel": "Topics covered: *",
+                            "type": "text"
+                        },
+                        {
+                            "source": "eventDurationHrs",
+                            "computed": null,
+                            "preLabel": "Event Duration (Hrs): *",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
                 "items": [{
                     "source": "eventNotes",
                     "computed": null,
@@ -71,9 +103,9 @@
                 }],
                 "computed": null,
                 "type": "col"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    }]
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

@@ -26,12 +26,12 @@
         },
         {
             "dataType": "list",
-            "items": [{
-                "dataType": "text",
-                "name": "totalCompletingCourses"
-            }],
             "name": "courseAttendance",
             "columns": [
+                {
+                    "dataType": "text",
+                    "name": "totalCompletingCourses"
+                },
                 {
                     "dataType": "text",
                     "description": "Type of course",
@@ -74,10 +74,18 @@
                 {
                     "dataType": "number",
                     "description": "The number of people who completed the course and received the qualification",
+                    "primaryResult": "true",
                     "name": "numberCompleted",
                     "validate": "required"
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "description": "The aggregate total number of people who completed the course and received qualifications",
+            "primaryResult": "true",
+            "name": "totalCompletingCourses",
+            "validate": "required"
         },
         {
             "dataType": "text",

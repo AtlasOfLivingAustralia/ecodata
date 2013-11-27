@@ -1,4 +1,9 @@
 {
+    "selectedActivity": {
+        "name": "Management Practice Change",
+        "type": "Activity",
+        "outputs": ["Management Practice Change Details"]
+    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
@@ -263,9 +268,9 @@
             ]
         },
         {
-            "name": "Land Management Practice Change",
+            "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": ["Land Management Practice Change Details"]
+            "outputs": ["Management Practice Change Details"]
         },
         {
             "name": "Other Conservation Works for Threatened Species",
@@ -1028,7 +1033,7 @@
                     "units": "Ha"
                 }
             ],
-            "name": "Land Management Practice Change Details"
+            "name": "Management Practice Change Details"
         },
         {
             "template": "knowledgeTransfer",
