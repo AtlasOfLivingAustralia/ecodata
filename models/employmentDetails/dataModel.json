@@ -70,10 +70,10 @@
             "name": "totalPtEmployees",
             "computed": {
                 "operation": "sum",
-                "dependents": {
-                    "source": "noOfIndigenousRangersPt",
-                    "fromList": "noOfIndigenousNonRangersPt"
-                }
+                "dependents": {"source": [
+                    "noOfIndigenousRangersPt",
+                    "noOfIndigenousNonRangersPt"
+                ]}
             }
         },
         {
@@ -83,10 +83,10 @@
             "name": "totalMaleEmployees",
             "computed": {
                 "operation": "sum",
-                "dependents": {
-                    "source": "noOfIndigenousRangersMale",
-                    "fromList": "noOfIndigenousNonRangersMale"
-                }
+                "dependents": {"source": [
+                    "noOfIndigenousRangersMale",
+                    "noOfIndigenousNonRangersMale"
+                ]}
             }
         },
         {
@@ -96,10 +96,10 @@
             "name": "totalFemaleEmployees",
             "computed": {
                 "operation": "sum",
-                "dependents": {
-                    "source": "noOfIndigenousRangersFemale",
-                    "fromList": "noOfIndigenousNonRangersFemale"
-                }
+                "dependents": {"source": [
+                    "noOfIndigenousRangersFemale",
+                    "noOfIndigenousNonRangersFemale"
+                ]}
             }
         },
         {
@@ -109,10 +109,10 @@
             "name": "totalEmployees",
             "computed": {
                 "operation": "sum",
-                "dependents": {
-                    "source": "totalFtEmployees",
-                    "fromList": "totalPtEmployees"
-                }
+                "dependents": {"source": [
+                    "totalFtEmployees",
+                    "totalPtEmployees"
+                ]}
             }
         }
     ],
@@ -201,7 +201,7 @@
                             "type": "number"
                         },
                         {
-                            "source": "totalNon-rangerEmployees",
+                            "source": "totalNonRangerEmployees",
                             "computed": {
                                 "operation": "sum",
                                 "dependents": {
@@ -278,7 +278,7 @@
                         "operation": "sum",
                         "dependents": {
                             "source": "totalRangerEmployees",
-                            "fromList": "totalNon-rangerEmployees"
+                            "fromList": "totalNonRangerEmployees"
                         }
                     },
                     "preLabel": "Total No. of project employees:",
