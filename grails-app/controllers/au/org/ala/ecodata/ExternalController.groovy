@@ -84,6 +84,25 @@ class ExternalController {
         render results as JSON
     }
 
+    def projectSites() {
+        def projectId = [type:params.type, value:params.id]
+
+        Project project = findProject(projectId)
+        if (!project) {
+            render (status:400, contentType: 'text/json', text: [message:"Invalid project id: ${projectId.id}"] as JSON)
+            return
+        }
+
+        def all =  projectService.toMap(project)
+        def sites = []
+        all.sites.each {
+            sites << [siteId:it.siteId, name:it.name, description:it.description, extent:it.extent, ]
+        }
+        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalProjectId, sites:sites]
+
+        render projectDetails as JSON
+    }
+
     def projectActivities() {
 
         def payload
@@ -161,7 +180,7 @@ class ExternalController {
     }
 
     /**
-     * The project id has a type and value field that determines how to lookup the project.  By the time we
+     * The project id has a type and id field that determines how to lookup the project.  By the time we
      * get here the schema has been validated, so we know it is one of the three allowed types.
      * @param projectId specifies the type and value of the key used to identify the project.
      */
@@ -169,13 +188,13 @@ class ExternalController {
 
         switch (projectId.type) {
             case 'grantId':
-                return Project.findByGrantId(projectId.value)
+                return Project.findByGrantId(projectId.id)
 
             case 'externalId':
-                return Project.findByExternalProjectId(projectId.value)
+                return Project.findByExternalProjectId(projectId.id)
 
             case 'internalId':
-                return Project.findByProjectId(projectId.value)
+                return Project.findByProjectId(projectId.id)
         }
     }
 

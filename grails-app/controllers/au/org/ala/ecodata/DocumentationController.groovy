@@ -91,7 +91,7 @@ class DocumentationController {
     }
 
     def getProjectSites() {
-
+        []
     }
 
     def schemaOverview(schema) {

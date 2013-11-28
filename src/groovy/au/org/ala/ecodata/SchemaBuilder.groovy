@@ -43,7 +43,7 @@ class SchemaBuilder {
                         description:"Identifies the project by one of its unique properties (grantId, externalId, internal guid).  <pre>{type:string, value:string}</pre> Type must be one of ['grantId','externalId','guid'].",
                         properties:[
                                 type:constrainedTextProperty([constraints:['grantId', 'externalId', 'guid']]),
-                                value:textProperty(null)
+                                id:textProperty(null)
                         ],
                         required: ['type', 'value']
                 ],
