@@ -35,13 +35,12 @@
                     "source": "typeOfEnterprise",
                     "computed": null,
                     "preLabel": "type(s) of enterprises established by indigenous communities:",
-                    "width": "20%",
                     "type": "textarea"
                 },
                 {
                     "source": "totalNewEnterprises",
                     "computed": null,
-                    "preLabel": "No. of new enterprises established: *",
+                    "preLabel": "No. of new enterprises established:",
                     "type": "number"
                 },
                 {
@@ -53,7 +52,7 @@
                 {
                     "source": "totalIndigenousEnterprisesEngaged",
                     "computed": null,
-                    "preLabel": "No of contracts that have been established by the Indigenous enterprise: *",
+                    "preLabel": "No of contracts that have been established by Indigenous enterprises:",
                     "type": "number"
                 }
             ],

@@ -121,29 +121,33 @@
             "items": [
                 {
                     "items": [
-                        {"title": "No. of indigenous rangers employed on the project"},
+                        {
+                            "source": "<h4>No. of indigenous rangers employed on the project<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
                         {
                             "source": "noOfIndigenousRangersFt",
-                            "preLabel": "Full time: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Full time:",
                             "type": "number,min[0]"
                         },
                         {
                             "source": "noOfIndigenousRangersPt",
-                            "preLabel": "Part time: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Part time:",
                             "type": "number"
                         },
                         {
                             "source": "noOfIndigenousRangersMale",
-                            "preLabel": "Males: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Males:",
                             "type": "number"
                         },
                         {
                             "source": "noOfIndigenousRangersFemale",
-                            "preLabel": "Females: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Females:",
                             "type": "number"
                         },
                         {
@@ -160,6 +164,7 @@
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "width": "45%",
                     "class": "output-section",
                     "type": "col"
@@ -168,30 +173,31 @@
                     "items": [
                         {
                             "source": "<h4>No. of indigenous people employed on the project who are not rangers<\/h4>",
+                            "computed": null,
                             "type": "literal"
                         },
                         {
                             "source": "noOfIndigenousNonRangersFt",
-                            "preLabel": "Full time: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Full time:",
                             "type": "number"
                         },
                         {
                             "source": "noOfIndigenousNonRangersPt",
-                            "preLabel": "Part time: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Part time:",
                             "type": "number"
                         },
                         {
                             "source": "noOfIndigenousNonRangersMale",
-                            "preLabel": "Males: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Males:",
                             "type": "number"
                         },
                         {
                             "source": "noOfIndigenousNonRangersFemale",
-                            "preLabel": "Females: *",
-                            "width": "20%",
+                            "computed": null,
+                            "preLabel": "Females:",
                             "type": "number"
                         },
                         {
@@ -204,15 +210,16 @@
                                 }
                             },
                             "preLabel": "Total No. of project employees who are not rangers:",
-                            "width": "20%",
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "width": "45%",
                     "class": "output-section",
                     "type": "col"
                 }
             ],
+            "class": "output-section",
             "type": "row"
         },
         {
@@ -227,7 +234,6 @@
                         }
                     },
                     "preLabel": "Total full time employees:",
-                    "width": "20%",
                     "type": "number"
                 },
                 {
@@ -240,7 +246,6 @@
                         }
                     },
                     "preLabel": "Total part time employees:",
-                    "width": "20%",
                     "type": "number"
                 },
                 {
@@ -253,7 +258,6 @@
                         }
                     },
                     "preLabel": "Total male employees:",
-                    "width": "20%",
                     "type": "number"
                 },
                 {
@@ -266,7 +270,6 @@
                         }
                     },
                     "preLabel": "Total female employees:",
-                    "width": "20%",
                     "type": "number"
                 },
                 {
@@ -279,7 +282,6 @@
                         }
                     },
                     "preLabel": "Total No. of project employees:",
-                    "width": "20%",
                     "type": "number"
                 }
             ],

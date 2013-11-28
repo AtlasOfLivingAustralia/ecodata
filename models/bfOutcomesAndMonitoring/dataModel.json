@@ -156,136 +156,218 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "source": "<h4>Theme 2 - Enhance existing areas of native vegetation<\/h4>",
-                "computed": null,
-                "type": "literal"
-            },
-            {
-                "source": "targetT2Area",
-                "computed": null,
-                "preLabel": "Output target for Theme 2 area to be enhanced:",
-                "type": "number"
-            },
-            {
-                "source": "themeTwo",
-                "computed": null,
-                "columns": [
-                    {
-                        "title": "Site Name:",
-                        "source": "siteName2",
-                        "type": "text"
-                    },
-                    {
-                        "title": "Vegetation Description:",
-                        "source": "vegetationDescription2",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Vegetation Current Condition:",
-                        "source": "vegetationCurrentCondition2",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Vegetation Intended Condition:",
-                        "source": "vegetationIntendedCondition2",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Assessment Methodology:",
-                        "source": "assessmentMethodology2",
-                        "type": "selectOne"
-                    }
-                ],
-                "userAddedRows": "true",
-                "class": "output-section",
-                "type": "table"
-            },
-            {
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Theme 1 - Establish new areas of native vegetation<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "targetT1Area",
+                            "computed": null,
+                            "preLabel": "Output target for Theme 1 area to be established:",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "source": "themeOne",
+                    "computed": null,
+                    "columns": [
+                        {
+                            "title": "Site Name:",
+                            "source": "siteName1",
+                            "type": "text"
+                        },
+                        {
+                            "title": "Vegetation Description:",
+                            "source": "vegetationDescription1",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Vegetation Current Condition:",
+                            "source": "vegetationCurrentCondition1",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Vegetation Intended Condition:",
+                            "source": "vegetationIntendedCondition1",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Assessment Methodology:",
+                            "source": "assessmentMethodology1",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "userAddedRows": "false",
+                    "class": "output-section",
+                    "type": "table"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Theme 2 - Enhance existing areas of native vegetation<\/h4>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "targetT2Area",
+                            "computed": null,
+                            "preLabel": "Output target for Theme 2 area to be enhanced:",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "source": "themeTwo",
+                    "computed": null,
+                    "columns": [
+                        {
+                            "title": "Site Name:",
+                            "source": "siteName2",
+                            "type": "text"
+                        },
+                        {
+                            "title": "Vegetation Description:",
+                            "source": "vegetationDescription2",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Vegetation Current Condition:",
+                            "source": "vegetationCurrentCondition2",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Vegetation Intended Condition:",
+                            "source": "vegetationIntendedCondition2",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Assessment Methodology:",
+                            "source": "assessmentMethodology2",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "userAddedRows": "false",
+                    "class": "output-section",
+                    "type": "table"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [{
                 "items": [
                     {
                         "source": "<h4>Output Targets for Theme 3 - Managing Invasive Species<\/h4>",
+                        "computed": null,
                         "type": "literal"
                     },
                     {
                         "source": "targetT3Area",
+                        "computed": null,
                         "preLabel": "Area to be managed for invasive species (Ha):",
                         "type": "number"
                     },
                     {
                         "source": "targetT3Species",
+                        "computed": null,
                         "preLabel": "Weed and nvasive pest species being managed:",
                         "type": "textarea"
                     },
                     {
                         "source": "targetT3Outcomes",
+                        "computed": null,
                         "preLabel": "Expected outcomes from weed and invasive pest management activities:",
                         "type": "textarea"
                     }
                 ],
-                "computed": null,
-                "class": "output-section",
-                "type": "row"
-            },
-            {
+                "type": "col"
+            }],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
                 "items": [
                     {
                         "source": "<h4>Output Targets for items which cannot be placed into one of the above Themes<\/h4>",
+                        "computed": null,
                         "type": "literal"
                     },
                     {
                         "source": "targetT4TotalPlants",
+                        "computed": null,
                         "preLabel": "Total No. of Plants to be Planted:",
                         "type": "number"
                     },
                     {
                         "source": "targetT4TotalSeed",
+                        "computed": null,
                         "preLabel": "Total Seed to be Sown (Kg):",
                         "type": "number"
                     },
                     {
                         "source": "targetT4PlantSurvival",
+                        "computed": null,
                         "preLabel": "Target ave. Survival Rate for Plantings:",
                         "type": "number"
                     },
                     {
                         "source": "targetT4CanopySpecies",
+                        "computed": null,
                         "preLabel": "Canopy layer species to be planted:",
                         "type": "textarea"
                     },
                     {
                         "source": "targetT4UnderstoreySpecies",
+                        "computed": null,
                         "preLabel": "Understorey species to be planted:",
                         "type": "textarea"
                     },
                     {
                         "source": "targetT4GroundSpecies",
+                        "computed": null,
                         "preLabel": "Ground layer species to be planted:",
                         "type": "textarea"
                     },
                     {
                         "source": "targetT4TotalFenceKm",
+                        "computed": null,
                         "preLabel": "Length of fence to be erected (Km):",
                         "type": "number"
                     },
                     {
                         "source": "targetT3GeneralOutcomes1",
+                        "computed": null,
                         "preLabel": "General Outcomes:",
                         "type": "textarea"
                     },
                     {
                         "source": "targetT3GeneralOutcomes2",
+                        "computed": null,
                         "preLabel": "More General Outcomes:",
                         "type": "textarea"
                     }
                 ],
-                "computed": null,
-                "class": "output-section",
-                "type": "row"
-            }
-        ],
-        "type": "row"
-    }]
+                "type": "col"
+            }],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }
