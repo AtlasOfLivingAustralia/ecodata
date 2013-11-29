@@ -134,7 +134,7 @@ class ProjectService {
                     toAggregate << [score:score]
                 }
             }
-            toAggregate << [score:new Score([outputName:'Revegetation Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'totalNumberPlanted', label:'Number of plants planted', units:'kg'] ), groupBy:[groupTitle: 'Plants By Type', entity:'activity', property:'mainTheme']]
+            toAggregate << [score:new Score([outputName:'Revegetation Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'totalNumberPlanted', label:'Number of plants planted', units:'kg'] ), groupBy:[groupTitle: 'Plants By Theme', entity:'activity', property:'mainTheme']]
             toAggregate << [score:new Score([outputName:'Weed Treatment Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'areaTreatedHa', label:'Area treated', units:'ha'] ), groupBy:[groupTitle: 'Area treated by species', entity:'output', property:'targetSpecies.name']]
 
             def outputSummary = reportService.projectSummary(id, toAggregate)
