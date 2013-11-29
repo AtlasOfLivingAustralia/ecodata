@@ -1,59 +1,181 @@
 {
-"modelName":"siteAssessment",
-"dataModel":[
-    {"name":"vegetationType", "dataType":"text"},
-    {"name":"vegetationCommunity", "dataType":"text"},
-    {"name":"vegetationFormation", "dataType":"text"},
-    {"name":"dominantStructuralSpecies", "dataType":"species"},
-    {"name":"subDominantStructuralSpecies", "dataType":"species"},
-    {"name":"vegetationAssessment","dataType":"list",
-        "columns": [
-            {"name":"poiId","dataType":"text"},
-            {"name":"species","dataType":"species"},
-            {"name":"lifeform","dataType":"text", "constraints":["Tree - Overstorey", "Tree - Mid-storey", "Large shrub", "Small shrub", "Grass", "Cryptogram"]},
-            {"name":"native","dataType":"text", "constraints":["Native", "Exotic"]},
-            {"name":"number","dataType":"number"},
-            {"name":"averageHeight", "dataType":"number"},
-            {"name":"treeDBHcm", "dataType":"number"},
-            {"name":"treeCanopyMeasureMetres", "dataType":"number"}
-        ],
-        "userAddedRows":"true"
-    }
-],
-"viewModel":[
-    {
-       "type":"template",
-        "source":"assessmentArea"
-    },
-    {   "type":"section", "title":"Vegetation Assessment", "items": [
+    "modelName": "siteAssessment",
+    "dataModel": [
         {
-            "type":"row", "items":[
-                {"type":"col", "items":[
-                    {"type":"text", "source":"vegetationType", "preLabel":"Vegetation type/class"},
-                    {"type":"text", "source":"vegetationCommunity", "preLabel":"Vegetation community"},
-                    {"type":"text", "source":"vegetationFormation", "preLabel":"Vegetation formation"},
-                    {"type":"autocomplete", "source":"dominantStructuralSpecies", "preLabel":"Dominant structural species"},
-                    {"type":"autocomplete", "source":"subDominantStructuralSpecies", "preLabel":"Sub-dominant structural species"}
-                ]}
-        ]}
-    ]},
-    {
-        "type":"table",
-        "allowHeaderWrap":"true",
-        "editableRows":"true",
-        "source":"vegetationAssessment",
-        "userAddedRows":"true",
-        "columns": [
-            {"title":"Measurement Unit","source":"poiId","width":"10%", "type":"selectOne", "options":{}},
-            {"title":"Species","source":"species","width":"15%", "type":"autocomplete"},
-            {"title":"Lifeform","source":"lifeform","width":"15%","textAlign":"center", "type":"selectOne"},
-            {"title":"Native/Exotic","source":"native","width":"10%", "type":"selectOne"},
-            {"title":"No.","source":"number","width":"10%", "type":"number"},
-            {"title":"Ave. Height (m)","source":"averageHeight","width":"10%", "type":"number", "enabled":{"source":"lifeform", "values":["Tree - Overstorey", "Tree - Mid-storey"]}},
-            {"title":"Tree DBH (cm)","source":"treeDBHcm","width":"10%", "type":"number"},
-            {"title":"Tree canopy measure (m)","source":"treeCanopyMeasureMetres","width":"10%", "type":"number"}
-
-        ]
-    }
-]
+            "dataType": "text",
+            "name": "vegetationType"
+        },
+        {
+            "dataType": "text",
+            "name": "vegetationCommunity"
+        },
+        {
+            "dataType": "text",
+            "name": "vegetationFormation"
+        },
+        {
+            "dataType": "species",
+            "name": "dominantStructuralSpecies"
+        },
+        {
+            "dataType": "species",
+            "name": "subDominantStructuralSpecies"
+        },
+        {
+            "dataType": "list",
+            "name": "vegetationAssessment",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "poiId"
+                },
+                {
+                    "dataType": "species",
+                    "name": "species"
+                },
+                {
+                    "dataType": "text",
+                    "name": "lifeform",
+                    "constraints": [
+                        "Tree - Overstorey",
+                        "Tree - Mid-storey",
+                        "Large shrub",
+                        "Small shrub",
+                        "Grass",
+                        "Cryptogram"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "native",
+                    "constraints": [
+                        "Native",
+                        "Exotic"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "number"
+                },
+                {
+                    "dataType": "number",
+                    "name": "averageHeight"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeDBHcm"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeCanopyMeasureMetres"
+                }
+            ],
+            "userAddedRows": "true"
+        }
+    ],
+    "viewModel": [
+        {
+            "title": "Vegetation Assessment",
+            "items": [{
+                "items": [{
+                    "items": [
+                        {
+                            "source": "vegetationType",
+                            "preLabel": "Vegetation type/class",
+                            "type": "text"
+                        },
+                        {
+                            "source": "vegetationCommunity",
+                            "preLabel": "Vegetation community",
+                            "type": "text"
+                        },
+                        {
+                            "source": "vegetationFormation",
+                            "preLabel": "Vegetation formation",
+                            "type": "text"
+                        },
+                        {
+                            "source": "dominantStructuralSpecies",
+                            "preLabel": "Dominant structural species",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "source": "subDominantStructuralSpecies",
+                            "preLabel": "Sub-dominant structural species",
+                            "type": "autocomplete"
+                        }
+                    ],
+                    "type": "col"
+                }],
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "source": "vegetationAssessment",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "Measurement Unit",
+                    "source": "poiId",
+                    "width": "10%",
+                    "type": "selectOne",
+                    "options": {}
+                },
+                {
+                    "title": "Species",
+                    "source": "species",
+                    "width": "15%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Lifeform",
+                    "source": "lifeform",
+                    "width": "15%",
+                    "textAlign": "center",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Native/Exotic",
+                    "source": "native",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No.",
+                    "source": "number",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "enabled": {
+                        "values": [
+                            "Tree - Overstorey",
+                            "Tree - Mid-storey"
+                        ],
+                        "source": "lifeform"
+                    },
+                    "title": "Ave. Height (m)",
+                    "source": "averageHeight",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Tree DBH (cm)",
+                    "source": "treeDBHcm",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Tree canopy measure (m)",
+                    "source": "treeCanopyMeasureMetres",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "editableRows": "true",
+            "type": "table"
+        }
+    ]
 }
