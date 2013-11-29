@@ -1,0 +1,92 @@
+{
+    "modelName": "Sustainable Practice Initiatives",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "sustainableInitiatives",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of sustainable practice initiative implemented.",
+                    "name": "initiativeType"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of the initiative used to promote sustainable practices.",
+                    "name": "initiativeDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of unique individuals influenced by implementation of a particular sustainable practice initiative. (Note that individuals should be counted only once across all listed initiatives)",
+                    "name": "noInfluenced"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of individuals influenced by implementation of sustainable practices.",
+            "name": "noInfluencedTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noInfluenced",
+                    "fromList": "sustainableInitiatives"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please list the different types of sustainable practice initiatives implemented and the numbers of people influenced by each type. (Note that individuals should be counted only once across all initiative types).",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of individuals influenced:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "noInfluencedTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInfluenced\",\"fromList\":\"sustainableInitiatives\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "source": "sustainableInitiatives",
+            "columns": [
+                {
+                    "title": "Type of initiative:",
+                    "source": "initiativeType",
+                    "computed": null,
+                    "type": "text"
+                },
+                {
+                    "title": "Description of sustainable practice initiative:",
+                    "source": "initiativeDescription",
+                    "computed": null,
+                    "type": "textarea"
+                },
+                {
+                    "title": "No. of individuals influenced:",
+                    "source": "noInfluenced",
+                    "computed": null,
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "editableRows": "true",
+            "type": "table"
+        }
+    ]
+}

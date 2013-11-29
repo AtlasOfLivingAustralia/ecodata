@@ -42,16 +42,19 @@
             {
                 "title": "Ground preparation works: *",
                 "source": "groundPreparationWorks",
+                "width": "10%",
                 "type": "selectOne"
             },
             {
                 "title": "Area prepared (Ha): *",
                 "source": "preparationArea",
+                "width": "10%",
                 "type": "number"
             },
             {
                 "title": "Comments / Notes:",
                 "source": "notes",
+                "width": "80%",
                 "type": "textarea"
             }
         ],

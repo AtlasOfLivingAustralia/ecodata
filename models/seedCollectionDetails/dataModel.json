@@ -47,54 +47,91 @@
             "dataType": "text",
             "description": "General comments and notes about the seed collection activity and related observations",
             "name": "notes"
+        },
+        {
+            "dataType": "number",
+            "description": "Aggregate total of seed sown",
+            "primaryResult": "true",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "seedCollectedKg",
+                    "fromList": "seedsList"
+                }
+            },
+            "name": "totalSeedCollectedKg"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "source": "seedSourceProvenance",
-                "computed": null,
-                "preLabel": "Provenance of source plant(s): *",
-                "type": "text"
-            },
-            {
-                "source": "seedBankRepository",
-                "computed": null,
-                "preLabel": "Name of seed bank storing the seed:",
-                "type": "text"
-            },
-            {
-                "source": "seedsList",
-                "computed": null,
-                "columns": [
-                    {
-                        "title": "Species: *",
-                        "source": "seedSourceSpecies",
-                        "type": "autocomplete"
-                    },
-                    {
-                        "title": "Seed collected (Kg): *",
-                        "source": "seedCollectedKg",
-                        "type": "number"
-                    },
-                    {
-                        "title": "Health of source plant(s):",
-                        "source": "sourcePlantHealth",
-                        "type": "selectOne"
-                    }
-                ],
-                "userAddedRows": "true",
-                "type": "table"
-            },
-            {
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "seedSourceProvenance",
+                    "computed": null,
+                    "preLabel": "Provenance of source plant(s): *",
+                    "type": "text"
+                },
+                {
+                    "source": "seedBankRepository",
+                    "computed": null,
+                    "preLabel": "Name of seed bank storing the seed:",
+                    "type": "text"
+                }
+            ],
+            "computed": null,
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total seed collected (kg)",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedCollectedKg",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "source": "seedsList",
+            "computed": null,
+            "columns": [
+                {
+                    "title": "Species: *",
+                    "source": "seedSourceSpecies",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Seed collected (Kg): *",
+                    "source": "seedCollectedKg",
+                    "type": "number"
+                },
+                {
+                    "title": "Health of source plant(s):",
+                    "source": "sourcePlantHealth",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [{
                 "source": "notes",
                 "computed": null,
                 "preLabel": "Comments / Notes:",
                 "width": "60%",
                 "type": "textarea"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    }]
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

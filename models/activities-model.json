@@ -1,9 +1,4 @@
 {
-    "selectedActivity": {
-        "name": "Management Practice Change",
-        "type": "Activity",
-        "outputs": ["Management Practice Change Details"]
-    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
@@ -270,7 +265,10 @@
         {
             "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": ["Management Practice Change Details"]
+            "outputs": [
+                "Management Practice Change Details",
+                "Sustainable Practice Initiatives"
+            ]
         },
         {
             "name": "Other Conservation Works for Threatened Species",
@@ -1090,6 +1088,22 @@
             "template": "lessonsLearned",
             "scores": [],
             "name": "Lessons Learned"
+        },
+        {
+            "template": "sustainablePracticeInitiatives",
+            "scores": [
+                {
+                    "name": "noInfluencedTotal",
+                    "aggregationType": "SUM",
+                    "label": "No. of entities influenced by sustainable practice initiatives"
+                },
+                {
+                    "name": "initiativeType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of different initiatives"
+                }
+            ],
+            "name": "Sustainable Practice Initiatives"
         }
     ]
 }
