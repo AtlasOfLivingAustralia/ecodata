@@ -114,6 +114,32 @@
                     "totalPtEmployees"
                 ]}
             }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Total No. of project employees who are not rangers",
+            "name": "totalNonRangerEmployees",
+            "computed": {
+                "operation": "sum",
+                "dependents": {"source": [
+                    "noOfIndigenousNonRangersFt",
+                    "noOfIndigenousNonRangersPt"
+                ]}
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Total No. of project employees who are indigenous rangers",
+            "name": "totalRangerEmployees",
+            "computed": {
+                "operation": "sum",
+                "dependents": {"source": [
+                    "noOfIndigenousRangersFt",
+                    "noOfIndigenousRangersPt"
+                ]}
+            }
         }
     ],
     "viewModel": [
@@ -130,7 +156,7 @@
                             "source": "noOfIndigenousRangersFt",
                             "computed": null,
                             "preLabel": "Full time:",
-                            "type": "number,min[0]"
+                            "type": "number"
                         },
                         {
                             "source": "noOfIndigenousRangersPt",

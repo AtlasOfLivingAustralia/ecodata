@@ -86,8 +86,8 @@
             "name": "planting",
             "columns": [
                 {
-                    "dataType": "species",
                     "speciesList": "project",
+                    "dataType": "species",
                     "noTotal": "true",
                     "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
                     "name": "species",
@@ -150,29 +150,29 @@
         },
         {
             "dataType": "number",
-            "primaryResult": "true",
             "description": "Aggregate total of plants planted",
-            "name": "totalNumberPlanted",
+            "primaryResult": "true",
             "computed": {
                 "operation": "sum",
                 "dependents": {
                     "source": "numberPlanted",
                     "fromList": "planting"
                 }
-            }
+            },
+            "name": "totalNumberPlanted"
         },
         {
             "dataType": "number",
-            "primaryResult": "true",
             "description": "Aggregate total of seed sown",
-            "name": "totalSeedSownKg",
+            "primaryResult": "true",
             "computed": {
                 "operation": "sum",
                 "dependents": {
                     "source": "seedSownKg",
                     "fromList": "planting"
                 }
-            }
+            },
+            "name": "totalSeedSownKg"
         }
     ],
     "viewModel": [
@@ -211,55 +211,55 @@
                 {
                     "title": "Species *",
                     "source": "species",
-                    "computed": null,
                     "width": "25%",
+                    "computed": null,
                     "type": "autocomplete"
                 },
                 {
                     "title": "No. Planted *",
                     "source": "numberPlanted",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
                     "title": "Seed Sown (Kg) *",
                     "source": "seedSownKg",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
                     "title": "Type of stock",
                     "source": "stockType",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Structural Layer",
                     "source": "structuralLayer",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Stock Provenance",
                     "source": "stockProvenance",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "text"
                 },
                 {
                     "title": "Type of Guard",
                     "source": "guardType",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "selectOne"
                 }
             ],
-            "class": "output-section",
             "userAddedRows": true,
+            "class": "output-section",
             "editableRows": "true",
             "type": "table"
         },
@@ -269,32 +269,32 @@
                     "items": [
                         {
                             "source": "vegDescriptionAtPlanting",
-                            "computed": null,
                             "preLabel": "Vegetation at time of planting: *",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "revegetationMethod",
-                            "computed": null,
                             "preLabel": "Revegetation method:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "equipmentUsed",
-                            "computed": null,
                             "preLabel": "Equipment used:",
+                            "computed": null,
                             "type": "textarea"
                         },
                         {
                             "source": "adjacentLanduse",
-                            "computed": null,
                             "preLabel": "Adjacent landuse:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "connectivityIndex",
-                            "computed": null,
                             "preLabel": "Landscape connectivity: *",
+                            "computed": null,
                             "type": "selectOne"
                         }
                     ],
@@ -304,8 +304,8 @@
                 {
                     "items": [{
                         "source": "environmentalBenefits",
-                        "computed": null,
                         "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
+                        "computed": null,
                         "type": "selectMany"
                     }],
                     "computed": null,
@@ -318,9 +318,9 @@
         {
             "items": [{
                 "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes:",
                 "width": "90%",
+                "preLabel": "Comments / Notes:",
+                "computed": null,
                 "type": "textarea"
             }],
             "class": "output-section",

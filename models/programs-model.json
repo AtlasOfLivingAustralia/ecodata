@@ -39,33 +39,6 @@
                 ]
             },
             {
-                "name": "Cumberland Plain Projects",
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "name": "Working on Country 1318",
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "name": "Reef Rescue 2013/14",
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ]
-            },
-            {
                 "name": "Round 2 - Expression of Interest 2013/14",
                 "themes": [
                     {"name": "Biodiverse plantings"},
@@ -82,105 +55,44 @@
             {
                 "name": "Regional Delivery 1318",
                 "themes": [
-                    {"name": "Conserving and protecting species and ecosystems"},
-                    {"name": "Urban waterways and coastal environments"},
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
                     {"name": "Protecting Ramsar sites and values"},
-                    {"name": "Protecting world heritage sites"},
-                    {"name": "Building NRM skills and engagement"},
-                    {"name": "Enhancing indigenous capacity for NRM"}
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
                 ]
             },
             {
                 "name": "Target Area Grants - 2013/14",
-                "themes": []
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ]
             },
             {
                 "name": "Community Environment Grants 1314",
                 "themes": []
             },
             {
-                "name": "Environmental Stewardship Program",
-                "themes": []
-            },
-            {
-                "name": "Indigenous Protected Areas",
-                "themes": []
-            },
-            {
-                "name": "World Heritage Grants 2013",
-                "themes": []
-            },
-            {
                 "name": "Reef Rescue 2013/14",
-                "themes": []
+                "themes": [{"name": "Protecting the Great Barrier Reef"}]
             },
             {
-                "name": "Working on Country 1318",
-                "themes": []
-            },
-            {
-                "name": "Target Area Grants - Expression of Interest 2013/14",
-                "themes": []
+                "name": "Targeted Area Grants - Expression of Interest 2013/14",
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ]
             }
         ]
-    },
-    {
-        "name": "Great Barrier Reef Foundation",
-        "subprograms": [
-            {
-                "name": "Round 1",
-                "themes": []
-            },
-            {
-                "name": "Round 2",
-                "themes": []
-            }
-        ]
-    },
-    {
-        "name": "National Wildlife Corridors Plan",
-        "subprograms": [
-            {
-                "name": "Round 1",
-                "themes": []
-            },
-            {
-                "name": "Round 2",
-                "themes": []
-            }
-        ]
-    },
-    {
-        "name": "NRM Planning for Climate Change",
-        "subprograms": [
-            {
-                "name": "Stream 1",
-                "themes": []
-            },
-            {
-                "name": "Stream 2",
-                "themes": []
-            }
-        ]
-    },
-    {
-        "name": "Indigenous Carbon Farming Fund",
-        "subprograms": [
-            {
-                "name": "Round 1 (Category One)",
-                "themes": []
-            },
-            {
-                "name": "Round 1 (Category Two)",
-                "themes": []
-            }
-        ]
-    },
-    {
-        "name": "Natural Heritage Trust",
-        "subprograms": [{
-            "name": "Working on Country 1318",
-            "themes": []
-        }]
     }
 ]}
