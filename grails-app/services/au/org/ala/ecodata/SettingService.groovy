@@ -22,6 +22,23 @@ This site is a prototype developed by the Atlas of Living Australia in 2013. Rep
     </ul>
 </div>
 """
+    // Default about text (Markdown)
+    public static final String DEFAULT_ABOUT_TEXT = """
+Developed in collaboration with the [Atlas of Living Australia](http://www.ala.org.au/), MERIT will enhance the
+reporting process by allowing simpler yet more complete project records and showing direct links between project
+activities and contributions to Australia’s biodiversity conservation work.
+
+At this stage MERIT includes the following programmes:
+
+* Caring for our Country Target Area Grants
+* Caring for our Country Regional Delivery
+* Caring for our Country Reef Rescue
+* Caring for our Country Community Environment Grants
+* Biodiversity Fund Round 1
+* Biodiversity Fund Round 2
+* Biodiversity Fund Investing in Tasmania's Native Forests
+* Biodiversity Fund Northern Australia Targeted Investment
+"""
 
     def getSetting(String key, String defaultValue="") {
         if (!key) {
@@ -29,7 +46,8 @@ This site is a prototype developed by the Atlas of Living Australia in 2013. Rep
         }
 
         def setting = Setting.findByKey(key)
-        if (setting) {
+        // if user saves an empty value in Admin -> Settings, then default value is used
+        if (setting && setting.value?.trim()) {
             return setting.value
         }
         return defaultValue
@@ -46,7 +64,7 @@ This site is a prototype developed by the Atlas of Living Australia in 2013. Rep
     }
 
     public String getAboutPageText() {
-        return getSetting(SETTING_KEY_ABOUT_TEXT, "This system was developed by the Atlas of Living Australia in 2013 in conjunction with the Department of Sustainability, Environment, Water, Population and Communities.") as String
+        return getSetting(SETTING_KEY_ABOUT_TEXT, DEFAULT_ABOUT_TEXT)
     }
 
     public void setAboutPageText(String content) {
