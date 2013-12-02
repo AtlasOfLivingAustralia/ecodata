@@ -45,7 +45,7 @@ class SchemaBuilder {
                                 type:constrainedTextProperty([constraints:['grantId', 'externalId', 'guid']]),
                                 id:textProperty(null)
                         ],
-                        required: ['type', 'value']
+                        required: ['type', 'id']
                 ],
                 //startDate:dateProperty(null),
                 //endDate:dateProperty(null),
