@@ -41,15 +41,17 @@
                 "Protection of sacred sites",
                 "Protection of ecologically sensitive areas",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
+            "description": "Notes",
             "name": "fenceNotes"
         }
     ],
-    "viewModel": [{
-        "items": [{
+    "viewModel": [
+        {
             "items": [
                 {
                     "source": "fenceType",
@@ -82,7 +84,16 @@
             ],
             "computed": null,
             "type": "row"
-        }],
-        "type": "section"
-    }]
+        },
+        {
+            "items": [{
+                "source": "fenceNotes",
+                "preLabel": "Comments/Notes:",
+                "computed": null,
+                "type": "textarea"
+            }],
+            "computed": "null",
+            "type": "row"
+        }
+    ]
 }
