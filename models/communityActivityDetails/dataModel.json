@@ -59,7 +59,7 @@
                     "items": [{
                         "source": "eventPurpose",
                         "computed": null,
-                        "preLabel": "Purpose of event: *",
+                        "preLabel": "Purpose of event:",
                         "type": "selectMany"
                     }],
                     "computed": null,
@@ -76,13 +76,13 @@
                         {
                             "source": "eventTopics",
                             "computed": null,
-                            "preLabel": "Topics covered: *",
+                            "preLabel": "Topics covered:",
                             "type": "text"
                         },
                         {
                             "source": "eventDurationHrs",
                             "computed": null,
-                            "preLabel": "Event Duration (Hrs): *",
+                            "preLabel": "Event Duration (Hrs):",
                             "type": "number"
                         }
                     ],

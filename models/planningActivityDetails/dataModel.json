@@ -1,5 +1,5 @@
 {
-    "modelName": "Planning Details",
+    "modelName": "Plan Development Details",
     "dataModel": [
         {
             "dataType": "text",
@@ -68,19 +68,19 @@
                         {
                             "source": "typeOfPlan",
                             "computed": null,
-                            "preLabel": "Type of planning being undertaken: *",
+                            "preLabel": "Type of planning being undertaken:",
                             "type": "selectOne"
                         },
                         {
                             "source": "nameOfPlan",
                             "computed": null,
-                            "preLabel": "Name of the plan being developed: *",
+                            "preLabel": "Name of the plan being developed:",
                             "type": "text"
                         },
                         {
                             "source": "versionOfPlan",
                             "computed": null,
-                            "preLabel": "Is this a new Plan or a revision of an existing Plan?: *",
+                            "preLabel": "Is this a new Plan or a revision of an existing Plan?:",
                             "type": "selectOne"
                         },
                         {
@@ -109,6 +109,7 @@
                         },
                         {
                             "source": "<h4>Please attach a copy of the Plan document via the Admin tab<\/h4>",
+                            "computed": null,
                             "type": "literal"
                         }
                     ],

@@ -48,7 +48,7 @@
             "name": "protectionMechanisms",
             "columns": [
                 {
-                    "dataType": "stringList",
+                    "dataType": "text",
                     "description": "The type of agreement mechanism implemented to protect threatened species",
                     "name": "protectionMechanism",
                     "constraints": [
@@ -56,20 +56,22 @@
                         "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
                         "Termed agreement not on title binding (eg Land management Agreement)",
                         "Not on title non-binding (eg Wildlife Refuge)",
+                        "No protection mechanism applicable",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "The number of agreement mechanisms implemented as a result of the project",
                     "name": "numberOfProtectionMechanisms",
-                    "validate": "min[0]"
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",
                     "description": "Area covered by conservation agreement (Ha): *",
                     "name": "areaUnderAgreement",
-                    "validate": "min[0]"
+                    "validate": "required,min[0]"
                 }
             ]
         },
@@ -81,26 +83,21 @@
     "viewModel": [{
         "items": [
             {
-                "items": [
-                    {
-                        "source": "targetSpecies",
-                        "preLabel": "Species: *",
-                        "type": "autocomplete"
-                    },
-                    {
-                        "source": "animalBreedingNos",
-                        "computed": null,
-                        "preLabel": "No. of animals in captive breeding programs:",
-                        "type": "text"
-                    },
-                    {
-                        "source": "animalReleaseNumber",
-                        "computed": null,
-                        "preLabel": "No. of animals released back into the wild:",
-                        "type": "text"
-                    }
-                ],
-                "type": "col"
+                "source": "targetSpecies",
+                "preLabel": "Species: *",
+                "type": "autocomplete"
+            },
+            {
+                "source": "animalBreedingNos",
+                "computed": null,
+                "preLabel": "No. of animals in captive breeding programs:",
+                "type": "text"
+            },
+            {
+                "source": "animalReleaseNumber",
+                "computed": null,
+                "preLabel": "No. of animals released back into the wild:",
+                "type": "text"
             },
             {
                 "source": "conservationWorks",
@@ -109,11 +106,13 @@
                     {
                         "title": "Conservation Action:",
                         "source": "conservationActionType",
+                        "width": "80%",
                         "type": "selectOne"
                     },
                     {
                         "title": "Area impacted by works (Ha):",
                         "source": "areaImpactedByWorks",
+                        "width": "18%",
                         "type": "number"
                     }
                 ],
@@ -127,16 +126,19 @@
                     {
                         "title": "Type of Agreement mechanism:",
                         "source": "protectionMechanism",
+                        "width": "65%",
                         "type": "selectOne"
                     },
                     {
                         "title": "No. of Agreement mechanisms:",
                         "source": "numberOfProtectionMechanisms",
+                        "width": "18%",
                         "type": "number"
                     },
                     {
                         "title": "Area under Agreement (Ha):",
                         "source": "areaUnderAgreement",
+                        "width": "18%",
                         "type": "number"
                     }
                 ],
@@ -144,22 +146,17 @@
                 "type": "table"
             },
             {
-                "items": [
-                    {
-                        "source": "notes",
-                        "computed": null,
-                        "preLabel": "Comments / Notes:",
-                        "width": "60%",
-                        "type": "textarea"
-                    },
-                    {
-                        "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
-                        "type": "literal"
-                    }
-                ],
-                "type": "col"
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            },
+            {
+                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
+                "type": "literal"
             }
         ],
+        "width": "100%",
         "class": "output-section",
         "type": "row"
     }]

@@ -68,7 +68,7 @@
                 {
                     "source": "seedSourceProvenance",
                     "computed": null,
-                    "preLabel": "Provenance of source plant(s): *",
+                    "preLabel": "Provenance of source plant(s):",
                     "type": "text"
                 },
                 {
@@ -104,12 +104,12 @@
             "computed": null,
             "columns": [
                 {
-                    "title": "Species: *",
+                    "title": "Species:",
                     "source": "seedSourceSpecies",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "Seed collected (Kg): *",
+                    "title": "Seed collected (Kg):",
                     "source": "seedCollectedKg",
                     "type": "number"
                 },

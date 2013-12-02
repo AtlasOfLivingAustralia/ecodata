@@ -75,17 +75,17 @@
         "source": "weedObservationMonitoringDetails",
         "columns": [
             {
-                "title": "Weed species *  <i>(start typing a species name)<\/i>",
+                "title": "Weed species:",
                 "source": "weedSpecies",
                 "type": "autocomplete"
             },
             {
-                "title": "Weed cover (Ha) *",
+                "title": "Weed cover (Ha):",
                 "source": "weedCoverHa",
                 "type": "number"
             },
             {
-                "title": "Infestation Density",
+                "title": "Infestation Density:",
                 "source": "weedInfestationDensity",
                 "type": "selectOne"
             },
@@ -95,7 +95,7 @@
                 "type": "selectOne"
             },
             {
-                "title": "Reproductive status",
+                "title": "Reproductive status:",
                 "source": "weedReproductiveStatus",
                 "type": "selectOne"
             },
@@ -105,7 +105,7 @@
                 "type": "selectOne"
             },
             {
-                "title": "Notes",
+                "title": "Notes:",
                 "source": "weedInspectionNotes",
                 "type": "textarea"
             }

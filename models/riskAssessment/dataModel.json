@@ -8,11 +8,20 @@
                 "dataType": "text",
                 "name": "riskType",
                 "constraints": [
+                    "Climate change",
                     "Cropping & root zone disturbance",
                     "Defoliation - birds",
                     "Defoliation - insects",
                     "Defoliation - other",
+                    "Disease - animals",
+                    "Disease - plants",
                     "Drainage - prolonged soil profile drying",
+                    "Fishing / aquaculture impacts - commercial over fishing",
+                    "Fishing / aquaculture impacts - recreational over fishing",
+                    "Fishing / aquaculture impacts - fishing bycatch",
+                    "Fishing / aquaculture impacts - drifting ghost nets",
+                    "Fishing / aquaculture impacts - escaped stock",
+                    "Fishing / aquaculture impacts - nutrification",
                     "Fire - managed fire frequency",
                     "Fire - managed fire intensity",
                     "Fire - wildfire",
@@ -22,11 +31,16 @@
                     "Grazing pressure - domestic stock",
                     "Grazing pressure - feral animals",
                     "Grazing pressure - native wildlife",
+                    "Impacts from public access / visitation - pedestrian",
+                    "Impacts from public access / visitation - vehicular",
+                    "Invasive and pest animals",
+                    "Invasive weeds",
                     "Mistletoe or other parasite/fungal infestations",
                     "Soil acidification or acid-sulphate soils",
                     "Soil compaction - animal/human/machinery",
                     "Soil nutrient enrichment/eutrophication",
                     "Soil salinity",
+                    "Urbanisation / subdivision",
                     "Weedicides/pesticides or chemical contamination",
                     "Other (specify in notes)"
                 ]
@@ -70,32 +84,38 @@
         ]
     }],
     "viewModel": [{
+        "userEditableRows": true,
         "source": "riskTable",
         "columns": [
             {
                 "title": "Type of threat/risk",
                 "source": "riskType",
+                "width": "30%",
                 "type": "selectOne"
             },
             {
                 "title": "Description",
                 "source": "riskDescription",
+                "width": "40%",
                 "type": "textarea"
             },
             {
                 "title": "Likelihood",
                 "source": "riskLikelihood",
+                "width": "10%",
                 "type": "selectOne"
             },
             {
                 "title": "Consequence",
                 "source": "riskConsequence",
+                "width": "10%",
                 "type": "selectOne"
             },
             {
                 "title": "Risk rating",
                 "source": "riskRating",
                 "computed": null,
+                "width": "10%",
                 "type": "selectOne"
             }
         ],

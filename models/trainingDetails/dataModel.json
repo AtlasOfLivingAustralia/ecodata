@@ -2,29 +2,6 @@
     "modelName": "Training Details",
     "dataModel": [
         {
-            "dataType": "text",
-            "description": "Purpose for which grazing is being used as a management tool",
-            "name": "stockManagementReason",
-            "constraints": [
-                "Reduce competition & shading for revegetation areas",
-                "Promote woody plant growth",
-                "Reduce wildfire risk & intensity",
-                "Other (describe in notes)"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "number",
-            "description": "Area in hectares where grazing is used as a management tool under this activity",
-            "name": "areaOfStockManagementHa",
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "Description of the grazing strategy/methodology being used to achieve the purpose",
-            "name": "stockingStrategy"
-        },
-        {
             "dataType": "list",
             "name": "courseAttendance",
             "columns": [
@@ -126,21 +103,25 @@
                 {
                     "title": "Type of course attended:",
                     "source": "typeOfCourse",
+                    "width": "35%",
                     "type": "selectOne"
                 },
                 {
                     "title": "Course title:",
                     "source": "courseTitle",
+                    "width": "25%",
                     "type": "text"
                 },
                 {
                     "title": "Course qualification level:",
                     "source": "qualificationLevel",
+                    "width": "25%",
                     "type": "selectOne"
                 },
                 {
                     "title": "No. of people who completed the course:",
                     "source": "courseAttendees",
+                    "width": "15%",
                     "type": "number"
                 }
             ],

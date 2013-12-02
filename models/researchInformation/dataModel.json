@@ -7,7 +7,7 @@
             "name": "typeOfResearch",
             "constraints": [
                 "Environmental resilience",
-                "Species population studies",
+                "Species and population studies",
                 "Eco-economic studies",
                 "Socio-environmental studies",
                 "Soils studies",
@@ -16,6 +16,7 @@
                 "Grazing regime impacts",
                 "Cropping regime impacts",
                 "Farm productivity",
+                "Research associated with project outcomes",
                 "Other (specify in notes)"
             ],
             "validate": "required"
@@ -47,13 +48,13 @@
                 {
                     "source": "typeOfResearch",
                     "computed": null,
-                    "preLabel": "Type of research being undertaken: *",
+                    "preLabel": "Type of research being undertaken:",
                     "type": "selectOne"
                 },
                 {
                     "source": "nameOfResearchProject",
                     "computed": null,
-                    "preLabel": "Name of the research project: *",
+                    "preLabel": "Name of the research project:",
                     "type": "text"
                 },
                 {

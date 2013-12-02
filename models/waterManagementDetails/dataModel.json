@@ -238,7 +238,7 @@
                         {
                             "source": "waterbodyType",
                             "computed": null,
-                            "preLabel": "Type of water-body being managed: *",
+                            "preLabel": "Type of water-body being managed:",
                             "type": "selectOne"
                         },
                         {
@@ -256,7 +256,7 @@
                         {
                             "source": "isCurrentFlowNatural",
                             "computed": null,
-                            "preLabel": "Current flow regime of the subject water body?: *",
+                            "preLabel": "Current flow regime of the subject water body?:",
                             "type": "selectOne"
                         },
                         {
@@ -274,13 +274,13 @@
                         {
                             "source": "hydrologicalStructuresInstalled",
                             "computed": null,
-                            "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
+                            "preLabel": "No. of new structures installed to manage the hydrological regime at this site:",
                             "type": "number"
                         },
                         {
                             "source": "isWaterBeingTransported",
                             "computed": null,
-                            "preLabel": "Is the management action extracting water from / importing water to the site?: *",
+                            "preLabel": "Is the management action extracting water from / importing water to the site?:",
                             "type": "selectOne"
                         },
                         {
@@ -292,7 +292,7 @@
                         {
                             "source": "managedArea",
                             "computed": null,
-                            "preLabel": "Area of catchment being managed/treated by this activity: *",
+                            "preLabel": "Area of catchment being managed/treated by this activity:",
                             "type": "number"
                         },
                         {
@@ -304,13 +304,13 @@
                         {
                             "source": "transportedWaterUse",
                             "computed": null,
-                            "preLabel": "What is extracted / imported water being used for?: *",
+                            "preLabel": "What is extracted / imported water being used for?:",
                             "type": "selectMany"
                         },
                         {
                             "source": "waterMgtEnvironBenefit",
                             "computed": null,
-                            "preLabel": "What environmental benefits are expected to be gained by this water management action?: *",
+                            "preLabel": "What environmental benefits are expected to be gained by this water management action?:",
                             "type": "selectMany"
                         }
                     ],

@@ -133,25 +133,25 @@
                     {
                         "source": "fireEventType",
                         "computed": null,
-                        "preLabel": "Type of fire event: *",
+                        "preLabel": "Type of fire event:",
                         "type": "selectOne"
                     },
                     {
                         "source": "fireReason",
                         "computed": null,
-                        "preLabel": "Reason(s) for burn: *",
+                        "preLabel": "Reason(s) for burn:",
                         "type": "selectMany"
                     },
                     {
                         "source": "areaOfFireHa",
                         "computed": null,
-                        "preLabel": "Area of burn (Ha): *",
+                        "preLabel": "Area of burn (Ha):",
                         "type": "number"
                     },
                     {
                         "source": "areaBurntPercent",
                         "computed": null,
-                        "preLabel": "Actual burnt area (% of fire ground area): *",
+                        "preLabel": "Actual burnt area (% of fire ground area):",
                         "type": "number"
                     },
                     {

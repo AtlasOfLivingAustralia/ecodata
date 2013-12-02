@@ -70,13 +70,13 @@
                     {
                         "source": "debrisWeightTonnes",
                         "computed": null,
-                        "preLabel": "Weight of debris removed (Tonnes): *",
+                        "preLabel": "Weight of debris removed (Tonnes):",
                         "type": "number"
                     },
                     {
                         "source": "debrisVolumeM3",
                         "computed": null,
-                        "preLabel": "Volume of debris removed (m3): *",
+                        "preLabel": "Volume of debris removed (m3):",
                         "type": "number"
                     },
                     {

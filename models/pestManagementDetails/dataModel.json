@@ -90,7 +90,7 @@
                         {
                             "source": "targetSpecies",
                             "computed": null,
-                            "preLabel": "Target species: *",
+                            "preLabel": "Target species:",
                             "type": "autocomplete"
                         },
                         {
@@ -102,19 +102,19 @@
                         {
                             "source": "pestAnimalsTreatedNo",
                             "computed": null,
-                            "preLabel": "No. of individuals killed / removed: *",
+                            "preLabel": "No. of individuals killed / removed:",
                             "type": "number"
                         },
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
-                            "preLabel": "Area covered by treatment (Ha): *",
+                            "preLabel": "Area covered by treatment (Ha):",
                             "type": "number"
                         },
                         {
                             "source": "pestDensityPerHa",
                             "computed": null,
-                            "preLabel": "Estimated pest density before treatment (No./Ha): *",
+                            "preLabel": "Estimated pest density before treatment (No./Ha):",
                             "type": "number"
                         }
                     ],
@@ -125,7 +125,7 @@
                     "items": [{
                         "source": "pestManagementMethod",
                         "computed": null,
-                        "preLabel": "Pest management method: *",
+                        "preLabel": "Pest management method:",
                         "type": "selectMany"
                     }],
                     "computed": null,
@@ -136,7 +136,7 @@
                         {
                             "source": "pestManagementPurpose",
                             "computed": null,
-                            "preLabel": "Pest management purpose: *",
+                            "preLabel": "Pest management purpose:",
                             "type": "selectOne"
                         },
                         {

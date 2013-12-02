@@ -59,20 +59,20 @@
                     {
                         "source": "numberOnCountryVisits",
                         "computed": null,
-                        "preLabel": "No. of indigenous on-country visits with older and younger people together: *",
+                        "preLabel": "No. of indigenous on-country visits with older and younger people together:",
                         "width": "20%",
                         "type": "number"
                     },
                     {
                         "source": "indigenousDecisionMakers",
                         "computed": null,
-                        "preLabel": "Were indigenous decision-makers involved in organising or running this activity?: *",
+                        "preLabel": "Were indigenous decision-makers involved in organising or running this activity?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "indigenousKnowledgeDocumented",
                         "computed": null,
-                        "preLabel": "Has any indigenous knowledge been documented as part of this activity?: *",
+                        "preLabel": "Has any indigenous knowledge been documented as part of this activity?:",
                         "type": "selectOne"
                     }
                 ],

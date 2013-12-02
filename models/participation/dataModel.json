@@ -45,42 +45,42 @@
                 {
                     "source": "totalParticipantsNotEmployed",
                     "computed": null,
-                    "preLabel": "Total No. of Participants (not employed on project): *",
+                    "preLabel": "Total No. of Participants (not employed on project):",
                     "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "numberOfIndigenousParticipants",
                     "computed": null,
-                    "preLabel": "No of Indigenous Participants (not employed on project): *",
+                    "preLabel": "No of Indigenous Participants (not employed on project):",
                     "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "totalParticipantsNew",
                     "computed": null,
-                    "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project): *",
+                    "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project):",
                     "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "numberOnCountryVisits",
                     "computed": null,
-                    "preLabel": "Total No. of indigenous on-country visits: *",
+                    "preLabel": "Total No. of indigenous on-country visits:",
                     "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "numberOfCommunityGroups",
                     "computed": null,
-                    "preLabel": "No of community groups participating: *",
+                    "preLabel": "No of community groups participating:",
                     "width": "20%",
                     "type": "number"
                 },
                 {
                     "source": "numberOfFarmingEntitiesNew",
                     "computed": null,
-                    "preLabel": "No of farming entities not previously attending events for this project: *",
+                    "preLabel": "No of farming entities not previously attending events for this project:",
                     "width": "20%",
                     "type": "number"
                 }

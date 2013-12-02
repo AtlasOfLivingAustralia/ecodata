@@ -96,12 +96,14 @@
                 {
                     "dataType": "number",
                     "description": "Number of plants planted",
-                    "name": "numberPlanted"
+                    "name": "numberPlanted",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "Weight of seed direct sown in kilograms",
-                    "name": "seedSownKg"
+                    "name": "seedSownKg",
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -209,21 +211,21 @@
             "source": "planting",
             "columns": [
                 {
-                    "title": "Species *",
+                    "title": "Species:",
                     "source": "species",
-                    "width": "25%",
+                    "width": "30%",
                     "computed": null,
                     "type": "autocomplete"
                 },
                 {
-                    "title": "No. Planted *",
+                    "title": "No. Planted:",
                     "source": "numberPlanted",
                     "width": "10%",
                     "computed": null,
                     "type": "number"
                 },
                 {
-                    "title": "Seed Sown (Kg) *",
+                    "title": "Seed Sown (Kg):",
                     "source": "seedSownKg",
                     "width": "10%",
                     "computed": null,

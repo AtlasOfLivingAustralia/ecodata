@@ -14,13 +14,13 @@
                 "Cyclone",
                 "Solid Sheet (pailing, pickets, sheet metal, etc.)",
                 "Other (specify in notes)"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "number",
             "description": "Length of fence erected in kilometres",
-            "name": "lengthOfFence"
+            "name": "lengthOfFence",
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -54,14 +54,14 @@
                 {
                     "source": "fenceType",
                     "computed": null,
-                    "preLabel": "Fence Type: *",
+                    "preLabel": "Fence Type:",
                     "width": "10%",
                     "type": "selectOne"
                 },
                 {
                     "source": "lengthOfFence",
                     "computed": null,
-                    "preLabel": "Length of fence (Km): *",
+                    "preLabel": "Length of fence (Km):",
                     "width": "20%",
                     "type": "number"
                 },

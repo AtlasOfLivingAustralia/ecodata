@@ -62,7 +62,7 @@
                 "items": [{
                     "source": "evidenceOfPreviousWeedTreatment",
                     "computed": null,
-                    "preLabel": "Evidence of Previous Treatment: *",
+                    "preLabel": "Evidence of Previous Treatment:",
                     "type": "selectMany"
                 }],
                 "computed": null,
@@ -73,7 +73,7 @@
                     {
                         "source": "effectivenessOfPreviousWeedTreatment",
                         "computed": null,
-                        "preLabel": "Effectiveness of Previous Treatment (% killed): *",
+                        "preLabel": "Effectiveness of Previous Treatment (% killed):",
                         "type": "number"
                     },
                     {

@@ -305,6 +305,11 @@
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Activity",
             "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
+        },
+        {
+            "name": "Infrastructure Establishment",
+            "type": "Activity",
+            "outputs": ["Infrastructure Details"]
         }
     ],
     "outputs": [
@@ -659,12 +664,19 @@
         },
         {
             "template": "infrastructureDetails",
-            "scores": [{
-                "name": "infrastructureType",
-                "aggregationType": "SET",
-                "label": "Type of infrastructure",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "name": "noInstallationsTotal",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of infrastructure installations / facilities established"
+                },
+                {
+                    "name": "infrastructureType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Type of infrastructure",
+                    "units": ""
+                }
+            ],
             "name": "Infrastructure Details"
         },
         {

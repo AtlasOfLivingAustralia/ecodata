@@ -119,7 +119,7 @@
                         {
                             "source": "targetSpecies",
                             "computed": null,
-                            "preLabel": "Target species: *",
+                            "preLabel": "Target species:",
                             "type": "autocomplete"
                         },
                         {
@@ -137,7 +137,7 @@
                         {
                             "source": "controlStatus",
                             "computed": null,
-                            "preLabel": "Control status: *",
+                            "preLabel": "Control status:",
                             "type": "selectOne"
                         },
                         {
@@ -156,25 +156,25 @@
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
-                            "preLabel": "Treatment area (Ha): *",
+                            "preLabel": "Treatment area (Ha):",
                             "type": "number"
                         },
                         {
                             "source": "linearAreaTreated",
                             "computed": null,
-                            "preLabel": "Length of riparian or roadside area treated (Km): *",
+                            "preLabel": "Length of riparian or roadside area treated (Km):",
                             "type": "number"
                         },
                         {
                             "source": "treatmentEventType",
                             "computed": null,
-                            "preLabel": "Type of treatment event: *",
+                            "preLabel": "Type of treatment event:",
                             "type": "selectOne"
                         },
                         {
                             "source": "treatmentMethod",
                             "computed": null,
-                            "preLabel": "Treatment method: *",
+                            "preLabel": "Treatment method:",
                             "type": "selectOne",
                             "validate": "required"
                         },

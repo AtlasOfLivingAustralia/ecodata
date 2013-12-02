@@ -201,6 +201,7 @@
                     "title": "Industry From:",
                     "source": "changePurpose",
                     "computed": null,
+                    "width": "25%",
                     "type": "selectOne"
                 },
                 {
@@ -219,18 +220,21 @@
                     "title": "Practice change action:",
                     "source": "practiceChangeAction",
                     "computed": null,
+                    "width": "20%",
                     "type": "selectOne"
                 },
                 {
                     "title": "Area treated by practice change (Ha):",
                     "source": "changePracticeTreatedArea",
                     "computed": null,
+                    "width": "10%",
                     "type": "number"
                 },
                 {
                     "title": "No. of farming entities adopting this practice change:",
                     "source": "entitiesAdoptingChange",
                     "computed": null,
+                    "width": "10%",
                     "type": "number"
                 }
             ],

@@ -63,13 +63,13 @@
                         {
                             "source": "stockManagementReason",
                             "computed": null,
-                            "preLabel": "What land management issue(s) are you using stock grazing to manage?: *",
+                            "preLabel": "What land management issue(s) are you using stock grazing to manage?:",
                             "type": "selectMany"
                         },
                         {
                             "source": "areaOfStockManagementHa",
                             "computed": null,
-                            "preLabel": "Area managed (Ha): *",
+                            "preLabel": "Area managed (Ha):",
                             "type": "number"
                         }
                     ],
@@ -102,17 +102,19 @@
             "source": "stockingDetails",
             "columns": [
                 {
-                    "title": "Type of stock used: *",
+                    "title": "Type of stock used:",
                     "source": "stockingManagementSpecies",
+                    "width": "50%",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Stocking density (DSE / Ha): *",
+                    "title": "Stocking density (DSE / Ha):",
                     "source": "stockingDensity",
                     "type": "number"
                 }
             ],
             "userAddedRows": "true",
+            "class": "output-section",
             "type": "table"
         }
     ]

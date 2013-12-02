@@ -40,6 +40,7 @@
         {
             "items": [{
                 "source": "Please list the different types of sustainable practice initiatives implemented and the numbers of people influenced by each type. (Note that individuals should be counted only once across all initiative types).",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -68,6 +69,7 @@
                     "title": "Type of initiative:",
                     "source": "initiativeType",
                     "computed": null,
+                    "width": "25%",
                     "type": "text"
                 },
                 {
@@ -80,6 +82,7 @@
                     "title": "No. of individuals influenced:",
                     "source": "noInfluenced",
                     "computed": null,
+                    "width": "10%",
                     "type": "number"
                 }
             ],

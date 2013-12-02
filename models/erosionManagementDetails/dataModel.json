@@ -111,19 +111,19 @@
                         {
                             "source": "erosionAreaTreated",
                             "computed": null,
-                            "preLabel": "Area of erosion being treated: *",
+                            "preLabel": "Area of erosion being treated:",
                             "type": "number"
                         },
                         {
                             "source": "erosionLength",
                             "computed": null,
-                            "preLabel": "Length of stream/coastline treated (Km): *",
+                            "preLabel": "Length of stream/coastline treated (Km):",
                             "type": "number"
                         },
                         {
                             "source": "erosionType",
                             "computed": null,
-                            "preLabel": "Type(s) of erosion treated: *",
+                            "preLabel": "Type(s) of erosion treated:",
                             "type": "selectMany"
                         }
                     ],
@@ -134,7 +134,7 @@
                     "items": [{
                         "source": "erosionTreatmentMethod",
                         "computed": null,
-                        "preLabel": "Erosion management method(s) used: *",
+                        "preLabel": "Erosion management method(s) used:",
                         "type": "selectMany"
                     }],
                     "computed": null,
@@ -151,7 +151,7 @@
                         {
                             "source": "erosionStructuresInstalled",
                             "computed": null,
-                            "preLabel": "No. of erosion control structures installed: *",
+                            "preLabel": "No. of erosion control structures installed:",
                             "type": "number"
                         }
                     ],
