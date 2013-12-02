@@ -14,6 +14,7 @@
  */
 
 package au.org.ala.ecodata
+
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchRequest
@@ -22,22 +23,23 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.QueryBuilder
-import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
 import org.elasticsearch.search.facet.terms.TermsFacet
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
+import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
+import org.grails.datastore.mapping.engine.event.EventType
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
+import java.util.concurrent.ConcurrentLinkedQueue
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
- * ElasticSearch service
+ * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
  * Code gist taken from
  *   https://github.com/mstein/elasticsearch-grails-plugin/blob/master/grails-app/services/org/grails/plugins/elasticsearch/ElasticSearchService.groovy
@@ -51,11 +53,14 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def allowedDocTypes = ['au.org.ala.ecodata.Project','au.org.ala.ecodata.Site','au.org.ala.ecodata.Activity']
+    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project','au.org.ala.ecodata.Site','au.org.ala.ecodata.Activity']
     def DEFAULT_INDEX = "search"
     def HOMEPAGE_INDEX = "homepage"
     def DEFAULT_TYPE = "doc"
-    def MAX_FACETS = 10;
+    def MAX_FACETS = 10
+    private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [ AuditMessage.class, UserPermission, Setting ]
+
 
     /**
      * Init method to be called on service creation
@@ -131,14 +136,18 @@ class ElasticSearchService {
     }
 
     /**
-     * Get the doc identifier, which differs for each domain class
+     * Get the doc identifier, which differs for each domain class.
+     * Note this can be called for both the Domain object itself or the
+     * "toMap" representation it. TODO might be better way to do this
      *
-     * @param doc
+     * @param  doc
      * @return docId (String)
      */
     def getEntityId(doc) {
         def docId
-        switch ( doc.class ) {
+        def className = (doc.className) ? doc.className : doc.class.name;
+
+        switch ( className ) {
             case "au.org.ala.ecodata.Project":
                 docId = doc.projectId; break
             case "au.org.ala.ecodata.Site":
@@ -152,7 +161,7 @@ class ElasticSearchService {
     }
 
     def getDocType(doc) {
-        def className = doc.class?:"au.org.ala.ecodata.doc"
+        def className = doc.className?:"au.org.ala.ecodata.doc"
         className.tokenize(".")[-1].toLowerCase()
     }
 
@@ -280,7 +289,7 @@ class ElasticSearchService {
                                 "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
-                        "class": {
+                        "className": {
                             "type":"string",
                             "analyzer":"facetKeyword"
                         },
@@ -420,48 +429,123 @@ class ElasticSearchService {
     }
 
     /**
+     * Log GORM event to msg queue
+     *
+     * @param event
+     */
+    def queueGormEvent(AbstractPersistenceEvent event) {
+        def doc = event.entityObject
+        def docType = doc.getClass().name
+        def docId = getEntityId(doc)
+
+        if (!ALLOWED_DOC_TYPES.contains(docType)) {
+            return
+        }
+
+        log.debug "GORM event: ${event.eventType} - doc has class: ${docType} with id: ${docId}"
+
+        try {
+            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType)
+            _messageQueue.offer(message)
+        } catch (Exception ex) {
+            log.error ex.localizedMessage, ex
+        }
+    }
+
+    /**
+     * Called by Quartz job - grabs all message on the queue and indexes
+     * documents with ElasticSearch. Code gist taken from AuditService.
+     *
+     * @param maxMessagesToFlush
+     * @return
+     */
+    public int flushIndexMessageQueue(int maxMessagesToFlush = 1000) {
+        int messageCount = 0
+
+        try {
+            IndexDocMsg message = null;
+            while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
+                log.debug "Processing IndexDocMsg: ${message}"
+
+                switch(message.indexType) {
+                    case EventType.PostUpdate:
+                    case EventType.PostInsert:
+                        indexDocType(message.docId, message.docType)
+                        break
+                    case EventType.PostDelete:
+                        deleteDocByIdAndType(message.docId, message.docType)
+                        break
+                    default:
+                        log.warn "Unexpected GORM event type: ${message.indexType}"
+                }
+
+                messageCount++
+            }
+        } catch (Exception ex) {
+            log.error "Error indexing docs from message queue: ${ex}", ex
+        }
+        return messageCount
+    }
+
+    /**
      * Index any document type using the toMap representation of it.
      * Called by {@link GormEventListener GormEventListener}.
      *
      * @param doc (domain object)
      */
-    def indexDocType(doc) {
-
+    def indexDocType(docId, docType) {
         // skip indexing
         if (indexingTempInactive
                 || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
-                || !allowedDocTypes.contains(doc.getClass().name)) {
+                || !ALLOWED_DOC_TYPES.contains(docType)) {
             return null
         }
 
-        log.debug "doc has class: ${doc.getClass().name}"
-        def docClass = doc.getClass()
-        switch(docClass) {
-            case au.org.ala.ecodata.Project:
+        switch(docType) {
+            case "au.org.ala.ecodata.Project":
+                def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
-                projectMap["class"] = docClass.name
+                projectMap["className"] = docType
                 indexDoc(projectMap, DEFAULT_INDEX)
-                // homepage index - turned off due to triggering recursive POST INSERT events for some reason
-//                try {
-//                    def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_ACTIVITIES.name())
-//                    projectMapDeep["class"] = docClass.name
-//                    indexDoc(projectMapDeep, HOMEPAGE_INDEX)
-//                } catch (StackOverflowError e) {
-//                    log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}"
-//                } catch (Exception e)  {
-//                    log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}"
-//                }
+                // update homepage search index (map, etc)
+                indexHomePage(doc, docType)
                 break;
-            case au.org.ala.ecodata.Site:
+            case "au.org.ala.ecodata.Site":
+                def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
-                siteMap["class"] = docClass.name
+                siteMap["className"] = docType
                 indexDoc(siteMap, DEFAULT_INDEX)
+                // update linked projects -- index for homepage
+                doc.projects.each { // assume list of Strings (ids)
+                    def pDoc = Project.findByProjectId(it)
+                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                }
                 break;
-            case au.org.ala.ecodata.Activity:
+            case "au.org.ala.ecodata.Activity":
+                def doc = Activity.findByActivityId(docId)
                 def activityMap = activityService.toMap(doc, "flat")
-                activityMap["class"] = docClass.name
+                activityMap["className"] = docType
                 indexDoc(activityMap, DEFAULT_INDEX)
                 break;
+        }
+    }
+
+    /**
+     * Update index for home page (projects with sites)
+     *
+     * @param doc
+     * @param docType
+     */
+    def indexHomePage(doc, docType) {
+        // homepage index - turned off due to triggering recursive POST INSERT events for some reason
+        try {
+            def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_ACTIVITIES.name())
+            projectMapDeep["className"] = docType
+            indexDoc(projectMapDeep, HOMEPAGE_INDEX)
+        } catch (StackOverflowError e) {
+            log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
+        } catch (Exception e)  {
+            log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
         }
     }
 
@@ -475,12 +559,41 @@ class ElasticSearchService {
         // skip indexing
         if (indexingTempInactive
                 || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
-                || !allowedDocTypes.contains(doc.getClass().name)) {
+                || !ALLOWED_DOC_TYPES.contains(doc.getClass().name)) {
             return null
         }
         // delete from index
         def resp = checkForDelete(doc, docId)
         log.info "Delete from index for ${doc}: ${resp} "
+    }
+
+    /**
+     * Delete doc from search index - by doc id and type
+     *
+     * @param docId
+     * @param docType
+     * @return
+     */
+    def deleteDocByIdAndType(docId, docType) {
+        def doc
+
+        switch(docType) {
+            case "au.org.ala.ecodata.Project":
+                doc = Project.findByProjectId(docId);
+                break
+            case "au.org.ala.ecodata.Site":
+                doc = Site.findBySiteId(docId)
+                break
+            case "au.org.ala.ecodata.Activity":
+                doc = Activity.findByActivityId(docId)
+                break
+        }
+
+        if (doc) {
+            deleteDocType(doc)
+        } else {
+            log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
+        }
     }
 
     /**
@@ -492,13 +605,13 @@ class ElasticSearchService {
         log.debug "Indexing all projects"
         def list = projectService.list("flat", false)
         list.each {
-            it["class"] = new Project().getClass().name
+            it["className"] = new Project().getClass().name
             indexDoc(it, DEFAULT_INDEX)
         }
         // homepage index
         def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
         listDeep.each {
-            it["class"] = new Project().getClass().name
+            it["className"] = new Project().getClass().name
             //log.debug "project (deep) = ${it as JSON}"
             indexDoc(it, HOMEPAGE_INDEX)
         }
@@ -506,13 +619,13 @@ class ElasticSearchService {
         def sites = Site.findAll()
         sites.each {
             def siteMap = siteService.toMap(it, "flat")
-            siteMap["class"] = new Site().getClass().name
+            siteMap["className"] = new Site().getClass().name
             indexDoc(siteMap, DEFAULT_INDEX)
         }
         log.debug "Indexing all activities"
         def acts = activityService.getAll(false, "flat")
         acts.each {
-            it["class"] = new Activity().getClass().name
+            it["className"] = new Activity().getClass().name
             indexDoc(it, DEFAULT_INDEX)
         }
 
@@ -530,7 +643,7 @@ class ElasticSearchService {
         // homepage index
         def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
         listDeep.each {
-            it["class"] = new Project().getClass().name
+            it["className"] = new Project().getClass().name
             //log.debug "project (deep) = ${it as JSON}"
             indexDoc(it, HOMEPAGE_INDEX)
         }
@@ -661,7 +774,7 @@ class ElasticSearchService {
         } else {
             facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("class").field("class").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("className").field("className").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").order(fsort).size(flimit).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))

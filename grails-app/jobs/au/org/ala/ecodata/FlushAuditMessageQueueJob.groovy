@@ -2,7 +2,7 @@ package au.org.ala.ecodata
 
 class FlushAuditMessageQueueJob {
 
-    def auditService
+    def auditService, elasticSearchService
 
     static triggers = {
         simple repeatInterval: 5000l // execute job once in 5 seconds
@@ -10,5 +10,6 @@ class FlushAuditMessageQueueJob {
 
     def execute() {
         auditService.flushMessageQueue()
+        elasticSearchService.flushIndexMessageQueue()
     }
 }

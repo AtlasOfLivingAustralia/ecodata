@@ -32,19 +32,13 @@ class GormEventListener extends AbstractPersistenceEventListener {
     @Override
     protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
 //        log.debug "onPersistenceEvent START || elasticSearchService = ${elasticSearchService}"
-
-        if (event.eventType == EventType.PostInsert) {
-            log.debug "POST INSERT ${event.entityObject}"
-            elasticSearchService.indexDocType(event.entityObject)
-            auditService.logGormEvent(event)
-        } else if (event.eventType == EventType.PostUpdate) {
-            log.debug "POST UPDATE "
-            elasticSearchService.indexDocType(event.entityObject)
-            auditService.logGormEvent(event)
-        } else if (event.eventType == EventType.PostDelete) {
-            log.debug "POST DELETE ${event.entityObject}"
-            elasticSearchService.deleteDocType(event.entityObject)
-            auditService.logGormEvent(event)
+        switch (event.eventType) {
+            case EventType.PostInsert:
+            case EventType.PostUpdate:
+            case EventType.PostDelete:
+                elasticSearchService.queueGormEvent(event)
+                auditService.logGormEvent(event)
+                break
         }
 
 //        log.debug "onPersistenceEvent END"
