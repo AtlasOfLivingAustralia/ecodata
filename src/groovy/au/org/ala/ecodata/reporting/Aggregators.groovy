@@ -106,6 +106,15 @@ class Aggregators {
         Map histogram = [:].withDefault { 0 };
 
         public void doAggregation(value) {
+            if (value =~ /name:/) {
+                // extract sci name from complex key. e.g.
+                // [guid:urn:lsid:biodiversity.org.au:apni.taxon:56760, listId:Atlas of Living Australia, name:Paspalum punctatum, list:]
+                // TODO move this code to somewhere else where the string has not already been encoded
+                //log.debug "value = '${value}'"
+                def m = value =~ /(?:name:)(.*?),/
+                //log.debug "m = ${m[0][1]?:'[unknown]'} "
+                value = m[0][1]?:'[unknown]'
+            }
             histogram[value]++
         }
 
