@@ -95,15 +95,12 @@
         },
         {
             "items": [{
-                "items": [{
-                    "source": "eventNotes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
-                }],
+                "source": "eventNotes",
                 "computed": null,
-                "type": "col"
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
             }],
+            "computed": null,
             "class": "output-section",
             "type": "row"
         }

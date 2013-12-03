@@ -172,7 +172,9 @@
                 "Ground Cover - MERI",
                 "Exotic Fauna - MERI",
                 "Crown Cover - MERI",
-                "Crown Type - MERI"
+                "Crown Type - MERI",
+                "Species Diversity - MERI",
+                "Exotic Species - MERI"
             ]
         },
         {
@@ -318,6 +320,7 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "outputName": "Revegetation Details",
                     "name": "areaOfWorks",
                     "aggregationType": "SUM",
                     "label": "Area of works",
@@ -325,6 +328,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Revegetation Details",
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
                     "label": "Number of plants planted",
@@ -332,6 +336,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Revegetation Details",
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
                     "label": "Kgs of seed sown",
@@ -374,6 +379,7 @@
             "template": "seedCollectionDetails",
             "scores": [{
                 "isOutputTarget": true,
+                "outputName": "Seed Collection Details",
                 "name": "seedCollectedKg",
                 "aggregationType": "SUM",
                 "label": "Seed collected (Kg)",
@@ -546,6 +552,7 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "outputName": "Fire Information",
                     "name": "areaOfFireHa",
                     "aggregationType": "SUM",
                     "label": "Area of burn (Ha)",
@@ -621,6 +628,7 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "outputName": "Weed Treatment Details",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
                     "label": "Total area treated (Ha)",
@@ -654,6 +662,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Stock Management Details",
                     "name": "areaOfStockManagmentHa",
                     "aggregationType": "SUM",
                     "label": "Area managed with stock (Ha)",
@@ -714,12 +723,14 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Pest Management Details",
                     "name": "pestAnimalsTreatedNo",
                     "aggregationType": "SUM",
                     "label": "No. of individual animals killed/removed"
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Pest Management Details",
                     "name": "areaTreatedForPests",
                     "aggregationType": "SUM",
                     "label": "Area covered by pest treatment (Ha)",
@@ -933,6 +944,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Debris Removal Details",
                     "name": "debrisWeightTonnes",
                     "aggregationType": "SUM",
                     "label": "Weight of debris removed (Tonnes)",
@@ -940,6 +952,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Debris Removal Details",
                     "name": "debrisVolumeM3",
                     "aggregationType": "SUM",
                     "label": "Volume of debris removed (m3)",
@@ -967,6 +980,7 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "outputName": "Erosion Management Details",
                     "name": "erosionAreaTreated",
                     "aggregationType": "SUM",
                     "label": "Erosion area treated (Ha)",
@@ -974,6 +988,7 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Erosion Management Details",
                     "name": "erosionLength",
                     "aggregationType": "SUM",
                     "label": "Length of stream/coastline treated (m)",
@@ -1024,12 +1039,14 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "outputName": "Management Practice Change Details",
                     "name": "totalEntitiesAdoptingChange",
                     "aggregationType": "SUM",
                     "label": "Farming entities adopting sustainable practice change"
                 },
                 {
                     "isOutputTarget": true,
+                    "outputName": "Management Practice Change Details",
                     "name": "totalChangePracticeTreatedArea",
                     "aggregationType": "SUM",
                     "label": "Area of land on which improved management practices are implemented",
@@ -1116,6 +1133,16 @@
                 }
             ],
             "name": "Sustainable Practice Initiatives"
+        },
+        {
+            "template": "speciesDiversityMeri",
+            "scores": [],
+            "name": "Species Diversity - MERI"
+        },
+        {
+            "template": "exoticSpeciesMeri",
+            "scores": [],
+            "name": "Exotic Species - MERI"
         }
     ]
 }
