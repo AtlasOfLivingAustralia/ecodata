@@ -1,0 +1,59 @@
+{
+    "modelName": "Species Diversity - MERI",
+    "dataModel": [{
+        "dataType": "list",
+        "description": "A list containing the distinct (but not necessarily identified) species present at the site",
+        "name": "speciesList",
+        "columns": [
+            {
+                "dataType": "species",
+                "description": "The species present at the site.  If not identified, select \"Unknown or unlisted species\" from the list",
+                "name": "species"
+            },
+            {
+                "dataType": "text",
+                "description": "Specifies whether the species is native to the site or exotic",
+                "name": "nativeOrExotic",
+                "constraints": [
+                    "Native",
+                    "Exotic"
+                ]
+            }
+        ]
+    }],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Field Sheet 5: Species Diversity<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<p>This sheet differs from the Biodiversity fund worksheet.  It combines Field Sheet 5 & 6.  Please attempt to identify each species, in particular the exotics.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "speciesList",
+            "columns": [
+                {
+                    "title": "Species",
+                    "source": "species",
+                    "width": "80%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Native/Exotic",
+                    "source": "nativeOrExotic",
+                    "width": "20%",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        }
+    ]
+}
