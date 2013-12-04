@@ -4,6 +4,7 @@ class SettingService {
 
     public static final String SETTING_KEY_ABOUT_TEXT = "fielddata.about.text"
     public static final String SETTING_KEY_FOOTER_TEXT = "fielddata.footer.text"
+    public static final String SETTING_KEY_ANNOUNCEMENT_TEXT = "fielddata.announcement.text"
 
     // Default footer text - note that each line has two spaces at the end of it per Markdown syntax for <br />
     public static final String DEFAULT_FOOTER_TEXT = """
@@ -63,20 +64,36 @@ At this stage MERIT includes the following programmes:
         setting.save(flush: true, failOnError: true)
     }
 
-    public String getAboutPageText() {
-        return getSetting(SETTING_KEY_ABOUT_TEXT, DEFAULT_ABOUT_TEXT)
+    public String getSettingText(String name) {
+        def keyMap = getKeyForName(name)
+        return getSetting(keyMap?.key, keyMap?.defaultValue)
     }
 
-    public void setAboutPageText(String content) {
-        setSetting(SETTING_KEY_ABOUT_TEXT, content)
+    public void setSettingText(String name, String content) {
+        def keyMap = getKeyForName(name)
+        setSetting(keyMap?.key, content)
     }
 
-    public String getFooterText() {
-        return getSetting(SETTING_KEY_FOOTER_TEXT, DEFAULT_FOOTER_TEXT)
-    }
+    def getKeyForName(settingName) {
+        def keyMap = [:]
+        switch (settingName) {
+            case "about":
+                keyMap.key = SETTING_KEY_ABOUT_TEXT
+                keyMap.defaultValue = DEFAULT_ABOUT_TEXT
+                break
+            case "footer":
+                keyMap.key = SETTING_KEY_FOOTER_TEXT
+                keyMap.defaultValue = DEFAULT_FOOTER_TEXT
+                break
+            case "announcement":
+                keyMap.key = SETTING_KEY_ANNOUNCEMENT_TEXT
+                keyMap.defaultValue = ""
+                break
+            default:
+                log.warn "Unknown setting type in setSettingText()"
+        }
 
-    public void setFooterText(String content) {
-        setSetting(SETTING_KEY_FOOTER_TEXT, content)
+        keyMap
     }
 
 }

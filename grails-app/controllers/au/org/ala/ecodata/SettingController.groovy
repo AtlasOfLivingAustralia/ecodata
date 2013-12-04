@@ -6,30 +6,20 @@ class SettingController {
 
     def settingService
 
-    def ajaxGetAboutPageText() {
-        def results = [aboutText: settingService.aboutPageText]
-        render(results as JSON)
-    }
-
-    def ajaxSetAboutPageText() {
+    def ajaxSetSettingText(String id) {
         def jsonMap = request.JSON
-        if (jsonMap.aboutText) {
-            settingService.setAboutPageText(jsonMap.aboutText as String)
+        if (!id || !jsonMap.containsKey("settingText")) {
+            response.status = 500
+            render([error:'Setting text not set!'] as JSON)
+            return
         }
+        settingService.setSettingText(id, jsonMap.settingText as String)
         render([message:'ok'] as JSON)
     }
 
-    def ajaxGetFooterText() {
-        def results = [footerText: settingService.footerText]
+    def ajaxGetSettingText(String id) {
+        def results = [settingText: settingService.getSettingText(id)]
         render(results as JSON)
-    }
-
-    def ajaxSetFooterText() {
-        def jsonMap = request.JSON
-        if (jsonMap.footerText) {
-            settingService.setFooterText(jsonMap.footerText as String)
-        }
-        render([message:'ok'] as JSON)
     }
 
 }
