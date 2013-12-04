@@ -22,7 +22,7 @@
         {
             "dataType": "text",
             "description": "Description of the appropriateness of the methodology used for the project. Was it the right methodology? In hindsight, was there a better methodology available that wasn't used for some reason - explain? Definition: A determination made through comparing the program with the needs of the intended beneficiaries using any of the techniques of needs analysis. Alternatively, the program could be evaluated in terms of its compliance with process.",
-            "name": "methodologyAnalysis",
+            "name": "methodologyAppropriateness",
             "validate": "required"
         }
     ],
@@ -48,13 +48,14 @@
                     "type": "textarea"
                 },
                 {
-                    "source": "methodologyAnalysis",
+                    "source": "methodologyAppropriateness",
                     "computed": null,
                     "preLabel": "Describe the appropriateness of the methodology(s) used.",
                     "width": "90%",
                     "type": "textarea"
                 }
             ],
+            "computed": null,
             "type": "col"
         }],
         "class": "output-section",

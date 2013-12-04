@@ -20,7 +20,7 @@
                 "dataType": "text",
                 "description": "Density class for particular weed species over the assessed area",
                 "name": "weedInfestationDensity",
-                "constaints": [
+                "constraints": [
                     "Few scattered plants",
                     "Sparse scattered patches",
                     "Sparse general cover",
@@ -34,7 +34,7 @@
                 "dataType": "text",
                 "description": "Observed health status of particular weed species as an average across the assessed area",
                 "name": "weedHealth",
-                "constaints": [
+                "constraints": [
                     "Healthy",
                     "Stressed",
                     "Dead"
@@ -44,7 +44,7 @@
                 "dataType": "text",
                 "description": "Observed reproductive status of particular weed species as an average across the assessed area",
                 "name": "weedReproductiveStatus",
-                "constaints": [
+                "constraints": [
                     "Flowering (FLWG)",
                     "Seeding (SEDG)",
                     "Vegetative & Mature (VGTV)",
@@ -56,7 +56,7 @@
                 "dataType": "text",
                 "description": "Status of the infestation area for particular weed species",
                 "name": "weedStatus",
-                "constaints": [
+                "constraints": [
                     "New Infestation",
                     "Active Infestation",
                     "Under control",
