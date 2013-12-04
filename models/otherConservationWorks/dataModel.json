@@ -80,84 +80,96 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "source": "targetSpecies",
-                "preLabel": "Species: *",
-                "type": "autocomplete"
-            },
-            {
-                "source": "animalBreedingNos",
-                "computed": null,
-                "preLabel": "No. of animals in captive breeding programs:",
-                "type": "text"
-            },
-            {
-                "source": "animalReleaseNumber",
-                "computed": null,
-                "preLabel": "No. of animals released back into the wild:",
-                "type": "text"
-            },
-            {
-                "source": "conservationWorks",
-                "computed": null,
-                "columns": [
-                    {
-                        "title": "Conservation Action:",
-                        "source": "conservationActionType",
-                        "width": "80%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Area impacted by works (Ha):",
-                        "source": "areaImpactedByWorks",
-                        "width": "18%",
-                        "type": "number"
-                    }
-                ],
-                "userAddedRows": "true",
-                "type": "table"
-            },
-            {
-                "source": "protectionMechanisms",
-                "computed": null,
-                "columns": [
-                    {
-                        "title": "Type of Agreement mechanism:",
-                        "source": "protectionMechanism",
-                        "width": "65%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "No. of Agreement mechanisms:",
-                        "source": "numberOfProtectionMechanisms",
-                        "width": "18%",
-                        "type": "number"
-                    },
-                    {
-                        "title": "Area under Agreement (Ha):",
-                        "source": "areaUnderAgreement",
-                        "width": "18%",
-                        "type": "number"
-                    }
-                ],
-                "userAddedRows": "true",
-                "type": "table"
-            },
-            {
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "targetSpecies",
+                    "preLabel": "Species: *",
+                    "type": "autocomplete"
+                },
+                {
+                    "source": "animalBreedingNos",
+                    "computed": null,
+                    "preLabel": "No. of animals in captive breeding programs:",
+                    "type": "number"
+                },
+                {
+                    "source": "animalReleaseNumber",
+                    "computed": null,
+                    "preLabel": "No. of animals released back into the wild:",
+                    "type": "number"
+                }
+            ],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "source": "conservationWorks",
+            "computed": null,
+            "columns": [
+                {
+                    "title": "Conservation Action:",
+                    "source": "conservationActionType",
+                    "width": "80%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Area impacted by works (Ha):",
+                    "source": "areaImpactedByWorks",
+                    "width": "18%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "source": "protectionMechanisms",
+            "computed": null,
+            "columns": [
+                {
+                    "title": "Type of Agreement mechanism:",
+                    "source": "protectionMechanism",
+                    "width": "65%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of Agreement mechanisms:",
+                    "source": "numberOfProtectionMechanisms",
+                    "width": "18%",
+                    "type": "number"
+                },
+                {
+                    "title": "Area under Agreement (Ha):",
+                    "source": "areaUnderAgreement",
+                    "width": "18%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
                 "source": "notes",
                 "computed": null,
                 "preLabel": "Comments / Notes:",
                 "type": "textarea"
-            },
-            {
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
                 "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
                 "type": "literal"
-            }
-        ],
-        "width": "100%",
-        "class": "output-section",
-        "type": "row"
-    }]
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

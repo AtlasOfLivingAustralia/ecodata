@@ -101,64 +101,56 @@
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "erosionAffectedArea",
-                            "computed": null,
-                            "preLabel": "Area of erosion on this site (Ha.):",
-                            "type": "number"
-                        },
-                        {
-                            "source": "erosionAreaTreated",
-                            "computed": null,
-                            "preLabel": "Area of erosion being treated:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "erosionLength",
-                            "computed": null,
-                            "preLabel": "Length of stream/coastline treated (Km):",
-                            "type": "number"
-                        },
-                        {
-                            "source": "erosionType",
-                            "computed": null,
-                            "preLabel": "Type(s) of erosion treated:",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "source": "erosionAffectedArea",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Area of erosion on this site (Ha.):",
+                    "type": "number"
                 },
                 {
-                    "items": [{
-                        "source": "erosionTreatmentMethod",
-                        "computed": null,
-                        "preLabel": "Erosion management method(s) used:",
-                        "type": "selectMany"
-                    }],
+                    "source": "erosionAreaTreated",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Area of erosion being treated:",
+                    "type": "number"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "erosionControlStructures",
-                            "computed": null,
-                            "preLabel": "Erosion control structure(s) installed:",
-                            "type": "selectMany"
-                        },
-                        {
-                            "source": "erosionStructuresInstalled",
-                            "computed": null,
-                            "preLabel": "No. of erosion control structures installed:",
-                            "type": "number"
-                        }
-                    ],
+                    "source": "erosionLength",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "Length of stream/coastline treated (Km):",
+                    "type": "number"
+                },
+                {
+                    "source": "erosionStructuresInstalled",
+                    "computed": null,
+                    "preLabel": "No. of erosion control structures installed:",
+                    "type": "number"
                 }
             ],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "erosionType",
+                    "computed": null,
+                    "preLabel": "Type(s) of erosion treated:",
+                    "type": "selectMany"
+                },
+                {
+                    "source": "erosionTreatmentMethod",
+                    "computed": null,
+                    "preLabel": "Erosion management method(s) used:",
+                    "type": "selectMany"
+                },
+                {
+                    "source": "erosionControlStructures",
+                    "computed": null,
+                    "preLabel": "Erosion control structure(s) installed:",
+                    "type": "selectMany"
+                }
+            ],
+            "computed": null,
             "class": "output-section",
             "type": "row"
         },
