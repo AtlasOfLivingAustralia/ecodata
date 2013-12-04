@@ -9,7 +9,10 @@ class FlushAuditMessageQueueJob {
     }
 
     def execute() {
+
         auditService.flushMessageQueue()
-        elasticSearchService.flushIndexMessageQueue()
+        Project.withNewSession {
+            elasticSearchService.flushIndexMessageQueue()
+        }
     }
 }
