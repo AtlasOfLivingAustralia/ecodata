@@ -15,7 +15,7 @@
                 "name": "name"
             },
             {
-                "dataType": "embeddedImage",
+                "dataType": "embeddedImages",
                 "description": "Photo point image",
                 "name": "photo"
             },
