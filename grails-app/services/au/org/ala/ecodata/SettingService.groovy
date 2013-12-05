@@ -5,6 +5,8 @@ class SettingService {
     public static final String SETTING_KEY_ABOUT_TEXT = "fielddata.about.text"
     public static final String SETTING_KEY_FOOTER_TEXT = "fielddata.footer.text"
     public static final String SETTING_KEY_ANNOUNCEMENT_TEXT = "fielddata.announcement.text"
+    public static final String SETTING_KEY_HELP_TEXT = "fielddata.help.text"
+    public static final String SETTING_KEY_CONTACTS_TEXT = "fielddata.contacts.text"
 
     // Default footer text - note that each line has two spaces at the end of it per Markdown syntax for <br />
     public static final String DEFAULT_FOOTER_TEXT = """
@@ -71,7 +73,11 @@ At this stage MERIT includes the following programmes:
 
     public void setSettingText(String name, String content) {
         def keyMap = getKeyForName(name)
-        setSetting(keyMap?.key, content)
+        if (keyMap) {
+            setSetting(keyMap?.key, content)
+        } else {
+            throw new RuntimeException("No Setting key found for name: ${name}")
+        }
     }
 
     def getKeyForName(settingName) {
@@ -88,6 +94,14 @@ At this stage MERIT includes the following programmes:
             case "announcement":
                 keyMap.key = SETTING_KEY_ANNOUNCEMENT_TEXT
                 keyMap.defaultValue = ""
+                break
+            case "help":
+                keyMap.key = SETTING_KEY_HELP_TEXT
+                keyMap.defaultValue = "TBC"
+                break
+            case "contacts":
+                keyMap.key = SETTING_KEY_CONTACTS_TEXT
+                keyMap.defaultValue = "TBC"
                 break
             default:
                 log.warn "Unknown setting type in setSettingText()"
