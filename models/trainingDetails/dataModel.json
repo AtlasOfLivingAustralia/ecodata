@@ -62,10 +62,18 @@
             "description": "The aggregate total number of people who completed the course and received qualifications",
             "primaryResult": "true",
             "name": "totalCompletingCourses",
-            "validate": "required"
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberCompleted",
+                    "fromList": "courseAttendance"
+                }
+            }
         },
         {
             "dataType": "text",
+            "description": "General notes about this activity",
+            "primaryResult": "true",
             "name": "notes"
         }
     ],
@@ -120,12 +128,13 @@
                 },
                 {
                     "title": "No. of people who completed the course:",
-                    "source": "courseAttendees",
+                    "source": "numberCompleted",
                     "width": "15%",
                     "type": "number"
                 }
             ],
             "userAddedRows": "true",
+            "class": "output-section",
             "type": "table"
         },
         {
@@ -136,7 +145,8 @@
                 "type": "textarea"
             }],
             "computed": null,
-            "type": "col"
+            "class": "output-section",
+            "type": "row"
         }
     ],
     "class": "output-section",
