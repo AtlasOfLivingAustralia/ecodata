@@ -7,6 +7,7 @@ class SettingService {
     public static final String SETTING_KEY_ANNOUNCEMENT_TEXT = "fielddata.announcement.text"
     public static final String SETTING_KEY_HELP_TEXT = "fielddata.help.text"
     public static final String SETTING_KEY_CONTACTS_TEXT = "fielddata.contacts.text"
+    public static final String SETTING_KEY_INTRO_TEXT = "fielddata.introduction.text"
 
     // Default footer text - note that each line has two spaces at the end of it per Markdown syntax for <br />
     public static final String DEFAULT_FOOTER_TEXT = """
@@ -66,21 +67,32 @@ At this stage MERIT includes the following programmes:
         setting.save(flush: true, failOnError: true)
     }
 
+    /**
+     * @deprecated
+     * @param name
+     * @return
+     */
     public String getSettingText(String name) {
-        def keyMap = getKeyForName(name)
-        return getSetting(keyMap?.key, keyMap?.defaultValue)
+        def keyMap = getKeyMapForName(name)
+        return getSetting(keyMap?.name, keyMap?.defaultValue)
     }
 
-    public void setSettingText(String name, String content) {
-        def keyMap = getKeyForName(name)
-        if (keyMap) {
-            setSetting(keyMap?.key, content)
-        } else {
-            throw new RuntimeException("No Setting key found for name: ${name}")
-        }
+    public String getSettingTextForKey(String key) {
+        def defaultValue = getKeyMapForKey(key)
+        return getSetting(key, defaultValue?:'')
     }
 
-    def getKeyForName(settingName) {
+
+    public void setSettingText(String content, String key) {
+        setSetting(key, content)
+    }
+
+    /**
+     * @deprecated
+     * @param settingName
+     * @return
+     */
+    def getKeyMapForName(settingName) {
         def keyMap = [:]
         switch (settingName) {
             case "about":
@@ -108,6 +120,30 @@ At this stage MERIT includes the following programmes:
         }
 
         keyMap
+    }
+
+    def getKeyMapForKey(key) {
+        def defaultValue
+        switch (key) {
+            case SETTING_KEY_ABOUT_TEXT:
+                defaultValue = DEFAULT_ABOUT_TEXT
+                break
+            case SETTING_KEY_FOOTER_TEXT:
+                defaultValue = DEFAULT_FOOTER_TEXT
+                break
+            case SETTING_KEY_ANNOUNCEMENT_TEXT:
+                defaultValue = ""
+                break
+            case SETTING_KEY_HELP_TEXT:
+            case SETTING_KEY_INTRO_TEXT:
+            case SETTING_KEY_CONTACTS_TEXT:
+                defaultValue = "TBC"
+                break
+            default:
+                log.info "Unknown setting type in setSettingText()"
+        }
+
+        defaultValue
     }
 
 }
