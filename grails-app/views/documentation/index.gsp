@@ -120,10 +120,11 @@
             </tbody>
         </table>
         <h4>Outputs</h4>
+        <p>The scores below are values configured from the details collected for an output that are currently used for reporting.  Scores in <b>bold</b> can be assigned as project as output targets.</p>
         <table class="table table-striped">
             <thead>
             <tr>
-                <th class="api-method">Name</th><th class="api-description">Description</th>
+                <th class="output-name">Name</th><th class="output-description">Description</th><th class="output-scores">Scores</th>
             </tr>
             </thead>
             <tbody>
@@ -134,6 +135,13 @@
                     </td>
                     <td>
                         <g:message code="${'api.'+output.name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
+                    </td>
+                    <td>
+                        <ul>
+                        <g:each var="score" in="${scores[output.name]}">
+                            <li><g:if test="${score.isOutputTarget}"><b></g:if>${score.label} <g:if test="${score.units}">(${score.units})</g:if><g:if test="${score.isOutputTarget}"><b></g:if></li>
+                        </g:each>
+                        </ul>
                     </td>
                 </tr>
             </g:each>

@@ -13,13 +13,15 @@ class DocumentationController {
 
         def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
         def outputs = [:]
+        def scoresByOutput = [:]
         activitiesModel.outputs.each {
             def outputDataModel = metadataService.getOutputDataModel(it.template)
 
             outputs << [(it.name): schemaGenerator.schemaForOutput(it.name, outputDataModel)]
+            scoresByOutput << [(it.name):it.scores]
         }
 
-        [activitiesModel:activitiesModel, outputs:outputs]
+        [activitiesModel:activitiesModel, outputs:outputs, scores:scoresByOutput]
     }
 
     def project() {

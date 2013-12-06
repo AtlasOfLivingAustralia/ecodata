@@ -4,6 +4,10 @@
 .property-description {width:50%;}
 .api-method {width:35%;}
 .api-description {width:65%;}
+.output-name {width:20%;}
+.output-description {width:40%;}
+.output-scores {width:40%;}
+
 .container-fluid.api {margin-top: 50px;}
 
 .bs-callout {
