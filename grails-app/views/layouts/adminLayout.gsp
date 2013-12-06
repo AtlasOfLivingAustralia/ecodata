@@ -49,7 +49,7 @@
         <div class="row-fluid">
             <div class="span3">
                 <ul class="nav nav-list nav-stacked nav-tabs">
-                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'users')}" title="Users" />
+                    %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'users')}" title="Users" />--}%
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'tools')}" title="Tools" />
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'settings')}" title="Settings" />
                     %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}" title="Metadata" />--}%

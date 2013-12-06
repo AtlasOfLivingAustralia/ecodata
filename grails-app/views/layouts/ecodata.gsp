@@ -23,23 +23,20 @@
         <div class="navbar-inner">
 
             <div class="container-fluid">
-                <a class="brand">Data capture prototype</a>
-
+                <a class="brand">Ecodata</a>
                 <div class="nav-collapse collapse">
                     <div class="navbar-text pull-right">
                         <span id="buttonBar">
-                            <ec:currentUserDisplayName />&nbsp;<hf:loginLogout cssClass="btn btn-small" logoutUrl="${createLink(controller:'logout', action:'logout')}"/>
-                            <button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>
+                            %{--<ec:currentUserDisplayName />&nbsp;<hf:loginLogout cssClass="btn btn-small" logoutUrl="${createLink(controller:'logout', action:'logout')}"/>--}%
+                            %{--<button class="btn btn-small btn-info" id="btnProfile"><i class="icon-user icon-white"></i>&nbsp;My Profile</button>--}%
                             <button class="btn btn-warning btn-small" id="btnAdministration"><i class="icon-cog icon-white"></i>&nbsp;Administration</button>
                             <g:pageProperty name="page.buttonBar"/>
                         </span>
                     </div>
-                    <fc:navbar active="${pageProperty(name: 'page.topLevelNav')}"/>
                 </div><!--/.nav-collapse -->
             </div>
         </div>
     </div>
-
     <g:layoutBody />
     <div class="push"></div>
   </div>
