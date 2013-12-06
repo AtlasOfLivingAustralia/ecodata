@@ -50,7 +50,14 @@
                 {
                     "dataType": "number",
                     "description": "The total estimated person hours spent on each administration activity.",
-                    "name": "hoursActionTotal"
+                    "name": "hoursActionTotal",
+                    "computed": {
+                        "operation": "times",
+                        "dependents": [
+                            "numberInvolved",
+                            "hoursPerPerson"
+                        ]
+                    }
                 }
             ]
         },
@@ -77,6 +84,7 @@
         {
             "items": [{
                 "source": "Please list the numbers of people involved in undertaking each relevant type of administration activity and the average time spent per person:",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -126,7 +134,7 @@
                 {
                     "title": "Ave. total time spent (Hrs):",
                     "source": "hoursActionTotal",
-                    "computed": null,
+                    "computed": "{\"operation\":\"product\",\"dependents\":[\"numberInvolved\",\"hoursPerPerson\"]}",
                     "width": "10%",
                     "type": "number"
                 }
