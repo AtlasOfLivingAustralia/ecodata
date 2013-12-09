@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 class SettingService {
 
     public static final String SETTING_KEY_ABOUT_TEXT = "fielddata.about.text"
+    public static final String SETTING_KEY_DESCRIPTION_TEXT = "fielddata.description.text"
     public static final String SETTING_KEY_FOOTER_TEXT = "fielddata.footer.text"
     public static final String SETTING_KEY_ANNOUNCEMENT_TEXT = "fielddata.announcement.text"
     public static final String SETTING_KEY_HELP_TEXT = "fielddata.help.text"
@@ -43,6 +44,13 @@ At this stage MERIT includes the following programmes:
 * Biodiversity Fund Investing in Tasmania's Native Forests
 * Biodiversity Fund Northern Australia Targeted Investment
 """
+
+    // Default description text (Markdown)
+    public static final String DEFAULT_DESCRIPTION_TEXT =  """
+The online monitoring, evaluation, reporting and improvement tool (MERIT) is now available for funding recipients to start reporting.
+MERIT allows funding recipients to record and upload data about the progress of their projects on a continual basis and to submit
+reports online. It will also increase information sharing within NRM communities and the broader public.
+    """
 
     def getSetting(String key, String defaultValue="") {
         if (!key) {
@@ -127,6 +135,9 @@ At this stage MERIT includes the following programmes:
         switch (key) {
             case SETTING_KEY_ABOUT_TEXT:
                 defaultValue = DEFAULT_ABOUT_TEXT
+                break
+            case SETTING_KEY_DESCRIPTION_TEXT:
+                defaultValue = DEFAULT_DESCRIPTION_TEXT
                 break
             case SETTING_KEY_FOOTER_TEXT:
                 defaultValue = DEFAULT_FOOTER_TEXT
