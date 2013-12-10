@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
 
 import java.text.SimpleDateFormat
@@ -68,4 +69,24 @@ class CommonService {
         mapOfProperties.findAll {k,v -> v != null && v != ""}
     }
 
+    def checkApiKey(key) {
+        // try the preferred api key store first
+        def url = grailsApplication.config.security.apikey.serviceUrl + key
+        try {
+            def conn = new URL(url).openConnection()
+            if (conn.getResponseCode() == 200) {
+                def resp = JSON.parse(conn.content.text as String)
+                if (!resp.valid) {
+                    log.info "Rejected change - " + (key ? "using key ${key}" : "no key present")
+                }
+                return resp
+            } else {
+                log.info "Rejected change - " + (key ? "using key ${key}" : "no key present")
+                return [valid:false]
+            }
+        } catch (Exception e) {
+            log.info "Failed to lookup key ${key}"
+            return [valid:false]
+        }
+    }
 }

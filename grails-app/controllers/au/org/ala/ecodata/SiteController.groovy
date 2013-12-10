@@ -62,6 +62,7 @@ class SiteController {
         }
     }
 
+    @RequireApiKey
     def delete(String id) {
         def s = Site.findBySiteId(id)
         if (s) {
@@ -83,6 +84,7 @@ class SiteController {
      * @param id - identifies the resource
      * @return
      */
+    @RequireApiKey
     def update(String id) {
         def props = request.JSON
         log.debug props

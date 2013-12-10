@@ -40,6 +40,7 @@ class OutputController {
         }
     }
 
+    @RequireApiKey
     def delete(String id) {
         def a = Output.findByOutputId(id)
         if (a) {
@@ -56,6 +57,7 @@ class OutputController {
         }
     }
 
+    @RequireApiKey
     def update(String id) {
         def props = request.JSON
         log.debug props

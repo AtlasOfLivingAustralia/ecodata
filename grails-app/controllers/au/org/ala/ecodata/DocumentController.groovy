@@ -17,7 +17,7 @@ class DocumentController {
     }
 
     def index() {
-        log.debug "Total documentss = ${Document.count()}"
+        log.debug "Total documents = ${Document.count()}"
         render "${Document.count()} documents"
     }
 
@@ -38,6 +38,7 @@ class DocumentController {
         }
     }
 
+    @RequireApiKey
     def delete(String id) {
         def a = Document.findByDocumentId(id)
         if (a) {
@@ -66,6 +67,7 @@ class DocumentController {
      * an update.
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
      */
+    @RequireApiKey
     def update(String id) {
         def props, file = null
         if (request.respondsTo('getFile')) {

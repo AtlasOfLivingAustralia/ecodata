@@ -6,6 +6,7 @@ class SettingController {
 
     def settingService
 
+    @RequireApiKey
     def ajaxSetSettingText() {
         def jsonMap = request.JSON
         if (!jsonMap.containsKey("settingText") || !jsonMap.containsKey("key") ) {

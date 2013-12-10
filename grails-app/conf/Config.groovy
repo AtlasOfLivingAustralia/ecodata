@@ -120,7 +120,7 @@ if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
 if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = "http://auth.ala.org.au/ws/check?apikey="
+    security.apikey.serviceUrl = "http://auth.ala.org.au/apikey/ws/check?apikey="
 }
 
 // CAS security conf

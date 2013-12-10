@@ -83,6 +83,27 @@ class ActivityService {
     }
 
     /**
+     * Deletes an activity by marking it as not 'active'.
+     *
+     * @param id
+     * @param destroy if true will really delete the object
+     * @return
+     */
+    def delete(String id, destroy) {
+        def a = Activity.findByActivityIdAndStatus(id, ACTIVE)
+        if (a) {
+            if (destroy) {
+                a.delete()
+            } else {
+                commonService.updateProperties(a, [status: 'deleted'])
+            }
+            [status: 'ok']
+        } else {
+            [status: 'not found']
+        }
+    }
+
+    /**
      * Updates an activity and also updates/creates any outputs that are passed in the 'outputs' property
      * of the activity. The activity itself is optional and will only be updated if the activityId
      * property is present (in the props).
@@ -92,7 +113,7 @@ class ActivityService {
      * @return json status
      */
     def update(props, id) {
-        log.debug "props = ${props}"
+        //log.debug "props = ${props}"
         def a = Activity.findByActivityId(id)
         def errors = []
         if (a) {

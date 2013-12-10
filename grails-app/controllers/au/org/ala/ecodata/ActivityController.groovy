@@ -1,7 +1,5 @@
 package au.org.ala.ecodata
 
-import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
-
 import java.text.SimpleDateFormat
 
 class ActivityController {
@@ -42,15 +40,9 @@ class ActivityController {
         }
     }
 
+    @RequireApiKey
     def delete(String id) {
-        def a = Activity.findByActivityId(id)
-        if (a) {
-            if (params.destroy) {
-                a.delete()
-            } else {
-                a.status = 'deleted'
-                a.save(flush: true)
-            }
+        if (activityService.delete(id, params.destroy).status == 'ok') {
             render (status: 200, text: 'deleted')
         } else {
             response.status = 404
@@ -58,9 +50,10 @@ class ActivityController {
         }
     }
 
+    @RequireApiKey
     def update(String id) {
         def props = request.JSON
-        log.debug props
+        //log.debug props
         def result
         def message
         if (id) {

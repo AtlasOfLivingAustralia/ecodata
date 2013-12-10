@@ -10,6 +10,7 @@ class MetadataController {
         render metadataService.activitiesModel()
     }
 
+    @RequireApiKey
     def updateActivitiesModel() {
         def model = request.JSON
         //log.debug "Model=${model.getClass()}"
@@ -22,6 +23,7 @@ class MetadataController {
         render metadataService.programsModel()
     }
 
+    @RequireApiKey
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
@@ -43,6 +45,7 @@ class MetadataController {
         }
     }
 
+    @RequireApiKey
     def updateOutputDataModel(String id) {
         //log.debug "id=${id}"
         def model = request.JSON
