@@ -3,7 +3,7 @@
  \******************************************************************************/
 def appName = 'ecodata'
 def ENV_NAME = "${appName.toUpperCase()}_CONFIG"
-def default_config = "/data/${appName}/config/${appName}-config.properties"
+default_config = "/data/${appName}/config/${appName}-config.properties"
 if(!grails.config.locations || !(grails.config.locations instanceof List)) {
     grails.config.locations = []
 }
@@ -87,13 +87,25 @@ grails.mongo.default.mapping = {
  *  APPLICATION CONFIG
  \*****************************************************************************/
 app.dump.location = "/data/ecodata/dump/"
-app.elasticsearch.location = "/data/ecodata/elasticsearch/"
-app.elasticsearch.indexAllOnStartup = true
-app.elasticsearch.indexOnGormEvents = true
-app.http.header.userId = "X-ALA-userId"
-app.file.upload.path = "/data/ecodata/uploads"
 
-app.external.api.version = 'draft'
+if(!app.elasticsearch.location){
+    app.elasticsearch.location = "/data/ecodata/elasticsearch/"
+}
+if(!app.elasticsearch.indexAllOnStartup){
+    app.elasticsearch.indexAllOnStartup = true
+}
+if(!app.elasticsearch.indexOnGormEvents){
+    app.elasticsearch.indexOnGormEvents = true
+}
+if(!app.http.header.userId){
+    app.http.header.userId = "X-ALA-userId"
+}
+if(!app.file.upload.path){
+    app.file.upload.path = "/data/ecodata/uploads"
+}
+if(!app.external.api.version){
+    app.external.api.version = 'draft'
+}
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
@@ -112,15 +124,19 @@ if (!security.apikey.serviceUrl) {
 }
 
 // CAS security conf
-security.cas.casServerName = 'https://auth.ala.org.au'
-security.cas.uriFilterPattern = "/admin/.*" // pattern for pages that require authentication
-security.cas.uriExclusionFilterPattern = '/images.*,/css.*,/js.*,/less.*'
-security.cas.authenticateOnlyIfLoggedInPattern = "" // pattern for pages that can optionally display info about the logged-in user
-security.cas.loginUrl = 'https://auth.ala.org.au/cas/login'
+//security.cas.casServerName = 'https://auth.ala.org.au'
+//security.cas.uriFilterPattern = "/admin/.*" // pattern for pages that require authentication
+//security.cas.uriExclusionFilterPattern = '/images.*,/css.*,/js.*,/less.*'
+//security.cas.authenticateOnlyIfLoggedInPattern = "" // pattern for pages that can optionally display info about the logged-in user
+//security.cas.loginUrl = 'https://auth.ala.org.au/cas/login'
 security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
 security.cas.casServerUrlPrefix = 'https://auth.ala.org.au/cas'
-security.cas.bypass = false
-security.cas.adminRole = "ROLE_ADMIN" // TODO change to ROLE_FC_ADMIN or equiv. (NdR)
+if(!security.cas.bypass){
+    security.cas.bypass = false
+}
+if(!security.cas.adminRole){
+    security.cas.adminRole = "ROLE_ADMIN"
+}
 
 environments {
     development {
@@ -139,41 +155,12 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.indexOnGormEvents = true
     }
-    test {
-        grails.logging.jul.usebridge = false
-        ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL = "http://testweb1.ala.org.au:8080/ecodata"
-        app.uploads.url = "http://testweb1.ala.org.au/uploads/"
-        security.cas.appServerName = "http://testweb1.ala.org.au:8080"
-        security.cas.contextPath = "/" + "ecodata"
-    }
-    nectartest {
-        grails.logging.jul.usebridge = false
-        ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL = "http://ecodata-test.ala.org.au"
-        app.uploads.url = grails.serverURL + "/uploads/"
-        security.cas.appServerName = grails.serverURL
-        security.cas.contextPath = ""
-    }
-    nectar {
-        grails.logging.jul.usebridge = false
-        ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL = "http://ecodata-dev.ala.org.au"
-        app.uploads.url = grails.serverURL + "/uploads/"
-        security.cas.appServerName = grails.serverURL
-        security.cas.contextPath = ""
-    }
     production {
         grails.logging.jul.usebridge = false
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/fieldcapture/models/"
-        grails.serverURL = "http://ecodata.ala.org.au"
+        app.external.model.dir = "/data/ecodata/models/"
+        grails.serverURL= "http://ecodata.ala.org.au"
         app.uploads.url = grails.serverURL + "/uploads/"
-        security.cas.appServerName = grails.serverURL
-        security.cas.contextPath = ""
     }
 }
 
