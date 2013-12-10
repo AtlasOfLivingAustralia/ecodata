@@ -82,6 +82,12 @@
             ]
         },
         {
+            "dataType": "number",
+            "description": "The area in hectares of the revegetation works area",
+            "name": "areaRevegHa",
+            "validate": "required"
+        },
+        {
             "dataType": "list",
             "name": "planting",
             "columns": [
@@ -181,7 +187,7 @@
         {
             "footer": {"rows": [{"columns": [
                 {
-                    "source": "Total Seedlings Planted",
+                    "source": "Total Seedlings Planted:",
                     "computed": null,
                     "type": "literal"
                 },
@@ -191,7 +197,7 @@
                     "type": "number"
                 },
                 {
-                    "source": "Total Seed Sown (Kg)",
+                    "source": "Total Seed Sown (Kg):",
                     "computed": null,
                     "type": "literal"
                 },
@@ -271,7 +277,7 @@
                     "items": [
                         {
                             "source": "vegDescriptionAtPlanting",
-                            "preLabel": "Vegetation at time of planting: *",
+                            "preLabel": "Vegetation at time of planting:",
                             "computed": null,
                             "type": "selectOne"
                         },
@@ -295,7 +301,7 @@
                         },
                         {
                             "source": "connectivityIndex",
-                            "preLabel": "Landscape connectivity: *",
+                            "preLabel": "Landscape connectivity:",
                             "computed": null,
                             "type": "selectOne"
                         }
@@ -304,12 +310,20 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "environmentalBenefits",
-                        "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
-                        "computed": null,
-                        "type": "selectMany"
-                    }],
+                    "items": [
+                        {
+                            "source": "areaRevegHa",
+                            "preLabel": "Area of revegetation works (Ha):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "environmentalBenefits",
+                            "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
+                            "computed": null,
+                            "type": "selectMany"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 }

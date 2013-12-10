@@ -1,8 +1,10 @@
 {
     "selectedActivity": {
-        "name": "Site Assessment - Biodiversity Fund (DoE)",
+        "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
         "type": "Assessment",
         "outputs": [
+            "Sampling Site Information",
+            "Photo Points",
             "Ground Cover - MERI",
             "Exotic Fauna - MERI",
             "Crown Cover - MERI",
@@ -176,9 +178,11 @@
             ]
         },
         {
-            "name": "Site Assessment - Biodiversity Fund (DoE)",
+            "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
             "type": "Assessment",
             "outputs": [
+                "Sampling Site Information",
+                "Photo Points",
                 "Ground Cover - MERI",
                 "Exotic Fauna - MERI",
                 "Crown Cover - MERI",
@@ -187,7 +191,7 @@
             ]
         },
         {
-            "name": "Site Assessment - Habitat Hectares (VIC)",
+            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Assessment",
@@ -196,7 +200,7 @@
             ]
         },
         {
-            "name": "Site Assessment - TasVeg (TAS)",
+            "name": "Vegetation Assessment - TasVeg (TAS)",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Assessment",
@@ -205,12 +209,12 @@
             ]
         },
         {
-            "name": "Site Assessment - BioMetric (NSW)",
+            "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
             "outputs": ["Vegetation Assessment"]
         },
         {
-            "name": "Site Assessment - Bushland Condition Monitoring (SA)",
+            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Assessment",
@@ -220,12 +224,12 @@
             ]
         },
         {
-            "name": "Site Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
+            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
             "outputs": ["Vegetation Assessment"]
         },
         {
-            "name": "Site Assessment - BioCondition (QLD)",
+            "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Assessment",
@@ -1137,6 +1141,11 @@
             "template": "exoticSpeciesMeri",
             "scores": [],
             "name": "Exotic Species - MERI"
+        },
+        {
+            "template": "bfSamplingSiteInfo",
+            "scores": [],
+            "name": "Sampling Site Information"
         }
     ]
 }

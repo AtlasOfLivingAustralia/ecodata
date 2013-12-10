@@ -1,0 +1,83 @@
+{
+    "modelName": "Sampling Imformation",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "The name of the person responsible for recording and assuring the quality of the data record.",
+            "name": "recorderName"
+        },
+        {
+            "dataType": "number",
+            "description": "The compass bearing in magnetic degrees of the sampled transect from the starting position of the transect.",
+            "name": "transectBearing",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Is this an initial assessment of the site or not?",
+            "name": "assessmentEventType",
+            "constraints": [
+                "Initial assessment",
+                "Follow-up assessment"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "items": [{
+                    "source": "This form is used to record vegetation and site assessment information using the Biodiversity Fund Ecological Monitoring Methodology. The guide for this methodology is available from the Department of Environment website at <strong>http://www.environment.gov.au/cleanenergyfuture/biodiversity-fund/meri/pubs/eco-monitoring-guide.pdf<\/strong>",
+                    "type": "literal"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "recorderName",
+                            "computed": null,
+                            "preLabel": "Recorder name:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "transectBearing",
+                            "computed": null,
+                            "preLabel": "Compass bearing of sampled transect (deg mag):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "assessmentEventType",
+                            "computed": null,
+                            "preLabel": "What type of assessment event was this?:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "notes",
+                        "computed": null,
+                        "preLabel": "General Description / Comments / Notes:",
+                        "type": "textarea"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
