@@ -1,5 +1,5 @@
 {
-    "modelName": "Species Diversity - MERI",
+    "modelName": "Species Diversity - BF method",
     "dataModel": [{
         "dataType": "list",
         "description": "A list containing the distinct (but not necessarily identified) species present at the site",
@@ -24,14 +24,16 @@
     "viewModel": [
         {
             "items": [{
-                "source": "<h4>Field Sheet 5: Species Diversity<\/h4>",
+                "source": "Please record all species present in the 20m x 20m plot marked out for this assessment.",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
         },
         {
             "items": [{
-                "source": "<p>This sheet differs from the Biodiversity fund worksheet.  It combines Field Sheet 5 & 6.  Please attempt to identify each species, in particular the exotics.<\/p>",
+                "source": "<p>This sheet differs from the hard copy worksheet - it combines Field Sheet 5 & 6.  Please attempt to identify each species, in particular the exotics.<\/p>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
