@@ -86,8 +86,9 @@ grails.mongo.default.mapping = {
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/
-app.dump.location = "/data/ecodata/dump/"
-
+if(!app.dump.location){
+    app.dump.location = "/data/ecodata/dump/"
+}
 if(!app.elasticsearch.location){
     app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 }
@@ -122,20 +123,17 @@ if (!headerAndFooter.baseURL) {
 if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = "http://auth.ala.org.au/apikey/ws/check?apikey="
 }
-
-// CAS security conf
-//security.cas.casServerName = 'https://auth.ala.org.au'
-//security.cas.uriFilterPattern = "/admin/.*" // pattern for pages that require authentication
-//security.cas.uriExclusionFilterPattern = '/images.*,/css.*,/js.*,/less.*'
-//security.cas.authenticateOnlyIfLoggedInPattern = "" // pattern for pages that can optionally display info about the logged-in user
-//security.cas.loginUrl = 'https://auth.ala.org.au/cas/login'
-security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
-security.cas.casServerUrlPrefix = 'https://auth.ala.org.au/cas'
+if(!security.cas.logoutUrl){
+    security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
+}
 if(!security.cas.bypass){
     security.cas.bypass = false
 }
 if(!security.cas.adminRole){
     security.cas.adminRole = "ROLE_ADMIN"
+}
+if(!ecodata.use.uuids){
+    ecodata.use.uuids = false
 }
 
 environments {
@@ -143,9 +141,7 @@ environments {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "/devt/ecodata/models/"
-        //grails.hostname = "localhost"
         grails.hostname = "devt.ala.org.au"
-        //grails.hostname = "192.168.0.15"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
@@ -157,10 +153,6 @@ environments {
     }
     production {
         grails.logging.jul.usebridge = false
-        ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
-        grails.serverURL= "http://ecodata.ala.org.au"
-        app.uploads.url = grails.serverURL + "/uploads/"
     }
 }
 
@@ -172,36 +164,6 @@ log4j = {
                 console name: "stdout",
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
                         threshold: org.apache.log4j.Level.DEBUG
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
-            }
-            test {
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
-            }
-            nectar {
-                rollingFile name: "ecodataLog",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
-                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
-                rollingFile name: "stacktrace",
-                        maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
-            }
-            nectartest {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
                         file: "/var/log/tomcat6/ecodata.log",
