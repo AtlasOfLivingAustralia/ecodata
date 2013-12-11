@@ -9,14 +9,14 @@ class PermissionService {
     def authService, userService // found in ala-web-theme plugin
 
     public boolean isUserAdminForProject(String userId, String projectId) {
-        def isEditor = false
+        def isAdmin = false
 
         if (userId && projectId) {
-            isEditor = ( UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.admin) )
-            log.debug "isEditor = ${isEditor}"
+            isAdmin = ( UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.admin) )
+            log.debug "isAdmin = ${isAdmin}"
         }
 
-        return isEditor
+        return isAdmin
     }
 
     def isUserEditorForProject(String userId, String projectId) {

@@ -364,7 +364,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def out = [userIsEditor: permissionService.isUserAdminForProject(userId, projectId)]
+                def out = [userIsAdmin: permissionService.isUserAdminForProject(userId, projectId)]
                 render out as JSON
             } else {
                 render status:404, text: "Project not found for projectId: ${projectId}"
