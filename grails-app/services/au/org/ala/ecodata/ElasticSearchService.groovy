@@ -121,17 +121,17 @@ class ElasticSearchService {
             return null
         }
 
-        addCustomFields(doc)
-        def docJson = doc as JSON
-        //log.debug "indexing docId: ${docId}"
-
         try {
+
+            addCustomFields(doc)
+            def docJson = doc as JSON
+
             client.prepareIndex(index, DEFAULT_TYPE, docId)
                 .setSource(
                     docJson.toString(false)
                 ).execute().actionGet();
         } catch (Exception e) {
-            log.error "ES prepareIndex error: ${e}", e
+            log.error "Error indexing document: ${doc}, ${e}", e
         }
     }
 
