@@ -131,7 +131,7 @@
             <g:each in="${activitiesModel.outputs}" var="output">
                 <tr>
                     <td>
-                        <g:link action="output" id="${output.name+'.html'}">${output.name}</g:link>
+                        <g:link action="output" id="${(output.name+'.html').encodeAsURL()}">${output.name}</g:link>
                     </td>
                     <td>
                         <g:message code="${'api.'+output.name+'.description'}" default="${g.message([code:'api.description.missing'])}"/>
