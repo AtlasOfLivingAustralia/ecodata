@@ -198,7 +198,7 @@
             "source": "practiceChange",
             "columns": [
                 {
-                    "title": "Industry From:",
+                    "title": "Reason for changing management practices:",
                     "source": "changePurpose",
                     "computed": null,
                     "width": "25%",

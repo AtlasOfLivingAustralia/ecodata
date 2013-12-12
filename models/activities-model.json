@@ -1,17 +1,4 @@
 {
-    "selectedActivity": {
-        "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
-        "type": "Assessment",
-        "outputs": [
-            "Sampling Site Information",
-            "Photo Points",
-            "Field Sheet 1: Ground Cover",
-            "Field Sheet 2: Exotic Fauna",
-            "Field Sheet 3: Overstorey and Midstorey Projected Crown Cover",
-            "Field Sheet 4: Crown Type",
-            "Field Sheet 5: Species Diversity"
-        ]
-    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
@@ -183,11 +170,11 @@
             "outputs": [
                 "Sampling Site Information",
                 "Photo Points",
-                "Field Sheet 1: Ground Cover",
-                "Field Sheet 2: Exotic Fauna",
-                "Field Sheet 3: Overstorey and Midstorey Projected Crown Cover",
-                "Field Sheet 4: Crown Type",
-                "Field Sheet 5: Species Diversity"
+                "Field Sheet 1 - Ground Cover",
+                "Field Sheet 2 - Exotic Fauna",
+                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                "Field Sheet 4 - Crown Type",
+                "Field Sheet 5 - Species Diversity"
             ]
         },
         {
@@ -398,7 +385,13 @@
         },
         {
             "template": "sitePreparationActions",
-            "scores": [],
+            "scores": [{
+                "isOutputTarget": true,
+                "name": "preparationAreaTotal",
+                "aggregationType": "SUM",
+                "label": "Total area prepared for follow-up treatment actions",
+                "units": "Ha"
+            }],
             "name": "Site Preparation Actions"
         },
         {
@@ -518,6 +511,12 @@
                     "aggregationType": "SUM",
                     "label": "Event Duration (Hrs)",
                     "units": ""
+                },
+                {
+                    "isOutputTarget": true,
+                    "name": "eventTopics",
+                    "aggregationType": "COUNT",
+                    "label": "Number of Community Participation and Engagement events"
                 }
             ],
             "name": "Event Details"
@@ -837,27 +836,27 @@
         {
             "template": "groundCover",
             "scores": [],
-            "name": "Field Sheet 1: Ground Cover"
+            "name": "Field Sheet 1 - Ground Cover"
         },
         {
             "template": "exoticFauna",
             "scores": [],
-            "name": "Field Sheet 2: Exotic Fauna"
+            "name": "Field Sheet 2 - Exotic Fauna"
         },
         {
             "template": "crownCover",
             "scores": [],
-            "name": "Field Sheet 3: Overstorey and Midstorey Projected Crown Cover"
+            "name": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover"
         },
         {
             "template": "crownType",
             "scores": [],
-            "name": "Field Sheet 4: Crown Type"
+            "name": "Field Sheet 4 - Crown Type"
         },
         {
             "template": "speciesDiversityMeri",
             "scores": [],
-            "name": "Field Sheet 5: Species Diversity"
+            "name": "Field Sheet 5 - Species Diversity"
         },
         {
             "template": "habitatHectaresSiteCondition",
@@ -1061,10 +1060,10 @@
                     "units": "Ha"
                 },
                 {
-                    "isOutputTarget": false,
+                    "isOutputTarget": true,
                     "name": "benefitAreaHa",
                     "aggregationType": "SUM",
-                    "label": "Area of land benefiting from adoption of sustainable practices",
+                    "label": "Area of land changed to sustainable practices",
                     "units": "Ha"
                 }
             ],
