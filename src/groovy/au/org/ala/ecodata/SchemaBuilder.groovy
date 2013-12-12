@@ -52,7 +52,19 @@ class SchemaBuilder {
                 //program:constrainedTextProperty([constraints: programs]),
                 //subprogram:textProperty(null),
                 //outputTargets:[type:'array', items:[type:'object', anyOf:allowedOutputs]],
-                activities:[type:'array', items:[type:'object', anyOf:activities]]
+                activities:[type:'array', items:[type:'object', anyOf:activities]],
+                outputTargets:[type:'array', items:[
+                        type:'object',
+                        description: "",
+                        properties:[
+                           outputLabel:[type:'string'],
+                           scoreName:[type:'string'],
+                           scoreLabel:[type:'string'],
+                           units:[type:'string'],
+
+                           outcomeTarget:[type:'string']
+                        ]
+                ]]
             ],
             required:['projectId']
         ]
