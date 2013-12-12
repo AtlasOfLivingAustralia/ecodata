@@ -14,7 +14,7 @@ import grails.converters.JSON
  */
 class ExternalController {
 
-    def grailsApplication, projectService, activityService, metadataService
+    def grailsApplication, projectService, activityService, metadataService, cacheService
 
     /** Temporary IP based security */
     def beforeInterceptor = [action:this.&applyWhiteList]
@@ -103,12 +103,22 @@ class ExternalController {
         render projectDetails as JSON
     }
 
+    private def projectActivitiesSchema() {
+
+        return cacheService.get('projectActivitiesSchema',{
+            def urlBuilder = new SchemaUrlBuilder(grailsApplication.config, metadataService)
+            JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
+            factory.getJsonSchema(urlBuilder.projectActivitiesSchemaUrl())
+        })
+
+    }
+
     def projectActivities() {
 
         def payload
         try {
 
-            String payloadText = request.inputStream.getText()
+            String payloadText = request.inputStream.getText('UTF-8')
             log.info("ExternalController::projectPlan with payload: ${payloadText} from: ${request.getRemoteAddr()}")
 
             payload = JsonLoader.fromString(payloadText)
@@ -119,9 +129,7 @@ class ExternalController {
         }
 
         try {
-            def urlBuilder = new SchemaUrlBuilder(grailsApplication.config, metadataService)
-            JsonSchemaFactory factory = JsonSchemaFactory.byDefault()
-            JsonSchema schema = factory.getJsonSchema(urlBuilder.projectActivitiesSchemaUrl())
+            JsonSchema schema = projectActivitiesSchema()
 
             ProcessingReport report = schema.validate(payload)
 
@@ -193,7 +201,7 @@ class ExternalController {
             case 'externalId':
                 return Project.findByExternalProjectId(projectId.id)
 
-            case 'internalId':
+            case 'guid':
                 return Project.findByProjectId(projectId.id)
         }
     }

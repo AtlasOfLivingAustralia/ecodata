@@ -46,14 +46,17 @@ class DocumentationController {
         def simplifiedSchema = schemaOverview(schema)
         simplifiedSchema.type = id
         def exampleActivity = exampleActivity(id)
-        def activityForm = null
 
-        if (exampleActivity) {
-            activityForm = "http://fieldcapture-dev.ala.org.au/activity/enterData/${exampleActivity.activityId}?returnTo=http://fieldcapture-dev.ala.org.au/project/index/746cb3f2-1f76-3824-9e80-fa735ae5ff35"
-        }
         withFormat {
             json {render schema as JSON}
-            html {[name: activityModel.name, activity:schema, overview:simplifiedSchema, example:exampleActivity, formUrl:activityForm]}
+            html {
+                def activityForm = null
+
+                if (exampleActivity) {
+                    activityForm = "http://fieldcapture-dev.ala.org.au/activity/enterData/${exampleActivity.activityId}?returnTo=http://fieldcapture-dev.ala.org.au/project/index/746cb3f2-1f76-3824-9e80-fa735ae5ff35"
+                }
+                [name: activityModel.name, activity:schema, overview:simplifiedSchema, example:exampleActivity, formUrl:activityForm]
+            }
         }
     }
 
@@ -69,10 +72,7 @@ class DocumentationController {
         def outputTemplate = metadataService.getOutputModel(id)?.template
         def outputName = metadataService.getOutputModel(id)?.name
 
-        def example = null
-        if (outputName) {
-            example = exampleOutput(outputName)
-        }
+
 
         def outputDataModel = metadataService.getOutputDataModel(outputTemplate)
 
@@ -82,7 +82,13 @@ class DocumentationController {
 
         withFormat {
             json {render schema as JSON}
-            html {[name:outputName, outputSchema: schema, overview:simplifiedSchema, example:example]}
+            html {
+                def example = null
+                if (outputName) {
+                    example = exampleOutput(outputName)
+                }
+                [name:outputName, outputSchema: schema, overview:simplifiedSchema, example:example]
+            }
         }
     }
 
