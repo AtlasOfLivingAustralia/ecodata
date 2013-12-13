@@ -23,7 +23,7 @@ class ApiKeyFilters {
                     //log.debug "IP ${clientIp} ${ipOk ? 'is' : 'is not'} ok. Key ${keyOk ? 'is' : 'is not'} ok."
 
                     if (!ipOk || !keyOk) {
-                        log.warning(ipOk ? "No valid api key for ${controllerName}/${actionName}" :
+                        log.warn(ipOk ? "No valid api key for ${controllerName}/${actionName}" :
                             "Non-authorised IP address - ${clientIp}" )
                         response.status = 403
                         def error = [error:'not authorised']
