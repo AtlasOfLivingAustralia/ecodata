@@ -196,6 +196,7 @@
             ]}]},
             "title": "Please list the details for each type of land management practice change related to this activity and any additional information that you can that is relevant:",
             "source": "practiceChange",
+            "allowHeaderWrap": "true",
             "columns": [
                 {
                     "title": "Reason for changing management practices:",
