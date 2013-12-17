@@ -114,6 +114,7 @@ class ElasticSearchService {
      */
     def indexDoc(doc, index) {
         def docId = getEntityId(doc)
+        def docJson = doc as JSON
         index = index?:DEFAULT_INDEX
         //client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
 
@@ -122,16 +123,13 @@ class ElasticSearchService {
         }
 
         try {
-
             addCustomFields(doc)
-            def docJson = doc as JSON
-
             client.prepareIndex(index, DEFAULT_TYPE, docId)
                 .setSource(
                     docJson.toString(false)
                 ).execute().actionGet();
         } catch (Exception e) {
-            log.error "Error indexing document: ${doc}, ${e}", e
+            log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
         }
     }
 
@@ -401,7 +399,18 @@ class ElasticSearchService {
                                 }
                             }
                         }
-                    }
+                    },
+                    "dynamic_templates": [
+                        {
+                            "output_template": {
+                                "path_match": "outputTargets.*",
+                                "mapping": {
+                                    "type": "string",
+                                    "index": "analyzed"
+                                }
+                            }
+                        }
+                    ]
                 }
             },
             settings:{
