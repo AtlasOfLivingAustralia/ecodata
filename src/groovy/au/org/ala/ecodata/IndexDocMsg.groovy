@@ -9,8 +9,9 @@ class IndexDocMsg {
     def docType
     def docId
     def indexType
+    List docIds
 
     public String toString() {
-        "IndexDocMsg[docType: ${docType}; docId: ${docId}; indexType: ${indexType}]"
+        "IndexDocMsg[docType: ${docType}; docId: ${docId}; indexType: ${indexType}; docIds: ${docIds.join('|')}]"
     }
 }

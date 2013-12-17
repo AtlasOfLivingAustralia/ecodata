@@ -39,6 +39,9 @@ class GormEventListener extends AbstractPersistenceEventListener {
                 elasticSearchService.queueGormEvent(event)
                 auditService.logGormEvent(event)
                 break
+            case EventType.PreUpdate:
+                elasticSearchService.queueGormEvent(event)
+                break
         }
 
 //        log.debug "onPersistenceEvent END"

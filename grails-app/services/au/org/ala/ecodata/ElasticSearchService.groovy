@@ -446,15 +446,30 @@ class ElasticSearchService {
         def doc = event.entityObject
         def docType = doc.getClass().name
         def docId = getEntityId(doc)
+        def projectIdsToUpdate = []
 
         if (!ALLOWED_DOC_TYPES.contains(docType)) {
             return
         }
 
-        log.debug "GORM event: ${event.eventType} - doc has class: ${docType} with id: ${docId}"
+        //log.debug "GORM event: ${event.eventType} - doc has class: ${docType} with id: ${docId}"
+
+        if (event.eventType == EventType.PreUpdate && docType == "au.org.ala.ecodata.Site") {
+
+            Site.withNewSession { session ->
+                def site = Site.findBySiteId(docId)
+                //log.debug "site = ${site?:"none"} and has projects: ${site?.projects}"
+                site.projects.each {
+                    if (it.size() > 1) {
+                        //log.debug "it = ${it}"
+                        projectIdsToUpdate.add(it)
+                    }
+                }
+            }
+        }
 
         try {
-            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType)
+            def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
             _messageQueue.offer(message)
         } catch (Exception ex) {
             log.error ex.localizedMessage, ex
@@ -483,6 +498,9 @@ class ElasticSearchService {
                         break
                     case EventType.PostDelete:
                         deleteDocByIdAndType(message.docId, message.docType)
+                        break
+                    case EventType.PreUpdate:
+                        checkDeleteForProjects(message.docIds)
                         break
                     default:
                         log.warn "Unexpected GORM event type: ${message.indexType}"
@@ -527,7 +545,11 @@ class ElasticSearchService {
                 // update linked projects -- index for homepage
                 doc.projects.each { // assume list of Strings (ids)
                     def pDoc = Project.findByProjectId(it)
-                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                    if (pDoc) {
+                        indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                    } else {
+                        log.warn "Project not foound for id: ${it}"
+                    }
                 }
                 break;
             case "au.org.ala.ecodata.Activity":
@@ -554,7 +576,7 @@ class ElasticSearchService {
         } catch (StackOverflowError e) {
             log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
         } catch (Exception e)  {
-            log.error "Exception - indexDocType for ${doc.projectId}: ${e.message}", e
+            log.error "Exception - indexDocType for ${doc?.projectId}: ${e.message}", e
         }
     }
 
@@ -603,6 +625,22 @@ class ElasticSearchService {
         } else {
             log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
         }
+    }
+
+    /**
+     * If an activity or site is deleted we need to keep track of the owning project (id)
+     * and then re-index those projects.
+     *
+     * @param docIds
+     * @return
+     */
+    def checkDeleteForProjects(docIds) {
+        // docIds is assumed to be a list of ProjectIds
+        docIds.each { id ->
+            //log.debug "Updating project id: ${id}"
+            indexDocType(id, "au.org.ala.ecodata.Project")
+        }
+
     }
 
     /**
