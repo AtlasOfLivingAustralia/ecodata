@@ -8,10 +8,10 @@ class AdminController {
 
     def outputService, activityService, siteService, projectService, authService,
         commonService, cacheService, metadataService, elasticSearchService
-    def beforeInterceptor = [action:this.&auth]
+    def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
-     * Triggered by beforeInterceptor, this restricts access for all actions to ROLE_ADMIN
+     * Triggered by beforeInterceptor, this restricts access to specified (only) actions to ROLE_ADMIN
      * users.
      *
      * @return
