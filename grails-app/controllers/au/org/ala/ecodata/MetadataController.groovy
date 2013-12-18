@@ -55,4 +55,11 @@ class MetadataController {
         def result = [model: metadataService.getOutputDataModel(id)]
         render result as JSON
     }
+
+    // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
+    // large grid files such as the NVIS grids.
+    def getNvisClassesForPoint(Double lat, Double lon) {
+        def result = metadataService.getNvisClassesForPoint(lat, lon)
+        render result as JSON
+    }
 }

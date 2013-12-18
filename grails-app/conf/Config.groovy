@@ -108,6 +108,9 @@ if(!app.external.api.version){
     app.external.api.version = 'draft'
 }
 
+app.nvis_grids.location = "/data/nvis_grids"
+app.nvis_grids.names = "mvg,mvs"
+
 /******************************************************************************\
  *  EXTERNAL SERVERS
 \******************************************************************************/

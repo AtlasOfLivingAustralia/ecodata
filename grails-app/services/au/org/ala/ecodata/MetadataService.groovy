@@ -105,4 +105,30 @@ class MetadataService {
         cacheService.clear('programs-model')
     }
 
+    // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
+    // large grid files such as the NVIS grids.
+    def getNvisClassesForPoint(Double lat, Double lon) {
+        def retMap = [:]
+
+        def nvisLayerNames = grailsApplication.config.app.nvis_grids.names.toString().split(",")
+
+        for(name in nvisLayerNames) {
+            def classesJsonFile = new File(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name + '.json')
+            def classesJson = classesJsonFile.text
+            def classesMap = JSON.parse(classesJson)
+
+            try {
+                BasicGridIntersector intersector = new BasicGridIntersector(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name)
+                def classNumber = intersector.readCell(lon, lat)
+                retMap.put(name, classesMap[classNumber.toInteger().toString()])
+            } catch (IllegalArgumentException ex) {
+                // Lat long was outside extent of grid
+                retMap.put(name, null)
+            }
+
+        }
+
+        return retMap
+    }
+
 }
