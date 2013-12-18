@@ -9,7 +9,7 @@ class UserService {
 
     def getCurrentUserDisplayName() {
         UserDetails currentUser = _currentUser.get()
-        return currentUser ? currentUser.displayName : '<anonymous>'
+        return currentUser ? currentUser.displayName : ""
     }
 
     def getCurrentUserDetails() {

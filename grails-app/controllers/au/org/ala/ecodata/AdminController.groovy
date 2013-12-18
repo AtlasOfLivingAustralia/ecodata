@@ -8,6 +8,23 @@ class AdminController {
 
     def outputService, activityService, siteService, projectService, authService,
         commonService, cacheService, metadataService, elasticSearchService
+    def beforeInterceptor = [action:this.&auth]
+
+    /**
+     * Triggered by beforeInterceptor, this restricts access for all actions to ROLE_ADMIN
+     * users.
+     *
+     * @return
+     */
+    private auth() {
+        if (!authService.userInRole(grailsApplication.config.security.cas.adminRole)) {
+            flash.message = "You are not authorised to access the page: Administration."
+            redirect(uri: "/")
+            false
+        } else {
+            true
+        }
+    }
 
     def index() {}
     def tools() {}
