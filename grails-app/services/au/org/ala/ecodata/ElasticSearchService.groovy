@@ -454,19 +454,20 @@ class ElasticSearchService {
 
         //log.debug "GORM event: ${event.eventType} - doc has class: ${docType} with id: ${docId}"
 
-        if (event.eventType == EventType.PreUpdate && docType == "au.org.ala.ecodata.Site") {
-
-            Site.withNewSession { session ->
-                def site = Site.findBySiteId(docId)
-                //log.debug "site = ${site?:"none"} and has projects: ${site?.projects}"
-                site.projects.each {
-                    if (it.size() > 1) {
-                        //log.debug "it = ${it}"
-                        projectIdsToUpdate.add(it)
-                    }
-                }
-            }
-        }
+// CG - nested sessions appear to result in a database connection leak which takes down the system.
+//        if (event.eventType == EventType.PreUpdate && docType == "au.org.ala.ecodata.Site") {
+//
+//            Site.withNewSession { session ->
+//                def site = Site.findBySiteId(docId)
+//                //log.debug "site = ${site?:"none"} and has projects: ${site?.projects}"
+//                site.projects.each {
+//                    if (it.size() > 1) {
+//                        //log.debug "it = ${it}"
+//                        projectIdsToUpdate.add(it)
+//                    }
+//                }
+//            }
+//        }
 
         try {
             def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
