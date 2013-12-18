@@ -1,4 +1,12 @@
 {
+    "selectedActivity": {
+        "name": "Flora (biological) survey",
+        "type": "Assessment",
+        "outputs": [
+            "Survey Information",
+            "Flora Survey Details"
+        ]
+    },
     "activities": [
         {
             "name": "Community Participation and Engagement",
@@ -124,12 +132,18 @@
         {
             "name": "Flora (biological) survey",
             "type": "Assessment",
-            "outputs": []
+            "outputs": [
+                "Survey Information",
+                "Flora Survey Details"
+            ]
         },
         {
             "name": "Fauna (biological) survey",
             "type": "Assessment",
-            "outputs": []
+            "outputs": [
+                "Survey Information",
+                "Fauna Survey Details"
+            ]
         },
         {
             "name": "Feral animal assessment",
@@ -1140,6 +1154,21 @@
                 }
             ],
             "name": "Sustainable Practice Initiatives"
+        },
+        {
+            "template": "biologicalSurveyInformation",
+            "scores": [],
+            "name": "Survey Information"
+        },
+        {
+            "template": "faunaSurveyDetails",
+            "scores": [],
+            "name": "Fauna Survey Details"
+        },
+        {
+            "template": "floraSurveyDetails",
+            "scores": [],
+            "name": "Flora Survey Details"
         }
     ]
 }

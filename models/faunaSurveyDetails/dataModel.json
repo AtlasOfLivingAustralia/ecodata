@@ -1,0 +1,240 @@
+{
+    "modelName": "Biological Survey - Fauna",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "surveyResults",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The identifier of the transect or plot in which sampling is being done.",
+                    "name": "plotId"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The identifier of the point at which the observational record was made",
+                    "name": "sampleSiteId"
+                },
+                {
+                    "dataType": "species",
+                    "description": "Species recorded at the sample site",
+                    "name": "species"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of organisms in the survey at the sample site which share the same set of record attributes.",
+                    "name": "numberOfOrganisms"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Nature of the evidence for the basis of the record",
+                    "name": "evidence",
+                    "constraints": [
+                        "Living organism",
+                        "Dead organism",
+                        "Tracks",
+                        "Scats",
+                        "Debris from molting",
+                        "Scratchings",
+                        "Nest / burrow / lodgings",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The sex of the organism recorded",
+                    "name": "sex",
+                    "constraints": [
+                        "Male",
+                        "Female",
+                        "Hermaphrodite",
+                        "Undetermined",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Life stage of the organism recorded",
+                    "name": "lifeStage",
+                    "constraints": [
+                        "Juvenile",
+                        "Adolescent",
+                        "Pre-metamorphic",
+                        "metamorphic juvenile",
+                        "Larva",
+                        "Nymph",
+                        "Pupa",
+                        "Adult - non reproductive",
+                        "Adult - reproductive",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The health or condition of the organism recorded",
+                    "name": "health"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
+                    "name": "biologicalMaterialTaken",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, etc.).",
+                    "name": "speciesNotes"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of the individual organisms recorded in the survey event",
+            "name": "totalNumberOfOrganisms",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberOfOrganisms",
+                    "fromList": "surveyResults"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "The total number of different species recorded during the survey event",
+            "name": "totalNumberOfSpecies",
+            "computed": {
+                "operation": "count",
+                "dependents": {
+                    "source": "species",
+                    "fromList": "surveyResults"
+                }
+            }
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "Total number of unique species recorded at this survey event:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberOfSpecies",
+                    "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"species\",\"fromList\":\"surveyResults\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 2,
+                    "source": "Total No. of individual organisms recorded in this survey event:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberOfOrganisms",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberOfOrganisms\",\"fromList\":\"surveyResults\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 4,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "title": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
+            "source": "surveyResults",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "Transect / plot Id:",
+                    "source": "plotId",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Trap / Sample Site Id:",
+                    "source": "sampleSiteId",
+                    "computed": null,
+                    "type": "text"
+                },
+                {
+                    "title": "Species:",
+                    "source": "species",
+                    "computed": null,
+                    "type": "species"
+                },
+                {
+                    "title": "No. of individuals:",
+                    "source": "numberOfOrganisms",
+                    "computed": null,
+                    "type": "number"
+                },
+                {
+                    "title": "Nature of evidence:",
+                    "source": "evidence",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Sex:",
+                    "source": "sex",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Life stage:",
+                    "source": "lifeStage",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Organism health:",
+                    "source": "health",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "text"
+                },
+                {
+                    "title": "Biological material taken:",
+                    "source": "biologicalMaterialTaken",
+                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Notes:",
+                    "source": "speciesNotes",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "editableRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
