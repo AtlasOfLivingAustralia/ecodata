@@ -1,0 +1,132 @@
+{
+    "modelName": "Biological Survey Information",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "An identifier or reference number that may be applicable to the survey event.",
+            "name": "surveyId"
+        },
+        {
+            "dataType": "text",
+            "description": "Short descriptive title of the survey. This provides context for the survey event and enables you to search for it easily.",
+            "name": "surveyTitle",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Description of the objectives of the survey event",
+            "name": "surveyObjectives"
+        },
+        {
+            "dataType": "text",
+            "description": "The name of the person leading the survey event",
+            "name": "surveyLeader",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "List of people people participating in the survey event.",
+            "name": "surveyParticipants"
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares over which the survey is being conducted",
+            "name": "surveyArea"
+        },
+        {
+            "dataType": "text",
+            "description": "The name of the methodology used. Note this should be the short-form name by which a standard methodology is commonly referred to (eg. 2 Ha 20 min Bird Survey). If it is not a common or standard methodology, please create a short-form name for it.",
+            "name": "surveyMethodologyName",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Long description of the methodology used for the survey event",
+            "name": "surveyMethodologyDescription"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "surveyId",
+                            "computed": null,
+                            "preLabel": "Survey Id / Reference No.:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "surveyTitle",
+                            "computed": null,
+                            "preLabel": "Survey title:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "surveyObjectives",
+                            "computed": null,
+                            "preLabel": "Survey objectives:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "surveyLeader",
+                            "computed": null,
+                            "preLabel": "Survey leader:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "surveyParticipants",
+                            "computed": null,
+                            "preLabel": "Survey participants:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "surveyArea",
+                            "computed": null,
+                            "preLabel": "Survey area (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "surveyMethodologyName",
+                            "computed": null,
+                            "preLabel": "Survey methodology used:",
+                            "type": "text"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "surveyMethodologyDescription",
+                        "computed": null,
+                        "preLabel": "Description of survey methodology:",
+                        "type": "textarea"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
