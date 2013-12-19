@@ -361,6 +361,13 @@ class ElasticSearchService {
                                                 "nrm" : {"type" : "string", "index" : "analyzed"},
                                                 "nrmFacet" : {"type" : "string", "index" : "not_analyzed"}
                                             }
+                                        },
+                                        "mvg": {
+                                            "type" : "multi_field",
+                                            "fields" : {
+                                                "mvg" : {"type" : "string", "index" : "analyzed"},
+                                                "mvgFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                            }
                                         }
                                     }
                                 }
@@ -391,6 +398,13 @@ class ElasticSearchService {
                                                     "fields" : {
                                                         "nrms" : {"type" : "string", "index" : "analyzed"},
                                                         "nrmsFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+                                                "mvg":{
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "mvgs" : {"type" : "string", "index" : "analyzed"},
+                                                        "mvgsFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 }
                                             }
@@ -827,6 +841,8 @@ class ElasticSearchService {
             facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
             facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            facetList.add(FacetBuilders.termsFacet("mvgFacet").field("mvgFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+
         }
 
         return facetList
