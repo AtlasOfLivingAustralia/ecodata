@@ -1,8 +1,13 @@
 package au.org.ala.ecodata.reporting
+
+import org.apache.log4j.Logger
+
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
 class Aggregators {
+
+    def log = Logger.getLogger(getClass())
 
     public static abstract class OutputAggregator {
 
@@ -60,7 +65,12 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            total += value as Double
+            if (value instanceof String && !value.isDouble()) {
+                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+            }
+            else {
+                total += value as Double
+            }
         }
 
         public AggregrationResult result() {
@@ -76,7 +86,12 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            total += value as Double
+            if (value instanceof String && !value.isDouble()) {
+                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+            }
+            else {
+                total += value as Double
+            }
         }
         public AggregrationResult result() {
             return new AggregrationResult([score:score, group:group, count:count, result:total])
