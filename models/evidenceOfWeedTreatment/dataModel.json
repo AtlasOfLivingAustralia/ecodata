@@ -19,7 +19,7 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
+            "dataType": "number",
             "description": "The effectiveness of the last treatment activity as a proportion of the area and density of the infestation that existed before the previous treatment activity, expressed as the percentage killed",
             "name": "effectivenessOfPreviousWeedTreatment",
             "validate": "required,min[0],max[100]"
