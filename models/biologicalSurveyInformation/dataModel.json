@@ -47,6 +47,13 @@
     ],
     "viewModel": [
         {
+            "items": [{
+                "source": "This is a generalised form for recording biological survey data and should cover the basic structured data gathering requirements of most surveys. If additional structured data is required, please contact <a href='mailto: MERIT@environment.gov.au'>MERIT@environment.gov.au<\/a>.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
             "items": [
                 {
                     "items": [

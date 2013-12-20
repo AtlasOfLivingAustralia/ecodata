@@ -63,7 +63,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, etc.).",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
                     "name": "speciesNotes"
                 }
             ]
@@ -82,19 +82,6 @@
             }
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "The total number of different species recorded during the survey event",
-            "name": "totalNumberOfSpecies",
-            "computed": {
-                "operation": "count",
-                "dependents": {
-                    "source": "species",
-                    "fromList": "surveyResultsFlora"
-                }
-            }
-        },
-        {
             "dataType": "text",
             "description": "The identifier of a soil sample collected in association with this survey event",
             "name": "soilSampleCollected"
@@ -106,20 +93,17 @@
     ],
     "viewModel": [
         {
+            "items": [{
+                "source": "Please list the details of plants observed or collected in each transect/plot and sampling site during this survey event:",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": 3,
-                    "source": "Total number of unique species recorded at this survey event:",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalNumberOfSpecies",
-                    "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"species\",\"fromList\":\"surveyResultsFlora\"}}",
-                    "type": "number"
-                },
-                {
-                    "colspan": 2,
                     "source": "Total No. of individual organisms recorded in this survey event:",
                     "computed": null,
                     "type": "literal"
@@ -130,13 +114,12 @@
                     "type": "number"
                 },
                 {
-                    "colspan": 3,
+                    "colspan": 6,
                     "source": "",
                     "computed": null,
                     "type": "literal"
                 }
             ]}]},
-            "title": "Please list the details of plants observed or collected in each transect/plot and sampling site during this survey event:",
             "source": "surveyResultsFlora",
             "allowHeaderWrap": "true",
             "columns": [
@@ -144,14 +127,14 @@
                     "title": "Transect / plot Id:",
                     "source": "plotId",
                     "computed": null,
-                    "width": "8%",
+                    "width": "7%",
                     "type": "text"
                 },
                 {
                     "title": "Sample Site Id:",
                     "source": "sampleSiteId",
                     "computed": null,
-                    "width": "8%",
+                    "width": "7%",
                     "type": "text"
                 },
                 {
@@ -159,7 +142,7 @@
                     "source": "species",
                     "computed": null,
                     "width": "15%",
-                    "type": "species"
+                    "type": "autocomplete"
                 },
                 {
                     "title": "No. of individuals:",
@@ -179,14 +162,14 @@
                     "title": "Ave. Height (m):",
                     "source": "aveHeight",
                     "computed": null,
-                    "width": "8%",
+                    "width": "7%",
                     "type": "number"
                 },
                 {
                     "title": "Tree DBH (cm) if applicable:",
                     "source": "dbh",
                     "computed": null,
-                    "width": "10%",
+                    "width": "7%",
                     "type": "number"
                 },
                 {
@@ -200,7 +183,7 @@
                     "title": "Biological material taken:",
                     "source": "biologicalMaterialTaken",
                     "computed": null,
-                    "width": "8%",
+                    "width": "7%",
                     "type": "selectOne"
                 },
                 {
@@ -220,7 +203,7 @@
             "items": [{
                 "source": "soilSampleCollected",
                 "computed": null,
-                "width": "40%",
+                "width": "10%",
                 "preLabel": "If a soil sample was collected as part of this survey event, please indicate the sample Id:",
                 "type": "text"
             }],

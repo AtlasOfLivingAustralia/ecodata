@@ -17,7 +17,7 @@
                 },
                 {
                     "dataType": "species",
-                    "description": "Species recorded at the sample site",
+                    "description": "All species recorded at the sample site",
                     "name": "species"
                 },
                 {
@@ -85,7 +85,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, etc.).",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
                     "name": "speciesNotes"
                 }
             ]
@@ -104,39 +104,23 @@
             }
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "The total number of different species recorded during the survey event",
-            "name": "totalNumberOfSpecies",
-            "computed": {
-                "operation": "count",
-                "dependents": {
-                    "source": "species",
-                    "fromList": "surveyResults"
-                }
-            }
-        },
-        {
             "dataType": "text",
             "name": "notes"
         }
     ],
     "viewModel": [
         {
+            "items": [{
+                "source": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": 3,
-                    "source": "Total number of unique species recorded at this survey event:",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalNumberOfSpecies",
-                    "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"species\",\"fromList\":\"surveyResults\"}}",
-                    "type": "number"
-                },
-                {
-                    "colspan": 2,
                     "source": "Total No. of individual organisms recorded in this survey event:",
                     "computed": null,
                     "type": "literal"
@@ -147,13 +131,12 @@
                     "type": "number"
                 },
                 {
-                    "colspan": 3,
+                    "colspan": 6,
                     "source": "",
                     "computed": null,
                     "type": "literal"
                 }
             ]}]},
-            "title": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
             "source": "surveyResults",
             "allowHeaderWrap": "true",
             "columns": [
@@ -161,8 +144,8 @@
                     "title": "Transect / plot Id:",
                     "source": "plotId",
                     "computed": null,
-                    "width": "8%",
-                    "type": "selectOne"
+                    "width": "7%",
+                    "type": "text"
                 },
                 {
                     "title": "Trap / Sample Site Id:",
@@ -175,8 +158,8 @@
                     "title": "Species:",
                     "source": "species",
                     "computed": null,
-                    "width": "15%",
-                    "type": "species"
+                    "width": "12%",
+                    "type": "autocomplete"
                 },
                 {
                     "title": "No. of individuals:",
@@ -196,7 +179,7 @@
                     "title": "Sex:",
                     "source": "sex",
                     "computed": null,
-                    "width": "8%",
+                    "width": "10%",
                     "type": "selectOne"
                 },
                 {
@@ -217,7 +200,7 @@
                     "title": "Biological material taken:",
                     "source": "biologicalMaterialTaken",
                     "computed": null,
-                    "width": "8%",
+                    "width": "7%",
                     "type": "selectOne"
                 },
                 {
