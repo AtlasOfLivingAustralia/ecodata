@@ -118,7 +118,7 @@ class ActivityService {
         def errors = []
         if (a) {
             // do updates for each attached output
-            props.outputs.each { output ->
+            props.outputs?.each { output ->
                 if (output.outputId) {
                     // update
                     log.debug "Updating output ${output.name}"
@@ -159,6 +159,36 @@ class ActivityService {
             def error = "Error updating Activity - no such id ${id}"
             log.error error
             return [status:'error',error:error]
+        }
+    }
+
+    /**
+     * A simple implementation of a bulk update - simply delegates to the update method for each
+     * supplied id.  The batch size is assumed to be small and hence issues like the grails validation cache are not considered.
+     * @param props
+     * @param ids a list of activity ids identifying the activities to update.
+     * @param props the properties of each activity to update.
+     */
+    def bulkUpdate(props, ids) {
+
+        def errors = []
+        ids.each {
+            def newProps = [activityId:it]
+            newProps.putAll(props)
+            def result = update(newProps, it)
+            if (result.status == 'error') {
+                if (result.errorList) {
+                    errors.addAll(result.errorList)
+                }
+                if (result.error) {
+                    errors << result.error
+                }
+            }
+        }
+        if (errors) {
+            return [status:'error', errorList: errors]
+        } else {
+            return [status:'ok']
         }
     }
 

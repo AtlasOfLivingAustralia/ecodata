@@ -17,6 +17,11 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
+        "/ws/activities/" {
+            controller = 'activity'
+            action = [PUT:'bulkUpdate', POST:'bulkUpdate']
+        }
+
         "/ws/metadata/$action/$id?" {
             controller = 'metadata'
         }

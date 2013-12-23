@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 import java.text.SimpleDateFormat
 
 class ActivityController {
@@ -76,6 +78,44 @@ class ActivityController {
             message = [message: 'error', errors: errors]
         }
         asJson(message)
+    }
+
+    /**
+     * The request should look like:
+     * /activities/?id=id1&id=id2&id=id3
+     * Request body should contain the properties to update, as per the update method.
+     * All activities identified by the supplied ids will have the supplied properties updated.
+     *
+     */
+    @RequireApiKey
+    def bulkUpdate() {
+        def ids = params.id
+        def props = request.JSON
+
+        if (!ids) {
+            def message = [message:'The id parameter is mandatory']
+            render status:400, message as JSON
+        }
+        if (!props) {
+            def message = [message:'The properties to be updated must be supplied in the request body']
+            render status:400, message as JSON
+        }
+
+        def result = activityService.bulkUpdate(props,ids)
+        def message = [message: 'updated']
+
+        if (result.status != 'ok') {
+            def errors = result.errorList ?: []
+            if (result.error) {
+                errors << [error: result.error]
+            }
+            errors.each {
+                log.error it
+            }
+            message = [message: 'error', errors: errors]
+        }
+        asJson(message)
+
     }
 
     /**
