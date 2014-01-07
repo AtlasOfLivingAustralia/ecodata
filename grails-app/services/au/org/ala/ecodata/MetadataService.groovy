@@ -114,16 +114,21 @@ class MetadataService {
 
         for(name in nvisLayerNames) {
             def classesJsonFile = new File(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name + '.json')
-            def classesJson = classesJsonFile.text
-            def classesMap = JSON.parse(classesJson)
+            if (classesJsonFile.exists()) { // The files are too big for the development system
+                def classesJson = classesJsonFile.text
+                def classesMap = JSON.parse(classesJson)
 
-            try {
-                BasicGridIntersector intersector = new BasicGridIntersector(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name)
-                def classNumber = intersector.readCell(lon, lat)
-                retMap.put(name, classesMap[classNumber.toInteger().toString()])
-            } catch (IllegalArgumentException ex) {
-                // Lat long was outside extent of grid
-                retMap.put(name, null)
+                try {
+                    BasicGridIntersector intersector = new BasicGridIntersector(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name)
+                    def classNumber = intersector.readCell(lon, lat)
+                    retMap.put(name, classesMap[classNumber.toInteger().toString()])
+                } catch (IllegalArgumentException ex) {
+                    // Lat long was outside extent of grid
+                    retMap.put(name, null)
+                }
+            }
+            else {
+                retMap << [(name) : null]
             }
 
         }
