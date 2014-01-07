@@ -863,7 +863,12 @@ class ElasticSearchService {
                     fb = FilterBuilders.boolFilter()
                 }
                 def fqs = it.tokenize(":")
-                fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+                if (fqs.size() > 1) {
+                    fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+                }
+                else {
+                    fb.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
+                }
             }
         }
 
@@ -886,10 +891,15 @@ class ElasticSearchService {
         filterList.each { fq ->
             def fqs = fq.tokenize(":")
             // support SOLR style filters (-) for exclude
-            if (fqs[0].getAt(0) == "-") {
-                boolFilter.mustNot(FilterBuilders.prefixFilter(fqs[0][1..-1], fqs[1]))
-            } else {
-                boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+            if (fqs.size() > 1) {
+                if (fqs[0].getAt(0) == "-") {
+                    boolFilter.mustNot(FilterBuilders.prefixFilter(fqs[0][1..-1], fqs[1]))
+                } else {
+                    boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+                }
+            }
+            else {
+                boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
             }
         }
 
