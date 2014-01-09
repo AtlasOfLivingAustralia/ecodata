@@ -1,10 +1,12 @@
 {
     "selectedActivity": {
-        "name": "Flora (biological) survey",
+        "name": "Pest animal survey",
         "type": "Assessment",
         "outputs": [
-            "Survey Information",
-            "Flora Survey Details"
+            "Evidence of Pest Management Activity",
+            "Pest Observation and Monitoring Details",
+            "Participant Information",
+            "Photo Points"
         ]
     },
     "activities": [
@@ -156,7 +158,12 @@
         {
             "name": "Pest animal survey",
             "type": "Assessment",
-            "outputs": []
+            "outputs": [
+                "Evidence of Pest Management Activity",
+                "Pest Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
+            ]
         },
         {
             "name": "Research",
@@ -1169,6 +1176,16 @@
             "template": "floraSurveyDetails",
             "scores": [],
             "name": "Flora Survey Details"
+        },
+        {
+            "template": "evidenceOfPestManagement",
+            "scores": [],
+            "name": "Evidence of Pest Management Activity"
+        },
+        {
+            "template": "pestMonitoringDetails",
+            "scores": [],
+            "name": "Pest Observation and Monitoring Details"
         }
     ]
 }
