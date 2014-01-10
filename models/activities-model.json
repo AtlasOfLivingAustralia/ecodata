@@ -1,11 +1,13 @@
 {
     "selectedActivity": {
-        "name": "Pest animal survey",
+        "name": "Site assessment",
         "type": "Assessment",
         "outputs": [
-            "Evidence of Pest Management Activity",
-            "Pest Observation and Monitoring Details",
             "Participant Information",
+            "Vegetation Assessment",
+            "Site Condition Components",
+            "Landscape Context Components",
+            "Threatening Processes & Site Condition Risks",
             "Photo Points"
         ]
     },
@@ -59,6 +61,7 @@
             "type": "Activity",
             "outputs": [
                 "Weed Treatment Details",
+                "Weed Treatment - multi-species",
                 "Participant Information",
                 "Photo Points"
             ]
@@ -93,7 +96,9 @@
         {
             "name": "Water Management",
             "type": "Activity",
-            "outputs": ["Water Management Details"]
+            "outputs": [
+                "Water Management Details"
+            ]
         },
         {
             "name": "Erosion Management",
@@ -174,18 +179,6 @@
             ]
         },
         {
-            "name": "Site assessment",
-            "type": "Assessment",
-            "outputs": [
-                "Participant Information",
-                "Vegetation Assessment",
-                "Site Condition Components",
-                "Landscape Context Components",
-                "Threatening Processes & Site Condition Risks",
-                "Photo Points"
-            ]
-        },
-        {
             "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
             "type": "Assessment",
             "outputs": [
@@ -219,7 +212,9 @@
         {
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "outputs": ["Vegetation Assessment"]
+            "outputs": [
+                "Vegetation Assessment"
+            ]
         },
         {
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
@@ -234,7 +229,9 @@
         {
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "outputs": ["Vegetation Assessment"]
+            "outputs": [
+                "Vegetation Assessment"
+            ]
         },
         {
             "name": "Vegetation Assessment - BioCondition (QLD)",
@@ -275,7 +272,9 @@
         {
             "name": "Site Monitoring Planning",
             "type": "Activity",
-            "outputs": ["Planned Monitoring Approach"]
+            "outputs": [
+                "Planned Monitoring Approach"
+            ]
         },
         {
             "name": "Project Administration",
@@ -313,7 +312,9 @@
         {
             "name": "Knowledge Integration and Transfer",
             "type": "Activity",
-            "outputs": ["Knowledge Integration and Transfer"]
+            "outputs": [
+                "Knowledge Integration and Transfer"
+            ]
         },
         {
             "name": "Outcomes, Evaluation and Learning",
@@ -327,12 +328,16 @@
         {
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Activity",
-            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
+            "outputs": [
+                "Biodiversity Fund Outcomes & Monitoring Methodology"
+            ]
         },
         {
             "name": "Infrastructure Establishment",
             "type": "Activity",
-            "outputs": ["Infrastructure Details"]
+            "outputs": [
+                "Infrastructure Details"
+            ]
         }
     ],
     "outputs": [
@@ -395,24 +400,28 @@
         },
         {
             "template": "seedCollectionDetails",
-            "scores": [{
-                "isOutputTarget": true,
-                "name": "seedCollectedKg",
-                "aggregationType": "SUM",
-                "label": "Seed collected (Kg)",
-                "units": "Kg"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "name": "seedCollectedKg",
+                    "aggregationType": "SUM",
+                    "label": "Seed collected (Kg)",
+                    "units": "Kg"
+                }
+            ],
             "name": "Seed Collection Details"
         },
         {
             "template": "sitePreparationActions",
-            "scores": [{
-                "isOutputTarget": true,
-                "name": "preparationAreaTotal",
-                "aggregationType": "SUM",
-                "label": "Total area prepared for follow-up treatment actions",
-                "units": "Ha"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "name": "preparationAreaTotal",
+                    "aggregationType": "SUM",
+                    "label": "Total area prepared for follow-up treatment actions",
+                    "units": "Ha"
+                }
+            ],
             "name": "Site Preparation Actions"
         },
         {
@@ -508,13 +517,15 @@
         },
         {
             "template": "photoPoints",
-            "scores": [{
-                "isOutputTarget": false,
-                "name": "numberOfPoints",
-                "aggregationType": "SUM",
-                "label": "No. of photo points",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": false,
+                    "name": "numberOfPoints",
+                    "aggregationType": "SUM",
+                    "label": "No. of photo points",
+                    "units": ""
+                }
+            ],
             "name": "Photo Points"
         },
         {
@@ -624,13 +635,15 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [{
-                "isOutputTarget": false,
-                "name": "effectivenessOfPreviousTreatment",
-                "aggregationType": "AVERAGE",
-                "label": "Effectiveness of Previous Treatment (% killed)",
-                "units": "%"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": false,
+                    "name": "effectivenessOfPreviousTreatment",
+                    "aggregationType": "AVERAGE",
+                    "label": "Effectiveness of Previous Treatment (% killed)",
+                    "units": "%"
+                }
+            ],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -771,11 +784,13 @@
         },
         {
             "template": "researchInformation",
-            "scores": [{
-                "name": "typeOfResearch",
-                "aggregationType": "HISTOGRAM",
-                "label": "Type of research"
-            }],
+            "scores": [
+                {
+                    "name": "typeOfResearch",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Type of research"
+                }
+            ],
             "name": "Research Information"
         },
         {
@@ -797,11 +812,13 @@
         },
         {
             "template": "siteAssessment",
-            "scores": [{
-                "name": "assessmentMethod",
-                "aggregationType": "SET",
-                "label": "Assessment Method"
-            }],
+            "scores": [
+                {
+                    "name": "assessmentMethod",
+                    "aggregationType": "SET",
+                    "label": "Assessment Method"
+                }
+            ],
             "name": "Vegetation Assessment"
         },
         {
@@ -821,32 +838,38 @@
         },
         {
             "template": "weedAbundanceAndThreatScore",
-            "scores": [{
-                "name": "totalWeedAbundanceAndThreatScore",
-                "aggregationType": "SET",
-                "label": "totalWeedAbundanceAndThreatScore",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "name": "totalWeedAbundanceAndThreatScore",
+                    "aggregationType": "SET",
+                    "label": "totalWeedAbundanceAndThreatScore",
+                    "units": ""
+                }
+            ],
             "name": "Weed Abundance & Threat Score"
         },
         {
             "template": "feralAnimalAbundanceScore",
-            "scores": [{
-                "name": "totalFeralAnimalAbundanceScore",
-                "aggregationType": "SET",
-                "label": "totalFeralAnimalAbundanceScore",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "name": "totalFeralAnimalAbundanceScore",
+                    "aggregationType": "SET",
+                    "label": "totalFeralAnimalAbundanceScore",
+                    "units": ""
+                }
+            ],
             "name": "Feral Animal Abundance Score"
         },
         {
             "template": "feralAnimalFrequencyScore",
-            "scores": [{
-                "name": "totalFeralAnimalFrequencyScore",
-                "aggregationType": "SET",
-                "label": "totalFeralAnimalFrequencyScore",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "name": "totalFeralAnimalFrequencyScore",
+                    "aggregationType": "SET",
+                    "label": "totalFeralAnimalFrequencyScore",
+                    "units": ""
+                }
+            ],
             "name": "Feral Animal Frequency Score"
         },
         {
@@ -995,11 +1018,13 @@
         },
         {
             "template": "accessControlDetails",
-            "scores": [{
-                "name": "structuresInstalled",
-                "aggregationType": "HISTOGRAM",
-                "label": "Types of structures installed for access management"
-            }],
+            "scores": [
+                {
+                    "name": "structuresInstalled",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Types of structures installed for access management"
+                }
+            ],
             "name": "Access Control Details"
         },
         {
@@ -1186,6 +1211,11 @@
             "template": "pestMonitoringDetails",
             "scores": [],
             "name": "Pest Observation and Monitoring Details"
+        },
+        {
+            "template": "weedTreatmentMulti",
+            "scores": [],
+            "name": "Weed Treatment - multi-species"
         }
     ]
 }
