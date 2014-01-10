@@ -169,63 +169,60 @@
             "type": "row"
         },
         {
-            "items": [
+
+            "source": "weedsTreated",
+            "computed": null,
+            "allowHeaderWrap": "true",
+            "columns": [
                 {
-                    "source": "weedsTreated",
+                    "title": "Target species:",
+                    "source": "targetSpecies",
                     "computed": null,
-                    "allowHeaderWrap": "true",
-                    "columns": [
-                        {
-                            "title": "Target species:",
-                            "source": "targetSpecies",
-                            "computed": null,
-                            "width": "20%",
-                            "type": "autocomplete"
-                        },
-                        {
-                            "title": "Reproductive status at the time of treatment:",
-                            "source": "reproductiveStatus",
-                            "computed": null,
-                            "width": "15%",
-                            "type": "selectOne"
-                        },
-                        {
-                            "title": "Plant health at the time of treatment:",
-                            "source": "plantHealth",
-                            "computed": null,
-                            "width": "15%",
-                            "type": "selectOne"
-                        },
-                        {
-                            "title": "Control status:",
-                            "source": "controlStatus",
-                            "computed": null,
-                            "width": "15%",
-                            "type": "selectOne"
-                        },
-                        {
-                            "title": "Type of treatment event:",
-                            "source": "treatmentEventType",
-                            "computed": null,
-                            "width": "10%",
-                            "type": "selectOne"
-                        },
-                        {
-                            "title": "Treatment method:",
-                            "source": "treatmentMethod",
-                            "computed": null,
-                            "width": "25%",
-                            "type": "selectOne",
-                            "validate": "required"
-                        }
-                    ],
-                    "userAddedRows": true,
-                    "editableRows": "true",
-                    "type": "table"
+                    "width": "20%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Reproductive status at the time of treatment:",
+                    "source": "reproductiveStatus",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Plant health at the time of treatment:",
+                    "source": "plantHealth",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Control status:",
+                    "source": "controlStatus",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Type of treatment event:",
+                    "source": "treatmentEventType",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Treatment method:",
+                    "source": "treatmentMethod",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "selectOne",
+                    "validate": "required"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "userAddedRows": true,
+            "editableRows": "true",
+            "type": "table"
+
+
         },
         {
             "items": [
