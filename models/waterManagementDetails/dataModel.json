@@ -284,12 +284,6 @@
                             "type": "selectOne"
                         },
                         {
-                            "source": "hydrologicalStructuresInstalled",
-                            "computed": null,
-                            "preLabel": "No. of new structures installed to manage the hydrological regime at this site: *",
-                            "type": "number"
-                        },
-                        {
                             "source": "managedArea",
                             "computed": null,
                             "preLabel": "Area of catchment being managed/treated by this activity:",
