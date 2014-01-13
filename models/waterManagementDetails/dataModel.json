@@ -286,7 +286,7 @@
                         {
                             "source": "managedArea",
                             "computed": null,
-                            "preLabel": "Area of catchment being managed/treated by this activity:",
+                            "preLabel": "Area of catchment being managed/treated by this activity (Ha):",
                             "type": "number"
                         },
                         {
