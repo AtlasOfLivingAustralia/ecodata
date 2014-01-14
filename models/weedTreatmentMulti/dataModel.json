@@ -49,16 +49,6 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The stage of treatment for the patch of weeds being treated",
-                    "name": "treatmentEventType",
-                    "constraints": [
-                        "Initial treatment",
-                        "Follow-up treatment"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
                     "description": "The method used to treat the patch of the target species",
                     "name": "treatmentMethod",
                     "constraints": [
@@ -84,6 +74,16 @@
                     ]
                 }
             ]
+        },
+        {
+            "dataType": "text",
+            "description": "The stage of treatment for the patch of weeds being treated",
+            "name": "treatmentEventType",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
