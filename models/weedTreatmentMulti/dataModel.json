@@ -49,7 +49,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The stage of treatment for the patch of the target species being treated",
+                    "description": "The stage of treatment for the patch of weeds being treated",
                     "name": "treatmentEventType",
                     "constraints": [
                         "Initial treatment",
@@ -123,6 +123,12 @@
                 {
                     "items": [
                         {
+                            "preLabel": "Type of treatment event:",
+                            "source": "treatmentEventType",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
                             "source": "areaTreatedHa",
                             "computed": null,
                             "preLabel": "Treatment area (Ha):",
@@ -178,7 +184,7 @@
                     "title": "Target species:",
                     "source": "targetSpecies",
                     "computed": null,
-                    "width": "20%",
+                    "width": "25%",
                     "type": "autocomplete"
                 },
                 {
@@ -203,17 +209,10 @@
                     "type": "selectOne"
                 },
                 {
-                    "title": "Type of treatment event:",
-                    "source": "treatmentEventType",
-                    "computed": null,
-                    "width": "10%",
-                    "type": "selectOne"
-                },
-                {
                     "title": "Treatment method:",
                     "source": "treatmentMethod",
                     "computed": null,
-                    "width": "25%",
+                    "width": "30%",
                     "type": "selectOne",
                     "validate": "required"
                 }
