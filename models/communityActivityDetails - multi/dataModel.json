@@ -1,0 +1,190 @@
+{
+    "modelName": "Community Event Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "events",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of event being conducted",
+                    "name": "eventType",
+                    "constraints": [
+                        "Field day activity",
+                        "Meeting",
+                        "Training session",
+                        "Conference / seminar presentation",
+                        "Working bee",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The purpose for which the event is being conducted",
+                    "name": "eventPurpose",
+                    "constraints": [
+                        "Awareness raising event (eg. demonstration, field day, or study tour)",
+                        "Training session, workshop or other skills / training event",
+                        "Knowledge evaluation event",
+                        "Works implementation",
+                        "Planning",
+                        "Other (describe in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The theme or topic covered during the event. Add in notes if more than one",
+                    "name": "eventTopics",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The duration of the event in hours. Part hour expressed as a decimal",
+                    "name": "eventDurationHrs",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The main industry type that the event is addressing",
+                    "name": "industryType",
+                    "validate": "required",
+                    "constraints": [
+                        "Sugarcane",
+                        "Grazing",
+                        "Grains",
+                        "Grapes",
+                        "Vegetables",
+                        "Fruit trees",
+                        "Berries",
+                        "Dairy",
+                        "Cotton",
+                        "Forestry",
+                        "Aquaculture",
+                        "Fishing",
+                        "Other (specify in notes)"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "No. of events run during this activity",
+            "primaryResult": "true",
+            "computed": {
+                "operation": "count",
+                "dependents": {
+                    "source": "eventTopics",
+                    "fromList": "event"
+                }
+            },
+            "name": "totalNumberPlanted"
+        },
+        {
+            "dataType": "number",
+            "description": "Elapse time of the whole activity. Do no double-count time for events running concurrently.",
+            "name": "totalNumberPlanted"
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes"
+        }
+    ],
+    "viewModel": [
+        {
+            "footer":
+                {
+                    "rows": [
+                        {
+                            "columns": [
+                                {
+                                    "source": "Number of events run during this activity:",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "numberOfEvents",
+                                    "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"eventTopics\",\"fromList\":\"events\"}}",
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "Activity duration (Hrs):",
+                                    "computed": null,
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "activityElapsedDuration",
+                                    "computed": null,
+                                    "type": "number"
+                                },
+                                {
+                                    "source": "",
+                                    "computed": null,
+                                    "type": "literal"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+        {
+            "title": "Please list the details of each event run as part of this activity:",
+            "source": "events",
+            "columns": [
+                {
+                    "source": "eventType",
+                    "computed": null,
+                    "title": "Type of event:",
+                    "width": "20%",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "eventPurpose",
+                    "computed": null,
+                    "title": "Purpose of event:",
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "industryType",
+                    "computed": null,
+                    "title": "Main industry type addressed:",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "eventTopics",
+                    "computed": null,
+                    "title": "Topics covered:",
+                    "width": "30%",
+                    "type": "text"
+                },
+                {
+                    "source": "eventDurationHrs",
+                    "computed": null,
+                    "title": "Event Duration (Hrs):",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "class": "output-section",
+            "editableRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "eventNotes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
