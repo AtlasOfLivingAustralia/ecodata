@@ -14,13 +14,15 @@ class SearchController {
 
     def elastic() {
         def res = elasticSearchService.search(params.query, params, "")
-        response.setContentType("application/json")
+        //log.debug "res = ${res}"
+        response.setContentType("application/json; charset=\"UTF-8\"")
+        //response.setCharacterEncoding("UTF-8")
         render res
     }
 
     def elasticHome() {
         def res = elasticSearchService.search(params.query, params, "homepage")
-        response.setContentType("application/json")
+        response.setContentType("application/json; charset=\"UTF-8\"")
         render res
     }
 
@@ -37,7 +39,7 @@ class SearchController {
                 geoRes << proj
             }
         }
-        response.setContentType("application/json")
+        response.setContentType("application/json; charset=\"UTF-8\"")
         def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes]
         render projectsAndTotal as JSON
     }
@@ -49,7 +51,7 @@ class SearchController {
 
         if (paramMap) {
             def res = elasticSearchService.search(paramMap.query, paramMap, "")
-            response.setContentType("application/json")
+            response.setContentType("application/json; charset=\"UTF-8\"")
             render res
         } else {
             def msg = [error: "Required JSON body not found"]
