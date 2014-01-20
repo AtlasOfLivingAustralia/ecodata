@@ -89,7 +89,7 @@ class ActivityController {
      */
     @RequireApiKey
     def bulkUpdate() {
-        def ids = params.id
+        def ids = params.list("id")
         def props = request.JSON
 
         if (!ids) {
