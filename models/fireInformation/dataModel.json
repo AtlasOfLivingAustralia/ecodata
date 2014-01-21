@@ -118,6 +118,11 @@
                 "No",
                 "Uncertain"
             ]
+        },
+        {
+            "dataType": "text",
+            "description": "General comments and notes about this management action, the subject site, etc.",
+            "name": "notes"
         }
     ],
     "viewModel": [{
@@ -215,5 +220,19 @@
         ],
         "class": "output-section",
         "type": "row"
-    }]
+    },
+    {
+        "items": [
+            {
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }
+    ]
 }
