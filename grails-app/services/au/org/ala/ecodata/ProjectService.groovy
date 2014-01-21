@@ -8,12 +8,14 @@ class ProjectService {
     static final ACTIVE = "active"
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
+    static final ALL = 'all'
 
     def grailsApplication
     def siteService
     def documentService
     def metadataService
     def reportService
+    def activityService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -49,6 +51,12 @@ class ProjectService {
             mapOfProperties.remove("sites")
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
+            if (levelOfDetail == ALL) {
+                mapOfProperties.activites = []
+                getActivityIdsForProject(prj.projectId).each {
+                    mapOfProperties.activites << activityService.get(it, ActivityService.ACTIVE)
+                }
+            }
         }
         mapOfProperties.findAll {k,v -> v != null}
     }

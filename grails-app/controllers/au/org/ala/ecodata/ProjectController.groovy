@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
-import au.com.bytecode.opencsv.CSVReader
-import au.org.ala.ecodata.reporting.Score
+
 import grails.converters.JSON
-import org.springframework.web.multipart.MultipartHttpServletRequest
 
 class ProjectController {
 
@@ -158,6 +156,7 @@ class ProjectController {
             render (status: 404, text: 'No such id')
         }
     }
+
 
 /*
     def loadTestData() {
