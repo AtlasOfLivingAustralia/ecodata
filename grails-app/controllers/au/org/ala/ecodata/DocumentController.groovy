@@ -62,7 +62,8 @@ class DocumentController {
      * This method currently expects:
      * 1) For an update, the document ID should be in the URL path.
      * 2) The document metadata is supplied (JSON encoded) as the value of the
-     * "document" HTTP parameter
+     * "document" HTTP parameter.  To create a text file from a supplied string, supply the filename and content
+     * as JSON properties.
      * 3) The file contents to be supplied as the value of the "files" HTTP parameter.  This is optional for
      * an update.
      * @param id The ID of an existing document to update.  If not present, a new Document will be created.
@@ -70,21 +71,24 @@ class DocumentController {
     @RequireApiKey
     def update(String id) {
         def props, file = null
+        def stream = null
         if (request.respondsTo('getFile')) {
             file = request.getFile('files')
             props = JSON.parse(params.document)
+            stream = file?.inputStream
         }
         else {
             props = request.JSON
+            stream = props.content ? new StringReader(props.content):null
         }
         def result
         def message
 
         if (id) {
-            result = documentService.update(props,id, file?.inputStream)
+            result = documentService.update(props,id, stream)
             message = [message: 'updated', documentId: result.documentId, url:result.url]
         } else {
-            result = documentService.create(props, file?.inputStream)
+            result = documentService.create(props, stream)
             message = [message: 'created', documentId: result.documentId, url:result.url]
         }
         if (result.status == 'ok') {
