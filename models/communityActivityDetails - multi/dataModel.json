@@ -79,12 +79,12 @@
                     "fromList": "event"
                 }
             },
-            "name": "totalNumberPlanted"
+            "name": "numberOfEvents"
         },
         {
             "dataType": "number",
             "description": "Elapse time of the whole activity. Do no double-count time for events running concurrently.",
-            "name": "totalNumberPlanted"
+            "name": "activityElapsedDuration"
         },
         {
             "dataType": "text",
@@ -94,40 +94,40 @@
     "viewModel": [
         {
             "footer":
-                {
-                    "rows": [
-                        {
-                            "columns": [
-                                {
-                                    "source": "Number of events run during this activity:",
-                                    "computed": null,
-                                    "type": "literal"
-                                },
-                                {
-                                    "source": "numberOfEvents",
-                                    "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"eventTopics\",\"fromList\":\"events\"}}",
-                                    "type": "number"
-                                },
-                                {
-                                    "source": "Activity duration (Hrs):",
-                                    "computed": null,
-                                    "type": "literal"
-                                },
-                                {
-                                    "source": "activityElapsedDuration",
-                                    "computed": null,
-                                    "type": "number"
-                                },
-                                {
-                                    "source": "",
-                                    "computed": null,
-                                    "type": "literal"
-                                }
-                            ]
-                        }
-                    ]
-                }
-            },
+            {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "Number of events run during this activity:",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "numberOfEvents",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"eventTopics\",\"fromList\":\"events\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "Activity duration (Hrs):",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "activityElapsedDuration",
+                                "computed": null,
+                                "type": "number"
+                            },
+                            {
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
         {
             "title": "Please list the details of each event run as part of this activity:",
             "source": "events",
