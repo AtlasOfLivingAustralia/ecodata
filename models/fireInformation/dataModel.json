@@ -150,7 +150,7 @@
                     {
                         "source": "areaOfFireHa",
                         "computed": null,
-                        "preLabel": "Area of burn (Ha):",
+                        "preLabel": "Area of fire ground (Ha):",
                         "type": "number"
                     },
                     {
