@@ -79,7 +79,10 @@ class DocumentController {
         }
         else {
             props = request.JSON
-            stream = props.content ? new StringReader(props.content):null
+            if (props.content) {
+                stream = new StringReader(props.content)
+                props.remove(content)
+            }
         }
         def result
         def message
