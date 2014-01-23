@@ -36,8 +36,7 @@
                 {
                     "dataType": "text",
                     "description": "The theme or topic covered during the event. Add in notes if more than one",
-                    "name": "eventTopics",
-                    "validate": "required"
+                    "name": "eventTopics"
                 },
                 {
                     "dataType": "number",
@@ -70,21 +69,9 @@
         },
         {
             "dataType": "number",
-            "description": "No. of events run during this activity",
-            "primaryResult": "true",
-            "computed": {
-                "operation": "count",
-                "dependents": {
-                    "source": "eventTopics",
-                    "fromList": "event"
-                }
-            },
-            "name": "numberOfEvents"
-        },
-        {
-            "dataType": "number",
-            "description": "Elapse time of the whole activity. Do no double-count time for events running concurrently.",
-            "name": "activityElapsedDuration"
+            "description": "Elapse time of the whole activity. This will be less than the sum of events running concurrently during the activity. NB. Do no double-count time for events running concurrently.",
+            "name": "activityElapsedDuration",
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -92,42 +79,6 @@
         }
     ],
     "viewModel": [
-        {
-            "footer":
-            {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "Number of events run during this activity:",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "numberOfEvents",
-                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"eventTopics\",\"fromList\":\"events\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "source": "Activity duration (Hrs):",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "activityElapsedDuration",
-                                "computed": null,
-                                "type": "number"
-                            },
-                            {
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            }
-        },
         {
             "title": "Please list the details of each event run as part of this activity:",
             "source": "events",
@@ -172,6 +123,18 @@
             "class": "output-section",
             "editableRows": "true",
             "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "activityElapsedDuration",
+                    "preLabel": "Activity duration (Hrs):",
+                    "computed": null,
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
         },
         {
             "items": [
