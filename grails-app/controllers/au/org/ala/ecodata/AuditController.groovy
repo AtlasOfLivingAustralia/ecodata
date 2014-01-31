@@ -42,6 +42,24 @@ class AuditController {
         [projectInstance: projectInstance, auditMessages: auditMessages]
     }
 
+    def getRecentEdits() {
+        params.max = params.max?:20
+        params.offset = params.offset?:0
+        params.sort = params.sort?:"date"
+        params.order = params.order?:"desc"
+        def auditMessages = AuditMessage.list(params)
+        //def auditMessages = AuditMessage.findAll(params, { projectId ==  params.projectId }) // move to its own method
+        def count = AuditMessage.count()
+        def output = [
+                totalRecords: count,
+                offset: params.offset,
+                max: params.max,
+                sort: params.sort,
+                order: params.order,
+                results: auditMessages]
+        render output as JSON
+    }
+
     def getRecentEditsForUserId() {
         def userId = params.id
         def user = userService.getUserForUserId(userId) // checks auth for userid
