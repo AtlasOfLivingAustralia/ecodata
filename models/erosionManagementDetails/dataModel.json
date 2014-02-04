@@ -2,7 +2,7 @@
     "modelName": "Erosion Management Details",
     "dataModel": [
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "The type of method used in this management action to manage erosion on the subject area",
             "name": "erosionTreatmentMethod",
             "constraints": [
@@ -28,7 +28,7 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "The type of erosion evident on the site",
             "name": "erosionType",
             "constraints": [
@@ -49,7 +49,7 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "The type(s) of structure installed during this activity to control erosion on the subject site",
             "name": "erosionControlStructures",
             "constraints": [
