@@ -81,7 +81,7 @@ class DocumentController {
             props = request.JSON
             if (props.content) {
                 stream = new StringReader(props.content)
-                props.remove(content)
+                props.remove('content')
             }
         }
         def result
@@ -95,7 +95,8 @@ class DocumentController {
             message = [message: 'created', documentId: result.documentId, url:result.url]
         }
         if (result.status == 'ok') {
-            asJson(message)
+            response.status = 200
+            render message as JSON
         } else {
             //Document.withSession { session -> session.clear() }
             log.error result.error
