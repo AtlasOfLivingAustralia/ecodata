@@ -15,7 +15,7 @@
                 "name": "name"
             },
             {
-                "dataType": "embeddedImage",
+                "dataType": "embeddedImages",
                 "description": "Photo point image recorded at the time of the activity",
                 "name": "photo"
             },
@@ -71,7 +71,7 @@
                     "source": "photo",
                     "computed": null,
                     "width": "40%",
-                    "type": "embeddedImage"
+                    "type": "embeddedImages"
                 },
                 {
                     "title": "Comment",
