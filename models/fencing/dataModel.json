@@ -13,7 +13,8 @@
                 "Post & Rail",
                 "Cyclone",
                 "Solid Sheet (pailing, pickets, sheet metal, etc.)",
-                "Other (specify in notes)"
+                "Other (specify in notes)",
+                "None"
             ],
             "validate": "required"
         },
