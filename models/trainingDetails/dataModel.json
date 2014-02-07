@@ -29,7 +29,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "number",
+                    "dataType": "text",
                     "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
                     "name": "qualificationLevel",
                     "constraints": [
