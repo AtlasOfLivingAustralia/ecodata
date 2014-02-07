@@ -181,6 +181,11 @@
                 }
             },
             "name": "totalSeedSownKg"
+        },
+        {
+            "dataType": "text",
+            "description": "Please enter any additional comments or notes about this planting activity",
+            "name": "notes"
         }
     ],
     "viewModel": [
