@@ -25,7 +25,7 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "The method used to assess the effectiveness of previous pest animal treatment",
             "name": "previousPestTreatmentAssessmentMethod",
             "constraints": [
