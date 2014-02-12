@@ -63,9 +63,14 @@
             "name": "surfaceWaterNitrates"
         },
         {
-            "dataType": "checkbox",
+            "dataType": "text",
             "description": "",
-            "name": "instrumentCalibration"
+            "name": "instrumentCalibration",
+            "validate": "required",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
         },
         {
             "dataType": "text",
@@ -106,6 +111,17 @@
                         "computed": null,
                         "preLabel": "Turbidity (NTUs):",
                         "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterNitrates",
+                        "computed": null,
+                        "preLabel": "Nitrates (mg/L as N):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "instrumentCalibration",
+                        "preLabel": "Did you calibrate your EC meter?:",
+                        "type": "selectOne"
                     }
                 ],
                 "computed": null,
@@ -148,27 +164,10 @@
                         "computed": null,
                         "preLabel": "E. coli (CFU/100mL):",
                         "type": "number"
-                    },
-                    {
-                        "source": "surfaceWaterNitrates",
-                        "computed": null,
-                        "preLabel": "Nitrates (mg/L as N):",
-                        "type": "number"
                     }
                 ],
                 "computed": null,
                 "type": "col"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    },
-    {
-        "items": [
-            {
-                "source": "instrumentCalibration",
-                "preLabel": "Did you calibrate your EC meter?:",
-                "type": "checkbox"
             }
         ],
         "class": "output-section",
