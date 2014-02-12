@@ -69,7 +69,20 @@
         },
         {
             "dataType": "number",
-            "description": "Elapse time of the whole activity. This will be less than the sum of events running concurrently during the activity. NB. Do no double-count time for events running concurrently.",
+            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity.",
+            "primaryResult": "true",
+            "name": "totalEventHrs",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "eventDurationHrs",
+                    "fromList": "events"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "description": "Elapse time of the whole activity. In most multi-event activities, this will be less than the sum of events running concurrently during the activity. NB. Do no double-count time for events running concurrently.",
             "name": "activityElapsedDuration",
             "validate": "required"
         },
@@ -79,6 +92,31 @@
         }
     ],
     "viewModel": [
+        {
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "",
+                                "computed": null,
+                                "colspan": "3"
+                            },
+                            {
+                                "source": "Total event hours for this activity:",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalEventHrs",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
         {
             "title": "Please list the details of each event run as part of this activity:",
             "source": "events",
