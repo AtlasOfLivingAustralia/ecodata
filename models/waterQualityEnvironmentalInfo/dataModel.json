@@ -3,7 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "",
+            "description": "General character of rainfall received at the sampling site over the 7 days prior to sampling.",
             "name": "rainfall7Days",
             "constraints": [
                 "Heavy",
@@ -14,13 +14,13 @@
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Rainfall in millimetres received at the sampling site over the 7 days prior to sampling",
             "name": "rainfallMm",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "General level of the water surface at the time of sampling, relative to it's normal level.",
             "name": "waterLevel",
             "constraints": [
                 "Low",
@@ -28,12 +28,12 @@
                 "High",
                 "Flood",
                 "No flow",
-                "Dry/isolated pool"
+                "Dry / Isolated pool"
             ]
         },
         {
-            "dataType": "number",
-            "description": "",
+            "dataType": "text",
+            "description": "Description of the rate of flow of the water at the time of sampling.",
             "name": "waterFlowRate"
         },
         {
@@ -74,7 +74,7 @@
                         "source": "waterFlowRate",
                         "computed": null,
                         "preLabel": "Rate of Flow:",
-                        "type": "number"
+                        "type": "text"
                     }
                 ],
                 "computed": null,
