@@ -3,73 +3,74 @@
     "dataModel": [
         {
             "dataType": "number",
-            "description": "",
+            "description": "The temperature of the air (in degrees Celsius) at 1.2 metres above the surface of the water at the time of sampling.",
             "name": "airTemperature"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "The average temperature (in degrees Celsius) of the top few centimetres of water at the sampling site",
             "name": "surfaceWaterTemperature"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "The average pH of the top few centimetres of water at the sampling site",
             "name": "surfaceWaterPh",
             "validate": "min[0],max[14]"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site",
             "name": "surfaceWaterEc"
         },
         {
             "dataType": "number",
-            "description": "",
-            "name": "surfaceWaterTurbidity"
+            "description": "The average turbidity (in nephelometric turbidity units (NTUs)) of the water column at the sampling site",
+            "name": "waterTurbidity"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the amount of available (soluble reactive component) phosphate in milligrams per litre of the water at the sampling site",
             "name": "surfaceWaterAvailableP"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the total amount of phosphate (reactive and unreactive components) in milligrams per litre of the water at the sampling site",
             "name": "surfaceWaterTotalP"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the amount of oxygen dissolved in a water sample in milligrams per litre",
             "name": "surfaceWaterDoMgl"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the amount of oxygen dissolved in a water sample expressed as a percentage of the oxygen holding capacity of the water at it's current temperature",
             "name": "surfaceWaterDoPcSat"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the density of faecal coliforms in a 100 millilitre sample of water",
             "name": "surfaceWaterColiforms"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the density of the bacteria E. coli in a 100 millilitre sample of water",
             "name": "surfaceWaterEcoli"
         },
         {
             "dataType": "number",
-            "description": "",
+            "description": "Measure of the amount of nitrogen dissolved in a water sample in milligrams per litre",
             "name": "surfaceWaterNitrates"
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
             "name": "instrumentCalibration",
             "validate": "required",
             "constraints": [
                 "Yes",
-                "No"
+                "No",
+                "Not applicable"
             ]
         },
         {
@@ -107,7 +108,7 @@
                         "type": "number"
                     },
                     {
-                        "source": "surfaceWaterTurbidity",
+                        "source": "waterTurbidity",
                         "computed": null,
                         "preLabel": "Turbidity (NTUs):",
                         "type": "number"
