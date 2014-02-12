@@ -1,0 +1,191 @@
+{
+    "modelName": "Water Quality Measurements",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "airTemperature"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterTemperature"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterPh",
+            "validate": "min[0],max[14]"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterEc"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterTurbidity"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterAvailableP"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterTotalP"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterDoMgl"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterDoPcSat"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterColiforms"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterEcoli"
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "surfaceWaterNitrates"
+        },
+        {
+            "dataType": "checkbox",
+            "description": "",
+            "name": "instrumentCalibration"
+        },
+        {
+            "dataType": "text",
+            "description": "General comments and notes about this water quality monitoring event.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "airTemperature",
+                        "computed": null,
+                        "preLabel": "Air Temperature (deg C):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterTemperature",
+                        "computed": null,
+                        "preLabel": "Water Temperature (deg C):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterPh",
+                        "computed": null,
+                        "preLabel": "pH (pH units):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterEc",
+                        "computed": null,
+                        "preLabel": "Electrical Conductivity (µS/cm):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterTurbidity",
+                        "computed": null,
+                        "preLabel": "Turbidity (NTUs):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "surfaceWaterAvailableP",
+                        "computed": null,
+                        "preLabel": "Available Phosphate (mg/L):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterTotalP",
+                        "computed": null,
+                        "preLabel": "Total Phosphate (mg/L):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterDoMgl",
+                        "computed": null,
+                        "preLabel": "Dissolved Oxygen (mg/L):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterDoPcSat",
+                        "computed": null,
+                        "preLabel": "Dissolved Oxygen (% sat):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterColiforms",
+                        "computed": null,
+                        "preLabel": "Faecal Coliforms (CFU/100mL):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterEcoli",
+                        "computed": null,
+                        "preLabel": "E. coli (CFU/100mL):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surfaceWaterNitrates",
+                        "computed": null,
+                        "preLabel": "Nitrates (mg/L as N):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    },
+    {
+        "items": [
+            {
+                "source": "instrumentCalibration",
+                "preLabel": "Did you calibrate your EC meter?:",
+                "type": "checkbox"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    },
+    {
+        "items": [
+            {
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Water Testing Notes/Issues:",
+                "width": "90%",
+                "type": "textarea"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }
+    ]
+}
