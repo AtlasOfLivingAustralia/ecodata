@@ -1,0 +1,206 @@
+{
+    "modelName": "Plant Propagation Details",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "plantPropagation",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "Species propagated",
+                    "name": "species",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Weight in grams of seed propagated",
+                    "name": "seedWeight",
+                    "primaryResult": "true",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The main method used to germinate seed for each listed species",
+                    "name": "germinationMethod",
+                    "constraints": [
+                        "Direct sowing - seeds pre-treated (abrasion / scarification)",
+                        "Direct sowing - pre-treated (cold stratification)",
+                        "Direct sowing - pre-treated (moist stratification)",
+                        "Direct sowing - pre-treated (cold moist stratification)",
+                        "Direct sowing - pre-treated (freezing and thawing)",
+                        "Direct sowing - pre-treated (light)",
+                        "Direct sowing - pre-treated (Hot Water)",
+                        "Direct sowing - pre-treated (fire)",
+                        "Direct sowing - pre-treated (smoke)",
+                        "Direct sowing - pre-treated (leaching)",
+                        "Direct sowing - seeds untreated",
+                        "vegetative - cuttings - direct striking",
+                        "vegetative - cuttings - pre-rooting",
+                        "vegetative - layering",
+                        "vegetative - tissue culture",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The type of plant stock being supplied to the market for planting out",
+                    "name": "finishedStockType",
+                    "constraints": [
+                        "Tube / tray - seedling",
+                        "Growth container - seedling",
+                        "Potted - seedling",
+                        "Potted - advanced plant",
+                        "Bare rooted",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of finished plant stock grown for shipment and planting out",
+                    "name": "numberGrown",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "description": "The approximate date that finished plant stock will be ready for planting out",
+                    "name": "propagationFinishDate"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The aggregate total weight of seed propagated in this activity",
+            "primaryResult": "true",
+            "name": "totalSeedWeight",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "seedWeight",
+                    "fromList": "plantPropagation"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "description": "The aggregate total number of plant stock propagated in this activity",
+            "primaryResult": "true",
+            "name": "totalNumberGrown",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberGrown",
+                    "fromList": "plantPropagation"
+                }
+            }
+        },
+        {
+            "dataType": "text",
+            "description": "General notes about this activity",
+            "primaryResult": "true",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Please enter details of plants propagated for this activity.",
+                "computed": null,
+                "type": "literal"
+            }],
+            "computed": null,
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total weight of seed (gms) used for propagation:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedWeight",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedWeight\",\"fromList\":\"plantPropagation\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 1,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total No. of plants grown:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberGrown",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberGrown\",\"fromList\":\"plantPropagation\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 1,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "source": "plantPropagation",
+            "columns": [
+                {
+                    "title": "Species:",
+                    "source": "species",
+                    "width": "25%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Amount of seed (gms):",
+                    "source": "seedWeight",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Germination method:",
+                    "source": "germinationMethod",
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Finished type of plant stock:",
+                    "source": "finishedStockType",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of plants:",
+                    "source": "numberGrown",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Date ready for planting out:",
+                    "source": "propagationFinishDate",
+                    "width": "15%",
+                    "type": "date"
+                }
+            ],
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
+        }
+    ],
+    "class": "output-section",
+    "type": "row"
+}
