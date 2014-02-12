@@ -1,0 +1,101 @@
+{
+    "modelName": "Environmental Information at the Time of Sampling",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "rainfall7Days",
+            "constraints": [
+                "Heavy",
+                "Moderate",
+                "Light",
+                "Nil"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "rainfallMm",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "waterLevel",
+            "constraints": [
+                "Low",
+                "Medium",
+                "High",
+                "Flood",
+                "No flow",
+                "Dry/isolated pool"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "",
+            "name": "waterFlowRate"
+        },
+        {
+            "dataType": "text",
+            "description": "General comments and notes about the site conditions at the time of the water quality monitoring event.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "rainfall7Days",
+                        "computed": null,
+                        "preLabel": "Rainfall in last 7 days:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "surfaceWaterTemperature",
+                        "computed": null,
+                        "preLabel": "Rainfall (mm):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "waterLevel",
+                        "computed": null,
+                        "preLabel": "Water level or flow:",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "waterFlowRate",
+                        "computed": null,
+                        "preLabel": "Rate of Flow:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    },
+    {
+        "items": [
+            {
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Site observations:",
+                "width": "90%",
+                "type": "textarea"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }
+    ]
+}
