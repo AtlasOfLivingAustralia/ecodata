@@ -85,6 +85,7 @@
                 }
             ],
             "computed": null,
+            "class": "output-section",
             "type": "row"
         },
         {
@@ -95,6 +96,7 @@
                 "type": "textarea"
             }],
             "computed": "null",
+            "class": "output-section",
             "type": "row"
         }
     ]
