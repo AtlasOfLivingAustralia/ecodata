@@ -1,0 +1,106 @@
+{
+    "modelName": "General Information & Participants",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The time of the day that the survey was undertaken",
+            "name": "surveyTime"
+        },
+        {
+            "dataType": "number",
+            "description": "The duration of the sampling event in hours",
+            "name": "surveyDuration",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of people participating in the sampling event",
+            "name": "totalParticipants",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "The name of the person or group undertaking the sampling event",
+            "name": "samplerName",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of volunteers participating in the sampling event",
+            "name": "numberOfVolunteerParticipants"
+        },
+        {
+            "dataType": "text",
+            "description": "Broad class of water body being sampled",
+            "name": "waterType",
+            "constraints": [
+                "Estuary",
+                "Freshwater stream / channel",
+                "Freshwater lake / dam",
+                "Saline stream / channel",
+                "Saline lake / dam"
+            ]
+        }
+    ],
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "samplerName",
+                        "computed": null,
+                        "preLabel": "Sampler name:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "waterType",
+                        "computed": null,
+                        "preLabel": "Type of water body:",
+                        "type": "selectOne"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "totalParticipants",
+                        "computed": null,
+                        "preLabel": "Number in sampler group:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfVolunteerParticipants",
+                        "computed": null,
+                        "preLabel": "No. of volunteer participants:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "surveyTime",
+                        "computed": null,
+                        "preLabel": "Survey time:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surveyDuration",
+                        "computed": null,
+                        "preLabel": "Survey duration (hrs):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }
+    ]
+}
