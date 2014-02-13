@@ -23,7 +23,7 @@
                     "description": "The main method used to germinate seed for each listed species",
                     "name": "germinationMethod",
                     "constraints": [
-                        "Direct sowing - seeds pre-treated (abrasion / scarification)",
+                        "Direct sowing - pre-treated (abrasion / scarification)",
                         "Direct sowing - pre-treated (cold stratification)",
                         "Direct sowing - pre-treated (moist stratification)",
                         "Direct sowing - pre-treated (cold moist stratification)",
