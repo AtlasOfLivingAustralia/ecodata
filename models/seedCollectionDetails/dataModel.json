@@ -79,6 +79,7 @@
                 }
             ],
             "computed": null,
+            "class": "output-section",
             "type": "row"
         },
         {
@@ -120,6 +121,7 @@
                 }
             ],
             "userAddedRows": "true",
+            "class": "output-section",
             "type": "table"
         },
         {
