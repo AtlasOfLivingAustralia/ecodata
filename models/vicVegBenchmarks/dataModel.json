@@ -1,5 +1,5 @@
 {
-    "modelName": "EVC Benchmark Values - Victoria",
+    "modelName": "vicVegBenchmarks",
     "dataModel": [
         {
             "dataType": "text",
@@ -434,180 +434,188 @@
     ],
     "viewModel": [
         {
-            "source": "Please note that until EVC benchmark data can be obtained in an electronic format, you will need to manually complete the benchmark data below. This is then used to calculate benchmark based values in the assessment form.",
-            "type": "litteral"
-        },
-        {
-            "source": "bioregion",
-            "preLabel": "Bioregion:",
-            "type": "selectOne"
-        },
-        {
-            "source": "evcName",
-            "preLabel": "EVC Name:",
-            "type": "text"
-        },
-        {
-            "title": "Large Trees",
-            "dataType": "list",
-            "source": "largeTreeBenchmark",
-            "columns": [
+            "items": [
                 {
-                    "source": "numberOfLargeTrees",
-                    "preLabel": "Number of trees >= benchmark DBH",
-                    "type": "number"
-                },
-                {
-                    "source": "largeTreeCanopyHealthPercent",
-                    "preLabel": "Large tree canopy health (%)",
-                    "type": "number"
-                },
-                {
-                    "source": "largeTreesScore",
-                    "preLabel": "Large Trees Score",
-                    "type": "number"
+                    "source": "<b>Please note: Until EVC benchmark data can be obtained in an electronic format, you will need to manually complete the benchmark data below. This is then used to calculate benchmark based values in the assessment form.</b><br>If the EVC is a 'non-tree' type, please ignore the large tree section.",
+                    "type": "literal"
                 }
             ],
-            "userAddedRows": true,
-            "type": "table"
-        },
-        {
-            "title": "Tree Canopy Cover",
-            "dataType": "list",
-            "source": "largeTreeBenchmark",
-            "columns": [
-                    {
-                        "source": "largeTreeSpecies",
-                        "preLabel": "Tree species:",
-                        "type": "number"
-                    },
-                    {
-                        "source": "canopyHealthPercent",
-                        "preLabel": "Tree canopy health (%)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "canopyCoverScore",
-                        "preLabel": "Canopy Cover Score",
-                        "type": "number"
-                    }
-            ],
-            "userAddedRows": true,
-            "type": "table"
-        },       {
-\           "items": [{                "source": "<h4>Understory life forms<\/h4>",
-                "type": "literal"
-            }],
             "type": "row"
         },
         {
-            "footer": {"rows": [{"columns": [
+            "items": [
                 {
-                    "colspan": "3",
-                    "source": "",
-                    "type": "literal"
-                },
-                {
-                    "source": "<b>Understorey Score<\/b>",
-                    "type": "literal"
-                },
-                {
-                    "source": "understoreyScore",
-                    "type": "number"
-                }
-            ]}]},
-            "source": "underStoreyLifeforms",
-            "columns": [
-                {
-                    "title": "Lifeform",
+                    "source": "bioregion",
+                    "preLabel": "Bioregion:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "#spp observed",
-                    "type": "number"
-                },
-                {
-                    "title": "% cover observed",
-                    "type": "number"
-                },
-                {
-                    "title": "Present",
-                    "type": "boolean"
-                },
-                {
-                    "title": "Modified",
-                    "type": "boolean"
+                    "source": "evcName",
+                    "preLabel": "EVC Name:",
+                    "type": "selectOne"
                 }
             ],
-            "userAddedRows": true,
-            "type": "table"
+            "type": "row",
+            "class": "output-section"
         },
         {
-            "title": "Lack of Weeds",
-            "items": [{
-                "items": [
-                    {
-                        "source": "totalWeedCoverPercent",
-                        "preLabel": "Total weed cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "highThreatWeedCoverPercent",
-                        "preLabel": "High threat weed cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "weedScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
+            "title": "Benchmark Vegetation Data",
+            "items": [
+                {
+                    "title": "Large Trees",
+                    "dataType": "list",
+                    "source": "largeTreeBenchmark",
+                    "columns": [
+                        {
+                            "source": "largeTreeSpecies",
+                            "title": "Tree species:",
+                            "width": "50%",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "source": "canopyCharacterSpecies",
+                            "title": "Is character species:",
+                            "width": "10%",
+                            "type": "boolean"
+                        },
+                        {
+                            "source": "largeTreeDbh",
+                            "title": "Large tree DBH (cm):",
+                            "width": "10%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "largeTreesPerHa",
+                            "title": "No. of large trees/Ha:",
+                            "width": "10%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "treeCanopyCoverPercent",
+                            "title": "% Canopy cover:",
+                            "width": "10%",
+                            "type": "number"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Life Forms</h4>",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "title": "Tree Canopy Cover",
+                    "dataType": "list",
+                    "source": "lifeForms",
+                    "columns": [
+                        {
+                            "source": "lfCanopyCoverPercent",
+                            "title": "Life form canopy cover (%):",
+                            "width": "20%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "lifeFormType",
+                            "title": "Life form:",
+                            "width": "60%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "lifeFormNoOfSpecies",
+                            "title": "No. of species",
+                            "width": "20%",
+                            "type": "number"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                },
+                {
+                    "title": "Species typical of at least part of the EVC range",
+                    "dataType": "list",
+                    "source": "typicalEvcSpecies",
+                    "columns": [
+                        {
+                            "source": "lifeFormType",
+                            "title": "Life form:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "species",
+                            "title": "Species:",
+                            "type": "autocomplete"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                },
+                {
+                    "title": "Weediness",
+                    "dataType": "list",
+                    "source": "weediness",
+                    "columns": [
+                        {
+                            "source": "lifeFormType",
+                            "title": "Life form:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "weedSpecies",
+                            "title": "Weed species:",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "source": "weedInvasiveness",
+                            "title": "Weed invasiveness:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "weedImpact",
+                            "title": "Weed impact:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
         },
         {
-            "title": "Organic Litter",
-            "items": [{
-                "items": [
-                    {
-                        "source": "organicLitterCoverPercent",
-                        "preLabel": "Organic litter cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "organicLitterScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "title": "Logs",
-            "items": [{
-                "items": [
-                    {
-                        "source": "averageLogLength",
-                        "preLabel": "Average log length (m)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "largeLogsPresent",
-                        "preLabel": "Large logs present?",
-                        "type": "boolean"
-                    },
-                    {
-                        "source": "logScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
+            "items": [
+                {
+                    "source": "recruitmentClass",
+                    "preLabel": "Recruitment:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "recruitmentDisturbancePeriod",
+                    "preLabel": "Desirable period between disturbances:",
+                    "postLabel": "(years)",
+                    "type": "number"
+                },
+                {
+                    "source": "organicLitterCoverPercent",
+                    "preLabel": "Organic litter:",
+                    "postLabel": "(% cover)",
+                    "type": "number"
+                },
+                {
+                    "source": "lengthOfLogs",
+                    "preLabel": "Length of logs:",
+                    "postLabel": "(m / 0.1 Ha)",
+                    "type": "number"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
         }
     ]
 }
