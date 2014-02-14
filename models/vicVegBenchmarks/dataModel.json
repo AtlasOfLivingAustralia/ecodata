@@ -459,136 +459,166 @@
             "class": "output-section"
         },
         {
-            "title": "Benchmark Vegetation Data",
             "items": [
                 {
-                    "title": "Large Trees",
-                    "dataType": "list",
-                    "source": "largeTreeBenchmark",
-                    "columns": [
-                        {
-                            "source": "largeTreeSpecies",
-                            "title": "Tree species:",
-                            "width": "50%",
-                            "type": "autocomplete"
-                        },
-                        {
-                            "source": "canopyCharacterSpecies",
-                            "title": "Is character species:",
-                            "width": "10%",
-                            "type": "boolean"
-                        },
-                        {
-                            "source": "largeTreeDbh",
-                            "title": "Large tree DBH (cm):",
-                            "width": "10%",
-                            "type": "number"
-                        },
-                        {
-                            "source": "largeTreesPerHa",
-                            "title": "No. of large trees/Ha:",
-                            "width": "10%",
-                            "type": "number"
-                        },
-                        {
-                            "source": "treeCanopyCoverPercent",
-                            "title": "% Canopy cover:",
-                            "width": "10%",
-                            "type": "number"
-                        }
-                    ],
-                    "userAddedRows": true,
-                    "type": "table"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Life Forms</h4>",
-                            "type": "literal"
-                        }
-                    ],
-                    "type": "row"
-                },
-                {
-                    "title": "Tree Canopy Cover",
-                    "dataType": "list",
-                    "source": "lifeForms",
-                    "columns": [
-                        {
-                            "source": "lfCanopyCoverPercent",
-                            "title": "Life form canopy cover (%):",
-                            "width": "20%",
-                            "type": "number"
-                        },
-                        {
-                            "source": "lifeFormType",
-                            "title": "Life form:",
-                            "width": "60%",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "lifeFormNoOfSpecies",
-                            "title": "No. of species",
-                            "width": "20%",
-                            "type": "number"
-                        }
-                    ],
-                    "userAddedRows": true,
-                    "type": "table"
-                },
-                {
-                    "title": "Species typical of at least part of the EVC range",
-                    "dataType": "list",
-                    "source": "typicalEvcSpecies",
-                    "columns": [
-                        {
-                            "source": "lifeFormType",
-                            "title": "Life form:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "species",
-                            "title": "Species:",
-                            "type": "autocomplete"
-                        }
-                    ],
-                    "userAddedRows": true,
-                    "type": "table"
-                },
-                {
-                    "title": "Weediness",
-                    "dataType": "list",
-                    "source": "weediness",
-                    "columns": [
-                        {
-                            "source": "lifeFormType",
-                            "title": "Life form:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "weedSpecies",
-                            "title": "Weed species:",
-                            "type": "autocomplete"
-                        },
-                        {
-                            "source": "weedInvasiveness",
-                            "title": "Weed invasiveness:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "weedImpact",
-                            "title": "Weed impact:",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "userAddedRows": true,
-                    "type": "table"
+                    "source": "<h4>Benchmark - Large Trees and Character species</h4>",
+                    "type": "literal"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "type": "row"
         },
         {
+            "title": "Large Trees",
+            "dataType": "list",
+            "source": "largeTreeBenchmark",
+            "columns": [
+                {
+                    "source": "largeTreeSpecies",
+                    "title": "Tree species:",
+                    "width": "50%",
+                    "type": "autocomplete"
+                },
+                {
+                    "source": "canopyCharacterSpecies",
+                    "title": "Is character species:",
+                    "width": "10%",
+                    "type": "boolean"
+                },
+                {
+                    "source": "largeTreeDbh",
+                    "title": "Large tree DBH (cm):",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "source": "largeTreesPerHa",
+                    "title": "No. of large trees/Ha:",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "source": "treeCanopyCoverPercent",
+                    "title": "% Canopy cover:",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Life Forms</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Tree Canopy Cover",
+            "dataType": "list",
+            "source": "lifeForms",
+            "columns": [
+                {
+                    "source": "lfCanopyCoverPercent",
+                    "title": "Life form canopy cover (%):",
+                    "width": "20%",
+                    "type": "number"
+                },
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "width": "60%",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "lifeFormNoOfSpecies",
+                    "title": "No. of species",
+                    "width": "20%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Species typical of at least part of the EVC range</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Species typical of at least part of the EVC range",
+            "dataType": "list",
+            "source": "typicalEvcSpecies",
+            "columns": [
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "species",
+                    "title": "Species:",
+                    "type": "autocomplete"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Benchmark - Weediness</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Weediness",
+            "dataType": "list",
+            "source": "weediness",
+            "columns": [
+                {
+                    "source": "lifeFormType",
+                    "title": "Life form:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedSpecies",
+                    "title": "Weed species:",
+                    "type": "autocomplete"
+                },
+                {
+                    "source": "weedInvasiveness",
+                    "title": "Weed invasiveness:",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedImpact",
+                    "title": "Weed impact:",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Other Benchmark Values</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "title": "Other Benchmark Values",
             "items": [
                 {
                     "source": "recruitmentClass",
