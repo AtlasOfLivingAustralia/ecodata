@@ -86,20 +86,22 @@ class PermissionService {
                 log.error msg, e
                 return [status:'error', error: msg]
             }
-            // remove any lower roles
-            prevRoles.each {
-                log.debug "1. prevRole = ${it}"
-                if (it != up) {
-                    try {
-                        it.delete(flush: true)
-                        //return [status:'ok', id: it.id]
-                    } catch (Exception e) {
-                        def msg = "Failed to delete (previous) UserPermission: ${e.message}"
-                        log.error msg, e
-                        return [status:'error', error: msg]
+            if (accessLevel != AccessLevel.starred) {
+                // remove any lower roles
+                prevRoles.each {
+                    log.debug "1. prevRole = ${it}"
+                    if (it != up) {
+                        try {
+                            it.delete(flush: true)
+                            //return [status:'ok', id: it.id]
+                        } catch (Exception e) {
+                            def msg = "Failed to delete (previous) UserPermission: ${e.message}"
+                            log.error msg, e
+                            return [status:'error', error: msg]
+                        }
                     }
-                }
 
+                }
             }
             return [status:'ok', id: up.id]
         //} else {
