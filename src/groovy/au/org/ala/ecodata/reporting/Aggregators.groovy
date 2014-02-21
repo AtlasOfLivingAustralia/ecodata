@@ -2,6 +2,9 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.log4j.Logger
 
+import java.text.NumberFormat
+import java.text.ParseException
+
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
@@ -49,6 +52,24 @@ class Aggregators {
             return output.data[score.name]
         }
 
+        def getValueAsNumeric(value) {
+            def numeric = null
+            if (value instanceof String) {
+                NumberFormat format = NumberFormat.getInstance(Locale.default)
+
+                try {
+                    numeric = format.parse(value)
+                }
+                catch (ParseException e) {
+                    log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+                }
+            }
+            else {
+                numeric = value
+            }
+            return numeric
+        }
+
         public abstract void doAggregation(output);
 
         public abstract AggregrationResult result();
@@ -65,11 +86,9 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            if (value instanceof String && !value.isDouble()) {
-                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
-            }
-            else {
-                total += value as Double
+            def numericValue = getValueAsNumeric(value)
+            if (numericValue) {
+                total += numericValue
             }
         }
 
@@ -86,12 +105,12 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            if (value instanceof String && !value.isDouble()) {
-                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+
+            def numericValue = getValueAsNumeric(value)
+            if (numericValue) {
+                total += numericValue
             }
-            else {
-                total += value as Double
-            }
+
         }
         public AggregrationResult result() {
             return new AggregrationResult([score:score, group:group, count:count, result:total])
