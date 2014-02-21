@@ -74,6 +74,8 @@ grails.project.dependency.resolution = {
 
         compile ":mongodb:1.3.0"
         compile ":quartz:1.0-RC9"
+        compile ":excel-export:0.2.0"
+        compile ":excel-import:1.0.0"
 
         build ":tomcat:$grailsVersion"
 
