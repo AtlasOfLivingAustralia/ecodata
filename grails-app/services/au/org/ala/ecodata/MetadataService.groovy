@@ -32,6 +32,11 @@ class MetadataService {
         })
     }
 
+    def getOutputDataModelByName(name) {
+        def outputModel = activitiesModel().outputs.find{it.name == name}
+        return getOutputDataModel(outputModel?.template)
+    }
+
     def updateOutputDataModel(model, templateName) {
         log.debug "updating template name = ${templateName}"
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
