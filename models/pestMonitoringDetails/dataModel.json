@@ -67,7 +67,7 @@
                 },
                 {
                     "dataType": "text",
-                    "name": "pestInspectionNotes"
+                    "name": "pestObservationNotes"
                 }
             ]
         }
@@ -131,14 +131,13 @@
                 },
                 {
                     "title": "Notes:",
-                    "source": "pestAssessmentNotes",
+                    "source": "pestObservationNotes",
                     "width": "25%",
                     "type": "textarea"
                 }
             ],
             "userAddedRows": "true",
             "class": "output-section",
-            "editableRows": "true",
             "type": "table"
         }
     ]
