@@ -157,7 +157,8 @@ class DocumentService {
         if (!document.filename) {
             return ''
         }
-        URI uri = new URI(grailsApplication.config.app.uploads.url + document.filename.replace(' ','%20'))
+        def encodedFileName = document.filename.encodeAsURL()
+        URI uri = new URI(grailsApplication.config.app.uploads.url + encodedFileName)
         return uri.toURL();
     }
 
