@@ -117,6 +117,58 @@ class ExternalController {
         render projectDetails as JSON
     }
 
+    def projectDetails() {
+        if (!params.type || !params.id) {
+            render (status:400, contentType: 'text/json', text: [message:"type and id are mandatory parameters"] as JSON)
+            return
+        }
+        def projectId = [type:params.type, id:params.id]
+
+        def project
+        try {
+            project = findProject(projectId)
+        }
+        catch (Exception e){
+            render (status:400, contentType: 'text/json', text: [message:"Grant ID ${projectId.id} is not unique"] as JSON)
+            return
+        }
+        if (!project) {
+            render (status:404, contentType: 'text/json', text: [message:"Can't find project with id: ${projectId.id}"] as JSON)
+            return
+        }
+
+
+
+        def all =  projectService.toMap(project)
+        def sites = []
+        all.sites.each {
+            sites << [siteId:it.siteId, name:it.name, description:it.description, extent:it.extent, ]
+        }
+        all.activities = activityService.findAllForProjectId(project.projectId)
+        def activities = []
+        all.activities.each {
+            def activity = [activityId:it.activityId, type:it.type, description: it.description, siteId: it.siteId,
+                    plannedStartDate: it.plannedStartDate, plannedEndDate: it.plannedEndDate, progress:it.progress]
+            if (it.startDate) {
+                activity.startDate = it.startDate
+            }
+            if (it.actualEndDate) {
+                activity.endDate = it.endDate
+            }
+            if (it.outputs) {
+                def outputs = []
+                it.outputs.each { output ->
+                    outputs << [name:output.name, outputId:output.outputId, data:output.data]
+                }
+                activity.outputs = outputs
+            }
+            activities << activity
+        }
+        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalId, sites:sites, activites:activities]
+
+        render projectDetails as JSON
+    }
+
     private def projectActivitiesSchema() {
 
         return cacheService.get('projectActivitiesSchema',{
@@ -174,7 +226,12 @@ class ExternalController {
             // creating new ones?  Should we be requiring ids for each activity?
             activities.each {
                 it << [projectId:project.projectId]
-                activityService.create(it)
+                if (it.activityId) {
+                    activityService.update(it, it.activityId)
+                }
+                else {
+                    activityService.create(it)
+                }
             }
 
             def result = [status:200, message:'Project plan updated']
