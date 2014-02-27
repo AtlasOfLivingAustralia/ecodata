@@ -85,20 +85,34 @@ class ExternalController {
     }
 
     def projectSites() {
-        def projectId = [type:params.type, id:params.id]
 
-        Project project = findProject(projectId)
-        if (!project) {
-            render (status:400, contentType: 'text/json', text: [message:"Invalid project id: ${projectId.id}"] as JSON)
+        if (!params.type || !params.id) {
+            render (status:400, contentType: 'text/json', text: [message:"type and id are mandatory parameters"] as JSON)
             return
         }
+        def projectId = [type:params.type, id:params.id]
+
+        def project
+        try {
+            project = findProject(projectId)
+        }
+        catch (Exception e){
+            render (status:400, contentType: 'text/json', text: [message:"Grant ID ${projectId.id} is not unique"] as JSON)
+            return
+        }
+        if (!project) {
+            render (status:404, contentType: 'text/json', text: [message:"Can't find project with id: ${projectId.id}"] as JSON)
+            return
+        }
+
+
 
         def all =  projectService.toMap(project)
         def sites = []
         all.sites.each {
             sites << [siteId:it.siteId, name:it.name, description:it.description, extent:it.extent, ]
         }
-        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalProjectId, sites:sites]
+        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalId, sites:sites]
 
         render projectDetails as JSON
     }
@@ -196,10 +210,16 @@ class ExternalController {
 
         switch (projectId.type) {
             case 'grantId':
-                return Project.findByGrantId(projectId.id)
-
+                def projects = Project.findAllByGrantId(projectId.id)
+                if (projects.size() > 1) {
+                    throw new RuntimeException("Grant ID is not unique")
+                }
+                else if (!projects) {
+                    return null
+                }
+                return projects[0]
             case 'externalId':
-                return Project.findByExternalProjectId(projectId.id)
+                return Project.findByExternalId(projectId.id)
 
             case 'guid':
                 return Project.findByProjectId(projectId.id)

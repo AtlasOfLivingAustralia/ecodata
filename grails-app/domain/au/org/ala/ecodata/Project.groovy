@@ -18,7 +18,7 @@ class Project {
     ObjectId id
     String projectId  // required
     String status = 'active'
-    String externalProjectId
+    String externalId
     String name  // required
     String description
     String manager
@@ -40,7 +40,7 @@ class Project {
     Date lastUpdated
 
     static constraints = {
-        externalProjectId nullable:true
+        externalId nullable:true
         description nullable:true, maxSize: 40000
         manager nullable:true
         groupId nullable:true

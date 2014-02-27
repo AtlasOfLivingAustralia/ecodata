@@ -7,7 +7,7 @@
         </tr>
     </thead>
     <g:each in="${projectList}" var="project">
-        <tr projectId="${project.externalProjectId}">
+        <tr projectId="${project.externalId}">
             <td>
                 ${project.name}
                 <div class="muted">
