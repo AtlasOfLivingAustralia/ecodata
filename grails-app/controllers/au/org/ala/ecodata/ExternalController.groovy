@@ -85,7 +85,7 @@ class ExternalController {
     }
 
     def projectSites() {
-        def projectId = [type:params.type, value:params.id]
+        def projectId = [type:params.type, id:params.id]
 
         Project project = findProject(projectId)
         if (!project) {
