@@ -52,53 +52,67 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "items": [
-                    {
-                        "source": "numberOnCountryVisits",
-                        "computed": null,
-                        "preLabel": "No. of indigenous on-country visits with older and younger people together:",
-                        "width": "20%",
-                        "type": "number"
-                    },
-                    {
-                        "source": "indigenousDecisionMakers",
-                        "computed": null,
-                        "preLabel": "Were indigenous decision-makers involved in organising or running this activity?:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "indigenousKnowledgeDocumented",
-                        "computed": null,
-                        "preLabel": "Has any indigenous knowledge been documented as part of this activity?:",
-                        "type": "selectOne"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            },
-            {
-                "items": [
-                    {
-                        "source": "datasetsShared",
-                        "computed": null,
-                        "preLabel": "No. of datasets shared publicly as a result of this activity:",
-                        "type": "number"
-                    },
-                    {
-                        "source": "formalPartnerships",
-                        "computed": null,
-                        "preLabel": "No. of formal partnerships established:",
-                        "type": "number"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    }]
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "numberOnCountryVisits",
+                            "computed": null,
+                            "preLabel": "No. of indigenous on-country visits with older and younger people together:",
+                            "width": "20%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "indigenousDecisionMakers",
+                            "computed": null,
+                            "preLabel": "Were indigenous decision-makers involved in organising or running this activity?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "indigenousKnowledgeDocumented",
+                            "computed": null,
+                            "preLabel": "Has any indigenous knowledge been documented as part of this activity?:",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "datasetsShared",
+                            "computed": null,
+                            "preLabel": "No. of datasets shared publicly as a result of this activity:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "formalPartnerships",
+                            "computed": null,
+                            "preLabel": "No. of formal partnerships established:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Notes / Comments:",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }
