@@ -1,5 +1,4 @@
 package au.org.ala.ecodata
-
 import grails.converters.JSON
 
 class MetadataController {
@@ -61,5 +60,34 @@ class MetadataController {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def result = metadataService.getNvisClassesForPoint(lat, lon)
         render result as JSON
+    }
+
+
+    /**
+     * Attaches a label matching the form to each entry of the dataModel in the output model template for the
+     * specified output.
+     *
+     */
+    def annotatedOutputDataModel() {
+        def outputName = params.type
+
+        if (!outputName) {
+            def result = [status:400, error:'type is a required parameter']
+            render result as JSON
+            return null
+        }
+        def outputMetadata = metadataService.getOutputDataModelByName(outputName)
+
+        if (!outputMetadata) {
+            def result = [status:404, error:"No output of type ${outputName} exists"]
+            render result as JSON
+            return null
+        }
+
+        OutputMetadata metadata = new OutputMetadata(outputMetadata)
+        def annotatedModel = metadata.annotateDataModel()
+        render annotatedModel as JSON
+
+
     }
 }
