@@ -34,8 +34,6 @@
                         "Exclusion fencing (please specify fence details)",
                         "Animal pest disease management - quarantine",
                         "Animal pest disease management - treatment",
-                        "Plant disease management - quarantine",
-                        "Plant disease management - treatment",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
