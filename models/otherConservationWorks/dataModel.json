@@ -55,8 +55,8 @@
                     "constraints": [
                         "On title in perpetuity (eg Covenant Agreement)",
                         "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
-                        "Termed agreement not on title binding (eg Land management Agreement)",
-                        "Not on title non-binding (eg Wildlife Refuge)",
+                        "Termed agreement not on title - binding (eg Land management Agreement)",
+                        "Not on title - non-binding (eg Wildlife Refuge)",
                         "No protection mechanism applicable",
                         "Other (specify in notes)"
                     ],
