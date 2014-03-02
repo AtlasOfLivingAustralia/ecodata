@@ -28,6 +28,7 @@
                     "description": "The type of conservation works implemented",
                     "name": "conservationActionType",
                     "constraints": [
+                        "Ecological thinning",
                         "Installation of nest boxes or other breeding/refuge structures",
                         "Restoring niche habitats",
                         "Seed bank establishment",
