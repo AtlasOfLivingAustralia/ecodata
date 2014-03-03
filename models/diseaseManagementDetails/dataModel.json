@@ -3,7 +3,7 @@
     "dataModel": [
         {
             "dataType": "stringList",
-            "description": "The method used in this activity to manage pests",
+            "description": "The method used in this activity to manage disease",
             "name": "diseaseManagementMethod",
             "constraints": [
                 "Fumigation",
