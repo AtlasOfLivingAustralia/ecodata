@@ -73,6 +73,20 @@
             ]
         },
         {
+            "dataType": "stringList",
+            "description": "Actions implemented to prevent or better manage wildfire events",
+            "name": "firePreventionAction",
+            "constraints": [
+                "Fire trail construction",
+                "Fire break construction",
+                "Woody vegetation removal",
+                "Grass slashing",
+                "Water point construction",
+                "Airstrip / helipad construction",
+                "Other (specify in notes)"
+            ]
+        },
+        {
             "dataType": "text",
             "description": "Generalised indicator of the intensity of the fire event",
             "name": "fireBurnTemp",
@@ -182,6 +196,12 @@
                             "computed": null,
                             "preLabel": "Time since last burn:",
                             "type": "selectOne"
+                        },
+                        {
+                            "source": "fireBurnTemp",
+                            "computed": null,
+                            "preLabel": "Temperature of burn:",
+                            "type": "selectOne"
                         }
                     ],
                     "computed": null,
@@ -190,10 +210,10 @@
                 {
                     "items": [
                         {
-                            "source": "fireBurnTemp",
+                            "source": "firePreventionAction",
                             "computed": null,
-                            "preLabel": "Temperature of burn:",
-                            "type": "selectOne"
+                            "preLabel": "Fire prevention works (if applicable):",
+                            "type": "selectMany"
                         },
                         {
                             "source": "fireMachineryUsed",
