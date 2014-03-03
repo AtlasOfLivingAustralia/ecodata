@@ -11,6 +11,7 @@
                 "Biological control agents",
                 "Plant disease management - quarantine",
                 "Plant disease management - treatment",
+                "Host destruction",
                 "Other (specify in notes)"
             ],
             "validate": "required"
