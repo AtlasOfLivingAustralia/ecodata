@@ -26,7 +26,6 @@
 "viewModel":[
     {
         "type":"table",
-        "editableRows":"true",
         "source":"weedAbundanceAndThreatScore",
         "userAddedRows":"true",
         "columns": [
