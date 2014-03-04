@@ -141,7 +141,6 @@
             ],
             "class": "output-section",
             "userAddedRows": true,
-            "editableRows": "true",
             "type": "table"
         },
         {
