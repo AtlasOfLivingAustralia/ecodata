@@ -273,7 +273,6 @@
             ],
             "userAddedRows": true,
             "class": "output-section",
-            "editableRows": "true",
             "type": "table"
         },
         {
