@@ -1,4 +1,6 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
 
 class MetadataController {

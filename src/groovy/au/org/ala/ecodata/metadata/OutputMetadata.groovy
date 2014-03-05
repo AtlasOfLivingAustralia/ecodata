@@ -1,4 +1,4 @@
-package au.org.ala.ecodata
+package au.org.ala.ecodata.metadata
 
 /**
  * Created by god08d on 28/02/14.
