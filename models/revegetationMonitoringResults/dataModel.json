@@ -14,7 +14,7 @@
         ]
     },
     {
-        "name":"Counting method",
+        "name":"countingMethod",
         "dataType":"text",
         "description": "The method used to determine the number of surviving plants",
         "constraints":[
@@ -110,25 +110,8 @@
                 "items": [
                     {
                         "type":"selectOne",
-                        "source":"activityPurpose",
-                        "preLabel":"Activity purpose:",
-                        "validate":"required"
-                    },
-                    {
-                        "type":"number",
-                        "source":"activityDuration",
-                        "preLabel":"Activity duration (Hrs)",
-                        "validate":"required,min[0]"
-                    },
-                    {
-                        "type":"selectOne",
                         "source":"revegetationType",
-                        "preLabel":"Revegetation type:"
-                    },
-                    {
-                        "type":"selectMany",
-                        "source":"environmentalBenefits",
-                        "preLabel":"Environmental benefits:"
+                        "preLabel":"Type of revegetation method:"
                     }
                 ]
             },
@@ -136,19 +119,9 @@
                 "type":"col",
                 "items": [
                     {
-                        "type":"textarea",
-                        "source":"equipmentUsed",
-                        "preLabel":"Equipment used:"
-                    },
-                    {
                         "type":"selectOne",
-                        "source":"connectivityIndex",
-                        "preLabel":"Connectivity index:"
-                    },
-                    {
-                        "type":"selectMany",
-                        "source":"adjacentUse",
-                        "preLabel":"Adjacent use:"
+                        "source":"countingMethod",
+                        "preLabel":"Counting Method:"
                     }
                 ]
             }
