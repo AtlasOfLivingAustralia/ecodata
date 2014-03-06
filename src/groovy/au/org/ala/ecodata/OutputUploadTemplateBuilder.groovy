@@ -5,6 +5,7 @@ import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.poi.hssf.util.HSSFColor
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddressList
+import org.apache.poi.ss.util.CellReference
 import pl.touk.excel.export.WebXlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse
 
 class OutputUploadTemplateBuilder extends WebXlsxExporter {
 
+    static final int MAX_SHEET_NAME_LENGTH = 31
     def model
     def outputName
 
@@ -20,15 +22,26 @@ class OutputUploadTemplateBuilder extends WebXlsxExporter {
         this.model = model
     }
 
+
+    public static String sheetName(name) {
+        def end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH)-1
+        return name[0..end]
+    }
     public void build() {
 
-        AdditionalSheet outputSheet = sheet(outputName)
+        AdditionalSheet outputSheet = sheet(sheetName(outputName))
 
-        def headers = model.collect { it.label ?: it.name }
+        def headers = model.collect {
+            def label = it.label ?: it.name
+            if (it.dataType == 'species') {
+                label += ' (Scientific Name Only)'
+            }
+            label
+        }
         outputSheet.fillHeader(headers)
         styleRow(outputSheet, 0, headerStyle(getWorkbook()))
 
-        new ValidationProcessor(outputSheet.sheet, model).process()
+        new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
         finalise()
     }
 
@@ -64,20 +77,29 @@ class OutputUploadTemplateBuilder extends WebXlsxExporter {
         super.setResponseHeaders(response, outputName+filenameSuffix)
         this
     }
-
 }
+
 
 class ValidationProcessor extends OutputModelProcessor {
 
-    def sheet, model
+    private Workbook workbook
+    private Sheet sheet
+    def model
 
-    public ValidationProcessor(sheet, model) {
+    public ValidationProcessor(workbook, sheet, model) {
+        this.workbook = workbook
         this.sheet = sheet
         this.model = model
     }
 
-    public void process(){
-        ExcelContext context = new ExcelContext([currentSheet:sheet])
+    public void process() {
+
+        // Create a worksheet to store validation lists in.
+        def validationSheetName = OutputUploadTemplateBuilder.sheetName("Validation - "+sheet.getSheetName())
+        Sheet validationSheet = workbook.createSheet(validationSheetName)
+        workbook.setSheetHidden(workbook.getSheetIndex(validationSheet), true)
+
+        ExcelValidationContext context = new ExcelValidationContext([currentSheet:sheet, validationSheet:validationSheet])
         ValidationHandler validationHandler = new ValidationHandler()
         model.eachWithIndex{node, i ->
             context.currentColumn = i
@@ -88,13 +110,15 @@ class ValidationProcessor extends OutputModelProcessor {
 
 }
 
-class ExcelContext implements OutputModelProcessor.ProcessingContext {
+class ExcelValidationContext implements OutputModelProcessor.ProcessingContext {
     Sheet currentSheet
+    Sheet validationSheet
     int currentColumn
 
 }
 
-class ValidationHandler implements OutputModelProcessor.Processor<ExcelContext> {
+
+class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidationContext> {
 
 
     def addValidation(node, context, constraint = null) {
@@ -113,7 +137,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelContext> 
     }
 
     @Override
-    def number(Object node, ExcelContext context) {
+    def number(Object node, ExcelValidationContext context) {
         DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
         OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)
 
@@ -127,29 +151,42 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelContext> 
     }
 
     @Override
-    def text(Object node, ExcelContext context) {
+    def text(Object node, ExcelValidationContext context) {
         if (node.constraints) {
+
+            node.constraints.eachWithIndex { value, i ->
+                Row row = context.validationSheet.getRow(i)
+                if (!row) {
+                    row = context.validationSheet.createRow(i)
+                }
+                Cell cell = row.createCell(context.currentColumn)
+                cell.setCellValue(value)
+            }
+            def colString = CellReference.convertNumToColString(context.currentColumn)
+            def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${node.constraints.length()}"
+
             DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
             DataValidationConstraint dvConstraint =
-                    dvHelper.createExplicitListConstraint(node.constraints.toArray(new String[0]))
+                    dvHelper.createFormulaListConstraint(rangeFormula)
 
 
             addValidation(node, context, dvConstraint)
+
         }
     }
 
     @Override
-    def date(Object node, ExcelContext context) {
+    def date(Object node, ExcelValidationContext context) {
 
     }
 
     @Override
-    def image(Object node, ExcelContext context) {
+    def image(Object node, ExcelValidationContext context) {
 
     }
 
     @Override
-    def species(Object node, ExcelContext context) {
+    def species(Object node, ExcelValidationContext context) {
 
     }
 
@@ -158,4 +195,5 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelContext> 
         CellRangeAddressList range = new CellRangeAddressList(1, MAX_ROWS, col, col)
         return range
     }
+
 }
