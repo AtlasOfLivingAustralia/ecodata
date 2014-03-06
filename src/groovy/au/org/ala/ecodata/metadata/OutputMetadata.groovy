@@ -1,7 +1,6 @@
 package au.org.ala.ecodata.metadata
-
 /**
- * Created by god08d on 28/02/14.
+ * Works with the Output metadata.
  */
 class OutputMetadata {
 
@@ -11,8 +10,6 @@ class OutputMetadata {
     }
 
     def annotateDataModel() {
-
-
         annotateNodes(metadata.dataModel)
     }
 
@@ -28,11 +25,13 @@ class OutputMetadata {
             }
             else {
 
-
                 def result = findViewByName(node.name)
                 if (result) {
                     def label = result.preLabel?:(result.title?:result.postLabel)
                     annotatedNode.label = label
+                }
+                if (!annotatedNode.label) {
+                    annotatedNode.label = annotatedNode.name
                 }
 
 
@@ -72,6 +71,70 @@ class OutputMetadata {
     }
     def isNestedViewModelType(node) {
         return (node.items != null || node.columns != null)
+    }
+
+    static class ValidationRules {
+
+        def validationRules = []
+        public ValidationRules(property) {
+            if (property.validate) {
+                def criteria = property.validate.tokenize(',')
+                validationRules = criteria.collect { it.trim() }
+            }
+
+        }
+
+
+        public boolean isMandatory() {
+            return validationRules.contains('required')
+        }
+
+        public BigDecimal min() {
+            def min = validationProperties().minimum?:new BigDecimal(0)
+            return min
+        }
+
+        public BigDecimal max() {
+            return validationProperties().maximum
+        }
+
+        def validationProperties() {
+            def props = [:]
+            validationRules.each {
+                if (it.startsWith('min')) {
+                    props << minProperty(it)
+                }
+                else if (it.startsWith('max')) {
+                    props << maxProperty(it)
+                }
+            }
+            return props
+        }
+
+        def valueInBrackets(rule) {
+            def matcher = rule =~ /.*\[(.*)\]/
+            if (matcher.matches()) {
+                return matcher[0][1]
+            }
+            return null
+        }
+
+        def minProperty(rule) {
+            def min = valueInBrackets(rule)
+            if (min) {
+                return [minimum: min as BigDecimal]
+            }
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+        }
+
+        def maxProperty(rule) {
+            def max = valueInBrackets(rule)
+            if (max) {
+                return [maximum: max as BigDecimal]
+            }
+            throw new IllegalArgumentException("Invalid validation rule: "+rule)
+        }
+
     }
 
 }

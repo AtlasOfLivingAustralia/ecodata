@@ -1,4 +1,6 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
 
 import java.text.SimpleDateFormat
@@ -139,6 +141,22 @@ class MetadataService {
         }
 
         return retMap
+    }
+
+    /**
+     * Attaches a label matching the form to each entry of the dataModel in the output model template for the
+     * specified output.
+     * @param outputName identifies the output to annotate.
+     */
+    def annotatedOutputDataModel(outputName) {
+        def outputMetadata = getOutputDataModelByName(outputName)
+
+        def annotatedModel = null
+        if (outputMetadata) {
+            OutputMetadata metadata = new OutputMetadata(outputMetadata)
+            annotatedModel = metadata.annotateDataModel()
+        }
+        annotatedModel
     }
 
 }

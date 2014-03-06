@@ -1,4 +1,7 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
+
 /**
  * Builds a JSON schema from a data model definition.
  * @link http://json-schema.org/
@@ -128,7 +131,7 @@ class SchemaBuilder {
         objectProps.each {
             if (!isComputed(it)) {  // TODO what to do about computed values?
 
-                def validationRules = new ValidationRules(it)
+                def validationRules = new OutputMetadata.ValidationRules(it)
                 if (validationRules.mandatory) {
                     required << it.name
                 }
@@ -282,88 +285,4 @@ class SchemaBuilder {
         return [type:'unsupported']
     }
 
-    def validation(property) {
-        if (!property.validate) {
-            return
-        }
-        def criteria = property.validate.tokenize(',')
-        criteria = criteria.collect { it.trim() }
-
-        def values = []
-        criteria.each {
-            switch (it) {
-                case 'required':
-                    if (model.type == 'selectMany') {
-                        values << 'minCheckbox[1]'
-                    }
-                    else {
-                        values << it
-                    }
-                    break
-                case 'number':
-                    values << 'custom[number]'
-                    break
-                case it.startsWith('min:'):
-                    values << it
-                    break
-                default:
-                    values << it
-            }
-        }
-    }
-
-    class ValidationRules {
-
-        def validationRules = []
-        public ValidationRules(property) {
-            if (property.validate) {
-                def criteria = property.validate.tokenize(',')
-                validationRules = criteria.collect { it.trim() }
-            }
-
-        }
-
-
-        public boolean isMandatory() {
-            return validationRules.contains('required')
-        }
-
-        def validationProperties() {
-            def props = [:]
-            validationRules.each {
-                if (it.startsWith('min')) {
-                    props << minProperty(it)
-                }
-                else if (it.startsWith('max')) {
-                    props << maxProperty(it)
-                }
-            }
-            return props
-        }
-
-        def valueInBrackets(rule) {
-            def matcher = rule =~ /.*\[(.*)\]/
-            if (matcher.matches()) {
-                return matcher[0][1]
-            }
-            return null
-        }
-
-        def minProperty(rule) {
-            def min = valueInBrackets(rule)
-            if (min) {
-                return [minimum: min as BigDecimal]
-            }
-            throw new IllegalArgumentException("Invalid validation rule: "+rule)
-        }
-
-        def maxProperty(rule) {
-            def max = valueInBrackets(rule)
-            if (max) {
-                return [maximum: max as BigDecimal]
-            }
-            throw new IllegalArgumentException("Invalid validation rule: "+rule)
-        }
-
-    }
 }

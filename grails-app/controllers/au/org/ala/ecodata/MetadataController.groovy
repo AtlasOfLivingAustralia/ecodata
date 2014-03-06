@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
 
 class MetadataController {
@@ -78,18 +77,48 @@ class MetadataController {
             render result as JSON
             return null
         }
-        def outputMetadata = metadataService.getOutputDataModelByName(outputName)
+        def annotatedModel = metadataService.annotatedOutputDataModel(outputName)
 
-        if (!outputMetadata) {
+        if (!annotatedModel) {
             def result = [status:404, error:"No output of type ${outputName} exists"]
             render result as JSON
             return null
         }
 
-        OutputMetadata metadata = new OutputMetadata(outputMetadata)
-        def annotatedModel = metadata.annotateDataModel()
         render annotatedModel as JSON
+    }
 
+    /**
+     * Returns an Excel template that can be populated with output data and uploaded.
+     */
+    def excelOutputTemplate() {
+
+        def outputName = params.type
+        def listName = params.listName
+
+        if (!outputName) {
+            def result = [status:400, error:'type is a required parameter']
+            render result as JSON
+            return null
+        }
+
+        def annotatedModel = metadataService.annotatedOutputDataModel(outputName)
+
+        if (!annotatedModel) {
+            def result = [status:404, error:"No output of type ${outputName} exists"]
+            render result as JSON
+            return null
+        }
+
+        if (listName) {
+            annotatedModel = annotatedModel.find { it.name == listName }?.columns
+        }
+
+        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, annotatedModel);
+        builder.build()
+        builder.setResponseHeaders(response)
+
+        builder.save(response.outputStream)
 
     }
 }
