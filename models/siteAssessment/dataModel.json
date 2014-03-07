@@ -75,7 +75,6 @@
     ],
     "viewModel": [
         {
-            "title": "Vegetation Assessment",
             "items": [{
                 "items": [{
                     "items": [
@@ -164,13 +163,27 @@
                     "title": "Tree DBH (cm)",
                     "source": "treeDBHcm",
                     "width": "10%",
-                    "type": "number"
+                    "type": "number",
+                    "enabled": {
+                        "values": [
+                            "Tree - Overstorey",
+                            "Tree - Mid-storey"
+                        ],
+                        "source": "lifeform"
+                    }
                 },
                 {
                     "title": "Tree canopy measure (m)",
                     "source": "treeCanopyMeasureMetres",
                     "width": "10%",
-                    "type": "number"
+                    "type": "number",
+                    "enabled": {
+                        "values": [
+                            "Tree - Overstorey",
+                            "Tree - Mid-storey"
+                        ],
+                        "source": "lifeform"
+                    }
                 }
             ],
             "userAddedRows": "true",
