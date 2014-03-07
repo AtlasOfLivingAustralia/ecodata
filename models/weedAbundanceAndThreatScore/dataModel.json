@@ -3,9 +3,9 @@
 "dataModel":[
     {"name":"weedAbundanceAndThreatScore","dataType":"list",
         "columns": [
-            {"name":"name","dataType":"text"},
+            {"name":"species","dataType":"autocomplete"},
             {"name":"isUnknownIfWeed","dataType":"boolean"},
-            {"name":"areaCovered","dataType":"text"},
+            {"name":"areaCovered","dataType":"number"},
             {"name":"coverRating","dataType":"number"},
             {"name":"invasiveThreatCategory","dataType":"number"},
             {"name":"abundanceAndThreatScore","dataType":"number",
@@ -13,7 +13,7 @@
         ],
         "userAddedRows":"true","todo":"//move to view model"
     },
-    {"name":"totalAreaCovered","dataType":"text","primaryResult":"true"},
+    {"name":"totalAreaCovered","dataType":"number","primaryResult":"true"},
     {"name":"totalAbundanceAndThreatScore","dataType":"number","primaryResult":"true",
         "computed":{
             "dependents":{
@@ -29,9 +29,9 @@
         "source":"weedAbundanceAndThreatScore",
         "userAddedRows":"true",
         "columns": [
-            {"title":"Weed name","source":"name","width":"25%"},
+            {"title":"Weed name","source":"species","width":"25%"},
             {"title":"Unknown if weed or native","source":"isUnknownIfWeed","width":"8%"},
-            {"title":"% Area covered","source":"areaCovered","width":"17%","textAlign":"center"},
+            {"title":"% Area covered rating","source":"areaCovered","width":"17%","textAlign":"center"},
             {"title":"Cover Rating","source":"coverRating","width":"10%"},
             {"title":"Invasive Threat Category","source":"invasiveThreatCategory","width":"10%"},
             {"title":"Abundance & Threat Score","source":"abundanceAndThreatScore","width":"10%"}
@@ -40,8 +40,8 @@
             "rows": [
                 {"columns":[
                     {"type":"literal","source":""},
-                    {"type":"literal","source":"Total cover"},
-                    {"type":"text","source":"totalAreaCovered"},
+                    {"type":"literal","source":"Total cover rating"},
+                    {"type":"number","source":"totalAreaCovered"},
                     {"type":"literal","source":"Total Abundance & Threat Score","colspan":"2"},
                     {"type":"number","source":"totalAbundanceAndThreatScore"}
                 ]}
