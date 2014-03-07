@@ -19,7 +19,7 @@ class OutputUploadTemplateBuilder extends WebXlsxExporter {
 
     public OutputUploadTemplateBuilder(outputName, model) {
         this.outputName = outputName
-        this.model = model
+        this.model = model.findAll{!it.computed}
     }
 
 
