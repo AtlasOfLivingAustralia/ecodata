@@ -1,17 +1,19 @@
 {
     "selectedActivity": {
-        "name": "Site assessment",
+        "name": "Biodiversity Fund - Outcomes and Monitoring",
         "type": "Assessment",
         "outputs": [
-            "Participant Information",
-            "Vegetation Assessment",
-            "Site Condition Components",
-            "Landscape Context Components",
-            "Threatening Processes & Site Condition Risks",
-            "Photo Points"
+            "Biodiversity Fund Outcomes & Monitoring Methodology"
         ]
     },
     "activities": [
+        {
+            "name": "Biodiversity Fund - Outcomes and Monitoring",
+            "type": "Assessment",
+            "outputs": [
+                "Biodiversity Fund Outcomes & Monitoring Methodology"
+            ]
+        },
         {
             "name": "Community Participation and Engagement",
             "type": "Activity",
@@ -19,70 +21,6 @@
                 "Event Details",
                 "Participant Information",
                 "Materials Provided to Participants"
-            ]
-        },
-        {
-            "name": "Revegetation",
-            "type": "Activity",
-            "outputs": [
-                "Revegetation Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Seed Collection",
-            "type": "Activity",
-            "outputs": [
-                "Seed Collection Details",
-                "Participant Information"
-            ]
-        },
-        {
-            "name": "Site Preparation",
-            "type": "Activity",
-            "outputs": [
-                "Site Preparation Actions",
-                "Weed Treatment Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Fencing",
-            "type": "Activity",
-            "outputs": [
-                "Fence Details",
-                "Participant Information"
-            ]
-        },
-        {
-            "name": "Weed Treatment",
-            "type": "Activity",
-            "outputs": [
-                "Weed Treatment Details",
-                "Weed Treatment - multi-species",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Pest and Disease Management",
-            "type": "Activity",
-            "outputs": [
-                "Pest Management Details",
-                "Fence Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Fire Management",
-            "type": "Activity",
-            "outputs": [
-                "Fire Information",
-                "Participant Information",
-                "Photo Points"
             ]
         },
         {
@@ -94,10 +32,11 @@
             ]
         },
         {
-            "name": "Water Management",
+            "name": "Debris Removal",
             "type": "Activity",
             "outputs": [
-                "Water Management Details"
+                "Debris Removal Details",
+                "Participant Information"
             ]
         },
         {
@@ -109,39 +48,11 @@
             ]
         },
         {
-            "name": "Works Implementation Planning",
+            "name": "Fencing",
             "type": "Activity",
             "outputs": [
-                "Site Planning Details",
-                "Threatening Processes & Site Condition Risks",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Management Plan Development",
-            "type": "Activity",
-            "outputs": [
-                "Plan Development Details",
+                "Fence Details",
                 "Participant Information"
-            ]
-        },
-        {
-            "name": "Weed Mapping & Monitoring",
-            "type": "Assessment",
-            "outputs": [
-                "Evidence of Weed Treatment",
-                "Weed Observation / Monitoring Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Flora (biological) survey",
-            "type": "Assessment",
-            "outputs": [
-                "Survey Information",
-                "Flora Survey Details"
             ]
         },
         {
@@ -161,88 +72,20 @@
             ]
         },
         {
-            "name": "Pest animal survey",
-            "type": "Assessment",
+            "name": "Fire Management",
+            "type": "Activity",
             "outputs": [
-                "Evidence of Pest Management Activity",
-                "Pest Observation and Monitoring Details",
+                "Fire Information",
                 "Participant Information",
                 "Photo Points"
             ]
         },
         {
-            "name": "Research",
-            "type": "Activity",
-            "outputs": [
-                "Research Information",
-                "Participant Information"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
+            "name": "Flora (biological) survey",
             "type": "Assessment",
             "outputs": [
-                "Sampling Site Information",
-                "Photo Points",
-                "Field Sheet 1 - Ground Cover",
-                "Field Sheet 2 - Exotic Fauna",
-                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
-                "Field Sheet 4 - Crown Type",
-                "Field Sheet 5 - Species Diversity"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment",
-                "Site Condition",
-                "Landscape Context"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - TasVeg (TAS)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment",
-                "Site Condition",
-                "Landscape Context"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - BioMetric (NSW)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment",
-                "Weed Abundance & Threat Score",
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - BioCondition (QLD)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment",
-                "100 x 50m area - Ecologically Dominant Layer",
-                "50 x 10m area",
-                "50 x 20m area - Coarse Woody Debris",
-                "Five 1 x 1m plots",
-                "100m Transect"
+                "Survey Information",
+                "Flora Survey Details"
             ]
         },
         {
@@ -254,33 +97,24 @@
             ]
         },
         {
-            "name": "Debris Removal",
+            "name": "Infrastructure Establishment",
             "type": "Activity",
             "outputs": [
-                "Debris Removal Details",
-                "Participant Information"
+                "Infrastructure Details"
             ]
         },
         {
-            "name": "Public Access Management",
+            "name": "Knowledge Integration and Transfer",
             "type": "Activity",
             "outputs": [
-                "Access Control Details",
-                "Participant Information"
+                "Knowledge Integration and Transfer"
             ]
         },
         {
-            "name": "Site Monitoring Planning",
+            "name": "Management Plan Development",
             "type": "Activity",
             "outputs": [
-                "Planned Monitoring Approach"
-            ]
-        },
-        {
-            "name": "Project Administration",
-            "type": "Activity",
-            "outputs": [
-                "Administration Activities",
+                "Plan Development Details",
                 "Participant Information"
             ]
         },
@@ -301,22 +135,6 @@
             ]
         },
         {
-            "name": "Training and Skills Development",
-            "type": "Activity",
-            "outputs": [
-                "Training Details",
-                "Skills Development",
-                "Participant Information"
-            ]
-        },
-        {
-            "name": "Knowledge Integration and Transfer",
-            "type": "Activity",
-            "outputs": [
-                "Knowledge Integration and Transfer"
-            ]
-        },
-        {
             "name": "Outcomes, Evaluation and Learning",
             "type": "Activity",
             "outputs": [
@@ -326,17 +144,205 @@
             ]
         },
         {
-            "name": "Biodiversity Fund - Outcomes and Monitoring",
-            "type": "Activity",
+            "name": "Pest animal survey",
+            "type": "Assessment",
             "outputs": [
-                "Biodiversity Fund Outcomes & Monitoring Methodology"
+                "Evidence of Pest Management Activity",
+                "Pest Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
             ]
         },
         {
-            "name": "Infrastructure Establishment",
+            "name": "Pest and Disease Management",
             "type": "Activity",
             "outputs": [
-                "Infrastructure Details"
+                "Pest Management Details",
+                "Fence Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Project Administration",
+            "type": "Activity",
+            "outputs": [
+                "Administration Activities",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Public Access Management",
+            "type": "Activity",
+            "outputs": [
+                "Access Control Details",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Research",
+            "type": "Activity",
+            "outputs": [
+                "Research Information",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Revegetation",
+            "type": "Activity",
+            "outputs": [
+                "Revegetation Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Seed Collection",
+            "type": "Activity",
+            "outputs": [
+                "Seed Collection Details",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Site assessment",
+            "type": "Assessment",
+            "outputs": [
+                "Participant Information",
+                "Vegetation Assessment",
+                "Site Condition Components",
+                "Landscape Context Components",
+                "Threatening Processes & Site Condition Risks",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Site Monitoring Planning",
+            "type": "Activity",
+            "outputs": [
+                "Planned Monitoring Approach"
+            ]
+        },
+        {
+            "name": "Site Preparation",
+            "type": "Activity",
+            "outputs": [
+                "Site Preparation Actions",
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Training and Skills Development",
+            "type": "Activity",
+            "outputs": [
+                "Training Details",
+                "Skills Development",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - BioCondition (QLD)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment",
+                "100 x 50m area - Ecologically Dominant Layer",
+                "50 x 10m area",
+                "50 x 20m area - Coarse Woody Debris",
+                "Five 1 x 1m plots",
+                "100m Transect"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
+            "type": "Assessment",
+            "outputs": [
+                "Sampling Site Information",
+                "Photo Points",
+                "Field Sheet 1 - Ground Cover",
+                "Field Sheet 2 - Exotic Fauna",
+                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                "Field Sheet 4 - Crown Type",
+                "Field Sheet 5 - Species Diversity"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - BioMetric (NSW)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment",
+                "Weed Abundance & Threat Score",
+                "Feral Animal Abundance Score",
+                "Feral Animal Frequency Score"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment",
+                "Site Condition",
+                "Landscape Context"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - TasVeg (TAS)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment",
+                "Site Condition",
+                "Landscape Context"
+            ]
+        },
+        {
+            "name": "Water Management",
+            "type": "Activity",
+            "outputs": [
+                "Water Management Details"
+            ]
+        },
+        {
+            "name": "Weed Treatment",
+            "type": "Activity",
+            "outputs": [
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Works Implementation Planning",
+            "type": "Activity",
+            "outputs": [
+                "Site Planning Details",
+                "Threatening Processes & Site Condition Risks",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Weed Mapping & Monitoring",
+            "type": "Assessment",
+            "outputs": [
+                "Evidence of Weed Treatment",
+                "Weed Observation / Monitoring Details",
+                "Participant Information",
+                "Photo Points"
             ]
         }
     ],
@@ -1127,7 +1133,14 @@
         },
         {
             "template": "adminActivities",
-            "scores": [],
+            "scores": [
+                {
+                    "name": "hoursAdminTotal",
+                    "aggregationType": "SUM",
+                    "label": "Total person hours spent on project administration",
+                    "units": "person Hrs"
+                }
+            ],
             "name": "Administration Activities"
         },
         {
@@ -1211,11 +1224,6 @@
             "template": "pestMonitoringDetails",
             "scores": [],
             "name": "Pest Observation and Monitoring Details"
-        },
-        {
-            "template": "weedTreatmentMulti",
-            "scores": [],
-            "name": "Weed Treatment - multi-species"
         }
     ]
 }
