@@ -1,9 +1,11 @@
 {
     "selectedActivity": {
-        "name": "Biodiversity Fund - Outcomes and Monitoring",
+        "name": "Revegetation Monitoring",
         "type": "Assessment",
         "outputs": [
-            "Biodiversity Fund Outcomes & Monitoring Methodology"
+            "Survey Information",
+            "Revegetation Monitoring Results",
+            "Photo Points"
         ]
     },
     "activities": [
@@ -18,7 +20,7 @@
             "name": "Community Participation and Engagement",
             "type": "Activity",
             "outputs": [
-                "Event Details",
+                "Event Details - multi-event",
                 "Participant Information",
                 "Materials Provided to Participants"
             ]
@@ -40,18 +42,18 @@
             ]
         },
         {
-            "name": "Erosion Management",
+            "name": "Disease Management",
             "type": "Activity",
             "outputs": [
-                "Erosion Management Details",
+                "Disease Management Details",
                 "Participant Information"
             ]
         },
         {
-            "name": "Fencing",
+            "name": "Erosion Management",
             "type": "Activity",
             "outputs": [
-                "Fence Details",
+                "Erosion Management Details",
                 "Participant Information"
             ]
         },
@@ -61,6 +63,14 @@
             "outputs": [
                 "Survey Information",
                 "Fauna Survey Details"
+            ]
+        },
+        {
+            "name": "Fencing",
+            "type": "Activity",
+            "outputs": [
+                "Fence Details",
+                "Participant Information"
             ]
         },
         {
@@ -111,14 +121,6 @@
             ]
         },
         {
-            "name": "Management Plan Development",
-            "type": "Activity",
-            "outputs": [
-                "Plan Development Details",
-                "Participant Information"
-            ]
-        },
-        {
             "name": "Management Practice Change",
             "type": "Activity",
             "outputs": [
@@ -144,23 +146,21 @@
             ]
         },
         {
-            "name": "Pest animal survey",
-            "type": "Assessment",
+            "name": "Pest and Disease Management",
+            "type": "Activity",
             "outputs": [
-                "Evidence of Pest Management Activity",
-                "Pest Observation and Monitoring Details",
+                "Pest Management Details - Multi",
+                "Fence Details",
                 "Participant Information",
                 "Photo Points"
             ]
         },
         {
-            "name": "Pest and Disease Management",
+            "name": "Plant Propagation",
             "type": "Activity",
             "outputs": [
-                "Pest Management Details",
-                "Fence Details",
-                "Participant Information",
-                "Photo Points"
+                "Plant Propagation Details",
+                "Participant Information"
             ]
         },
         {
@@ -205,18 +205,6 @@
             ]
         },
         {
-            "name": "Site assessment",
-            "type": "Assessment",
-            "outputs": [
-                "Participant Information",
-                "Vegetation Assessment",
-                "Site Condition Components",
-                "Landscape Context Components",
-                "Threatening Processes & Site Condition Risks",
-                "Photo Points"
-            ]
-        },
-        {
             "name": "Site Monitoring Planning",
             "type": "Activity",
             "outputs": [
@@ -243,10 +231,64 @@
             ]
         },
         {
+            "name": "Water Management",
+            "type": "Activity",
+            "outputs": [
+                "Water Management Details"
+            ]
+        },
+        {
+            "name": "Weed Treatment",
+            "type": "Activity",
+            "outputs": [
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Works Implementation Planning",
+            "type": "Activity",
+            "outputs": [
+                "Site Planning Details",
+                "Threatening Processes & Site Condition Risks",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Management Plan Development",
+            "type": "Activity",
+            "outputs": [
+                "Plan Development Details",
+                "Participant Information"
+            ]
+        },
+        {
+            "name": "Pest animal survey",
+            "type": "Assessment",
+            "outputs": [
+                "Evidence of Pest Management Activity",
+                "Pest Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Revegetation Monitoring",
+            "type": "Assessment",
+            "outputs": [
+                "Survey Information",
+                "Revegetation Monitoring Results",
+                "Photo Points"
+            ]
+        },
+        {
             "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment",
+                "Benchmarks - QLD",
+                "Floristic Composition",
                 "100 x 50m area - Ecologically Dominant Layer",
                 "50 x 10m area",
                 "50 x 20m area - Coarse Woody Debris",
@@ -271,68 +313,61 @@
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment"
+                "Floristic Composition"
             ]
         },
         {
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment",
-                "Weed Abundance & Threat Score",
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
+                "Benchmarks - SA",
+                "Bushland Condition - Site Health Summary",
+                "Indicator 1 - Plant Species Diversity",
+                "Indicator 2 - Weed Abundance & Threat",
+                "Indicator 3 - Structural Diversity",
+                "Indicator 4 - Regeneration",
+                "Indicator 5 - Tree and Shrub Health",
+                "Indicator 6 - Tree Habitat",
+                "Indicator 7 - Feral Animals",
+                "Indicator 8 - Total Grazing Pressure",
+                "Indicator 9 - Animal Species",
+                "Indicator 10 - Bushland Degradation Risk"
             ]
         },
         {
             "name": "Vegetation Assessment - Habitat Hectares (VIC)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment",
-                "Site Condition",
-                "Landscape Context"
+                "EVC Benchmark Values - Victoria",
+                "Vegetation Assessment - Species List",
+                "Site Condition Components",
+                "Landscape Context Components"
             ]
         },
         {
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment"
+                "Floristic Composition"
             ]
         },
         {
             "name": "Vegetation Assessment - TasVeg (TAS)",
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment",
+                "Benchmarks - TAS",
+                "Floristic Composition",
                 "Site Condition",
                 "Landscape Context"
             ]
         },
         {
-            "name": "Water Management",
-            "type": "Activity",
+            "name": "Water Quality Survey",
+            "type": "Assessment",
             "outputs": [
-                "Water Management Details"
-            ]
-        },
-        {
-            "name": "Weed Treatment",
-            "type": "Activity",
-            "outputs": [
-                "Weed Treatment Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Works Implementation Planning",
-            "type": "Activity",
-            "outputs": [
-                "Site Planning Details",
-                "Threatening Processes & Site Condition Risks",
-                "Participant Information",
-                "Photo Points"
+                "General information & Participants",
+                "Environmental Information at the Time of Sampling",
+                "Water Quality Measurements"
             ]
         },
         {
@@ -817,131 +852,9 @@
             "name": "Water Management Details"
         },
         {
-            "template": "siteAssessment",
-            "scores": [
-                {
-                    "name": "assessmentMethod",
-                    "aggregationType": "SET",
-                    "label": "Assessment Method"
-                }
-            ],
-            "name": "Vegetation Assessment"
-        },
-        {
-            "template": "siteConditionComponents",
-            "scores": [],
-            "name": "Site Condition Components"
-        },
-        {
-            "template": "landscapeContextComponents",
-            "scores": [],
-            "name": "Landscape Context Components"
-        },
-        {
             "template": "riskAssessment",
             "scores": [],
             "name": "Threatening Processes & Site Condition Risks"
-        },
-        {
-            "template": "weedAbundanceAndThreatScore",
-            "scores": [
-                {
-                    "name": "totalWeedAbundanceAndThreatScore",
-                    "aggregationType": "SET",
-                    "label": "totalWeedAbundanceAndThreatScore",
-                    "units": ""
-                }
-            ],
-            "name": "Weed Abundance & Threat Score"
-        },
-        {
-            "template": "feralAnimalAbundanceScore",
-            "scores": [
-                {
-                    "name": "totalFeralAnimalAbundanceScore",
-                    "aggregationType": "SET",
-                    "label": "totalFeralAnimalAbundanceScore",
-                    "units": ""
-                }
-            ],
-            "name": "Feral Animal Abundance Score"
-        },
-        {
-            "template": "feralAnimalFrequencyScore",
-            "scores": [
-                {
-                    "name": "totalFeralAnimalFrequencyScore",
-                    "aggregationType": "SET",
-                    "label": "totalFeralAnimalFrequencyScore",
-                    "units": ""
-                }
-            ],
-            "name": "Feral Animal Frequency Score"
-        },
-        {
-            "template": "bfSamplingSiteInfo",
-            "scores": [],
-            "name": "Sampling Site Information"
-        },
-        {
-            "template": "groundCover",
-            "scores": [],
-            "name": "Field Sheet 1 - Ground Cover"
-        },
-        {
-            "template": "exoticFauna",
-            "scores": [],
-            "name": "Field Sheet 2 - Exotic Fauna"
-        },
-        {
-            "template": "crownCover",
-            "scores": [],
-            "name": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover"
-        },
-        {
-            "template": "crownType",
-            "scores": [],
-            "name": "Field Sheet 4 - Crown Type"
-        },
-        {
-            "template": "speciesDiversityMeri",
-            "scores": [],
-            "name": "Field Sheet 5 - Species Diversity"
-        },
-        {
-            "template": "habitatHectaresSiteCondition",
-            "scores": [],
-            "name": "Site Condition"
-        },
-        {
-            "template": "habitatHectaresLandscapeContext",
-            "scores": [],
-            "name": "Landscape Context"
-        },
-        {
-            "template": "bioCondition100x50m",
-            "scores": [],
-            "name": "100 x 50m area - Ecologically Dominant Layer"
-        },
-        {
-            "template": "bioCondition50x10m",
-            "scores": [],
-            "name": "50 x 10m area"
-        },
-        {
-            "template": "bioCondition50x20m",
-            "scores": [],
-            "name": "50 x 20m area - Coarse Woody Debris"
-        },
-        {
-            "template": "bioCondition1x1m",
-            "scores": [],
-            "name": "Five 1 x 1m plots"
-        },
-        {
-            "template": "bioCondition100mTransect",
-            "scores": [],
-            "name": "100m Transect"
         },
         {
             "template": "employmentDetails",
@@ -1091,6 +1004,26 @@
             "name": "Indigenous Enterprise"
         },
         {
+            "template": "plantPropagationDetails",
+            "scores": [],
+            "name": "Plant Propagation Details"
+        },
+        {
+            "template": "waterQualityGeneralInfo",
+            "scores": [],
+            "name": "General information & Participants"
+        },
+        {
+            "template": "waterQualityEnvironmentalInfo",
+            "scores": [],
+            "name": "Environmental Information at the Time of Sampling"
+        },
+        {
+            "template": "waterQualityMeasurements",
+            "scores": [],
+            "name": "Water Quality Measurements"
+        },
+        {
             "template": "sitePlanningDetails",
             "scores": [],
             "name": "Site Planning Details"
@@ -1133,14 +1066,7 @@
         },
         {
             "template": "adminActivities",
-            "scores": [
-                {
-                    "name": "hoursAdminTotal",
-                    "aggregationType": "SUM",
-                    "label": "Total person hours spent on project administration",
-                    "units": "person Hrs"
-                }
-            ],
+            "scores": [],
             "name": "Administration Activities"
         },
         {
@@ -1224,6 +1150,223 @@
             "template": "pestMonitoringDetails",
             "scores": [],
             "name": "Pest Observation and Monitoring Details"
+        },
+        {
+            "template": "eventDetailsMulti",
+            "scores": [],
+            "name": "Event Details - multi-event"
+        },
+        {
+            "template": "siteAssessment",
+            "scores": [
+                {
+                    "name": "assessmentMethod",
+                    "aggregationType": "SET",
+                    "label": "Assessment Method"
+                }
+            ],
+            "name": "Floristic Composition"
+        },
+        {
+            "template": "bfSamplingSiteInfo",
+            "scores": [],
+            "name": "Sampling Site Information"
+        },
+        {
+            "template": "groundCover",
+            "scores": [],
+            "name": "Field Sheet 1 - Ground Cover"
+        },
+        {
+            "template": "exoticFauna",
+            "scores": [],
+            "name": "Field Sheet 2 - Exotic Fauna"
+        },
+        {
+            "template": "crownCover",
+            "scores": [],
+            "name": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover"
+        },
+        {
+            "template": "crownType",
+            "scores": [],
+            "name": "Field Sheet 4 - Crown Type"
+        },
+        {
+            "template": "speciesDiversityMeri",
+            "scores": [],
+            "name": "Field Sheet 5 - Species Diversity"
+        },
+        {
+            "template": "saBenchmarks",
+            "scores": [],
+            "name": "Benchmarks - SA"
+        },
+        {
+            "template": "saSiteHealthSummary",
+            "scores": [],
+            "name": "Bushland Condition - Site Health Summary"
+        },
+        {
+            "template": "saFloristicComposition",
+            "scores": [],
+            "name": "Indicator 1 - Plant Species Diversity"
+        },
+        {
+            "template": "saWeedAbundanceAndThreat",
+            "scores": [
+                {
+                    "name": "totalWeedAbundanceAndThreatScore",
+                    "aggregationType": "SET",
+                    "label": "totalWeedAbundanceAndThreatScore",
+                    "units": ""
+                }
+            ],
+            "name": "Indicator 2 - Weed Abundance & Threat"
+        },
+        {
+            "template": "saStructuralDiversity",
+            "scores": [],
+            "name": "Indicator 3 - Structural Diversity"
+        },
+        {
+            "template": "saRegeneration",
+            "scores": [],
+            "name": "Indicator 4 - Regeneration"
+        },
+        {
+            "template": "saTreeAndShrubHealth",
+            "scores": [],
+            "name": "Indicator 5 - Tree and Shrub Health"
+        },
+        {
+            "template": "saTreeHabitat",
+            "scores": [],
+            "name": "Indicator 6 - Tree Habitat"
+        },
+        {
+            "template": "saFeralAnimals",
+            "scores": [],
+            "name": "Indicator 7 - Feral Animals"
+        },
+        {
+            "template": "saFeralAnimalAbundanceScore",
+            "scores": [
+                {
+                    "name": "totalFeralAnimalAbundanceScore",
+                    "aggregationType": "SET",
+                    "label": "totalFeralAnimalAbundanceScore",
+                    "units": ""
+                }
+            ],
+            "name": "Indicator 7a - Feral Animal Abundance Score"
+        },
+        {
+            "template": "saFeralAnimalFrequencyScore",
+            "scores": [
+                {
+                    "name": "totalFeralAnimalFrequencyScore",
+                    "aggregationType": "SET",
+                    "label": "totalFeralAnimalFrequencyScore",
+                    "units": ""
+                }
+            ],
+            "name": "Indicator 7b - Feral Animal Frequency Score"
+        },
+        {
+            "template": "saTotalGrazingPressure",
+            "scores": [],
+            "name": "Indicator 8 - Total Grazing Pressure"
+        },
+        {
+            "template": "saAnimalSpecies",
+            "scores": [],
+            "name": "Indicator 9 - Animal Species"
+        },
+        {
+            "template": "saBushlandDegradationRisk",
+            "scores": [],
+            "name": "Indicator 10 - Bushland Degradation Risk"
+        },
+        {
+            "template": "vicVegAssessSpeciesList",
+            "scores": [],
+            "name": "Vegetation Assessment - Species List"
+        },
+        {
+            "template": "vicVegBenchmarks",
+            "scores": [],
+            "name": "EVC Benchmark Values - Victoria"
+        },
+        {
+            "template": "vicSiteConditionComponents",
+            "scores": [],
+            "name": "Site Condition Components"
+        },
+        {
+            "template": "vicLandscapeContextComponents",
+            "scores": [],
+            "name": "Landscape Context Components"
+        },
+        {
+            "template": "benchmarksTas",
+            "scores": [],
+            "name": "Benchmarks - TAS"
+        },
+        {
+            "template": "habitatHectaresSiteCondition",
+            "scores": [],
+            "name": "Site Condition"
+        },
+        {
+            "template": "habitatHectaresLandscapeContext",
+            "scores": [],
+            "name": "Landscape Context"
+        },
+        {
+            "template": "benchmarksQld",
+            "scores": [],
+            "name": "Benchmarks - QLD"
+        },
+        {
+            "template": "bioCondition50x10m",
+            "scores": [],
+            "name": "50 x 10m area"
+        },
+        {
+            "template": "bioCondition1x1m",
+            "scores": [],
+            "name": "Five 1 x 1m plots"
+        },
+        {
+            "template": "bioCondition100mTransect",
+            "scores": [],
+            "name": "100m Transect"
+        },
+        {
+            "template": "bioCondition100x50m",
+            "scores": [],
+            "name": "100 x 50m area - Ecologically Dominant Layer"
+        },
+        {
+            "template": "bioCondition50x20m",
+            "scores": [],
+            "name": "50 x 20m area - Coarse Woody Debris"
+        },
+        {
+            "template": "pestManagementDetailsMulti",
+            "scores": [],
+            "name": "Pest Management Details - Multi"
+        },
+        {
+            "template": "diseaseManagementDetails",
+            "scores": [],
+            "name": "Disease Management Details"
+        },
+        {
+            "template": "revegetationMonitoringResults",
+            "scores": [],
+            "name": "Revegetation Monitoring Results"
         }
     ]
 }
