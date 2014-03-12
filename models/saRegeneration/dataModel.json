@@ -1,59 +1,360 @@
 {
-"modelName":"saWeedAbundanceAndThreat",
-"dataModel":[
-    {"name":"weedAbundanceAndThreatScore","dataType":"list",
-        "columns": [
-            {"name":"species","dataType":"autocomplete"},
-            {"name":"isUnknownIfWeed","dataType":"boolean"},
-            {"name":"areaCovered","dataType":"number"},
-            {"name":"coverRating","dataType":"number"},
-            {"name":"invasiveThreatCategory","dataType":"number"},
-            {"name":"abundanceAndThreatScore","dataType":"number",
-                "computed":{"dependents":["coverRating","invasiveThreatCategory"],"operation":"times"}}
-        ],
-        "userAddedRows":"true","todo":"//move to view model"
-    },
-    {"name":"totalAreaCovered","dataType":"number","primaryResult":"true"},
-    {"name":"totalAbundanceAndThreatScore","dataType":"number","primaryResult":"true",
-        "computed":{
-            "dependents":{
-                "fromList":"weedAbundanceAndThreatScore",
-                "source":"abundanceAndThreatScore"
-            },"operation":"sum"
-        }
-    }
-],
-"viewModel":[
-    {
-        "type":"table",
-        "source":"weedAbundanceAndThreatScore",
-        "userAddedRows":"true",
-        "columns": [
-            {"title":"Weed name","source":"species","width":"25%"},
-            {"title":"Unknown if weed or native","source":"isUnknownIfWeed","width":"8%"},
-            {"title":"% Area covered rating","source":"areaCovered","width":"17%","textAlign":"center"},
-            {"title":"Cover Rating","source":"coverRating","width":"10%"},
-            {"title":"Invasive Threat Category","source":"invasiveThreatCategory","width":"10%"},
-            {"title":"Abundance & Threat Score","source":"abundanceAndThreatScore","width":"10%"}
-        ],
-        "footer": {
-            "rows": [
-                {"columns":[
-                    {"type":"literal","source":""},
-                    {"type":"literal","source":"Total cover rating"},
-                    {"type":"number","source":"totalAreaCovered"},
-                    {"type":"literal","source":"Total Abundance & Threat Score","colspan":"2"},
-                    {"type":"number","source":"totalAbundanceAndThreatScore"}
-                ]}
+    "modelName": "saRegeneration",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "treeRegenerationTable",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "treeRegenName"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "treeRegenPresent"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeRegenSeedlingTally"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeRegenSeedlingRating",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeRegenJuvenilesTally"
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeRegenJuvenilesRating",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "treeRegenCohortClasses"
+                }
+            ]
+        },
+        {
+            "items": [
+                {
+                    "name": "treeRegenSpeciesTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "treeRegenerationTable",
+                    "computed": {
+                        "dependents": "treeRegenPresent",
+                        "operation": "sum"
+                    }
+                },
+                {
+                    "name": "treeRegenSeedlingsTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "treeRegenerationTable",
+                    "computed": {
+                        "dependents": "treeRegenSeedlingTally",
+                        "operation": "sum"
+                    }
+                },
+                {
+                    "name": "treeRegenJuvenilesTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "treeRegenerationTable",
+                    "computed": {
+                        "dependents": "treeRegenJuvenilesTally",
+                        "operation": "sum"
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "shrubRegenerationTable",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "shrubRegenName"
+                },
+                {
+                    "dataType": "boolean",
+                    "name": "shrubRegenPresent"
+                },
+                {
+                    "dataType": "number",
+                    "name": "shrubRegenSeedlingTally"
+                },
+                {
+                    "dataType": "number",
+                    "name": "shrubRegenSeedlingRating",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "shrubRegenJuvenilesTally"
+                },
+                {
+                    "dataType": "number",
+                    "name": "shrubRegenJuvenilesRating",
+                    "constraints": [
+                        "1",
+                        "2",
+                        "3",
+                        "4"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "shrubRegenCohortClasses"
+                }
+            ]
+        },
+        {
+            "row": [
+                {
+                    "name": "shrubRegenSpeciesTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "shrubRegenerationTable",
+                    "computed": {
+                        "dependents": "shrubRegenPresent",
+                        "operation": "sum"
+                    }
+                },
+                {
+                    "name": "shrubRegenSeedlingsTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "shrubRegenerationTable",
+                    "computed": {
+                        "dependents": "shrubRegenSeedlingTally",
+                        "operation": "sum"
+                    }
+                },
+                {
+                    "name": "shrubRegenJuvenilesTotal",
+                    "dataType": "number",
+                    "primaryResult": "true",
+                    "fromList": "shrubRegenerationTable",
+                    "computed": {
+                        "dependents": "shrubRegenJuvenilesTally",
+                        "operation": "sum"
+                    }
+                }
             ]
         }
-    },
-    {
-        "type":"row",
-        "items":[
-            {"type":"literal","source":"Your Weed Abundance & Threat Score","width":"17%","css":"heavy-border span5 offset4"},
-            {"type":"number","source":"totalAbundanceAndThreatScore","css":"heavy-border span1"}
-        ]
-    }
-]
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h4>Tree Regeneration</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "source": "treeRegenerationTable",
+            "allowHeaderWrap": "true",
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table",
+            "columns": [
+                {
+                    "title": "Native Species Name",
+                    "source": "treeRegenName",
+                    "width": "40%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Regeneration Present",
+                    "source": "treeRegenPresent",
+                    "width": "10%",
+                    "type": "boolean"
+                },
+                {
+                    "title": "Seedlings Abundance Tally",
+                    "source": "treeRegenSeedlingTally",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Seedlings Abundance Rating",
+                    "source": "treeRegenSeedlingRating",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Juveniles Abundance Tally",
+                    "source": "treeRegenJuvenilesTally",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Juveniles Abundance Rating",
+                    "source": "treeRegenJuvenilesRating",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of distinct height classes / age groups present (include adults)",
+                    "source": "treeRegenCohortClasses",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "<strong>Tree Regeneration Score</strong><br><small><i>(Total no. of tree species regenerating)</i></small>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "treeRegenSpeciesTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "treeRegenSeedlingsTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "<strong>Total</strong>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "treeRegenJuvenilesTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "<strong>Total</strong>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "",
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Shrub Regeneration</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "source": "shrubRegenerationTable",
+            "allowHeaderWrap": "true",
+            "userAddedRows": "true",
+            "class": "output-section",
+            "type": "table",
+            "columns": [
+                {
+                    "title": "Native Species Name",
+                    "source": "shrubRegenName",
+                    "width": "40%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Regeneration Present",
+                    "source": "shrubRegenPresent",
+                    "width": "10%",
+                    "type": "boolean"
+                },
+                {
+                    "title": "Seedlings Abundance Tally",
+                    "source": "shrubRegenSeedlingTally",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Seedlings Abundance Rating",
+                    "source": "shrubRegenSeedlingRating",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Juveniles Abundance Tally",
+                    "source": "shrubRegenJuvenilesTally",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Juveniles Abundance Rating",
+                    "source": "shrubRegenJuvenilesRating",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "No. of distinct height classes or age groups present (include adults)",
+                    "source": "shrubRegenCohortClasses",
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "<strong>Shrub Regeneration Score</strong><br><small><i>(Total no. of shrub species regenerating)</i></small>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "shrubRegenSpeciesTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "shrubRegenSeedlingsTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "<strong>Total</strong>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "shrubRegenJuvenilesTotal",
+                                "type": "number"
+                            },
+                            {
+                                "source": "<strong>Total</strong>",
+                                "type": "literal"
+                            },
+                            {
+                                "source": "",
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ]
 }
