@@ -81,12 +81,6 @@
             }
         },
         {
-            "dataType": "number",
-            "description": "Elapse time of the whole activity. In most multi-event activities, this will be less than the sum of events running concurrently during the activity. NB. Do no double-count time for events running concurrently.",
-            "name": "activityElapsedDuration",
-            "validate": "required"
-        },
-        {
             "dataType": "text",
             "name": "eventNotes"
         }
@@ -109,15 +103,12 @@
                             },
                             {
                                 "source": "totalEventHrs",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
                                 "type": "number"
                             }
                         ]
                     }
                 ]
-            }
-        },
-        {
+            },
             "title": "Please list the details of each event run as part of this activity:",
             "source": "events",
             "columns": [
@@ -159,20 +150,7 @@
             ],
             "userAddedRows": true,
             "class": "output-section",
-            "editableRows": "true",
             "type": "table"
-        },
-        {
-            "items": [
-                {
-                    "source": "activityElapsedDuration",
-                    "preLabel": "Activity duration (Hrs):",
-                    "computed": null,
-                    "type": "number"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
         },
         {
             "items": [
