@@ -33,7 +33,13 @@ class Aggregators {
                     output.data[score.listName].each{aggregateValue(getValue(output))}
                 }
                 else {
-                    aggregateValue(getValue(output))
+                    def val = getValue(output)
+                    if (val instanceof List) {
+                        val.each {aggregateValue(it)}
+                    }
+                    else {
+                        aggregateValue(val)
+                    }
                 }
             }
         }
@@ -140,6 +146,7 @@ class Aggregators {
         Map histogram = [:].withDefault { 0 };
 
         public void doAggregation(value) {
+
             if (value =~ /name:/) {
                 // extract sci name from complex key. e.g.
                 // [guid:urn:lsid:biodiversity.org.au:apni.taxon:56760, listId:Atlas of Living Australia, name:Paspalum punctatum, list:]

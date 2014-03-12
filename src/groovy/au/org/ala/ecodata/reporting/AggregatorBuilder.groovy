@@ -74,9 +74,19 @@ class AggregatorBuilder {
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return {activity, output -> Eval.x(activity, 'x?.'+property.replace('.', '?.'))}
+                if (property.contains('.')) {
+                    return {activity, output -> Eval.x(activity, 'x?.'+property.replace('.', '?.'))}
+                }
+                else {
+                    return {activity, output -> activity[property]}
+                }
             case 'output':
-                return {activity, output -> Eval.x(output.data, 'x?.'+property.replace('.', '?.'))}
+                if (property.contains('.')) {
+                    return {activity, output -> Eval.x(output.data, 'x?.'+property.replace('.', '?.'))}
+                }
+                else {
+                    return {activity, output -> output.data[property]}
+                }
             case 'site':
                 return {activity, output -> activity.site ? Eval.x(activity.site, 'x?.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
             case 'project':
