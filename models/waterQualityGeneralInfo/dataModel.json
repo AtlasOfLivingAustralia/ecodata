@@ -9,20 +9,17 @@
         {
             "dataType": "number",
             "description": "The duration of the sampling event in hours",
-            "name": "surveyDuration",
-            "validate": "required"
+            "name": "surveyDuration"
         },
         {
             "dataType": "number",
             "description": "The total number of people participating in the sampling event",
-            "name": "totalParticipants",
-            "validate": "required"
+            "name": "totalParticipants"
         },
         {
             "dataType": "text",
             "description": "The name of the person or group undertaking the sampling event",
-            "name": "samplerName",
-            "validate": "required"
+            "name": "samplerName"
         },
         {
             "dataType": "number",
