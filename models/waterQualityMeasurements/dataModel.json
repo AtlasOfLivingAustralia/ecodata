@@ -59,8 +59,13 @@
         },
         {
             "dataType": "number",
-            "description": "Measure of the amount of nitrogen dissolved in a water sample in milligrams per litre",
+            "description": "Measure of the amount of nitrogen dissolved in a water sample as nitrate in milligrams per litre",
             "name": "surfaceWaterNitrates"
+        },
+        {
+            "dataType": "number",
+            "description": "Measure of the total amount of nitrogen dissolved in a water sample in milligrams per litre",
+            "name": "surfaceWaterTotalN"
         },
         {
             "dataType": "text",
@@ -130,6 +135,12 @@
             },
             {
                 "items": [
+                    {
+                        "source": "surfaceWaterTotalN",
+                        "computed": null,
+                        "preLabel": "Total Nitrogen (mg/L as N):",
+                        "type": "number"
+                    },
                     {
                         "source": "surfaceWaterAvailableP",
                         "computed": null,
