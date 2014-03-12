@@ -36,9 +36,13 @@
         },
         {
             "dataType": "number",
-            "description": "Area in hectares covered by quarantine protocols and/or treatment: *",
-            "name": "areaTreatedHa",
-            "validate": "required"
+            "description": "Area in hectares covered by quarantine protocols and/or treatment:",
+            "name": "areaTreatedHa"
+        },
+        {
+            "dataType": "number",
+            "description": "Number of individual plants or animals covered by quarantine protocols and/or treatment:",
+            "name": "numberTreated"
         },
         {
             "dataType": "number",
@@ -65,7 +69,17 @@
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
-                            "preLabel": "Area covered by quarantine / treatment (Ha):",
+                            "preLabel": "Area quarantined / treated (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "<h3>OR</h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "numberTreated",
+                            "computed": null,
+                            "preLabel": "No. of individuals quarantined / treated:",
                             "type": "number"
                         }
                     ],
