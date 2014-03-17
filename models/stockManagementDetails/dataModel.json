@@ -2,7 +2,7 @@
     "modelName": "Stock Management",
     "dataModel": [
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "Purpose for which grazing is being used as a management tool",
             "name": "stockManagementReason",
             "constraints": [
