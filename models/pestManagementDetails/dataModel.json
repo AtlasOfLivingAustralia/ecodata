@@ -78,6 +78,12 @@
             "validate": "required"
         },
         {
+            "dataType": "number",
+            "description": "The duration in hours over which this activity was conducted",
+            "name": "activityDuration",
+            "validate": "min[0]"
+        },
+        {
             "dataType": "text",
             "name": "notes"
         }
