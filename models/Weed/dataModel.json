@@ -2,44 +2,86 @@
     "modelName": "Weed Treatment Details",
     "dataModel": [
         {
-            "dataType": "species",
-            "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species)",
-            "name": "targetSpecies",
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "The reproductive status of the target species being treated",
-            "name": "reproductiveStatus",
-            "constraints": [
-                "Flowering (FLWG)",
-                "Seeding (SEDG)",
-                "Vegetative & Mature (VGTV)",
-                "Immature (IMTR)",
-                "Not recorded (NRRS)"
+            "dataType": "list",
+            "name": "weedsTreated",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species)",
+                    "name": "targetSpecies",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The reproductive status of the target species being treated",
+                    "name": "reproductiveStatus",
+                    "constraints": [
+                        "Flowering (FLWG)",
+                        "Seeding (SEDG)",
+                        "Vegetative & Mature (VGTV)",
+                        "Immature (IMTR)",
+                        "Not recorded (NRRS)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The general health of the patch of the target species being treated",
+                    "name": "plantHealth",
+                    "constraints": [
+                        "Healthy",
+                        "Stressed",
+                        "Dead"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The control status of the patch of the target species being treated",
+                    "name": "controlStatus",
+                    "constraints": [
+                        "New Infestation",
+                        "Active Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Closed",
+                        "Unknown"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The method used to treat the patch of the target species",
+                    "name": "treatmentMethod",
+                    "constraints": [
+                        "Environmental management - Fire",
+                        "Environmental management - moisture & nutrient control",
+                        "Environmental management - over-planting",
+                        "Chemical control - Foliar spraying",
+                        "Chemical control - Basal bark spraying",
+                        "Chemical control - Stem injection",
+                        "Chemical control - Cut stump",
+                        "Chemical control - Cut and swab",
+                        "Chemical control - Stem scraper",
+                        "Chemical control - Wick applicators",
+                        "Mechanical control - Slashing",
+                        "Mechanical control - Mowing",
+                        "Mechanical control - Dozing",
+                        "Mechanical control - Pushing",
+                        "Mechanical control - Felling",
+                        "Manual control - Hand pulling",
+                        "Manual control - Grubbing/chipping",
+                        "Biological control - Biological agents (specify in notes)",
+                        "Other (specify in notes)"
+                    ]
+                }
             ]
         },
         {
             "dataType": "text",
-            "description": "The general health of the patch of the target species being treated",
-            "name": "plantHealth",
+            "description": "The stage of treatment for the patch of weeds being treated",
+            "name": "treatmentEventType",
             "constraints": [
-                "Healthy",
-                "Stressed",
-                "Dead"
-            ]
-        },
-        {
-            "dataType": "text",
-            "description": "The control status of the patch of the target species being treated",
-            "name": "controlStatus",
-            "constraints": [
-                "New Infestation",
-                "Active Infestation",
-                "Under control",
-                "Under monitoring",
-                "Closed",
-                "Unknown"
+                "Initial treatment",
+                "Follow-up treatment"
             ],
             "validate": "required"
         },
@@ -62,42 +104,6 @@
         },
         {
             "dataType": "text",
-            "description": "The stage of treatment for the patch of the target species being treated",
-            "name": "treatmentEventType",
-            "constraints": [
-                "Initial treatment",
-                "Follow-up treatment"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "The method used to treat the patch of the target species",
-            "name": "treatmentMethod",
-            "constraints": [
-                "Environmental management - Fire",
-                "Environmental management - moisture & nutrient control",
-                "Environmental management - over-planting",
-                "Chemical control - Foliar spraying",
-                "Chemical control - Basal bark spraying",
-                "Chemical control - Stem injection",
-                "Chemical control - Cut stump",
-                "Chemical control - Cut and swab",
-                "Chemical control - Stem scraper",
-                "Chemical control - Wick applicators",
-                "Mechanical control - Slashing",
-                "Mechanical control - Mowing",
-                "Mechanical control - Dozing",
-                "Mechanical control - Pushing",
-                "Mechanical control - Felling",
-                "Manual control - Hand pulling",
-                "Manual control - Grubbing/chipping",
-                "Biological control - Biological agents (specify in notes)",
-                "Other (specify in notes)"
-            ]
-        },
-        {
-            "dataType": "text",
             "description": "Details of chemical treatment including chemical agent and rate of application",
             "name": "chemicalDetails"
         },
@@ -117,42 +123,11 @@
                 {
                     "items": [
                         {
-                            "source": "targetSpecies",
+                            "preLabel": "Type of treatment event:",
+                            "source": "treatmentEventType",
                             "computed": null,
-                            "preLabel": "Target species:",
-                            "type": "autocomplete"
-                        },
-                        {
-                            "source": "reproductiveStatus",
-                            "computed": null,
-                            "preLabel": "Reproductive status at the time of treatment:",
                             "type": "selectOne"
                         },
-                        {
-                            "source": "plantHealth",
-                            "computed": null,
-                            "preLabel": "Plant health at the time of treatment:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "controlStatus",
-                            "computed": null,
-                            "preLabel": "Control status:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "locality",
-                            "computed": null,
-                            "preLabel": "Locality of the treatment area:",
-                            "width": "60%",
-                            "type": "textarea"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
                         {
                             "source": "areaTreatedHa",
                             "computed": null,
@@ -166,17 +141,23 @@
                             "type": "number"
                         },
                         {
-                            "source": "treatmentEventType",
+                            "source": "treatmentCostPerHa",
                             "computed": null,
-                            "preLabel": "Type of treatment event:",
-                            "type": "selectOne"
-                        },
+                            "preLabel": "Treatment cost ($/Ha):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
                         {
-                            "source": "treatmentMethod",
+                            "source": "locality",
                             "computed": null,
-                            "preLabel": "Treatment method:",
-                            "type": "selectOne",
-                            "validate": "required"
+                            "preLabel": "Locality of the treatment area:",
+                            "width": "60%",
+                            "type": "textarea"
                         },
                         {
                             "source": "chemicalDetails",
@@ -194,13 +175,63 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes",
-                "width": "90%",
-                "type": "textarea"
-            }],
+
+            "source": "weedsTreated",
+            "computed": null,
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "Target species:",
+                    "source": "targetSpecies",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Reproductive status at the time of treatment:",
+                    "source": "reproductiveStatus",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Plant health at the time of treatment:",
+                    "source": "plantHealth",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Control status:",
+                    "source": "controlStatus",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Treatment method:",
+                    "source": "treatmentMethod",
+                    "computed": null,
+                    "width": "30%",
+                    "type": "selectOne",
+                    "validate": "required"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+
+
+        },
+        {
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
