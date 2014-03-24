@@ -21,7 +21,8 @@ class AggregatorBuilder {
 
 
     public Aggregator build() {
-        def groupingFunction = createGroupingFunction(groupingSpec)
+        def groupingFunction = createGroupingFunction(score, groupingSpec)
+
         return new Aggregator(groupingSpec.groupTitle, groupingFunction, score, this)
     }
 
@@ -67,35 +68,60 @@ class AggregatorBuilder {
      * }
      * @return
      */
-    Closure createGroupingFunction(groupingSpec) {
+    Closure createGroupingFunction(score, groupingSpec) {
 
         final String property = groupingSpec.property
 
         switch (groupingSpec.entity) {
 
             case 'activity':
-                if (property.contains('.')) {
-                    return {activity, output -> Eval.x(activity, 'x?.'+property.replace('.', '?.'))}
-                }
-                else {
-                    return {activity, output -> activity[property]}
-                }
+                return buildClosure(property, 'activity')
             case 'output':
-                if (property.contains('.')) {
-                    return {activity, output -> Eval.x(output.data, 'x?.'+property.replace('.', '?.'))}
+                def start = 'data'
+                if (score.listName) {
+                    start = ''
                 }
-                else {
-                    return {activity, output -> output.data[property]}
-                }
+                return buildClosure(property, start)
             case 'site':
-                return {activity, output -> activity.site ? Eval.x(activity.site, 'x?.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
+                return buildClosure(property, 'site')
             case 'project':
-                return {activity, output -> activity.project ? Eval.x(activity.project, 'x?.'+property.replace('.', '?.')) : null} // Use of Eval allows nested property access
+                return buildClosure(property, 'project')
             case '*':
-                return {activity, output -> ""}  // No grouping required.
+                return {""}  // No grouping required.
             default:
                 throw new IllegalArgumentException("Invalid grouping Entity: "+groupingSpec.entity)
         }
 
+
+    }
+
+
+    static Map cachedClosures = [:]
+    def buildClosure(String property, String start) {
+
+        def key = property+":"+start
+        if (cachedClosures.containsKey(key)) {
+            return cachedClosures[key]
+        }
+        def closure
+        if (!property.contains('.')) {
+            closure = { row -> return row[start][property]}
+        }
+        else {
+            def parts = property.split('\\.')
+            closure = { row ->
+
+                def data = start?row[start]:row
+                for (String part : parts) {
+                    if (!data) {
+                        return null
+                    }
+                    data = data[part]
+                }
+                return data
+            }
+        }
+        cachedClosures.put(key, closure)
+        return closure
     }
 }

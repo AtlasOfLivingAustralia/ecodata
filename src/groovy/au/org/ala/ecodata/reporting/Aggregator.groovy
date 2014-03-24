@@ -20,6 +20,10 @@ class Aggregator {
         this.score = score
         this.title = title
 
+        if (score.listName) {
+            outputListName = score.listName
+        }
+
         aggregatorsByGroup = [:].withDefault { key ->
             builder.createAggregator(score, key)
         }
@@ -64,8 +68,9 @@ class Aggregator {
      */
     Aggregators.OutputAggregator aggregatorFor(activity, output) {
 
+        output.activity = activity
         // TODO the grouping function should probably specify the default group.
-        String group = groupingFunction(activity, output)
+        String group = groupingFunction(output)
         if (!group) {
             group = DEFAULT_GROUP
         }
