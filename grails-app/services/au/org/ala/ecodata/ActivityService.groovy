@@ -1,4 +1,7 @@
 package au.org.ala.ecodata
+import com.mongodb.BasicDBObject
+import com.mongodb.DBCursor
+import com.mongodb.DBObject
 
 class ActivityService {
 
@@ -17,6 +20,26 @@ class ActivityService {
         includeDeleted ?
             Activity.list().collect { toMap(it, levelOfDetail) } :
             Activity.findAllByStatus(ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     * Accepts a closure that will be called once for each (not deleted) Activity in the system,
+     * passing the details Activity (as a Map) as the single parameter.
+     * Implementation note, this uses the Mongo API directly as using GORM incurs a
+     * significant memory and performance overhead when dealing with so many entities
+     * at once.
+     * @param action the action to be performed on each Activity.
+     * @return
+     */
+    def doWithAllActivities(Closure action) {
+        // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
+        com.mongodb.DBCollection collection = Activity.getCollection()
+        DBObject query = new BasicDBObject('status', ACTIVE)
+        DBCursor results = collection.find(query).batchSize(100)
+
+        results.each { dbObject ->
+            action.call(dbObject.toMap())
+        }
     }
 
     def getAll(List listOfIds, levelOfDetail = []) {

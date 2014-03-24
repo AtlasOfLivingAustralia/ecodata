@@ -14,7 +14,6 @@
  */
 
 package au.org.ala.ecodata
-
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchRequest
@@ -412,6 +411,17 @@ class ElasticSearchService {
                                     }
                                 }
                             }
+                        },
+                        "activities":{
+                            "properties":{
+                                "mainTheme": {
+                                    "type":"multi_field",
+                                    "fields": {
+                                        "mainTheme": {"type":"string", "index":"analyzed"},
+                                        "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                }
+                            }
                         }
                     },
                     "dynamic_templates": [
@@ -585,7 +595,7 @@ class ElasticSearchService {
     def indexHomePage(doc, docType) {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
-            def projectMapDeep = projectService.toMap(doc, LevelOfDetail.NO_ACTIVITIES.name())
+            def projectMapDeep = prepareProjectForHomePageIndex(doc)
             projectMapDeep["className"] = docType
             indexDoc(projectMapDeep, HOMEPAGE_INDEX)
         } catch (StackOverflowError e) {
@@ -670,12 +680,21 @@ class ElasticSearchService {
             it["className"] = new Project().getClass().name
             indexDoc(it, DEFAULT_INDEX)
         }
-        // homepage index
-        def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
-        listDeep.each {
-            it["className"] = new Project().getClass().name
-            //log.debug "project (deep) = ${it as JSON}"
-            indexDoc(it, HOMEPAGE_INDEX)
+        // homepage index (doing some manual batching due to memory constraints)
+        Project.withNewSession {
+            def batchParams = [offset:0, max:50]
+            def projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+
+            while (projects) {
+                projects.each { project ->
+                    Map projectMap = prepareProjectForHomePageIndex(project)
+
+                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                }
+
+                batchParams.offset = batchParams.offset + batchParams.max
+                projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+            }
         }
         log.debug "Indexing all sites"
         def sites = Site.findAll()
@@ -685,30 +704,29 @@ class ElasticSearchService {
             indexDoc(siteMap, DEFAULT_INDEX)
         }
         log.debug "Indexing all activities"
-        def acts = activityService.getAll(false, "flat")
-        acts.each {
-            it["className"] = new Activity().getClass().name
-            indexDoc(it, DEFAULT_INDEX)
+
+        activityService.doWithAllActivities { activity ->
+
+            activity["className"] = Activity.class.getName()
+            indexDoc(activity, DEFAULT_INDEX)
         }
+
+
 
     }
 
     /**
-     * Regenerate the HOMEPAGE_INDEX index only
-     *
-     * @return
+     * Augments the supplied Project with information required by the facets supported on the home page.
+     * Specifically this includes site & activity information.
+     * @param project the project
+     * @return a Map ready for indexing.
      */
-    def generateHomePageIndex() {
-        log.debug "generateHomePageIndex"
-        // clear index
-        deleteIndex(HOMEPAGE_INDEX)
-        // homepage index
-        def listDeep = projectService.list(LevelOfDetail.NO_ACTIVITIES.name(), false)
-        listDeep.each {
-            it["className"] = new Project().getClass().name
-            //log.debug "project (deep) = ${it as JSON}"
-            indexDoc(it, HOMEPAGE_INDEX)
-        }
+    private Map prepareProjectForHomePageIndex(Project project) {
+        def projectMap = projectService.toMap(project, ProjectService.FLAT)
+        projectMap["className"] = new Project().getClass().name
+        projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+        projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+        projectMap
     }
 
     /**
