@@ -27,6 +27,11 @@ class ProjectService {
         }
     }
 
+    def get(String id, levelOfDetail = []) {
+        def p = Project.findByProjectId(id)
+        toMap(p, levelOfDetail)
+    }
+
     def list(levelOfDetail = [], includeDeleted = false) {
         def list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
         list.collect { toMap(it, levelOfDetail) }
