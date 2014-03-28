@@ -8,8 +8,9 @@ class ActivityService {
     static transactional = false
     static final ACTIVE = "active"
     static final FLAT = 'flat'
+    static final SITE = 'site'
 
-    def grailsApplication, outputService, commonService, documentService
+    def grailsApplication, outputService, commonService, documentService, siteService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -66,7 +67,12 @@ class ActivityService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
-        if (levelOfDetail != FLAT && levelOfDetail != LevelOfDetail.NO_OUTPUTS.name()) {
+        if (levelOfDetail == SITE) {
+            if (mapOfProperties.siteId) {
+                mapOfProperties.site = siteService.get(mapOfProperties.siteId, SiteService.FLAT)
+            }
+        }
+        else if (levelOfDetail != FLAT && levelOfDetail != LevelOfDetail.NO_OUTPUTS.name()) {
             mapOfProperties.remove("outputs")
             mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
             mapOfProperties.documents = documentService.findAllForActivityId(act.activityId)
