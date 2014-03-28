@@ -15,6 +15,8 @@ class Score {
     /** The name of the score (as defined in the OutputModel */
     String name
 
+    String category
+
     String listName
 
     /** Defines how this score should be aggregated */
