@@ -19,6 +19,11 @@ class Score {
 
     String listName
 
+    String groupBy
+
+    /** "piechart" or "barchart" only currently */
+    String displayType
+
     /** Defines how this score should be aggregated */
     AGGREGATION_TYPE aggregationType
 

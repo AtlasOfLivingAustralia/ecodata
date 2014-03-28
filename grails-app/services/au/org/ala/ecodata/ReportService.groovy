@@ -20,14 +20,20 @@ class ReportService {
 
         metadataService.activitiesModel().outputs?.each{
             Score.outputScores(it).each { score ->
-                if (score.category) {
-                    println score.category
+                def scoreDetails = [score:score]
+                if (score.groupBy) {
+                    def bits = score.groupBy.split(':')
+                    if (bits.length != 2) {
+                        log.error("Misconfigured score grouping: "+score.groupBy)
+                    }
+                    else {
+                        scoreDetails << [groupBy: [entity: bits[0], property: bits[1], groupTitle: score.label]]
+                    }
                 }
-                toAggregate << [score:score]
+
+                toAggregate << scoreDetails
             }
         }
-        toAggregate << [score:new Score([outputName:'Revegetation Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'totalNumberPlanted', label:'Number of plants planted', units:'kg'] ), groupBy:[groupTitle: 'Plants By Theme', entity:'activity', property:'mainTheme']]
-        toAggregate << [score:new Score([outputName:'Weed Treatment Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'areaTreatedHa', listName:'weedsTreated', label:'Area treated', units:'ha'] ), groupBy:[groupTitle: 'Area treated by species', entity:'output',  property:'targetSpecies.name']]
         toAggregate
     }
 
