@@ -16,12 +16,12 @@
 package au.org.ala.ecodata
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.index.query.BoolFilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.*
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -115,7 +115,6 @@ class ElasticSearchService {
         def docId = getEntityId(doc)
         def docJson = doc as JSON
         index = index?:DEFAULT_INDEX
-        //client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
 
         if (checkForDelete(doc, docId)) {
             return null
@@ -123,10 +122,9 @@ class ElasticSearchService {
 
         try {
             addCustomFields(doc)
-            client.prepareIndex(index, DEFAULT_TYPE, docId)
-                .setSource(
-                    docJson.toString(false)
-                ).execute().actionGet();
+            IndexRequestBuilder builder = client.prepareIndex(index, DEFAULT_TYPE, docId)
+            builder.setSource(docJson.toString(false)).execute().actionGet()
+
         } catch (Exception e) {
             log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
         }
@@ -200,6 +198,10 @@ class ElasticSearchService {
      * @param doc
      */
     def addCustomFields(Map doc) {
+
+        // Remove the mongo id if it exists.
+        doc.remove("_id")
+
         // hand-coded copy fields with different analysers
         doc.docType = getDocType(doc)
 
@@ -256,6 +258,7 @@ class ElasticSearchService {
                 }
             }
         }
+
     }
 
     /**
@@ -311,13 +314,7 @@ class ElasticSearchService {
                                 "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
-                        "reportingThemes": {
-                            "type" : "multi_field",
-                            "fields" : {
-                                "reportingThemes" : {"type" : "string", "index" : "analyzed"},
-                                "reportingThemesFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
+
                         "name": {
                             "type" : "multi_field",
                             "fields" : {
@@ -416,13 +413,27 @@ class ElasticSearchService {
                             "properties":{
                                 "mainTheme": {
                                     "type":"multi_field",
+                                    "path":"just_name",
                                     "fields": {
                                         "mainTheme": {"type":"string", "index":"analyzed"},
                                         "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
                                     }
                                 }
                             }
+                        },
+                        "mainTheme": {
+                            "type":"multi_field",
+                            "path":"just_name",
+                            "fields": {
+                                "mainTheme": {"type":"string", "index":"analyzed"},
+                                "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
+                            }
+                        },
+                        "publicationStatus":{
+                            "type":"string",
+                            "index":"not_analyzed"
                         }
+
                     },
                     "dynamic_templates": [
                         {
@@ -578,10 +589,9 @@ class ElasticSearchService {
                 }
                 break;
             case "au.org.ala.ecodata.Activity":
-                def doc = Activity.findByActivityId(docId)
-                def activityMap = activityService.toMap(doc, "flat")
-                activityMap["className"] = docType
-                indexDoc(activityMap, DEFAULT_INDEX)
+                def doc = activityService.get(docId, ActivityService.FLAT)
+                doc = prepareActivityForIndexing(doc)
+                indexDoc(doc, DEFAULT_INDEX)
                 break;
         }
     }
@@ -706,12 +716,9 @@ class ElasticSearchService {
         log.debug "Indexing all activities"
 
         activityService.doWithAllActivities { activity ->
-
-            activity["className"] = Activity.class.getName()
+            prepareActivityForIndexing(activity)
             indexDoc(activity, DEFAULT_INDEX)
         }
-
-
 
     }
 
@@ -727,6 +734,19 @@ class ElasticSearchService {
         projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
         projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
         projectMap
+    }
+
+    private Map prepareActivityForIndexing(Map activity) {
+        activity["className"] = Activity.class.getName()
+        // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
+        // faceting for reporting.
+
+        if (activity.siteId) {
+            def site = siteService.get(activity.siteId, SiteService.FLAT)
+            activity.sites = [site]
+        }
+        activity.putAll(projectService.get(activity.projectId, ProjectService.FLAT))
+        activity
     }
 
     /**
@@ -769,6 +789,27 @@ class ElasticSearchService {
         return response
     }
 
+
+    def searchActivities(activityFilters, Map paginationParams, String index = DEFAULT_INDEX) {
+        SearchRequest request = new SearchRequest()
+        request.indices(index)
+        request.searchType SearchType.DFS_QUERY_THEN_FETCH
+
+        def queryBuilder = new MatchAllQueryBuilder()
+        if (activityFilters) {
+            def filters = buildFilters(activityFilters)
+            queryBuilder = new FilteredQueryBuilder(queryBuilder, filters)
+        }
+
+        SearchSourceBuilder source =  pagenateQuery(paginationParams).query(queryBuilder)
+
+        request.source(source)
+
+
+        client.search(request).actionGet()
+
+    }
+
     /**
      * Build the search request object from query and params
      *
@@ -789,13 +830,7 @@ class ElasticSearchService {
         request.types(types as String[])
 
         // set pagination stuff
-        SearchSourceBuilder source = new SearchSourceBuilder()
-        source.from(params.offset ? params.offset as int : 0)
-        source.size(params.max ? params.max as int : 10)
-        source.explain(params.explain ?: false)
-        if (params.sort) {
-            source.sort(params.sort, SortOrder.valueOf(params.order?.toUpperCase() ?: "ASC"))
-        }
+        SearchSourceBuilder source = pagenateQuery(params)
 
         // add query
         source.query(queryString(query))
@@ -818,6 +853,17 @@ class ElasticSearchService {
         request.source(source)
 
         return request
+    }
+
+    private SearchSourceBuilder pagenateQuery(Map params) {
+        SearchSourceBuilder source = new SearchSourceBuilder()
+        source.from(params.offset ? params.offset as int : 0)
+        source.size(params.max ? params.max as int : 10)
+        source.explain(params.explain ?: false)
+        if (params.sort) {
+            source.sort(params.sort, SortOrder.valueOf(params.order?.toUpperCase() ?: "ASC"))
+        }
+        source
     }
 
     /**
@@ -925,7 +971,7 @@ class ElasticSearchService {
     }
 
     /**
-     * Helper method to return a List given either a String or String[]
+     * Helper method to return a List given either a List, String or String[]
      *
      * @param filters
      * @return filterList
@@ -936,7 +982,10 @@ class ElasticSearchService {
         if (filters instanceof String[]) {
             // assume a String[] array
             filterList = filters as List
-        } else {
+        } else if (filters instanceof List) {
+            filterList.addAll(filters)
+        }
+        else {
             filterList.add(filters)
         }
 
