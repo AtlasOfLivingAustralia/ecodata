@@ -31,16 +31,15 @@ class ReportService {
         toAggregate
     }
 
-    def queryPaginated(params, Closure action) {
-        def facets = (params.fq?.toList())?: []
+    def queryPaginated(List filters, Closure action) {
 
         // Only dealing with approved activities.
-        facets << PUBLISHED_ACTIVITIES_FILTER
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+        additionalFilters.addAll(filters)
 
-        params.offset = 0
-        params.max = 100
+        Map params = [offset:0, max:100]
 
-        def results = elasticSearchService.searchActivities(facets, params)
+        def results = elasticSearchService.searchActivities(additionalFilters, params)
 
         def total = results.hits.totalHits
         def count = 0
@@ -51,13 +50,13 @@ class ReportService {
                 action(hit)
             }
             params.offset += params.max
-            results  = elasticSearchService.searchActivities(facets, params)
+            results  = elasticSearchService.searchActivities(additionalFilters, params)
             println count
             count++
         }
     }
 
-    def aggregate(params) {
+    def aggregate(List filters) {
 
         def toAggregate = buildReportSpec()
 
@@ -79,7 +78,7 @@ class ReportService {
             }
         }
 
-        queryPaginated(params, aggregateActivity)
+        queryPaginated(filters, aggregateActivity)
 
         def allResults = aggregators.collect {it.results()}
         def outputData = allResults.findAll{it.results}

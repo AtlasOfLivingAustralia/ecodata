@@ -70,7 +70,8 @@ class SearchController {
     }
 
     def dashboardReport() {
-        def results = reportService.aggregate(params)
+        def filters = params.getList("fq")
+        def results = reportService.aggregate(filters)
         render results as JSON
     }
 }
