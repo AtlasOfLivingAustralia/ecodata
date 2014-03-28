@@ -6,6 +6,7 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 class SearchController {
     def searchService
     def elasticSearchService
+    def reportService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -66,5 +67,10 @@ class SearchController {
 
     def indexAll() {
         render elasticSearchService.indexAll() as JSON
+    }
+
+    def dashboardReport() {
+        def results = reportService.aggregate(params)
+        render results as JSON
     }
 }
