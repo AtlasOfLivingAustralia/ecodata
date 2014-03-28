@@ -365,6 +365,7 @@ class ElasticSearchService {
                                                 "mvgFacet" : {"type" : "string", "index" : "not_analyzed"}
                                             }
                                         }
+
                                     }
                                 }
                             }
@@ -401,6 +402,28 @@ class ElasticSearchService {
                                                     "fields" : {
                                                         "mvgs" : {"type" : "string", "index" : "analyzed"},
                                                         "mvgsFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+
+                                                "ibra": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "ibra" : {"type" : "string", "index" : "analyzed"},
+                                                        "ibraFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+                                                "incra4_pb": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "incra4_pb" : {"type" : "string", "index" : "analyzed"},
+                                                        "incra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                    }
+                                                },
+                                                "other": {
+                                                    "type" : "multi_field",
+                                                    "fields" : {
+                                                        "incra4_pb" : {"type" : "string", "index" : "analyzed"},
+                                                        "incra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 }
                                             }
