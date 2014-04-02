@@ -34,13 +34,13 @@ class Aggregator {
         activity.outputs?.each { output ->
             if (outputListName) {
                 output.data[outputListName].each{
-                    Aggregators.OutputAggregator aggregator = aggregatorFor(activity, it)
-                    aggregator.aggregate(output)
+                    List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, it)
+                    aggregators.each {aggregator -> aggregator.aggregate(output)}
                 }
             }
             else {
-                Aggregators.OutputAggregator aggregator = aggregatorFor(activity, output)
-                aggregator.aggregate(output)
+                List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, output)
+                aggregators.each {aggregator -> aggregator.aggregate(output)}
             }
         }
 
@@ -66,16 +66,20 @@ class Aggregator {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    Aggregators.OutputAggregator aggregatorFor(activity, output) {
+    List<Aggregators.OutputAggregator> aggregatorFor(activity, output) {
 
         output.activity = activity
         // TODO the grouping function should probably specify the default group.
-        String group = groupingFunction(output)
+        def group = groupingFunction(output)
+
+        if (group instanceof List) {
+            return group.collect { aggregatorsByGroup[group]}
+        }
+
         if (!group) {
             group = DEFAULT_GROUP
         }
-
-        return aggregatorsByGroup[group]
+        return [aggregatorsByGroup[group]]
     }
 
 

@@ -70,8 +70,11 @@ class Aggregators {
                     log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
                 }
             }
-            else {
+            else if (value instanceof Number) {
                 numeric = value
+            }
+            else {
+                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
             }
             return numeric
         }
