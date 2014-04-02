@@ -412,18 +412,18 @@ class ElasticSearchService {
                                                         "ibraFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 },
-                                                "incra4_pb": {
+                                                "imcra4_pb": {
                                                     "type" : "multi_field",
                                                     "fields" : {
-                                                        "incra4_pb" : {"type" : "string", "index" : "analyzed"},
-                                                        "incra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                        "imcra4_pb" : {"type" : "string", "index" : "analyzed"},
+                                                        "imcra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 },
                                                 "other": {
                                                     "type" : "multi_field",
                                                     "fields" : {
-                                                        "incra4_pb" : {"type" : "string", "index" : "analyzed"},
-                                                        "incra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                                        "other" : {"type" : "string", "index" : "analyzed"},
+                                                        "otherFacet" : {"type" : "string", "index" : "not_analyzed"}
                                                     }
                                                 }
                                             }
