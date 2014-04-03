@@ -46,7 +46,7 @@
             <tbody>
                 <tr>
                     <td>
-                        GET /external/draft/projectActivities
+                        GET /ws/external/draft/projectActivities
                     </td>
                     <td>
                         Returns the collection of activities to be undertaken by a project.
@@ -54,7 +54,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <g:link action="postProjectActivities">POST /external/draft/projectActivities</g:link>
+                        <g:link action="postProjectActivities">POST /ws/external/draft/projectActivities</g:link>
                     </td>
                     <td>
                         Updates the output targets and activities that will be undertaken by a project.
