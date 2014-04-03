@@ -105,7 +105,7 @@ class AggregatorBuilder {
         }
         def closure
         if (!property.contains('.')) {
-            closure = { row -> return row[start][property]}
+            closure = { row -> return start?row[start][property]:row[property]}
         }
         else {
             def parts = property.split('\\.')

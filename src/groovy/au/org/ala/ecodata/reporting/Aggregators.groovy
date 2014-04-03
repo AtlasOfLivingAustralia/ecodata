@@ -30,7 +30,7 @@ class Aggregators {
         public void aggregate(output) {
             if (output.name == score.outputName) {
                 if (score.listName) {
-                    output.data[score.listName].each{aggregateValue(getValue(output))}
+                    output.data[score.listName].each{aggregateValue(it[score.name])}
                 }
                 else {
                     def val = getValue(output)
