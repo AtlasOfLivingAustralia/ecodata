@@ -65,9 +65,9 @@
         </table>
 
 
-        <h4>Project sites</h4>
+        <h4>Project Details</h4>
         <p>
-            The collection of sites on which project activities will be undertaken.  A site is defined by a name, description and extent.
+            Details of a project, including sites and activities.
         </p>
 
         <table class="table table-striped">
@@ -79,10 +79,10 @@
             <tbody>
             <tr>
                 <td>
-                    <g:link action="getProjectSites">GET /external/draft/projectSites</g:link>
+                    <g:link action="getProjectSites">GET /ws/external/draft/projectDetails</g:link>
                 </td>
                 <td>
-                    Returns the collection of sites on which project activities will be undertaken.  In the short term, it is expected that the
+                    Returns details of project sites and activities.  In the short term, it is expected that the
                     project sites will be defined in the MERIT system and referenced by uuid when using the <g:createLink action="postProjectActivities">POST /external/draft/projectActivities</g:createLink> API.
                 </td>
 

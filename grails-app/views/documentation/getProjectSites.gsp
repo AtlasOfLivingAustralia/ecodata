@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta name="layout" content="api"/>
-    <title>MERIT API - POST /POST /external/draft/getProjectSites</title>
+    <title>MERIT API - POST /ws/external/draft/getProjectDetails</title>
     <r:require modules="application, app_bootstrap, vkbeautify"/>
 </head>
 
@@ -18,10 +18,10 @@
     </div>
 
     <div class="row-fluid">
-        <h3>Get project sites</h3>
+        <h3>Get project details</h3>
         <h4>Description</h4>
         <p>
-            Returns the sites that have been defined for use by a Project.
+            Returns the sites and activities that have been defined for a Project.
         </p>
 
         <h4>Authentication</h4>
@@ -29,7 +29,7 @@
             In the short term requests will only be accepted from clients with an IP address appearing on a white list.
         </p>
         <h4>Method / URL</h4>
-        GET /external/draft/projectSites
+        GET /ws/external/draft/projectDetails
 
         <h4>Parameters</h4>
         <table class="table table-striped table-bordered">
