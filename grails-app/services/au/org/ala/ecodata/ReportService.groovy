@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.Aggregator
 import au.org.ala.ecodata.reporting.AggregatorBuilder
 import au.org.ala.ecodata.reporting.Score
-import org.elasticsearch.search.SearchHit
 /**
  * The ReportService aggregates and returns output scores.
  */
@@ -48,17 +47,15 @@ class ReportService {
         def results = elasticSearchService.searchActivities(additionalFilters, params)
 
         def total = results.hits.totalHits
-        def count = 0
         while (params.offset < total) {
 
             def hits = results.hits.hits
-            for (SearchHit hit : hits) {
-                action(hit)
+            for (def hit : hits) {
+                action(hit.source)
             }
             params.offset += params.max
+
             results  = elasticSearchService.searchActivities(additionalFilters, params)
-            println count
-            count++
         }
     }
 
@@ -69,8 +66,7 @@ class ReportService {
         List<Aggregator> aggregators = buildAggregators(toAggregate)
         def metadata = [activities: 0, distinctSites:new HashSet(), distinctProjects:new HashSet()]
 
-        def aggregateActivity = { hit->
-            def activity = hit.getSource()
+        def aggregateActivity = { activity ->
             metadata.activities++
             metadata.distinctProjects << activity.projectId
             if (activity.sites) {
