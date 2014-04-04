@@ -17,31 +17,22 @@ class Aggregators {
         String group
         Score score
         int count;
-        boolean scoreNested = false
 
         public void setScore(Score score) {
             this.score = score
-            if (score.name.contains('.')) {
-                scoreNested = true
-            }
-
         }
 
         public void aggregate(output) {
-            if (output.name == score.outputName) {
-                if (score.listName) {
-                    output.data[score.listName].each{aggregateValue(it[score.name])}
-                }
-                else {
-                    def val = getValue(output)
-                    if (val instanceof List) {
-                        val.each {aggregateValue(it)}
-                    }
-                    else {
-                        aggregateValue(val)
-                    }
-                }
+
+            def val = getValue(output)
+            if (val instanceof List) {
+                val.each {aggregateValue(it)}
             }
+            else {
+                aggregateValue(val)
+            }
+
+
         }
 
         public void aggregateValue(value) {
@@ -52,10 +43,8 @@ class Aggregators {
         }
 
         def getValue(output) {
-            if (scoreNested) {
-                return Eval.x(output.data, 'x.'+score.name.replace('.', '?.'))
-            }
-            return output.data[score.name]
+
+            return output[score.name]
         }
 
         def getValueAsNumeric(value) {

@@ -32,15 +32,17 @@ class Aggregator {
     def aggregate(activity) {
 
         activity.outputs?.each { output ->
-            if (outputListName) {
-                output.data[outputListName].each{
-                    List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, it)
-                    aggregators.each {aggregator -> aggregator.aggregate(output)}
+            if (output.name == score.outputName) {
+                if (outputListName) {
+                    output.data[outputListName].each{
+                        List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, it)
+                        aggregators.each {aggregator -> aggregator.aggregate(it)}
+                    }
                 }
-            }
-            else {
-                List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, output)
-                aggregators.each {aggregator -> aggregator.aggregate(output)}
+                else {
+                    List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, output)
+                    aggregators.each {aggregator -> aggregator.aggregate(output.data)}
+                }
             }
         }
 
