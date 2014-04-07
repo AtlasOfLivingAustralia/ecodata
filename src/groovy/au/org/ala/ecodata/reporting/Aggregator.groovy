@@ -75,7 +75,7 @@ class Aggregator {
         def group = groupingFunction(output)
 
         if (group instanceof List) {
-            return group.collect { aggregatorsByGroup[group]}
+            return group.collect { aggregatorsByGroup[it]}
         }
 
         if (!group) {
