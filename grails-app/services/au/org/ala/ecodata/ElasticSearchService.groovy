@@ -768,7 +768,10 @@ class ElasticSearchService {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
             activity.sites = [site]
         }
-        activity.putAll(projectService.get(activity.projectId, ProjectService.FLAT))
+        def project = projectService.get(activity.projectId, ProjectService.FLAT)
+        if (project) {
+            activity.putAll(project)
+        }
         activity
     }
 

@@ -29,7 +29,8 @@ class ProjectService {
 
     def get(String id, levelOfDetail = []) {
         def p = Project.findByProjectId(id)
-        toMap(p, levelOfDetail)
+
+        return p?toMap(p, levelOfDetail):null
     }
 
     def list(levelOfDetail = [], includeDeleted = false) {
