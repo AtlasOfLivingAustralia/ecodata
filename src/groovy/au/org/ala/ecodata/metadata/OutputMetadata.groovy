@@ -43,10 +43,6 @@ class OutputMetadata {
 
 
     def findViewByName(name, context = null) {
-        if (name == 'photoPointId') {
-        println name
-        println metadata
-        }
 
         if (!context) {
             context = metadata.viewModel

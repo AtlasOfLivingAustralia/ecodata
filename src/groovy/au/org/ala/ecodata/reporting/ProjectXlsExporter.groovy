@@ -8,11 +8,12 @@ import pl.touk.excel.export.multisheet.AdditionalSheet
  */
 class ProjectXlsExporter {
 
-    def projectHeaders = ['Name', 'Description']
+    def projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program']
 
-    def projectProperties = ['name', 'description']
-    def siteHeaders = ['Site name']
-    def siteProperties = ['name']
+    def projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram']
+
+    def siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
+    def siteProperties = ['siteID', 'name', 'description', 'lat', 'lon']
     def activityHeaders = ['Project ID','Activity ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
     def activityProperties = ['projectId', 'activityId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
@@ -39,7 +40,10 @@ class ProjectXlsExporter {
         projectSheet.add([project], projectProperties)
 
         if (project.sites) {
-            sitesSheet.add(project.sites, siteProperties)
+            def sites = project.sites.collect {
+                [siteId:it.siteId, name:it.name, description:it.description, lat:it.extent?.geometry?.centre[1], lon:it.extent?.geometry?.centre[0]]
+            }
+            sitesSheet.add(sites, siteProperties)
         }
         if (project.activites) {
 

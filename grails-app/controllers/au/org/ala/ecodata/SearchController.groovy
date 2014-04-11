@@ -100,11 +100,8 @@ class SearchController {
         exporter.setResponseHeaders(response)
         ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
 
-
-        ids.each{
-            def project = projectService.get(it,ProjectService.ALL)
-            projectExporter.export(project)
-        }
+        List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+        projectExporter.exportAll(projects)
         exporter.sizeColumns()
 
         exporter.save(response.outputStream)
