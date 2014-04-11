@@ -48,7 +48,7 @@ class ProjectXlsExporter {
             activitiesSheet.add(project.activites, activityProperties)
 
             project.activites.each { activity ->
-                activity.outputs?.each { output ->
+                activity?.outputs?.each { output ->
                     outputsByType[output.name] << output
                 }
             }
