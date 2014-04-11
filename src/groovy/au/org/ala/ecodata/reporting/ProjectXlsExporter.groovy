@@ -37,19 +37,22 @@ class ProjectXlsExporter {
         sitesSheet()
         activitiesSheet()
 
-        projectSheet.add([project], projectProperties)
+        int row = projectSheet.getSheet().lastRowNum
+        projectSheet.add([project], projectProperties, row+1)
 
         if (project.sites) {
             def sites = project.sites.collect {
                 [siteId:it.siteId, name:it.name, description:it.description, lat:it.extent?.geometry?.centre[1], lon:it.extent?.geometry?.centre[0]]
             }
-            sitesSheet.add(sites, siteProperties)
+            row = sitesSheet.getSheet().lastRowNum
+            sitesSheet.add(sites, siteProperties, row+1)
         }
         if (project.activites) {
 
             def outputsByType = [:].withDefault { [] }
 
-            activitiesSheet.add(project.activites, activityProperties)
+            row = sitesSheet.getSheet().lastRowNum
+            activitiesSheet.add(project.activites, activityProperties, row+1)
 
             project.activites.each { activity ->
                 activity?.outputs?.each { output ->
@@ -66,10 +69,11 @@ class ProjectXlsExporter {
                         outputSheets[outputName] = exporter.addSheet(outputName, expandedHeaders)
                     }
                     AdditionalSheet outputSheet = outputSheets[outputName]
+                    row = outputSheet.sheet.lastRowNum
 
 
                     def getters = [new ConstantGetter('projectId', project.projectId), 'activityId', *config.propertyGetters]
-                    outputSheet.add(data, getters)
+                    outputSheet.add(data, getters, row+1)
                 }
             }
         }
