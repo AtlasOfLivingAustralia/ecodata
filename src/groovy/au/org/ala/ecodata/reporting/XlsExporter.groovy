@@ -25,7 +25,7 @@ class XlsExporter extends WebXlsxExporter {
     public static String sheetName(name) {
         def end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH)-1
         def shortName = name[0..end]
-        shortName = shortName.replaceAll('\\/', 'and')
+        shortName = shortName.replaceAll('[^a-zA-z0-9 ]', '')
 
         shortName
     }
