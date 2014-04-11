@@ -13,7 +13,7 @@ class ProjectXlsExporter {
     def projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram']
 
     def siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
-    def siteProperties = ['siteID', 'name', 'description', 'lat', 'lon']
+    def siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     def activityHeaders = ['Project ID','Activity ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
     def activityProperties = ['projectId', 'activityId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
@@ -51,7 +51,7 @@ class ProjectXlsExporter {
 
             def outputsByType = [:].withDefault { [] }
 
-            row = sitesSheet.getSheet().lastRowNum
+            row = activitiesSheet.getSheet().lastRowNum
             activitiesSheet.add(project.activites, activityProperties, row+1)
 
             project.activites.each { activity ->
