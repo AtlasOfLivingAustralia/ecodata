@@ -1,12 +1,19 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ProjectXlsExporter
+import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 
 class SearchController {
     def searchService
     def elasticSearchService
     def reportService
+    def projectService
+    def metadataService
+
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -74,4 +81,33 @@ class SearchController {
         def results = reportService.aggregate(filters)
         render results as JSON
     }
+
+    def downloadSearchResults() {
+        params.max = 1000
+        params.offset = 0
+
+        SearchResponse res = elasticSearchService.search(params.query, params, "")
+
+        Set ids = new HashSet()
+
+        for (SearchHit hit : res.hits.hits) {
+            if (hit.source.projectId) {
+                ids << hit.source.projectId
+            }
+        }
+
+        XlsExporter exporter = new XlsExporter("results")
+        exporter.setResponseHeaders(response)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
+
+
+        ids.each{
+            def project = projectService.get(it,ProjectService.ALL)
+            projectExporter.export(project)
+        }
+        exporter.sizeColumns()
+
+        exporter.save(response.outputStream)
+    }
+
 }

@@ -13,8 +13,8 @@ class ProjectXlsExporter {
     def projectProperties = ['name', 'description']
     def siteHeaders = ['Site name']
     def siteProperties = ['name']
-    def activityHeaders = ['ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
-    def activityProperties = ['activityId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
+    def activityHeaders = ['Project ID','Activity ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
+    def activityProperties = ['projectId', 'activityId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
     def metadataService
     def XlsExporter exporter
@@ -57,11 +57,15 @@ class ProjectXlsExporter {
             outputsByType.each { outputName, data ->
                 def config = outputProperties(outputName)
                 if (config.headers) {
+                    def expandedHeaders = ['Project ID', 'Activity ID', *config.headers]
                     if (!outputSheets[outputName]) {
-                        outputSheets[outputName] = exporter.addSheet(outputName, config.headers)
+                        outputSheets[outputName] = exporter.addSheet(outputName, expandedHeaders)
                     }
                     AdditionalSheet outputSheet = outputSheets[outputName]
-                    outputSheet.add(data, config.propertyGetters)
+
+
+                    def getters = [new ConstantGetter('projectId', project.projectId), 'activityId', *config.propertyGetters]
+                    outputSheet.add(data, getters)
                 }
             }
         }
@@ -113,9 +117,27 @@ class ProjectXlsExporter {
                 headers << it.description
             }
         }
-        println headers
         def propertyGetters = properties.collect{new OutputDataPropertiesBuilder(it, model)}
         [headers:headers, propertyGetters:propertyGetters]
+    }
+
+    class ConstantGetter implements Getter<String> {
+
+        def name, value
+
+        public ConstantGetter(name, value) {
+            this.name = name
+            this.value = value
+        }
+        @Override
+        String getPropertyName() {
+            return name
+        }
+
+        @Override
+        String getFormattedValue(Object object) {
+            return value
+        }
     }
 
     class Value implements OutputModelProcessor.ProcessingContext {
@@ -181,7 +203,10 @@ class ProjectXlsExporter {
         @Override
         def stringList(Object node, Value outputValue) {
             def val = outputValue.value
-            return val?val.join(','):""
+            if (val instanceof List) {
+                val = val.join(',')
+            }
+            return val?:""
         }
 
         // Implementation of Getter<String>

@@ -24,7 +24,10 @@ class XlsExporter extends WebXlsxExporter {
 
     public static String sheetName(name) {
         def end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH)-1
-        return name[0..end]
+        def shortName = name[0..end]
+        shortName = shortName.replaceAll('\\/', 'and')
+
+        shortName
     }
     public AdditionalSheet addSheet(name, headers) {
 

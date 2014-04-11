@@ -66,6 +66,8 @@ class ProjectController {
         exporter.setResponseHeaders(response)
         ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
         projectExporter.export(project)
+        exporter.sizeColumns()
+
         exporter.save(response.outputStream)
     }
 
