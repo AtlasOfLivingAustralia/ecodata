@@ -43,6 +43,10 @@ class OutputMetadata {
 
 
     def findViewByName(name, context = null) {
+        if (name == 'photoPointId') {
+        println name
+        println metadata
+        }
 
         if (!context) {
             context = metadata.viewModel
@@ -60,7 +64,7 @@ class OutputMetadata {
     }
 
     def getNestedViewNodes(node) {
-        return (node.type == 'table') ? node.columns: node.items
+        return (node.type in ['table', 'photoPoints'] ) ? node.columns: node.items
     }
     def getNestedDataModelNodes(node) {
         return node.columns

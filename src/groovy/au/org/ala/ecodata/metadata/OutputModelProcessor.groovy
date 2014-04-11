@@ -11,13 +11,19 @@ class OutputModelProcessor {
     interface Processor<T extends ProcessingContext> {
         def number(node, T context)
 
+        def integer(node, T context)
+
         def text(node, T context)
 
         def date(node, T context)
 
         def image(node, T context)
 
+        def embeddedImages(node, T context)
+
         def species(node, T context)
+
+        def stringList(node, T context)
     }
 
     def processNode(processor, node, context) {
@@ -26,6 +32,9 @@ class OutputModelProcessor {
         switch(type) {
             case 'number':
                 processor.number(node, context);
+                break;
+            case 'integer':
+                processor.integer(node, context);
                 break;
             case 'text':
                 processor.text(node, context);
@@ -36,8 +45,14 @@ class OutputModelProcessor {
             case 'image':
                 processor.image(node, context);
                 break;
+            case 'embeddedImages':
+                processor.embeddedImages(node, context);
+                break;
             case 'species':
                 processor.species(node, context);
+                break;
+            case 'stringList':
+                processor.stringList(node, context)
                 break;
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")

@@ -1,35 +1,24 @@
 package au.org.ala.ecodata
-
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
-import org.apache.poi.hssf.util.HSSFColor
+import au.org.ala.ecodata.reporting.XlsExporter
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.ss.util.CellReference
-import pl.touk.excel.export.WebXlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
-import javax.servlet.http.HttpServletResponse
+class OutputUploadTemplateBuilder extends XlsExporter {
 
-class OutputUploadTemplateBuilder extends WebXlsxExporter {
-
-    static final int MAX_SHEET_NAME_LENGTH = 31
     def model
     def outputName
 
     public OutputUploadTemplateBuilder(outputName, model) {
+        super(outputName)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
     }
 
-
-    public static String sheetName(name) {
-        def end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH)-1
-        return name[0..end]
-    }
     public void build() {
-
-        AdditionalSheet outputSheet = sheet(sheetName(outputName))
 
         def headers = model.collect {
             def label = it.label ?: it.name
@@ -38,45 +27,16 @@ class OutputUploadTemplateBuilder extends WebXlsxExporter {
             }
             label
         }
-        outputSheet.fillHeader(headers)
-        styleRow(outputSheet, 0, headerStyle(getWorkbook()))
+        AdditionalSheet outputSheet = addSheet(outputName, headers)
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
         finalise()
     }
 
-    def styleRow(AdditionalSheet sheet, int row, CellStyle style) {
-        sheet.sheet.getRow(row).cellIterator().toList().each {
-            it.setCellStyle(style)
-        }
-    }
-
-    private CellStyle headerStyle(Workbook workbook) {
-        CellStyle headerStyle = workbook.createCellStyle();
-        headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
-        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
-        Font font = workbook.createFont();
-        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
-        font.setColor(HSSFColor.WHITE.index);
-        headerStyle.setFont(font);
-        return headerStyle
-    }
-
     def finalise() {
-        for (Sheet sheet:workbook) {
-            int columns = sheet.getRow(0).getLastCellNum()
-            for (int col=0; col<columns; col++) {
-                sheet.autoSizeColumn(col);
-            }
-        }
-
-
+        sizeColumns()
     }
 
-    WebXlsxExporter setResponseHeaders(HttpServletResponse response) {
-        super.setResponseHeaders(response, outputName+filenameSuffix)
-        this
-    }
 }
 
 
@@ -151,6 +111,11 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     @Override
+    def integer(Object node, ExcelValidationContext context) {
+        number(node, context)
+    }
+
+    @Override
     def text(Object node, ExcelValidationContext context) {
         if (node.constraints) {
 
@@ -186,7 +151,17 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     @Override
+    def embeddedImages(Object node, ExcelValidationContext context) {
+
+    }
+
+    @Override
     def species(Object node, ExcelValidationContext context) {
+
+    }
+
+    @Override
+    def stringList(Object node, ExcelValidationContext context) {
 
     }
 

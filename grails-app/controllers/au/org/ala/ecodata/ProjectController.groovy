@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ProjectXlsExporter
+import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 
 class ProjectController {
@@ -41,11 +43,30 @@ class ProjectController {
         } else {
             def p = Project.findByProjectId(id)
             if (p) {
-                asJson projectService.toMap(p, levelOfDetail)
+
+                withFormat {
+                    json {
+                        asJson projectService.toMap(p, levelOfDetail)
+                    }
+                    xlsx {
+                        asXlsx projectService.toMap(p, 'all')  // Probably should only support one level of detail?
+                    }
+                }
+
+
             } else {
                 render (status: 404, text: 'No such id')
             }
         }
+    }
+
+    def asXlsx(project) {
+
+        XlsExporter exporter = new XlsExporter(project.name)
+        exporter.setResponseHeaders(response)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
+        projectExporter.export(project)
+        exporter.save(response.outputStream)
     }
 
     @RequireApiKey
