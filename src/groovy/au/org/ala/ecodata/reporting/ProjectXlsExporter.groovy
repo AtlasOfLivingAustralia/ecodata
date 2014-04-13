@@ -218,6 +218,12 @@ class ProjectXlsExporter {
             return val?:""
         }
 
+        @Override
+        def booleanType(Object node, Value outputValue) {
+            def val = outputValue.value
+            return Boolean.parseBoolean(val?:"")
+        }
+
         // Implementation of Getter<String>
         @Override
         String getPropertyName() {

@@ -24,6 +24,8 @@ class OutputModelProcessor {
         def species(node, T context)
 
         def stringList(node, T context)
+
+        def booleanType(node, T context)
     }
 
     def processNode(processor, node, context) {
@@ -53,6 +55,9 @@ class OutputModelProcessor {
                 break;
             case 'stringList':
                 processor.stringList(node, context)
+                break;
+            case 'boolean':
+                processor.booleanType(node, context)
                 break;
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")

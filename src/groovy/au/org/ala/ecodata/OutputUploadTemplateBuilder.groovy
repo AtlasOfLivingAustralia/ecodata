@@ -171,4 +171,9 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
         return range
     }
 
+    @Override
+    def booleanType(node, ExcelValidationContext context) {
+
+    }
+
 }
