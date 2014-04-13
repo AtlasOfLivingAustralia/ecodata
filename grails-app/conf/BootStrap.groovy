@@ -2,6 +2,7 @@ import au.org.ala.ecodata.AccessLevel
 import au.org.ala.ecodata.AuditEventType
 import au.org.ala.ecodata.GormEventListener
 import grails.converters.JSON
+import net.sf.json.JSONNull
 import org.bson.BSON
 import org.bson.Transformer
 import org.bson.types.ObjectId
@@ -54,6 +55,8 @@ class BootStrap {
         JSON.registerObjectMarshaller(AuditEventType) { AuditEventType eventType ->
             return eventType.toString()
         }
+
+        JSON.registerObjectMarshaller(JSONNull, {return ""})
 
     }
 
