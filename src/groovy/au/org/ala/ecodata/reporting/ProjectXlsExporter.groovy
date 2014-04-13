@@ -221,7 +221,10 @@ class ProjectXlsExporter {
         @Override
         def booleanType(Object node, Value outputValue) {
             def val = outputValue.value
-            return Boolean.parseBoolean(val?:"")
+            if (val instanceof Boolean) {
+                val = Boolean.parseBoolean(val)
+            }
+            return val?:""
         }
 
         // Implementation of Getter<String>
