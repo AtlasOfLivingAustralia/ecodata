@@ -42,7 +42,8 @@ class ProjectXlsExporter {
 
         if (project.sites) {
             def sites = project.sites.collect {
-                [siteId:it.siteId, name:it.name, description:it.description, lat:it.extent?.geometry?.centre[1], lon:it.extent?.geometry?.centre[0]]
+                def centre = it.extent?.geometry?.centre
+                [siteId:it.siteId, name:it.name, description:it.description, lat:centre?centre[1]:"", lon:centre?centre[0]:""]
             }
             row = sitesSheet.getSheet().lastRowNum
             sitesSheet.add(sites, siteProperties, row+1)
