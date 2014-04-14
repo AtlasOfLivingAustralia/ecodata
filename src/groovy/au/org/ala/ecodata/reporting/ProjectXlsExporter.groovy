@@ -14,8 +14,8 @@ class ProjectXlsExporter {
 
     def siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     def siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    def activityHeaders = ['Project ID','Activity ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
-    def activityProperties = ['projectId', 'activityId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
+    def activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
+    def activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
     def metadataService
     def XlsExporter exporter
