@@ -83,8 +83,11 @@ class SearchController {
     }
 
     def downloadSearchResults() {
-        params.max = 1000
-        params.offset = 0
+
+        if (!params.max) {
+            params.max = 100
+            params.offset = 0
+        }
 
         SearchResponse res = elasticSearchService.search(params.query, params, "")
 
@@ -96,15 +99,26 @@ class SearchController {
             }
         }
 
-        XlsExporter exporter = new XlsExporter("results")
-        exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
+        withFormat {
+            json {
+                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+                render projects as JSON
 
-        List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
-        projectExporter.exportAll(projects)
-        exporter.sizeColumns()
+            }
+            xlsx {
+                XlsExporter exporter = new XlsExporter("results")
+                exporter.setResponseHeaders(response)
+                ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
 
-        exporter.save(response.outputStream)
+                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+                projectExporter.exportAll(projects)
+                exporter.sizeColumns()
+
+                exporter.save(response.outputStream)
+            }
+        }
+
+
     }
 
 }
