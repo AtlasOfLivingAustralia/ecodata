@@ -62,6 +62,8 @@ class ProjectService {
                 getActivityIdsForProject(prj.projectId).each {
                     mapOfProperties.activites << activityService.get(it, ActivityService.ACTIVE)
                 }
+                // Don't want to duplicate the activities as they can be large, so remove from the sites.
+                mapOfProperties.sites?.each { it.remove('activities')}
             }
         }
         mapOfProperties.findAll {k,v -> v != null}
