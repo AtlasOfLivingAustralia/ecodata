@@ -48,7 +48,7 @@ class ProjectXlsExporter {
             row = sitesSheet.getSheet().lastRowNum
             sitesSheet.add(sites, siteProperties, row+1)
         }
-        if (project.activites) {
+        if (project.activities) {
 
             def outputsByType = [:].withDefault { [] }
 

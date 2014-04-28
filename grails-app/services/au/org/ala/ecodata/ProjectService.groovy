@@ -58,9 +58,9 @@ class ProjectService {
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
             if (levelOfDetail == ALL) {
-                mapOfProperties.activites = []
+                mapOfProperties.activities = []
                 getActivityIdsForProject(prj.projectId).each {
-                    mapOfProperties.activites << activityService.get(it, ActivityService.ACTIVE)
+                    mapOfProperties.activities << activityService.get(it, ActivityService.ACTIVE)
                 }
                 // Don't want to duplicate the activities as they can be large, so remove from the sites.
                 mapOfProperties.sites?.each { it.remove('activities')}

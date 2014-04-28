@@ -164,7 +164,7 @@ class ExternalController {
             }
             activities << activity
         }
-        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalId, sites:sites, activites:activities]
+        def projectDetails = [projectId:all.projectId, grantId:all.grantId, externalId:all.externalId, sites:sites, activities:activities]
 
         render projectDetails as JSON
     }

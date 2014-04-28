@@ -18,7 +18,7 @@
         </div>
 
         <div class="row-fluid">
-            <h3>Update project activites</h3>
+            <h3>Update project activities</h3>
             <h4>Description</h4>
             <p></p>
             <ul>
