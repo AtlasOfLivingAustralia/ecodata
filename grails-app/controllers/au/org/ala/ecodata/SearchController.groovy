@@ -121,4 +121,9 @@ class SearchController {
 
     }
 
+    def userReport() {
+
+        render reportService.userSummary() as JSON
+    }
+
 }

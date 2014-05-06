@@ -7,7 +7,7 @@ import au.org.ala.ecodata.reporting.Score
  */
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService
+    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService
 
     static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
 
@@ -146,6 +146,18 @@ class ReportService {
         aggregators
     }
 
+    def userSummary() {
+
+        def userSummary = [:]
+        def users = UserPermission.findAll().groupBy{it.userId}
+        users.each { userId, projects ->
+            def userDetails = userService.lookupUserDetails(userId)
+
+            userSummary[userId] = [projects:projects, userDetails:userDetails]
+        }
+
+        userSummary
+    }
 
 
 }
