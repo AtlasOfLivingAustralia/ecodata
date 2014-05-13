@@ -102,7 +102,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th class="api-method">Name</th><th class="api-description">Description</th>
+                <th class="api-method">Name</th><th class="api-description"><g:message code="api.property.description.header" default="Definition"/></th>
             </tr>
             </thead>
             <tbody>
@@ -124,7 +124,7 @@
         <table class="table table-striped">
             <thead>
             <tr>
-                <th class="output-name">Name</th><th class="output-description">Description</th><th class="output-scores">Scores</th>
+                <th class="output-name">Name</th><th class="output-description"><g:message code="api.property.description.header" default="Definition"/></th><th class="output-scores">Scores</th>
             </tr>
             </thead>
             <tbody>
