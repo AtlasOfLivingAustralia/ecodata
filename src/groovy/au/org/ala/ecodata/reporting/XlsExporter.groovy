@@ -62,9 +62,13 @@ class XlsExporter extends WebXlsxExporter {
 
     def sizeColumns() {
         for (Sheet sheet:workbook) {
-            int columns = sheet.getRow(0).getLastCellNum()
-            for (int col=0; col<columns; col++) {
-                sheet.autoSizeColumn(col);
+            // For table upload templates, the validation sheet may have no rows if nothing needs validation.
+            def row = sheet.getRow(0)
+            if (row) {
+                int columns = row.getLastCellNum()
+                for (int col = 0; col < columns; col++) {
+                    sheet.autoSizeColumn(col);
+                }
             }
         }
 
