@@ -102,6 +102,12 @@
             "validate": "required"
         },
         {
+            "dataType": "number",
+            "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
+            "name": "groupsSupported",
+            "validate": "min[0]"
+        },
+        {
             "dataType": "text",
             "name": "eventNotes"
         }
@@ -178,16 +184,34 @@
         {
             "items": [
                 {
-                    "preLabel": "Delivery partners:",
-                    "source": "deliveryPartner",
-                    "computed": null,
-                    "type": "selectMany"
+                    "items": [
+                        {
+                            "source": "deliveryPartner",
+                            "preLabel": "Delivery partners:",
+                            "computed": null,
+                            "type": "selectMany"
+                        }
+                    ],
+                    "width": "30%",
+                    "type": "col"
                 },
                 {
-                    "source": "eventNotes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
+                    "items": [
+                        {
+                            "source": "groupsSupported",
+                            "preLabel": "No. of groups supported financially:",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "eventNotes",
+                            "computed": null,
+                            "preLabel": "Comments / Notes:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "width": "70%",
+                    "type": "col"
                 }
             ],
             "computed": null,
