@@ -6,12 +6,12 @@
             "description": "The method used in this activity to manage disease",
             "name": "diseaseManagementMethod",
             "constraints": [
-                "Fumigation",
-                "Positive competition",
                 "Biological control agents",
+                "Fumigation",
+                "Host destruction",
                 "Plant disease management - quarantine",
                 "Plant disease management - treatment",
-                "Host destruction",
+                "Positive competition",
                 "Other (specify in notes)"
             ],
             "validate": "required"
@@ -41,19 +41,13 @@
         },
         {
             "dataType": "number",
-            "description": "Number of individual plants or animals covered by quarantine protocols and/or treatment:",
+            "description": "Number of individual plants or animals (or colonies as applicable) covered by quarantine protocols and/or treatment:",
             "name": "numberTreated"
         },
         {
             "dataType": "number",
             "description": "Cost of the treatment on a per hectare basis",
             "name": "treatmentCostPerHa",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "description": "The duration in hours over which this activity was conducted",
-            "name": "activityDuration",
             "validate": "min[0]"
         },
         {
@@ -80,12 +74,13 @@
                         },
                         {
                             "source": "<h3>OR</h3>",
+                            "computed": null,
                             "type": "literal"
                         },
                         {
                             "source": "numberTreated",
                             "computed": null,
-                            "preLabel": "No. of individuals quarantined / treated:",
+                            "preLabel": "No. of individuals or colonies quarantined / treated:",
                             "type": "number"
                         }
                     ],
@@ -93,12 +88,14 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "diseaseManagementMethod",
-                        "computed": null,
-                        "preLabel": "Disease management method:",
-                        "type": "selectMany"
-                    }],
+                    "items": [
+                        {
+                            "source": "diseaseManagementMethod",
+                            "computed": null,
+                            "preLabel": "Disease management method:",
+                            "type": "selectMany"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 },
@@ -131,13 +128,15 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes",
-                "width": "90%",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
