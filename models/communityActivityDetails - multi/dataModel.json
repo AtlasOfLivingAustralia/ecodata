@@ -10,11 +10,15 @@
                     "description": "The type of event being conducted",
                     "name": "eventType",
                     "constraints": [
+                        "Conference / seminar presentation",
                         "Field day activity",
                         "Meeting",
+                        "Mentoring",
+                        "Planning session",
+                        "Project feedback / debrief",
                         "Training session",
-                        "Conference / seminar presentation",
                         "Working bee",
+                        "Workshop",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
@@ -35,35 +39,36 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The theme or topic covered during the event. Add in notes if more than one",
+                    "description": "The themes or topics covered during the events. Add in notes if more than one.",
                     "name": "eventTopics"
                 },
                 {
                     "dataType": "number",
-                    "description": "The duration of the event in hours. Part hour expressed as a decimal",
+                    "description": "The duration of the events in whole hours.",
                     "name": "eventDurationHrs",
-                    "validate": "required,min[0]"
+                    "validate": "min[0]"
                 },
                 {
                     "dataType": "text",
                     "description": "The main industry type that the event is addressing",
                     "name": "industryType",
-                    "validate": "required",
                     "constraints": [
-                        "Sugarcane",
-                        "Grazing",
+                        "Aquaculture",
+                        "Berries",
+                        "Cotton",
+                        "Dairy",
+                        "Environmental management",
+                        "Fishing",
+                        "Forestry",
+                        "Fruit trees",
                         "Grains",
                         "Grapes",
+                        "Grazing",
+                        "Sugarcane",
                         "Vegetables",
-                        "Fruit trees",
-                        "Berries",
-                        "Dairy",
-                        "Cotton",
-                        "Forestry",
-                        "Aquaculture",
-                        "Fishing",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 }
             ]
         },
@@ -82,6 +87,22 @@
         },
         {
             "dataType": "text",
+            "description": "Select the type(s) of partners involved in delivering the event",
+            "name": "deliveryPartner",
+            "constraints": [
+                "Academic/research institution",
+                "Consultant",
+                "Local farmer or community group",
+                "Peak Primary Industry Group",
+                "Regional Landcare Facilitator",
+                "Regional Landcare or farmer network",
+                "No delivery partners",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "name": "eventNotes"
         }
     ],
@@ -92,9 +113,10 @@
                     {
                         "columns": [
                             {
+                                "colspan": "3",
                                 "source": "",
                                 "computed": null,
-                                "colspan": "3"
+                                "type": null
                             },
                             {
                                 "source": "Total event hours for this activity:",
@@ -103,6 +125,7 @@
                             },
                             {
                                 "source": "totalEventHrs",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
                                 "type": "number"
                             }
                         ]
@@ -113,37 +136,37 @@
             "source": "events",
             "columns": [
                 {
+                    "title": "Type of event:",
                     "source": "eventType",
                     "computed": null,
-                    "title": "Type of event:",
-                    "width": "20%",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "eventPurpose",
-                    "computed": null,
-                    "title": "Purpose of event:",
-                    "width": "25%",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "industryType",
-                    "computed": null,
-                    "title": "Main industry type addressed:",
                     "width": "15%",
                     "type": "selectOne"
                 },
                 {
+                    "title": "Purpose of event:",
+                    "source": "eventPurpose",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Main industry type addressed:",
+                    "source": "industryType",
+                    "computed": null,
+                    "width": "5%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Topics covered:",
                     "source": "eventTopics",
                     "computed": null,
-                    "title": "Topics covered:",
-                    "width": "30%",
+                    "width": "25%",
                     "type": "text"
                 },
                 {
+                    "title": "Event Duration (Hrs):",
                     "source": "eventDurationHrs",
                     "computed": null,
-                    "title": "Event Duration (Hrs):",
                     "width": "10%",
                     "type": "number"
                 }
@@ -154,6 +177,12 @@
         },
         {
             "items": [
+                {
+                    "preLabel": "Delivery partners:",
+                    "source": "deliveryPartner",
+                    "computed": null,
+                    "type": "selectMany"
+                },
                 {
                     "source": "eventNotes",
                     "computed": null,
