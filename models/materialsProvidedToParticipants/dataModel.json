@@ -1,25 +1,64 @@
 {
-    "modelName":"Materials Provided to Participants",
-    "dataModel":[
-        {"name":"numberOfBrochures","dataType":"number"},
-        {"name":"numberOfWrittenMaterials","dataType":"number"},
-        {"name":"numberOfMaterialRecipients","dataType":"number"},
-        {"name":"numberOfDisplays","dataType":"number"}
-
+    "modelName": "Materials Provided to Participants",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The number of written materials (incl. brochures) taken by participants at an event",
+            "name": "numberOfWrittenMaterials"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of individual participants taking materials at an event",
+            "name": "numberOfMaterialRecipients"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of individual displays and presentations given at an event",
+            "name": "numberOfDisplays"
+        }
     ],
-    "viewModel":[
-        {   "type":"row", "class": "output-section",
+    "viewModel": [
+        {
             "items": [
                 {
-                    "type":"col",
                     "items": [
-                        {"type":"number","source":"numberOfBrochures","preLabel":"No. of Brochures","validate":"required"},
-                        {"type":"number","source":"numberOfWrittenMaterials","preLabel":"No. of Written Materials","validate":"required"},
-                        {"type":"number","source":"numberOfMaterialRecipients","preLabel":"No. of Material Recipients","validate":"required"},
-                        {"type":"number","source":"numberOfDisplays","preLabel":"No. of Displays","validate":"required"}
-                    ]
+                        {
+                            "source": "numberOfWrittenMaterials",
+                            "computed": null,
+                            "preLabel": "No. of written Materials and brochures:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfMaterialRecipients",
+                            "computed": null,
+                            "preLabel": "No. of Material Recipients:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfDisplays",
+                            "computed": null,
+                            "preLabel": "No. of Displays at the event:",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
                 }
-            ]
+            ],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }
