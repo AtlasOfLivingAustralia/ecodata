@@ -76,6 +76,35 @@
         },
         {
             "dataType": "text",
+            "description": "The main objective that you are aiming to achieve with this activity.",
+            "name": "treatmentObjective",
+            "constraints": [
+                "Local / regional eradication",
+                "Manage threats to priority environmental assets",
+                "Co-ordinated control to protect agriculture production"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Brief description of the public benefits to be gained from the treatment actions.",
+            "name": "treatmentObjectiveBenefits"
+        },
+        {
+            "dataType": "text",
+            "description": "The main type of partner that you are working with to deliver this activity.",
+            "name": "partnerType",
+            "constraints": [
+                "Local government authority",
+                "Local Landcare, 'Friends of', community, or farmer group",
+                "National Primary Industry Association",
+                "Regional Primary Industry group or community / Landcare Network",
+                "State government agency"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "description": "The stage of treatment for the patch of weeds being treated",
             "name": "treatmentEventType",
             "constraints": [
@@ -97,17 +126,17 @@
         },
         {
             "dataType": "number",
-            "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area",
+            "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area - as applicable",
             "name": "linearAreaTreated"
         },
         {
             "dataType": "text",
-            "description": "Details of chemical treatment including chemical agent and rate of application",
+            "description": "Details of chemical treatment including chemical agent and rate of application - as applicable",
             "name": "chemicalDetails"
         },
         {
             "dataType": "number",
-            "description": "The cost per hectare of the treatment",
+            "description": "The approximate cost per hectare of the treatment",
             "name": "treatmentCostPerHa"
         },
         {
@@ -121,10 +150,16 @@
                 {
                     "items": [
                         {
-                            "source": "treatmentEventType",
-                            "preLabel": "Type of treatment event:",
+                            "source": "treatmentObjective",
                             "computed": null,
+                            "preLabel": "Treatment objective:",
                             "type": "selectOne"
+                        },
+                        {
+                            "source": "treatmentObjectiveBenefits",
+                            "computed": null,
+                            "preLabel": "Describe the assets or production values to be protected and the expected public benefits:",
+                            "type": "textarea"
                         },
                         {
                             "source": "areaTreatedHa",
@@ -141,7 +176,7 @@
                         {
                             "source": "treatmentCostPerHa",
                             "computed": null,
-                            "preLabel": "Treatment cost ($/Ha):",
+                            "preLabel": "Approximate treatment cost ($/Ha):",
                             "type": "number"
                         }
                     ],
@@ -150,6 +185,19 @@
                 },
                 {
                     "items": [
+                        {
+                            "source": "treatmentEventType",
+                            "preLabel": "Type of treatment event:",
+                            "computed": null,
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "partnerType",
+                            "computed": null,
+                            "preLabel": "Main activity partner:",
+                            "width": "60%",
+                            "type": "selectOne"
+                        },
                         {
                             "source": "locality",
                             "computed": null,
