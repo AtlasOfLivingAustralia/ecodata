@@ -9,8 +9,10 @@
                 "Direct drill seeding",
                 "Hand broardcast seeding",
                 "Hand planting",
-                "Machine planting"
-            ]
+                "Machine planting",
+                "Natural regeneration from threat exclusion / removal"
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
@@ -56,9 +58,12 @@
                 "Connected to patch of 25 to 100 ha",
                 "Connected to patch of less than 25 ha",
                 "Patch linked to other vegetation via riparian link",
-                "Isolated forest or woodland remnant",
-                "Patch surrounded by native grasses",
-                "Isolated grassland",
+                "Patch <1km from a patch of more than 1000ha",
+                "Patch <1km from a patch of 100 to 1000ha",
+                "Patch <1km from a patch of 25 to 100ha",
+                "Patch <1km from a patch of less than 25ha",
+                "Isolated forest or woodland remnant >1km from other remnants",
+                "Isolated grassland >1km from other remnants",
                 "No vegetation within 1km",
                 "Only isolated Paddock trees within 1 km",
                 "Patch surrounded by grazing",
@@ -73,12 +78,16 @@
             "constraints": [
                 "Groundwater recharge management",
                 "Groundwater discharge or salinity management",
-                "Habitat restoration - home range improvement",
-                "Habitat enhancement - improved migration paths",
+                "Habitat enhancement - improved habitat connectivity",
+                "Habitat restoration - home range/extent improvement",
+                "Habitat restoration - habitat condition improvement",
+                "Improved vegetation condition",
+                "Improved vegetation connectivity",
+                "Improved vegetation extent",
+                "Nutrient cycling",
                 "Soil stabilisation",
                 "Riparian rehabilitation",
-                "Streambank protection",
-                "Nutrient cycling"
+                "Streambank protection"
             ]
         },
         {
@@ -86,6 +95,16 @@
             "description": "The area in hectares of the revegetation works area",
             "name": "areaRevegHa",
             "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "The length in metres of the revegetation works area. This field should only be used for linear sites",
+            "name": "lengthReveg"
+        },
+        {
+            "dataType": "number",
+            "description": "The duration of the planting activity in hours",
+            "name": "activityDuration"
         },
         {
             "dataType": "list",
@@ -122,7 +141,8 @@
                         "Advanced",
                         "Cutting",
                         "Other"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -134,7 +154,8 @@
                         "Midstory",
                         "Understory",
                         "Ground stratum"
-                    ]
+                    ],
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
@@ -149,10 +170,18 @@
                     "name": "guardType",
                     "constraints": [
                         "None",
-                        "Gro-guard",
                         "Carton",
+                        "Corflute",
+                        "Mesh",
+                        "Plastic sleeve",
                         "Other"
                     ]
+                },
+                {
+                    "dataType": "number",
+                    "description": "The average cost per plant or kilogram of seed as applicable",
+                    "name": "stockCostPerUnit",
+                    "validate": "required"
                 }
             ]
         },
@@ -190,41 +219,47 @@
     ],
     "viewModel": [
         {
-            "footer": {"rows": [{"columns": [
-                {
-                    "source": "Total Seedlings Planted:",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalNumberPlanted",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
-                    "type": "number"
-                },
-                {
-                    "source": "Total Seed Sown (Kg):",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalSeedSownKg",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
-                    "type": "number"
-                },
-                {
-                    "colspan": 3,
-                    "source": "",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ]}]},
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "Total Seedlings Planted:",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalNumberPlanted",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "Total Seed Sown (Kg):",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalSeedSownKg",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "colspan": 3,
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            },
             "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
             "source": "planting",
             "columns": [
                 {
                     "title": "Species:",
                     "source": "species",
-                    "width": "30%",
+                    "width": "20%",
                     "computed": null,
                     "type": "autocomplete"
                 },
@@ -269,6 +304,13 @@
                     "width": "10%",
                     "computed": null,
                     "type": "selectOne"
+                },
+                {
+                    "title": "Cost / unit ($)",
+                    "source": "stockCostPerUnit",
+                    "width": "10%",
+                    "computed": null,
+                    "type": "number"
                 }
             ],
             "userAddedRows": true,
@@ -308,6 +350,24 @@
                             "preLabel": "Landscape connectivity:",
                             "computed": null,
                             "type": "selectOne"
+                        },
+                        {
+                            "source": "areaRevegHa",
+                            "preLabel": "Area of revegetation works (Ha):",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "lengthReveg",
+                            "preLabel": "Length of planting (metres) - if site is linear:",
+                            "computed": null,
+                            "type": "number"
+                        },
+                        {
+                            "source": "activityDuration",
+                            "preLabel": "Duration of the activity (hours):",
+                            "computed": null,
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -315,12 +375,6 @@
                 },
                 {
                     "items": [
-                        {
-                            "source": "areaRevegHa",
-                            "preLabel": "Area of revegetation works (Ha):",
-                            "computed": null,
-                            "type": "number"
-                        },
                         {
                             "source": "environmentalBenefits",
                             "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
@@ -336,13 +390,15 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "width": "90%",
-                "preLabel": "Comments / Notes:",
-                "computed": null,
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "width": "90%",
+                    "preLabel": "Comments / Notes:",
+                    "computed": null,
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
