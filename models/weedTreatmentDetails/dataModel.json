@@ -44,8 +44,7 @@
                         "Under monitoring",
                         "Closed",
                         "Unknown"
-                    ],
-                    "validate": "required"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -99,8 +98,7 @@
         {
             "dataType": "number",
             "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area",
-            "name": "linearAreaTreated",
-            "validate": "required"
+            "name": "linearAreaTreated"
         },
         {
             "dataType": "text",
@@ -123,8 +121,8 @@
                 {
                     "items": [
                         {
-                            "preLabel": "Type of treatment event:",
                             "source": "treatmentEventType",
+                            "preLabel": "Type of treatment event:",
                             "computed": null,
                             "type": "selectOne"
                         },
@@ -175,7 +173,6 @@
             "type": "row"
         },
         {
-
             "source": "weedsTreated",
             "computed": null,
             "allowHeaderWrap": "true",
@@ -219,8 +216,6 @@
             ],
             "userAddedRows": true,
             "type": "table"
-
-
         },
         {
             "items": [
