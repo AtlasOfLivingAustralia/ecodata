@@ -10,8 +10,11 @@
                     "description": "Type of ground preparation works undertaken",
                     "name": "groundPreparationWorks",
                     "constraints": [
-                        "Herbicide only",
-                        "Herbicide and rip",
+                        "Fire - remove overgrowth",
+                        "Fire - prepare ash bed for regeneration",
+                        "Herbicide broadscale only",
+                        "Herbicide broadscale and rip",
+                        "Herbicide spot spray",
                         "Mound and swale",
                         "No preparation",
                         "Physical clearing",
@@ -19,8 +22,6 @@
                         "Rip only",
                         "Scalping",
                         "Scarifying",
-                        "Fire - remove overgrowth",
-                        "Fire - prepare ash bed for regeneration",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
@@ -29,7 +30,7 @@
                     "dataType": "number",
                     "description": "Area in hectares subject to the associated site preparation works",
                     "name": "preparationArea",
-                    "validate": "required, min[0]"
+                    "validate": "min[0]"
                 },
                 {
                     "dataType": "text",
@@ -38,13 +39,13 @@
                     "constraints": [
                         "Conservation Grazing Management",
                         "Debris Removal",
+                        "Disease Management",
                         "Erosion Management",
                         "Fencing",
-                        "Infrastructure Establishment",
                         "Pest Management",
-                        "Disease Management",
-                        "Public Access Management",
-                        "Revegetation"
+                        "Public Access and Infrastructure",
+                        "Revegetation",
+                        "Other (specify in notes)"
                     ]
                 },
                 {
@@ -69,32 +70,40 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Please indicate the area and nature of works carried out on the site to prepare it for undertaking another activity.",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please indicate the area and nature of works carried out on the site to prepare it for undertaking another activity.",
+                    "type": "literal"
+                }
+            ],
             "computed": null,
             "type": "col"
         },
         {
-            "footer": {"rows": [{"columns": [
-                {
-                    "source": "Total area of site preparation works (Ha):",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "preparationAreaTotal",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noWorksAreasTotal\",\"fromList\":\"actionsList\"}}",
-                    "type": "number"
-                },
-                {
-                    "colspan": 2,
-                    "source": "",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ]}]},
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "Total area of site preparation works (Ha):",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "preparationAreaTotal",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noWorksAreasTotal\",\"fromList\":\"actionsList\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "colspan": 2,
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            },
             "source": "actionsList",
             "columns": [
                 {
