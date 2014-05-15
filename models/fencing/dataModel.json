@@ -13,10 +13,8 @@
                 "Post & Rail",
                 "Cyclone",
                 "Solid Sheet (pailing, pickets, sheet metal, etc.)",
-                "Other (specify in notes)",
-                "None"
-            ],
-            "validate": "required"
+                "Other (specify in notes)"
+            ]
         },
         {
             "dataType": "number",
@@ -56,32 +54,42 @@
         {
             "items": [
                 {
-                    "source": "fenceType",
-                    "computed": null,
-                    "preLabel": "Fence Type:",
-                    "width": "10%",
-                    "type": "selectOne"
+                    "items": [
+                        {
+                            "source": "fenceType",
+                            "computed": null,
+                            "preLabel": "Fence Type:",
+                            "width": "10%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "lengthOfFence",
+                            "computed": null,
+                            "preLabel": "Length of fence (Km):",
+                            "width": "20%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "fenceCostPerKm",
+                            "computed": null,
+                            "preLabel": "Fence cost ($/Km):",
+                            "width": "20%",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
                 },
                 {
-                    "source": "lengthOfFence",
-                    "computed": null,
-                    "preLabel": "Length of fence (Km):",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "fenceCostPerKm",
-                    "computed": null,
-                    "preLabel": "Fence cost ($/Km):",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "purposeOfFence",
-                    "computed": null,
-                    "preLabel": "Purpose of fence:",
-                    "width": "20%",
-                    "type": "selectMany"
+                    "items": [
+                        {
+                            "source": "purposeOfFence",
+                            "computed": null,
+                            "preLabel": "Purpose of fence:",
+                            "width": "20%",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "type": "col"
                 }
             ],
             "computed": null,
@@ -89,12 +97,14 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "fenceNotes",
-                "preLabel": "Comments/Notes:",
-                "computed": null,
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "fenceNotes",
+                    "preLabel": "Comments/Notes:",
+                    "computed": null,
+                    "type": "textarea"
+                }
+            ],
             "computed": "null",
             "class": "output-section",
             "type": "row"
