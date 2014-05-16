@@ -54,6 +54,15 @@
         {
             "items": [
                 {
+                    "source": "Enter the details of any fencing erected by this activity, if applicable",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
                     "items": [
                         {
                             "source": "fenceType",
