@@ -101,7 +101,9 @@
                 "Local Landcare, 'Friends of', community, or farmer group",
                 "National Primary Industry Association",
                 "Regional Primary Industry group or community / Landcare Network",
-                "State government agency"
+                "State government agency",
+                "Other (specify in notes)",
+                "No delivery partner"
             ],
             "validate": "required"
         },
