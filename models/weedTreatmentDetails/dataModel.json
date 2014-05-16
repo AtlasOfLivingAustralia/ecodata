@@ -71,7 +71,8 @@
                         "Manual control - Grubbing/chipping",
                         "Biological control - Biological agents (specify in notes)",
                         "Other (specify in notes)"
-                    ]
+                    ],
+                    "validate": "required"
                 }
             ]
         },
