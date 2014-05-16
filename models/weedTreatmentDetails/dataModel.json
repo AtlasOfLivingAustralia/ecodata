@@ -89,7 +89,7 @@
         },
         {
             "dataType": "text",
-            "description": "Brief description of the public benefits to be gained from the treatment actions.",
+            "description": "Describe the partner contributions, including lead, and contributions to cover any private benefits. How will gains be maintained after the project period.",
             "name": "treatmentObjectiveBenefits"
         },
         {
