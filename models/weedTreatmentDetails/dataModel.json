@@ -48,7 +48,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The method used to treat the patch of the target species",
+                    "description": "The primary method used to treat the patch of the target species",
                     "name": "treatmentMethod",
                     "constraints": [
                         "Environmental management - Fire",
@@ -59,6 +59,7 @@
                         "Chemical control - Stem injection",
                         "Chemical control - Cut stump",
                         "Chemical control - Cut and swab",
+                        "Chemical control - Splatter gun",
                         "Chemical control - Stem scraper",
                         "Chemical control - Wick applicators",
                         "Mechanical control - Slashing",
