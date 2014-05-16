@@ -69,9 +69,9 @@
                             "type": "number"
                         },
                         {
-                            "source": "numberOnCountryVisits",
+                            "source": "numberOfFarmingEntitiesNew",
                             "computed": null,
-                            "preLabel": "No. of Indigenous on-country visits:",
+                            "preLabel": "No. of farming entities participating in project activities for the first time:",
                             "type": "number"
                         }
                     ],
@@ -87,9 +87,9 @@
                             "type": "number"
                         },
                         {
-                            "source": "numberOfFarmingEntitiesNew",
+                            "source": "numberOnCountryVisits",
                             "computed": null,
-                            "preLabel": "No. of farming entities participating in project activities for the first time:",
+                            "preLabel": "No. of Indigenous on-country visits:",
                             "type": "number"
                         }
                     ],
