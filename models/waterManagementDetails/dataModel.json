@@ -3,6 +3,12 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The Name of water body, waterway or wetland which is the subject of this management action",
+            "name": "waterbodyName",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "description": "The type of water body, waterway or wetland which is the subject of this management action",
             "name": "waterbodyType",
             "constraints": [
@@ -154,8 +160,7 @@
                 "Natural",
                 "Modified",
                 "Fully artificial"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "text",
@@ -166,8 +171,7 @@
                 "Imported to",
                 "Passing through (non-resident)",
                 "No transport occurring"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "stringList",
@@ -236,27 +240,23 @@
                 {
                     "items": [
                         {
+                            "source": "waterbodyName",
+                            "preLabel": "Name of water-body being managed:",
+                            "type": "text"
+                        },
+                        {
                             "source": "waterbodyType",
-                            "computed": null,
                             "preLabel": "Type of water-body being managed:",
                             "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalRegimeChangeFrom",
-                            "computed": null,
                             "preLabel": "Hydrological regime changed from:",
                             "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalRegimeChangeTo",
-                            "computed": null,
                             "preLabel": "Hydrological regime changed to:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "isCurrentFlowNatural",
-                            "computed": null,
-                            "preLabel": "Current flow regime of the subject water body?:",
                             "type": "selectOne"
                         },
                         {
@@ -271,6 +271,11 @@
                 },
                 {
                     "items": [
+                        {
+                            "source": "isCurrentFlowNatural",
+                            "preLabel": "Current flow regime of the subject water body?:",
+                            "type": "selectOne"
+                        },
                         {
                             "source": "hydrologicalStructuresInstalled",
                             "computed": null,
