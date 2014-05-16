@@ -9,7 +9,7 @@
                 "Reduce competition & shading for revegetation areas",
                 "Promote woody plant growth",
                 "Reduce wildfire risk & intensity",
-                "Other (describe in notes)"
+                "Other (specify in notes)"
             ],
             "validate": "required"
         },
@@ -21,7 +21,7 @@
         },
         {
             "dataType": "text",
-            "description": "Description of the grazing strategy/methodology being used to achieve the purpose",
+            "description": "Description of the grazing strategy / methodology being used to achieve the purpose",
             "name": "stockingStrategy"
         },
         {
@@ -45,8 +45,21 @@
                 {
                     "dataType": "number",
                     "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
-                    "name": "stockingDensity",
-                    "validate": "required"
+                    "name": "stockingDensity"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The duration in whole hours that stock are kept on-site.",
+                    "name": "stockingDuration",
+                    "constraints": [
+                        "1 day or less",
+                        "2 - 3 days",
+                        "4 - 7 days",
+                        "< 2 weeks",
+                        "> 2 weeks",
+                        "> 4 weeks",
+                        "Ongoing"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -110,7 +123,14 @@
                 {
                     "title": "Stocking density (DSE / Ha):",
                     "source": "stockingDensity",
+                    "width": "25%",
                     "type": "number"
+                },
+                {
+                    "title": "Time stock are on-site (Hrs):",
+                    "source": "stockingDuration",
+                    "width": "25%",
+                    "type": "selectOne"
                 }
             ],
             "userAddedRows": "true",
