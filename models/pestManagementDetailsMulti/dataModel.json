@@ -209,7 +209,7 @@
                 {
                     "source": "pestAnimalsTreatedNo",
                     "computed": null,
-                    "title": "No. of individuals / colonies killed / removed:",
+                    "title": "No. of individuals OR colonies killed / removed:",
                     "width": "10%",
                     "type": "number"
                 },
