@@ -82,6 +82,7 @@ class SearchController {
         render results as JSON
     }
 
+    @RequireApiKey
     def downloadSearchResults() {
 
         if (!params.max) {
