@@ -1,9 +1,12 @@
 package au.org.ala.ecodata.metadata
 
+import groovy.util.logging.Log4j
+
 /**
  * Define the set of valid data types for an output & provides a data type based switch to method to help
  * me make sure all valid types are handled when processing output metadata.
  */
+@Log4j
 class OutputModelProcessor {
 
     interface ProcessingContext {}
@@ -32,7 +35,7 @@ class OutputModelProcessor {
 
         def type = node.dataType
         if (type == null) {
-            println("Found node with null dataType: "+node)
+            log.warn("Found node with null dataType: "+node)
             return;
         }
         switch(type) {
