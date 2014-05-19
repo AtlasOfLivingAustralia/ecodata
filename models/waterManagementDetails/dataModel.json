@@ -33,7 +33,7 @@
         },
         {
             "dataType": "text",
-            "description": "The hydrological regime which typified the flow characteristics of the subject water body prior to this management action",
+            "description": "The hydrological regime which typified the flow characteristics of the subject water body prior to this management action. NB. These are based on an international standard vocabulary.",
             "name": "hydrologicalRegimeChangeFrom",
             "constraints": [
                 "Perennial uniform flow",
@@ -70,7 +70,7 @@
         },
         {
             "dataType": "text",
-            "description": "The hydrological regime which will typify the flow characteristics of the subject water body after implementation of this management action",
+            "description": "The hydrological regime which will typify the flow characteristics of the subject water body after implementation of this management action. NB. These are based on an international standard vocabulary.",
             "name": "hydrologicalRegimeChangeTo",
             "constraints": [
                 "Perennial uniform flow",
@@ -111,34 +111,35 @@
             "constraints": [
                 "Barrage / Weir (with fish ladder)",
                 "Barrage / Weir (without fish ladder)",
-                "Hinged flap gates",
+                "Channel - constructed",
+                "Channel - natural",
                 "Check valves",
-                "Dike / Flood levee",
-                "Stilling / Retarding structures",
-                "Flow interception structures (eg. contour banks)",
-                "Sluice gate",
-                "Tidal gate",
-                "Constructed channel",
-                "Natural channel",
-                "Pipes",
-                "Pump",
-                "Drip irrigation",
-                "Flow splitters",
-                "Water supply tank",
-                "Groundwater pump (wind, solar, other)",
-                "Flume",
                 "Dam",
-                "Retention ponds",
-                "Vanes",
+                "Desalination plant installation",
+                "Dike / Flood levee",
+                "Drip irrigation",
+                "Flow interception structures (eg. contour banks)",
+                "Flow splitters",
+                "Flume",
+                "Groundwater pump (wind, solar, other)",
                 "Head & cross regulators",
+                "Hinged flap gates",
+                "Pipes",
                 "Pollution trap",
+                "Pump",
+                "Retention ponds",
+                "Sluice gate",
+                "Stilling / Retarding structures",
+                "Tidal gate",
+                "Vanes",
+                "Water recycling facility installation",
                 "Water-sensitive urban design installation",
+                "Water supply tank",
                 "Water treatment facility installation",
                 "Water treatment facility upgrade",
-                "Water recycling facility installation",
-                "Desalination plant installation",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -157,9 +158,9 @@
             "description": "The naturalness of the hydrological regime of the subject water body immediately prior to undertaking this management action",
             "name": "isCurrentFlowNatural",
             "constraints": [
-                "Natural",
+                "Fully artificial",
                 "Modified",
-                "Fully artificial"
+                "Natural"
             ]
         },
         {
@@ -178,11 +179,11 @@
             "description": "The transport medium for 'managed' water to/from the subject water body in respect to this management action",
             "name": "waterTransportMethod",
             "constraints": [
+                "Gravity drainage",
+                "Mole or similar subterranean drain",
                 "Open channel - lined",
                 "Open channel - unlined",
                 "Piped",
-                "Mole or similar subterranean drain",
-                "Gravity drainage",
                 "Pumped",
                 "Other (specify in notes)"
             ]
@@ -194,6 +195,7 @@
             "constraints": [
                 "Water storage for later use",
                 "Water extraction for current use",
+                "Environmental outcomes off-site",
                 "Environmental outcomes on the current site"
             ]
         },
@@ -202,13 +204,13 @@
             "description": "The use(s) for which managed water under this management action will be applied",
             "name": "transportedWaterUse",
             "constraints": [
-                "Stock & domestic",
-                "Irrigated cropping",
-                "Irrigated pasture",
-                "Irrigated horticulture",
-                "Industrial",
-                "Urban potable water",
                 "Environmental outcomes",
+                "Industrial",
+                "Irrigated cropping",
+                "Irrigated horticulture",
+                "Irrigated pasture",
+                "Stock & domestic",
+                "Urban potable water",
                 "Other (specify in notes)"
             ],
             "validate": "required"
@@ -218,15 +220,15 @@
             "description": "The environmental benefits/outcomes expected to be realised as a result of this water management action",
             "name": "waterMgtEnvironBenefit",
             "constraints": [
+                "Ecosystem enhancement",
+                "Enhancing species resilience & breeding",
+                "Erosion management",
+                "Flood mitigation - enhanced drainage / increased flow rate",
+                "Flood mitigation - flow retention / buffering",
                 "Salinity management",
                 "Waterlogging management",
-                "Erosion management",
-                "Habitat management for enhancing species resilience & breeding",
-                "Flood mitigation - flow retention / buffering",
-                "Flood mitigation - enhanced drainage / increased flow rate",
                 "Other (specify in notes)"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "text",
