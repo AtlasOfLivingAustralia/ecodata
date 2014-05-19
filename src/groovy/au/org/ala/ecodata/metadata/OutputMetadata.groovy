@@ -60,7 +60,7 @@ class OutputMetadata {
     }
 
     def getNestedViewNodes(node) {
-        return (node.type in ['table', 'photoPoints'] ) ? node.columns: node.items
+        return (node.type in ['table', 'photoPoints', 'grid'] ) ? node.columns: node.items
     }
     def getNestedDataModelNodes(node) {
         return node.columns

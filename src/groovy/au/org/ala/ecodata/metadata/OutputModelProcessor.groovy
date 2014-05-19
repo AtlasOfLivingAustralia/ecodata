@@ -31,6 +31,10 @@ class OutputModelProcessor {
     def processNode(processor, node, context) {
 
         def type = node.dataType
+        if (type == null) {
+            println("Found node with null dataType: "+node)
+            return;
+        }
         switch(type) {
             case 'number':
                 processor.number(node, context);
@@ -42,6 +46,7 @@ class OutputModelProcessor {
                 processor.text(node, context);
                 break;
             case 'date':
+            case 'simpleDate':
                 processor.date(node, context);
                 break;
             case 'image':
@@ -59,6 +64,8 @@ class OutputModelProcessor {
             case 'boolean':
                 processor.booleanType(node, context)
                 break;
+            case 'lookupRange':
+                break; // do nothing
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")
         }

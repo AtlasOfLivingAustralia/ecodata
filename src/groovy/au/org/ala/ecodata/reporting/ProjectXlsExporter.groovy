@@ -55,7 +55,7 @@ class ProjectXlsExporter {
             row = activitiesSheet.getSheet().lastRowNum
             activitiesSheet.add(project.activites, activityProperties, row+1)
 
-            project.activites.each { activity ->
+            project.activities.each { activity ->
                 activity?.outputs?.each { output ->
                     outputsByType[output.name] << output
                 }
