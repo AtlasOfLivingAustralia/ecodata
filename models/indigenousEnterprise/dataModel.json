@@ -4,7 +4,8 @@
         {
             "dataType": "text",
             "description": "Description of the type(s) of enterprises established by indigenous communities as a result of this project",
-            "name": "typeOfEnterprise"
+            "name": "typeOfEnterprise",
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -33,26 +34,25 @@
             "items": [
                 {
                     "source": "typeOfEnterprise",
-                    "computed": null,
-                    "preLabel": "type(s) of enterprises established by indigenous communities:",
+                    "preLabel": "Type(s) of businesses established by indigenous communities:",
                     "type": "textarea"
                 },
                 {
                     "source": "totalNewEnterprises",
                     "computed": null,
-                    "preLabel": "No. of new enterprises established:",
+                    "preLabel": "No. of new businesses established:",
                     "type": "number"
                 },
                 {
                     "source": "numberOfIndigenousCommunities",
                     "computed": null,
-                    "preLabel": "No. of indigenous communities in which new enterprises have been established:",
+                    "preLabel": "No. of indigenous communities in which new businesses have been established:",
                     "type": "number"
                 },
                 {
                     "source": "totalIndigenousEnterprisesEngaged",
                     "computed": null,
-                    "preLabel": "No of contracts that have been established by Indigenous enterprises:",
+                    "preLabel": "No of contracts that have been established by Indigenous businesses:",
                     "type": "number"
                 }
             ],
