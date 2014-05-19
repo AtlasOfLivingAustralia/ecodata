@@ -6,26 +6,24 @@
             "description": "Category of research being undertaken",
             "name": "typeOfResearch",
             "constraints": [
-                "Environmental resilience",
-                "Species and population studies",
-                "Eco-economic studies",
-                "Socio-environmental studies",
-                "Soils studies",
-                "Fire management studies",
-                "Water management studies",
-                "Grazing regime impacts",
                 "Cropping regime impacts",
+                "Eco-economic studies",
+                "Environmental resilience",
                 "Farm productivity",
+                "Fire management studies",
+                "Grazing regime impacts",
                 "Research associated with project outcomes",
+                "Socio-environmental studies",
+                "Species and population studies",
+                "Soils studies",
+                "Water management studies",
                 "Other (specify in notes)"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "text",
             "description": "Name of the research project",
-            "name": "nameOfResearchProject",
-            "validate": "required"
+            "name": "nameOfResearchProject"
         },
         {
             "dataType": "text",
