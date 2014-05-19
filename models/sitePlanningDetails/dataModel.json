@@ -13,8 +13,7 @@
                 {
                     "dataType": "text",
                     "description": "Short title for the works/activity area (point of interest) to enable it to be easily identified and referred to.",
-                    "name": "worksAreaTitle",
-                    "validate": "required"
+                    "name": "worksAreaTitle"
                 },
                 {
                     "dataType": "text",
@@ -24,33 +23,24 @@
                         "Community Participation and Engagement",
                         "Conservation Grazing Management",
                         "Debris Removal",
+                        "Disease Management",
                         "Erosion Management",
+                        "Fauna survey - general",
                         "Fencing",
                         "Fire Management",
-                        "Indigenous Employment & Enterprise",
-                        "Infrastructure Establishment",
-                        "Knowledge Integration and Transfer",
-                        "Management Plan Development",
+                        "Flora survey - general",
                         "Management Practice Change",
-                        "Other Conservation Works for Threatened Species",
-                        "Outcomes, Evaluation and Learning",
-                        "Pest and Disease Management",
-                        "Project Administration",
-                        "Public Access Management",
+                        "Conservation Works for Threatened Species",
+                        "Pest Animal Assessment",
+                        "Pest Management",
+                        "Public Access and Infrastructure",
                         "Research",
                         "Revegetation",
                         "Seed Collection",
-                        "Site Monitoring Planning",
+                        "Site Assessment",
                         "Site Preparation",
-                        "Training and Skills Development",
                         "Water Management",
                         "Weed Treatment",
-                        "Works Implementation Planning",
-                        "Biodiversity Fund - Outcomes and Monitoring",
-                        "Fauna (biological) survey",
-                        "Flora (biological) survey",
-                        "Pest animal assessment",
-                        "Site Assessment",
                         "Weed Mapping & Monitoring"
                     ]
                 },
@@ -62,8 +52,7 @@
                 {
                     "dataType": "number",
                     "description": "The number of individual works and/or activity ares (points of interest) within the specified site for each selected activity type.",
-                    "name": "noOfWorksAreas",
-                    "validate": "required"
+                    "name": "noOfWorksAreas"
                 }
             ]
         },
