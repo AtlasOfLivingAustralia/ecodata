@@ -10,9 +10,9 @@
                     "description": "The type of infrastructure being established.",
                     "name": "infrastructureType",
                     "constraints": [
-                        "Native plant nursery",
                         "Injured fauna hospital",
                         "Injured fauna recovery facility",
+                        "Native plant nursery",
                         "Visitor facilities (eg. toilets, bins, BBQ, tables & benches, etc.)",
                         "Other (specify in notes)"
                     ],
