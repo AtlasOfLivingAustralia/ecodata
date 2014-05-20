@@ -1,0 +1,108 @@
+{
+    "modelName": "Planned Monitoring Approach",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The amount of time in hours spent on planning the works and other activities to be undertaken on the selected site under this project.",
+            "name": "sitePlanningTimeSpent"
+        },
+        {
+            "dataType": "list",
+            "name": "plannedActions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of monitoring activity(s) to be undertaken on this site.",
+                    "name": "plannedActivityType",
+                    "constraints": [
+                        "Fauna Survey - general",
+                        "Flora Survey - general",
+                        "Pest Animal Survey and Monitoring",
+                        "Plant Survival Survey",
+                        "Vegetation Assessment - Commonwealth government methodology",
+                        "Water Quality Survey",
+                        "Weed Mapping and Monitoring",
+                        "Other (specify in notes)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Brief description of how the type of monitoring activity will be undertaken on the site.",
+                    "name": "plannedActivityDescription"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual monitoring points/ares (points of interest) within the specified site for each type of monitoring activity.",
+                    "name": "noOfMonitoringAreas"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h5>The section is for recording information about the monitoring methodologies and approach that you are planning to undertake for this project. It may include one or several methodologies on different activity areas within the site.</h5>",
+                    "type": "literal"
+                }
+            ],
+            "computed": null,
+            "type": "col"
+        },
+        {
+            "items": [
+                {
+                    "source": "Please indicate what assessment / monitoring methodology(s) you are planning to use on each of the areas which you are intending to monitor.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "source": "plannedActions",
+            "columns": [
+                {
+                    "title": "Type of monitoring activity planned:",
+                    "source": "plannedActivityType",
+                    "computed": null,
+                    "width": "35%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Monitoring approach:",
+                    "source": "plannedActivityDescription",
+                    "computed": null,
+                    "width": "50%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "No. of monitoring areas of type within the site:",
+                    "source": "noOfMonitoringAreas",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Notes",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
