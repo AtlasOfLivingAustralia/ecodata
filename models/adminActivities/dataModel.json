@@ -23,10 +23,9 @@
                         "GIS/spatial data",
                         "Meeting/meeting administration",
                         "Modelling",
-                        "Order/purchase equipment, plants, seed, wire, posts etc",
+                        "Order / purchase equipment, plants, seed, wire, posts etc",
                         "Prepare EOI process/criteria",
                         "Record Keeping",
-                        "Report review",
                         "Site selection",
                         "Steering group/working group established",
                         "Submit project progress/annual/final report",
@@ -39,14 +38,12 @@
                 {
                     "dataType": "number",
                     "description": "Number of people involved in the administration activity. An individual can be involved in more than one activity.",
-                    "name": "numberInvolved",
-                    "validate": "required"
+                    "name": "numberInvolved"
                 },
                 {
                     "dataType": "number",
                     "description": "The average number of hours per person spent on each administration activity",
-                    "name": "hoursPerPerson",
-                    "validate": "required"
+                    "name": "hoursPerPerson"
                 },
                 {
                     "dataType": "number",
