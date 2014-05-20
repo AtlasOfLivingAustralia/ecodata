@@ -6,41 +6,32 @@
             "description": "Generalised method employed to manage access on the subject area",
             "name": "accessManagementMethod",
             "constraints": [
+                "Speed management",
                 "Traffic exclusion",
                 "Traffic confinement / containment",
                 "Traffic flow management",
-                "Speed management",
                 "Other (specify in notes)"
             ]
+        },
+        {
+            "dataType": "number",
+            "description": "The area in hectares being protected by installed access control measures.",
+            "name": "accessAreaProtected"
         },
         {
             "dataType": "stringList",
             "description": "Type of structure(s) installed to manage access on the subject area",
             "name": "structuresInstalled",
             "constraints": [
-                "Bollards & barriers",
-                "Fencing, styles, gates & grids",
                 "Boardwalks",
-                "Formed trafficways",
+                "Bollards & barriers",
                 "Constructed parking bays",
+                "Fencing, styles, gates & grids",
+                "Formed trafficways",
                 "Signage",
                 "Other (specify in notes)"
             ],
             "validate": "required"
-        },
-        {
-            "dataType": "stringList",
-            "description": "Type of structure(s) installed to manage access on the subject area",
-            "name": "structuresInstalled",
-            "constraints": [
-                "Bollards & barriers",
-                "Fencing, styles, gates & grids",
-                "Boardwalks",
-                "Formed trafficways",
-                "Constructed parking bays",
-                "Signage",
-                "Other (specify in notes)"
-            ]
         },
         {
             "dataType": "number",
@@ -65,14 +56,17 @@
         {
             "dataType": "number",
             "description": "Length in kilometres of fences and boardwalks installed during this activity",
-            "name": "lengthOfLinealStructures",
-            "validate": "required"
+            "name": "lengthOfLinealStructures"
         },
         {
             "dataType": "number",
             "description": "Total number of visitors managed for access during this activity",
-            "name": "visitationNumber",
-            "validate": "required"
+            "name": "visitationNumber"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the nature and severity of the issues for which access control measures are being implemented to manage.",
+            "name": "accessControlIssues"
         },
         {
             "dataType": "text",
@@ -85,14 +79,7 @@
                 {
                     "items": [
                         {
-                            "source": "accessManagementMethod",
-                            "computed": null,
-                            "preLabel": "Access control method used:",
-                            "type": "selectMany"
-                        },
-                        {
                             "source": "structuresInstalled",
-                            "computed": null,
                             "preLabel": "Structure(s) installed:",
                             "type": "selectMany"
                         },
@@ -101,18 +88,6 @@
                             "computed": null,
                             "preLabel": "No. of access management structures installed:",
                             "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "accessControlPurpose",
-                            "computed": null,
-                            "preLabel": "Purpose of undertaking access management works:",
-                            "type": "selectMany"
                         },
                         {
                             "source": "lengthOfLinealStructures",
@@ -122,7 +97,6 @@
                         },
                         {
                             "source": "accessControlIssues",
-                            "computed": null,
                             "preLabel": "Description of issue(s) requiring access management:",
                             "type": "textarea"
                         },
@@ -131,6 +105,29 @@
                             "computed": null,
                             "preLabel": "No. of visitors (people managed for access):",
                             "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "accessManagementMethod",
+                            "preLabel": "Access control method used:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "accessAreaProtected",
+                            "computed": null,
+                            "preLabel": "Area (Ha) protected by access management structure(s):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "accessControlPurpose",
+                            "computed": null,
+                            "preLabel": "Purpose of undertaking access management works:",
+                            "type": "selectMany"
                         }
                     ],
                     "computed": null,
