@@ -33,42 +33,27 @@
                             "source": "activityContributionToPlans",
                             "preLabel": "How will this activity contribute to existing conservation and / or management plans?:",
                             "type": "textarea"
-                        }
-                    ],
-                    "type": "row"
-                },
-                {
-                    "items": [
+                        },
                         {
                             "source": "heritageOutcomesExpected",
                             "preLabel": "What heritage outcomes do you expect as a result of the work undertaken?:",
                             "type": "textarea"
-                        }
-                    ],
-                    "type": "row"
-                },
-                {
-                    "items": [
+                        },
                         {
                             "source": "communityOutcomesExpected",
                             "preLabel": "What are the expected outcomes / impacts on the local community as a result of this project?:",
                             "type": "textarea"
-                        }
-                    ],
-                    "type": "row"
-                },
-                {
-                    "items": [
+                        },
                         {
                             "source": "notes",
                             "preLabel": "Comments / Notes:",
                             "type": "textarea"
                         }
                     ],
-                    "type": "row"
+                    "type": "col"
                 }
             ],
-            "type": "col",
+            "type": "row",
             "class": "output-section"
         }
     ]
