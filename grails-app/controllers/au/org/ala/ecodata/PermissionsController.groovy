@@ -9,7 +9,7 @@ import grails.converters.JSON
  * @see au.org.ala.ecodata.UserPermission
  */
 class PermissionsController {
-    def permissionService
+    def permissionService, projectService
 
     def index() {
         def msg = [message: "Hello"]
@@ -252,7 +252,7 @@ class PermissionsController {
             up.each {
                 def t = [:]
                 log.debug "it.projectId = ${it.projectId}"
-                t.project = Project.findByProjectId(it.projectId)
+                t.project = projectService.get(it.projectId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
                 out.add t
             }
