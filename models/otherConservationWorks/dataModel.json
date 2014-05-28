@@ -1,5 +1,5 @@
 {
-    "modelName": "Other Conservation Works for Threatened species",
+    "modelName": "Conservation Works for Threatened species",
     "dataModel": [
         {
             "dataType": "species",
@@ -9,13 +9,13 @@
         },
         {
             "dataType": "number",
-            "description": "The number of individual animals in a captive breeding program",
+            "description": "The number of individual animals in a captive or ex-situ breeding program or plants in a propagation program.",
             "name": "animalBreedingNos",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of individual animals released back into the wild",
+            "description": "The number of individual animals / plants released back into the wild",
             "name": "animalReleaseNumber",
             "validate": "min[0]"
         },
@@ -32,7 +32,7 @@
                         "Installation of nest boxes or other breeding/refuge structures",
                         "Restoring niche habitats",
                         "Seed bank establishment",
-                        "Ex-situ breeding program",
+                        "Ex-situ breeding / propagation program",
                         "Other (specify in notes)"
                     ]
                 },
@@ -55,8 +55,8 @@
                     "constraints": [
                         "On title in perpetuity (eg Covenant Agreement)",
                         "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
-                        "Termed agreement not on title binding (eg Land management agreement)",
-                        "Not on title non-binding (eg Wildlife Refuge)",
+                        "Termed agreement not on title - binding (eg Land management agreement)",
+                        "Not on title - non-binding (eg Wildlife Refuge)",
                         "No protection mechanism applicable",
                         "Other (specify in notes)"
                     ],
@@ -86,19 +86,20 @@
             "items": [
                 {
                     "source": "targetSpecies",
+                    "computed": null,
                     "preLabel": "Species: *",
                     "type": "autocomplete"
                 },
                 {
                     "source": "animalBreedingNos",
                     "computed": null,
-                    "preLabel": "No. of animals in captive breeding programs:",
+                    "preLabel": "No. of animals in captive breeding programs or plants propagated:",
                     "type": "number"
                 },
                 {
                     "source": "animalReleaseNumber",
                     "computed": null,
-                    "preLabel": "No. of animals released back into the wild:",
+                    "preLabel": "No. of animals / plants released back into the wild:",
                     "type": "number"
                 }
             ],
@@ -155,20 +156,25 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes:",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Please attach applicable Plan documents via Admin tab</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
