@@ -12,7 +12,7 @@
                     "name": "adminActionType",
                     "constraints": [
                         "Assess EOI applications and EOI site visits",
-                        "Development/call for applications",
+                        "Development / call for applications",
                         "Data analysis",
                         "Desktop information gathering",
                         "Develop monitoring protocols",
@@ -20,16 +20,16 @@
                         "Establish landholder agreements",
                         "Financial audits",
                         "Financial planning",
-                        "GIS/spatial data",
-                        "Meeting/meeting administration",
+                        "GIS / spatial data",
+                        "Meeting / meeting administration",
                         "Modelling",
                         "Order / purchase equipment, plants, seed, wire, posts etc",
-                        "Prepare EOI process/criteria",
+                        "Prepare EOI process / criteria",
                         "Record Keeping",
                         "Site selection",
-                        "Steering group/working group established",
-                        "Submit project progress/annual/final report",
-                        "Update/submit Project MERI Plan",
+                        "Steering group / working group established",
+                        "Submit project progress / annual / final report",
+                        "Update / submit Project MERI Plan",
                         "Works approvals",
                         "Other (specify in notes)"
                     ],
@@ -80,32 +80,40 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Please list the numbers of people involved in undertaking each relevant type of administration activity and the average time spent per person:",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please list the numbers of people involved in undertaking each relevant type of administration activity and the average time spent per person:",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "footer": {"rows": [{"columns": [
-                {
-                    "colspan": 2,
-                    "source": "",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "Total time spent undertaking project administration activities (Hrs)",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "hoursAdminTotal",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"hoursActionTotal\",\"fromList\":\"adminActions\"}}",
-                    "type": "number"
-                }
-            ]}]},
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan": 2,
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "Total time spent undertaking project administration activities (Hrs)",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "hoursAdminTotal",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"hoursActionTotal\",\"fromList\":\"adminActions\"}}",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                ]
+            },
             "source": "adminActions",
             "columns": [
                 {
@@ -142,13 +150,15 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes:",
-                "width": "90%",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
