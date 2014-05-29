@@ -34,25 +34,25 @@
                         {
                             "source": "projectEffectiveness",
                             "computed": null,
-                            "preLabel": "Describe the effectiveness of the project and whether it delivered what was intended:",
+                            "preLabel": "EFFECTIVENESS - Describe the effectiveness of the project and whether it delivered what was intended:",
                             "type": "textarea"
                         },
                         {
                             "source": "projectImpact",
                             "computed": null,
-                            "preLabel": "Describe the impact of the project:",
+                            "preLabel": "IMPACT - Describe the impact of the project:",
                             "type": "textarea"
                         },
                         {
                             "source": "projectEfficiency",
                             "computed": null,
-                            "preLabel": "Describe the efficiency of the delivery mechanism(s) for the project the project:",
+                            "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project the project:",
                             "type": "textarea"
                         },
                         {
                             "source": "methodologyAppropriateness",
                             "computed": null,
-                            "preLabel": "Describe the appropriateness of the methodology(s) used.",
+                            "preLabel": "METHODOLOGY - Describe the appropriateness of the methodology(s) used.",
                             "width": "90%",
                             "type": "textarea"
                         }
