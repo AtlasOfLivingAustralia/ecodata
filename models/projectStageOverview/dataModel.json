@@ -1,0 +1,45 @@
+{
+    "modelName": "projectStageOverview",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Describe in general terms how the project has progressed in this stage in respect to the achievement of immediate and intermediate targeted activities and outcomes.",
+            "name": "stageOverviewProgress",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide a brief analysis of the overall project successes and challenges, and how the project has adapted. Include a brief summary about what has worked and what has not worked.",
+            "name": "stageOverviewChallenges",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "This section should provide an overview of how your project has progressed over this stage against the information for the activities and deliverables identified in your plan. Information provided here is used in the Stage Report Summary. More detail is requested in other sections below.",
+                            "width": "100%",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "stageOverviewProgress",
+                            "preLabel": "Progress against planned activities and outcomes:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "stageOverviewChallenges",
+                            "preLabel": "Successes, challenges and adaptations:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
