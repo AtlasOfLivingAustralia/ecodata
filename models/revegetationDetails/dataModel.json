@@ -53,10 +53,6 @@
             "description": "Estimate of the 'connectedness' of the planting site with other native vegetation around it. Choose the most representative category.",
             "name": "connectivityIndex",
             "constraints": [
-                "Connected to patch of more than 1000 ha",
-                "Connected to patch of 100 to 1000 ha",
-                "Connected to patch of 25 to 100 ha",
-                "Connected to patch of less than 25 ha",
                 "Patch linked to other vegetation via riparian link",
                 "Patch <1km from a patch of more than 1000ha",
                 "Patch <1km from a patch of 100 to 1000ha",
@@ -78,16 +74,29 @@
             "constraints": [
                 "Groundwater recharge management",
                 "Groundwater discharge or salinity management",
-                "Habitat enhancement - improved habitat connectivity",
-                "Habitat restoration - home range/extent improvement",
-                "Habitat restoration - habitat condition improvement",
+                "Home range / extent improvement",
+                "Habitat condition improvement",
+                "Improved habitat connectivity",
+                "Improved / increased fauna habitat",
                 "Improved vegetation condition",
                 "Improved vegetation connectivity",
                 "Improved vegetation extent",
                 "Nutrient cycling",
                 "Soil stabilisation",
-                "Riparian rehabilitation",
-                "Streambank protection"
+                "Riparian rehabilitation"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "description": "Type of guard used to protect planted seedlings",
+            "name": "guardType",
+            "constraints": [
+                "None",
+                "Carton",
+                "Corflute",
+                "Mesh",
+                "Plastic sleeve",
+                "Other"
             ]
         },
         {
@@ -159,29 +168,23 @@
                 },
                 {
                     "dataType": "text",
-                    "noTotal": "true",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "name": "matureHeight",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
                     "description": "The name of the locality from which the seedstock was collected",
                     "name": "stockProvenance"
                 },
                 {
-                    "dataType": "text",
-                    "noTotal": "true",
-                    "description": "Type of guard used to protect planted seedlings",
-                    "name": "guardType",
-                    "constraints": [
-                        "None",
-                        "Carton",
-                        "Corflute",
-                        "Mesh",
-                        "Plastic sleeve",
-                        "Other"
-                    ]
-                },
-                {
                     "dataType": "number",
                     "description": "The average cost per plant or kilogram of seed as applicable",
-                    "name": "stockCostPerUnit",
-                    "validate": "required"
+                    "name": "stockCostPerUnit"
                 }
             ]
         },
@@ -281,29 +284,24 @@
                     "title": "Type of stock",
                     "source": "stockType",
                     "width": "10%",
-                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Structural Layer",
                     "source": "structuralLayer",
                     "width": "10%",
-                    "computed": null,
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Mature height",
+                    "source": "matureHeight",
+                    "width": "10%",
                     "type": "selectOne"
                 },
                 {
                     "title": "Stock Provenance",
-                    "source": "stockProvenance",
                     "width": "10%",
-                    "computed": null,
                     "type": "text"
-                },
-                {
-                    "title": "Type of Guard",
-                    "source": "guardType",
-                    "width": "10%",
-                    "computed": null,
-                    "type": "selectOne"
                 },
                 {
                     "title": "Cost / unit ($)",
@@ -377,8 +375,18 @@
                     "items": [
                         {
                             "source": "environmentalBenefits",
-                            "preLabel": "Environmental benefits / outcomes expected to be achieved from this planting:",
-                            "computed": null,
+                            "preLabel": "Environmental benefits / outcomes expected to be achieved:",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "preLabel": "Type(s) of guard used",
+                            "source": "guardType",
                             "type": "selectMany"
                         }
                     ],
@@ -395,7 +403,6 @@
                     "source": "notes",
                     "width": "90%",
                     "preLabel": "Comments / Notes:",
-                    "computed": null,
                     "type": "textarea"
                 }
             ],
