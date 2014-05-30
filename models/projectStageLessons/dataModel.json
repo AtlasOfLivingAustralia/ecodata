@@ -1,0 +1,61 @@
+{
+    "modelName": "projectStageLessons",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Provide information about lessons learned from monitoring and evaluation during this reporting period, including anticipated outcomes.",
+            "name": "stageReportLessons",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide information about improvements or changes to project implementation as a result of lessons learned from monitoring and evaluation. Include how these improvements or changes are captured in revisions to your plan / programme logic.",
+            "name": "stageReportImprovements",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide any additional information that you may not have captured elsewhere.",
+            "name": "stageReportNotes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "stageReportLessons",
+                            "preLabel": "Lessons learned for this stage:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "stageReportImprovements",
+                            "preLabel": "Improvement actions to be implemented:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "stageReportNotes",
+                            "preLabel": "Comments / Notes:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
