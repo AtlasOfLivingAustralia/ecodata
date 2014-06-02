@@ -44,7 +44,7 @@ class ProjectService {
      * @param prj a Project instance
      * @return map of properties
      */
-    def toMap(prj, levelOfDetail = []) {
+    def toMap(prj, levelOfDetail = [], includeDeletedActivites = false) {
         def dbo = prj.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         if (levelOfDetail == BRIEF) {
@@ -58,10 +58,7 @@ class ProjectService {
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
             if (levelOfDetail == ALL) {
-                mapOfProperties.activities = []
-                getActivityIdsForProject(prj.projectId).each {
-                    mapOfProperties.activities << activityService.get(it, ActivityService.ACTIVE)
-                }
+                mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
                 // Don't want to duplicate the activities as they can be large, so remove from the sites.
                 mapOfProperties.sites?.each { it.remove('activities')}
             }

@@ -47,7 +47,7 @@ class ProjectController {
 
                 withFormat {
                     json {
-                        asJson projectService.toMap(p, levelOfDetail)
+                        asJson projectService.toMap(p, levelOfDetail, params.includeDeleted)
                     }
                     xlsx {
                         asXlsx projectService.toMap(p, 'all')  // Probably should only support one level of detail?

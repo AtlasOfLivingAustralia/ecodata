@@ -51,8 +51,15 @@ class ActivityService {
         Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForProjectId(id, levelOfDetail = []) {
-        Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+        def activities
+        if (includeDeleted) {
+            activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
+        }
+        else {
+            activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
+        activities
     }
 
     /**
