@@ -33,12 +33,13 @@ class ProjectController {
     }
 
     def get(String id) {
+        def includeDeleted = params.boolean('includeDeleted', false)
         def levelOfDetail = []
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
         if (params.view == RICH) { levelOfDetail << RICH }
         if (params.view == ProjectService.ALL) { levelOfDetail = ProjectService.ALL }
         if (!id) {
-            def list = projectService.list(levelOfDetail, params.includeDeleted)
+            def list = projectService.list(levelOfDetail, includeDeleted)
             list.sort {it.name}
             asJson([list: list])
         } else {
@@ -47,7 +48,7 @@ class ProjectController {
 
                 withFormat {
                     json {
-                        asJson projectService.toMap(p, levelOfDetail, params.includeDeleted)
+                        asJson projectService.toMap(p, levelOfDetail, includeDeleted)
                     }
                     xlsx {
                         asXlsx projectService.toMap(p, 'all')  // Probably should only support one level of detail?
