@@ -10,10 +10,9 @@
                     "description": "The purpose for which changed practices are implemented",
                     "name": "changePurpose",
                     "constraints": [
+                        "Reduce run-off into the Great Barrier Reef",
                         "Sustainable farm practice",
                         "Sustainable fishing and aquaculture practice",
-                        "Innovative farming and fishing practices",
-                        "Reduce run-off into the Great Barrier Reef",
                         "Wetland, riparian and mangrove protection and restoration along the Great Barrier Reef",
                         "Other (specify in notes)"
                     ],
@@ -24,72 +23,54 @@
                     "description": "The type of industry in which changed practices are implemented",
                     "name": "industryType",
                     "constraints": [
-                        "Sugarcane",
-                        "Grazing",
+                        "Aquaculture",
+                        "Bananas",
+                        "Berries",
+                        "Cotton",
+                        "Dairy",
+                        "Fishing",
+                        "Forestry",
+                        "Fruit trees",
                         "Grains",
                         "Grapes",
+                        "Grazing",
+                        "Sugarcane",
                         "Vegetables",
-                        "Fruit trees",
-                        "Berries",
-                        "Dairy",
-                        "Cotton",
-                        "Forestry",
-                        "Aquaculture",
-                        "Fishing",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
                 },
                 {
                     "dataType": "text",
-                    "description": "The condition of the resource at the time when changed practices are implemented",
-                    "name": "resourceCondition",
+                    "description": "The primary targeted public good outcomes to be attained from the changed management practices.",
+                    "name": "targetOutcomes",
                     "constraints": [
-                        "Lack of ground cover",
-                        "Soil acidity",
-                        "Soil erosion (wind)",
-                        "Soil erosion (water)",
-                        "Soil health (biology)",
-                        "Soil health (other)",
-                        "Quality of wastewater (aquaculture)",
-                        "Marine quality (fishing)",
-                        "Nutrient loads",
-                        "Sediment loads",
-                        "Pesticide loads",
-                        "Vegetation condition",
+                        "Building soil carbon to improve nutrients and soil water holding capacity",
+                        "Improve water quality by reducing the transport of nutrients, pesticides and other farm chemicals off-farm",
+                        "Improve air and water quality by reducing the transport of soils / sediment off-farm (wind and water erosion)",
+                        "Improved groundcover management",
+                        "Improved quality and treatment of water discharged from aquaculture systems",
+                        "Increased adoption of industry approved environment management systems",
+                        "Reduced fisheries bycatch and reduced mortality of animals incidentally caught",
+                        "Reduced risk of soil acidification",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
                 },
                 {
                     "dataType": "text",
-                    "description": "The practice change action applied to address the resource condition issue.",
+                    "description": "The primary strategy(s) and / or actions implemented to facilitate the practice change(s) reported.",
                     "name": "practiceChangeAction",
                     "constraints": [
-                        "Retaining ground cover",
-                        "Soil testing",
-                        "Minimum-to-no till farming",
-                        "Composting/mulching",
-                        "Planting cover crops",
-                        "Farm planning",
-                        "Soil conditioning",
-                        "Managing soil nutrients",
-                        "Establishing wind breaks",
-                        "Planning",
-                        "By-catch reduction",
-                        "Industry environmental management plan",
-                        "Industry codes of practice",
-                        "Reduced stocking rates/selective grazing",
-                        "Fence off stock to watering points",
-                        "Consistent wheel tracks",
-                        "Crop rotation improvements",
-                        "Nitrogen budget developed",
-                        "Chemical application considered with rain forecast",
-                        "Revegetation",
-                        "Restoration",
-                        "Riparian fencing",
-                        "Management of invasive species",
-                        "Improved technologies in management",
+                        "Application and testing of on-farm decision support tools",
+                        "Conferences and seminars",
+                        "Development and implementation of industry codes of practice or guidelines",
+                        "Facilitator employment",
+                        "Farm planning and extension",
+                        "On-ground trials and demonstrations",
+                        "On-ground works (specify rationale and private contributions in notes)",
+                        "Training and workshops",
+                        "Use of new technologies to monitor and manage stocking rates",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
@@ -105,6 +86,12 @@
                     "description": "The number of farming entities adopting the specified changed management practices",
                     "name": "entitiesAdoptingChange",
                     "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of individual people influenced by implementation of a particular sustainable practice initiative. (Note that individuals should be counted only once across all listed initiatives)",
+                    "name": "noInfluenced",
+                    "validate": "required"
                 }
             ]
         },
@@ -116,22 +103,20 @@
         },
         {
             "dataType": "stringList",
-            "description": "Targeted outcomes to be attained from the changed management practices",
-            "name": "targetOutcomes",
+            "description": "The primary benefits to productivity, profitability and / or farm resilience outcomes that the new practices are expected to deliver.",
+            "name": "productivityBenefits",
             "constraints": [
-                "Reduced transport of nutrients off-farm",
-                "Reduced transport of soils / sediment off-farm",
-                "Reduced transport of pesticides off-farm",
-                "Reduced transport of farm chemicals off-farm",
-                "Improved soil structure, health and fertility / productivity",
-                "Enhanced habitat for native flora and fauna",
+                "Increased drought resilience",
+                "Increased yield – including crops or aquaculture",
+                "Reduced inputs of fertiliser, or  pesticides",
+                "Improved market access from sustainable produce",
+                "More effective stocking rates",
+                "More efficient use of farm labour",
+                "More sustainable fisheries catch and aquaculture production",
+                "Reduced impact of soil acidification",
                 "Other (specify in notes)"
-            ]
-        },
-        {
-            "dataType": "number",
-            "description": "Length of fence in kilometres erected to control stock access to watering points",
-            "name": "lengthOfFenceStockWatering"
+            ],
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -160,82 +145,118 @@
             }
         },
         {
+            "dataType": "number",
+            "primaryResult": "true",
+            "description": "Aggregate total of people influenced by implementation of sustainable practices.",
+            "name": "noInfluencedTotal",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "noInfluenced",
+                    "fromList": "practiceChange"
+                }
+            }
+        },
+        {
             "dataType": "text",
             "name": "notes"
         }
     ],
     "viewModel": [
         {
-            "footer": {"rows": [{"columns": [
+            "items": [
                 {
-                    "colspan": 2,
-                    "source": "",
+                    "source": "Please insert multiple rows as required if multiple industries, change reasons, public good outcomes, or facilitation strategies are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
                     "computed": null,
                     "type": "literal"
-                },
-                {
-                    "source": "Total area of adopted changed practices (Ha)",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalChangePracticeTreatedArea",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"changePracticeTreatedArea\",\"fromList\":\"practiceChange\"}}",
-                    "type": "number"
-                },
-                {
-                    "source": "Total No. of farming entities",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalEntitiesAdoptingChange",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"entitiesAdoptingChange\",\"fromList\":\"practiceChange\"}}",
-                    "type": "number"
                 }
-            ]}]},
+            ],
+            "type": "row"
+        },
+        {
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan": 2,
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "Total area of adopted changed practices (Ha)",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalChangePracticeTreatedArea",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"changePracticeTreatedArea\",\"fromList\":\"practiceChange\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "Total No. of farming entities and people",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalEntitiesAdoptingChange",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"entitiesAdoptingChange\",\"fromList\":\"practiceChange\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "noInfluencedTotal",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInfluenced\",\"fromList\":\"practiceChange\"}}",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                ]
+            },
             "title": "Please list the details for each type of land management practice change related to this activity and any additional information that you can that is relevant:",
             "source": "practiceChange",
             "allowHeaderWrap": "true",
             "columns": [
                 {
-                    "title": "Reason for changing management practices:",
-                    "source": "changePurpose",
-                    "computed": null,
-                    "width": "25%",
-                    "type": "selectOne"
-                },
-                {
                     "title": "Industry:",
                     "source": "industryType",
-                    "computed": null,
+                    "width": "10%",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Resource condition prior to action:",
-                    "source": "resourceCondition",
-                    "computed": null,
+                    "title": "Reason for changing management practices:",
+                    "source": "changePurpose",
+                    "width": "22%",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Practice change action:",
+                    "title": "Public good outcomes:",
+                    "source": "targetOutcomes",
+                    "width": "21%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Change facilitation strategy(s):",
                     "source": "practiceChangeAction",
-                    "computed": null,
                     "width": "20%",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Area treated by practice change (Ha):",
+                    "title": "Area covered by practice change (Ha):",
                     "source": "changePracticeTreatedArea",
-                    "computed": null,
-                    "width": "10%",
+                    "width": "8%",
                     "type": "number"
                 },
                 {
                     "title": "No. of farming entities adopting this practice change:",
                     "source": "entitiesAdoptingChange",
-                    "computed": null,
-                    "width": "10%",
+                    "width": "11%",
+                    "type": "number"
+                },
+                {
+                    "title": "No. of people influenced:",
+                    "source": "noInfluenced",
+                    "width": "8%",
                     "type": "number"
                 }
             ],
@@ -252,24 +273,20 @@
                             "computed": null,
                             "preLabel": "Area of land directly benefiting from the practice change:",
                             "type": "number"
-                        },
-                        {
-                            "source": "lengthOfFenceStockWatering",
-                            "computed": null,
-                            "preLabel": "Length of fence installed for managing stock access to water:",
-                            "type": "number"
                         }
                     ],
                     "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "targetOutcomes",
-                        "computed": null,
-                        "preLabel": "Expected outcomes from changed practices:",
-                        "type": "selectMany"
-                    }],
+                    "items": [
+                        {
+                            "source": "productivityBenefits",
+                            "computed": null,
+                            "preLabel": "Productivity outcomes expected:",
+                            "type": "selectMany"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 }
@@ -278,13 +295,15 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes",
-                "width": "90%",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
