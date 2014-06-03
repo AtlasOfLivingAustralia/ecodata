@@ -6,7 +6,7 @@
             "name": "practiceChange",
             "columns": [
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "description": "The purpose for which changed practices are implemented",
                     "name": "changePurpose",
                     "constraints": [
@@ -41,7 +41,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "description": "The primary targeted public good outcomes to be attained from the changed management practices.",
                     "name": "targetOutcomes",
                     "constraints": [
@@ -58,7 +58,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "description": "The primary strategy(s) and / or actions implemented to facilitate the practice change(s) reported.",
                     "name": "practiceChangeAction",
                     "constraints": [
@@ -227,19 +227,19 @@
                     "title": "Reason for changing management practices:",
                     "source": "changePurpose",
                     "width": "22%",
-                    "type": "selectOne"
+                    "type": "selectMany"
                 },
                 {
                     "title": "Public good outcomes:",
                     "source": "targetOutcomes",
                     "width": "21%",
-                    "type": "selectOne"
+                    "type": "selectMany"
                 },
                 {
                     "title": "Change facilitation strategy(s):",
                     "source": "practiceChangeAction",
                     "width": "20%",
-                    "type": "selectOne"
+                    "type": "selectMany"
                 },
                 {
                     "title": "Area covered by practice change (Ha):",
