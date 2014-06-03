@@ -1,5 +1,5 @@
 function renameListValue(outputName, property, oldValue, newValue) {
-
+    property = 'data.'+property;
     var query = {name:outputName};
     query[property] = oldValue;
     var affectedCount = db.output.find(query).count();
@@ -26,6 +26,7 @@ function renameListValue(outputName, property, oldValue, newValue) {
 
 function renameArrayTypedListValue(outputName, property, oldValue, newValue) {
 
+    property = 'data.'+property;
     var query = {name:outputName};
     query[property] = oldValue;
     var affectedCount = db.output.find(query).count();
@@ -51,9 +52,10 @@ function renameArrayTypedListValue(outputName, property, oldValue, newValue) {
 
 }
 
+// Do not include 'data.' prefix on the listProperty parameter.
 function renameNestedListValue(outputName, listProperty, property, oldValue, newValue) {
     var query = {name:outputName};
-    query[listProperty+'.'+property] = oldValue;
+    query['data.'+listProperty+'.'+property] = oldValue;
     var affectedCount = db.output.find(query).count();
 
     var updatedCount = 0;
@@ -64,10 +66,13 @@ function renameNestedListValue(outputName, listProperty, property, oldValue, new
         while (outputs.hasNext()) {
             var found = false;
             var output = outputs.next();
-            var list = output[listProperty];
+
+            var list = output.data[listProperty];
+
             for (var i=0; i<list.length; i++) {
-                if (output[listProperty][i] === oldValue) {
-                    output[listProperty][i] === newValue;
+                print(output.data[listProperty][i][property]);
+                if (output.data[listProperty][i][property] === oldValue) {
+                    output.data[listProperty][i][property] === newValue;
                     found = true;
                 }
             }
@@ -82,7 +87,7 @@ function renameNestedListValue(outputName, listProperty, property, oldValue, new
             throw {name:'Error', message:'Updating '+outputName+'.'+property+', expected '+affectedCount+', was '+updatedCount};
         }
 
-        print('Updated '+updatedCount+' outputs. '+outputName+'.'+property+' from '+oldValue+' to '+newValue);
+        print('Updated '+updatedCount+' outputs. '+outputName+' '+listProperty+'.'+property+' from "'+oldValue+'" to "'+newValue+'"');
     }
     else {
         print('No outputs with '+outputName+'.'+listProperty+'.'+property+' = '+oldValue);
