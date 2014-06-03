@@ -193,6 +193,7 @@
                             "type": "selectMany"
                         }
                     ],
+                    "computed": null,
                     "width": "30%",
                     "type": "col"
                 },
@@ -211,6 +212,7 @@
                             "type": "textarea"
                         }
                     ],
+                    "computed": null,
                     "width": "70%",
                     "type": "col"
                 }
