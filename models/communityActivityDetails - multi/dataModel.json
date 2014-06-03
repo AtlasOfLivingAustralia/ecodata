@@ -54,6 +54,7 @@
                     "name": "industryType",
                     "constraints": [
                         "Aquaculture",
+                        "Bananas",
                         "Berries",
                         "Cotton",
                         "Dairy",
@@ -86,7 +87,7 @@
             }
         },
         {
-            "dataType": "text",
+            "dataType": "stringList",
             "description": "Select the type(s) of partners involved in delivering the event",
             "name": "deliveryPartner",
             "constraints": [
