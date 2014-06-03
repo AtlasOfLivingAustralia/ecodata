@@ -35,7 +35,7 @@
 
         ]
     },
-    {"name":"totalFeralAnimalAbundanceScore","type":"number","primaryResult":"true","computed":{
+    {"name":"totalFeralAnimalAbundanceScore","dataType":"number","primaryResult":"true","computed":{
         "dependents":{"fromMatrix":"activeSigns","row":"abundanceRating"},"operation":"sum"}
     },
     {"name":"comments","dataType":"text"}

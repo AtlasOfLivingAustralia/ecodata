@@ -24,7 +24,7 @@
             ]
         }
     },
-    {"name":"totalFeralAnimalFrequencyScore","type":"number","primaryResult":"true","computed":{
+    {"name":"totalFeralAnimalFrequencyScore","dataType":"number","primaryResult":"true","computed":{
         "dependents":{"from":"frequencyTotals","source":"frequencyScore"},"operation":"sum"}
     },
     {"name":"frequencyScoreLookup","dataType":"lookupRange","map":[
