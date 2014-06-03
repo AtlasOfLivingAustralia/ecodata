@@ -54,16 +54,16 @@
                     "description": "The method used in this activity to manage pests",
                     "name": "pestManagementMethod",
                     "constraints": [
-                        "Trap & remove",
-                        "Trap & cull",
-                        "Spotlight cull",
                         "Bait & trap",
                         "Bait only",
+                        "Biological control agents",
+                        "Exclusion fencing",
                         "Fumigation",
                         "Harbour destruction",
                         "Positive competition",
-                        "Biological control agents",
-                        "Exclusion fencing",
+                        "Spotlight cull",
+                        "Trap & cull",
+                        "Trap & remove",
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
@@ -138,6 +138,7 @@
                             "type": "selectMany"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
@@ -149,6 +150,7 @@
                             "type": "selectMany"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
@@ -160,6 +162,7 @@
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -181,62 +184,62 @@
         {
             "title": "Please :",
             "source": "pestManagement",
+            "allowHeaderWrap": "true",
             "columns": [
                 {
-                    "source": "targetSpecies",
                     "title": "Target species:",
+                    "source": "targetSpecies",
                     "width": "15%",
                     "type": "autocomplete"
                 },
                 {
-                    "source": "pestPriorityStatus",
                     "title": "Priority status:",
+                    "source": "pestPriorityStatus",
                     "width": "15%",
                     "type": "selectOne"
                 },
                 {
-                    "source": "pestManagementMethod",
                     "title": "Pest management method:",
+                    "source": "pestManagementMethod",
                     "width": "12%",
                     "type": "selectOne"
                 },
                 {
-                    "source": "treatmentIncentiveMethod",
                     "title": "Treatment incentive method:",
+                    "source": "treatmentIncentiveMethod",
                     "width": "12%",
                     "type": "selectOne"
                 },
                 {
+                    "title": "No. of individuals OR colonies killed / removed:",
                     "source": "pestAnimalsTreatedNo",
                     "computed": null,
-                    "title": "No. of individuals OR colonies killed / removed:",
                     "width": "10%",
                     "type": "number"
                 },
                 {
+                    "title": "No. unknown:",
                     "source": "noUnknown",
                     "computed": null,
-                    "title": "No. unknown:",
                     "width": "5%",
                     "type": "checkBox"
                 },
                 {
+                    "title": "Area covered by treatment (Ha):",
                     "source": "areaTreatedHa",
                     "computed": null,
-                    "title": "Area covered by treatment (Ha):",
                     "width": "10%",
                     "type": "number"
                 },
                 {
+                    "title": "Estimated pest density before treatment (No./Ha):",
                     "source": "pestDensityPerHa",
                     "computed": null,
-                    "title": "Estimated pest density before treatment (No./Ha):",
                     "width": "10%",
                     "type": "number"
                 }
             ],
             "userAddedRows": true,
-            "allowHeaderWrap": "true",
             "class": "output-section",
             "type": "table"
         },
