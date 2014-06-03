@@ -1,11 +1,9 @@
 {
     "selectedActivity": {
-        "name": "Revegetation Monitoring",
-        "type": "Assessment",
+        "name": "Management Practice Change",
+        "type": "Activity",
         "outputs": [
-            "Survey Information",
-            "Revegetation Monitoring Results",
-            "Photo Points"
+            "Management Practice Change Details"
         ]
     },
     "activities": [
@@ -20,7 +18,7 @@
             "name": "Community Participation and Engagement",
             "type": "Activity",
             "outputs": [
-                "Event Details - multi-event",
+                "Event Details",
                 "Participant Information",
                 "Materials Provided to Participants"
             ]
@@ -58,7 +56,7 @@
             ]
         },
         {
-            "name": "Fauna (biological) survey",
+            "name": "Fauna Survey - general",
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -74,24 +72,16 @@
             ]
         },
         {
-            "name": "Feral animal assessment",
-            "type": "Assessment",
-            "outputs": [
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
-            ]
-        },
-        {
             "name": "Fire Management",
             "type": "Activity",
             "outputs": [
-                "Fire Information",
+                "Fire Management Details",
                 "Participant Information",
                 "Photo Points"
             ]
         },
         {
-            "name": "Flora (biological) survey",
+            "name": "Flora Survey - general",
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -99,37 +89,45 @@
             ]
         },
         {
-            "name": "Indigenous Employment & Enterprise",
+            "name": "Heritage Conservation",
+            "type": "Activity",
+            "outputs": [
+                "Heritage Conservation Information",
+                "Expected Heritage Outcomes"
+            ]
+        },
+        {
+            "name": "Indigenous Employment and Businesses",
             "type": "Activity",
             "outputs": [
                 "Indigenous Employment",
-                "Indigenous Enterprise"
+                "Indigenous Businesses"
             ]
         },
         {
-            "name": "Infrastructure Establishment",
+            "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
             "outputs": [
-                "Infrastructure Details"
+                "Indigenous Knowledge Transfer Details"
             ]
         },
         {
-            "name": "Knowledge Integration and Transfer",
+            "name": "Management Plan Development",
             "type": "Activity",
             "outputs": [
-                "Knowledge Integration and Transfer"
+                "Plan Development Details",
+                "Participant Information"
             ]
         },
         {
             "name": "Management Practice Change",
             "type": "Activity",
             "outputs": [
-                "Management Practice Change Details",
-                "Sustainable Practice Initiatives"
+                "Management Practice Change Details"
             ]
         },
         {
-            "name": "Other Conservation Works for Threatened Species",
+            "name": "Conservation Actions for Threatened Species",
             "type": "Activity",
             "outputs": [
                 "Conservation Works Details",
@@ -137,7 +135,7 @@
             ]
         },
         {
-            "name": "Outcomes, Evaluation and Learning",
+            "name": "Outcomes, Evaluation and Learning - final report",
             "type": "Activity",
             "outputs": [
                 "Outcomes",
@@ -146,10 +144,20 @@
             ]
         },
         {
-            "name": "Pest and Disease Management",
+            "name": "Pest Animal Survey and Monitoring",
+            "type": "Assessment",
+            "outputs": [
+                "Evidence of Pest Management Activity",
+                "Pest Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Pest Management",
             "type": "Activity",
             "outputs": [
-                "Pest Management Details - Multi",
+                "Pest Management Details",
                 "Fence Details",
                 "Participant Information",
                 "Photo Points"
@@ -164,6 +172,15 @@
             ]
         },
         {
+            "name": "Plant Survival Survey",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Monitoring Results",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
             "name": "Project Administration",
             "type": "Activity",
             "outputs": [
@@ -172,10 +189,11 @@
             ]
         },
         {
-            "name": "Public Access Management",
+            "name": "Public Access and Infrastructure",
             "type": "Activity",
             "outputs": [
                 "Access Control Details",
+                "Infrastructure Details",
                 "Participant Information"
             ]
         },
@@ -205,7 +223,7 @@
             ]
         },
         {
-            "name": "Site Monitoring Planning",
+            "name": "Site Monitoring Plan",
             "type": "Activity",
             "outputs": [
                 "Planned Monitoring Approach"
@@ -238,130 +256,6 @@
             ]
         },
         {
-            "name": "Weed Treatment",
-            "type": "Activity",
-            "outputs": [
-                "Weed Treatment Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Works Implementation Planning",
-            "type": "Activity",
-            "outputs": [
-                "Site Planning Details",
-                "Threatening Processes & Site Condition Risks",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Management Plan Development",
-            "type": "Activity",
-            "outputs": [
-                "Plan Development Details",
-                "Participant Information"
-            ]
-        },
-        {
-            "name": "Pest animal survey",
-            "type": "Assessment",
-            "outputs": [
-                "Evidence of Pest Management Activity",
-                "Pest Observation and Monitoring Details",
-                "Participant Information",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Revegetation Monitoring",
-            "type": "Assessment",
-            "outputs": [
-                "Survey Information",
-                "Revegetation Monitoring Results",
-                "Photo Points"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - BioCondition (QLD)",
-            "type": "Assessment",
-            "outputs": [
-                "Benchmarks - QLD",
-                "Floristic Composition",
-                "100 x 50m area - Ecologically Dominant Layer",
-                "50 x 10m area",
-                "50 x 20m area - Coarse Woody Debris",
-                "Five 1 x 1m plots",
-                "100m Transect"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Biodiversity Fund (DoE)",
-            "type": "Assessment",
-            "outputs": [
-                "Sampling Site Information",
-                "Photo Points",
-                "Field Sheet 1 - Ground Cover",
-                "Field Sheet 2 - Exotic Fauna",
-                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
-                "Field Sheet 4 - Crown Type",
-                "Field Sheet 5 - Species Diversity"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - BioMetric (NSW)",
-            "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-            "type": "Assessment",
-            "outputs": [
-                "Benchmarks - SA",
-                "Bushland Condition - Site Health Summary",
-                "Indicator 1 - Plant Species Diversity",
-                "Indicator 2 - Weed Abundance & Threat",
-                "Indicator 3 - Structural Diversity",
-                "Indicator 4 - Regeneration",
-                "Indicator 5 - Tree and Shrub Health",
-                "Indicator 6 - Tree Habitat",
-                "Indicator 7 - Feral Animals",
-                "Indicator 8 - Total Grazing Pressure",
-                "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
-            "type": "Assessment",
-            "outputs": [
-                "EVC Benchmark Values - Victoria",
-                "Vegetation Assessment - Species List",
-                "Site Condition Components",
-                "Landscape Context Components"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
-            "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
-        },
-        {
-            "name": "Vegetation Assessment - TasVeg (TAS)",
-            "type": "Assessment",
-            "outputs": [
-                "Benchmarks - TAS",
-                "Floristic Composition",
-                "Site Condition",
-                "Landscape Context"
-            ]
-        },
-        {
             "name": "Water Quality Survey",
             "type": "Assessment",
             "outputs": [
@@ -375,9 +269,51 @@
             "type": "Assessment",
             "outputs": [
                 "Evidence of Weed Treatment",
-                "Weed Observation / Monitoring Details",
+                "Weed Observation and Monitoring Details",
                 "Participant Information",
                 "Photo Points"
+            ]
+        },
+        {
+            "name": "Weed Treatment",
+            "type": "Activity",
+            "outputs": [
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Works Planning and Risk",
+            "type": "Activity",
+            "outputs": [
+                "Site Planning Details",
+                "Threatening Processes & Site Condition Risks",
+                "Participant Information",
+                "Photo Points"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Commonwealth government methodology",
+            "type": "Assessment",
+            "outputs": [
+                "Sampling Site Information",
+                "Photo Points",
+                "Field Sheet 1 - Ground Cover",
+                "Field Sheet 2 - Exotic Fauna",
+                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                "Field Sheet 4 - Crown Type",
+                "Field Sheet 5 - Species Diversity"
+            ]
+        },
+        {
+            "name": "Progress, Outcomes and Learning - stage report",
+            "type": "Activity",
+            "outputs": [
+                "Overview of Project Progress",
+                "Environmental, Economic and Social Outcomes",
+                "Implementation Update",
+                "Lessons Learned and Improvements"
             ]
         }
     ],
@@ -387,54 +323,75 @@
             "scores": [
                 {
                     "isOutputTarget": true,
-                    "name": "areaOfWorks",
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "areaRevegHa",
                     "aggregationType": "SUM",
-                    "label": "Area of works",
+                    "label": "Area of revegetation works (Ha)",
                     "units": "Ha"
                 },
                 {
                     "isOutputTarget": true,
+                    "category": "Revegetation",
+                    "displayType": "",
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
                     "label": "Number of plants planted",
                     "units": ""
                 },
                 {
+                    "groupBy": "output:species.name",
+                    "category": "Revegetation",
+                    "listName": "planting",
+                    "displayType": "barchart",
+                    "name": "numberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "No. of plants planted by species"
+                },
+                {
                     "isOutputTarget": true,
+                    "category": "Revegetation",
+                    "displayType": "barchart",
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
-                    "label": "Kgs of seed sown",
+                    "label": "Kilograms of seed sown",
                     "units": "Kg"
                 },
                 {
+                    "groupBy": "output:species.name",
                     "isOutputTarget": false,
-                    "name": "stockType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Stock type",
+                    "category": "Revegetation",
+                    "listName": "planting",
+                    "displayType": "barchart",
+                    "name": "seedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown by species",
                     "units": ""
                 },
                 {
-                    "name": "structuralLayer",
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "environmentalBenefits",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Structural Layer",
+                    "label": "No. of activities undertaking revegetation by environmental benefit type",
                     "units": ""
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Revegetation",
+                    "displayType": "piechart",
                     "name": "revegPurpose",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Revegetation purpose"
+                    "label": "No. of activities undertaking revegetation by revegetation purpose"
                 },
                 {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
                     "name": "revegMethod",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Revegetation method"
-                },
-                {
-                    "isOutputTarget": false,
-                    "name": "ecosystemType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Ecosystem type(s)"
+                    "label": "No. of activities undertaking revegetation by revegetation method"
                 }
             ],
             "name": "Revegetation Details"
@@ -444,9 +401,22 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalSeedCollectedKg",
+                    "aggregationType": "SUM",
+                    "label": "Total seed collected (Kg)",
+                    "units": "Kg"
+                },
+                {
+                    "groupBy": "output:seedSourceSpecies.name",
+                    "category": "Revegetation",
+                    "listName": "seedsList",
+                    "displayType": "barchart",
                     "name": "seedCollectedKg",
                     "aggregationType": "SUM",
-                    "label": "Seed collected (Kg)",
+                    "label": "Kg of seed collected by species",
                     "units": "Kg"
                 }
             ],
@@ -457,9 +427,21 @@
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "category": "Revegetation",
+                    "displayType": "",
                     "name": "preparationAreaTotal",
                     "aggregationType": "SUM",
-                    "label": "Total area prepared for follow-up treatment actions",
+                    "label": "Total area prepared (Ha) for follow-up treatment actions",
+                    "units": "Ha"
+                },
+                {
+                    "groupBy": "output:actionsList.groundPreparationWorks",
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "preparationAreaTotal",
+                    "aggregationType": "SUM",
+                    "label": "Area prepared (Ha) by type of preparation works",
                     "units": "Ha"
                 }
             ],
@@ -470,28 +452,39 @@
             "scores": [
                 {
                     "isOutputTarget": false,
+                    "category": "Biodiversity Management",
+                    "displayType": "",
                     "name": "lengthOfFence",
                     "aggregationType": "SUM",
-                    "label": "Total length of fence",
-                    "units": "Km"
+                    "label": "Total length of fence (Km)",
+                    "units": "kilometres"
                 },
                 {
-                    "name": "purposeOfFence",
-                    "aggregationType": "SET",
-                    "label": "Purpose of fence",
-                    "units": ""
+                    "groupBy": "output:purposeOfFence",
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Length of fence (Km) by fence purpose",
+                    "units": "kilometres"
                 },
                 {
                     "isOutputTarget": false,
-                    "name": "fenceCostPerKm",
-                    "aggregationType": "AVERAGE",
-                    "label": "Fence cost/Km",
-                    "units": "$/Km"
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "purposeOfFence",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities by fence purpose",
+                    "units": ""
                 },
                 {
+                    "category": "Biodiversity Management",
+                    "displayType": "piechart",
                     "name": "fenceType",
-                    "aggregationType": "SET",
-                    "label": "Fence type",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities by fence type",
                     "units": ""
                 }
             ],
@@ -520,6 +513,8 @@
             "scores": [
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "totalParticipants",
                     "aggregationType": "SUM",
                     "label": "Total No. of participants",
@@ -527,6 +522,8 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "numberOfVolunteers",
                     "aggregationType": "SUM",
                     "label": "No of volunteers",
@@ -534,13 +531,17 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "aggregationType": "SUM",
-                    "label": "No of indigenous participants",
+                    "label": "No of Indigenous participants at project events",
                     "units": ""
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "totalParticipantsNew",
                     "aggregationType": "SUM",
                     "label": "Total No. of unique participants attending project events",
@@ -548,6 +549,8 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Farm Management Practices",
+                    "displayType": "",
                     "name": "numberOfFarmingEntitiesNew",
                     "aggregationType": "SUM",
                     "label": "Total No. of unique farming entities engaged",
@@ -573,23 +576,38 @@
             "template": "communityActivityDetails",
             "scores": [
                 {
-                    "isOutputTarget": false,
-                    "name": "eventPurpose",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Purpose of event",
-                    "units": ""
-                },
-                {
-                    "name": "eventDurationHrs",
-                    "aggregationType": "SUM",
-                    "label": "Event Duration (Hrs)",
-                    "units": ""
-                },
-                {
                     "isOutputTarget": true,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "eventTopics",
                     "aggregationType": "COUNT",
-                    "label": "Number of Community Participation and Engagement events"
+                    "label": "Total No. of Community Participation and Engagement events run"
+                },
+                {
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
+                    "name": "eventDurationHrs",
+                    "aggregationType": "SUM",
+                    "label": "Total amount of time (Hrs) over which events have run",
+                    "units": ""
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "piechart",
+                    "name": "eventPurpose",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities by purpose of event",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:industryType",
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "eventPurpose",
+                    "aggregationType": "COUNT",
+                    "label": "No. of events by type of industry"
                 }
             ],
             "name": "Event Details"
@@ -599,6 +617,8 @@
             "scores": [
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "numberOfBrochures",
                     "aggregationType": "SUM",
                     "label": "No. of brochures",
@@ -606,6 +626,8 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "numberOfWrittenMaterials",
                     "aggregationType": "SUM",
                     "label": "No. of written materials",
@@ -613,6 +635,8 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "numberOfMaterialRecipients",
                     "aggregationType": "SUM",
                     "label": "No. of recipients of materials",
@@ -620,6 +644,8 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
                     "name": "numberOfDisplays",
                     "aggregationType": "SUM",
                     "label": "No. of displays",
@@ -632,27 +658,43 @@
             "template": "fireInformation",
             "scores": [
                 {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "areaOfFireHa",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking fire management measures"
+                },
+                {
                     "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "areaOfFireHa",
                     "aggregationType": "SUM",
-                    "label": "Area of burn (Ha)",
+                    "label": "Burnt area (Ha) - may be different to the total area managed",
                     "units": "Ha"
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "burnReason",
                     "aggregationType": "HISTOGRAM",
                     "label": "Reason for burn",
                     "units": ""
                 },
                 {
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "fireEventType",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Type of fire event",
+                    "label": "No. of activities by type of fire event",
                     "units": ""
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "totalMachineHrs",
                     "aggregationType": "SUM",
                     "label": "Total machinery Hrs",
@@ -660,25 +702,31 @@
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "controlLineKmMachine",
                     "aggregationType": "SUM",
                     "label": "Control line constructed by machine (Km)",
                     "units": "Km"
                 },
                 {
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "controlLineKmHand",
                     "aggregationType": "SUM",
                     "label": "Control line constructed by hand tools (Km)",
                     "units": "Km"
                 }
             ],
-            "name": "Fire Information"
+            "name": "Fire Management Details"
         },
         {
             "template": "evidenceOfWeedTreatment",
             "scores": [
                 {
                     "isOutputTarget": false,
+                    "category": "Invasive Species Management - Weeds",
+                    "displayType": "",
                     "name": "effectivenessOfPreviousTreatment",
                     "aggregationType": "AVERAGE",
                     "label": "Effectiveness of Previous Treatment (% killed)",
@@ -692,41 +740,76 @@
             "scores": [
                 {
                     "isOutputTarget": false,
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedObservationMonitoringDetails",
+                    "displayType": "piechart",
                     "name": "weedCoverHa",
                     "aggregationType": "SUM",
-                    "label": "Weed Cover (Ha)",
+                    "label": "Area (Ha) of weed cover monitored",
                     "units": "Ha"
                 },
                 {
+                    "groupBy": "output:weedSpecies.name",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedObservationMonitoringDetails",
+                    "displayType": "barchart",
+                    "name": "weedCoverHa",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha.) of weed cover monitored by species"
+                },
+                {
+                    "groupBy": "output:weedStatus",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedObservationMonitoringDetails",
+                    "displayType": "piechart",
+                    "name": "weedCoverHa",
+                    "aggregationType": "SUM",
+                    "label": "No. of activities treating weeds by weed Status"
+                },
+                {
+                    "groupBy": "output:weedSpecies.name",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedObservationMonitoringDetails",
+                    "displayType": "barchart",
                     "name": "weedStatus",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Weed Status"
+                    "aggregationType": "COUNT",
+                    "label": "No. of records by weed status by species"
                 }
             ],
-            "name": "Weed Observation / Monitoring Details"
+            "name": "Weed Observation and Monitoring Details"
         },
         {
             "template": "Weed",
             "scores": [
                 {
                     "isOutputTarget": true,
+                    "category": "Invasive Species Management - Weeds",
+                    "displayType": "",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
                     "label": "Total area treated (Ha)",
                     "units": "Ha"
                 },
                 {
+                    "groupBy": "output:targetSpecies.name",
                     "isOutputTarget": false,
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedsTreated",
+                    "displayType": "barchart",
                     "name": "targetSpecies",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Target species",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities treating weeds by weed species",
                     "units": ""
                 },
                 {
+                    "groupBy": "output:weedsTreated.treatmentMethod",
                     "isOutputTarget": false,
-                    "name": "treatmentMethod",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Treatment method"
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "treatmentEventType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities treating weeds by treatment method"
                 }
             ],
             "name": "Weed Treatment Details"
@@ -735,18 +818,39 @@
             "template": "stockManagementDetails",
             "scores": [
                 {
-                    "isOutputTarget": false,
-                    "name": "stockManagementReason",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Stock management reason",
-                    "units": ""
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "areaOfStockManagementHa",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of activities undertaken involving conservation grazing"
                 },
                 {
                     "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "areaOfStockManagmentHa",
                     "aggregationType": "SUM",
-                    "label": "Area managed with stock (Ha)",
+                    "label": "Area managed with conservation grazing (Ha)",
                     "units": "Ha"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "name": "stockManagementReason",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities undertaking conservation grazing by stock management reason",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:stockingDetails.stockingManagemnetSpecies",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "stockManagementReason",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities by conservation grazing reason by stock species"
                 }
             ],
             "name": "Stock Management Details"
@@ -755,14 +859,28 @@
             "template": "infrastructureDetails",
             "scores": [
                 {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "noInstallationsTotal",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking infrastructure works"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "noInstallationsTotal",
                     "aggregationType": "SUM",
                     "label": "Total No. of infrastructure installations / facilities established"
                 },
                 {
-                    "name": "infrastructureType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Type of infrastructure",
+                    "groupBy": "output:infrastructureType",
+                    "category": "Natural Resources Management",
+                    "listName": "infrastructureInstallations",
+                    "displayType": "barchart",
+                    "name": "noInstallations",
+                    "aggregationType": "SUM",
+                    "label": "No. of installations by type of infrastructure",
                     "units": ""
                 }
             ],
@@ -772,64 +890,49 @@
             "template": "planningActivityDetails",
             "scores": [
                 {
-                    "isOutputTarget": false,
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "",
+                    "displayType": "",
                     "name": "typeOfPlan",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Type of plan"
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking plan development work"
                 },
                 {
                     "isOutputTarget": false,
+                    "category": "Project Management, Planning and Research Outputs",
+                    "displayType": "",
                     "name": "noOfPlanActionsAddressed",
                     "aggregationType": "SUM",
                     "label": "No. of Plan actions addressed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Project Management, Planning and Research Outputs",
+                    "displayType": "piechart",
+                    "name": "typeOfPlan",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Plan development activities by type of plan"
                 }
             ],
             "name": "Plan Development Details"
         },
         {
-            "template": "pestManagementDetails",
-            "scores": [
-                {
-                    "name": "activityDuration",
-                    "aggregationType": "SUM",
-                    "label": "Duration of activity ",
-                    "units": ""
-                },
-                {
-                    "name": "pestManagementMethod",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Pest management method",
-                    "units": ""
-                },
-                {
-                    "isOutputTarget": true,
-                    "name": "pestAnimalsTreatedNo",
-                    "aggregationType": "SUM",
-                    "label": "No. of individual animals killed/removed"
-                },
-                {
-                    "isOutputTarget": true,
-                    "name": "areaTreatedForPests",
-                    "aggregationType": "SUM",
-                    "label": "Area covered by pest treatment (Ha)",
-                    "units": "Ha"
-                },
-                {
-                    "name": "pestTreatmentCostPerHa",
-                    "aggregationType": "AVERAGE",
-                    "label": "Cost of treatment / Ha.",
-                    "units": "$/Ha"
-                }
-            ],
-            "name": "Pest Management Details"
-        },
-        {
             "template": "researchInformation",
             "scores": [
                 {
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "typeOfResearch",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of research activities undertaken"
+                },
+                {
+                    "category": "Project Management, Planning and Research Outputs",
+                    "displayType": "",
                     "name": "typeOfResearch",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Type of research"
+                    "label": "Research activities by type of research"
                 }
             ],
             "name": "Research Information"
@@ -838,88 +941,150 @@
             "template": "waterManagementDetails",
             "scores": [
                 {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "isCurrentFlowNatural",
+                    "aggregationType": "COUNT",
+                    "label": "No. of water management activities implemented"
+                },
+                {
                     "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "hydrologicalStructuresInstalled",
                     "aggregationType": "SUM",
                     "label": "No. of hydrological structures installed"
                 },
                 {
-                    "name": "isCurrentFlowNatural",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Current flow regime"
+                    "groupBy": "output:waterMgtEnviroBenefit",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "managedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) of water management by environmental benefit type"
+                },
+                {
+                    "groupBy": "output:waterbodyType",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "managedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) of water management by type of water body"
+                },
+                {
+                    "groupBy": "output:waterUsePurpose",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "managedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) of water management by water use purpose"
                 }
             ],
             "name": "Water Management Details"
         },
         {
-            "template": "riskAssessment",
-            "scores": [],
-            "name": "Threatening Processes & Site Condition Risks"
-        },
-        {
-            "template": "employmentDetails",
+            "template": "trainingDetails",
             "scores": [
                 {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousRangersFt",
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
+                    "name": "totalCompletingCourses",
                     "aggregationType": "SUM",
-                    "label": "No. of full time indigenous rangers employed on project"
+                    "label": "Total No. of people who completed formal training courses"
                 },
                 {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousRangersPt",
-                    "aggregationType": "SUM",
-                    "label": "No. of part time indigenous rangers employed on project"
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalCompletingCourses",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaken which involved formal training"
                 },
                 {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousRangersMale",
-                    "aggregationType": "SUM",
-                    "label": "No. of male indigenous rangers employed on project"
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "courseAttendance",
+                    "displayType": "barchart",
+                    "name": "courseTitle",
+                    "aggregationType": "COUNT",
+                    "label": "No. of courses attended by project participants"
                 },
                 {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousRangersFemale",
-                    "aggregationType": "SUM",
-                    "label": "No. of female indigenous rangers employed on project"
+                    "groupBy": "output:typeOfCourse",
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "courseAttendance",
+                    "displayType": "piechart",
+                    "name": "numberCompleted",
+                    "aggregationType": "COUNT",
+                    "label": "Course attendance by course type"
                 },
                 {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousNon-rangersFt",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous people who are not rangers employed full time on project"
-                },
-                {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousNon-rangersPt",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous people who are not rangers employed part time on project"
-                },
-                {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousNon-rangersMale",
-                    "aggregationType": "SUM",
-                    "label": "No. of male indigenous people who are employed on project, but are not rangers"
-                },
-                {
-                    "isOutputTarget": false,
-                    "name": "noOfIndigenousNon-rangersFemale",
-                    "aggregationType": "SUM",
-                    "label": "No. of female indigenous people who are employed on project, but are not rangers"
+                    "groupBy": "output:qualificationLevel",
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "courseAttendance",
+                    "displayType": "barchart",
+                    "name": "numberCompleted",
+                    "aggregationType": "COUNT",
+                    "label": "Course attendance by qualification level"
                 }
             ],
-            "name": "Indigenous Employment"
+            "name": "Training Details"
+        },
+        {
+            "template": "skillsDevelopment",
+            "scores": [
+                {
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "skillsApplication",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities indicating application of enhanced skills"
+                },
+                {
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "skillsApplication",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Application of enhanced skills by type"
+                }
+            ],
+            "name": "Skills Development"
+        },
+        {
+            "template": "riskAssessment",
+            "scores": [
+                {
+                    "groupBy": "output:riskType",
+                    "category": "Sites and Activity Planning",
+                    "listName": "riskTable",
+                    "displayType": "barchart",
+                    "name": "riskType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of threat and risk issues by type of issue"
+                }
+            ],
+            "name": "Threatening Processes & Site Condition Risks"
         },
         {
             "template": "debrisRemovalDetails",
             "scores": [
                 {
-                    "name": "debrisType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Types of material removed"
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "debrisRemovalMethod",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of debris removal activities"
                 },
                 {
                     "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "debrisWeightTonnes",
                     "aggregationType": "SUM",
                     "label": "Weight of debris removed (Tonnes)",
@@ -927,21 +1092,111 @@
                 },
                 {
                     "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
                     "name": "debrisVolumeM3",
                     "aggregationType": "SUM",
                     "label": "Volume of debris removed (m3)",
                     "units": "m3"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
+                    "name": "debrisType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities removing debris by types of material"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "debrisRemovalMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities removing debris by removal method"
                 }
             ],
             "name": "Debris Removal Details"
         },
         {
+            "template": "erosionManagementDetails",
+            "scores": [
+                {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking erosion control works"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Erosion area treated (Ha)",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "name": "erosionLength",
+                    "aggregationType": "SUM",
+                    "label": "Length of stream/coastline treated (m)",
+                    "units": "metres"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "name": "erosionControlStructures",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Erosion control structure installed"
+                }
+            ],
+            "name": "Erosion Management Details"
+        },
+        {
             "template": "accessControlDetails",
             "scores": [
                 {
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
                     "name": "structuresInstalled",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Types of structures installed for access management"
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities implementing access control works"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
+                    "name": "numberOfInstallations",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of structures installed for access management"
+                },
+                {
+                    "groupBy": "output:structuresInstalled",
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
+                    "name": "numberOfInstallations",
+                    "aggregationType": "COUNT",
+                    "label": "No. of structures installed for access management by type of structure"
+                },
+                {
+                    "groupBy": "output:accessControlPurpose",
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
+                    "name": "numberOfInstallations",
+                    "aggregationType": "COUNT",
+                    "label": "No. of structures installed for access management by purpose"
+                },
+                {
+                    "groupBy": "output:accessManagementMethod",
+                    "category": "Natural Resources Management",
+                    "displayType": "piechart",
+                    "name": "numberOfInstallations",
+                    "aggregationType": "COUNT",
+                    "label": "No. of structures installed for access management by management method"
                 }
             ],
             "name": "Access Control Details"
@@ -952,30 +1207,144 @@
             "name": "Planned Monitoring Approach"
         },
         {
-            "template": "erosionManagementDetails",
+            "template": "practiceChangeDetails",
             "scores": [
                 {
                     "isOutputTarget": true,
-                    "name": "erosionAreaTreated",
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "name": "totalEntitiesAdoptingChange",
                     "aggregationType": "SUM",
-                    "label": "Erosion area treated (Ha)",
+                    "label": "No. of farming entities adopting sustainable practice change"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "name": "totalChangePracticeTreatedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area of land (Ha) on which improved management practices have been implemented",
                     "units": "Ha"
                 },
                 {
                     "isOutputTarget": true,
-                    "name": "erosionLength",
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "name": "benefitAreaHa",
                     "aggregationType": "SUM",
-                    "label": "Length of stream/coastline treated (m)",
-                    "units": "metres"
-                },
-                {
-                    "isOutputTarget": false,
-                    "name": "erosionControlStructures",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Erosion control structure installed"
+                    "label": "Area of land (Ha) changed to sustainable practices",
+                    "units": "Ha"
                 }
             ],
-            "name": "Erosion Management Details"
+            "name": "Management Practice Change Details"
+        },
+        {
+            "template": "sustainablePracticeInitiatives",
+            "scores": [
+                {
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "name": "noInfluencedTotal",
+                    "aggregationType": "SUM",
+                    "label": "No. of entities influenced by sustainable practice initiatives"
+                },
+                {
+                    "category": "Farm Management Practices",
+                    "listName": "sustainableInitiatives",
+                    "displayType": "",
+                    "name": "initiativeType",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of activities recording implementation of sustainable practices"
+                },
+                {
+                    "category": "Farm Management Practices",
+                    "listName": "sustainableInitiatives",
+                    "displayType": "piechart",
+                    "name": "initiativeType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities implementing sustainable practices by type of initiative"
+                }
+            ],
+            "name": "Sustainable Practice Initiatives"
+        },
+        {
+            "template": "otherConservationWorks",
+            "scores": [
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "targetSpecies",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking species conservation actions"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "targetSpecies",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities implementing conservation actions by species"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "animalBreedingNos",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals in captive breeding programs"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "animalReleaseNumber",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals released back into the wild"
+                },
+                {
+                    "groupBy": "output:conservationActionType",
+                    "category": "Biodiversity Management",
+                    "listName": "conservationWorks",
+                    "displayType": "piechart",
+                    "name": "areaImpactedByWorks",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) impacted by conservation action type"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "protectionMechanisms",
+                    "displayType": "piechart",
+                    "name": "protectionMechanism",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of protection mechanisms implemented"
+                },
+                {
+                    "groupBy": "output:protectionMechanism",
+                    "category": "Biodiversity Management",
+                    "listName": "conservationWorks",
+                    "displayType": "piechart",
+                    "name": "areaImpactedByWorks",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Area (Ha) under agreement by protection mechanism type"
+                }
+            ],
+            "name": "Conservation Works Details"
+        },
+        {
+            "template": "adminActivities",
+            "scores": [
+                {
+                    "groupBy": "output:adminActionType",
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "adminActions",
+                    "displayType": "barchart",
+                    "name": "hoursActionTotal",
+                    "aggregationType": "SUM",
+                    "label": "Total hours spent undertaking different types of project administration tasks"
+                }
+            ],
+            "name": "Administration Activities"
         },
         {
             "template": "outcomes",
@@ -983,30 +1352,456 @@
             "name": "Outcomes"
         },
         {
+            "template": "evaluation",
+            "scores": [],
+            "name": "Evaluation"
+        },
+        {
+            "template": "lessonsLearned",
+            "scores": [],
+            "name": "Lessons Learned"
+        },
+        {
+            "template": "knowledgeTransfer",
+            "scores": [
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "numberOnCountryVisits",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of activities involving the sharing of Indigenous knowledge"
+                },
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "indigenousDecisionMakers",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "% of activities organised or run by Indigenous people"
+                },
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "numberOnCountryVisits",
+                    "aggregationType": "SUM",
+                    "label": "No. of on-country visits involving both older and younger people together"
+                },
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "indigenousKnowledgeDocumented",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "% of activities in which Indigenous knowledge was documented"
+                },
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "datasetsShared",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous datasets shared publicly"
+                },
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "formalPartnerships",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous partnerships formally established"
+                }
+            ],
+            "name": "Indigenous Knowledge Transfer Details"
+        },
+        {
+            "template": "plantPropagationDetails",
+            "scores": [
+                {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
+                    "name": "totalNumberGrown",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of plants grown and ready for planting "
+                },
+                {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
+                    "name": "totalSeedWeight",
+                    "aggregationType": "SUM",
+                    "label": "Total weight of seed germinated to produce the finished stock"
+                },
+                {
+                    "groupBy": "output:plantPropagation.finishedStockType",
+                    "category": "Revegetation",
+                    "listName": "plantPropagation",
+                    "displayType": "piechart",
+                    "name": "numberGrown",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of plants grown by type of finished stock"
+                },
+                {
+                    "groupBy": "output:plantPropagation.germinationMethod",
+                    "category": "Revegetation",
+                    "listName": "plantPropagation",
+                    "displayType": "piechart",
+                    "name": "numberGrown",
+                    "aggregationType": "SUM",
+                    "label": "No. of plants germinated by type of preparation technique"
+                }
+            ],
+            "name": "Plant Propagation Details"
+        },
+        {
+            "template": "biologicalSurveyInformation",
+            "scores": [],
+            "name": "Survey Information"
+        },
+        {
+            "template": "faunaSurveyDetails",
+            "scores": [
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalNumberOfOrganisms",
+                    "aggregationType": "COUNT",
+                    "label": "No. of surveys undertaken"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalNumberOfOrganisms",
+                    "aggregationType": "SUM",
+                    "label": "Total number of species recorded"
+                }
+            ],
+            "name": "Fauna Survey Details"
+        },
+        {
+            "template": "floraSurveyDetails",
+            "scores": [
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalNumberOfOrganisms",
+                    "aggregationType": "COUNT",
+                    "label": "No. of surveys undertaken"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalNumberOfOrganisms",
+                    "aggregationType": "SUM",
+                    "label": "Total number of species recorded"
+                }
+            ],
+            "name": "Flora Survey Details"
+        },
+        {
+            "template": "sitePlanningDetails",
+            "scores": [],
+            "name": "Site Planning Details"
+        },
+        {
+            "template": "employmentDetails",
+            "scores": [
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalEmployees",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous people employed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousRangersFt",
+                    "aggregationType": "SUM",
+                    "label": "No. of full time Indigenous rangers employed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousRangersPt",
+                    "aggregationType": "SUM",
+                    "label": "No. of part time Indigenous rangers employed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousRangersMale",
+                    "aggregationType": "SUM",
+                    "label": "No. of male Indigenous rangers employed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousRangersFemale",
+                    "aggregationType": "SUM",
+                    "label": "No. of female Indigenous rangers employed"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousNon-rangersFt",
+                    "aggregationType": "SUM",
+                    "label": "No. of Indigenous people who are not rangers employed full time"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousNon-rangersPt",
+                    "aggregationType": "SUM",
+                    "label": "No. of Indigenous people who are not rangers employed part time"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousNon-rangersMale",
+                    "aggregationType": "SUM",
+                    "label": "No. of male Indigenous people who are employed, but are not rangers"
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "name": "noOfIndigenousNon-rangersFemale",
+                    "aggregationType": "SUM",
+                    "label": "No. of female Indigenous people who are employed, but are not rangers"
+                }
+            ],
+            "name": "Indigenous Employment"
+        },
+        {
             "template": "indigenousEnterprise",
             "scores": [
                 {
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
                     "name": "totalNewEnterprises",
                     "aggregationType": "SUM",
                     "label": "No. of new enterprises established"
                 },
                 {
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
                     "name": "totalIndigenousEnterprisesEngaged",
                     "aggregationType": "SUM",
-                    "label": "No of formal (contractual) engagements of an Indigenous enterprises"
+                    "label": "No of formal (contractual) engagements with Indigenous enterprises"
                 },
                 {
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
                     "name": "numberOfIndigenousCommunities",
                     "aggregationType": "SUM",
-                    "label": "No. of indigenous communities in which new enterprises have been established"
+                    "label": "No. of Indigenous communities in which new enterprises have been established"
                 }
             ],
-            "name": "Indigenous Enterprise"
+            "name": "Indigenous Businesses"
         },
         {
-            "template": "plantPropagationDetails",
+            "template": "pestManagementDetails",
+            "scores": [
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "pestManagementMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Activities undertaking pest management by management method",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:targetSpecies.name",
+                    "isOutputTarget": true,
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals killed/removed by species",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:pestManagementMethod",
+                    "isOutputTarget": false,
+                    "category": "Invasive Species Management - Pest Animals",
+                    "displayType": "barchart",
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals killed/removed by treatment method"
+                },
+                {
+                    "groupBy": "output:pestManagementPurpose",
+                    "isOutputTarget": false,
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals killed/removed by management purpose",
+                    "units": "Ha"
+                },
+                {
+                    "groupBy": "output:treatmentIncentiveMethod",
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered by pest treatment (Ha) by incentive method",
+                    "units": "Ha"
+                },
+                {
+                    "groupBy": "output:treatmentIncentiveMethod",
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of individual animals killed/removed by incentive method",
+                    "units": ""
+                },
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered by pest treatment (Ha)",
+                    "units": "Ha"
+                },
+                {
+                    "groupBy": "output:targetSpecies.name",
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "barchart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered by pest treatment (Ha) by species",
+                    "units": "Ha"
+                },
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "treatmentCostPerHa",
+                    "aggregationType": "AVERAGE",
+                    "label": "Cost of treatment ($ / Ha.)",
+                    "units": "$/Ha"
+                },
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "activityDuration",
+                    "aggregationType": "SUM",
+                    "label": "Total hours spent undertaking pest management activities",
+                    "units": "Hours"
+                }
+            ],
+            "name": "Pest Management Details"
+        },
+        {
+            "template": "diseaseManagementDetails",
             "scores": [],
-            "name": "Plant Propagation Details"
+            "name": "Disease Management Details"
+        },
+        {
+            "template": "evidenceOfPestManagement",
+            "scores": [],
+            "name": "Evidence of Pest Management Activity"
+        },
+        {
+            "template": "pestMonitoringDetails",
+            "scores": [
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "pestObservationMonitoringDetails",
+                    "displayType": "barchart",
+                    "name": "pestSampledArea",
+                    "aggregationType": "SUM",
+                    "label": "Total area sampled (Ha) for pest animal monitoring",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:pestSpecies.name",
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "pestObservationMonitoringDetails",
+                    "displayType": "barchart",
+                    "name": "pestSpecies",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities monitoring pest animals by species"
+                },
+                {
+                    "groupBy": "output:pestSpecies.name",
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "pestObservationMonitoringDetails",
+                    "displayType": "barchart",
+                    "name": "pestSampledArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) of pest monitoring by species",
+                    "units": ""
+                }
+            ],
+            "name": "Pest Observation and Monitoring Details"
+        },
+        {
+            "template": "revegetationMonitoringResults",
+            "scores": [
+                {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
+                    "name": "revegetationType",
+                    "aggregationType": "SUM",
+                    "label": "Total number of revegetation monitoring activities undertaken"
+                },
+                {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
+                    "name": "countingMethod",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities monitoring revegetation works by counting method"
+                },
+                {
+                    "category": "Revegetation",
+                    "displayType": "piechart",
+                    "name": "totalNumberSurviving",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of plants surviving"
+                },
+                {
+                    "category": "Revegetation",
+                    "listName": "revegetationMonitoring",
+                    "displayType": "piechart",
+                    "name": "survivalRate",
+                    "aggregationType": "AVERAGE",
+                    "label": "Average survival rate for all monitoring activities"
+                },
+                {
+                    "groupBy": "output:revegetationMonitoring.species",
+                    "category": "Revegetation",
+                    "listName": "revegetationMonitoring",
+                    "displayType": "barchart",
+                    "name": "survivalRate",
+                    "aggregationType": "AVERAGE",
+                    "label": "Average survival rate by species for monitored activities"
+                }
+            ],
+            "name": "Vegetation Monitoring Results"
         },
         {
             "template": "waterQualityGeneralInfo",
@@ -1020,85 +1815,17 @@
         },
         {
             "template": "waterQualityMeasurements",
-            "scores": [],
-            "name": "Water Quality Measurements"
-        },
-        {
-            "template": "sitePlanningDetails",
-            "scores": [],
-            "name": "Site Planning Details"
-        },
-        {
-            "template": "practiceChangeDetails",
             "scores": [
                 {
-                    "isOutputTarget": true,
-                    "name": "totalEntitiesAdoptingChange",
-                    "aggregationType": "SUM",
-                    "label": "Farming entities adopting sustainable practice change"
-                },
-                {
-                    "isOutputTarget": true,
-                    "name": "totalChangePracticeTreatedArea",
-                    "aggregationType": "SUM",
-                    "label": "Area of land on which improved management practices are implemented",
-                    "units": "Ha"
-                },
-                {
-                    "isOutputTarget": true,
-                    "name": "benefitAreaHa",
-                    "aggregationType": "SUM",
-                    "label": "Area of land changed to sustainable practices",
-                    "units": "Ha"
-                }
-            ],
-            "name": "Management Practice Change Details"
-        },
-        {
-            "template": "knowledgeTransfer",
-            "scores": [],
-            "name": "Knowledge Integration and Transfer"
-        },
-        {
-            "template": "otherConservationWorks",
-            "scores": [],
-            "name": "Conservation Works Details"
-        },
-        {
-            "template": "adminActivities",
-            "scores": [],
-            "name": "Administration Activities"
-        },
-        {
-            "template": "trainingDetails",
-            "scores": [
-                {
-                    "name": "totalCompletingCourses",
-                    "aggregationType": "SUM",
-                    "label": "Total No. of people who completed formal training courses"
-                },
-                {
-                    "name": "totalCompletingCourses",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Course attendance by course type"
-                },
-                {
-                    "name": "courseTitle",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "instrumentCalibration",
                     "aggregationType": "COUNT",
-                    "label": "No. of courses attended by project participants"
+                    "label": "No. of water quality monitoring events undertaken"
                 }
             ],
-            "name": "Training Details"
-        },
-        {
-            "template": "skillsDevelopment",
-            "scores": [],
-            "name": "Skills Development"
-        },
-        {
-            "template": "evaluation",
-            "scores": [],
-            "name": "Evaluation"
+            "name": "Water Quality Measurements"
         },
         {
             "template": "bfOutcomesAndMonitoring",
@@ -1106,66 +1833,34 @@
             "name": "Biodiversity Fund Outcomes & Monitoring Methodology"
         },
         {
-            "template": "lessonsLearned",
-            "scores": [],
-            "name": "Lessons Learned"
-        },
-        {
-            "template": "sustainablePracticeInitiatives",
-            "scores": [
-                {
-                    "name": "noInfluencedTotal",
-                    "aggregationType": "SUM",
-                    "label": "No. of entities influenced by sustainable practice initiatives"
-                },
-                {
-                    "name": "initiativeType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "No. of different initiatives"
-                }
-            ],
-            "name": "Sustainable Practice Initiatives"
-        },
-        {
-            "template": "biologicalSurveyInformation",
-            "scores": [],
-            "name": "Survey Information"
-        },
-        {
-            "template": "faunaSurveyDetails",
-            "scores": [],
-            "name": "Fauna Survey Details"
-        },
-        {
-            "template": "floraSurveyDetails",
-            "scores": [],
-            "name": "Flora Survey Details"
-        },
-        {
-            "template": "evidenceOfPestManagement",
-            "scores": [],
-            "name": "Evidence of Pest Management Activity"
-        },
-        {
-            "template": "pestMonitoringDetails",
-            "scores": [],
-            "name": "Pest Observation and Monitoring Details"
-        },
-        {
-            "template": "eventDetailsMulti",
-            "scores": [],
-            "name": "Event Details - multi-event"
-        },
-        {
             "template": "siteAssessment",
-            "scores": [
-                {
-                    "name": "assessmentMethod",
-                    "aggregationType": "SET",
-                    "label": "Assessment Method"
-                }
-            ],
-            "name": "Floristic Composition"
+            "scores": [],
+            "name": "Vegetation Assessment"
+        },
+        {
+            "template": "siteConditionComponents",
+            "scores": [],
+            "name": "Site Condition Components"
+        },
+        {
+            "template": "landscapeContextComponents",
+            "scores": [],
+            "name": "Landscape Context Components"
+        },
+        {
+            "template": "weedAbundanceAndThreatScore",
+            "scores": [],
+            "name": "Weed Abundance & Threat Score"
+        },
+        {
+            "template": "feralAnimalAbundanceScore",
+            "scores": [],
+            "name": "Feral Animal Abundance Score"
+        },
+        {
+            "template": "feralAnimalFrequencyScore",
+            "scores": [],
+            "name": "Feral Animal Frequency Score"
         },
         {
             "template": "bfSamplingSiteInfo",
@@ -1198,122 +1893,6 @@
             "name": "Field Sheet 5 - Species Diversity"
         },
         {
-            "template": "saBenchmarks",
-            "scores": [],
-            "name": "Benchmarks - SA"
-        },
-        {
-            "template": "saSiteHealthSummary",
-            "scores": [],
-            "name": "Bushland Condition - Site Health Summary"
-        },
-        {
-            "template": "saFloristicComposition",
-            "scores": [],
-            "name": "Indicator 1 - Plant Species Diversity"
-        },
-        {
-            "template": "saWeedAbundanceAndThreat",
-            "scores": [
-                {
-                    "name": "totalWeedAbundanceAndThreatScore",
-                    "aggregationType": "SET",
-                    "label": "totalWeedAbundanceAndThreatScore",
-                    "units": ""
-                }
-            ],
-            "name": "Indicator 2 - Weed Abundance & Threat"
-        },
-        {
-            "template": "saStructuralDiversity",
-            "scores": [],
-            "name": "Indicator 3 - Structural Diversity"
-        },
-        {
-            "template": "saRegeneration",
-            "scores": [],
-            "name": "Indicator 4 - Regeneration"
-        },
-        {
-            "template": "saTreeAndShrubHealth",
-            "scores": [],
-            "name": "Indicator 5 - Tree and Shrub Health"
-        },
-        {
-            "template": "saTreeHabitat",
-            "scores": [],
-            "name": "Indicator 6 - Tree Habitat"
-        },
-        {
-            "template": "saFeralAnimals",
-            "scores": [],
-            "name": "Indicator 7 - Feral Animals"
-        },
-        {
-            "template": "saFeralAnimalAbundanceScore",
-            "scores": [
-                {
-                    "name": "totalFeralAnimalAbundanceScore",
-                    "aggregationType": "SET",
-                    "label": "totalFeralAnimalAbundanceScore",
-                    "units": ""
-                }
-            ],
-            "name": "Indicator 7a - Feral Animal Abundance Score"
-        },
-        {
-            "template": "saFeralAnimalFrequencyScore",
-            "scores": [
-                {
-                    "name": "totalFeralAnimalFrequencyScore",
-                    "aggregationType": "SET",
-                    "label": "totalFeralAnimalFrequencyScore",
-                    "units": ""
-                }
-            ],
-            "name": "Indicator 7b - Feral Animal Frequency Score"
-        },
-        {
-            "template": "saTotalGrazingPressure",
-            "scores": [],
-            "name": "Indicator 8 - Total Grazing Pressure"
-        },
-        {
-            "template": "saAnimalSpecies",
-            "scores": [],
-            "name": "Indicator 9 - Animal Species"
-        },
-        {
-            "template": "saBushlandDegradationRisk",
-            "scores": [],
-            "name": "Indicator 10 - Bushland Degradation Risk"
-        },
-        {
-            "template": "vicVegAssessSpeciesList",
-            "scores": [],
-            "name": "Vegetation Assessment - Species List"
-        },
-        {
-            "template": "vicVegBenchmarks",
-            "scores": [],
-            "name": "EVC Benchmark Values - Victoria"
-        },
-        {
-            "template": "vicSiteConditionComponents",
-            "scores": [],
-            "name": "Site Condition Components"
-        },
-        {
-            "template": "vicLandscapeContextComponents",
-            "scores": [],
-            "name": "Landscape Context Components"
-        },
-        {
-            "template": "benchmarksTas",
-            "scores": [],
-            "name": "Benchmarks - TAS"
-        },
-        {
             "template": "habitatHectaresSiteCondition",
             "scores": [],
             "name": "Site Condition"
@@ -1324,14 +1903,19 @@
             "name": "Landscape Context"
         },
         {
-            "template": "benchmarksQld",
+            "template": "bioCondition100x50m",
             "scores": [],
-            "name": "Benchmarks - QLD"
+            "name": "100 x 50m area - Ecologically Dominant Layer"
         },
         {
             "template": "bioCondition50x10m",
             "scores": [],
             "name": "50 x 10m area"
+        },
+        {
+            "template": "bioCondition50x20m",
+            "scores": [],
+            "name": "50 x 20m area - Coarse Woody Debris"
         },
         {
             "template": "bioCondition1x1m",
@@ -1344,29 +1928,34 @@
             "name": "100m Transect"
         },
         {
-            "template": "bioCondition100x50m",
+            "template": "heritageConservationInformation",
             "scores": [],
-            "name": "100 x 50m area - Ecologically Dominant Layer"
+            "name": "Heritage Conservation Information"
         },
         {
-            "template": "bioCondition50x20m",
+            "template": "heritageExpectedOutcomes",
             "scores": [],
-            "name": "50 x 20m area - Coarse Woody Debris"
+            "name": "Expected Heritage Outcomes"
         },
         {
-            "template": "pestManagementDetailsMulti",
+            "template": "projectStageProgress",
             "scores": [],
-            "name": "Pest Management Details - Multi"
+            "name": "Overview of Project Progress"
         },
         {
-            "template": "diseaseManagementDetails",
+            "template": "projectStageOutcomes",
             "scores": [],
-            "name": "Disease Management Details"
+            "name": "Environmental, Economic and Social Outcomes"
         },
         {
-            "template": "revegetationMonitoringResults",
+            "template": "projectStageUpdate",
             "scores": [],
-            "name": "Revegetation Monitoring Results"
+            "name": "Implementation Update"
+        },
+        {
+            "template": "projectStageLessons",
+            "scores": [],
+            "name": "Lessons Learned and Improvements"
         }
     ]
 }
