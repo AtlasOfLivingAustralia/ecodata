@@ -166,7 +166,7 @@
         {
             "items": [
                 {
-                    "source": "Please insert multiple rows as required if multiple industries, change reasons, public good outcomes, or facilitation strategies are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
+                    "source": "Please insert multiple rows as required if multiple industries are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
                     "computed": null,
                     "type": "literal"
                 }
