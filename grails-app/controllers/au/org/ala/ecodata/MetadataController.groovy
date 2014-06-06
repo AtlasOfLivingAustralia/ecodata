@@ -10,6 +10,10 @@ class MetadataController {
         render metadataService.activitiesModel()
     }
 
+    def activitiesList() {
+        render metadataService.activitiesList(params.program) as JSON
+    }
+
     @RequireApiKey
     def updateActivitiesModel() {
         def model = request.JSON

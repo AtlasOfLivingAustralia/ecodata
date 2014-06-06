@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat
 
 class MetadataService {
 
+    private static final String ACTIVE = 'active'
+
     def grailsApplication, webService, cacheService
 
     def activitiesModel() {
@@ -16,11 +18,40 @@ class MetadataService {
         })
     }
 
+    def activitiesList(programName) {
+
+        def activities = activitiesModel().activities
+
+        if (programName) {
+            def program = programModel(programName)
+            if (program.activities) {
+                activities = activities.findAll{it.type in program.activities}
+            }
+        }
+
+        // Remove deprecated activities
+        activities = activities.findAll {!it.status || it.status == ACTIVE}
+
+        Map byCategory = [:].withDefault {[]}
+
+        // Group by the activity category field, falling back on a default grouping of activity or assessment.
+        activities.each {
+            def category = it.category?: it.type == 'Activity' ? 'Activities' : 'Assessment'
+            byCategory[category] << it.name
+        }
+
+        byCategory
+    }
+
     def programsModel() {
         return cacheService.get('programs-model',{
             String filename = (grailsApplication.config.app.external.model.dir as String) + 'programs-model.json'
             JSON.parse(new File(filename).text)
         })
+    }
+
+    def programModel(program) {
+        return programsModel().programs.find {it.name == program}
     }
 
     def getOutputModel(name) {
