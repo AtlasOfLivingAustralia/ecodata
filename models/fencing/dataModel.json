@@ -6,13 +6,14 @@
             "description": "The type of fence erected",
             "name": "fenceType",
             "constraints": [
-                "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
-                "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
-                "Post & Netting (net or ringlock) - non-electified",
-                "Post & Netting (net or ringlock) - electified",
-                "Post & Rail",
                 "Cyclone",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
+                "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
+                "Post & Netting (net or ringlock) - electified",
+                "Post & Netting (net or ringlock) - non-electified",
+                "Post & Rail",
                 "Solid Sheet (pailing, pickets, sheet metal, etc.)",
+                "None",
                 "Other (specify in notes)"
             ]
         },
@@ -52,10 +53,13 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Enter the details of any fencing erected by this activity, if applicable",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Enter the details of any fencing erected by this activity, if applicable",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -84,16 +88,20 @@
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "purposeOfFence",
-                        "computed": null,
-                        "preLabel": "Purpose of fence:",
-                        "width": "20%",
-                        "type": "selectMany"
-                    }],
+                    "items": [
+                        {
+                            "source": "purposeOfFence",
+                            "computed": null,
+                            "preLabel": "Purpose of fence:",
+                            "width": "20%",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -102,12 +110,14 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "fenceNotes",
-                "preLabel": "Comments/Notes:",
-                "computed": null,
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "fenceNotes",
+                    "preLabel": "Comments/Notes:",
+                    "computed": null,
+                    "type": "textarea"
+                }
+            ],
             "computed": "null",
             "class": "output-section",
             "type": "row"

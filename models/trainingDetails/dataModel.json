@@ -7,10 +7,6 @@
             "columns": [
                 {
                     "dataType": "text",
-                    "name": "totalCompletingCourses"
-                },
-                {
-                    "dataType": "text",
                     "description": "Type of course",
                     "name": "typeOfCourse",
                     "constraints": [
@@ -78,33 +74,41 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Please enter details of formal training courses attended by project participants.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please enter details of formal training courses attended by project participants.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "computed": null,
             "type": "row"
         },
         {
-            "footer": {"rows": [{"columns": [
-                {
-                    "colspan": 2,
-                    "source": "",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "Total No. of attendees completing courses:",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalCompletingCourses",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberCompleted\",\"fromList\":\"courseAttendance\"}}",
-                    "type": "number"
-                }
-            ]}]},
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan": 2,
+                                "source": "",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "Total No. of attendees completing courses:",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalCompletingCourses",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberCompleted\",\"fromList\":\"courseAttendance\"}}",
+                                "type": "number"
+                            }
+                        ]
+                    }
+                ]
+            },
             "source": "courseAttendance",
             "columns": [
                 {
@@ -137,11 +141,14 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "notes",
-                "preLabel": "Comments / Notes:",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
