@@ -1,0 +1,36 @@
+{
+    "modelName": "projectStageImplementation",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Describe how project activities were implemented during the reporting period, including any issues or external factors which affected the activity schedule and / or activity outcomes.",
+            "name": "stageReportImplementation",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If applicable, explain how aspects of the plan or programme logic have needed to be adapted to reflect changes in implementation to achieve agreed project objectives. These may include evaluation / monitoring questions, project assumptions, monitoring measures and methods, and / or evaluation methods.",
+            "name": "stageReportAdaptations",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [{
+        "items": [{
+            "items": [
+                {
+                    "source": "stageReportImplementation",
+                    "preLabel": "Activity implementation for this stage:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "stageReportAdaptations",
+                    "preLabel": "Details of adaptations and variations from the plan:",
+                    "type": "textarea"
+                }
+            ],
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
+}
