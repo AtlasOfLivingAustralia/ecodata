@@ -30,3 +30,33 @@ renameNestedListValue('Pest Observation and Monitoring Details', 'pestObservatio
 renameNestedListValue('Pest Observation and Monitoring Details', 'pestObservationMonitoringDetails', 'pestPopulationDensityClass', '101 - 1000 individuals / Ha', '101 - 1000 individuals or colonies / Ha');
 
 // Plan Management Details
+
+
+// Water management details
+renameArrayTypedListValue('Water Management Details', 'hydrologicalStructuresOnsite', 'Constructed channel', 'Channel - constructed');
+renameArrayTypedListValue('Water Management Details', 'hydrologicalStructuresOnsite', 'Natural channel', 'Channel - natural');
+renameArrayTypedListValue('Water Management Details', 'hydrologicalStructuresOnsite', 'Habitat management for enhancing species resilience & breeding', 'Enhancing species resilience & breeding');
+
+// Stock Management Details
+renameArrayTypedListValue('Stock Management Details', 'stockManagementReason', 'Other (describe in notes)', 'Other (specify in notes)');
+
+// Other conservation works
+renameNestedListValue('Conservation Works Details', 'conservationWorks', 'conservationActionType', 'Ex-situ breeding program', 'Ex-situ breeding / propagation program');
+renameNestedListValue('Conservation Works Details', 'conservationWorks', 'protectionMechanism', 'Termed agreement not on title binding (eg Land management Agreement)', 'Termed agreement not on title - binding (eg Land management agreement)');
+renameNestedListValue('Conservation Works Details', 'conservationWorks', 'protectionMechanism', 'Not on title non-binding (eg Wildlife Refuge)', 'Not on title - non-binding (eg Wildlife Refuge)');
+
+// Site preparation actions
+renameNestedListValue('Site Preparation Actions', 'actionsList', 'groundPreparationWorks', 'Herbicide only', 'Herbicide broadscale only');
+renameNestedListValue('Site Preparation Actions', 'actionsList', 'groundPreparationWorks', 'Herbicide and rip', 'Herbicide broadscale and rip');
+renameNestedListValue('Site Preparation Actions', 'actionsList', 'associatedActivity', 'Infrastructure Establishment', 'Public Access and Infrastructure');
+renameNestedListValue('Site Preparation Actions', 'actionsList', 'associatedActivity', 'Public Access Management', 'Public Access and Infrastructure');
+
+// Evidence of Weed Management
+renameArrayTypedListValue('Evidence of Weed Treatment', 'evidenceOfPreviousWeedTreatment', 'Root/stem rot present', 'Root / stem rot present');
+renameArrayTypedListValue('Evidence of Weed Treatment', 'recommendedWeedTreatment', 'Manual control - Grubbing/chipping', 'Manual control - Grubbing / chipping');
+
+// Erosion Management Details
+renameArrayTypedListValue('Erosion Management Details', 'erosionTreatmentMethod', 'Farming practice change - improved crop management (contour plowing/bunding)', 'Farming practice change - improved crop management (contour plowing / bunding)');
+renameArrayTypedListValue('Erosion Management Details', 'erosionType', 'Mass movement - landslide/landslip', 'Mass movement - landslide / landslip');
+renameArrayTypedListValue('Erosion Management Details', 'erosionControlStructures', 'Channel/bank lining - solid barrier', 'Channel / bank lining - solid barrier');
+renameArrayTypedListValue('Erosion Management Details', 'erosionControlStructures', 'Channel/bank lining - cellular confinement systems', 'Channel / bank lining - cellular confinement systems');
