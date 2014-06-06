@@ -20,36 +20,28 @@
             "validate": "required"
         }
     ],
-    "viewModel": [
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "projectEnvironmentalOutcomes",
-                            "computed": null,
-                            "preLabel": "Describe the environmental outcomes of your project:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectSocialOutcomes",
-                            "computed": null,
-                            "preLabel": "Describe the social outcomes of your project:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectEconomicOutcomes",
-                            "computed": null,
-                            "preLabel": "Describe the economic outcomes of your project:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    "source": "projectEnvironmentalOutcomes",
+                    "preLabel": "ENVIRONMENTAL OUTCOMES - Describe the environmental outcomes of your project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectSocialOutcomes",
+                    "preLabel": "SOCIAL OUTCOMES - Describe the social outcomes of your project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEconomicOutcomes",
+                    "preLabel": "ECONOMIC OUTCOMES - Describe the economic outcomes of your project:",
+                    "type": "textarea"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

@@ -17,13 +17,13 @@
             "dataType": "number",
             "description": "Number of male indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersMale",
-            "validate": "required,min[0]"
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of female indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersFemale",
-            "validate": "required,min[0]"
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
@@ -42,13 +42,13 @@
             "dataType": "number",
             "description": "Number of indigenous males employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersMale",
-            "validate": "required,min[0]"
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
             "description": "Number of indigenous females employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersFemale",
-            "validate": "required,min[0]"
+            "validate": "min[0]"
         },
         {
             "dataType": "number",
@@ -149,7 +149,6 @@
                     "items": [
                         {
                             "source": "<h4>No. of indigenous rangers employed on the project<\/h4>",
-                            "computed": null,
                             "type": "literal"
                         },
                         {

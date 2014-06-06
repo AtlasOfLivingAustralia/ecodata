@@ -67,7 +67,7 @@
                     "type": "photopoint"
                 },
                 {
-                    "title": "Photo",
+                    "title": "Photo(s)",
                     "source": "photo",
                     "computed": null,
                     "width": "40%",

@@ -9,8 +9,7 @@
         {
             "dataType": "text",
             "description": "Short descriptive title of the survey. This provides context for the survey event and enables you to search for it easily.",
-            "name": "surveyTitle",
-            "validate": "required"
+            "name": "surveyTitle"
         },
         {
             "dataType": "text",
@@ -20,8 +19,7 @@
         {
             "dataType": "text",
             "description": "The name of the person leading the survey event",
-            "name": "surveyLeader",
-            "validate": "required"
+            "name": "surveyLeader"
         },
         {
             "dataType": "text",
@@ -49,6 +47,7 @@
         {
             "items": [{
                 "source": "This is a generalised form for recording biological survey data and should cover the basic structured data gathering requirements of most surveys. If additional structured data is required, please contact <a href='mailto: MERIT@environment.gov.au'>MERIT@environment.gov.au<\/a>.",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"

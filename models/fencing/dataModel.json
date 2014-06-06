@@ -52,12 +52,10 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Enter the details of any fencing erected by this activity, if applicable",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Enter the details of any fencing erected by this activity, if applicable",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -89,15 +87,13 @@
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "purposeOfFence",
-                            "computed": null,
-                            "preLabel": "Purpose of fence:",
-                            "width": "20%",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "items": [{
+                        "source": "purposeOfFence",
+                        "computed": null,
+                        "preLabel": "Purpose of fence:",
+                        "width": "20%",
+                        "type": "selectMany"
+                    }],
                     "type": "col"
                 }
             ],
@@ -106,14 +102,12 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "fenceNotes",
-                    "preLabel": "Comments/Notes:",
-                    "computed": null,
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "fenceNotes",
+                "preLabel": "Comments/Notes:",
+                "computed": null,
+                "type": "textarea"
+            }],
             "computed": "null",
             "class": "output-section",
             "type": "row"

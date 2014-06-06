@@ -55,7 +55,7 @@
                         "Reduced risk of soil acidification",
                         "Other (specify in notes)"
                     ],
-                    "validate": "required"
+                    "validate": "required,inputmin[1],inputmax[3]"
                 },
                 {
                     "dataType": "stringList",
@@ -164,55 +164,47 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Please insert multiple rows as required if multiple industries are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Please insert multiple rows as required if multiple industries are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "colspan": 2,
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "Total area of adopted changed practices (Ha)",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalChangePracticeTreatedArea",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"changePracticeTreatedArea\",\"fromList\":\"practiceChange\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "source": "Total No. of farming entities and people",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalEntitiesAdoptingChange",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"entitiesAdoptingChange\",\"fromList\":\"practiceChange\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "source": "noInfluencedTotal",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInfluenced\",\"fromList\":\"practiceChange\"}}",
-                                "type": "number"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total area of adopted changed practices (Ha)",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalChangePracticeTreatedArea",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"changePracticeTreatedArea\",\"fromList\":\"practiceChange\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total No. of farming entities and people",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalEntitiesAdoptingChange",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"entitiesAdoptingChange\",\"fromList\":\"practiceChange\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "noInfluencedTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noInfluenced\",\"fromList\":\"practiceChange\"}}",
+                    "type": "number"
+                }
+            ]}]},
             "title": "Please list the details for each type of land management practice change related to this activity and any additional information that you can that is relevant:",
             "source": "practiceChange",
             "allowHeaderWrap": "true",
@@ -267,26 +259,22 @@
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "benefitAreaHa",
-                            "computed": null,
-                            "preLabel": "Area of land directly benefiting from the practice change:",
-                            "type": "number"
-                        }
-                    ],
+                    "items": [{
+                        "source": "benefitAreaHa",
+                        "computed": null,
+                        "preLabel": "Area of land directly benefiting from the practice change:",
+                        "type": "number"
+                    }],
                     "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "productivityBenefits",
-                            "computed": null,
-                            "preLabel": "Productivity outcomes expected:",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "items": [{
+                        "source": "productivityBenefits",
+                        "computed": null,
+                        "preLabel": "Productivity outcomes expected:",
+                        "type": "selectMany"
+                    }],
                     "computed": null,
                     "type": "col"
                 }
@@ -295,15 +283,13 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

@@ -25,8 +25,7 @@
                 "Management",
                 "Research",
                 "Other (specify in notes)"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "species",
@@ -36,13 +35,15 @@
         },
         {
             "dataType": "number",
-            "description": "Area in hectares covered by quarantine protocols and/or treatment:",
-            "name": "areaTreatedHa"
+            "description": "Area in hectares covered by quarantine protocols and / or treatment:",
+            "name": "areaTreatedHa",
+            "validate": "required"
         },
         {
             "dataType": "number",
-            "description": "Number of individual plants or animals (or colonies as applicable) covered by quarantine protocols and/or treatment:",
-            "name": "numberTreated"
+            "description": "Number of individual plants or animals (or colonies as applicable) covered by quarantine protocols and / or treatment:",
+            "name": "numberTreated",
+            "validate": "required"
         },
         {
             "dataType": "number",
@@ -73,7 +74,7 @@
                             "type": "number"
                         },
                         {
-                            "source": "<h3>OR</h3>",
+                            "source": "<h3>OR<\/h3>",
                             "computed": null,
                             "type": "literal"
                         },
@@ -88,14 +89,12 @@
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "diseaseManagementMethod",
-                            "computed": null,
-                            "preLabel": "Disease management method:",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "items": [{
+                        "source": "diseaseManagementMethod",
+                        "computed": null,
+                        "preLabel": "Disease management method:",
+                        "type": "selectMany"
+                    }],
                     "computed": null,
                     "type": "col"
                 },
@@ -128,15 +127,13 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

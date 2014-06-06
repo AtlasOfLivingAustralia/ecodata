@@ -22,6 +22,12 @@
             "name": "samplerName"
         },
         {
+            "dataType": "text",
+            "description": "The name of the water body being sampled.",
+            "name": "waterbodyName",
+            "validate": "required"
+        },
+        {
             "dataType": "number",
             "description": "The number of volunteers participating in the sampling event",
             "name": "numberOfVolunteerParticipants"
@@ -45,18 +51,20 @@
                 "items": [
                     {
                         "source": "samplerName",
-                        "computed": null,
                         "preLabel": "Sampler name:",
                         "type": "text"
                     },
                     {
+                        "source": "waterbodyName",
+                        "preLabel": "Type of water body:",
+                        "type": "selectOne"
+                    },
+                    {
                         "source": "waterType",
-                        "computed": null,
                         "preLabel": "Type of water body:",
                         "type": "selectOne"
                     }
                 ],
-                "computed": null,
                 "type": "col"
             },
             {
@@ -98,6 +106,5 @@
         ],
         "class": "output-section",
         "type": "row"
-    }
-    ]
+    }]
 }

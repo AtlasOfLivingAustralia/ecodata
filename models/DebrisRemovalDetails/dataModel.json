@@ -29,6 +29,12 @@
             "validate": "required"
         },
         {
+            "dataType": "number",
+            "description": "Area in hectares covered by the debris removal activity.",
+            "name": "debrisActivityArea",
+            "validate": "required"
+        },
+        {
             "dataType": "stringList",
             "description": "Method(s) used to remove debris during the activity",
             "name": "debrisRemovalMethod",
@@ -77,6 +83,12 @@
                         "source": "debrisVolumeM3",
                         "computed": null,
                         "preLabel": "Volume of debris removed (m3):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "debrisActivityArea",
+                        "computed": null,
+                        "preLabel": "Area covered by this activity (Ha):",
                         "type": "number"
                     },
                     {

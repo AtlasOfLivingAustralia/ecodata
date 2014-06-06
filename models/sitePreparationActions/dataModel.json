@@ -70,40 +70,32 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Please indicate the area and nature of works carried out on the site to prepare it for undertaking another activity.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Please indicate the area and nature of works carried out on the site to prepare it for undertaking another activity.",
+                "type": "literal"
+            }],
             "computed": null,
             "type": "col"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "Total area of site preparation works (Ha):",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "preparationAreaTotal",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noWorksAreasTotal\",\"fromList\":\"actionsList\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "colspan": 2,
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total area of site preparation works (Ha):",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "preparationAreaTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"noWorksAreasTotal\",\"fromList\":\"actionsList\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
             "source": "actionsList",
             "columns": [
                 {

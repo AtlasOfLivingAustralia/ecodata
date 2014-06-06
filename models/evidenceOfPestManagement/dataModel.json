@@ -24,7 +24,7 @@
         },
         {
             "dataType": "stringList",
-            "description": "The method used to assess the effectiveness of previous pest animal treatment. <font color='blue'>'<b>NB.:</b> This pertains to evidence of previous treatments only.</font>'",
+            "description": "The method used to assess the effectiveness of previous pest animal treatment. <font color='blue'>'<b>NB.:<\/b> This pertains to evidence of previous treatments only.<\/font>'",
             "name": "previousPestTreatmentAssessmentMethod",
             "constraints": [
                 "Anecdotal - 3rd party observations",
@@ -91,7 +91,7 @@
                             "type": "number"
                         },
                         {
-                            "source": "<font color='blue'>'<b>NB.:</b> The following methods pertain only to how evidence of previous treatments was obtained.</font>'",
+                            "source": "<font color='blue'>'<b>NB.:<\/b> The following methods pertain only to how evidence of previous treatments was obtained.<\/font>'",
                             "type": "literal"
                         },
                         {
@@ -108,16 +108,14 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Notes:",
-                    "type": "textarea"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Notes:",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

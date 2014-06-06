@@ -2,50 +2,111 @@
     "modelName": "Community Event Details",
     "dataModel": [
         {
+            "dataType": "list",
+            "name": "events",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The type of event being conducted",
+                    "name": "eventType",
+                    "constraints": [
+                        "Conference / seminar presentation",
+                        "Field day activity",
+                        "Meeting",
+                        "Mentoring",
+                        "Planning session",
+                        "Project feedback / debrief",
+                        "Training session",
+                        "Working bee",
+                        "Workshop",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The purpose for which the event is being conducted",
+                    "name": "eventPurpose",
+                    "constraints": [
+                        "Awareness raising event (eg. demonstration, field day, or study tour)",
+                        "Training session, workshop or other skills / training event",
+                        "Knowledge evaluation event",
+                        "Works implementation",
+                        "Planning",
+                        "Other (describe in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The themes or topics covered during the events. Add in notes if more than one.",
+                    "name": "eventTopics"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The duration of the events in whole hours.",
+                    "name": "eventDurationHrs",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The main industry type that the event is addressing",
+                    "name": "industryType",
+                    "constraints": [
+                        "Aquaculture",
+                        "Bananas",
+                        "Berries",
+                        "Cotton",
+                        "Dairy",
+                        "Environmental management",
+                        "Fishing",
+                        "Forestry",
+                        "Fruit trees",
+                        "Grains",
+                        "Grapes",
+                        "Grazing",
+                        "Sugarcane",
+                        "Vegetables",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity.",
+            "primaryResult": "true",
+            "name": "totalEventHrs",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "eventDurationHrs",
+                    "fromList": "events"
+                }
+            }
+        },
+        {
             "dataType": "stringList",
-            "description": "The purpose for which the event is being conducted",
-            "name": "eventPurpose",
+            "description": "Select the type(s) of partners involved in delivering the event",
+            "name": "deliveryPartner",
             "constraints": [
-                "Awareness raising event (eg. demonstration, field day, or study tour)",
-                "Training session, workshop or other skills/training event",
-                "Knowledge evaluation event",
-                "Works implementation",
-                "Planning",
-                "Other (describe in notes)"
+                "Academic/research institution",
+                "Consultant",
+                "Local farmer or community group",
+                "Peak Primary Industry Group",
+                "Regional Landcare Facilitator",
+                "Regional Landcare or farmer network",
+                "No delivery partners",
+                "Other (specify in notes)"
             ],
             "validate": "required"
         },
         {
-            "dataType": "text",
-            "description": "The theme or topic covered during the event. Add in notes if more than one",
-            "name": "eventTopics",
-            "validate": "required"
-        },
-        {
             "dataType": "number",
-            "description": "The duration of the event in hours. Part hour expressed as a decimal",
-            "name": "eventDurationHrs",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "text",
-            "description": "The main industry type that the event is addressing",
-            "name": "industryType",
-            "constraints": [
-                "Sugarcane",
-                "Grazing",
-                "Grains",
-                "Grapes",
-                "Vegetables",
-                "Fruit trees",
-                "Berries",
-                "Dairy",
-                "Cotton",
-                "Forestry",
-                "Aquaculture",
-                "Fishing",
-                "Other (specify in notes)"
-            ]
+            "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
+            "name": "groupsSupported",
+            "validate": "min[0]"
         },
         {
             "dataType": "text",
@@ -54,52 +115,100 @@
     ],
     "viewModel": [
         {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": "3",
+                    "source": "",
+                    "computed": null,
+                    "type": null
+                },
+                {
+                    "source": "Total event hours for this activity:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalEventHrs",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
+                    "type": "number"
+                }
+            ]}]},
+            "title": "Please list the details of each event run as part of this activity:",
+            "source": "events",
+            "columns": [
+                {
+                    "title": "Type of event:",
+                    "source": "eventType",
+                    "computed": null,
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Purpose of event:",
+                    "source": "eventPurpose",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Main industry type addressed:",
+                    "source": "industryType",
+                    "computed": null,
+                    "width": "5%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Topics covered:",
+                    "source": "eventTopics",
+                    "computed": null,
+                    "width": "25%",
+                    "type": "text"
+                },
+                {
+                    "title": "Event Duration (Hrs):",
+                    "source": "eventDurationHrs",
+                    "computed": null,
+                    "width": "10%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "class": "output-section",
+            "type": "table"
+        },
+        {
             "items": [
                 {
                     "items": [{
-                        "source": "eventPurpose",
+                        "source": "deliveryPartner",
+                        "preLabel": "Delivery partners:",
                         "computed": null,
-                        "preLabel": "Purpose of event:",
                         "type": "selectMany"
                     }],
                     "computed": null,
+                    "width": "30%",
                     "type": "col"
                 },
                 {
                     "items": [
                         {
-                            "source": "industryType",
+                            "source": "groupsSupported",
+                            "preLabel": "No. of groups supported financially:",
                             "computed": null,
-                            "preLabel": "Main industry type addressed:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "eventTopics",
-                            "computed": null,
-                            "preLabel": "Topics covered:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "eventDurationHrs",
-                            "computed": null,
-                            "preLabel": "Event Duration (Hrs):",
                             "type": "number"
+                        },
+                        {
+                            "source": "eventNotes",
+                            "computed": null,
+                            "preLabel": "Comments / Notes:",
+                            "type": "textarea"
                         }
                     ],
                     "computed": null,
+                    "width": "70%",
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "eventNotes",
-                "computed": null,
-                "preLabel": "Comments / Notes:",
-                "type": "textarea"
-            }],
             "computed": null,
             "class": "output-section",
             "type": "row"

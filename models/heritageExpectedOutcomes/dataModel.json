@@ -24,37 +24,33 @@
             "name": "notes"
         }
     ],
-    "viewModel": [
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "activityContributionToPlans",
-                            "preLabel": "How will this activity contribute to existing conservation and / or management plans?:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "heritageOutcomesExpected",
-                            "preLabel": "What heritage outcomes do you expect as a result of the work undertaken?:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "communityOutcomesExpected",
-                            "preLabel": "What are the expected outcomes / impacts on the local community as a result of this project?:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "notes",
-                            "preLabel": "Comments / Notes:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "type": "col"
+                    "source": "activityContributionToPlans",
+                    "preLabel": "How will this activity contribute to existing conservation and / or management plans?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "heritageOutcomesExpected",
+                    "preLabel": "What heritage outcomes do you expect as a result of the work undertaken?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "communityOutcomesExpected",
+                    "preLabel": "What are the expected outcomes / impacts on the local community as a result of this project?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "notes",
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
-        }
-    ]
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

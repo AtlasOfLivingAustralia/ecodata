@@ -156,25 +156,21 @@
             "type": "table"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Please attach applicable Plan documents via Admin tab</h4>",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "class": "output-section",
             "type": "row"
         }

@@ -3,21 +3,18 @@
     "dataModel": [
         {
             "dataType": "number",
-            "description": "The number of items of written materials (incl. brochures) taken by participants at an event",
-            "name": "numberOfWrittenMaterials",
-            "validate": "required"
+            "description": "The number of written materials (incl. brochures) taken by participants at an event",
+            "name": "numberOfWrittenMaterials"
         },
         {
             "dataType": "number",
             "description": "The number of individual participants taking materials at an event",
-            "name": "numberOfMaterialRecipients",
-            "validate": "required"
+            "name": "numberOfMaterialRecipients"
         },
         {
             "dataType": "number",
             "description": "The number of individual displays and presentations given at an event",
-            "name": "numberOfDisplays",
-            "validate": "required"
+            "name": "numberOfDisplays"
         }
     ],
     "viewModel": [{
@@ -26,7 +23,7 @@
                 "items": [{
                     "source": "numberOfWrittenMaterials",
                     "computed": null,
-                    "preLabel": "No. of Written Materials and brochures:",
+                    "preLabel": "No. of written Materials and brochures:",
                     "type": "number"
                 }],
                 "computed": null,

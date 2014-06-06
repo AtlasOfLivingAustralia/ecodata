@@ -69,7 +69,7 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "The canopy foliage cover estimated using the Biodiversity Fund Ecological Monitoring methodology, expressed as a percentage.",
+                    "description": "The canopy foliage cover estimated using the Vegetation Assessment - commonwealth methodology, expressed as a percentage.",
                     "name": "crownType",
                     "validate": "min[0],max[100]"
                 }

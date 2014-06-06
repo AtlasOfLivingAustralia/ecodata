@@ -103,14 +103,12 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Notes / Comments:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Notes / Comments:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

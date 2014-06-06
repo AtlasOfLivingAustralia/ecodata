@@ -26,43 +26,39 @@
             "validate": "required"
         }
     ],
-    "viewModel": [
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "projectEffectiveness",
-                            "computed": null,
-                            "preLabel": "EFFECTIVENESS - Describe the effectiveness of the project and whether it delivered what was intended:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectImpact",
-                            "computed": null,
-                            "preLabel": "IMPACT - Describe the impact of the project:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectEfficiency",
-                            "computed": null,
-                            "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project the project:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "methodologyAppropriateness",
-                            "computed": null,
-                            "preLabel": "METHODOLOGY - Describe the appropriateness of the methodology(s) used.",
-                            "width": "90%",
-                            "type": "textarea"
-                        }
-                    ],
+                    "source": "projectEffectiveness",
                     "computed": null,
-                    "type": "col"
+                    "preLabel": "EFFECTIVENESS - Describe the effectiveness of the project and whether it delivered what was intended:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectImpact",
+                    "computed": null,
+                    "preLabel": "IMPACT - Describe the impact of the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectEfficiency",
+                    "computed": null,
+                    "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project the project:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "methodologyAppropriateness",
+                    "computed": null,
+                    "preLabel": "METHODOLOGY - Describe the appropriateness of the methodology(s) used.",
+                    "width": "90%",
+                    "type": "textarea"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            "computed": null,
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

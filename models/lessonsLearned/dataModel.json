@@ -20,32 +20,28 @@
             "validate": "required"
         }
     ],
-    "viewModel": [
-        {
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "assumptions",
-                            "preLabel": "ASSUMPTIONS - Did the project implementation happen as it was planned / envisaged?:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectRiskManagement",
-                            "preLabel": "RISK MANAGEMENT - Discuss the effectiveness of your approach to managing project risks:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "projectLessons",
-                            "preLabel": "LESSONS - What other lessons did you or your organisation learn while undertaking this project?:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "type": "col"
+                    "source": "assumptions",
+                    "preLabel": "ASSUMPTIONS - Did the project implementation happen as it was planned / envisaged?:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectRiskManagement",
+                    "preLabel": "RISK MANAGEMENT - Discuss the effectiveness of your approach to managing project risks:",
+                    "type": "textarea"
+                },
+                {
+                    "source": "projectLessons",
+                    "preLabel": "LESSONS - What other lessons did you or your organisation learn while undertaking this project?:",
+                    "type": "textarea"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

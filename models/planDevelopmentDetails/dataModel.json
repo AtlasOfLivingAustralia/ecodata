@@ -6,16 +6,15 @@
             "description": "Categorisation of the type of plan developed",
             "name": "typeOfPlan",
             "constraints": [
-                "Burn plan (fire management)",
-                "Catchment plan",
                 "Implementation works design",
-                "Marine protection plan",
                 "Project arrangements and governance",
-                "Property, Reserve or Site development plan",
-                "Property, Reserve or Site management plan",
-                "Recovery plan",
                 "Regional plan",
+                "Catchment plan",
                 "Resource management plan",
+                "Marine protection plan",
+                "Property or Reserve plan",
+                "Recovery plan",
+                "Burn plan (fire management)",
                 "Other (specify in notes)"
             ],
             "validate": "required"
@@ -44,8 +43,7 @@
         {
             "dataType": "number",
             "description": "The area in square kilometres that the plan covers",
-            "name": "planCoverageArea",
-            "validate": "required"
+            "name": "planCoverageArea"
         },
         {
             "dataType": "date",
@@ -110,7 +108,7 @@
                             "type": "date"
                         },
                         {
-                            "source": "<h4>Please attach a copy of the Plan document via the Admin tab</h4>",
+                            "source": "<h4>Please attach a copy of the Plan document via the Admin tab<\/h4>",
                             "computed": null,
                             "type": "literal"
                         }

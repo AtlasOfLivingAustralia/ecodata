@@ -23,38 +23,30 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "skillsApplication",
-                            "computed": null,
-                            "preLabel": "How have the skills and learning outcomes of participants in this project been applied?:",
-                            "type": "selectMany"
-                        }
-                    ],
+            "items": [{
+                "items": [{
+                    "source": "skillsApplication",
                     "computed": null,
-                    "type": "col"
-                }
-            ],
+                    "preLabel": "How have the skills and learning outcomes of participants in this project been applied?:",
+                    "type": "selectMany"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
             "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "notes",
-                            "computed": null,
-                            "preLabel": "Notes / Comments:",
-                            "type": "textarea"
-                        }
-                    ],
+            "items": [{
+                "items": [{
+                    "source": "notes",
                     "computed": null,
-                    "type": "col"
-                }
-            ],
+                    "preLabel": "Notes / Comments:",
+                    "type": "textarea"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
             "class": "output-section",
             "type": "row"
         }

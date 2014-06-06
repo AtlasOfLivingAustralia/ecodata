@@ -80,40 +80,32 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Please list the numbers of people involved in undertaking each relevant type of administration activity and the average time spent per person:",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Please list the numbers of people involved in undertaking each relevant type of administration activity and the average time spent per person:",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "colspan": 2,
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "Total time spent undertaking project administration activities (Hrs)",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "hoursAdminTotal",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"hoursActionTotal\",\"fromList\":\"adminActions\"}}",
-                                "type": "number"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "Total time spent undertaking project administration activities (Hrs)",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "hoursAdminTotal",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"hoursActionTotal\",\"fromList\":\"adminActions\"}}",
+                    "type": "number"
+                }
+            ]}]},
             "source": "adminActions",
             "columns": [
                 {
@@ -150,15 +142,13 @@
             "type": "table"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

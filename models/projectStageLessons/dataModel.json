@@ -21,39 +21,33 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "stageReportLessons",
-                            "preLabel": "Lessons learned for this stage:",
-                            "type": "textarea"
-                        },
-                        {
-                            "source": "stageReportImprovements",
-                            "preLabel": "Improvement actions to be implemented:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
+            "items": [{
+                "items": [
+                    {
+                        "source": "stageReportLessons",
+                        "preLabel": "Lessons learned for this stage:",
+                        "type": "textarea"
+                    },
+                    {
+                        "source": "stageReportImprovements",
+                        "preLabel": "Improvement actions to be implemented:",
+                        "type": "textarea"
+                    }
+                ],
+                "type": "col"
+            }],
             "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "stageReportNotes",
-                            "preLabel": "Comments / Notes:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "stageReportNotes",
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }],
+                "type": "col"
+            }],
             "class": "output-section",
             "type": "row"
         }

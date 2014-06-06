@@ -4,13 +4,13 @@
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": "The number of participants involved in an activity who are not employed in the project",
+            "description": "The number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants.",
             "name": "totalParticipantsNotEmployed",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of indigenous people participating in an activity who are not employed in the project",
+            "description": "The number of indigenous people participating in an activity who are not delivery partners or employed in the project (ie. Indigenous volunteers)",
             "name": "numberOfIndigenousParticipants",
             "validate": "required,min[0]"
         },
@@ -22,72 +22,84 @@
         },
         {
             "dataType": "number",
-            "description": "The number of participants involved in an activity who have not attended other activities associated with the project",
+            "description": "The number of people involved in an activity who have not attended other activities associated with the project",
             "name": "totalParticipantsNew",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of different community groups participating in this activity",
+            "description": "The number of different community groups (non delivery partners) participating in this activity",
             "name": "numberOfCommunityGroups",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of farm entities represented by participants in an activity, which have not previously been represented at other project activities",
+            "description": "Total number of farm entities participating in project activities for the first time",
             "name": "numberOfFarmingEntitiesNew",
             "validate": "required,min[0]"
         }
     ],
     "viewModel": [{
-        "items": [{
-            "items": [
-                {
-                    "source": "totalParticipantsNotEmployed",
-                    "computed": null,
-                    "preLabel": "Total No. of Participants (not employed on project):",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "numberOfIndigenousParticipants",
-                    "computed": null,
-                    "preLabel": "No of Indigenous Participants (not employed on project):",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "totalParticipantsNew",
-                    "computed": null,
-                    "preLabel": "Total No. of participants not previously attending events for this project (ie. new participants in the project):",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "numberOnCountryVisits",
-                    "computed": null,
-                    "preLabel": "Total No. of indigenous on-country visits:",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "numberOfCommunityGroups",
-                    "computed": null,
-                    "preLabel": "No of community groups participating:",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "source": "numberOfFarmingEntitiesNew",
-                    "computed": null,
-                    "preLabel": "No of farming entities not previously attending events for this project:",
-                    "width": "20%",
-                    "type": "number"
-                }
-            ],
-            "computed": null,
-            "type": "row"
-        }],
-        "type": "section"
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "totalParticipantsNotEmployed",
+                        "computed": null,
+                        "preLabel": "No. of volunteers (ie. not employed on project):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfIndigenousParticipants",
+                        "computed": null,
+                        "preLabel": "No. of Indigenous volunteers (ie. not employed on project):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "width": "30%",
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "totalParticipantsNew",
+                        "computed": null,
+                        "preLabel": "No. of new people attending project activities:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfFarmingEntitiesNew",
+                        "computed": null,
+                        "preLabel": "No. of farming entities participating in project activities for the first time:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "width": "30%",
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "numberOfCommunityGroups",
+                        "computed": null,
+                        "preLabel": "No. of community groups (non delivery partners) participating:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOnCountryVisits",
+                        "computed": null,
+                        "preLabel": "No. of Indigenous on-country visits:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "width": "30%",
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
     }]
 }

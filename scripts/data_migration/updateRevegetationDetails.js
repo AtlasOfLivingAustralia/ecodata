@@ -1,6 +1,7 @@
 load('renameListValue.js');
 
 // Revegetation Details
+renameListValue('Revegetation Details','revegetationMethod', 'Hand broardcast seeding', 'Hand broadcast seeding');
 renameListValue('Revegetation Details', 'connectivityIndex', 'Isolated forest or woodland remnant', 'Isolated forest or woodland remnant >1km from other remnants');
 renameListValue('Revegetation Details', 'connectivityIndex', 'Isolated grassland', 'Isolated grassland >1km from other remnants');
 renameListValue('Revegetation Details', 'connectivityIndex', 'Connected to patch of more than 1000 ha', 'Patch <1km from a patch of more than 1000ha');

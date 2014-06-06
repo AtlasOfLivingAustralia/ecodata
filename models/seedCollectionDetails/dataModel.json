@@ -84,30 +84,24 @@
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "Total seed collected (kg)",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalSeedCollectedKg",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "colspan": 2,
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total seed collected (kg)",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedCollectedKg",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 2,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
             "source": "seedsList",
             "computed": null,
             "columns": [
@@ -132,15 +126,13 @@
             "type": "table"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "width": "60%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "60%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

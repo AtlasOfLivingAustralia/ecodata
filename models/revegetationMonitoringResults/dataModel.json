@@ -1,11 +1,11 @@
 {
-    "modelName":"Revegetation Monitoring Results",
-    "dataModel":[
+    "modelName": "Vegetation Monitoring Results",
+    "dataModel": [
         {
-            "name":"revegetationType",
-            "dataType":"text",
+            "dataType": "text",
             "description": "The type of revegetation method used",
-            "constraints":[
+            "name": "revegetationType",
+            "constraints": [
                 "Direct drill seeding",
                 "Hand broardcast seeding",
                 "Hand planting",
@@ -14,10 +14,10 @@
             ]
         },
         {
-            "name":"countingMethod",
-            "dataType":"text",
+            "dataType": "text",
             "description": "The method used to determine the number of surviving plants",
-            "constraints":[
+            "name": "countingMethod",
+            "constraints": [
                 "Direct count",
                 "Calculated estimate - stratified sample (plot-based)",
                 "Calculated estimate - stratified sample (transect-based)",
@@ -26,42 +26,44 @@
             ]
         },
         {
-            "name":"revegetationMonitoring",
-            "dataType":"list",
+            "dataType": "list",
+            "name": "revegetationMonitoring",
             "columns": [
                 {
-                    "name":"species",
-                    "dataType":"species",
+                    "dataType": "species",
+                    "speciesList": "project",
+                    "noTotal": "true",
                     "description": "Species planted on the revegetation site and/or represented in the survival count",
-                    "speciesList":"project",
-                    "noTotal":"true"
+                    "name": "species",
+                    "validate": "required"
                 },
                 {
-                    "name":"numberPlanted",
+                    "dataType": "number",
                     "description": "The number of individual plants planted on the site during the revegetation works activity",
-                    "dataType":"number",
-                    "primaryResult":"true",
-                    "validate": "min[1]"
+                    "primaryResult": "true",
+                    "name": "numberPlanted",
+                    "validate": "required, min[1]"
                 },
                 {
-                    "name":"seedSown",
+                    "dataType": "number",
                     "description": "The quantity in kilograms of seed sown on the site during the revegetation works activity",
-                    "dataType":"number"
+                    "name": "seedSown",
+                    "validate": "required"
                 },
                 {
-                    "name":"numberSurviving",
-                    "dataType":"number",
-                    "description": "The number of individual seedlings surviving at the time of this survey"
+                    "dataType": "number",
+                    "description": "The number of individual seedlings surviving at the time of this survey",
+                    "name": "numberSurviving"
                 },
                 {
-                    "name":"survivalRate",
-                    "dataType":"number",
-                    "description": "The percentage of individual seedlings surviving at the time of this survey as a proportion of numbers planted"
+                    "dataType": "number",
+                    "description": "The percentage of individual seedlings surviving at the time of this survey as a proportion of numbers planted",
+                    "name": "survivalRate",
+                    "validate": "required"
                 },
                 {
-                    "name":"notes",
-                    "dataType":"text",
-                    "noTotal":"true"
+                    "dataType": "text",
+                    "name": "notes"
                 }
             ]
         },
@@ -90,110 +92,108 @@
             "name": "totalNumberSurviving"
         }
     ],
-    "viewModel":[
+    "viewModel": [
         {
-            "type":"row",
-            "class": "output-section",
             "items": [
                 {
-                    "type":"col",
-                    "items": [
-                        {
-                            "type":"selectOne",
-                            "source":"revegetationType",
-                            "preLabel":"Type of revegetation method:"
-                        }
-                    ]
+                    "items": [{
+                        "source": "revegetationType",
+                        "computed": null,
+                        "preLabel": "Type of revegetation method:",
+                        "type": "selectOne"
+                    }],
+                    "computed": null,
+                    "type": "col"
                 },
                 {
-                    "type":"col",
-                    "items": [
-                        {
-                            "type":"selectOne",
-                            "source":"countingMethod",
-                            "preLabel":"Counting Method:"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "type":"table",
-            "source":"revegetationMonitoring",
-            "class": "output-section",
-            "userAddedRows":true,
-            "columns": [
-                {
-                    "title":"Species",
-                    "type":"autocomplete",
-                    "source":"species",
-                    "width": "25%"
-                },
-                {
-                    "title":"No. Planted",
-                    "type":"number",
-                    "source":"numberPlanted",
-                    "width": "10%"
-                },
-                {
-                    "title":"Seed Sown (Kg)",
-                    "type":"number",
-                    "source":"seedSown",
-                    "width": "10%"
-                },
-                {
-                    "title":"No. Surviving",
-                    "type":"number",
-                    "source":"numberSurviving",
-                    "width": "10%"
-                },
-                {
-                    "title":"Survival rate (%)",
-                    "type":"number",
-                    "source":"survivalRate",
-                    "width": "10%"
-                },
-                {
-                    "title":"Notes / Comments",
-                    "type":"textarea",
-                    "source":"notes",
-                    "width": "35%"
+                    "items": [{
+                        "source": "countingMethod",
+                        "computed": null,
+                        "preLabel": "Counting Method:",
+                        "type": "selectOne"
+                    }],
+                    "computed": null,
+                    "type": "col"
                 }
             ],
-            "footer": {
-                "rows":[
-                    {
-                        "columns":[
-                            {
-                                "type":"literal",
-                                "source":"Total number planted"
-                            },
-                            {
-                                "source": "totalNumberPlanted",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "type":"literal",
-                                "source":"Total number surviving"
-                            },
-                            {
-                                "source": "totalNumberSurviving",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "type":"number",
-                                "source":""
-                            },
-                            {
-                                "type":"literal",
-                                "source":"Average survival rate (%)"
-                            }
-                        ]
-                    }
-                ]
-            }
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total number planted",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberPlanted",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total number surviving",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberSurviving",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "number"
+                },
+                {
+                    "source": "Average survival rate (%)",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "source": "revegetationMonitoring",
+            "columns": [
+                {
+                    "title": "Species",
+                    "source": "species",
+                    "width": "25%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "No. Planted",
+                    "source": "numberPlanted",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Seed Sown (Kg)",
+                    "source": "seedSown",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "No. Surviving",
+                    "source": "numberSurviving",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Survival rate (%)",
+                    "source": "survivalRate",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Notes / Comments",
+                    "source": "notes",
+                    "width": "35%",
+                    "type": "textarea"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
         }
     ]
 }

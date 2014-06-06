@@ -1,18 +1,15 @@
 {
     "selectedActivity": {
-        "name": "Management Practice Change",
-        "type": "Activity",
-        "outputs": [
-            "Management Practice Change Details"
-        ]
+        "status": "deleted",
+        "name": "Biodiversity Fund - Outcomes and Monitoring",
+        "type": "Assessment",
+        "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
     },
     "activities": [
         {
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
-            "outputs": [
-                "Biodiversity Fund Outcomes & Monitoring Methodology"
-            ]
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         },
         {
             "name": "Community Participation and Engagement",
@@ -107,9 +104,7 @@
         {
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
-            "outputs": [
-                "Indigenous Knowledge Transfer Details"
-            ]
+            "outputs": ["Indigenous Knowledge Transfer Details"]
         },
         {
             "name": "Management Plan Development",
@@ -122,9 +117,7 @@
         {
             "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": [
-                "Management Practice Change Details"
-            ]
+            "outputs": ["Management Practice Change Details"]
         },
         {
             "name": "Conservation Actions for Threatened Species",
@@ -225,9 +218,7 @@
         {
             "name": "Site Monitoring Plan",
             "type": "Activity",
-            "outputs": [
-                "Planned Monitoring Approach"
-            ]
+            "outputs": ["Planned Monitoring Approach"]
         },
         {
             "name": "Site Preparation",
@@ -251,9 +242,7 @@
         {
             "name": "Water Management",
             "type": "Activity",
-            "outputs": [
-                "Water Management Details"
-            ]
+            "outputs": ["Water Management Details"]
         },
         {
             "name": "Water Quality Survey",
@@ -561,15 +550,13 @@
         },
         {
             "template": "photoPoints",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "name": "numberOfPoints",
-                    "aggregationType": "SUM",
-                    "label": "No. of photo points",
-                    "units": ""
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "name": "numberOfPoints",
+                "aggregationType": "SUM",
+                "label": "No. of photo points",
+                "units": ""
+            }],
             "name": "Photo Points"
         },
         {
@@ -722,17 +709,15 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "category": "Invasive Species Management - Weeds",
-                    "displayType": "",
-                    "name": "effectivenessOfPreviousTreatment",
-                    "aggregationType": "AVERAGE",
-                    "label": "Effectiveness of Previous Treatment (% killed)",
-                    "units": "%"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "category": "Invasive Species Management - Weeds",
+                "displayType": "",
+                "name": "effectivenessOfPreviousTreatment",
+                "aggregationType": "AVERAGE",
+                "label": "Effectiveness of Previous Treatment (% killed)",
+                "units": "%"
+            }],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -1057,17 +1042,15 @@
         },
         {
             "template": "riskAssessment",
-            "scores": [
-                {
-                    "groupBy": "output:riskType",
-                    "category": "Sites and Activity Planning",
-                    "listName": "riskTable",
-                    "displayType": "barchart",
-                    "name": "riskType",
-                    "aggregationType": "COUNT",
-                    "label": "No. of threat and risk issues by type of issue"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:riskType",
+                "category": "Sites and Activity Planning",
+                "listName": "riskTable",
+                "displayType": "barchart",
+                "name": "riskType",
+                "aggregationType": "COUNT",
+                "label": "No. of threat and risk issues by type of issue"
+            }],
             "name": "Threatening Processes & Site Condition Risks"
         },
         {
@@ -1333,17 +1316,15 @@
         },
         {
             "template": "adminActivities",
-            "scores": [
-                {
-                    "groupBy": "output:adminActionType",
-                    "category": "Project Management, Planning and Research Outputs",
-                    "listName": "adminActions",
-                    "displayType": "barchart",
-                    "name": "hoursActionTotal",
-                    "aggregationType": "SUM",
-                    "label": "Total hours spent undertaking different types of project administration tasks"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:adminActionType",
+                "category": "Project Management, Planning and Research Outputs",
+                "listName": "adminActions",
+                "displayType": "barchart",
+                "name": "hoursActionTotal",
+                "aggregationType": "SUM",
+                "label": "Total hours spent undertaking different types of project administration tasks"
+            }],
             "name": "Administration Activities"
         },
         {
@@ -1815,16 +1796,14 @@
         },
         {
             "template": "waterQualityMeasurements",
-            "scores": [
-                {
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "instrumentCalibration",
-                    "aggregationType": "COUNT",
-                    "label": "No. of water quality monitoring events undertaken"
-                }
-            ],
+            "scores": [{
+                "category": "Natural Resources Management",
+                "listName": "",
+                "displayType": "",
+                "name": "instrumentCalibration",
+                "aggregationType": "COUNT",
+                "label": "No. of water quality monitoring events undertaken"
+            }],
             "name": "Water Quality Measurements"
         },
         {

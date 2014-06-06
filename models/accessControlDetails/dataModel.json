@@ -80,7 +80,6 @@
                     "items": [
                         {
                             "source": "structuresInstalled",
-                            "computed": null,
                             "preLabel": "Structure(s) installed:",
                             "type": "selectMany"
                         },
@@ -98,7 +97,6 @@
                         },
                         {
                             "source": "accessControlIssues",
-                            "computed": null,
                             "preLabel": "Description of issue(s) requiring access management:",
                             "type": "textarea"
                         },
@@ -116,7 +114,6 @@
                     "items": [
                         {
                             "source": "accessManagementMethod",
-                            "computed": null,
                             "preLabel": "Access control method used:",
                             "type": "selectMany"
                         },
@@ -141,15 +138,13 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

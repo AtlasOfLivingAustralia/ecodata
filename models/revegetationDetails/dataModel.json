@@ -7,7 +7,7 @@
             "name": "revegetationMethod",
             "constraints": [
                 "Direct drill seeding",
-                "Hand broardcast seeding",
+                "Hand broadcast seeding",
                 "Hand planting",
                 "Machine planting",
                 "Natural regeneration from threat exclusion / removal"
@@ -222,40 +222,34 @@
     ],
     "viewModel": [
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "Total Seedlings Planted:",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalNumberPlanted",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "source": "Total Seed Sown (Kg):",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalSeedSownKg",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
-                                "type": "number"
-                            },
-                            {
-                                "colspan": 3,
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total Seedlings Planted:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberPlanted",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total Seed Sown (Kg):",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedSownKg",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 3,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
             "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
             "source": "planting",
             "columns": [
@@ -372,24 +366,20 @@
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "environmentalBenefits",
-                            "preLabel": "Environmental benefits / outcomes expected to be achieved:",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "items": [{
+                        "source": "environmentalBenefits",
+                        "preLabel": "Environmental benefits / outcomes expected to be achieved:",
+                        "type": "selectMany"
+                    }],
                     "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "preLabel": "Type(s) of guard used",
-                            "source": "guardType",
-                            "type": "selectMany"
-                        }
-                    ],
+                    "items": [{
+                        "source": "guardType",
+                        "preLabel": "Type(s) of guard used",
+                        "type": "selectMany"
+                    }],
                     "computed": null,
                     "type": "col"
                 }
@@ -398,14 +388,12 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "width": "90%",
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "width": "90%",
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

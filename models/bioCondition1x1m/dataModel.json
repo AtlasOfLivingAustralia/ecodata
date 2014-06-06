@@ -1,238 +1,97 @@
 {
-    "modelName": "Five 1 x 1m plots",
-    "dataModel": [
-        {
-            "name": "groundCover",
-            "dataType": "list",
-            "columns": [
-                {
-                    "name": "groundCoverType",
-                    "dataType": "text"
-                },
-                {
-                    "name": "plot1",
-                    "dataType": "number"
-                },
-                {
-                    "name": "plot2",
-                    "dataType": "number"
-                },
-                {
-                    "name": "plot3",
-                    "dataType": "number"
-                },
-                {
-                    "name": "plot4",
-                    "dataType": "number"
-                },
-                {
-                    "name": "plot5",
-                    "dataType": "number"
-                },
-                {
-                    "name": "plotsMean",
-                    "dataType": "number",
-                    "computed": {
-                        "dependents": ["plot1", "plot2", "plot3", "plot4", "plot5"],
-                        "operation": "sum"
-                    }
-                }
-            ],
-            "defaultRows": [
-                {
-                    "groundCoverType": "% Native Perennial ('decreaser') grass cover*"
-                },
-                {
-                    "groundCoverType": "% Native other grass cover (if relevant)*"
-                },
-                {
-                    "groundCoverType": "% Native forbs and other species (non-grass)"
-                },
-                {
-                    "groundCoverType": "% Native shrubs (< 1m height)"
-                },
-                {
-                    "groundCoverType": "% Non-native grass"
-                },
-                {
-                    "groundCoverType": "% Non-native forbs and shrubs"
-                },
-                {
-                    "groundCoverType": "% Litter*"
-                },
-                {
-                    "groundCoverType": "% Rock"
-                },
-                {
-                    "groundCoverType": "% Bare ground"
-                },
-                {
-                    "groundCoverType": "% Cryptograms"
-                }
-            ]
-
+    "modelName":"Five 1 x 1m plots",
+    "dataModel":[
+        {"name":"groundCover", "dataType":"list","columns":[
+            {"name":"groundCoverType","dataType":"text"},
+            {"name":"plot1","dataType":"number"},
+            {"name":"plot2","dataType":"number"},
+            {"name":"plot3","dataType":"number"},
+            {"name":"plot4","dataType":"number"},
+            {"name":"plot5","dataType":"number"},
+            {"name":"plotsMean","dataType":"number","computed":{"dependents":["plot1","plot2","plot3","plot4","plot5"],"operation":"sum"}}
+        ],
+        "defaultRows":[
+                {"groundCoverType":"% Native Perennial ('decreaser') grass cover*"},
+                {"groundCoverType":"% Native other grass cover (if relevant)*"},
+                {"groundCoverType":"% Native forbs and other species (non-grass)"},
+                {"groundCoverType":"% Native shrubs (< 1m height)"},
+                {"groundCoverType":"% Non-native grass"},
+                {"groundCoverType":"% Non-native forbs and shrubs"},
+                {"groundCoverType":"% Litter*"},
+                {"groundCoverType":"% Rock"},
+                {"groundCoverType":"% Bare ground"},
+                {"groundCoverType":"% Cryptograms"}
+        ]
         },
-        {
-            "name": "totalPlot1",
-            "dataType": "number",
-            "primaryResult": "true",
-            "computed": {
-                "dependents": {
-                    "fromList": "groundCover",
-                    "source": "plot1"
-                },
-                "operation": "sum"
+
+        {"name":"totalPlot1","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"groundCover",
+                    "source":"plot1"
+                },"operation":"sum"
             }
         },
 
-        {
-            "name": "totalPlot2",
-            "dataType": "number",
-            "primaryResult": "true",
-            "computed": {
-                "dependents": {
-                    "fromList": "groundCover",
-                    "source": "plot2"
-                },
-                "operation": "sum"
+        {"name":"totalPlot2","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"groundCover",
+                    "source":"plot2"
+                },"operation":"sum"
             }
         },
 
-        {
-            "name": "totalPlot3",
-            "dataType": "number",
-            "primaryResult": "true",
-            "computed": {
-                "dependents": {
-                    "fromList": "groundCover",
-                    "source": "plot3"
-                },
-                "operation": "sum"
+        {"name":"totalPlot3","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"groundCover",
+                    "source":"plot3"
+                },"operation":"sum"
             }
         },
 
-        {
-            "name": "totalPlot4",
-            "dataType": "number",
-            "primaryResult": "true",
-            "computed": {
-                "dependents": {
-                    "fromList": "groundCover",
-                    "source": "plot4"
-                },
-                "operation": "sum"
+        {"name":"totalPlot4","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"groundCover",
+                    "source":"plot4"
+                },"operation":"sum"
             }
         },
 
-        {
-            "name": "totalPlot5",
-            "dataType": "number",
-            "primaryResult": "true",
-            "computed": {
-                "dependents": {
-                    "fromList": "groundCover",
-                    "source": "plot5"
-                },
-                "operation": "sum"
+        {"name":"totalPlot5","dataType":"number","primaryResult":"true",
+            "computed":{
+                "dependents":{
+                    "fromList":"groundCover",
+                    "source":"plot5"
+                },"operation":"sum"
             }
         }
     ],
-    "viewModel": [
-        {
-            "type": "row",
-            "items": [
-                {
-                    "type": "literal",
-                    "source": "<h2>Five 1x1m plots</h2>"
-                }
-            ]
-        },
-        {
-            "type": "row",
-            "items": [
-                {
-                    "type": "literal",
-                    "source": "(* attributes are essential to assess as used in scoring, however assessment of all attributes improves your ability to more accurately visualise proportions on each of the attributes)"
-                }
-            ]
-        },
-        {
-            "type": "table",
-            "source": "groundCover",
+    "viewModel":[
+        {   "type": "row", "items": [{"type": "literal", "source":"<h2>Five 1x1m plots</h2>"}]},
+        {   "type": "row", "items": [{"type": "literal", "source":"(* attributes are essential to assess as used in scoring, however assessment of all attributes improves your ability to more accurately visualise proportions on each of the attributes)"}]},
+        {   "type": "table", "source":"groundCover",
             "columns": [
-                {
-                    "title": "Ground cover",
-                    "source": "groundCoverType",
-                    "type": "text",
-                    "noEdit": true
-                },
-                {
-                    "title": "1",
-                    "source": "plot1",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                },
-                {
-                    "title": "2",
-                    "source": "plot2",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                },
-                {
-                    "title": "3",
-                    "source": "plot3",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                },
-                {
-                    "title": "4",
-                    "source": "plot4",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                },
-                {
-                    "title": "5",
-                    "source": "plot5",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                },
-                {
-                    "title": "Mean",
-                    "source": "plotsMean",
-                    "type": "number",
-                    "validate": "min[0],max[100]"
-                }
+                {"title":"Ground cover", "source":"groundCoverType","type":"text", "noEdit":true},
+                {"title":"1","source":"plot1","type":"number","validate":"min[0],max[100]"},
+                {"title":"2","source":"plot2","type":"number","validate":"min[0],max[100]"},
+                {"title":"3","source":"plot3","type":"number","validate":"min[0],max[100]"},
+                {"title":"4","source":"plot4","type":"number","validate":"min[0],max[100]"},
+                {"title":"5","source":"plot5","type":"number","validate":"min[0],max[100]"},
+                {"title":"Mean","source":"plotsMean","type":"number","validate":"min[0],max[100]"}
             ],
             "footer": {
                 "rows": [
-                    {
-                        "columns": [
-                            {
-                                "type": "literal",
-                                "source": "Total (%)"
-                            },
-                            {
-                                "type": "number",
-                                "source": "totalPlot1"
-                            },
-                            {
-                                "type": "number",
-                                "source": "totalPlot2"
-                            },
-                            {
-                                "type": "number",
-                                "source": "totalPlot3"
-                            },
-                            {
-                                "type": "number",
-                                "source": "totalPlot4"
-                            },
-                            {
-                                "type": "number",
-                                "source": "totalPlot5"
-                            }
-                        ]
-                    }
+                    {"columns":[
+                        {"type":"literal","source":"Total (%)"},
+                        {"type":"number","source":"totalPlot1"},
+                        {"type":"number","source":"totalPlot2"},
+                        {"type":"number","source":"totalPlot3"},
+                        {"type":"number","source":"totalPlot4"},
+                        {"type":"number","source":"totalPlot5"}
+                    ]}
                 ]
             }
         }

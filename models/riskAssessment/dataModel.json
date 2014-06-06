@@ -19,7 +19,7 @@
                     "Fishing / aquaculture impacts - commercial over-fishing",
                     "Fishing / aquaculture impacts - recreational over-fishing",
                     "Fishing / aquaculture impacts - fishing bycatch",
-                    "Fishing / aquaculture impacts - drifting ghost nets",
+                    "Fishing / aquaculture impacts - drifting nets / debris",
                     "Fishing / aquaculture impacts - escaped stock",
                     "Fishing / aquaculture impacts - nutrification",
                     "Fire - managed fire frequency",
@@ -35,13 +35,14 @@
                     "Impacts from public access / visitation - vehicular",
                     "Invasive and pest animals",
                     "Invasive weeds",
-                    "Mistletoe or other parasite/fungal infestations",
+                    "Mistletoe or other parasite / fungal infestations",
                     "Soil acidification or acid-sulphate soils",
-                    "Soil compaction - animal/human/machinery",
-                    "Soil nutrient enrichment/eutrophication",
+                    "Soil compaction - animal / human / machinery",
+                    "Soil erosion",
+                    "Soil nutrient enrichment / eutrophication",
                     "Soil salinity",
                     "Urbanisation / subdivision",
-                    "Weedicides/pesticides or chemical contamination",
+                    "Weedicides / pesticides or chemical contamination",
                     "Other (specify in notes)"
                 ]
             },
@@ -90,24 +91,28 @@
             {
                 "title": "Type of threat/risk",
                 "source": "riskType",
+                "computed": null,
                 "width": "30%",
                 "type": "selectOne"
             },
             {
                 "title": "Description",
                 "source": "riskDescription",
+                "computed": null,
                 "width": "40%",
                 "type": "textarea"
             },
             {
                 "title": "Likelihood",
                 "source": "riskLikelihood",
+                "computed": null,
                 "width": "10%",
                 "type": "selectOne"
             },
             {
                 "title": "Consequence",
                 "source": "riskConsequence",
+                "computed": null,
                 "width": "10%",
                 "type": "selectOne"
             },
@@ -120,6 +125,7 @@
             }
         ],
         "userAddedRows": true,
+        "class": "output-section",
         "type": "table"
     }]
 }

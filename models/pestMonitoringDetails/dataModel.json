@@ -39,7 +39,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Estimated density class of particular pest species on a number of individuals  or colonies (for insects) per hectare basis within a range class. Calculate this value as: (population estimate (from method) / sample area in hectares) x (1 / sample area in hectares)",
+                    "description": "Estimated density class of particular pest species on a number of individuals  or colonies (for insects) on a per hectare basis within a range class. Calculate this value as: (population estimate (from method) / sample area in hectares) x (1 / sample area in hectares)",
                     "name": "pestPopulationDensityClass",
                     "constraints": [
                         "< 10 individuals or colonies / Ha",
@@ -74,24 +74,20 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "The <a href='http://www.feral.org.au/' target='_blank'>www.feral.org.au</a> website is a useful source of information for this activity, and this website (<a href='http://www.cals.ncsu.edu/course/fw353/Estimate.htm' target='_blank'>Estimating Wildlife Populations</a>), amongst many others, is a useful resource for population estimation methods and calculations.<br>You may also find the <a href='https://itunes.apple.com/au/app/field-guide-to-pest-animals/id634197149?mt=8' target='_blank'>PestSmart app</a> (iOS only) useful as an aid in identifying pest species.",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "The <a href='http://www.feral.org.au/' target='_blank'>www.feral.org.au<\/a> website is a useful source of information for this activity, and this website (<a href='http://www.cals.ncsu.edu/course/fw353/Estimate.htm' target='_blank'>Estimating Wildlife Populations<\/a>), amongst many others, is a useful resource for population estimation methods and calculations.<br>You may also find the <a href='https://itunes.apple.com/au/app/field-guide-to-pest-animals/id634197149?mt=8' target='_blank'>PestSmart app<\/a> (iOS only) useful as an aid in identifying pest species.",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "assessorName",
-                    "computed": null,
-                    "preLabel": "Assessor:",
-                    "type": "text"
-                }
-            ],
+            "items": [{
+                "source": "assessorName",
+                "computed": null,
+                "preLabel": "Assessor:",
+                "type": "text"
+            }],
             "type": "row"
         },
         {
@@ -140,13 +136,12 @@
             "type": "table"
         },
         {
-            "items": [
-                {
-                    "preLabel": "Notes:",
-                    "source": "pestObservationNotes",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "pestObservationNotes",
+                "computed": null,
+                "preLabel": "Notes:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

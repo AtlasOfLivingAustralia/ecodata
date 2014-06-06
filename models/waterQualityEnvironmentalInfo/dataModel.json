@@ -42,60 +42,59 @@
             "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [
-            {
-                "items": [
-                    {
-                        "source": "rainfall7Days",
-                        "computed": null,
-                        "preLabel": "Rainfall in last 7 days:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "surfaceWaterTemperature",
-                        "computed": null,
-                        "preLabel": "Rainfall (mm):",
-                        "type": "number"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            },
-            {
-                "items": [
-                    {
-                        "source": "waterLevel",
-                        "computed": null,
-                        "preLabel": "Water level or flow:",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "waterFlowRate",
-                        "computed": null,
-                        "preLabel": "Rate of Flow:",
-                        "type": "text"
-                    }
-                ],
-                "computed": null,
-                "type": "col"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    },
-    {
-        "items": [
-            {
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "rainfall7Days",
+                            "computed": null,
+                            "preLabel": "Rainfall in last 7 days:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "surfaceWaterTemperature",
+                            "computed": null,
+                            "preLabel": "Rainfall (mm):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "waterLevel",
+                            "computed": null,
+                            "preLabel": "Water level or flow:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "waterFlowRate",
+                            "computed": null,
+                            "preLabel": "Rate of Flow:",
+                            "type": "text"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
                 "source": "notes",
                 "computed": null,
                 "preLabel": "Site observations:",
                 "width": "90%",
                 "type": "textarea"
-            }
-        ],
-        "class": "output-section",
-        "type": "row"
-    }
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
     ]
 }

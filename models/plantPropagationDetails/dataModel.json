@@ -14,9 +14,8 @@
                 {
                     "dataType": "number",
                     "description": "Weight in grams of seed propagated",
-                    "name": "seedWeight",
                     "primaryResult": "true",
-                    "validate": "required"
+                    "name": "seedWeight"
                 },
                 {
                     "dataType": "text",
@@ -34,10 +33,11 @@
                         "Direct sowing - pre-treated (smoke)",
                         "Direct sowing - pre-treated (leaching)",
                         "Direct sowing - seeds untreated",
-                        "vegetative - cuttings - direct striking",
-                        "vegetative - cuttings - pre-rooting",
-                        "vegetative - layering",
-                        "vegetative - tissue culture",
+                        "Mycorrhizal inoculation",
+                        "Vegetative - cuttings - direct striking",
+                        "Vegetative - cuttings - pre-rooting",
+                        "Vegetative - layering",
+                        "Vegetative - tissue culture",
                         "Other (specify in notes)"
                     ]
                 },
@@ -52,8 +52,7 @@
                         "Potted - advanced plant",
                         "Bare rooted",
                         "Other (specify in notes)"
-                    ],
-                    "validate": "required"
+                    ]
                 },
                 {
                     "dataType": "number",

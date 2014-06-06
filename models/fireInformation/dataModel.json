@@ -1,5 +1,5 @@
 {
-    "modelName": "Fire Information",
+    "modelName": "Fire Management Details",
     "dataModel": [
         {
             "dataType": "text",
@@ -26,8 +26,7 @@
                 "Wildfire",
                 "Wildfire prevention works",
                 "Other (specify in notes)"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "stringList",
@@ -54,7 +53,7 @@
             "dataType": "number",
             "description": "Area of the fire ground actually burnt expressed as a percentage of the total fire ground area",
             "name": "areaBurntPercent",
-            "validate": "required,min[0],max[100]"
+            "validate": "min[0],max[100]"
         },
         {
             "dataType": "date",
@@ -71,6 +70,11 @@
                 "7-10 years",
                 "> 10 years"
             ]
+        },
+        {
+            "dataType": "number",
+            "description": "The total time in whole hours over which this activity was conducted.",
+            "name": "eventDuration"
         },
         {
             "dataType": "stringList",
@@ -143,12 +147,11 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Please enter as much information about this fire activity as possible. If the type of fire event is 'Fire prevention works' and fire was not used as a tool (eg. for fuel reduction), then please ignore any non-relevant questions.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Please enter as much information about this fire activity as possible. If the type of fire event is 'Fire prevention works' and fire was not used as a tool (eg. for fuel reduction), then please ignore any non-relevant questions.",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -202,6 +205,12 @@
                             "computed": null,
                             "preLabel": "Temperature of burn:",
                             "type": "selectOne"
+                        },
+                        {
+                            "source": "eventDuration",
+                            "computed": null,
+                            "preLabel": "Duration of this activity (Hrs):",
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -254,15 +263,13 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Comments / Notes:",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }
