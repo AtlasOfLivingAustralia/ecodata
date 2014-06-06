@@ -5,7 +5,7 @@ renameActivity('Flora (biological) survey', 'Flora Survey - general');
 renameActivity('Indigenous Employment & Enterprise', 'Indigenous Employment and Businesses');
 renameActivity('Knowledge Integration and Transfer', 'Indigenous Knowledge Transfer');
 renameActivity('Pest and Disease Management', 'Pest Management');
-renameActivity('Pest animal survey', 'Pest Animal Survey and Monitoring');
+renameActivity('Pest animal survey', 'Pest Animal Survey');
 renameActivity('Public Access Management', 'Public Access and Infrastructure');
 renameActivity('Vegetation Assessment - Biodiversity Fund (DoE)', 'Vegetation Assessment - Commonwealth government methodology');
 renameActivity('Outcomes, Evaluation and Learning', 'Outcomes, Evaluation and Learning - final report');
