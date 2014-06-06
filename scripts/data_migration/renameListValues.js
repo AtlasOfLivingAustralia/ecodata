@@ -52,3 +52,14 @@ renameArrayTypedListValue('Erosion Management Details', 'erosionTreatmentMethod'
 renameArrayTypedListValue('Erosion Management Details', 'erosionType', 'Mass movement - landslide/landslip', 'Mass movement - landslide / landslip');
 renameArrayTypedListValue('Erosion Management Details', 'erosionControlStructures', 'Channel/bank lining - solid barrier', 'Channel / bank lining - solid barrier');
 renameArrayTypedListValue('Erosion Management Details', 'erosionControlStructures', 'Channel/bank lining - cellular confinement systems', 'Channel / bank lining - cellular confinement systems');
+
+// Risk Assessment
+renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Fishing / aquaculture impacts - drifting ghost nets', 'Fishing / aquaculture impacts - drifting nets / debris');
+renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Mistletoe or other parasite/fungal infestations', 'Mistletoe or other parasite / fungal infestations');
+renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Soil compaction - animal/human/machinery', 'Soil compaction - animal / human / machinery');
+renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Soil nutrient enrichment/eutrophication', 'Soil nutrient enrichment / eutrophication');
+renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Weedicides/pesticides or chemical contamination', 'Weedicides / pesticides or chemical contamination');
+
+
+
+
