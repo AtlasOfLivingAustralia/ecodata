@@ -3,10 +3,6 @@ load('renameListValue.js');
 // Admin activities
 renameNestedListValue('Administration Activities', 'adminActions', 'adminActionType', 'Submit project progress / annual/final report', 'Submit project progress / annual / final report');
 
-renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Habitat restoration - home range improvement', 'Home range / extent improvement');
-renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Habitat enhancement - improved migration paths', 'Improved habitat connectivity');
-renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Streambank protection', 'Riparian rehabilitation');
-
 // Site planning details
 renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Infrastructure Establishment', 'Public Access and Infrastructure');
 renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Other Conservation Works for Threatened Species', 'Conservation Works for Threatened Species');
@@ -14,7 +10,7 @@ renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivit
 renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Public Access Management', 'Public Access and Infrastructure');
 renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Fauna (biological) survey', 'Fauna survey - general');
 renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Flora (biological) survey', 'Flora survey - general');
-renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Pest animal assessment', 'Pest Animal Assessment');
+renameNestedListValue('Site Planning Details', 'plannedActions', 'plannedActivityType', 'Pest animal assessment', 'Pest Animal Survey');
 
 // Pest Monitoring Details
 renameNestedListValue('Pest Observation and Monitoring Details', 'pestObservationMonitoringDetails', 'pestPopulationDensityClass', '< 10 individuals / Ha', '< 10 individuals or colonies / Ha');
@@ -43,7 +39,7 @@ renameNestedListValue('Site Preparation Actions', 'actionsList', 'groundPreparat
 renameNestedListValue('Site Preparation Actions', 'actionsList', 'associatedActivity', 'Infrastructure Establishment', 'Public Access and Infrastructure');
 renameNestedListValue('Site Preparation Actions', 'actionsList', 'associatedActivity', 'Public Access Management', 'Public Access and Infrastructure');
 
-// Evidence of Weed Management
+// Evidence of Weed Treatment
 renameArrayTypedListValue('Evidence of Weed Treatment', 'evidenceOfPreviousWeedTreatment', 'Root/stem rot present', 'Root / stem rot present');
 renameArrayTypedListValue('Evidence of Weed Treatment', 'recommendedWeedTreatment', 'Manual control - Grubbing/chipping', 'Manual control - Grubbing / chipping');
 
@@ -60,6 +56,26 @@ renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable
 renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Soil nutrient enrichment/eutrophication', 'Soil nutrient enrichment / eutrophication');
 renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable', 'riskType', 'Weedicides/pesticides or chemical contamination', 'Weedicides / pesticides or chemical contamination');
 
+// Planned Monitoring Approach
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Fauna survey (biological)', 'Fauna Survey - general');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Flora survey (biological)', '');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Flora Survey - general');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Pest animal assessment & monitoring', 'Pest Animal Survey');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - BioCondition (QLD)', 'Vegetation Assessment - Commonwealth government methodology');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - Biodiversity Fund (DoE)', 'Vegetation Assessment - Commonwealth government methodology')
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - BioMetric (NSW)', 'Vegetation Assessment - Commonwealth government methodology')
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - Bushland Condition Monitoring (SA)', 'Vegetation Assessment - Commonwealth government methodology')
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - Habitat Hectares (VIC)', 'Vegetation Assessment - Commonwealth government methodology')
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - Native Vegetation Condition Assessment and Monitoring (WA)', 'Vegetation Assessment - Commonwealth government methodology')
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - TasVeg (TAS)', 'Vegetation Assessment - Commonwealth government methodology');
 
+// Plant Propagation Details
+renameNestedListValue('Plant Propagation Details', 'plantPropagation', 'germinationMethod', 'vegetative - cuttings - direct striking', 'Vegetative - cuttings - direct striking');
+renameNestedListValue('Plant Propagation Details', 'plantPropagation', 'germinationMethod', 'vegetative - cuttings - pre-rooting', 'Vegetative - cuttings - pre-rooting');
+renameNestedListValue('Plant Propagation Details', 'plantPropagation', 'germinationMethod', 'vegetative - layering', 'Vegetative - layering');
+renameNestedListValue('Plant Propagation Details', 'plantPropagation', 'germinationMethod', 'vegetative - tissue culture', 'Vegetative - tissue culture');
 
+// Evidence of Pest Management
+renameArrayTypedListValue('Evidence of Pest Management Activity', 'previousPestTreatmentAssessmentMethod', 'Spotlight / daylight population survey - target species (specify details in notes)', 'Method-based population survey - target species abundance (specify method in notes)');
+renameArrayTypedListValue('Evidence of Pest Management Activity', 'previousPestTreatmentAssessmentMethod', 'Spotlight / daylight population survey - food species (specify details in notes)', 'Method-based population survey - food species abundance (specify method in notes)');
 

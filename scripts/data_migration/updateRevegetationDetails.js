@@ -9,6 +9,10 @@ renameListValue('Revegetation Details', 'connectivityIndex', 'Connected to patch
 renameListValue('Revegetation Details', 'connectivityIndex', 'Connected to patch of 25 to 100 ha', 'Patch <1km from a patch of 25 to 100ha');
 renameListValue('Revegetation Details', 'connectivityIndex', 'Connected to patch of less than 25 ha', 'Patch <1km from a patch of less than 25ha');
 
+renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Habitat restoration - home range improvement', 'Home range / extent improvement');
+renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Habitat enhancement - improved migration paths', 'Improved habitat connectivity');
+renameArrayTypedListValue('Revegetation Details', 'environmentalBenefits', 'Streambank protection', 'Riparian rehabilitation');
+
 var outputs = db.output.find({name:'Revegetation Details', 'data.guardType':{$exists:false}});
 var outputCount = outputs.count();
 var count = 0;
