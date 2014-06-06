@@ -1,4 +1,8 @@
-var outputs = db.output.find({name:'Pest Management Details'});
+var outputs = db.output.find({name:'Pest Management Details', 'data.pestManagement':{$exists:false}});
+
+var outputCount = outputs.count();
+var count = 0;
+
 while (outputs.hasNext()) {
     var output = outputs.next();
     output.data.pestManagement= [];
@@ -49,5 +53,13 @@ while (outputs.hasNext()) {
     delete output.data.pestManagementPurpose;
 
     db.output.save(output);
+    count++;
 
+}
+
+if (outputCount != count) {
+    print("Error! Expected "+outputCount+" but modified "+count+" Pest Management Details outputs");
+}
+else {
+    print("Updated "+count+" Pest Management Details outputs");
 }
