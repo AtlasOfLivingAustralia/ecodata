@@ -9,7 +9,7 @@ class MetadataService {
 
     private static final String ACTIVE = 'active'
 
-    def grailsApplication, webService, cacheService
+    def grailsApplication, webService, cacheService, messageSource
 
     def activitiesModel() {
         return cacheService.get('activities-model',{
@@ -32,14 +32,17 @@ class MetadataService {
         // Remove deprecated activities
         activities = activities.findAll {!it.status || it.status == ACTIVE}
 
-        Map byCategory = [:].withDefault {[]}
+        Map byCategory = [:]
 
         // Group by the activity category field, falling back on a default grouping of activity or assessment.
         activities.each {
             def category = it.category?: it.type == 'Activity' ? 'Activities' : 'Assessment'
-            byCategory[category] << it.name
+            if (!byCategory[category]) {
+                byCategory[category] = []
+            }
+            def description = messageSource.getMessage("api.${it.name}.description", null, "", Locale.default)
+            byCategory[category] << [name:it.name, description:description]
         }
-
         byCategory
     }
 
