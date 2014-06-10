@@ -139,7 +139,7 @@
                     <td>
                         <ul>
                         <g:each var="score" in="${scores[output.name]}">
-                            <li><g:if test="${score.isOutputTarget}"><b></g:if>${score.label} <g:if test="${score.units}">(${score.units})</g:if><g:if test="${score.isOutputTarget}"><b></g:if></li>
+                            <li><g:if test="${score.isOutputTarget}"><b></g:if>${score.label} <g:if test="${score.units}">(${score.units})</g:if><g:if test="${score.isOutputTarget}"></b></g:if></li>
                         </g:each>
                         </ul>
                     </td>

@@ -11,17 +11,29 @@ class DocumentationController {
 
         def activitiesModel = metadataService.activitiesModel()
 
+        // Exclude deprecated / soft deleted activities
+        def activeActivities = activitiesModel.activities.findAll{!it.status || it.status == 'active'}
+        def activeOutputs = []
+        activitiesModel.outputs.each { output ->
+            if (activeActivities.find{output.name in it.outputs}) {
+                activeOutputs << output
+            }
+        }
+
+        def displayModel = [activities:activeActivities, outputs:activeOutputs]
+
         def schemaGenerator = new SchemaBuilder(grailsApplication.config, activitiesModel)
         def outputs = [:]
         def scoresByOutput = [:]
-        activitiesModel.outputs.each {
-            def outputDataModel = metadataService.getOutputDataModel(it.template)
+        displayModel.outputs.each { output ->
 
-            outputs << [(it.name): schemaGenerator.schemaForOutput(it.name, outputDataModel)]
-            scoresByOutput << [(it.name):it.scores]
+            def outputDataModel = metadataService.getOutputDataModel(output.template)
+
+            outputs << [(output.name): schemaGenerator.schemaForOutput(output.name, outputDataModel)]
+            scoresByOutput << [(output.name):output.scores]
         }
 
-        [activitiesModel:activitiesModel, outputs:outputs, scores:scoresByOutput]
+        [activitiesModel:displayModel, outputs:outputs, scores:scoresByOutput]
     }
 
     def project() {
