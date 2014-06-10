@@ -84,8 +84,8 @@ while (outputs.hasNext()) {
     count++;
 }
 if (outputCount != count) {
-    print("Error! Expected "+outputCount+" but modified "+count+" Event Details outputs");
+    print("Error! Expected "+outputCount+" but modified "+count+" Management Practice Change Details outputs");
 }
 else {
-    print("Updated "+count+" Event Details outputs");
+    print("Updated "+count+" Management Practice Change Details outputs");
 }
