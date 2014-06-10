@@ -69,12 +69,8 @@
             "type": "row"
         },
         {
-            "items": [{
-                "dataType": "text",
-                "name": "weedInspectionNotes"
-            }],
-            "class": "output-section",
-            "type": "row"
+            "dataType": "text",
+            "name": "weedInspectionNotes"
         }
     ],
     "viewModel": [
