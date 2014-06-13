@@ -17,8 +17,8 @@
                 },
                 {
                     "dataType": "text",
-                    "name": "weedInfestationDensity",
                     "description": "Density class for particular weed species over the assessed area",
+                    "name": "weedInfestationDensity",
                     "constraints": [
                         "Dense general cover",
                         "Dense patches",
