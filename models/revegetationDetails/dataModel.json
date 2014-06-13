@@ -294,7 +294,7 @@
                 },
                 {
                     "title": "Stock Provenance",
-                    "source":"stockProvenance",
+                    "source": "stockProvenance",
                     "width": "10%",
                     "type": "text"
                 },
@@ -369,6 +369,7 @@
                 {
                     "items": [{
                         "source": "environmentalBenefits",
+                        "computed": null,
                         "preLabel": "Environmental benefits / outcomes expected to be achieved:",
                         "type": "selectMany"
                     }],
@@ -378,6 +379,7 @@
                 {
                     "items": [{
                         "source": "guardType",
+                        "computed": null,
                         "preLabel": "Type(s) of guard used",
                         "type": "selectMany"
                     }],
@@ -391,6 +393,7 @@
         {
             "items": [{
                 "source": "notes",
+                "computed": null,
                 "width": "90%",
                 "preLabel": "Comments / Notes:",
                 "type": "textarea"
