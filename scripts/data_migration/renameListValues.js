@@ -58,7 +58,7 @@ renameNestedListValue('Threatening Processes & Site Condition Risks', 'riskTable
 
 // Planned Monitoring Approach
 renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Fauna survey (biological)', 'Fauna Survey - general');
-renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Flora survey (biological)', '');
+renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Flora survey (biological)', 'Flora Survey - general');
 renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Flora Survey - general');
 renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Pest animal assessment & monitoring', 'Pest Animal Survey');
 renameNestedListValue('Planned Monitoring Approach', 'plannedActions', 'plannedActivityType', 'Vegetation condition assessment - BioCondition (QLD)', 'Vegetation Assessment - Commonwealth government methodology');
