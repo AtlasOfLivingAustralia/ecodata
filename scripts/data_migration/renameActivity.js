@@ -34,7 +34,7 @@ function renameActivityWithoutOutputs(oldName, newName) {
         var activity = activities.next();
         var outputs = db.output.find({activityId: activity.activityId}).count();
         if (outputs > 0) {
-            print(type+','+activity.projectId+','+activity.activityId+',Has outputs - not changing');
+            print(oldName+','+activity.projectId+','+activity.activityId+',Has outputs - not changing');
             count++;
         }
         else {

@@ -7,11 +7,10 @@ renameActivity('Knowledge Integration and Transfer', 'Indigenous Knowledge Trans
 renameActivity('Pest and Disease Management', 'Pest Management');
 renameActivity('Pest animal survey', 'Pest Animal Survey');
 renameActivity('Public Access Management', 'Public Access and Infrastructure');
-renameActivity('Vegetation Assessment - Biodiversity Fund (DoE)', 'Vegetation Assessment - Commonwealth government methodology');
-renameActivity('Outcomes, Evaluation and Learning', 'Outcomes, Evaluation and Learning - final report');
+renameActivity('Outcomes, Evaluation and Learning', 'Progress, Outcomes and Learning - stage report');
 renameActivity('Infrastructure Establishment', 'Public Access and Infrastructure');
 renameActivity('Works Implementation Planning', 'Works Planning and Risk');
-renameActivityWithoutOutputs('Feral animal assessment', 'Pest Animal Survey and Monitoring');
+renameActivityWithoutOutputs('Feral animal assessment', 'Pest Animal Survey');
 renameActivityWithoutOutputs('Site assessment', 'Plant Survival Survey');
 
 renameActivity('Vegetation Assessment - Biodiversity Fund (DoE)', 'Vegetation Assessment - Commonwealth government methodology');

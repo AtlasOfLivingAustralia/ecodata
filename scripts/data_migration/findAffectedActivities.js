@@ -9,6 +9,7 @@ types.push('Vegetation Assessment - Habitat Hectares (VIC)');
 types.push('Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)');
 types.push('Vegetation Assessment - TasVeg (TAS)');
 types.push('Feral animal assessment');
+types.push('Biodiversity Fund - Outcomes and Monitoring');
 
 print('Activity Type, Project ID, Activity ID,Has outputs?');
 for (var i = 0; i<types.length; i++) {

@@ -5,6 +5,7 @@ var count = 0;
 
 while (outputs.hasNext()) {
     var output = outputs.next();
+    print("Updating Pest Management Details for activity: " + output.activityId + ", output: " + output.outputId);
     output.data.pestManagement= [];
     var methods = output.data.pestManagementMethod;
 
