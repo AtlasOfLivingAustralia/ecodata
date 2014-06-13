@@ -1,17 +1,25 @@
 {
     "selectedActivity": {
-        "status": "deleted",
-        "name": "Biodiversity Fund - Outcomes and Monitoring",
+        "category": "Assessment & monitoring",
+        "status": "active",
+        "name": "Pest Animal Survey",
         "type": "Assessment",
-        "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
+        "outputs": [
+            "Evidence of Pest Management Activity",
+            "Pest Observation and Monitoring Details",
+            "Participant Information",
+            "Photo Points"
+        ]
     },
     "activities": [
         {
+            "status": "deleted",
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
             "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         },
         {
+            "category": "Implementation actions",
             "name": "Community Participation and Engagement",
             "type": "Activity",
             "outputs": [
@@ -21,6 +29,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Conservation Grazing Management",
             "type": "Activity",
             "outputs": [
@@ -29,6 +38,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Debris Removal",
             "type": "Activity",
             "outputs": [
@@ -37,6 +47,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Disease Management",
             "type": "Activity",
             "outputs": [
@@ -45,6 +56,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Erosion Management",
             "type": "Activity",
             "outputs": [
@@ -53,6 +65,7 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Fauna Survey - general",
             "type": "Assessment",
             "outputs": [
@@ -61,6 +74,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Fencing",
             "type": "Activity",
             "outputs": [
@@ -69,6 +83,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Fire Management",
             "type": "Activity",
             "outputs": [
@@ -78,6 +93,7 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Flora Survey - general",
             "type": "Assessment",
             "outputs": [
@@ -86,6 +102,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Heritage Conservation",
             "type": "Activity",
             "outputs": [
@@ -94,6 +111,7 @@
             ]
         },
         {
+            "category": "Administration, management & reporting",
             "name": "Indigenous Employment and Businesses",
             "type": "Activity",
             "outputs": [
@@ -102,11 +120,13 @@
             ]
         },
         {
+            "category": "Training",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
             "outputs": ["Indigenous Knowledge Transfer Details"]
         },
         {
+            "category": "Implementation actions",
             "name": "Management Plan Development",
             "type": "Activity",
             "outputs": [
@@ -115,11 +135,13 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Management Practice Change",
             "type": "Activity",
             "outputs": ["Management Practice Change Details"]
         },
         {
+            "category": "Implementation actions",
             "name": "Conservation Actions for Threatened Species",
             "type": "Activity",
             "outputs": [
@@ -128,6 +150,7 @@
             ]
         },
         {
+            "category": "Administration, management & reporting",
             "name": "Outcomes, Evaluation and Learning - final report",
             "type": "Activity",
             "outputs": [
@@ -137,7 +160,9 @@
             ]
         },
         {
-            "name": "Pest Animal Survey and Monitoring",
+            "category": "Assessment & monitoring",
+            "status": "active",
+            "name": "Pest Animal Survey",
             "type": "Assessment",
             "outputs": [
                 "Evidence of Pest Management Activity",
@@ -147,6 +172,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Pest Management",
             "type": "Activity",
             "outputs": [
@@ -157,6 +183,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Plant Propagation",
             "type": "Activity",
             "outputs": [
@@ -165,6 +192,7 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Plant Survival Survey",
             "type": "Assessment",
             "outputs": [
@@ -174,6 +202,7 @@
             ]
         },
         {
+            "category": "Administration, management & reporting",
             "name": "Project Administration",
             "type": "Activity",
             "outputs": [
@@ -182,6 +211,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Public Access and Infrastructure",
             "type": "Activity",
             "outputs": [
@@ -191,6 +221,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Research",
             "type": "Activity",
             "outputs": [
@@ -199,6 +230,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Revegetation",
             "type": "Activity",
             "outputs": [
@@ -208,6 +240,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Seed Collection",
             "type": "Activity",
             "outputs": [
@@ -216,11 +249,13 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Site Monitoring Plan",
             "type": "Activity",
             "outputs": ["Planned Monitoring Approach"]
         },
         {
+            "category": "Implementation actions",
             "name": "Site Preparation",
             "type": "Activity",
             "outputs": [
@@ -231,6 +266,7 @@
             ]
         },
         {
+            "category": "Training",
             "name": "Training and Skills Development",
             "type": "Activity",
             "outputs": [
@@ -240,11 +276,13 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Water Management",
             "type": "Activity",
             "outputs": ["Water Management Details"]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Water Quality Survey",
             "type": "Assessment",
             "outputs": [
@@ -254,6 +292,7 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Weed Mapping & Monitoring",
             "type": "Assessment",
             "outputs": [
@@ -264,6 +303,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Weed Treatment",
             "type": "Activity",
             "outputs": [
@@ -273,6 +313,7 @@
             ]
         },
         {
+            "category": "Implementation actions",
             "name": "Works Planning and Risk",
             "type": "Activity",
             "outputs": [
@@ -283,6 +324,7 @@
             ]
         },
         {
+            "category": "Assessment & monitoring",
             "name": "Vegetation Assessment - Commonwealth government methodology",
             "type": "Assessment",
             "outputs": [
@@ -296,6 +338,7 @@
             ]
         },
         {
+            "category": "Administration, management & reporting",
             "name": "Progress, Outcomes and Learning - stage report",
             "type": "Activity",
             "outputs": [
@@ -303,6 +346,99 @@
                 "Environmental, Economic and Social Outcomes",
                 "Implementation Update",
                 "Lessons Learned and Improvements"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - BioCondition (QLD)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "Benchmarks - QLD",
+                "Floristic Composition",
+                "100 x 50m area - Ecologically Dominant Layer",
+                "50 x 10m area",
+                "50 x 20m area - Coarse Woody Debris",
+                "Five 1 x 1m plots",
+                "100m Transect"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - BioMetric (NSW)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "Floristic Composition"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "Benchmarks - SA",
+                "Bushland Condition - Site Health Summary",
+                "Indicator 1 - Plant Species Diversity",
+                "Indicator 2 - Weed Abundance & Threat",
+                "Indicator 3 - Structural Diversity",
+                "Indicator 4 - Regeneration",
+                "Indicator 5 - Tree and Shrub Health",
+                "Indicator 6 - Tree Habitat",
+                "Indicator 7 - Feral Animals",
+                "Indicator 8 - Total Grazing Pressure",
+                "Indicator 9 - Animal Species",
+                "Indicator 10 - Bushland Degradation Risk"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "EVC Benchmark Values - Victoria",
+                "Vegetation Assessment - Species List",
+                "Site Condition Components",
+                "Landscape Context Components"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "Floristic Composition"
+            ]
+        },
+        {
+            "name": "Vegetation Assessment - TasVeg (TAS)",
+            "type": "Assessment",
+            "status": "deleted",
+            "outputs": [
+                "Benchmarks - TAS",
+                "Floristic Composition",
+                "Site Condition",
+                "Landscape Context"
+            ]
+        },
+        {
+            "name": "Feral animal assessment",
+            "type": "Assessment",
+            "status":"deleted",
+            "outputs": [
+                "Feral Animal Abundance Score",
+                "Feral Animal Frequency Score"
+            ]
+        },
+        {
+            "name": "Site assessment",
+            "type": "Assessment",
+            "status":"deleted",
+            "outputs": [
+                "Participant Information",
+                "Vegetation Assessment",
+                "Site Condition Components",
+                "Landscape Context Components",
+                "Threatening Processes & Site Condition Risks",
+                "Photo Points"
             ]
         }
     ],
