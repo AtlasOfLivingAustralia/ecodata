@@ -90,7 +90,6 @@ function renameNestedListValue(outputName, listProperty, property, oldValue, new
             var list = output.data[listProperty];
 
             for (var i=0; i<list.length; i++) {
-                print(output.data[listProperty][i][property]);
                 if (output.data[listProperty][i][property] === oldValue) {
                     output.data[listProperty][i][property] === newValue;
                     found = true;
