@@ -214,7 +214,7 @@
                     "source": "noUnknown",
                     "computed": null,
                     "width": "5%",
-                    "type": "checkBox"
+                    "type": "boolean"
                 },
                 {
                     "title": "Area covered by treatment (Ha):",
