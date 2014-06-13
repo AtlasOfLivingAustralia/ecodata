@@ -76,6 +76,9 @@ while (outputs.hasNext()) {
         if (practiceChange[i].changePurpose == 'Innovative farming and fishing practices') {
             practiceChange[i].changePurpose = ['Sustainable fishing and aquaculture practice'];
         }
+        else {
+            practiceChange[i].changePurpose = [practiceChange[i].changePurpose];
+        }
     }
 
     delete output.data.targetOutcomes;
