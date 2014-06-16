@@ -1,16 +1,4 @@
 {
-    "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "status": "active",
-        "name": "Pest Animal Survey",
-        "type": "Assessment",
-        "outputs": [
-            "Evidence of Pest Management Activity",
-            "Pest Observation and Monitoring Details",
-            "Participant Information",
-            "Photo Points"
-        ]
-    },
     "activities": [
         {
             "status": "deleted",
@@ -349,9 +337,9 @@
             ]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
-            "status": "deleted",
             "outputs": [
                 "Benchmarks - QLD",
                 "Floristic Composition",
@@ -363,17 +351,15 @@
             ]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "status": "deleted",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
-            "status": "deleted",
             "outputs": [
                 "Benchmarks - SA",
                 "Bushland Condition - Site Health Summary",
@@ -390,9 +376,9 @@
             ]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - Habitat Hectares (VIC)",
             "type": "Assessment",
-            "status": "deleted",
             "outputs": [
                 "EVC Benchmark Values - Victoria",
                 "Vegetation Assessment - Species List",
@@ -401,17 +387,15 @@
             ]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "status": "deleted",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
+            "status": "deleted",
             "name": "Vegetation Assessment - TasVeg (TAS)",
             "type": "Assessment",
-            "status": "deleted",
             "outputs": [
                 "Benchmarks - TAS",
                 "Floristic Composition",
@@ -420,18 +404,18 @@
             ]
         },
         {
+            "status": "deleted",
             "name": "Feral animal assessment",
             "type": "Assessment",
-            "status":"deleted",
             "outputs": [
                 "Feral Animal Abundance Score",
                 "Feral Animal Frequency Score"
             ]
         },
         {
+            "status": "deleted",
             "name": "Site assessment",
             "type": "Assessment",
-            "status":"deleted",
             "outputs": [
                 "Participant Information",
                 "Vegetation Assessment",
@@ -455,6 +439,14 @@
                     "aggregationType": "SUM",
                     "label": "Area of revegetation works (Ha)",
                     "units": "Ha"
+                },
+                {
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "lengthReveg",
+                    "aggregationType": "SUM",
+                    "label": "Length (kilometres) of waterway / coastline revegetated"
                 },
                 {
                     "isOutputTarget": true,
@@ -517,6 +509,14 @@
                     "name": "revegMethod",
                     "aggregationType": "HISTOGRAM",
                     "label": "No. of activities undertaking revegetation by revegetation method"
+                },
+                {
+                    "category": "Revegetation",
+                    "listName": "",
+                    "displayType": "piechart",
+                    "name": "connectivityIndex",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of activities increasing connectivity by type of connection"
                 }
             ],
             "name": "Revegetation Details"
@@ -1901,12 +1901,13 @@
                     "label": "Total No. of plants surviving"
                 },
                 {
+                    "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "revegetationMonitoring",
                     "displayType": "piechart",
                     "name": "survivalRate",
                     "aggregationType": "AVERAGE",
-                    "label": "Average survival rate for all monitoring activities"
+                    "label": "Average survivability of tubestock and seedstock (%)"
                 },
                 {
                     "groupBy": "output:revegetationMonitoring.species",
