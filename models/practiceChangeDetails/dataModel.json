@@ -55,7 +55,7 @@
                         "Reduced risk of soil acidification",
                         "Other (specify in notes)"
                     ],
-                    "validate": "required,inputmin[1],inputmax[3]"
+                    "validate": "required, maxCheckbox[3]"
                 },
                 {
                     "dataType": "stringList",
@@ -73,7 +73,7 @@
                         "Use of new technologies to monitor and manage stocking rates",
                         "Other (specify in notes)"
                     ],
-                    "validate": "required"
+                    "validate": "required, maxCheckbox[3]"
                 },
                 {
                     "dataType": "number",
@@ -116,7 +116,7 @@
                 "Reduced impact of soil acidification",
                 "Other (specify in notes)"
             ],
-            "validate": "required"
+            "validate": "required, maxCheckbox[3]"
         },
         {
             "dataType": "number",
