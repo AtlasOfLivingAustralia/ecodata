@@ -90,6 +90,18 @@
                 }
             },
             "name": "totalNumberSurviving"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "computed": {
+                "operation": "average",
+                "dependents": {
+                    "source": "survivalRate",
+                    "fromList": "revegetationMonitoring"
+                }
+            },
+            "name": "aveSurvivalRate"
         }
     ],
     "viewModel": [
@@ -133,7 +145,6 @@
                 },
                 {
                     "source": "Total number surviving",
-                    "computed": null,
                     "type": "literal"
                 },
                 {
@@ -142,13 +153,11 @@
                     "type": "number"
                 },
                 {
-                    "source": "",
-                    "computed": null,
+                    "source": "aveSurvivalRate",
                     "type": "number"
                 },
                 {
                     "source": "Average survival rate (%)",
-                    "computed": null,
                     "type": "literal"
                 }
             ]}]},
