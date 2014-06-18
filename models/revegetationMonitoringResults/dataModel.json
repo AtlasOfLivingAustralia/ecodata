@@ -23,7 +23,8 @@
                 "Calculated estimate - stratified sample (transect-based)",
                 "Extrapolated estimate - non-stratified sample",
                 "Remote sensing estimate"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "list",
