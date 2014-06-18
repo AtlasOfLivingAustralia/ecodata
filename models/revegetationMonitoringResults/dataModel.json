@@ -63,6 +63,16 @@
                 },
                 {
                     "dataType": "text",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "name": "matureHeight",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
                     "name": "notes"
                 }
             ]
@@ -108,22 +118,26 @@
         {
             "items": [
                 {
-                    "items": [{
-                        "source": "revegetationType",
-                        "computed": null,
-                        "preLabel": "Type of revegetation method:",
-                        "type": "selectOne"
-                    }],
+                    "items": [
+                        {
+                            "source": "revegetationType",
+                            "computed": null,
+                            "preLabel": "Type of revegetation method:",
+                            "type": "selectOne"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "countingMethod",
-                        "computed": null,
-                        "preLabel": "Counting Method:",
-                        "type": "selectOne"
-                    }],
+                    "items": [
+                        {
+                            "source": "countingMethod",
+                            "computed": null,
+                            "preLabel": "Counting Method:",
+                            "type": "selectOne"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 }
@@ -132,66 +146,81 @@
             "type": "row"
         },
         {
-            "footer": {"rows": [{"columns": [
-                {
-                    "source": "Total number planted",
-                    "computed": null,
-                    "type": "literal"
-                },
-                {
-                    "source": "totalNumberPlanted",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
-                    "type": "number"
-                },
-                {
-                    "source": "Total number surviving",
-                    "type": "literal"
-                },
-                {
-                    "source": "totalNumberSurviving",
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
-                    "type": "number"
-                },
-                {
-                    "source": "aveSurvivalRate",
-                    "type": "number"
-                },
-                {
-                    "source": "Average survival rate (%)",
-                    "type": "literal"
-                }
-            ]}]},
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "source": "Total number planted",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalNumberPlanted",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "Total number surviving",
+                                "computed": null,
+                                "type": "literal"
+                            },
+                            {
+                                "source": "totalNumberSurviving",
+                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "aveSurvivalRate",
+                                "computed": "{\"operation\":\"average\",\"dependents\":{\"source\":\"survivalRate\",\"fromList\":\"revegetationMonitoring\"}}",
+                                "type": "number"
+                            },
+                            {
+                                "source": "Average survival rate (%)",
+                                "computed": null,
+                                "type": "literal"
+                            }
+                        ]
+                    }
+                ]
+            },
             "source": "revegetationMonitoring",
             "columns": [
                 {
                     "title": "Species",
                     "source": "species",
-                    "width": "25%",
+                    "width": "20%",
                     "type": "autocomplete"
                 },
                 {
                     "title": "No. Planted",
                     "source": "numberPlanted",
-                    "width": "10%",
+                    "width": "9%",
                     "type": "number"
                 },
                 {
                     "title": "Seed Sown (Kg)",
                     "source": "seedSown",
-                    "width": "10%",
+                    "width": "9%",
                     "type": "number"
                 },
                 {
                     "title": "No. Surviving",
                     "source": "numberSurviving",
-                    "width": "10%",
+                    "width": "9%",
                     "type": "number"
                 },
                 {
                     "title": "Survival rate (%)",
                     "source": "survivalRate",
-                    "width": "10%",
+                    "width": "9%",
                     "type": "number"
+                },
+                {
+                    "title": "Mature height",
+                    "source": "matureHeight",
+                    "width": "9%",
+                    "type": "selectOne"
                 },
                 {
                     "title": "Notes / Comments",
