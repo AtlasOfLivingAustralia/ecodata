@@ -8,12 +8,14 @@
                 {
                     "dataType": "species",
                     "description": "Name(s) of the weed species observed on the subject site (may be entered as scientific or common names)",
-                    "name": "weedSpecies"
+                    "name": "weedSpecies",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
                     "description": "Area in hectares of coverage of particular weed species",
-                    "name": "weedCoverHa"
+                    "name": "weedCoverHa",
+                    "validate": "required"
                 },
                 {
                     "dataType": "text",
