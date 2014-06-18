@@ -44,7 +44,8 @@
                 "Removal by mobile machinery",
                 "Hand removal",
                 "Other (specify in notes)"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
