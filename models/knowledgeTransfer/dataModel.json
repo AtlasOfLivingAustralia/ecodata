@@ -30,7 +30,8 @@
         {
             "dataType": "number",
             "description": "The number of datasets collected and shared publicly",
-            "name": "datasetsShared"
+            "name": "datasetsShared",
+            "validate": "required"
         },
         {
             "dataType": "number",
