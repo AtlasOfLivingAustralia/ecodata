@@ -42,7 +42,8 @@
                 "Freshwater lake / dam",
                 "Saline stream / channel",
                 "Saline lake / dam"
-            ]
+            ],
+            "validate": "required"
         }
     ],
     "viewModel": [{
