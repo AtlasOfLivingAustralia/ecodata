@@ -155,6 +155,16 @@
         },
         {
             "dataType": "text",
+            "description": "Is this assessment on an intervention site (an area where intervention activities have been undertaken) or a control site (an area where intervention activities have not been undertaken)?",
+            "name": "typeOfSite",
+            "constraints": [
+                "Control site",
+                "Intervention site"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "name": "notes"
         }
     ],
@@ -211,14 +221,26 @@
                             "type": "selectOne"
                         },
                         {
-                            "source": "notes",
+                            "source": "typeOfSite",
                             "computed": null,
-                            "preLabel": "General Description / Comments / Notes:",
-                            "type": "textarea"
+                            "preLabel": "What type of site is this assessment being undertaken on?:",
+                            "type": "selectOne"
                         }
                     ],
                     "computed": null,
                     "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "General Description / Comments / Notes:",
+                    "type": "textarea"
                 }
             ],
             "class": "output-section",
