@@ -8,7 +8,8 @@
             {
                 "dataType": "species",
                 "description": "The species present at the site.  If not identified, select \"Unknown or unlisted species\" from the list",
-                "name": "species"
+                "name": "species",
+                "validate": "required"
             },
             {
                 "dataType": "text",
