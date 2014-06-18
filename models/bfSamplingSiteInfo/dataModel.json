@@ -9,8 +9,7 @@
         {
             "dataType": "number",
             "description": "The compass bearing in magnetic degrees of the sampled transect from the starting position of the transect.",
-            "name": "transectBearing",
-            "validate": "required"
+            "name": "transectBearing"
         },
         {
             "dataType": "text",
