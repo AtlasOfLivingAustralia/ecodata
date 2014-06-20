@@ -162,6 +162,11 @@ environments {
 }
 
 // log4j configuration
+
+//this can be overridden in the external configuration
+if (!logging.dir) {
+    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat6')
+}
 log4j = {
     appenders {
         environments{
@@ -171,22 +176,22 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata.log",
+                        file: logging.dir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
+                        file: logging.dir+"/ecodata-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata.log",
+                        file: logging.dir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: "/var/log/tomcat6/ecodata-stacktrace.log"
+                        file: logging.dir+"/ecodata-stacktrace.log"
             }
         }
     }
