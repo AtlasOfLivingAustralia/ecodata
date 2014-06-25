@@ -44,13 +44,14 @@ class OutputController {
     def delete(String id) {
         def a = Output.findByOutputId(id)
         if (a) {
-            if (params.destroy) {
-                a.delete()
-            } else {
-                a.status = 'deleted'
-                a.save(flush: true)
+            def result = outputService.delete(id, params.destroy)
+            if (!result.error) {
+                render(status: 200, text: 'deleted')
             }
-            render (status: 200, text: 'deleted')
+            else {
+                response.status = 500
+                render status:500, text:result.error
+            }
         } else {
             response.status = 404
             render status:404, text: 'No such id'

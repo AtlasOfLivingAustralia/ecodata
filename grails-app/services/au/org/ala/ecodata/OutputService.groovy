@@ -26,6 +26,21 @@ class OutputService {
         Output.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    def delete(String id, destroy) {
+        def a = Output.findByOutputId(id)
+        if (a) {
+            if (destroy) {
+                a.delete()
+            } else {
+                a.status = 'deleted'
+                a.save(flush: true)
+            }
+            return [status:'ok']
+        } else {
+            return [status:'error', error:'No such id']
+        }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.

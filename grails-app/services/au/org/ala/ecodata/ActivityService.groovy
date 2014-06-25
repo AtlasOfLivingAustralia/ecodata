@@ -128,6 +128,10 @@ class ActivityService {
     def delete(String id, destroy) {
         def a = Activity.findByActivityIdAndStatus(id, ACTIVE)
         if (a) {
+
+            // Delete the outputs associated with this activity.
+            outputService.getAllOutputIdsForActivity(id).each{outputService.delete(it, destroy)}
+
             if (destroy) {
                 a.delete()
             } else {

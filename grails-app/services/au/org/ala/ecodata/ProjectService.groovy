@@ -16,6 +16,7 @@ class ProjectService {
     def metadataService
     def reportService
     def activityService
+    def permissionService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -127,6 +128,42 @@ class ProjectService {
             return [status:'error',error:error]
         }
     }
+
+    /**
+     * Deletes a project and any associated activities, outputs and user permissions.  The
+     * project is removed from any sites it it associated with.  Orphaned sites are not
+     * deleted.
+     * @param id the id of the project to delete.
+     * @param destroy if false, all deletes will be status updates (a soft delete).  Note that
+     * the permissions will be deleted and site associations removed, even in the soft delete case.
+     */
+    def delete(String id, destroy) {
+
+        def p = Project.findByProjectId(id)
+        if (p) {
+
+            // Delete activities associated with the project.
+            def activityIds = getActivityIdsForProject(id)
+            activityIds.each {activityService.delete(it, destroy)}
+
+            // Delete any user associations or permissions associated with the project
+            permissionService.deleteAllForProject(id)
+
+            // Remove any site associations - maybe orphaned sites should be deleted too?
+            siteService.deleteSitesFromProject(id)
+
+            if (destroy) {
+                p.delete()
+            } else {
+                p.status = 'deleted'
+                p.save(flush: true)
+            }
+            return [status: 'ok']
+        } else {
+            return [status: 'error', error: 'No such id']
+        }
+    }
+
 
     /**
      * Returns the reportable metrics for a project as determined by the project output targets and activities

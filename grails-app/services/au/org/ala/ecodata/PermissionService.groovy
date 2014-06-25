@@ -122,4 +122,13 @@ class PermissionService {
             }
         }
     }
+
+    /**
+     * Deletes all permissions associated with the supplied project.  Used as a part of a project delete operation.
+     * UserPermissions don't support soft deletes, even if the project itself is soft-deleted.
+     * @param projectId
+     */
+    def deleteAllForProject(String projectId) {
+        UserPermission.findAllByProjectId(projectId).each{it.delete()}
+    }
 }

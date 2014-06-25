@@ -73,17 +73,18 @@ class ProjectController {
         exporter.save(response.outputStream)
     }
 
-    @RequireApiKey
+
     def delete(String id) {
         def p = Project.findByProjectId(id)
         if (p) {
-            if (params.destroy) {
-                p.delete()
-            } else {
-                p.status = 'deleted'
-                p.save(flush: true)
+            def result = projectService.delete(id, params.destroy)
+            if (!result.error) {
+                render (status: 200, text: 'deleted')
             }
-            render (status: 200, text: 'deleted')
+            else {
+                render (status:400, text:result.error)
+            }
+
         } else {
             render (status: 404, text: 'No such id')
         }
