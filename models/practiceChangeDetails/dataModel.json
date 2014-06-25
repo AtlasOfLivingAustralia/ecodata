@@ -262,7 +262,7 @@
                     "items": [{
                         "source": "benefitAreaHa",
                         "computed": null,
-                        "preLabel": "Area of land directly benefiting from the practice change:",
+                        "preLabel": "Area of land (Ha) directly benefiting from the practice change:",
                         "type": "number"
                     }],
                     "computed": null,
