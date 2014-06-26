@@ -59,7 +59,12 @@
         },
         {
             "dataType": "number",
-            "description": "Measure of the amount of nitrogen dissolved in a water sample in milligrams per litre",
+            "description": "Measure of the total amount of nitrogen dissolved in a water sample in milligrams per litre",
+            "name": "surfaceWaterTotalNitrogen"
+        },
+        {
+            "dataType": "number",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
             "name": "surfaceWaterNitrates"
         },
         {
@@ -102,15 +107,21 @@
                             "type": "number"
                         },
                         {
+                            "source": "waterTurbidity",
+                            "computed": null,
+                            "preLabel": "Turbidity (NTUs):",
+                            "type": "number"
+                        },
+                        {
                             "source": "surfaceWaterEc",
                             "computed": null,
                             "preLabel": "Electrical Conductivity (µS/cm):",
                             "type": "number"
                         },
                         {
-                            "source": "waterTurbidity",
+                            "source": "surfaceWaterTotalNitrogen",
                             "computed": null,
-                            "preLabel": "Turbidity (NTUs):",
+                            "preLabel": "Total Nitrogen (mg/L as N):",
                             "type": "number"
                         },
                         {
@@ -118,12 +129,6 @@
                             "computed": null,
                             "preLabel": "Nitrates (mg/L as N):",
                             "type": "number"
-                        },
-                        {
-                            "source": "instrumentCalibration",
-                            "computed": null,
-                            "preLabel": "Did you calibrate your EC meter?:",
-                            "type": "selectOne"
                         }
                     ],
                     "computed": null,
@@ -166,6 +171,12 @@
                             "computed": null,
                             "preLabel": "E. coli (CFU/100mL):",
                             "type": "number"
+                        },
+                        {
+                            "source": "instrumentCalibration",
+                            "computed": null,
+                            "preLabel": "Did you calibrate your EC meter?:",
+                            "type": "selectOne"
                         }
                     ],
                     "computed": null,
@@ -176,13 +187,15 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "computed": null,
-                "preLabel": "Water Testing Notes/Issues:",
-                "width": "90%",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "computed": null,
+                    "preLabel": "Water Testing Notes/Issues:",
+                    "width": "90%",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
