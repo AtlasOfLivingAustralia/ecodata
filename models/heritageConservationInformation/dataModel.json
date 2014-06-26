@@ -3,6 +3,12 @@
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The name of the heritage site",
+            "name": "siteName",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "description": "Type of heritage conservation work being undertaken",
             "name": "typeOfHeritage",
             "constraints": [
@@ -90,6 +96,11 @@
                 {
                     "items": [
                         {
+                            "source": "siteName",
+                            "preLabel": "Name of heritage site:",
+                            "type": "text"
+                        },
+                        {
                             "source": "typeOfHeritage",
                             "preLabel": "Type of heritage work being undertaken:",
                             "type": "selectOne"
@@ -110,6 +121,7 @@
                             "type": "selectOne"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
@@ -142,11 +154,13 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "notes",
-                "preLabel": "Comments / Notes:",
-                "type": "textarea"
-            }],
+            "items": [
+                {
+                    "source": "notes",
+                    "preLabel": "Comments / Notes:",
+                    "type": "textarea"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }
