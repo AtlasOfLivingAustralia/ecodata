@@ -44,7 +44,7 @@
                 {
                     "source": "projectEfficiency",
                     "computed": null,
-                    "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project the project:",
+                    "preLabel": "EFFICIENCY - Describe the efficiency of the delivery mechanism(s) for the project:",
                     "type": "textarea"
                 },
                 {
