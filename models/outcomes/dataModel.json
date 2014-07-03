@@ -9,13 +9,13 @@
         },
         {
             "dataType": "text",
-            "description": "Description of the environmental outcomes achieved by the project",
+            "description": "Description of the social outcomes achieved by the project",
             "name": "projectSocialOutcomes",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Description of the environmental outcomes achieved by the project",
+            "description": "Description of the economic outcomes achieved by the project",
             "name": "projectEconomicOutcomes",
             "validate": "required"
         }
