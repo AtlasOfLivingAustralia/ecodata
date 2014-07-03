@@ -25,7 +25,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The density of grazing stock used to achieve the purpose of the activity expressed in Dry Sheep Equivalents per hectare",
+                    "description": "The standard Australian Qualification level applicable for the course undertaken. All accredited training courses in Australia have an AQF level.",
                     "name": "qualificationLevel",
                     "constraints": [
                         "Senior Secondary Certificate of Education",
