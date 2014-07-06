@@ -96,7 +96,7 @@
                     "type": "number"
                 },
                 {
-                    "colspan": 2,
+                    "colspan": 1,
                     "source": "",
                     "computed": null,
                     "type": "literal"
