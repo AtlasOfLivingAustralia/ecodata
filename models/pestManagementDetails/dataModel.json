@@ -110,7 +110,7 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "Area covered by treatment (Ha): *",
+                    "description": "Area covered by treatment (Ha):",
                     "name": "areaTreatedHa",
                     "validate": "required"
                 },
