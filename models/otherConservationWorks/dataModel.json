@@ -70,7 +70,7 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "Area covered by conservation agreement (Ha): *",
+                    "description": "Area covered by conservation agreement (Ha):",
                     "name": "areaUnderAgreement",
                     "validate": "required,min[0]"
                 }
@@ -87,7 +87,7 @@
                 {
                     "source": "targetSpecies",
                     "computed": null,
-                    "preLabel": "Species: *",
+                    "preLabel": "Species:",
                     "type": "autocomplete"
                 },
                 {
