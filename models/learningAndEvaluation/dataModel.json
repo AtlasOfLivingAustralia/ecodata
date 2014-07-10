@@ -95,13 +95,13 @@
                         {
                             "source": "structuresInstalled",
                             "computed": null,
-                            "preLabel": "Structure(s) installed: *",
+                            "preLabel": "Structure(s) installed:",
                             "type": "selectMany"
                         },
                         {
                             "source": "numberOfInstallations",
                             "computed": null,
-                            "preLabel": "No. of access management structures installed: *",
+                            "preLabel": "No. of access management structures installed:",
                             "type": "number"
                         }
                     ],
@@ -119,7 +119,7 @@
                         {
                             "source": "lengthOfLinealStructures",
                             "computed": null,
-                            "preLabel": "Length of fences and boardwalks installed (Km): *",
+                            "preLabel": "Length of fences and boardwalks installed (Km):",
                             "type": "number"
                         },
                         {
@@ -131,7 +131,7 @@
                         {
                             "source": "visitationNumber",
                             "computed": null,
-                            "preLabel": "No. of visitors (people managed for access): *",
+                            "preLabel": "No. of visitors (people managed for access):",
                             "type": "number"
                         }
                     ],
