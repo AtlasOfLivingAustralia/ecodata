@@ -64,12 +64,12 @@
                         "Transient",
                         "Uncertain"
                     ]
-                },
-                {
-                    "dataType": "text",
-                    "name": "pestObservationNotes"
                 }
             ]
+        },
+        {
+            "dataType": "text",
+            "name": "pestObservationNotes"
         }
     ],
     "viewModel": [
