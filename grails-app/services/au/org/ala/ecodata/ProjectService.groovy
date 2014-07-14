@@ -66,7 +66,7 @@ class ProjectService {
                 mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
             }
             else if (levelOfDetail == OUTPUT_SUMMARY) {
-                mapOfProperties.outputSummary = projectMetrics(prj.projectId, true)
+                mapOfProperties.outputSummary = projectMetrics(prj.projectId, true, true)
             }
         }
         mapOfProperties.findAll {k,v -> v != null}
@@ -177,7 +177,7 @@ class ProjectService {
      * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
      *
      */
-    def projectMetrics(String id, targetsOnly = false) {
+    def projectMetrics(String id, targetsOnly = false, approvedOnly = false) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
@@ -192,7 +192,7 @@ class ProjectService {
                 }
             }
 
-            def outputSummary = reportService.projectSummary(id, toAggregate)
+            def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
 
 
             // Add project output target information where it exists.

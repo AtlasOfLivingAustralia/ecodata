@@ -99,12 +99,15 @@ class ReportService {
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
-    def projectSummary(String projectId, List aggregationSpec) {
+    def projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false) {
 
 
        // We definitely could be smarter about this query - only getting activities with outputs of particular
         // types or containing particular scores for example.
         List activities = activityService.findAllForProjectId(projectId, 'FLAT')
+        if (approvedActivitiesOnly) {
+            activities = activities.findAll{it.publicationStatus == 'published'}
+        }
         List outputs = Output.findAllByActivityIdInListAndStatus(activities.collect{it.activityId}, OutputService.ACTIVE).collect {outputService.toMap(it)}
         Map outputsByActivityId = outputs.groupBy{it.activityId}
 
