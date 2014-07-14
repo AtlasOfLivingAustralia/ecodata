@@ -9,6 +9,7 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
+    static final OUTPUT_SUMMARY = 'outputs'
 
     def grailsApplication
     def siteService
@@ -46,6 +47,7 @@ class ProjectService {
      * @return map of properties
      */
     def toMap(prj, levelOfDetail = [], includeDeletedActivites = false) {
+
         def dbo = prj.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         if (levelOfDetail == BRIEF) {
@@ -55,13 +57,16 @@ class ProjectService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         if (levelOfDetail != FLAT) {
+
             mapOfProperties.remove("sites")
-            mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, levelOfDetail)
+            mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, [SiteService.FLAT])
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
+
             if (levelOfDetail == ALL) {
                 mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
-                // Don't want to duplicate the activities as they can be large, so remove from the sites.
-                mapOfProperties.sites?.each { it.remove('activities')}
+            }
+            else if (levelOfDetail == OUTPUT_SUMMARY) {
+                mapOfProperties.outputSummary = projectMetrics(prj.projectId, true)
             }
         }
         mapOfProperties.findAll {k,v -> v != null}
@@ -172,7 +177,7 @@ class ProjectService {
      * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
      *
      */
-    def projectMetrics(String id) {
+    def projectMetrics(String id, targetsOnly = false) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
@@ -181,11 +186,11 @@ class ProjectService {
 
             metadataService.activitiesModel().outputs?.each{
                 Score.outputScores(it).each { score ->
-                    toAggregate << [score:score]
+                    if (!targetsOnly || score.isOutputTarget) {
+                        toAggregate << [score: score]
+                    }
                 }
             }
-            toAggregate << [score:new Score([outputName:'Revegetation Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'totalNumberPlanted', label:'Number of plants planted', units:'kg'] ), groupBy:[groupTitle: 'Plants By Theme', entity:'activity', property:'mainTheme']]
-            toAggregate << [score:new Score([outputName:'Weed Treatment Details', aggregationType:Score.AGGREGATION_TYPE.SUM, name:'areaTreatedHa', listName:'weedsTreated', label:'Area treated', units:'ha'] ), groupBy:[groupTitle: 'Area treated by species', entity:'output',  property:'targetSpecies.name']]
 
             def outputSummary = reportService.projectSummary(id, toAggregate)
 

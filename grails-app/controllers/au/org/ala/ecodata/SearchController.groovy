@@ -85,6 +85,7 @@ class SearchController {
     @RequireApiKey
     def downloadSearchResults() {
 
+
         if (!params.max) {
             params.max = 100
             params.offset = 0
@@ -102,7 +103,11 @@ class SearchController {
 
         withFormat {
             json {
-                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+                def levelOfDetail = ProjectService.ALL
+                if (params.type == 'outputSummary') {
+                    levelOfDetail = ProjectService.OUTPUT_SUMMARY
+                }
+                List projects = ids.collect{projectService.get(it,levelOfDetail)}
                 render projects as JSON
 
             }
@@ -121,10 +126,34 @@ class SearchController {
 
 
     }
-
+    /** Temporary method to assist generating the user report.  Needs work */
     def userReport() {
 
-        render reportService.userSummary() as JSON
+        def users = reportService.userSummary()
+
+        File out = new File('/Users/god08d/Documents/MERIT/users/userReport.csv')
+        out.withWriter { writer ->
+            writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
+
+            users.values().each { user->
+
+                writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
+                if (user.projects) {
+                    boolean first = true
+                    user.projects.each { project ->
+                        if (!first) {
+                            writer.print(",,,,")
+                        }
+                        writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
+                        first = false
+                    }
+                }
+
+
+            }
+
+
+        }
     }
 
 }

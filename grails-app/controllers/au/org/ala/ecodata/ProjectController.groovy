@@ -38,6 +38,7 @@ class ProjectController {
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
         if (params.view == RICH) { levelOfDetail << RICH }
         if (params.view == ProjectService.ALL) { levelOfDetail = ProjectService.ALL }
+        if (params.view == ProjectService.OUTPUT_SUMMARY) {levelOfDetail = ProjectService.OUTPUT_SUMMARY}
         if (!id) {
             def list = projectService.list(levelOfDetail, includeDeleted)
             list.sort {it.name}

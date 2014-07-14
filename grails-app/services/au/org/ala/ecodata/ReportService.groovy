@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.Aggregator
 import au.org.ala.ecodata.reporting.AggregatorBuilder
 import au.org.ala.ecodata.reporting.Score
+import org.grails.plugins.csv.CSVReaderUtils
+
 /**
  * The ReportService aggregates and returns output scores.
  */
@@ -84,7 +86,7 @@ class ReportService {
 
         def allResults = aggregators.collect {it.results()}
         def outputData = allResults.findAll{it.results}
-        [outputData:outputData, metadata:[activities: metadata.activities, sites:metadata.distinctSites.size(), projects:metadata.distinctProjects.size()]]
+        [outputData:outputData, metadata:[activities: metadata.activities, sites:metadata.distinctSites.size(), projects:metadata.distinctProjects]]
     }
 
     /**
@@ -146,15 +148,44 @@ class ReportService {
         aggregators
     }
 
+    /** Temporary method to assist running the user report.  Needs work */
     def userSummary() {
+
+        def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
         def users = UserPermission.findAll().groupBy{it.userId}
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 
-            userSummary[userId] = [projects:projects, userDetails:userDetails]
+
+            userSummary[userId] = [id:userDetails.userId, name:userDetails.displayName, email:userDetails.userName, role:'FC_USER']
+            userSummary[userId].projects = projects.collect {
+                def project = projectService.get(it.projectId, ProjectService.FLAT)
+
+                [projectId: project.projectId, grantId:project.grantId, externalId:project.externalId, name:project.name, access:levels[it.accessLevel.code]]
+            }
         }
+
+        // TODO need a web service from auth to support this properly.
+        def fcOfficerList = new File('/Users/god08d/Documents/MERIT/users/fc_officer.csv')
+        CSVReaderUtils.eachLine(fcOfficerList, { String[] tokens ->
+            def userIdStr = tokens[0]
+            if (userIdStr.isInteger()) {
+                def userId = userIdStr as Integer
+                def user = userSummary[userId]
+                if (!user) {
+                    user = [:]
+                    userSummary[userId] = user
+                    def userDetails = userService.lookupUserDetails(userIdStr)
+                    user.userId = userDetails.userId
+                    user.name = userDetails.displayName
+                    user.email = userDetails.userName
+                    user.projects = []
+                }
+                user.role = tokens[2]
+            }
+        })
 
         userSummary
     }
