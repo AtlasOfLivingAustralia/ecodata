@@ -277,6 +277,15 @@ class ElasticSearchService {
                     "properties": {
                         "organisationName": {
                             "type" : "multi_field",
+                            "path" : "just_name",
+                            "fields" : {
+                                "organisationName" : {"type" : "string", "index" : "analyzed"},
+                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
+                            }
+                        },
+                        "serviceProviderName": {
+                            "type" : "multi_field",
+                            "path" : "just_name",
                             "fields" : {
                                 "organisationName" : {"type" : "string", "index" : "analyzed"},
                                 "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
@@ -292,13 +301,6 @@ class ElasticSearchService {
                         "className": {
                             "type":"string",
                             "analyzer":"facetKeyword"
-                        },
-                        "fundingSource": {
-                            "type" : "multi_field",
-                            "fields" : {
-                                "fundingSource" : {"type" : "string", "index" : "analyzed"},
-                                "fundingSourceFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
                         },
                         "associatedProgram": {
                             "type" : "multi_field",
@@ -320,17 +322,6 @@ class ElasticSearchService {
                             "fields" : {
                                 "name" : {"type" : "string", "index" : "analyzed"},
                                 "nameSort" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "plannedOutputs":{
-                            "properties": {
-                                "theme": {
-                                    "type" : "multi_field",
-                                    "fields" : {
-                                        "outputTheme" : {"type" : "string", "index" : "analyzed"},
-                                        "outputThemeFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                    }
-                                }
                             }
                         },
                         "extent":{
