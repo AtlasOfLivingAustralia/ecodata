@@ -76,6 +76,11 @@
         }
     ],
     "viewModel": [
+        {"footer": {"rows": [{"columns": [{
+            "colspan": 6,
+            "source": "",
+            "type": "literal"
+        }]}]}},
         {
             "source": "weedObservationMonitoringDetails",
             "columns": [

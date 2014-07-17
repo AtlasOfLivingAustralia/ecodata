@@ -86,16 +86,19 @@
                 {
                     "items": [
                         {
-                            "source": "effectivenessOfPreviousPestTreatment",
+                            "source": "effectivenessOfPreviousWeedTreatment",
+                            "computed": null,
                             "preLabel": "Effectiveness of Previous Treatment (No. killed):",
                             "type": "number"
                         },
                         {
                             "source": "<font color='blue'>'<b>NB.:<\/b> The following methods pertain only to how evidence of previous treatments was obtained.<\/font>'",
+                            "computed": null,
                             "type": "literal"
                         },
                         {
                             "source": "previousPestTreatmentAssessmentMethod",
+                            "computed": null,
                             "preLabel": "Previous treatment effectiveness assessment method:",
                             "type": "selectMany"
                         }

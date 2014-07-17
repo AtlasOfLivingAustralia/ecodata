@@ -154,13 +154,11 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "preLabel": "Comments / Notes:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

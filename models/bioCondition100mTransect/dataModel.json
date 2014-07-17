@@ -26,7 +26,7 @@
             {"type": "col", "items": [
                 {   "type":"literal", "source":"<h4>Tree canopy cover</h4>"},
                 {   "type":"literal", "source":"(Only assess Emergent (E) or Subcanopy (S) layers if the benchmark document stipulates that layers are present.)"},
-                {   "type":"literal", "source":"* If trees are in the same layer and continuous along the transect you can group them"},
+                {   "type":"literal", "source":"*If trees are in the same layer and continuous along the transect you can group them"},
                 {   "type": "table", "source":"treeCanopyRecords",
                     "userAddedRows":"true",
                     "columns": [
@@ -49,7 +49,7 @@
                 {   "type": "table", "source":"shrubCanopyRecords",
                     "userAddedRows":"true",
                     "columns": [
-                        {"title":"Shrubs","source":"shrubType", "type":"selectOne"},
+                        {"title":"Shrubs*","source":"shrubType", "type":"selectOne"},
                         {"title":"Distance (m)","source":"distance", "type":"number"},
                         {"title":"Total","source":"total", "type":"number"}
                     ]

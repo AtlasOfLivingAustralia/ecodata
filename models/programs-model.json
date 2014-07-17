@@ -1,5 +1,7 @@
 {"programs": [
     {
+        "reportingPeriod": "6",
+        "isMeritProgramme": false,
         "name": "Biodiversity Fund",
         "subprograms": [
             {
@@ -56,9 +58,12 @@
                     {"name": "Enabling technologies"}
                 ]
             }
-        ]
+        ],
+        "reportingPeriodAlignedToCalendar": true
     },
     {
+        "reportingPeriod": "6",
+        "isMeritProgramme": true,
         "name": "Caring for Our Country 2",
         "subprograms": [
             {
@@ -93,7 +98,16 @@
             },
             {
                 "name": "Regional Delivery (sustainable agriculture)",
-                "themes": []
+                "themes": [
+                    {"name": "Increase the adoption of sustainable land management practices"},
+                    {"name": "Increase the adoption of sustainable fishing practices"},
+                    {"name": "Increase trialling of innovative practices for improved NRM"},
+                    {"name": "Increase the knowledge and skills of NRM managers"},
+                    {"name": "Increase the capacity of leaders involved in NRM"},
+                    {"name": "Increase engagement and participation in NRM"},
+                    {"name": "Increase community awareness of natural resources"},
+                    {"name": "Regional Land care Facilitator position"}
+                ]
             },
             {
                 "name": "Target Area Grants -  Expression of Interest 2013/14",
@@ -103,9 +117,12 @@
                 "name": "0210 1318",
                 "themes": []
             }
-        ]
+        ],
+        "reportingPeriodAlignedToCalendar": true
     },
     {
+        "reportingPeriod": "6",
+        "isMeritProgramme": true,
         "name": "Cumberland Plain",
         "subprograms": [{
             "name": "Cumberland Plain Projects",
@@ -113,11 +130,30 @@
         }]
     },
     {
+        "reportingPeriod": "3",
+        "isMeritProgramme": true,
         "name": "Green Army",
-        "subprograms": []
+        "subprograms": [{
+            "name": "Round 1",
+            "themes": []
+        }],
+        "reportingPeriodAlignedToCalendar": true
     },
     {
+        "reportingPeriod": "6",
+        "isMeritProgramme": true,
         "name": "20 Million Trees",
-        "subprograms": []
+        "subprograms": [],
+        "reportingPeriodAlignedToCalendar": true
+    },
+    {
+        "reportingPeriod": "3",
+        "isMeritProgramme": true,
+        "name": "Environmental Stewardship",
+        "subprograms": [{
+            "name": "Environmental Stewardship 1318",
+            "themes": []
+        }],
+        "reportingPeriodAlignedToCalendar": false
     }
 ]}
