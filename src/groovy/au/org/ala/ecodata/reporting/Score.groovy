@@ -33,6 +33,12 @@ class Score {
     /** Whether or not this score is suitable for use as a project output target */
     boolean isOutputTarget
 
+    /** Used for mapping this score to the GMS */
+    String gmsScoreName
+
+    /** Use for mapping this score to the GMS */
+    String gmsUnits
+
     /**
      * The units this score is measured in.  May not make sense for all scores or for an aggregrated result
      * (e.g. units don't make sense for a count based aggregation).
