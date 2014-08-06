@@ -14,6 +14,22 @@ class SiteService {
         grailsApplication.mainContext.commonService
     }
 
+    /**
+     * Returns all sites in the system in a list.
+     * @param includeDeleted true if deleted sites should be returned.
+     * @return
+     */
+    def list(boolean includeDeleted = false) {
+        def list = []
+        def sites = includeDeleted ? Site.list() : Site.findAllByStatus(ACTIVE)
+        sites.each { site ->
+            list << toMap(site, [FLAT])
+        }
+        list.sort {it.name}
+
+        list
+    }
+
     def get(id, levelOfDetail = []) {
         def o = Site.findBySiteId(id)
         if (!o) { return null }

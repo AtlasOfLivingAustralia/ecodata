@@ -125,4 +125,8 @@ class MetadataController {
         builder.save(response.outputStream)
 
     }
+
+    def getLocationMetadataForPoint(double lat, double lng) {
+        render metadataService.getLocationMetadataForPoint(lat, lng) as JSON
+    }
 }

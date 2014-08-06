@@ -228,6 +228,30 @@ class AdminController {
         Project.collection.drop()
     }
 
+    /**
+     * Refreshes site metadata (geographical facets & geocodes) every site in the system.
+     * @return {"result":"success"} if the operation is successful.
+     */
+    def reloadSiteMetadata() {
+        def sites = siteService.list()
+        for (site in sites) {
+            def siteId = site.siteId
+            def centroid = site.extent?.geometry?.centre
+            if (centroid && centroid.size() == 2) {
+
+                def longitude = centroid[0]
+                def latitude = centroid[1]
+                def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
+
+                site.extent.geometry.putAll(metadata)
+                siteService.update(siteId, [extent:site.extent])
+            }
+
+        }
+        def result = [result: "success"]
+        render result as grails.converters.JSON
+    }
+
     def audit() { }
     def auditMessagesByEntity() { }
     def auditMessagesByProject() { }

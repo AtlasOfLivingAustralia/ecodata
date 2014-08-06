@@ -15,13 +15,17 @@
 
 package au.org.ala.ecodata
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.BoolFilterBuilder
+import org.elasticsearch.index.query.FilterBuilders
+import org.elasticsearch.index.query.FilteredQueryBuilder
+import org.elasticsearch.index.query.MatchAllQueryBuilder
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -268,7 +272,7 @@ class ElasticSearchService {
 
         def mappingJson = '''
         {
-            mappings:{
+            "mappings":{
                 "doc": {
                     "_all": {
                         "enabled": true,
@@ -328,34 +332,7 @@ class ElasticSearchService {
                             "properties": {
                                 "geometry": {
                                     "properties": {
-                                        "state": {
-                                            "type" : "multi_field",
-                                            "fields" : {
-                                                "state" : {"type" : "string", "index" : "analyzed"},
-                                                "stateFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                            }
-                                        },
-                                        "lga": {
-                                            "type" : "multi_field",
-                                            "fields" : {
-                                                "lga" : {"type" : "string", "index" : "analyzed"},
-                                                "lgaFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                            }
-                                        },
-                                        "nrm": {
-                                            "type" : "multi_field",
-                                            "fields" : {
-                                                "nrm" : {"type" : "string", "index" : "analyzed"},
-                                                "nrmFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                            }
-                                        },
-                                        "mvg": {
-                                            "type" : "multi_field",
-                                            "fields" : {
-                                                "mvg" : {"type" : "string", "index" : "analyzed"},
-                                                "mvgFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                            }
-                                        }
+
 
                                     }
                                 }
@@ -367,56 +344,7 @@ class ElasticSearchService {
                                     "properties": {
                                         "geometry": {
                                             "properties": {
-                                                "state": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "states" : {"type" : "string", "index" : "analyzed"},
-                                                        "statesFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
-                                                "lga": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "lgas" : {"type" : "string", "index" : "analyzed"},
-                                                        "lgasFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
-                                                "nrm": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "nrms" : {"type" : "string", "index" : "analyzed"},
-                                                        "nrmsFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
-                                                "mvg":{
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "mvgs" : {"type" : "string", "index" : "analyzed"},
-                                                        "mvgsFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
 
-                                                "ibra": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "ibra" : {"type" : "string", "index" : "analyzed"},
-                                                        "ibraFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
-                                                "imcra4_pb": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "imcra4_pb" : {"type" : "string", "index" : "analyzed"},
-                                                        "imcra4_pbFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                },
-                                                "other": {
-                                                    "type" : "multi_field",
-                                                    "fields" : {
-                                                        "other" : {"type" : "string", "index" : "analyzed"},
-                                                        "otherFacet" : {"type" : "string", "index" : "not_analyzed"}
-                                                    }
-                                                }
                                             }
                                         }
                                     }
@@ -462,7 +390,7 @@ class ElasticSearchService {
                     ]
                 }
             },
-            settings:{
+            "settings":{
                 "analysis":{
                     "analyzer":{
                         "facetKeyword":{
@@ -478,13 +406,39 @@ class ElasticSearchService {
         }
         '''
 
+        def parsedJson = new JsonSlurper().parseText(mappingJson)
+        def facetMappings = buildFacetMapping()
+
+        // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
+        parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
+        parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
+
+        def mappingsDoc = (parsedJson as JSON).toString()
+
         def indexes = (index) ? [ index ] : [DEFAULT_INDEX, HOMEPAGE_INDEX]
         indexes.each {
-            client.admin().indices().prepareCreate(it).setSource(mappingJson).execute().actionGet()
+            client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
     }
+
+    def buildFacetMapping() {
+        def facetList = []
+        def facetConfig = grailsApplication.config.app.facets.geographic
+        // These groupings of facets determine the way the layers are used with a site, but can be treated the
+        // same for the purposes of indexing the results.
+        ['gridded', 'grouped', 'special'].each {
+            facetList.addAll(facetConfig[it].collect {k, v -> k})
+        }
+
+        def properties = [:]
+        facetList.each { facetName ->
+            properties << [(facetName):[type:'multi_field', path:'just_name', fields:[(facetName):[type:"string", index:"analyzed"], (facetName+"Facet"):[type:"string", index:"not_analyzed"]]]]
+        }
+        properties
+    }
+
 
     /**
      * Log GORM event to msg queue
@@ -915,14 +869,11 @@ class ElasticSearchService {
                 facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).facetFilter(addFacetFilter(filterList)))
             }
         } else {
-            facetList.add(FacetBuilders.termsFacet("typeFacet").field("typeFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("assessment").field("assessment").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("className").field("className").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("organisationFacet").field("organisationFacet").order(fsort).size(flimit).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("stateFacet").field("stateFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("lgaFacet").field("lgaFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("nrmFacet").field("nrmFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            facetList.add(FacetBuilders.termsFacet("mvgFacet").field("mvgFacet").size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+
+            def defaultFacets = ['typeFacet', 'className', 'organisationFacet', 'stateFacet', 'lgaFacet', 'nrmFacet']
+            defaultFacets.each { facet ->
+                facetList.add(FacetBuilders.termsFacet(facet).field(facet).size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
+            }
 
         }
 
