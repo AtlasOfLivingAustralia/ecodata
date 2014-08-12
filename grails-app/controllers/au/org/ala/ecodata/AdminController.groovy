@@ -244,7 +244,7 @@ class AdminController {
                 def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
 
                 site.extent.geometry.putAll(metadata)
-                siteService.update(siteId, [extent:site.extent])
+                siteService.update([extent:site.extent], siteId)
             }
 
         }
