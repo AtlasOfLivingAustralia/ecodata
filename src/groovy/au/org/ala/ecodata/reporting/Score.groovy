@@ -34,10 +34,7 @@ class Score {
     boolean isOutputTarget
 
     /** Used for mapping this score to the GMS */
-    String gmsScoreName
-
-    /** Use for mapping this score to the GMS */
-    String gmsUnits
+    String gmsId
 
     /**
      * The units this score is measured in.  May not make sense for all scores or for an aggregrated result

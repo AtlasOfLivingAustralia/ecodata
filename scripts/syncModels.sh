@@ -1,4 +1,5 @@
 #!/bin/sh
+cd /data/temp
 rm -rf datamodels
 mkdir datamodels
 
