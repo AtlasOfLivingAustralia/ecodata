@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
-import com.mongodb.util.JSON
+
+import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonBuilder
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -241,10 +242,19 @@ class AdminController {
 
                 def longitude = centroid[0]
                 def latitude = centroid[1]
-                def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
 
-                site.extent.geometry.putAll(metadata)
-                siteService.update([extent:site.extent], siteId)
+                try {
+                    def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
+
+                    site.extent.geometry.putAll(metadata)
+                    siteService.update([extent: site.extent], siteId)
+                }
+                catch (Exception e) {
+                    log.error("Unable to update metadata for site: ${siteId}", e)
+                }
+            }
+            else {
+                log.error("Unable to update metadata for site: ${siteId}, no centroid exists.")
             }
 
         }
