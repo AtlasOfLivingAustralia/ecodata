@@ -29,7 +29,7 @@
         {
             "category": "Implementation actions",
             "name": "Community Participation and Engagement",
-            "gmsName": "Community participation and engagement",
+            "gmsId": "Community participation and engagement",
             "type": "Activity",
             "outputs": [
                 "Event Details",
@@ -49,7 +49,7 @@
         {
             "category": "Implementation actions",
             "name": "Debris Removal",
-            "gmsName": "Debris removal",
+            "gmsId": "Debris removal",
             "type": "Activity",
             "outputs": [
                 "Debris Removal Details",
@@ -68,7 +68,7 @@
         {
             "category": "Implementation actions",
             "name": "Erosion Management",
-            "gmsName": "Erosion management",
+            "gmsId": "Erosion management",
             "type": "Activity",
             "outputs": [
                 "Erosion Management Details",
@@ -78,7 +78,7 @@
         {
             "category": "Assessment & monitoring",
             "name": "Fauna Survey - general",
-            "gmsName": "Fauna (biological) survey",
+            "gmsId": "Fauna (biological) survey",
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -98,7 +98,7 @@
         {
             "category": "Implementation actions",
             "name": "Fire Management",
-            "gmsName": "Fire management",
+            "gmsId": "Fire management",
             "type": "Activity",
             "outputs": [
                 "Fire Management Details",
@@ -109,7 +109,7 @@
         {
             "category": "Assessment & monitoring",
             "name": "Flora Survey - general",
-            "gmsName": "Flora (biological) survey",
+            "gmsId": "Flora (biological) survey",
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -191,7 +191,7 @@
         {
             "category": "Implementation actions",
             "name": "Pest Management",
-            "gmsName": "Pest management",
+            "gmsId": "Pest management",
             "type": "Activity",
             "outputs": [
                 "Pest Management Details",
@@ -203,7 +203,7 @@
         {
             "category": "Implementation actions",
             "name": "Plant Propagation",
-            "gmsName": "Plant propagation",
+            "gmsId": "Plant propagation",
             "type": "Activity",
             "outputs": [
                 "Plant Propagation Details",
@@ -213,7 +213,7 @@
         {
             "category": "Assessment & monitoring",
             "name": "Plant Survival Survey",
-            "gmsName": "Vegetation monitoring and related activities",
+            "gmsId": "Vegetation monitoring and related activities",
             "type": "Assessment",
             "outputs": [
                 "Vegetation Monitoring Results",
@@ -233,7 +233,7 @@
         {
             "category": "Implementation actions",
             "name": "Public Access and Infrastructure",
-            "gmsName": "Public access management",
+            "gmsId": "Public access management",
             "type": "Activity",
             "outputs": [
                 "Access Control Details",
@@ -253,7 +253,7 @@
         {
             "category": "Implementation actions",
             "name": "Revegetation",
-            "gmsName": "Revegetation",
+            "gmsId": "Revegetation",
             "type": "Activity",
             "outputs": [
                 "Revegetation Details",
@@ -264,7 +264,7 @@
         {
             "category": "Implementation actions",
             "name": "Seed Collection",
-            "gmsName": "Seed collection",
+            "gmsId": "Seed collection",
             "type": "Activity",
             "outputs": [
                 "Seed Collection Details",
@@ -280,7 +280,7 @@
         {
             "category": "Implementation actions",
             "name": "Site Preparation",
-            "gmsName": "Site preparation",
+            "gmsId": "Site preparation",
             "type": "Activity",
             "outputs": [
                 "Site Preparation Actions",
@@ -308,7 +308,7 @@
         {
             "category": "Assessment & monitoring",
             "name": "Water Quality Survey",
-            "gmsName": "Water quality survey and assessment",
+            "gmsId": "Water quality survey and assessment",
             "type": "Assessment",
             "outputs": [
                 "General information & Participants",
@@ -330,7 +330,7 @@
         {
             "category": "Implementation actions",
             "name": "Weed Treatment",
-            "gmsName": "Weed treatment",
+            "gmsId": "Weed treatment",
             "type": "Activity",
             "outputs": [
                 "Weed Treatment Details",
@@ -352,7 +352,7 @@
         {
             "category": "Assessment & monitoring",
             "name": "Vegetation Assessment - Commonwealth government methodology",
-            "gmsName": "Site assessment",
+            "gmsId": "Site assessment",
             "type": "Assessment",
             "outputs": [
                 "Sampling Site Information",
