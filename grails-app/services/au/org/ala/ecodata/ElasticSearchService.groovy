@@ -51,7 +51,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder
  */
 class ElasticSearchService {
     static transactional = false
-    def grailsApplication, projectService, siteService, activityService
+    def grailsApplication, projectService, siteService, activityService, metadataService
 
     Node node;
     Client client;
@@ -698,6 +698,12 @@ class ElasticSearchService {
      */
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
+
+        // This is done so MERIT can filter relevant projects easily.
+        def program = metadataService.programModel(projectMap.associatedProgram)
+        def isMeritProgramme = program?.isMeritProgramme
+        projectMap.isMeritProgramme = isMeritProgramme?:false
+
         projectMap["className"] = new Project().getClass().name
         projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
         projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())

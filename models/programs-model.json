@@ -1,7 +1,7 @@
 {"programs": [
     {
         "reportingPeriod": "6",
-        "isMeritProgramme": false,
+        "isMeritProgramme": true,
         "name": "Biodiversity Fund",
         "subprograms": [
             {
