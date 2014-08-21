@@ -105,7 +105,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
         DataValidationConstraint dvConstraint =
                 dvHelper.createNumericConstraint(DataValidationConstraint.ValidationType.DECIMAL,
-                operator, rules.min().toString(), rules.max()?:"")
+                operator, rules.min().toString(), rules.max()?rules.max().toString():"")
 
         addValidation(node, context, dvConstraint)
     }
