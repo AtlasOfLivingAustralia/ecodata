@@ -213,7 +213,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/devt/ecodata/models/"
+        app.external.model.dir = "/data/ecodata/models/"
         grails.hostname = "devt.ala.org.au"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
