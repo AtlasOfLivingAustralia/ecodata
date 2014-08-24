@@ -37,6 +37,7 @@ class Project {
     String projectPlannedOutputType
     String projectPlannedOutputValue
 	Map custom
+	Map risks
 	Date dateCreated
     Date lastUpdated
 	
@@ -59,5 +60,7 @@ class Project {
         projectPlannedOutputValue nullable:true
         grantId nullable:true
 		custom nullable:true
+		risks nullable:true
+		
     }
 }
