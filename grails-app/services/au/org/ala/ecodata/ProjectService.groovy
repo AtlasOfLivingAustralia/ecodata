@@ -66,7 +66,7 @@ class ProjectService {
                 mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
             }
             else if (levelOfDetail == OUTPUT_SUMMARY) {
-                mapOfProperties.outputSummary = projectMetrics(prj.projectId, true, true)
+                mapOfProperties.outputSummary = projectMetrics(prj.projectId, false, true)
             }
         }
         mapOfProperties.findAll {k,v -> v != null}
