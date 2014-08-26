@@ -1,4 +1,16 @@
 {
+    "selectedActivity": {
+        "category": "Assessment & monitoring",
+        "name": "Weed Mapping & Monitoring",
+        "type": "Assessment",
+        "outputs": [
+            "Evidence of Weed Treatment",
+            "Weed Observation and Monitoring Details",
+            "Participant Information",
+            "Photo Points"
+        ],
+        "gmsId": "WSA"
+    },
     "activities": [
         {
             "status": "deleted",
@@ -16,7 +28,8 @@
                 "Event Details",
                 "Participant Information",
                 "Materials Provided to Participants"
-            ]
+            ],
+            "gmsId": "CPEE"
         },
         {
             "category": "Implementation actions",
@@ -25,7 +38,8 @@
             "outputs": [
                 "Stock Management Details",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "CGM"
         },
         {
             "category": "Implementation actions",
@@ -34,7 +48,8 @@
             "outputs": [
                 "Debris Removal Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "DRV DRW"
         },
         {
             "category": "Implementation actions",
@@ -43,7 +58,8 @@
             "outputs": [
                 "Disease Management Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "DMA"
         },
         {
             "category": "Implementation actions",
@@ -52,7 +68,8 @@
             "outputs": [
                 "Erosion Management Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "EMA EML"
         },
         {
             "category": "Assessment & monitoring",
@@ -62,7 +79,8 @@
                 "Survey Information",
                 "Fauna Survey Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "FBS"
         },
         {
             "category": "Implementation actions",
@@ -71,7 +89,8 @@
             "outputs": [
                 "Fence Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "FNC"
         },
         {
             "category": "Implementation actions",
@@ -81,7 +100,8 @@
                 "Fire Management Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "FMA"
         },
         {
             "category": "Assessment & monitoring",
@@ -91,7 +111,8 @@
                 "Survey Information",
                 "Flora Survey Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "FRBS"
         },
         {
             "category": "Implementation actions",
@@ -101,7 +122,8 @@
                 "Heritage Conservation Information",
                 "Expected Heritage Outcomes",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "HC HSA"
         },
         {
             "category": "Administration, management & reporting",
@@ -110,7 +132,8 @@
             "outputs": [
                 "Indigenous Employment",
                 "Indigenous Businesses"
-            ]
+            ],
+            "gmsId": "IPE"
         },
         {
             "category": "Training",
@@ -118,7 +141,8 @@
             "type": "Activity",
             "outputs": [
                 "Indigenous Knowledge Transfer Details"
-            ]
+            ],
+            "gmsId": "IKM IKT"
         },
         {
             "category": "Implementation actions",
@@ -127,7 +151,8 @@
             "outputs": [
                 "Plan Development Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "MPD"
         },
         {
             "category": "Implementation actions",
@@ -135,7 +160,8 @@
             "type": "Activity",
             "outputs": [
                 "Management Practice Change Details"
-            ]
+            ],
+            "gmsId": "MPC MPCFE MPCSP"
         },
         {
             "category": "Implementation actions",
@@ -144,7 +170,8 @@
             "outputs": [
                 "Conservation Works Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "CATS"
         },
         {
             "category": "Administration, management & reporting",
@@ -166,7 +193,8 @@
                 "Pest Observation and Monitoring Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "PSA"
         },
         {
             "category": "Implementation actions",
@@ -177,7 +205,8 @@
                 "Fence Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "PMA PMQ"
         },
         {
             "category": "Implementation actions",
@@ -186,7 +215,8 @@
             "outputs": [
                 "Plant Propagation Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "PPRP"
         },
         {
             "category": "Assessment & monitoring",
@@ -196,7 +226,8 @@
                 "Vegetation Monitoring Results",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "PSS"
         },
         {
             "category": "Administration, management & reporting",
@@ -215,7 +246,8 @@
                 "Access Control Details",
                 "Infrastructure Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "PAI"
         },
         {
             "category": "Implementation actions",
@@ -234,7 +266,8 @@
                 "Revegetation Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "RVA RVN RVSS RVT2A RVT2B"
         },
         {
             "category": "Implementation actions",
@@ -243,7 +276,8 @@
             "outputs": [
                 "Seed Collection Details",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "SDC"
         },
         {
             "category": "Assessment & monitoring",
@@ -262,7 +296,8 @@
                 "Weed Treatment Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "STP"
         },
         {
             "category": "Training",
@@ -272,7 +307,8 @@
                 "Training Details",
                 "Skills Development",
                 "Participant Information"
-            ]
+            ],
+            "gmsId": "TSD"
         },
         {
             "category": "Implementation actions",
@@ -280,7 +316,8 @@
             "type": "Activity",
             "outputs": [
                 "Water Management Details"
-            ]
+            ],
+            "gmsId": "WMA WMN"
         },
         {
             "category": "Assessment & monitoring",
@@ -290,7 +327,8 @@
                 "General information & Participants",
                 "Environmental Information at the Time of Sampling",
                 "Water Quality Measurements"
-            ]
+            ],
+            "gmsId": "WQSA"
         },
         {
             "category": "Assessment & monitoring",
@@ -301,7 +339,8 @@
                 "Weed Observation and Monitoring Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "WSA"
         },
         {
             "category": "Implementation actions",
@@ -311,7 +350,8 @@
                 "Weed Treatment Details",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "WDT"
         },
         {
             "category": "Implementation actions",
@@ -322,7 +362,8 @@
                 "Threatening Processes & Site Condition Risks",
                 "Participant Information",
                 "Photo Points"
-            ]
+            ],
+            "gmsId": "STA"
         },
         {
             "category": "Assessment & monitoring",
@@ -336,7 +377,8 @@
                 "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
                 "Field Sheet 4 - Crown Type",
                 "Field Sheet 5 - Species Diversity"
-            ]
+            ],
+            "gmsId": "VAC"
         },
         {
             "category": "Administration, management & reporting",
@@ -369,25 +411,6 @@
             "type": "Assessment",
             "outputs": [
                 "Floristic Composition"
-            ]
-        },
-        {
-            "status": "deleted",
-            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-            "type": "Assessment",
-            "outputs": [
-                "Benchmarks - SA",
-                "Bushland Condition - Site Health Summary",
-                "Indicator 1 - Plant Species Diversity",
-                "Indicator 2 - Weed Abundance & Threat",
-                "Indicator 3 - Structural Diversity",
-                "Indicator 4 - Regeneration",
-                "Indicator 5 - Tree and Shrub Health",
-                "Indicator 6 - Tree Habitat",
-                "Indicator 7 - Feral Animals",
-                "Indicator 8 - Total Grazing Pressure",
-                "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk"
             ]
         },
         {
@@ -441,6 +464,26 @@
                 "Threatening Processes & Site Condition Risks",
                 "Photo Points"
             ]
+        },
+        {
+            "category": "assessment",
+            "status": "deleted",
+            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "type": "Assessment",
+            "outputs": [
+                "Benchmarks - SA",
+                "Bushland Condition - Site Health Summary",
+                "Indicator 1 - Plant Species Diversity",
+                "Indicator 2 - Weed Abundance & Threat",
+                "Indicator 3 - Structural Diversity",
+                "Indicator 4 - Regeneration",
+                "Indicator 5 - Tree and Shrub Health",
+                "Indicator 6 - Tree Habitat",
+                "Indicator 7 - Feral Animals",
+                "Indicator 8 - Total Grazing Pressure",
+                "Indicator 9 - Animal Species",
+                "Indicator 10 - Bushland Degradation Risk"
+            ]
         }
     ],
     "outputs": [
@@ -455,7 +498,8 @@
                     "name": "areaRevegHa",
                     "aggregationType": "SUM",
                     "label": "Area of revegetation works (Ha)",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "RVA"
                 },
                 {
                     "category": "Revegetation",
@@ -472,7 +516,8 @@
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
                     "label": "Number of plants planted",
-                    "units": ""
+                    "units": "",
+                    "gmsId": "RVN"
                 },
                 {
                     "category": "Revegetation",
@@ -498,7 +543,8 @@
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
                     "label": "Kilograms of seed sown",
-                    "units": "Kg"
+                    "units": "Kg",
+                    "gmsId": "RVSS"
                 },
                 {
                     "groupBy": "output:species.name",
@@ -543,7 +589,8 @@
                     "displayType": "barchart",
                     "name": "numberPlanted",
                     "aggregationType": "SUM",
-                    "label": "No. of plants planted by mature height class (eg. >2m)"
+                    "label": "No. of plants planted by mature height class (eg. >2m)",
+                    "gmsId": "RVT2A"
                 }
             ],
             "name": "Revegetation Details"
@@ -559,7 +606,8 @@
                     "name": "totalSeedCollectedKg",
                     "aggregationType": "SUM",
                     "label": "Total seed collected (Kg)",
-                    "units": "Kg"
+                    "units": "Kg",
+                    "gmsId": "SDC"
                 },
                 {
                     "category": "Revegetation",
@@ -592,7 +640,8 @@
                     "name": "preparationAreaTotal",
                     "aggregationType": "SUM",
                     "label": "Total area prepared (Ha) for follow-up treatment actions",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "STP"
                 },
                 {
                     "groupBy": "output:actionsList.groundPreparationWorks",
@@ -617,7 +666,8 @@
                     "name": "lengthOfFence",
                     "aggregationType": "SUM",
                     "label": "Total length of fence (Km)",
-                    "units": "kilometres"
+                    "units": "kilometres",
+                    "gmsId": "FNC"
                 },
                 {
                     "groupBy": "output:purposeOfFence",
@@ -654,12 +704,15 @@
             "template": "fenceCostCalculator",
             "scores": [
                 {
+                    "displayType": "",
                     "name": "fenceCostPerKm",
                     "aggregationType": "AVERAGE",
                     "label": "Fence cost/Km",
-                    "units": "$/Km"
+                    "units": "$/Km",
+                    "gmsId": ""
                 },
                 {
+                    "displayType": "",
                     "name": "lengthOfFence",
                     "aggregationType": "SUM",
                     "label": "Length of fence (Km)",
@@ -741,7 +794,8 @@
                     "displayType": "",
                     "name": "eventTopics",
                     "aggregationType": "COUNT",
-                    "label": "Total No. of Community Participation and Engagement events run"
+                    "label": "Total No. of Community Participation and Engagement events run",
+                    "gmsId": "CPEE"
                 },
                 {
                     "category": "Community Engagement and Capacity Building",
@@ -795,7 +849,8 @@
                     "name": "areaOfFireHa",
                     "aggregationType": "SUM",
                     "label": "Burnt area (Ha) - may be different to the total area managed",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "Fire management (area)"
                 },
                 {
                     "isOutputTarget": false,
@@ -836,6 +891,15 @@
             "template": "weedObservationDetails",
             "scores": [
                 {
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "weedObservationMonitoringDetails",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking weed monitoring",
+                    "gmsId": "WMM"
+                },
+                {
                     "isOutputTarget": false,
                     "category": "Invasive Species Management - Weeds",
                     "listName": "weedObservationMonitoringDetails",
@@ -867,7 +931,8 @@
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
                     "label": "Total area treated (Ha)",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "WDT"
                 },
                 {
                     "groupBy": "output:targetSpecies.name",
@@ -943,7 +1008,8 @@
                     "name": "areaOfStockManagmentHa",
                     "aggregationType": "SUM",
                     "label": "Area managed with conservation grazing (Ha)",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "CGM"
                 },
                 {
                     "isOutputTarget": false,
@@ -997,7 +1063,8 @@
                     "displayType": "",
                     "name": "typeOfPlan",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities undertaking plan development work"
+                    "label": "No. of activities undertaking plan development work",
+                    "gmsId": "MPD"
                 },
                 {
                     "isOutputTarget": false,
@@ -1046,6 +1113,15 @@
                     "category": "Natural Resources Management",
                     "listName": "",
                     "displayType": "",
+                    "name": "waterbodyType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of water management activities implemented",
+                    "gmsId": "WMN"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
                     "name": "isCurrentFlowNatural",
                     "aggregationType": "COUNT",
                     "label": "No. of water management activities implemented"
@@ -1057,6 +1133,17 @@
                     "name": "hydrologicalStructuresInstalled",
                     "aggregationType": "SUM",
                     "label": "No. of hydrological structures installed"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "managedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) managed for water values",
+                    "units": "Ha",
+                    "gmsId": "WMA"
                 },
                 {
                     "groupBy": "output:waterMgtEnviroBenefit",
@@ -1097,7 +1184,8 @@
                     "displayType": "",
                     "name": "totalCompletingCourses",
                     "aggregationType": "SUM",
-                    "label": "Total No. of people completing formal training courses"
+                    "label": "Total No. of people completing formal training courses",
+                    "gmsId": "TSD"
                 },
                 {
                     "category": "Community Engagement and Capacity Building",
@@ -1191,7 +1279,8 @@
                     "name": "debrisWeightTonnes",
                     "aggregationType": "SUM",
                     "label": "Weight of debris removed (Tonnes)",
-                    "units": "Tonnes"
+                    "units": "Tonnes",
+                    "gmsId": "DRW"
                 },
                 {
                     "isOutputTarget": true,
@@ -1200,7 +1289,8 @@
                     "name": "debrisVolumeM3",
                     "aggregationType": "SUM",
                     "label": "Volume of debris removed (m3)",
-                    "units": "m3"
+                    "units": "m3",
+                    "gmsId": "DRV"
                 },
                 {
                     "category": "Natural Resources Management",
@@ -1229,7 +1319,8 @@
                     "displayType": "",
                     "name": "erosionAreaTreated",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities undertaking erosion control works"
+                    "label": "No. of activities undertaking erosion control works",
+                    "gmsId": ""
                 },
                 {
                     "isOutputTarget": true,
@@ -1238,7 +1329,8 @@
                     "name": "erosionAreaTreated",
                     "aggregationType": "SUM",
                     "label": "Erosion area treated (Ha)",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "EMA"
                 },
                 {
                     "isOutputTarget": true,
@@ -1247,7 +1339,8 @@
                     "name": "erosionLength",
                     "aggregationType": "SUM",
                     "label": "Length of stream/coastline treated (Km)",
-                    "units": "Km"
+                    "units": "Km",
+                    "gmsId": "EML"
                 },
                 {
                     "isOutputTarget": true,
@@ -1275,11 +1368,13 @@
             "template": "accessControlDetails",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "category": "Natural Resources Management",
                     "displayType": "piechart",
                     "name": "structuresInstalled",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities implementing access control works"
+                    "label": "No. of activities implementing access control works",
+                    "gmsId": "PAI"
                 },
                 {
                     "category": "Natural Resources Management",
@@ -1329,7 +1424,8 @@
                     "displayType": "",
                     "name": "totalEntitiesAdoptingChange",
                     "aggregationType": "SUM",
-                    "label": "No. of farming entities adopting sustainable practice change"
+                    "label": "No. of farming entities adopting sustainable practice change",
+                    "gmsId": "MPCFE"
                 },
                 {
                     "isOutputTarget": true,
@@ -1338,7 +1434,8 @@
                     "name": "totalChangePracticeTreatedArea",
                     "aggregationType": "SUM",
                     "label": "Area of land (Ha) on which improved management practices have been implemented",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "MPC"
                 },
                 {
                     "isOutputTarget": true,
@@ -1347,7 +1444,8 @@
                     "name": "benefitAreaHa",
                     "aggregationType": "SUM",
                     "label": "Area of land (Ha) changed to sustainable practices",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "MPCSP"
                 },
                 {
                     "groupBy": "output:practiceChangeAction",
@@ -1400,7 +1498,8 @@
                     "displayType": "barchart",
                     "name": "targetSpecies",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities undertaking species conservation actions"
+                    "label": "No. of activities undertaking species conservation actions",
+                    "gmsId": "CATS"
                 },
                 {
                     "category": "Biodiversity Management",
@@ -1520,7 +1619,8 @@
                     "displayType": "",
                     "name": "numberOnCountryVisits",
                     "aggregationType": "SUM",
-                    "label": "No. of on-country visits involving both older and younger people together"
+                    "label": "No. of on-country visits involving both older and younger people together",
+                    "gmsId": "IKT"
                 },
                 {
                     "category": "Indigenous Capacity",
@@ -1536,7 +1636,8 @@
                     "displayType": "",
                     "name": "datasetsShared",
                     "aggregationType": "SUM",
-                    "label": "Total No. of Indigenous datasets shared publicly"
+                    "label": "Total No. of Indigenous datasets shared publicly",
+                    "gmsId": "IKM"
                 },
                 {
                     "category": "Indigenous Capacity",
@@ -1558,7 +1659,8 @@
                     "displayType": "piechart",
                     "name": "totalNumberGrown",
                     "aggregationType": "SUM",
-                    "label": "Total No. of plants grown and ready for planting "
+                    "label": "Total No. of plants grown and ready for planting ",
+                    "gmsId": "PPRP"
                 },
                 {
                     "category": "Revegetation",
@@ -1597,12 +1699,14 @@
             "template": "faunaSurveyDetails",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "category": "Biodiversity Management",
                     "listName": "",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
-                    "label": "No. of surveys undertaken"
+                    "label": "No. of surveys undertaken",
+                    "gmsId": "FBS"
                 },
                 {
                     "category": "Biodiversity Management",
@@ -1627,12 +1731,14 @@
             "template": "floraSurveyDetails",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "category": "Biodiversity Management",
                     "listName": "",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
-                    "label": "No. of surveys undertaken"
+                    "label": "No. of surveys undertaken",
+                    "gmsId": "FRBS"
                 },
                 {
                     "category": "Biodiversity Management",
@@ -1654,11 +1760,6 @@
             "name": "Flora Survey Details"
         },
         {
-            "template": "sitePlanningDetails",
-            "scores": [],
-            "name": "Site Planning Details"
-        },
-        {
             "template": "employmentDetails",
             "scores": [
                 {
@@ -1667,7 +1768,8 @@
                     "displayType": "",
                     "name": "totalEmployees",
                     "aggregationType": "SUM",
-                    "label": "Total No. of Indigenous people employed"
+                    "label": "Total No. of Indigenous people employed",
+                    "gmsId": "IPE"
                 }
             ],
             "name": "Indigenous Employment"
@@ -1721,7 +1823,8 @@
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
                     "label": "Area covered (Ha) by pest treatment",
-                    "units": "Ha"
+                    "units": "Ha",
+                    "gmsId": "PMA"
                 },
                 {
                     "groupBy": "output:targetSpecies.name",
@@ -1742,7 +1845,8 @@
                     "name": "pestAnimalsTreatedNo",
                     "aggregationType": "SUM",
                     "label": "No. of individual animals killed / removed by species",
-                    "units": ""
+                    "units": "",
+                    "gmsId": "PMQ"
                 },
                 {
                     "groupBy": "output:pestManagementMethod",
@@ -1812,12 +1916,14 @@
                     "label": "Proportion of activities undertaking disease management by purpose"
                 },
                 {
+                    "isOutputTarget": true,
                     "category": "Invasive Species Management - Pest Animals",
                     "listName": "",
                     "displayType": "",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
-                    "label": "Total area (Ha) treated / quarantined by species"
+                    "label": "Total area (Ha) treated / quarantined by species",
+                    "gmsId": "DMA"
                 },
                 {
                     "category": "Invasive Species Management - Pest Animals",
@@ -1828,7 +1934,7 @@
                     "label": "Total number of individuals or colonies treated / quarantined"
                 },
                 {
-                    "groupBy": "output:output:diseaseManagementMethod",
+                    "groupBy": "output:diseaseManagementMethod",
                     "category": "Invasive Species Management - Pest Animals",
                     "listName": "",
                     "displayType": "",
@@ -1863,6 +1969,15 @@
                     "aggregationType": "SUM",
                     "label": "Total area sampled (Ha) for pest animal monitoring",
                     "units": ""
+                },
+                {
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "pestObservationMonitoringDetails",
+                    "displayType": "",
+                    "name": "assessmentMethod",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities monitoring pest animals",
+                    "gmsId": "PSA"
                 },
                 {
                     "groupBy": "output:pestSpecies.name",
@@ -1902,7 +2017,8 @@
                     "displayType": "",
                     "name": "revegetationType",
                     "aggregationType": "SUM",
-                    "label": "Total number of revegetation monitoring activities undertaken"
+                    "label": "Total number of revegetation monitoring activities undertaken",
+                    "gmsId": "PSS"
                 },
                 {
                     "category": "Revegetation",
@@ -1961,12 +2077,14 @@
             "template": "waterQualityMeasurements",
             "scores": [
                 {
+                    "isOutputTarget": true,
                     "category": "Natural Resources Management",
                     "listName": "",
                     "displayType": "",
                     "name": "instrumentCalibration",
                     "aggregationType": "COUNT",
-                    "label": "No. of water quality monitoring events undertaken"
+                    "label": "No. of water quality monitoring events undertaken",
+                    "gmsId": "WQSA"
                 }
             ],
             "name": "Water Quality Measurements"
@@ -2008,7 +2126,18 @@
         },
         {
             "template": "bfSamplingSiteInfo",
-            "scores": [],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "assessmentEventType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of site assessments undertaken",
+                    "gmsId": "VAC"
+                }
+            ],
             "name": "Sampling Site Information"
         },
         {
@@ -2033,74 +2162,6 @@
         },
         {
             "template": "speciesDiversityMeri",
-            "templateDetail": {
-                "modelName": "Species Diversity - BF method",
-                "dataModel": [
-                    {
-                        "dataType": "list",
-                        "description": "A list containing the distinct (but not necessarily identified) species present at the site",
-                        "name": "speciesList",
-                        "columns": [
-                            {
-                                "dataType": "species",
-                                "description": "The species present at the site.  If not identified, select \"Unknown or unlisted species\" from the list",
-                                "name": "species",
-                                "validate": "required"
-                            },
-                            {
-                                "dataType": "text",
-                                "description": "Specifies whether the species is native to the site or exotic",
-                                "name": "nativeOrExotic",
-                                "constraints": [
-                                    "Native",
-                                    "Exotic"
-                                ]
-                            }
-                        ]
-                    }
-                ],
-                "viewModel": [
-                    {
-                        "items": [
-                            {
-                                "source": "Please record all species present in the 20m x 20m plot marked out for this assessment.",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ],
-                        "type": "row"
-                    },
-                    {
-                        "items": [
-                            {
-                                "source": "<p>This sheet differs from the hard copy worksheet - it combines Field Sheet 5 & 6.  Please attempt to identify each species, in particular the exotics.</p>",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ],
-                        "type": "row"
-                    },
-                    {
-                        "source": "speciesList",
-                        "columns": [
-                            {
-                                "title": "Species",
-                                "source": "species",
-                                "width": "80%",
-                                "type": "autocomplete"
-                            },
-                            {
-                                "title": "Native/Exotic",
-                                "source": "nativeOrExotic",
-                                "width": "20%",
-                                "type": "selectOne"
-                            }
-                        ],
-                        "userAddedRows": true,
-                        "type": "table"
-                    }
-                ]
-            },
             "scores": [
                 {
                     "category": "Biodiversity Management",
@@ -2166,7 +2227,8 @@
                     "displayType": "",
                     "name": "siteName",
                     "aggregationType": "SUM",
-                    "label": "Total No. of activities undertaking heritage conservation actions"
+                    "label": "Total No. of activities undertaking heritage conservation actions",
+                    "gmsId": "HC"
                 },
                 {
                     "category": "Heritage Asset Management",
@@ -2211,6 +2273,11 @@
             "template": "projectStageLessons",
             "scores": [],
             "name": "Lessons Learned and Improvements"
+        },
+        {
+            "template": "sitePlanningDetails",
+            "scores": [],
+            "name": "Site Planning Details"
         }
     ]
 }

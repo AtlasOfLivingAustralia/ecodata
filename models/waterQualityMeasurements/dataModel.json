@@ -187,15 +187,13 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "Water Testing Notes/Issues:",
-                    "width": "90%",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "Water Testing Notes/Issues:",
+                "width": "90%",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }

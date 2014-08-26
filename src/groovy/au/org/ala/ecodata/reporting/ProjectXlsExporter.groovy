@@ -53,7 +53,7 @@ class ProjectXlsExporter {
             def outputsByType = [:].withDefault { [] }
 
             row = activitiesSheet.getSheet().lastRowNum
-            activitiesSheet.add(project.activites, activityProperties, row+1)
+            activitiesSheet.add(project.activities, activityProperties, row+1)
 
             project.activities.each { activity ->
                 activity?.outputs?.each { output ->

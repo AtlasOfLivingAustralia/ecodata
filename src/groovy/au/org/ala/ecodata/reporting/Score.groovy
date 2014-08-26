@@ -21,6 +21,9 @@ class Score {
 
     String groupBy
 
+    /** In the case that a groupBy term is specified, the filterBy term will select the value from a particular group */
+    String filterBy
+
     /** "piechart" or "barchart" only currently */
     String displayType
 
@@ -32,6 +35,9 @@ class Score {
 
     /** Whether or not this score is suitable for use as a project output target */
     boolean isOutputTarget
+
+    /** Used for mapping this score to the GMS */
+    String gmsId
 
     /**
      * The units this score is measured in.  May not make sense for all scores or for an aggregrated result

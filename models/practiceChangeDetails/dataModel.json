@@ -16,7 +16,7 @@
                         "Wetland, riparian and mangrove protection and restoration along the Great Barrier Reef",
                         "Other (specify in notes)"
                     ],
-                    "validate": "required"
+                    "validate": "required, maxCheckbox[3]"
                 },
                 {
                     "dataType": "text",
@@ -165,7 +165,7 @@
     "viewModel": [
         {
             "items": [{
-                "source": "Please insert multiple rows as required if multiple industries are applicable. Area and numbers of people and farming entities should be entered only once for each industry type.",
+                "source": "Please insert multiple rows as required if multiple industries are applicable. Select only the 3 most appropriate options in each multi-select cell of each row. Area and numbers of people and farming entities should be entered only once for each industry type.",
                 "computed": null,
                 "type": "literal"
             }],

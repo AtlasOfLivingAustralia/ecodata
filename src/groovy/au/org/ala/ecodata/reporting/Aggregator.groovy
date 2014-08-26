@@ -63,7 +63,7 @@ class Aggregator {
 
     /**
      * Classifies the supplied output according to the groupingFunction and returns the
-     * Aggregator(s) that are aggregrating results for that group.
+     * Aggregator(s) that are aggregating results for that group.
      * @param activity the activity to be aggregated - this is optionally used to perform the grouping.
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
@@ -75,9 +75,12 @@ class Aggregator {
         def group = groupingFunction(output)
 
         if (group instanceof List) {
-            return group.collect { aggregatorsByGroup[it]}
+            return group.grep{score.filterBy ? it == score.filterBy : true}.collect { aggregatorsByGroup[it]}
         }
 
+        if (score.filterBy && group != score.filterBy) {
+            return []
+        }
         if (!group) {
             group = DEFAULT_GROUP
         }

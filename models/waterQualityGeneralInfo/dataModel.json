@@ -46,68 +46,66 @@
             "validate": "required"
         }
     ],
-    "viewModel": [
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "samplerName",
-                            "preLabel": "Sampler name:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "waterbodyName",
-                            "preLabel": "Name of water body:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "waterType",
-                            "preLabel": "Type of water body:",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "totalParticipants",
-                            "computed": null,
-                            "preLabel": "Number in sampler group:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "numberOfVolunteerParticipants",
-                            "computed": null,
-                            "preLabel": "No. of volunteer participants:",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "surveyTime",
-                            "computed": null,
-                            "preLabel": "Survey time:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "surveyDuration",
-                            "computed": null,
-                            "preLabel": "Survey duration (hrs):",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+    "viewModel": [{
+        "items": [
+            {
+                "items": [
+                    {
+                        "source": "samplerName",
+                        "preLabel": "Sampler name:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "waterbodyName",
+                        "preLabel": "Name of water body:",
+                        "type": "text"
+                    },
+                    {
+                        "source": "waterType",
+                        "preLabel": "Type of water body:",
+                        "type": "selectOne"
+                    }
+                ],
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "totalParticipants",
+                        "computed": null,
+                        "preLabel": "Number in sampler group:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfVolunteerParticipants",
+                        "computed": null,
+                        "preLabel": "No. of volunteer participants:",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            },
+            {
+                "items": [
+                    {
+                        "source": "surveyTime",
+                        "computed": null,
+                        "preLabel": "Survey time:",
+                        "type": "number"
+                    },
+                    {
+                        "source": "surveyDuration",
+                        "computed": null,
+                        "preLabel": "Survey duration (hrs):",
+                        "type": "number"
+                    }
+                ],
+                "computed": null,
+                "type": "col"
+            }
+        ],
+        "class": "output-section",
+        "type": "row"
+    }]
 }

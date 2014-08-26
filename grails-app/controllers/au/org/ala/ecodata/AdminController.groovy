@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
-import com.mongodb.util.JSON
+
+import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonBuilder
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
@@ -226,6 +227,39 @@ class AdminController {
         Activity.collection.drop()
         Site.collection.drop()
         Project.collection.drop()
+    }
+
+    /**
+     * Refreshes site metadata (geographical facets & geocodes) every site in the system.
+     * @return {"result":"success"} if the operation is successful.
+     */
+    def reloadSiteMetadata() {
+        def sites = siteService.list()
+        for (site in sites) {
+            def siteId = site.siteId
+            def centroid = site.extent?.geometry?.centre
+            if (centroid && centroid.size() == 2) {
+
+                def longitude = centroid[0]
+                def latitude = centroid[1]
+
+                try {
+                    def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
+
+                    site.extent.geometry.putAll(metadata)
+                    siteService.update([extent: site.extent], siteId)
+                }
+                catch (Exception e) {
+                    log.error("Unable to update metadata for site: ${siteId}", e)
+                }
+            }
+            else {
+                log.error("Unable to update metadata for site: ${siteId}, no centroid exists.")
+            }
+
+        }
+        def result = [result: "success"]
+        render result as grails.converters.JSON
     }
 
     def audit() { }

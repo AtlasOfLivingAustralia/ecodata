@@ -110,8 +110,76 @@ if(!app.external.api.version){
     app.external.api.version = 'draft'
 }
 
-app.nvis_grids.location = "/data/nvis_grids"
-app.nvis_grids.names = "mvg,mvs"
+if(!webservice.connectTimeout){
+    webservice.connectTimeout = 10000
+}
+if(!webservice.readTimeout){
+    webservice.readTimeout = 20000
+}
+// spatial services
+if(!spatial.baseUrl){
+    spatial.baseUrl = "http://spatial-dev.ala.org.au"
+}
+if (!spatial.intersectUrl) {
+    spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
+}
+if(!google.geocode.url){
+    google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
+}
+
+// Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
+// on the home and search pages.
+// Each gridded facet becomes a search facet.
+// Each entry under the grouped facets becomes a facet, with the possible facet terms provided by intersecting the site
+// with each layer in the group.
+// The special facets are gridded facets that are too large for the spatial portal so are managed locally by ecodata.
+// Please note that changes to these facets require that all sites in the system be re-processed - this can be
+// done using the admin tools in fieldcapture.
+app {
+    facets {
+        geographic {
+            gridded {
+                state = 'cl22'
+                nrm = 'cl916'
+                lga = 'cl959'
+                ibra = 'cl20'
+                imcra4_pb = 'cl21'
+            }
+            grouped {
+                other {
+                    australian_coral_ecoregions = 'cl917'
+                    ramsar = 'cl935'
+                    diwa_type_criteria = 'cl901'
+                    tams_reserves = 'cl1054'
+                    nswlls = 'cl2012'
+                    eez_poly = 'cl929'
+                    ntd = 'cl2009'
+                    alcw4 = 'cl990'
+                    ger_national_corridor_20121031 = 'cl1068'
+                    ipa_7aug13 = 'cl2015'
+                    ilua = 'cl2010'
+                    east_afa_final = 'cl900'
+
+                }
+                gerSubRegion {
+                    gerBorderRanges = 'cl1062'
+                    gerIllawarraToShoalhaven = 'cl1064'
+                    gerSouthernHighlands = 'cl1070'
+                    gerHunterValley = 'cl1063'
+                    gerJaliigirr = 'cl1065'
+                    gerKanangraBoydToWyangalaLink = 'cl1066'
+                    gerKosciuszkoToCoast = 'cl1067'
+                    gerSlopesToSummit = 'cl1069'
+                }
+            }
+            special {
+                mvg = '/data/nvis_grids/mvg'
+                mvs = '/data/nvis_grids/mvs'
+            }
+        }
+    }
+}
+
 
 /******************************************************************************\
  *  EXTERNAL SERVERS
@@ -145,7 +213,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/devt/ecodata/models/"
+        app.external.model.dir = "/data/ecodata/models/"
         grails.hostname = "devt.ala.org.au"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"

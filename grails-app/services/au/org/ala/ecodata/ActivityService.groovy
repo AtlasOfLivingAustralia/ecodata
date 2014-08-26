@@ -106,8 +106,12 @@ class ActivityService {
         def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
         try {
             props.remove('id')
-            props.remove('outputs')
+            def outputs = props.remove('outputs')
             commonService.updateProperties(o, props)
+            // If outputs were supplied, update those separately.
+            if (outputs) {
+                update(outputs:outputs, o.activityId)
+            }
             return [status:'ok',activityId:o.activityId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes

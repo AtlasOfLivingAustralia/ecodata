@@ -8,6 +8,8 @@ import java.text.SimpleDateFormat
 class MetadataService {
 
     private static final String ACTIVE = 'active'
+    // The spatial portal returns n/a when the point does not intersect a layer.
+    private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
 
     def grailsApplication, webService, cacheService, messageSource
 
@@ -151,16 +153,16 @@ class MetadataService {
     def getNvisClassesForPoint(Double lat, Double lon) {
         def retMap = [:]
 
-        def nvisLayerNames = grailsApplication.config.app.nvis_grids.names.toString().split(",")
+        def nvisLayers = grailsApplication.config.app.facets.geographic.special
 
-        for(name in nvisLayerNames) {
-            def classesJsonFile = new File(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name + '.json')
+        nvisLayers.each { name, path ->
+            def classesJsonFile = new File(path + '.json')
             if (classesJsonFile.exists()) { // The files are too big for the development system
                 def classesJson = classesJsonFile.text
                 def classesMap = JSON.parse(classesJson)
 
                 try {
-                    BasicGridIntersector intersector = new BasicGridIntersector(grailsApplication.config.app.nvis_grids.location.toString() + '/' + name)
+                    BasicGridIntersector intersector = new BasicGridIntersector(path)
                     def classNumber = intersector.readCell(lon, lat)
                     retMap.put(name, classesMap[classNumber.toInteger().toString()])
                 } catch (IllegalArgumentException ex) {
@@ -191,6 +193,76 @@ class MetadataService {
             annotatedModel = metadata.annotateDataModel()
         }
         annotatedModel
+    }
+
+    /**
+     * This method produces the location metadata for a point, used in particular to provide the geographic facet terms
+     * for a site.  This is done by intersecting the site centroid against a configured set of spatial portal layers
+     * and storing the results against attributes that are indexed specifically for faceting.
+     * @param lat the latitude of the point.
+     * @param lng the longitude of the point.
+     * @return metadata for the point.
+     */
+    def getLocationMetadataForPoint(lat, lng) {
+
+        def features = performLayerIntersect(lat, lng)
+
+        def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
+        def result = webService.getJson(localityUrl)
+        def localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
+        features << [locality: localityValue]
+
+        // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle
+        // large grid files such as the NVIS grids.
+        features << getNvisClassesForPoint(lat as Double, lng as Double)
+
+        features
+    }
+
+    /**
+     * Reads the facet configuration and intersects the supplied point against the defined facets.
+     * @param lat the latitude of the point.
+     * @param lng the longitude of the point.
+     * @return metadata for the point obtained from the spatial portal.
+     */
+    def performLayerIntersect(lat,lng) {
+
+
+        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+
+        // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
+        def fieldIds = griddedLayers.collect { k, v -> v }
+        groupedFacets.each { k, v ->
+            fieldIds.addAll(v.collect { k1, v1 -> v1 })
+        }
+
+        // Do the intersect
+        def featuresUrl = grailsApplication.config.spatial.intersectUrl + "${fieldIds.join(',')}/${lat}/${lng}"
+        def features = webService.getJson(featuresUrl)
+
+        def facetTerms = [:]
+        griddedLayers.each { name, fid ->
+            def match = features.find { it.field == fid }
+            if (match  && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                facetTerms << [(name): match.value]
+            }
+        }
+
+        groupedFacets.each { group, layers ->
+            def groupTerms = []
+            layers.each { name, fid ->
+                def match = features.find { it.field == fid }
+                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    groupTerms << match.value
+                }
+            }
+            if (groupTerms) {
+                facetTerms << [(group): groupTerms]
+            }
+        }
+
+        facetTerms
     }
 
 }

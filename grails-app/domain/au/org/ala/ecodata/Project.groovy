@@ -36,9 +36,11 @@ class Project {
     String reportingMeasuresAddressed
     String projectPlannedOutputType
     String projectPlannedOutputValue
-    Date dateCreated
+	Map custom
+	Map risks
+	Date dateCreated
     Date lastUpdated
-
+	
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
@@ -57,5 +59,8 @@ class Project {
         projectPlannedOutputType nullable:true
         projectPlannedOutputValue nullable:true
         grantId nullable:true
+		custom nullable:true
+		risks nullable:true
+		
     }
 }

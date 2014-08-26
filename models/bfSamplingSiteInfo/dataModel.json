@@ -235,14 +235,12 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "computed": null,
-                    "preLabel": "General Description / Comments / Notes:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "computed": null,
+                "preLabel": "General Description / Comments / Notes:",
+                "type": "textarea"
+            }],
             "class": "output-section",
             "type": "row"
         }
