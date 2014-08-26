@@ -21,6 +21,9 @@ class Score {
 
     String groupBy
 
+    /** In the case that a groupBy term is specified, the filterBy term will select the value from a particular group */
+    String filterBy
+
     /** "piechart" or "barchart" only currently */
     String displayType
 
