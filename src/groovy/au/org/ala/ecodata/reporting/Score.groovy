@@ -33,6 +33,9 @@ class Score {
     /** The label for this score when displayed */
     String label
 
+    /** A more detailed description of the score and how it should be interpreted */
+    String description
+
     /** Whether or not this score is suitable for use as a project output target */
     boolean isOutputTarget
 
