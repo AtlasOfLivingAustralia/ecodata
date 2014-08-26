@@ -54,6 +54,7 @@
                     "description": "The method used in this activity to manage pests",
                     "name": "pestManagementMethod",
                     "constraints": [
+                        "Crown of Thorns Starfish injection",
                         "Bait & trap",
                         "Bait only",
                         "Biological control agents",
