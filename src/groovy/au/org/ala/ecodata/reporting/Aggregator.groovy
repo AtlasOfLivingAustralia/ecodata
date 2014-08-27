@@ -9,43 +9,60 @@ class Aggregator {
     static String DEFAULT_GROUP = ""
 
     Map<String, Aggregators.OutputAggregator> aggregatorsByGroup
-    Score score
-    Closure groupingFunction
+
+    def scores = []
     String title
-    String outputListName
+    AggregatorBuilder builder
 
-    public Aggregator(String title, groupingFunction, Score score, AggregatorBuilder builder) {
+    public Aggregator(String title, List<Score> scores, AggregatorBuilder builder) {
 
-        this.groupingFunction = groupingFunction
-        this.score = score
+        this.scores = scores
         this.title = title
-
-        if (score.listName) {
-            outputListName = score.listName
-        }
+        this.builder = builder
 
         aggregatorsByGroup = [:].withDefault { key ->
-            builder.createAggregator(score, key)
+            // It's safe to use the first score as grouped scores must have the same label and aggregation type.
+            builder.createAggregator(scores[0].label, scores[0].aggregationType, key)
         }
     }
 
     def aggregate(activity) {
 
         activity.outputs?.each { output ->
-            if (output.name == score.outputName) {
-                if (outputListName) {
-                    output.data[outputListName].each{
-                        List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, it)
-                        aggregators.each {aggregator -> aggregator.aggregate(it)}
+
+            scores.each { score ->
+                if (output.name == score.outputName) {
+                    if (score.listName) {
+                        output.data[score.listName].each{
+                            List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, activity, it)
+                            aggregators.each {aggregator -> aggregateOutput(score, aggregator, it)}
+                        }
                     }
-                }
-                else {
-                    List<Aggregators.OutputAggregator> aggregators = aggregatorFor(activity, output)
-                    aggregators.each {aggregator -> aggregator.aggregate(output.data)}
+                    else {
+                        List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, activity, output)
+                        aggregators.each {aggregator -> aggregateOutput(score, aggregator, output.data)}
+                    }
                 }
             }
         }
 
+    }
+
+
+
+    private void aggregateOutput(score, aggregator, output) {
+
+        def val = getValue(output, score.name)
+        if (val instanceof List) {
+            val.each {aggregator.aggregateValue(it)}
+        }
+        else {
+            aggregator.aggregateValue(val)
+        }
+    }
+
+    def getValue(output, property) {
+        return output[property]
     }
 
     /**
@@ -58,7 +75,7 @@ class Aggregator {
     def results() {
         def results = aggregatorsByGroup.values().collect { it.result() }.findAll{ it.count > 0 }
 
-        return [groupTitle:title, score:score, results:results]
+        return [groupTitle:title, score:scores[0], results:results]
     }
 
     /**
@@ -68,11 +85,11 @@ class Aggregator {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    List<Aggregators.OutputAggregator> aggregatorFor(activity, output) {
+    List<Aggregators.OutputAggregator> aggregatorFor(score, activity, output) {
 
         output.activity = activity
         // TODO the grouping function should probably specify the default group.
-        def group = groupingFunction(output)
+        def group = builder.createGroupingFunction(score)(output)
 
         if (group instanceof List) {
             return group.grep{score.filterBy ? it == score.filterBy : true}.collect { aggregatorsByGroup[it]}

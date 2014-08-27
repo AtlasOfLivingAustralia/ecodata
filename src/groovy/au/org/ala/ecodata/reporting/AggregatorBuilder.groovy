@@ -7,23 +7,28 @@ package au.org.ala.ecodata.reporting
 class AggregatorBuilder {
 
     Map groupingSpec
-    Score score
+    List<Score> scores = []
 
     public AggregatorBuilder groupBy(groupingSpec) {
         this.groupingSpec = groupingSpec
         this
     }
 
-    public AggregatorBuilder score(score) {
-        this.score = score
+    public AggregatorBuilder scores(List<Score> scores) {
+        this.scores = scores
         this
+    }
+
+    public AggregatorBuilder accumulate(Score score) {
+        this.scores << score
     }
 
 
     public Aggregator build() {
-        def groupingFunction = createGroupingFunction(score, groupingSpec)
-
-        return new Aggregator(groupingSpec.groupTitle, groupingFunction, score, this)
+        if (!scores) {
+            throw new IllegalArgumentException("At least one score must be supplied.")
+        }
+        return new Aggregator(scores[0].label, scores, this)
     }
 
     /**
@@ -32,10 +37,10 @@ class AggregatorBuilder {
      * @param group the value of the group that the Aggregator is aggregating.
      * @return a new instance of OutputAggregator
      */
-    def createAggregator(score, group = '') {
+    def createAggregator(label, aggregationType, group = '') {
 
-        def params = [score:score, group:group]
-        switch (score.aggregationType) {
+        def params = [label:label, group:group]
+        switch (aggregationType) {
             case Score.AGGREGATION_TYPE.SUM:
                 return new Aggregators.SummingAggegrator(params)
                 break;
@@ -52,7 +57,7 @@ class AggregatorBuilder {
                 return new Aggregators.SetAggregator(params)
                 break;
             default:
-                throw new IllegalAccessException('Invalid aggregation type: '+score.aggregationType)
+                throw new IllegalAccessException('Invalid aggregation type: '+aggregationType)
         }
 
 
@@ -68,8 +73,11 @@ class AggregatorBuilder {
      * }
      * @return
      */
-    Closure createGroupingFunction(score, groupingSpec) {
+    Closure createGroupingFunction(Score score, groupingSpec = null) {
 
+        if (!groupingSpec) {
+            groupingSpec = score.defaultGrouping()
+        }
         final String property = groupingSpec.property
 
         switch (groupingSpec.entity) {

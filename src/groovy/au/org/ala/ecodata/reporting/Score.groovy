@@ -48,6 +48,17 @@ class Score {
      */
     String units
 
+    public defaultGrouping() {
+        if (groupBy) {
+            def bits = groupBy.split(':')
+            if (bits.length == 2) {
+                return [entity: bits[0], property: bits[1], groupTitle: label]
+            }
+        }
+        return [entity: '*']
+    }
+
+
     /**
      * Returns a List of Scores as defined for the supplied output metadata.
      * @param outputMetadata describes the output, including a description of the scores this output provides

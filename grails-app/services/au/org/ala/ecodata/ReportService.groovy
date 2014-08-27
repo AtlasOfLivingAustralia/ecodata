@@ -22,16 +22,6 @@ class ReportService {
         metadataService.activitiesModel().outputs?.each{
             Score.outputScores(it).each { score ->
                 def scoreDetails = [score:score]
-                if (score.groupBy) {
-                    def bits = score.groupBy.split(':')
-                    if (bits.length != 2) {
-                        log.error("Misconfigured score grouping: "+score.groupBy)
-                    }
-                    else {
-                        scoreDetails << [groupBy: [entity: bits[0], property: bits[1], groupTitle: score.label]]
-                    }
-                }
-
                 toAggregate << scoreDetails
             }
         }
@@ -144,8 +134,10 @@ class ReportService {
     def buildAggregators(aggregationSpec) {
         List<Aggregator> aggregators = []
 
-        aggregationSpec.each {
-            aggregators << new AggregatorBuilder().score(it.score).groupBy(it.groupBy?:it.groupBy ?: [entity:'*']).build()
+        def groupedScores = aggregationSpec.groupBy{it.score.label}
+
+        groupedScores.each { k, v ->
+            aggregators << new AggregatorBuilder().scores(v.collect{it.score}).build()
         }
 
         aggregators

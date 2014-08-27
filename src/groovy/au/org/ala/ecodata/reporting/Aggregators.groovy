@@ -15,36 +15,14 @@ class Aggregators {
     public static abstract class OutputAggregator {
 
         String group
-        Score score
         int count;
-
-        public void setScore(Score score) {
-            this.score = score
-        }
-
-        public void aggregate(output) {
-
-            def val = getValue(output)
-            if (val instanceof List) {
-                val.each {aggregateValue(it)}
-            }
-            else {
-                aggregateValue(val)
-            }
-
-
-        }
+        String label
 
         public void aggregateValue(value) {
             if (value != null) {
                 count++;
                 doAggregation(value);
             }
-        }
-
-        def getValue(output) {
-
-            return output[score.name]
         }
 
         def getValueAsNumeric(value) {
@@ -56,14 +34,14 @@ class Aggregators {
                     numeric = format.parse(value)
                 }
                 catch (ParseException e) {
-                    log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+                    log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${label}")
                 }
             }
             else if (value instanceof Number) {
                 numeric = value
             }
             else {
-                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${score.outputName}:${score.label}")
+                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${label}")
             }
             return numeric
         }
@@ -91,7 +69,7 @@ class Aggregators {
         }
 
         public AggregrationResult result() {
-            return new AggregrationResult([score:score, group:group, count: count, result:count > 0 ? total/count : 0])
+            return new AggregrationResult([label:label, group:group, count: count, result:count > 0 ? total/count : 0])
         }
     }
 
@@ -111,7 +89,7 @@ class Aggregators {
 
         }
         public AggregrationResult result() {
-            return new AggregrationResult([score:score, group:group, count:count, result:total])
+            return new AggregrationResult([label:label, group:group, count:count, result:total])
         }
 
     }
@@ -125,7 +103,7 @@ class Aggregators {
 
         public AggregrationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([score:score, units:"", group:group, count:count, result:count])
+            return new AggregrationResult([label:label, units:"", group:group, count:count, result:count])
         }
     }
 
@@ -153,7 +131,7 @@ class Aggregators {
 
         public AggregrationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([score:score, units:"", group:group, count:count, result:histogram])
+            return new AggregrationResult([label:label, units:"", group:group, count:count, result:histogram])
         }
     }
 
@@ -170,7 +148,7 @@ class Aggregators {
 
         public AggregrationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([score:score, units:"", group:group, count:count, result:values])
+            return new AggregrationResult([label:label, units:"", group:group, count:count, result:values])
         }
     }
 
@@ -180,9 +158,7 @@ class Aggregators {
      */
     static class AggregrationResult {
         /** The score label */
-        String score
-
-        String outputName
+        String label
 
         /** The units of the aggregation */
         String units
@@ -197,7 +173,7 @@ class Aggregators {
         def result
 
         public String toString() {
-            return "$outputName:$score:,count=$count,result=$result"
+            return "$label:,count=$count,result=$result"
         }
     }
 
