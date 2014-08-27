@@ -1,24 +1,10 @@
 {
-    "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "name": "Weed Mapping & Monitoring",
-        "type": "Assessment",
-        "outputs": [
-            "Evidence of Weed Treatment",
-            "Weed Observation and Monitoring Details",
-            "Participant Information",
-            "Photo Points"
-        ],
-        "gmsId": "WSA"
-    },
     "activities": [
         {
             "status": "deleted",
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
-            "outputs": [
-                "Biodiversity Fund Outcomes & Monitoring Methodology"
-            ]
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         },
         {
             "category": "Implementation actions",
@@ -484,6 +470,18 @@
                 "Indicator 9 - Animal Species",
                 "Indicator 10 - Bushland Degradation Risk"
             ]
+        },
+        {
+            "category": "Small Grants",
+            "name": "Progress Report",
+            "type": "Assessment",
+            "outputs": ["Progress Report Details"]
+        },
+        {
+            "category": "Small Grants",
+            "name": "Final Report",
+            "type": "Assessment",
+            "outputs": ["Final Report Details"]
         }
     ],
     "outputs": [
@@ -774,15 +772,13 @@
         },
         {
             "template": "photoPoints",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "name": "numberOfPoints",
-                    "aggregationType": "SUM",
-                    "label": "No. of photo points",
-                    "units": ""
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "name": "numberOfPoints",
+                "aggregationType": "SUM",
+                "label": "No. of photo points",
+                "units": ""
+            }],
             "name": "Photo Points"
         },
         {
@@ -874,17 +870,15 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "category": "Invasive Species Management - Weeds",
-                    "displayType": "",
-                    "name": "effectivenessOfPreviousTreatment",
-                    "aggregationType": "AVERAGE",
-                    "label": "Effectiveness of Previous Treatment (% killed)",
-                    "units": "%"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "category": "Invasive Species Management - Weeds",
+                "displayType": "",
+                "name": "effectivenessOfPreviousTreatment",
+                "aggregationType": "AVERAGE",
+                "label": "Effectiveness of Previous Treatment (% killed)",
+                "units": "%"
+            }],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -1113,18 +1107,10 @@
                     "category": "Natural Resources Management",
                     "listName": "",
                     "displayType": "",
-                    "name": "waterbodyType",
+                    "name": "isCurrentFlowNatural",
                     "aggregationType": "COUNT",
                     "label": "No. of water management activities implemented",
                     "gmsId": "WMN"
-                },
-                {
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "isCurrentFlowNatural",
-                    "aggregationType": "COUNT",
-                    "label": "No. of water management activities implemented"
                 },
                 {
                     "isOutputTarget": false,
@@ -1248,17 +1234,15 @@
         },
         {
             "template": "riskAssessment",
-            "scores": [
-                {
-                    "groupBy": "output:riskType",
-                    "category": "Sites and Activity Planning",
-                    "listName": "riskTable",
-                    "displayType": "barchart",
-                    "name": "riskType",
-                    "aggregationType": "COUNT",
-                    "label": "No. of threat and risk issues by type of issue"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:riskType",
+                "category": "Sites and Activity Planning",
+                "listName": "riskTable",
+                "displayType": "barchart",
+                "name": "riskType",
+                "aggregationType": "COUNT",
+                "label": "No. of threat and risk issues by type of issue"
+            }],
             "name": "Threatening Processes & Site Condition Risks"
         },
         {
@@ -1566,17 +1550,15 @@
         },
         {
             "template": "adminActivities",
-            "scores": [
-                {
-                    "groupBy": "output:adminActionType",
-                    "category": "Project Management, Planning and Research Outputs",
-                    "listName": "adminActions",
-                    "displayType": "barchart",
-                    "name": "hoursActionTotal",
-                    "aggregationType": "SUM",
-                    "label": "Total hours spent undertaking different types of project administration tasks"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:adminActionType",
+                "category": "Project Management, Planning and Research Outputs",
+                "listName": "adminActions",
+                "displayType": "barchart",
+                "name": "hoursActionTotal",
+                "aggregationType": "SUM",
+                "label": "Total hours spent undertaking different types of project administration tasks"
+            }],
             "name": "Administration Activities"
         },
         {
@@ -2278,6 +2260,16 @@
             "template": "sitePlanningDetails",
             "scores": [],
             "name": "Site Planning Details"
+        },
+        {
+            "template": "smallGrantProgressReport",
+            "scores": [],
+            "name": "Progress Report Details"
+        },
+        {
+            "template": "smallGrantFinalReport",
+            "scores": [],
+            "name": "Final Report Details"
         }
     ]
 }
