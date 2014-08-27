@@ -125,9 +125,7 @@
             "category": "Training",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
-            "outputs": [
-                "Indigenous Knowledge Transfer Details"
-            ],
+            "outputs": ["Indigenous Knowledge Transfer Details"],
             "gmsId": "IKM IKT"
         },
         {
@@ -144,9 +142,7 @@
             "category": "Implementation actions",
             "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": [
-                "Management Practice Change Details"
-            ],
+            "outputs": ["Management Practice Change Details"],
             "gmsId": "MPC MPCFE MPCSP"
         },
         {
@@ -233,7 +229,7 @@
                 "Infrastructure Details",
                 "Participant Information"
             ],
-            "gmsId": "PAI"
+            "gmsId": "PAM"
         },
         {
             "category": "Implementation actions",
@@ -269,9 +265,7 @@
             "category": "Assessment & monitoring",
             "name": "Site Monitoring Plan",
             "type": "Activity",
-            "outputs": [
-                "Planned Monitoring Approach"
-            ]
+            "outputs": ["Planned Monitoring Approach"]
         },
         {
             "category": "Implementation actions",
@@ -300,9 +294,7 @@
             "category": "Implementation actions",
             "name": "Water Management",
             "type": "Activity",
-            "outputs": [
-                "Water Management Details"
-            ],
+            "outputs": ["Water Management Details"],
             "gmsId": "WMA WMN"
         },
         {
@@ -326,7 +318,7 @@
                 "Participant Information",
                 "Photo Points"
             ],
-            "gmsId": "WSA"
+            "gmsId": "WMM"
         },
         {
             "category": "Implementation actions",
@@ -395,9 +387,7 @@
             "status": "deleted",
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
             "status": "deleted",
@@ -414,9 +404,7 @@
             "status": "deleted",
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
             "status": "deleted",
@@ -846,7 +834,7 @@
                     "aggregationType": "SUM",
                     "label": "Burnt area (Ha) - may be different to the total area managed",
                     "units": "Ha",
-                    "gmsId": "Fire management (area)"
+                    "gmsId": "FMA"
                 },
                 {
                     "isOutputTarget": false,
@@ -1358,7 +1346,7 @@
                     "name": "structuresInstalled",
                     "aggregationType": "COUNT",
                     "label": "No. of activities implementing access control works",
-                    "gmsId": "PAI"
+                    "gmsId": "PAM"
                 },
                 {
                     "category": "Natural Resources Management",
@@ -1743,17 +1731,15 @@
         },
         {
             "template": "employmentDetails",
-            "scores": [
-                {
-                    "category": "Indigenous Capacity",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalEmployees",
-                    "aggregationType": "SUM",
-                    "label": "Total No. of Indigenous people employed",
-                    "gmsId": "IPE"
-                }
-            ],
+            "scores": [{
+                "category": "Indigenous Capacity",
+                "listName": "",
+                "displayType": "",
+                "name": "totalEmployees",
+                "aggregationType": "SUM",
+                "label": "Total No. of Indigenous people employed",
+                "gmsId": "IPE"
+            }],
             "name": "Indigenous Employment"
         },
         {
@@ -2057,18 +2043,16 @@
         },
         {
             "template": "waterQualityMeasurements",
-            "scores": [
-                {
-                    "isOutputTarget": true,
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "instrumentCalibration",
-                    "aggregationType": "COUNT",
-                    "label": "No. of water quality monitoring events undertaken",
-                    "gmsId": "WQSA"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": true,
+                "category": "Natural Resources Management",
+                "listName": "",
+                "displayType": "",
+                "name": "instrumentCalibration",
+                "aggregationType": "COUNT",
+                "label": "No. of water quality monitoring events undertaken",
+                "gmsId": "WQSA"
+            }],
             "name": "Water Quality Measurements"
         },
         {
@@ -2108,18 +2092,16 @@
         },
         {
             "template": "bfSamplingSiteInfo",
-            "scores": [
-                {
-                    "isOutputTarget": true,
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "assessmentEventType",
-                    "aggregationType": "COUNT",
-                    "label": "No. of site assessments undertaken",
-                    "gmsId": "VAC"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": true,
+                "category": "Natural Resources Management",
+                "listName": "",
+                "displayType": "",
+                "name": "assessmentEventType",
+                "aggregationType": "COUNT",
+                "label": "No. of site assessments undertaken",
+                "gmsId": "VAC"
+            }],
             "name": "Sampling Site Information"
         },
         {
@@ -2258,7 +2240,14 @@
         },
         {
             "template": "sitePlanningDetails",
-            "scores": [],
+            "scores": [{
+                "listName": "",
+                "displayType": "",
+                "name": "noOfWorksAreasTotal",
+                "aggregationType": "COUNT",
+                "label": "Number of site preparation forms filled out",
+                "gmsId": "STA"
+            }],
             "name": "Site Planning Details"
         },
         {
