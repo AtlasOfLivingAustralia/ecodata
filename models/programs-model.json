@@ -134,8 +134,13 @@
         "isMeritProgramme": true,
         "name": "Green Army",
         "subprograms": [{
-            "name": "Round 1",
-            "themes": []
+            "name": "Green Army Round 1",
+            "themes": [
+                {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
+                {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
+            ]
         }],
         "reportingPeriodAlignedToCalendar": true
     },
