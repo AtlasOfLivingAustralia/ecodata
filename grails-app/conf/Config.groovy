@@ -139,7 +139,7 @@ app {
     facets {
         geographic {
             gridded {
-                state = 'cl22'
+                state = 'cl927'
                 nrm = 'cl916'
                 lga = 'cl959'
                 ibra = 'cl20'
