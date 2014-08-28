@@ -1,4 +1,16 @@
 {
+    "selectedActivity": {
+        "category": "Assessment & monitoring",
+        "name": "Weed Mapping & Monitoring",
+        "type": "Assessment",
+        "outputs": [
+            "Evidence of Weed Treatment",
+            "Weed Observation and Monitoring Details",
+            "Participant Information",
+            "Photo Points"
+        ],
+        "gmsId": "WMM WSA"
+    },
     "activities": [
         {
             "status": "deleted",
@@ -318,7 +330,7 @@
                 "Participant Information",
                 "Photo Points"
             ],
-            "gmsId": "WMM"
+            "gmsId": "WMM WSA"
         },
         {
             "category": "Implementation actions",
@@ -879,7 +891,7 @@
                     "name": "weedObservationMonitoringDetails",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking weed monitoring",
-                    "gmsId": "WMM"
+                    "gmsId": "WMM WSA"
                 },
                 {
                     "isOutputTarget": false,
@@ -2192,7 +2204,7 @@
                     "name": "siteName",
                     "aggregationType": "SUM",
                     "label": "Total No. of activities undertaking heritage conservation actions",
-                    "gmsId": "HC"
+                    "gmsId": "HC HSA"
                 },
                 {
                     "category": "Heritage Asset Management",
