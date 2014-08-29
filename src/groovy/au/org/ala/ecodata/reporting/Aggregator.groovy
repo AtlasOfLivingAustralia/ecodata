@@ -98,7 +98,8 @@ class Aggregator {
         if (score.filterBy && group != score.filterBy) {
             return []
         }
-        if (!group) {
+        // Remove the group when using filtered scores as it will prevent aggregration with other grouped or non-grouped scores.
+        if (!group || score.filterBy) {
             group = DEFAULT_GROUP
         }
         return [aggregatorsByGroup[group]]

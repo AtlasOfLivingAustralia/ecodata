@@ -1,16 +1,4 @@
 {
-    "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "name": "Weed Mapping & Monitoring",
-        "type": "Assessment",
-        "outputs": [
-            "Evidence of Weed Treatment",
-            "Weed Observation and Monitoring Details",
-            "Participant Information",
-            "Photo Points"
-        ],
-        "gmsId": "WMM WSA"
-    },
     "activities": [
         {
             "status": "deleted",
@@ -330,7 +318,7 @@
                 "Participant Information",
                 "Photo Points"
             ],
-            "gmsId": "WMM WSA"
+            "gmsId": "WMM"
         },
         {
             "category": "Implementation actions",
@@ -475,13 +463,29 @@
             "category": "Small Grants",
             "name": "Progress Report",
             "type": "Assessment",
-            "outputs": ["Progress Report Details"]
+            "outputs": [
+                "Progress Report Details",
+                "Attachments"
+            ]
         },
         {
             "category": "Small Grants",
             "name": "Final Report",
             "type": "Assessment",
-            "outputs": ["Final Report Details"]
+            "outputs": [
+                "Final Report Details",
+                "Output Details",
+                "Project Aquittal",
+                "Attachments"
+            ]
+        },
+        {
+            "category": "None",
+            "status": "active",
+            "name": "Upload of stage 1 and 2 reporting data",
+            "type": "Activity",
+            "outputs": ["Upload of stage 1 and 2 reporting data"],
+            "gmsId": ""
         }
     ],
     "outputs": [
@@ -492,7 +496,7 @@
                     "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "",
-                    "displayType": "barchart",
+                    "displayType": "",
                     "name": "areaRevegHa",
                     "aggregationType": "SUM",
                     "label": "Area of revegetation works (Ha)",
@@ -537,7 +541,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
-                    "displayType": "barchart",
+                    "displayType": "",
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
                     "label": "Kilograms of seed sown",
@@ -588,6 +592,7 @@
                     "name": "numberPlanted",
                     "aggregationType": "SUM",
                     "label": "No. of plants planted by mature height class (eg. >2m)",
+                    "filterBy": "> 2 metres",
                     "gmsId": "RVT2A"
                 }
             ],
@@ -891,7 +896,7 @@
                     "name": "weedObservationMonitoringDetails",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking weed monitoring",
-                    "gmsId": "WMM WSA"
+                    "gmsId": "WMM"
                 },
                 {
                     "isOutputTarget": false,
@@ -2204,7 +2209,7 @@
                     "name": "siteName",
                     "aggregationType": "SUM",
                     "label": "Total No. of activities undertaking heritage conservation actions",
-                    "gmsId": "HC HSA"
+                    "gmsId": "HC"
                 },
                 {
                     "category": "Heritage Asset Management",
@@ -2253,11 +2258,13 @@
         {
             "template": "sitePlanningDetails",
             "scores": [{
+                "category": "Project Management, Planning and Research Outputs",
                 "listName": "",
+                "description": "Represents the number of acitivities which have undertaken planning for intervention works.",
                 "displayType": "",
                 "name": "noOfWorksAreasTotal",
                 "aggregationType": "COUNT",
-                "label": "Number of site preparation forms filled out",
+                "label": "Number of site preparation actions undertaken",
                 "gmsId": "STA"
             }],
             "name": "Site Planning Details"
@@ -2271,6 +2278,34 @@
             "template": "smallGrantFinalReport",
             "scores": [],
             "name": "Final Report Details"
+        },
+        {
+            "template": "smallGrantOutputs",
+            "scores": [],
+            "name": "Output Details"
+        },
+        {
+            "template": "smallGrantAquittal",
+            "scores": [],
+            "name": "Project Aquittal"
+        },
+        {
+            "template": "activityAttachments",
+            "scores": [],
+            "name": "Attachments"
+        },
+        {
+            "template": "summaryReportDataUpload",
+            "scores": [{
+                "groupBy": "output:scoreLabel",
+                "listName": "scores",
+                "displayType": "barchart",
+                "name": "score",
+                "aggregationType": "SUM",
+                "label": "Number of plants planted",
+                "filterBy": "Number of plants planted"
+            }],
+            "name": "Upload of stage 1 and 2 reporting data"
         }
     ]
 }

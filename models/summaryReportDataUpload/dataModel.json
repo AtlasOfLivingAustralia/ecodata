@@ -1,0 +1,49 @@
+{
+    "modelName": "Upload of stage 1 and 2 reporting data",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "scores",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The label of the score we are collecting",
+                    "name": "scoreLabel",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The value of the score",
+                    "name": "score",
+                    "validate": "required"
+                }            ]
+        }
+    ],
+    "viewModel": [
+        {
+
+            "title": "Progress towards targets automatically uploaded for stage 1 and 2:",
+            "source": "scores",
+            "columns": [
+                {
+                    "title": "Score",
+                    "source": "scoreLabel",
+                    "width": "50%",
+                    "type": "text",
+                    "readOnly":true
+                },
+                {
+                    "title": "Amount",
+                    "source": "score",
+                    "width": "10%",
+                    "computed": null,
+                    "type": "number",
+                    "readOnly":true
+                }
+            ],
+            "userAddedRows": false,
+            "class": "output-section",
+            "type": "table"
+        }
+    ]
+}
