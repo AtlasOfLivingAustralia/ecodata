@@ -41,9 +41,11 @@ grails.project.dependency.resolution = {
 		mavenRepo "http://mvnrepository.com"
         mavenRepo "http://maven.ala.org.au/repository"
         mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
+        mavenRepo "http://download.osgeo.org/webdav/geotools/"
     }
 
     def seleniumVersion = "2.21.0"
+    def geoToolsVersion = "11.2"
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
@@ -63,6 +65,10 @@ grails.project.dependency.resolution = {
         compile "com.github.fge:json-schema-validator:2.1.6"
 		compile "com.itextpdf:itextpdf:5.5.1"
         compile "org.apache.httpcomponents:httpmime:4.1.2"
+
+        compile "org.geotools.xsd:gt-xsd-kml:${geoToolsVersion}"
+        compile "org.geotools:gt-shapefile:${geoToolsVersion}"
+        compile "org.geotools:gt-geojson:${geoToolsVersion}"
     }
 
     plugins {

@@ -2,7 +2,22 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.Aggregator
 import au.org.ala.ecodata.reporting.AggregatorBuilder
 import au.org.ala.ecodata.reporting.Score
+import com.vividsolutions.jts.geom.Geometry
+import grails.converters.JSON
+import org.geotools.data.DataStore
+import org.geotools.data.DataUtilities
+import org.geotools.data.FeatureStore
+import org.geotools.data.FeatureWriter
+import org.geotools.data.FileDataStoreFactorySpi
+import org.geotools.data.shapefile.ShapefileDataStoreFactory
+import org.geotools.geojson.geom.GeometryJSON
 import org.grails.plugins.csv.CSVReaderUtils
+import org.opengis.feature.simple.SimpleFeature
+import org.opengis.feature.simple.SimpleFeatureType
+import org.opengis.feature.type.FeatureType
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 /**
  * The ReportService aggregates and returns output scores.
@@ -183,6 +198,80 @@ class ReportService {
         })
 
         userSummary
+    }
+
+    def exportShapeFile(projectIds) {
+
+        FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory();
+
+        File file = File.createTempFile("siteShapeFile", ".shp")
+        String filename = file.getName().substring(0, file.getName().indexOf(".shp"))
+
+        Map map = Collections.singletonMap( "url", file.toURI().toURL() );
+
+        FeatureWriter<SimpleFeatureType,SimpleFeature>  writer = null
+        try {
+            DataStore store = factory.createNewDataStore( map );
+            FeatureType featureType = DataUtilities.createType( filename, "geom:MultiPolygon,name:String,description:String,projectName:String,grantId:String,externalId:String" );
+            store.createSchema( featureType );
+
+
+            writer = store.getFeatureWriterAppend(((FeatureStore)store.getFeatureSource(filename)).getTransaction())
+
+            GeometryJSON gjson = new GeometryJSON()
+
+
+            projectIds.each { projectId ->
+                def project = projectService.get(projectId)
+
+                project.sites.each { site ->
+
+                    def siteGeom = siteService.geometryAsGeoJson(site)
+                    if (siteGeom) {
+
+
+                        Geometry geom = gjson.read((siteGeom as JSON).toString())
+
+                        SimpleFeature siteFeature = writer.next()
+
+                        siteFeature.setAttributes([geom, site.name, site.description, project.name, project.grantId, project.externalId].toArray())
+
+                        writer.write()
+                    } else {
+                        log.warn("Unable to get geometry for site: ${site.siteId}")
+                    }
+                }
+            }
+        }
+        finally {
+            if (writer != null) {
+                writer.close()
+            }
+        }
+
+        buildZip(file)
+
+    }
+
+    def buildZip(File shapeFile) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream()
+        ZipOutputStream zipFile = new ZipOutputStream(baos)
+
+        String filename = shapeFile.getName().substring(0, shapeFile.getName().indexOf(".shp"))
+        String path = shapeFile.getParent()
+
+        def fileExtensions = ['.shp', '.dbf', '.fix', '.prj', '.shx']
+
+        fileExtensions.each { extension ->
+            File file = new File(path, filename+extension)
+            zipFile.putNextEntry(new ZipEntry("meritSites"+extension))
+            file.withInputStream {
+                zipFile << it
+            }
+            zipFile.closeEntry()
+        }
+        zipFile.finish()
+        baos
     }
 
 

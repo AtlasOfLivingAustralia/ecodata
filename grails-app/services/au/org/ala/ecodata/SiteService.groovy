@@ -8,7 +8,7 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
 
-    def grailsApplication, activityService, projectService, commonService
+    def grailsApplication, activityService, projectService, commonService, webService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -141,6 +141,34 @@ class SiteService {
         site.projects.unique()
         site.save()
         [status:'ok']
+    }
+
+    def geometryAsGeoJson(site) {
+        def geometry = site?.extent?.geometry
+
+        if (!geometry) {
+            return
+        }
+        def result
+        switch (geometry.type) {
+            case 'Circle':
+                // We support circles, but they are not officially supported.
+                result = [type:'Point', coordinates:geometry.centre]
+                break
+            case 'Point':
+            case 'point':
+                result = [type:'Point', coordinates:geometry.coordinates]
+                break
+            case 'pid':
+                result = geometryForPid(geometry.pid)
+                break
+        }
+        result
+    }
+
+    def geometryForPid(pid) {
+        def url = "${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/${pid}"
+        webService.getJson(url)
     }
 
 }

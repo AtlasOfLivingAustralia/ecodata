@@ -156,4 +156,33 @@ class SearchController {
         }
     }
 
+    def exportProjectSitesAsShapefile() {
+
+        if (!params.max) {
+            params.max = 100
+            params.offset = 0
+        }
+        def query = params.query
+        if (!query) {
+            query = '*'
+        }
+
+        SearchResponse res = elasticSearchService.search(query, params, "")
+
+        Set ids = new HashSet()
+
+        for (SearchHit hit : res.hits.hits) {
+            if (hit.source.projectId) {
+                ids << hit.source.projectId
+            }
+        }
+
+        def zipOut = reportService.exportShapeFile(ids)
+
+        response.setContentType("application/zip")
+        response.setHeader("Content-disposition", "filename=meritSites.zip")
+        response.outputStream << zipOut.toByteArray()
+        response.outputStream.flush()
+    }
+
 }
