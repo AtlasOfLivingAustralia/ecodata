@@ -69,6 +69,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools.xsd:gt-xsd-kml:${geoToolsVersion}"
         compile "org.geotools:gt-shapefile:${geoToolsVersion}"
         compile "org.geotools:gt-geojson:${geoToolsVersion}"
+        compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
     }
 
     plugins {

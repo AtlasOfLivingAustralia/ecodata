@@ -4,11 +4,11 @@ import au.org.ala.ecodata.reporting.AggregatorBuilder
 import au.org.ala.ecodata.reporting.Score
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.geotools.data.DataStore
 import org.geotools.data.DataUtilities
 import org.geotools.data.FeatureStore
 import org.geotools.data.FeatureWriter
 import org.geotools.data.FileDataStoreFactorySpi
+import org.geotools.data.shapefile.ShapefileDataStore
 import org.geotools.data.shapefile.ShapefileDataStoreFactory
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.plugins.csv.CSVReaderUtils
@@ -207,14 +207,13 @@ class ReportService {
         File file = File.createTempFile("siteShapeFile", ".shp")
         String filename = file.getName().substring(0, file.getName().indexOf(".shp"))
 
-        Map map = Collections.singletonMap( "url", file.toURI().toURL() );
+        Map map = ["url": file.toURI().toURL() ]
 
         FeatureWriter<SimpleFeatureType,SimpleFeature>  writer = null
         try {
-            DataStore store = factory.createNewDataStore( map );
-            FeatureType featureType = DataUtilities.createType( filename, "geom:MultiPolygon,name:String,description:String,projectName:String,grantId:String,externalId:String" );
+            ShapefileDataStore store = factory.createNewDataStore( map );
+            FeatureType featureType = DataUtilities.createType( filename, "geom:MultiPolygon:srid=4326,name:String,description:String,projectName:String,grantId:String,externalId:String" );
             store.createSchema( featureType );
-
 
             writer = store.getFeatureWriterAppend(((FeatureStore)store.getFeatureSource(filename)).getTransaction())
 
@@ -224,21 +223,30 @@ class ReportService {
             projectIds.each { projectId ->
                 def project = projectService.get(projectId)
 
-                project.sites.each { site ->
+                if (!project) {
+                    return
+                }
 
-                    def siteGeom = siteService.geometryAsGeoJson(site)
-                    if (siteGeom) {
+                project.sites?.each { site ->
+
+                    try {
+                        def siteGeom = siteService.geometryAsGeoJson(site)
+                        if (siteGeom) {
 
 
-                        Geometry geom = gjson.read((siteGeom as JSON).toString())
+                            Geometry geom = gjson.read((siteGeom as JSON).toString())
 
-                        SimpleFeature siteFeature = writer.next()
+                            SimpleFeature siteFeature = writer.next()
 
-                        siteFeature.setAttributes([geom, site.name, site.description, project.name, project.grantId, project.externalId].toArray())
+                            siteFeature.setAttributes([geom, site.name, site.description, project.name, project.grantId, project.externalId].toArray())
 
-                        writer.write()
-                    } else {
-                        log.warn("Unable to get geometry for site: ${site.siteId}")
+                            writer.write()
+                        } else {
+                            log.warn("Unable to get geometry for site: ${site.siteId}")
+                        }
+                    }
+                    catch (Exception e) {
+                        log.error("Error getting geomerty for site: ${site.siteId}", e)
                     }
                 }
             }
