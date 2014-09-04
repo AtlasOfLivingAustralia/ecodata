@@ -348,8 +348,12 @@ class ElasticSearchService {
                                             }
                                         }
                                     }
-                                }
+                                },
+                                "externalId":{"type":"string"}
                             }
+                        },
+                        "externalId": {
+                            "type":"string"
                         },
                         "activities":{
                             "properties":{
