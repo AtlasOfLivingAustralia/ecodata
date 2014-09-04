@@ -70,6 +70,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-shapefile:${geoToolsVersion}"
         compile "org.geotools:gt-geojson:${geoToolsVersion}"
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
+        runtime "com.h2database:h2:1.3.164"
     }
 
     plugins {

@@ -240,7 +240,15 @@ class ReportService {
 
                             siteFeature.setAttributes([geom, site.name, site.description, project.name, project.grantId, project.externalId].toArray())
 
-                            writer.write()
+                            try {
+                                writer.write()
+                            }
+                            catch (Exception e){
+                                writer.remove()
+                                log.error("Unable to get write for site: ${site.siteId}", e)
+
+                            }
+
                         } else {
                             log.warn("Unable to get geometry for site: ${site.siteId}")
                         }
