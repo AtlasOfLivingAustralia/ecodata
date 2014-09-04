@@ -248,24 +248,30 @@ class MetadataService {
         def features = webService.getJson(featuresUrl)
 
         def facetTerms = [:]
-        griddedLayers.each { name, fid ->
-            def match = features.find { it.field == fid }
-            if (match  && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                facetTerms << [(name): match.value]
-            }
-        }
 
-        groupedFacets.each { group, layers ->
-            def groupTerms = []
-            layers.each { name, fid ->
+        if (features instanceof List) {
+            griddedLayers.each { name, fid ->
                 def match = features.find { it.field == fid }
                 if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                    groupTerms << match.value
+                    facetTerms << [(name): match.value]
                 }
             }
-            if (groupTerms) {
-                facetTerms << [(group): groupTerms]
+
+            groupedFacets.each { group, layers ->
+                def groupTerms = []
+                layers.each { name, fid ->
+                    def match = features.find { it.field == fid }
+                    if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                        groupTerms << match.value
+                    }
+                }
+                if (groupTerms) {
+                    facetTerms << [(group): groupTerms]
+                }
             }
+        }
+        else {
+            log.warn("Error performing intersect for lat=${lat} lng=${lng}, result=${features}")
         }
 
         facetTerms
