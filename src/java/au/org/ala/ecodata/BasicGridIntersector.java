@@ -1,5 +1,7 @@
 package au.org.ala.ecodata;
 
+import groovy.util.logging.Log;
+
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -9,6 +11,7 @@ import java.nio.ByteOrder;
  * Is is based on the class org.ala.layers.grid.GridGroup in the layers-store project
  */
 public class BasicGridIntersector {
+
 
     RandomAccessFile raf;
     byte[] b;
@@ -98,6 +101,16 @@ public class BasicGridIntersector {
                 byteorderLSB = false;
             }
         }
+    }
+
+    public void close() {
+        try {
+            raf.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

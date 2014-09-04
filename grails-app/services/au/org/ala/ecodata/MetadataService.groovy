@@ -161,13 +161,19 @@ class MetadataService {
                 def classesJson = classesJsonFile.text
                 def classesMap = JSON.parse(classesJson)
 
+                BasicGridIntersector intersector = null
                 try {
-                    BasicGridIntersector intersector = new BasicGridIntersector(path)
+                    intersector = new BasicGridIntersector(path)
                     def classNumber = intersector.readCell(lon, lat)
                     retMap.put(name, classesMap[classNumber.toInteger().toString()])
                 } catch (IllegalArgumentException ex) {
                     // Lat long was outside extent of grid
                     retMap.put(name, null)
+                }
+                finally {
+                    if (intersector != null) {
+                        intersector.close()
+                    }
                 }
             }
             else {
