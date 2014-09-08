@@ -157,7 +157,13 @@ class SiteService {
                 break
             case 'Point':
             case 'point':
-                result = [type:'Point', coordinates:geometry.coordinates]
+                def coords = geometry.coordinates
+                // There is a process that is recording the coordinates as strings.
+                coords = [coords[0] as Double, coords[1] as Double]
+                result = [type:'Point', coordinates:coords]
+                break
+            case 'Polygon':
+                result = [type:'Polygon', coordinates: geometry.coordinates]
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)
