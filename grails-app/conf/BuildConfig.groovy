@@ -70,7 +70,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-shapefile:${geoToolsVersion}"
         compile "org.geotools:gt-geojson:${geoToolsVersion}"
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
-        runtime "com.h2database:h2:1.3.164"
+
     }
 
     plugins {
@@ -85,7 +85,7 @@ grails.project.dependency.resolution = {
         //runtime ":yui-minify-resources:0.1.5"
 
         compile ":mongodb:1.3.0"
-        compile ":quartz:1.0-RC9"
+        compile ":quartz:1.0.2"
         compile ":excel-export:0.2.0"
         compile ":excel-import:1.0.0"
 
