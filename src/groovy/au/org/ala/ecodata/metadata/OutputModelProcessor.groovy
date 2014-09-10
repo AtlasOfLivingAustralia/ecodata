@@ -74,11 +74,38 @@ class OutputModelProcessor {
         }
     }
 
+    /**
+     * Takes an output containing potentially nested values and produces a flat List of stuff.
+     * If the output contains more than one set of nested properties, the number of items returned will
+     * be the sum of the nested properties - any particular row will only contain values from one of the
+     * nested rows.
+     * @param output
+     */
+    def flatten(output, outputMetadata) {
 
+        List rows = []
 
+        def flat = output.remove('data') + output
 
+        def nested = outputMetadata.getNestedPropertyNames()
+        if (nested) {
+            def nestedValues = [:]
+            nested.each { property ->
+                nestedValues << [(property):flat.remove(property)]
+            }
 
+            nestedValues.each { key, value ->
+                value.each { row ->
+                    rows << (row + flat)
+                }
+            }
 
+        }
+        else {
+            rows << flat
+        }
 
+        rows
+    }
 
 }

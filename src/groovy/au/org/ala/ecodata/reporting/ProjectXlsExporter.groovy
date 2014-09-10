@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.MetadataService
+import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import pl.touk.excel.export.getters.Getter
 import pl.touk.excel.export.multisheet.AdditionalSheet
@@ -33,6 +34,7 @@ class ProjectXlsExporter {
 
     public void export(project) {
 
+        OutputModelProcessor processor = new OutputModelProcessor()
         projectSheet()
         sitesSheet()
         activitiesSheet()
@@ -57,7 +59,8 @@ class ProjectXlsExporter {
 
             project.activities.each { activity ->
                 activity?.outputs?.each { output ->
-                    outputsByType[output.name] << output
+                    def outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
+                    outputsByType[output.name] << processor.flatten(output, outputModel )
                 }
             }
 
@@ -163,7 +166,7 @@ class ProjectXlsExporter {
         private List outputDataModel
 
         public OutputDataPropertiesBuilder(String name, outputDataModel) {
-            this.nameParts = name.tokenize('.'[0]);
+            this.nameParts = name.tokenize('.');
             this.outputDataModel = outputDataModel;
         }
 
@@ -248,10 +251,7 @@ class ProjectXlsExporter {
         }
 
         def getValue(outputModelOrData) {
-            def value = outputModelOrData.data
-            for (String part : nameParts) {
-                value = value[part]
-            }
+            def value = outputModelOrData[nameParts[nameParts.size()-1]]
             new Value(value)
         }
     }

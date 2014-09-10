@@ -1,0 +1,53 @@
+{
+    "activityId" : "activity1",
+    "dateCreated" : "2014-08-29T05:31:29.923Z",
+    "lastUpdated" : "2014-08-29T05:31:29.926Z",
+    "name" : "Revegetation Details",
+    "outputId" : "output1",
+    "status" : "active",
+    "data" : {
+        "areaRevegHa" : "1",
+        "lengthReveg" : 0,
+        "totalNumberPlanted" : 1,
+        "connectivityIndex" : "Patch linked to other vegetation via riparian link",
+        "activityDuration" : 0,
+        "vegDescriptionAtPlanting" : "Bare substrate",
+        "environmentalBenefits" : [ ],
+        "planting" : [
+            {
+                "stockType" : "Seed",
+                "species" : {
+                    "guid" : "urn:lsid:biodiversity.org.au:apni.taxon:587764",
+                    "listId" : "Atlas of Living Australia",
+                    "name" : "Brachyscome melanocarpa",
+                    "list" : ""
+                },
+                "matureHeight" : "< 2 metres",
+                "stockCostPerUnit" : 0,
+                "stockProvenance" : "",
+                "numberPlanted" : 1,
+                "seedSownKg" : 0,
+                "structuralLayer" : "Midstory"
+            },
+            {
+                "stockType" : "Seed",
+                "species" : {
+                    "guid" : "urn:lsid:biodiversity.org.au:apni.taxon:587764",
+                    "listId" : "Atlas of Living Australia",
+                    "name" : "Brachyscome melanocarpa",
+                    "list" : ""
+                },
+                "matureHeight" : "> 2 metres",
+                "stockCostPerUnit" : 0,
+                "stockProvenance" : "",
+                "numberPlanted" : 2,
+                "seedSownKg" : 0,
+                "structuralLayer" : "Midstory"
+            }
+
+        ],
+        "revegetationMethod" : "Hand planting",
+        "guardType" : [ ],
+        "totalSeedSownKg" : 0
+    }
+}

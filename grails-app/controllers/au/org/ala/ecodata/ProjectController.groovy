@@ -65,7 +65,7 @@ class ProjectController {
 
     def asXlsx(project) {
 
-        XlsExporter exporter = new XlsExporter(project.name)
+        XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
         ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
         projectExporter.export(project)

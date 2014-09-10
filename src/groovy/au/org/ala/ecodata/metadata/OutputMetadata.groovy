@@ -9,6 +9,10 @@ class OutputMetadata {
         this.metadata = metadata
     }
 
+    def getDarwinCoreMapping() {
+        metadata.darwinCoreMapping
+    }
+
     def annotateDataModel() {
         annotateNodes(metadata.dataModel)
     }
@@ -57,6 +61,16 @@ class OutputMetadata {
                 return (node.source == name)?node:null
             }
         }
+    }
+
+    def getNestedPropertyNames() {
+        def props = []
+        metadata.dataModel.each { property ->
+            if (isNestedDataModelType(property)) {
+                props << property.name
+            }
+        }
+        props
     }
 
     def getNestedViewNodes(node) {
