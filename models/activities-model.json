@@ -1,10 +1,24 @@
 {
+    "selectedActivity": {
+        "category": "Assessment & monitoring",
+        "name": "Weed Mapping & Monitoring",
+        "type": "Assessment",
+        "outputs": [
+            "Evidence of Weed Treatment",
+            "Weed Observation and Monitoring Details",
+            "Participant Information",
+            "Photo Points"
+        ],
+        "gmsId": "WMM WSA"
+    },
     "activities": [
         {
             "status": "deleted",
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
-            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
+            "outputs": [
+                "Biodiversity Fund Outcomes & Monitoring Methodology"
+            ]
         },
         {
             "category": "Implementation actions",
@@ -125,7 +139,9 @@
             "category": "Training",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
-            "outputs": ["Indigenous Knowledge Transfer Details"],
+            "outputs": [
+                "Indigenous Knowledge Transfer Details"
+            ],
             "gmsId": "IKM IKT"
         },
         {
@@ -142,7 +158,9 @@
             "category": "Implementation actions",
             "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": ["Management Practice Change Details"],
+            "outputs": [
+                "Management Practice Change Details"
+            ],
             "gmsId": "MPC MPCFE MPCSP"
         },
         {
@@ -265,7 +283,9 @@
             "category": "Assessment & monitoring",
             "name": "Site Monitoring Plan",
             "type": "Activity",
-            "outputs": ["Planned Monitoring Approach"]
+            "outputs": [
+                "Planned Monitoring Approach"
+            ]
         },
         {
             "category": "Implementation actions",
@@ -294,7 +314,9 @@
             "category": "Implementation actions",
             "name": "Water Management",
             "type": "Activity",
-            "outputs": ["Water Management Details"],
+            "outputs": [
+                "Water Management Details"
+            ],
             "gmsId": "WMA WMN"
         },
         {
@@ -387,7 +409,9 @@
             "status": "deleted",
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "outputs": ["Floristic Composition"]
+            "outputs": [
+                "Floristic Composition"
+            ]
         },
         {
             "status": "deleted",
@@ -404,7 +428,9 @@
             "status": "deleted",
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "outputs": ["Floristic Composition"]
+            "outputs": [
+                "Floristic Composition"
+            ]
         },
         {
             "status": "deleted",
@@ -481,10 +507,12 @@
         },
         {
             "category": "None",
-            "status": "active",
+            "status": "deleted",
             "name": "Upload of stage 1 and 2 reporting data",
             "type": "Activity",
-            "outputs": ["Upload of stage 1 and 2 reporting data"],
+            "outputs": [
+                "Upload of stage 1 and 2 reporting data"
+            ],
             "gmsId": ""
         }
     ],
@@ -777,13 +805,15 @@
         },
         {
             "template": "photoPoints",
-            "scores": [{
-                "isOutputTarget": false,
-                "name": "numberOfPoints",
-                "aggregationType": "SUM",
-                "label": "No. of photo points",
-                "units": ""
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": false,
+                    "name": "numberOfPoints",
+                    "aggregationType": "SUM",
+                    "label": "No. of photo points",
+                    "units": ""
+                }
+            ],
             "name": "Photo Points"
         },
         {
@@ -875,15 +905,17 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [{
-                "isOutputTarget": false,
-                "category": "Invasive Species Management - Weeds",
-                "displayType": "",
-                "name": "effectivenessOfPreviousTreatment",
-                "aggregationType": "AVERAGE",
-                "label": "Effectiveness of Previous Treatment (% killed)",
-                "units": "%"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": false,
+                    "category": "Invasive Species Management - Weeds",
+                    "displayType": "",
+                    "name": "effectivenessOfPreviousTreatment",
+                    "aggregationType": "AVERAGE",
+                    "label": "Effectiveness of Previous Treatment (% killed)",
+                    "units": "%"
+                }
+            ],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -1239,15 +1271,17 @@
         },
         {
             "template": "riskAssessment",
-            "scores": [{
-                "groupBy": "output:riskType",
-                "category": "Sites and Activity Planning",
-                "listName": "riskTable",
-                "displayType": "barchart",
-                "name": "riskType",
-                "aggregationType": "COUNT",
-                "label": "No. of threat and risk issues by type of issue"
-            }],
+            "scores": [
+                {
+                    "groupBy": "output:riskType",
+                    "category": "Sites and Activity Planning",
+                    "listName": "riskTable",
+                    "displayType": "barchart",
+                    "name": "riskType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of threat and risk issues by type of issue"
+                }
+            ],
             "name": "Threatening Processes & Site Condition Risks"
         },
         {
@@ -1555,15 +1589,17 @@
         },
         {
             "template": "adminActivities",
-            "scores": [{
-                "groupBy": "output:adminActionType",
-                "category": "Project Management, Planning and Research Outputs",
-                "listName": "adminActions",
-                "displayType": "barchart",
-                "name": "hoursActionTotal",
-                "aggregationType": "SUM",
-                "label": "Total hours spent undertaking different types of project administration tasks"
-            }],
+            "scores": [
+                {
+                    "groupBy": "output:adminActionType",
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "adminActions",
+                    "displayType": "barchart",
+                    "name": "hoursActionTotal",
+                    "aggregationType": "SUM",
+                    "label": "Total hours spent undertaking different types of project administration tasks"
+                }
+            ],
             "name": "Administration Activities"
         },
         {
@@ -1748,15 +1784,17 @@
         },
         {
             "template": "employmentDetails",
-            "scores": [{
-                "category": "Indigenous Capacity",
-                "listName": "",
-                "displayType": "",
-                "name": "totalEmployees",
-                "aggregationType": "SUM",
-                "label": "Total No. of Indigenous people employed",
-                "gmsId": "IPE"
-            }],
+            "scores": [
+                {
+                    "category": "Indigenous Capacity",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalEmployees",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous people employed",
+                    "gmsId": "IPE"
+                }
+            ],
             "name": "Indigenous Employment"
         },
         {
@@ -2060,16 +2098,18 @@
         },
         {
             "template": "waterQualityMeasurements",
-            "scores": [{
-                "isOutputTarget": true,
-                "category": "Natural Resources Management",
-                "listName": "",
-                "displayType": "",
-                "name": "instrumentCalibration",
-                "aggregationType": "COUNT",
-                "label": "No. of water quality monitoring events undertaken",
-                "gmsId": "WQSA"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "instrumentCalibration",
+                    "aggregationType": "COUNT",
+                    "label": "No. of water quality monitoring events undertaken",
+                    "gmsId": "WQSA"
+                }
+            ],
             "name": "Water Quality Measurements"
         },
         {
@@ -2109,16 +2149,18 @@
         },
         {
             "template": "bfSamplingSiteInfo",
-            "scores": [{
-                "isOutputTarget": true,
-                "category": "Natural Resources Management",
-                "listName": "",
-                "displayType": "",
-                "name": "assessmentEventType",
-                "aggregationType": "COUNT",
-                "label": "No. of site assessments undertaken",
-                "gmsId": "VAC"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "assessmentEventType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of site assessments undertaken",
+                    "gmsId": "VAC"
+                }
+            ],
             "name": "Sampling Site Information"
         },
         {
@@ -2257,16 +2299,18 @@
         },
         {
             "template": "sitePlanningDetails",
-            "scores": [{
-                "category": "Project Management, Planning and Research Outputs",
-                "listName": "",
-                "description": "Represents the number of acitivities which have undertaken planning for intervention works.",
-                "displayType": "",
-                "name": "noOfWorksAreasTotal",
-                "aggregationType": "COUNT",
-                "label": "Number of site preparation actions undertaken",
-                "gmsId": "STA"
-            }],
+            "scores": [
+                {
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "",
+                    "description": "Represents the number of acitivities which have undertaken planning for intervention works.",
+                    "displayType": "",
+                    "name": "noOfWorksAreasTotal",
+                    "aggregationType": "COUNT",
+                    "label": "Number of site preparation actions undertaken",
+                    "gmsId": "STA"
+                }
+            ],
             "name": "Site Planning Details"
         },
         {
@@ -2296,15 +2340,17 @@
         },
         {
             "template": "summaryReportDataUpload",
-            "scores": [{
-                "groupBy": "output:scoreLabel",
-                "listName": "scores",
-                "displayType": "barchart",
-                "name": "score",
-                "aggregationType": "SUM",
-                "label": "Number of plants planted",
-                "filterBy": "Number of plants planted"
-            }],
+            "scores": [
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Number of plants planted",
+                    "filterBy": "Number of plants planted"
+                }
+            ],
             "name": "Upload of stage 1 and 2 reporting data"
         }
     ]
