@@ -1,16 +1,4 @@
 {
-    "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "name": "Weed Mapping & Monitoring",
-        "type": "Assessment",
-        "outputs": [
-            "Evidence of Weed Treatment",
-            "Weed Observation and Monitoring Details",
-            "Participant Information",
-            "Photo Points"
-        ],
-        "gmsId": "WMM WSA"
-    },
     "activities": [
         {
             "status": "deleted",
@@ -524,6 +512,7 @@
                     "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "The area of land actually revegetated with native species by the planting of seedlings, sowing of seed and managed native regeneration actions.",
                     "displayType": "",
                     "name": "areaRevegHa",
                     "aggregationType": "SUM",
@@ -534,6 +523,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "The lineal length (longest axis) of waterways and coastline revegetated.",
                     "displayType": "",
                     "name": "lengthReveg",
                     "aggregationType": "SUM",
@@ -542,6 +532,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
+                    "description": "The aggregate total number of seedlings planted.",
                     "displayType": "",
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
@@ -552,6 +543,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "planting",
+                    "description": "The total number of species as an aggregate of the number of species in each revegetation activity. Individual species may be multi-counted if the same species has been planted in multiple activities.",
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
@@ -561,6 +553,7 @@
                     "groupBy": "output:species.name",
                     "category": "Revegetation",
                     "listName": "planting",
+                    "description": "The number of seedlings of each species planted to establish native vegetation in revegetation sites.",
                     "displayType": "barchart",
                     "name": "numberPlanted",
                     "aggregationType": "SUM",
@@ -569,6 +562,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
+                    "description": "The total weight of seed sown in revegetation plots.",
                     "displayType": "",
                     "name": "totalSeedSownKg",
                     "aggregationType": "SUM",
@@ -581,6 +575,7 @@
                     "isOutputTarget": false,
                     "category": "Revegetation",
                     "listName": "planting",
+                    "description": "The weight of seed of each species sown to establish native vegetation in revegetation sites.",
                     "displayType": "barchart",
                     "name": "seedSownKg",
                     "aggregationType": "SUM",
@@ -590,6 +585,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "The proportional distribution of environmental benefits being delivered by revegetation activities. Individual activities may be delivering multiple benefits.",
                     "displayType": "piechart",
                     "name": "environmentalBenefits",
                     "aggregationType": "HISTOGRAM",
@@ -598,6 +594,7 @@
                 },
                 {
                     "category": "Revegetation",
+                    "description": "The proportional distribution of methods used for revegetation by revegetation activities. Individual activities may be applying multiple methods..",
                     "displayType": "piechart",
                     "name": "revegMethod",
                     "aggregationType": "HISTOGRAM",
@@ -1393,7 +1390,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
-                    "displayType": "piechart",
+                    "displayType": "",
                     "name": "structuresInstalled",
                     "aggregationType": "COUNT",
                     "label": "No. of activities implementing access control works",
@@ -1518,7 +1515,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
-                    "displayType": "barchart",
+                    "displayType": "",
                     "name": "targetSpecies",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking species conservation actions",
@@ -1535,7 +1532,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
-                    "displayType": "piechart",
+                    "displayType": "",
                     "name": "animalBreedingNos",
                     "aggregationType": "SUM",
                     "label": "No. of individual animals in captive breeding programs"
@@ -1679,7 +1676,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
-                    "displayType": "piechart",
+                    "displayType": "",
                     "name": "totalNumberGrown",
                     "aggregationType": "SUM",
                     "label": "Total No. of plants grown and ready for planting ",
@@ -1698,7 +1695,7 @@
                     "listName": "plantPropagation",
                     "displayType": "piechart",
                     "name": "numberGrown",
-                    "aggregationType": "HISTOGRAM",
+                    "aggregationType": "COUNT",
                     "label": "No. of plants grown by type of finished stock"
                 },
                 {
