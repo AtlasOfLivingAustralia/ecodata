@@ -8,7 +8,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 class AdminController {
 
     def outputService, activityService, siteService, projectService, authService,
-        commonService, cacheService, metadataService, elasticSearchService
+        commonService, cacheService, metadataService, elasticSearchService, documentService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
@@ -220,6 +220,14 @@ class AdminController {
     def drop() {
         dropDB()
         forward action: 'count'
+    }
+
+    def updateDocumentThumbnails() {
+
+        def results = Document.findAllByStatusAndType('active', 'image')
+        results.each { document ->
+            documentService.makeThumbnail(document.filepath, document.filename, false)
+        }
     }
 
     def dropDB() {
