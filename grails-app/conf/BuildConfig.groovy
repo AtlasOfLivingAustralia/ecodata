@@ -46,6 +46,7 @@ grails.project.dependency.resolution = {
 
     def seleniumVersion = "2.21.0"
     def geoToolsVersion = "11.2"
+    def imgscalrVersion = "4.2"
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
@@ -70,6 +71,8 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-shapefile:${geoToolsVersion}"
         compile "org.geotools:gt-geojson:${geoToolsVersion}"
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
+
+        compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
 
     }
 

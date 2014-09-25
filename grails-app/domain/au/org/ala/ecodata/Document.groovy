@@ -7,6 +7,11 @@ import org.bson.types.ObjectId
  */
 class Document {
 
+    def grailsApplication
+
+    static final String DOCUMENT_TYPE_IMAGE = 'image'
+    static final String THUMBNAIL_PREFIX = 'thumb_'
+
     static mapping = {
         name index: true
         projectId index: true
@@ -32,6 +37,41 @@ class Document {
     String activityId
     String outputId
 
+    Date dateCreated
+    Date lastUpdated
+
+    def isImage() {
+        return DOCUMENT_TYPE_IMAGE == type
+    }
+
+    def getUrl() {
+        return urlFor(filepath, filename)
+    }
+
+    def getThumbnailUrl() {
+        if (isImage()) {
+            return urlFor(filepath, THUMBNAIL_PREFIX+filename)
+        }
+        return ''
+    }
+
+    /**
+     * Returns a String containing the URL by which the file attached to the supplied document can be downloaded.
+     */
+    private def urlFor(path, name) {
+        if (!name) {
+            return ''
+        }
+
+        if (path) {
+            path = path + '/'
+        }
+
+        def encodedFileName = name.encodeAsURL().replaceAll('\\+', '%20')
+        URI uri = new URI(grailsApplication.config.app.uploads.url + path + encodedFileName)
+        return uri.toURL();
+    }
+
     static constraints = {
         name nullable: true
         attribution nullable: true
@@ -44,5 +84,7 @@ class Document {
         activityId nullable: true
         outputId nullable: true
         filename nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 }

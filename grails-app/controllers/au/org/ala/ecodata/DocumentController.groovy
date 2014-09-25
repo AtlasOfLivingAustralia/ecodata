@@ -75,6 +75,9 @@ class DocumentController {
         if (request.respondsTo('getFile')) {
             file = request.getFile('files')
             props = JSON.parse(params.document)
+            if (!props.contentType && file) {
+               props.contentType = file.contentType
+            }
             stream = file?.inputStream
         }
         else {
@@ -115,7 +118,7 @@ class DocumentController {
             return null
         }
 
-        File file = new File(documentService.fullPath(params.filename))
+        File file = new File(documentService.fullPath('', params.filename))
 
         if (!file.exists()) {
             response.status = 404
