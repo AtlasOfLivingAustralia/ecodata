@@ -65,6 +65,10 @@ class DocumentService {
         Document.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    def findAllForSiteId(id, levelOfDetail = []) {
+        Document.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
     def findAllForOutputId(id, levelOfDetail = []) {
         Document.findAllByOutputIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }

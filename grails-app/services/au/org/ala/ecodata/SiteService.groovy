@@ -8,7 +8,7 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
 
-    def grailsApplication, activityService, projectService, commonService, webService
+    def grailsApplication, activityService, projectService, commonService, webService, documentService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -60,10 +60,13 @@ class SiteService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
-        if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF) && levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
-            def projects = projectService.getBrief(mapOfProperties.projects)
-            mapOfProperties.projects = projects
-            mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)
+        if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
+            mapOfProperties.documents = documentService.findAllForSiteId(site.siteId)
+            if (levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
+                def projects = projectService.getBrief(mapOfProperties.projects)
+                mapOfProperties.projects = projects
+                mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)
+            }
         }
 
         mapOfProperties.findAll {k,v -> v != null}
@@ -79,6 +82,7 @@ class SiteService {
         assert getCommonService()
         def o = new Site(siteId: Identifiers.getNew(true,''))
         try {
+            assignPOIIds(props)
             props.remove('id')
             o.save(failOnError: true)
             //props.activities = props.activities.collect {it.activityId}
@@ -99,6 +103,7 @@ class SiteService {
         def site = Site.findBySiteId(id)
         if (site) {
             try {
+                assignPOIIds(props)
                 getCommonService().updateProperties(site, props)
                 return [status:'ok']
             } catch (Exception e) {
@@ -125,6 +130,17 @@ class SiteService {
         [status:'ok']
     }
 
+    /**
+     * Goes through the POIs assigned to a a site and assigns GUIDs to any new POIs.
+     * @param site the site to check the POIs of.
+     */
+    def assignPOIIds(site) {
+        site.poi?.each { poi ->
+            if (!poi.poiId) {
+                poi.poiId = Identifiers.getNew(true, '')
+            }
+        }
+    }
 
     def removeProject(siteId, projectId){
         log.debug("Removing project $projectId from site $siteId" +

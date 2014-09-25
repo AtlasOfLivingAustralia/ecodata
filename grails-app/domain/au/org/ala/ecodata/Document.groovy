@@ -63,9 +63,7 @@ class Document {
             return ''
         }
 
-        if (path) {
-            path = path + '/'
-        }
+        path = path?path+'/':''
 
         def encodedFileName = name.encodeAsURL().replaceAll('\\+', '%20')
         URI uri = new URI(grailsApplication.config.app.uploads.url + path + encodedFileName)
