@@ -142,6 +142,27 @@ class SiteService {
         }
     }
 
+    /**
+     * Creates a point of interest for a site.
+     * @param siteId the ID of the site
+     * @param props the properties of the POI.
+     * @return the ID of the new POI.
+     */
+    def createPoi(siteId, props) {
+        props.poiId = Identifiers.getNew(true, '')
+        def site = get(siteId, [FLAT])
+
+        if (!site) {
+            return [status:'error', error:"No site with ID ${siteId}"]
+        }
+        def pois = site.poi ?:[]
+        pois.push(props)
+
+        update([poi:pois], siteId)
+
+        return [status:'ok', poiId:props.poiId]
+    }
+
     def removeProject(siteId, projectId){
         log.debug("Removing project $projectId from site $siteId" +
                 "")

@@ -106,101 +106,26 @@ class SiteController {
         }
     }
 
-    /*def loadTestData() {
-        def testFile = new File('/data/fieldcapture/site-test-data.csv')
-        testFile.eachCsvLine { tokens ->
-            if (tokens[2] == 'Bushbids') {
-                Site s = new Site(name: tokens[4],
-                        siteId: Identifiers.getNew(
-                                grailsApplication.config.ecodata.use.uuids, tokens[4]),
-                        description: tokens[15],
-                        notes: tokens[13])
-                s.save(flush: true)
-                s['organisationName'] = tokens[1]
-                s['projectName'] = tokens[2]
-                def lat = tokens[10]
-                def lng = tokens[9]
-                if (lat && lng && lat != '0' && lng != '0') {
-                    s.location = [[
-                            name: 'centre',
-                            type: 'locationTypePoint',
-                            data: [
-                                decimalLatitude: lat,
-                                decimalLongitude: lng
-                            ]
-                    ]]
-                } else {
-                    s.location = []
-                }
+    @RequireApiKey
+    def createPoi(String id) {
+        def props = request.JSON
 
-                if (s.name == 'ASH-MACC-A - 1') {
-                    // add an activity
-                    Activity a1 = new Activity(
-                            activityId: Identifiers.getNew(
-                               grailsApplication.config.ecodata.use.uuids, ''),
-                            siteId: s.siteId,
-                            type: 'DECCW vegetation assessment'
-                    )
-                    a1.save(flush: true, failOnError: true)
-                    s.addToActivities(a1)
-
-                    // add an output
-                    Output o = new Output(
-                            outputId: Identifiers.getNew(
-                                    grailsApplication.config.ecodata.use.uuids, ''),
-                            activityId: a1.activityId,
-                            assessmentDate: a1.startDate,
-                            collector: 'Wally'
-                    )
-                    o.save(flush: true, failOnError: true)
-                    o.errors.each {
-                        log.debug it
-                    }
-                    o.data = [weedAbundanceAndThreatScore: [
-                            [name: 'Blackberry', areaCovered: '30%', coverRating: 4, invasiveThreatCategory: 5],
-                            [name: 'Bridal Creeper', areaCovered: '3 plants', coverRating: 1, invasiveThreatCategory: 5]
-                    ]]
-                    a1.addToOutputs(o)
-                    a1.save(failOnError: true)
-                }
-
-                s.save()
-            }
+        if (!id) {
+            render status:400, text:'Site ID is mandatory'
+            return
         }
-        render "${Site.count()} sites"
-    }*/
-
-    def testInsert() {
-        //def point = new Coordinate(decimalLatitude: '-35.4', decimalLongitude: '145.3')
-        def point = [decimalLatitude: '-35.4', decimalLongitude: '145.3']
-        def locations = [point]
-        Site s = new Site(siteId: "test3", name: 'Test site2',
-                location: locations)
-        s.save(flush: true)
-        if (s.hasErrors()) {
-            s.errors.each { println it }
+        def result = siteService.createPoi(id, props)
+        if (result.status == 'ok') {
+            def message = [message:'created', poiId: result.poiId]
+            asJson(message)
         }
-        render "${Site.count()} sites"
-    }
-
-    def testShow(id) {
-        params.each { println it }
-        println "id = ${id}"
-        def s = Site.findBySiteId(id)
-        if (s) {
-            render s as JSON
-        } else {
-            render (status: 404, text: 'No such id')
+        else {
+            render status:400, text:result.error
         }
     }
 
     def list2() {
         def sites = Site.list()
         [sites: sites]
-    }
-
-    def clear() {
-        Site.list().each {it.delete(flush: true)}
-        render "${Site.count()} sites"
     }
 }

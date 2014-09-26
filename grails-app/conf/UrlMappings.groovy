@@ -31,6 +31,11 @@ class UrlMappings {
             action = 'getBare'
         }
 
+        "/ws/site/$id/poi" {
+            controller = 'site'
+            action = [POST:'createPoi']
+        }
+
 		"/ws/$controller/$action?/$id?" {
 		}
 
