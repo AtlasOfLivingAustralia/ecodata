@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
+import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
@@ -83,16 +84,14 @@ class SearchController {
     }
 
     @RequireApiKey
-    def downloadSearchResults() {
-
+    def downloadAllData() {
 
         if (!params.max) {
-            params.max = 100
+            params.max = 5000
             params.offset = 0
         }
 
-        SearchResponse res = elasticSearchService.search(params.query, params, "")
-
+        SearchResponse res = elasticSearchService.search(params.query, params, "homepage")
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
@@ -109,7 +108,6 @@ class SearchController {
                 }
                 List projects = ids.collect{projectService.get(it,levelOfDetail)}
                 render projects as JSON
-
             }
             xlsx {
                 XlsExporter exporter = new XlsExporter("results")
@@ -123,9 +121,36 @@ class SearchController {
                 exporter.save(response.outputStream)
             }
         }
-
-
     }
+
+    @RequireApiKey
+    def downloadSummaryData() {
+
+        def defaultCategory = "Not categorized"
+        def filters = params.getList("fq")
+        def results = reportService.aggregate(filters)
+        def scores = results.outputData
+        def scoresByCategory = scores.groupBy{
+            (it.score.category?:defaultCategory)
+        }
+
+        withFormat {
+            json {
+                render scoresByCategory as JSON
+            }
+            xlsx {
+                XlsExporter exporter = new XlsExporter("results")
+                exporter.setResponseHeaders(response)
+
+                SummaryXlsExporter summaryXlsExporter = new SummaryXlsExporter(exporter)
+                summaryXlsExporter.exportAll(scoresByCategory)
+                exporter.sizeColumns()
+
+                exporter.save(response.outputStream)
+            }
+        }
+    }
+
     /** Temporary method to assist generating the user report.  Needs work */
     def userReport() {
 

@@ -225,7 +225,7 @@ class ProjectXlsExporter {
         def booleanType(Object node, Value outputValue) {
             def val = outputValue.value
             if (val instanceof Boolean) {
-                val = Boolean.parseBoolean(val)
+                val = Boolean.parseBoolean("${val}")
             }
             return val?:""
         }
