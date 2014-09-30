@@ -102,11 +102,7 @@ class SearchController {
 
         withFormat {
             json {
-                def levelOfDetail = ProjectService.ALL
-                if (params.type == 'outputSummary') {
-                    levelOfDetail = ProjectService.OUTPUT_SUMMARY
-                }
-                List projects = ids.collect{projectService.get(it,levelOfDetail)}
+                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                 render projects as JSON
             }
             xlsx {

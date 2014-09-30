@@ -169,6 +169,36 @@ class ProjectController {
         }
     }
 
+    @RequireApiKey
+    def downloadProjectData() {
+
+        def p = Project.findByProjectId(params.id)
+
+        if (!p) {
+            render (status: 404, text: 'No such id')
+        }else{
+            Set ids = new HashSet()
+            ids << params.id;
+
+            withFormat {
+                json {
+                    List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+                    render projects as JSON
+                }
+                xlsx {
+                    XlsExporter exporter = new XlsExporter("results")
+                    exporter.setResponseHeaders(response)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
+
+                    List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
+                    projectExporter.exportAll(projects)
+                    exporter.sizeColumns()
+
+                    exporter.save(response.outputStream)
+                }
+            }
+        }
+    }
 
     def projectMetrics(String id) {
 
