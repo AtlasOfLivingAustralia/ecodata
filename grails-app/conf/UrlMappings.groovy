@@ -36,6 +36,8 @@ class UrlMappings {
             action = [POST:'createPoi']
         }
 
+
+
 		"/ws/$controller/$action?/$id?" {
 		}
 
@@ -54,7 +56,10 @@ class UrlMappings {
             controller = 'external'
         }
 
-
+        "/ws/$entity/$id/documents" {
+            controller = 'document'
+            action = 'find'
+        }
 
 		"/"(view:"/index")
 		"500"(view:'/error')

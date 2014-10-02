@@ -270,5 +270,13 @@ class DocumentService {
 
     }
 
+    def findAllByOwner(ownerType, owner) {
+        def query = Document.createCriteria()
 
+        def results = query {
+           eq(ownerType, owner)
+        }
+
+        results.collect{toMap(it, 'flat')}
+    }
 }

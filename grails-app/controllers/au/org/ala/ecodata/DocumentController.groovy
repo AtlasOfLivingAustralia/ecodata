@@ -38,6 +38,11 @@ class DocumentController {
         }
     }
 
+    def find(String entity, String id) {
+        def result = documentService.findAllByOwner(entity+'Id', id)
+        asJson([documents:result])
+    }
+
     @RequireApiKey
     def delete(String id) {
         def a = Document.findByDocumentId(id)
