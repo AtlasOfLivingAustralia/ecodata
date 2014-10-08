@@ -1,0 +1,243 @@
+{
+    "modelName": "Small Grants - Final Report",
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Indicate which natural, agricultural and cultural features have been addressed and / or benefited by this project.",
+            "name": "projectGoalsAddressed",
+            "constraints": [
+                "Aquatic and coastal systems",
+                "Remnant vegetation",
+                "Threatened species",
+                "Threatened ecological community",
+                "Conservation Estate properties",
+                "Migratory species",
+                "Ramsar wetlands",
+                "National Heritage listed place",
+                "World Heritage listed property",
+                "Nationally important wetlands",
+                "Indigenous cultural values",
+                "Community participation and engagement in biodiversity and natural resource management",
+                "Sustainable management of the natural resource management base",
+                "Soil condition",
+                "Ground cover",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If 'Other' was selected in 1.1a, describe what 'other' features have benefited from implementation of this project.",
+            "name": "projectGoalsAddressed_Other",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "State what this project has achieved (against the Activities and Outcomes stated in the Funding Agreement) and how it has contributed towards the Programme's Strategic Objectives and Outcomes.",
+            "name": "achievementsSummary",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "participatingOrganisations",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "Name of contributing organisation",
+                    "name": "organisationName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Type of contributing organisation",
+                    "name": "organisationType",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Describe how this organisation contributed to the project outcomes.",
+                    "name": "organisationContribution",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the impact the grant has had on your own organisation (and if applicable), membership composition and membership numbers.",
+            "name": "organisationImpact",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate any significant achievements delivered by or resulting from implementing the project.",
+            "name": "achievementsHighlights"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide a summary of a) what project monitoring and / or evaluation activities have been undertaken to date; b) any key findings and/or learnings gained from the project; and c) any changes you are making in response to these.(Detailed information, such as survey data, can be submitted as an attachment to the report).",
+            "name": "monitoringEvaluationLearning",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide any further comments you may wish to make on the project and / or programme here.",
+            "name": "notes"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h4>1. Summary of the Project and its Outcomes</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "projectGoalsAddressed",
+                            "preLabel": "1.1a Identify the agricultural features the project has addressed / benefited?",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "projectGoalsAddressed_Other",
+                            "preLabel": "1.1b If 'Other', describe the features benefited by the project",
+                            "type": "textarea"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "achievementsSummary",
+                            "preLabel": "1.2 Provide a summary of the project's overall achievements against the Activities and Outcomes stated in the Funding Agreement and its contribution towards the Programme's Strategic Objectives and Outcomes.",
+                            "width": "95%",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<h5>1.3 Provide the names of the various organisations that participated in your project and briefly describe how each contributed to the project.</h5>",
+                            "type": "literal"
+                        },
+                        {
+                            "title": "<h5>1.4 Provide the names of the various organisations that participated in your project and briefly describe how each contributed to the project.</h5>",
+                            "source": "participatingOrganisations",
+                            "computed": null,
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "title": "Organisation Name",
+                                    "source": "organisationName",
+                                    "width": "40%",
+                                    "type": "text"
+                                },
+                                {
+                                    "title": "Organisation Type",
+                                    "source": "organisationType",
+                                    "width": "15",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "title": "How the organisaton participated",
+                                    "source": "organisationContribution",
+                                    "width": "40%",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "class": "output-section",
+                            "type": "table"
+                        },
+                        {
+                            "source": "organisationImpact",
+                            "preLabel": "1.4 Describe the impact the grant has had on your own organisation and, if applicable, membership composition and numbers.",
+                            "width": "95%",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "achievementsHighlights",
+                            "preLabel": "1.5 Are there any significant project achievements you would like to highlight?",
+                            "width": "95%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>2. Monitoring, Evaluation and Project Learnings</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "achievementsSummary",
+                            "preLabel": "Provide a summary of a) what project monitoring and/or evaluation activities have been undertaken to date; b) any key findings and / or learnings gained from the project; and c) any changes you are making in response to these.",
+                            "width": "100%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>3. Other Comments</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "(Please provide any further comments you may wish to make on the project and / or programme here)",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "notes",
+                            "preLabel": "",
+                            "width": "100%",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}

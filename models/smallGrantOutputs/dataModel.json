@@ -1,0 +1,386 @@
+{
+    "modelName": "smallGrantOutputs",
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The area in hectares of the revegetation works area.",
+            "name": "areaRevegHa"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of individual plants planted.",
+            "name": "totalNumberPlanted"
+        },
+        {
+            "dataType": "number",
+            "description": "The percentage of individual seedlings surviving at the time of follow-up survey as a proportion of numbers planted. The follow-up survey should be undertaken at least 3 (preferably 6) months after planting.",
+            "name": "percentSurvivalRate"
+        },
+        {
+            "dataType": "number",
+            "description": "The weight of seed collected in kilograms.",
+            "name": "totalSeedCollectedKg"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of individual plants propagated.",
+            "name": "totalNumberGrown"
+        },
+        {
+            "dataType": "number",
+            "description": "Area in hectares of erosion treated by this activity.",
+            "name": "erosionAreaTreated"
+        },
+        {
+            "dataType": "list",
+            "name": "pestManagement",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "The pest species targeted for treatment (start typing a  scientific or common name for a species).",
+                    "name": "pestAnimalsTargetSpecies"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The number of target pest animals or colonies of insects removed during this activity.",
+                    "name": "pestAnimalsTreatedNo"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The area covered by treatment actions (Ha).",
+                    "name": "pestAnimalsAreaTreatedHa"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "weedManagement",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species).",
+                    "name": "weedsTargetSpecies"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The area in hectares of the patch of the target species being treated.",
+                    "name": "weedsAreaTreatedHa"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The area of land in hectares on which changed management practices are implemented.",
+            "name": "changePracticeTreatedArea"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the project was undertaken on multiple (Yes) or single (No) tenures.",
+            "name": "crossTenure",
+            "constraints": [
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The number of skills development activities undertaken.",
+            "name": "skillsDevelopmentActivitiesNo"
+        },
+        {
+            "dataType": "stringList",
+            "description": "The general type(s) of formal training undertaken to develop skills.",
+            "name": "typeOfCourse",
+            "constraints": [
+                "Vocational - Occupational Health & Safety",
+                "Vocational - First aid",
+                "Other vocational skills - short course",
+                "Science degree or higher"
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The length of fence erected in kilometres.",
+            "name": "lengthOfFence"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of community, promotion and/or awareness raising/knowledge sharing events undertaken for the project.",
+            "name": "numberOfEvents"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of surveys undertaken to inform understanding of public awareness, knowledge, opinions, etc.",
+            "name": "publicSurveysNo"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of surveys undertaken to monitor biodiversity and ecological assets.",
+            "name": "surveysNo"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of different community groups (non delivery partners) participating in this project.",
+            "name": "numberOfCommunityGroups"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of people involved in the project who are not delivery partners or employed in the project. These would typically be the volunteer participants.",
+            "name": "numberOfVolunteers"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of farming entities adopting the specified changed management practices.",
+            "name": "entitiesAdoptingChange"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of unique farming/fisher entities participating in the project.",
+            "name": "numberOfFarmingEntitiesParticipating"
+        },
+        {
+            "dataType": "number",
+            "description": "The number of Indigenous people participating in the project who are not delivery partners or employed in the project (ie. Indigenous volunteers).",
+            "name": "numberOfIndigenousParticipants"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of Indigenous people employed on the project.",
+            "name": "totalIndigenousEmployees"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of Indigenous Land and Sea Plans developed by the project.",
+            "name": "indigenousPlansCompleted"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of publications and other products (eg. videos) developed by the project to facilitate the sharing of Indigenous Ecological Knowledge.",
+            "name": "indigenousProductsDeveloped"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<h4>4. Total Project Outputs</h4> (Please only report on outputs relevant to your project as defined in your Funding Agreement. You are not required to complete those outputs that are not relevant to your project.)",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h5>Actual Achievements - Physical Outputs</h5>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "areaRevegHa",
+                            "preLabel": "Area of Revegetation (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalNumberPlanted",
+                            "preLabel": "Plants planted (No.):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "percentSurvivalRate",
+                            "preLabel": "Survival rate (%):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalSeedCollectedKg",
+                            "preLabel": "Seed collected\t(Kg):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalNumberGrown",
+                            "preLabel": "Plant propagation (No.):",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Pest Animals",
+                            "source": "pestManagement",
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "title": "Pest species managed\t(name):",
+                                    "source": "pestAnimalsTargetSpecies",
+                                    "width": "65%",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "title": "Number of individuals/colonies treated:",
+                                    "source": "pestAnimalsTreatedNo",
+                                    "width": "15%",
+                                    "type": "number"
+                                },
+                                {
+                                    "title": "Area of pest animal treatment (Ha):",
+                                    "source": "pestAnimalsAreaTreatedHa",
+                                    "width": "15%",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "type": "table"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "erosionAreaTreated",
+                            "preLabel": "Erosion area treated (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "changePracticeTreatedArea",
+                            "preLabel": "Area of land with improved management practices implemented (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "crossTenure",
+                            "preLabel": "Did the project work across tenure?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "lengthOfFence",
+                            "preLabel": "Length of fence erected (Km):",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Weeds",
+                            "source": "weedManagement",
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "title": "Weed species managed\t(name):",
+                                    "source": "weedsTargetSpecies",
+                                    "width": "80%",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "title": "Area of weed treatment (Ha):",
+                                    "source": "weedsAreaTreatedHa",
+                                    "width": "15%",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "type": "table"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h5>Actual Achievements - Community, Social and Indigenous Outputs</h5>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "skillsDevelopmentActivitiesNo",
+                            "preLabel": "Enhancing Community Skills and Knowledge (No.):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "typeOfCourse",
+                            "preLabel": "Types of training undertaken:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "entitiesAdoptingChange",
+                            "preLabel": "No. of farming/fisher entities adopting sustainable practice change:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfFarmingEntitiesParticipating",
+                            "preLabel": "No. of farming/fisher entities involved in delivery of project activities:",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfEvents",
+                            "preLabel": "No. of Workshops/Field Days events:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "publicSurveysNo",
+                            "preLabel": "No. of Public Surveys:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "surveysNo",
+                            "preLabel": "No. of Surveys:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfVolunteers",
+                            "preLabel": "No. of volunteers who participated in the delivery of project activities:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfCommunityGroups",
+                            "preLabel": "No. of community groups that participated in delivery of the project:",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfIndigenousParticipants",
+                            "preLabel": "No. of Indigenous participants involved in delivery of project activities (excluding those employed):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalIndigenousEmployees",
+                            "preLabel": "No. of Indigenous people employed/sub-contracted:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "indigenousPlansCompleted",
+                            "preLabel": "No. of Indigenous Land and Sea Plans completed:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "indigenousProductsDeveloped",
+                            "preLabel": "Indigenous Ecological Knowledge (No. of publications/products developed):",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
