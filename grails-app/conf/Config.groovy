@@ -155,7 +155,7 @@ app {
                     eez_poly = 'cl929'
                     ntd = 'cl2009'
                     alcw4 = 'cl990'
-                    ger_national_corridor_20121031 = 'cl1068'
+                    GER_311213 = 'cl2045'
                     ipa_7aug13 = 'cl2015'
                     ilua = 'cl2010'
                     east_afa_final = 'cl900'
