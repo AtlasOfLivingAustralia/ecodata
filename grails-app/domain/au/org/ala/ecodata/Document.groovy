@@ -50,7 +50,14 @@ class Document {
 
     def getThumbnailUrl() {
         if (isImage()) {
-            return urlFor(filepath, THUMBNAIL_PREFIX+filename)
+
+            File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
+            if (thumbFile.exists()) {
+                return urlFor(filepath, THUMBNAIL_PREFIX + filename)
+            }
+            else {
+                return getUrl()
+            }
         }
         return ''
     }
@@ -68,6 +75,16 @@ class Document {
         def encodedFileName = name.encodeAsURL().replaceAll('\\+', '%20')
         URI uri = new URI(grailsApplication.config.app.uploads.url + path + encodedFileName)
         return uri.toURL();
+    }
+
+    private def filePath(name) {
+
+        def path = filepath ?: ''
+        if (path) {
+            path = path+File.separator
+        }
+        return grailsApplication.config.app.file.upload.path + '/' + path  + name
+
     }
 
     static constraints = {
