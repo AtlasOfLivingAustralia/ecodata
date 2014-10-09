@@ -155,7 +155,7 @@ app {
                     eez_poly = 'cl929'
                     ntd = 'cl2009'
                     alcw4 = 'cl990'
-                    GER_311213 = 'cl2045'
+                    ger_boundary_140813 = 'cl2047'
                     ipa_7aug13 = 'cl2015'
                     ilua = 'cl2010'
                     east_afa_final = 'cl900'
@@ -167,9 +167,10 @@ app {
                     gerSouthernHighlands = 'cl1070'
                     gerHunterValley = 'cl1063'
                     gerJaliigirr = 'cl1065'
-                    gerKanangraBoydToWyangalaLink = 'cl1066'
+                    gerKanangraBoydToWyangalaLink = 'cl2048'
                     gerKosciuszkoToCoast = 'cl1067'
                     gerSlopesToSummit = 'cl1069'
+                    gerVictoriaBioLinks = 'cl2046'
                 }
             }
             special {
