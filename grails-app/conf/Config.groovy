@@ -85,6 +85,12 @@ grails.mongo.default.mapping = {
     version false
 }
 
+grails.cache.config = {
+    provider {
+        name "ehcache-${appName}"
+    }
+}
+
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/
