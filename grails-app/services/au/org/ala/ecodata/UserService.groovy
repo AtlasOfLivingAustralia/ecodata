@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 class UserService {
 
     static transactional = false
-    def authService
+    def authService, cacheService
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
@@ -22,8 +22,18 @@ class UserService {
         getUserForUserId(userId)?:userDetails
     }
 
-    def getUserForUserId(String userId) {
-        def um = authService.getAllUserNameMap() // cached by eh-cache
+    synchronized def getUserForUserId(String userId) {
+
+        def um = cacheService.get('userNameMap' , {
+            def userMap = authService.getAllUserNameMap()
+            userMap.values().collectEntries { [(it.userId): it] }
+
+        })
+
+        if (!um || um.containsKey('error')) {
+            cacheService.clear('userNameMap')
+        }
+
         def ud = null;
 
         if (um && um.containsKey(userId)) {
@@ -31,10 +41,6 @@ class UserService {
         }
 
         return ud
-    }
-
-    def getAllUsers() {
-        // casService.getAllUserNameList()
     }
 
     /**

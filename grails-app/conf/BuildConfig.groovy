@@ -12,7 +12,7 @@ grails.project.fork.run=false
 //grails.project.fork = [
 //   run: [maxMemory:1024, minMemory:64, debug:false, maxPerm:256]
 //]
-
+grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -79,33 +79,28 @@ grails.project.dependency.resolution = {
     }
 
     plugins {
-        runtime ":jquery:1.8.3"
-        runtime ":resources:1.1.6"
+        runtime ":jquery:1.11.1"
+        runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-web-theme:0.2.2"
+        runtime ":ala-web-theme:1.0.0"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
         //runtime ":cached-resources:1.0"
         //runtime ":yui-minify-resources:0.1.5"
 
-        compile ":mongodb:1.3.0"
+        compile ":mongodb:3.0.2"
         compile ":quartz:1.0.2"
         compile ":excel-export:0.2.0"
-        compile ":excel-import:1.0.0"
+        compile ":excel-import:1.0.1"
 
-        build ":tomcat:$grailsVersion"
+        build ":tomcat:7.0.52.1"
 
-        compile ':cache:1.0.1'
+        compile ':cache:1.1.7'
 
         test ":geb:0.9.0"
         test(":spock:0.7") {
             exclude "spock-grails-support"
-        }
-
-
-        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
-            export = false
         }
 
     }
