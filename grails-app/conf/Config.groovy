@@ -240,7 +240,7 @@ environments {
 
 //this can be overridden in the external configuration
 if (!logging.dir) {
-    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat6')
+    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 }
 log4j = {
     appenders {
