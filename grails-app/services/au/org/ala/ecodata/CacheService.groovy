@@ -1,8 +1,5 @@
 package au.org.ala.ecodata
 
-import org.codehaus.groovy.grails.commons.ConfigurationHolder
-import grails.converters.JSON
-
 /**
  * Handles caching of service responses (after transforming).
  * Uses passed closures to handle service requests - so remains independent
