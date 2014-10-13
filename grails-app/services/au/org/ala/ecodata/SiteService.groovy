@@ -8,7 +8,7 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
 
-    def grailsApplication, activityService, projectService, commonService, webService, documentService
+    def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -87,6 +87,11 @@ class SiteService {
             o.save(failOnError: true)
             //props.activities = props.activities.collect {it.activityId}
             //props.assessments = props.assessments.collect {it.activityId}
+            // If the site location is being updated, refresh the location metadata.
+            def centroid = props?.extent?.geometry?.centre
+            if (centroid && centroid.size() == 2) {
+                props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
+            }
             getCommonService().updateProperties(o, props)
             return [status:'ok',siteId:o.siteId]
         } catch (Exception e) {
@@ -104,6 +109,12 @@ class SiteService {
         if (site) {
             try {
                 assignPOIIds(props)
+
+                // If the site location is being updated, refresh the location metadata.
+                def centroid = props.extent?.geometry?.centre
+                if (centroid && centroid.size() == 2) {
+                    props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
+                }
                 getCommonService().updateProperties(site, props)
                 return [status:'ok']
             } catch (Exception e) {

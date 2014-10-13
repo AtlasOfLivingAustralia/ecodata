@@ -262,7 +262,7 @@ class MetadataService {
                 layers.each { name, fid ->
                     def match = features.find { it.field == fid }
                     if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                        groupTerms << match.value
+                        groupTerms << match.layername
                     }
                 }
                 if (groupTerms) {

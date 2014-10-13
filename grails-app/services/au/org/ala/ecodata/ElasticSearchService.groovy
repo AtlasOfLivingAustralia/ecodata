@@ -280,15 +280,14 @@ class ElasticSearchService {
                     },
                     "properties": {
                         "organisationName": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "path" : "just_name",
                             "fields" : {
-                                "organisationName" : {"type" : "string", "index" : "analyzed"},
                                 "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
                         "serviceProviderName": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "path" : "just_name",
                             "fields" : {
                                 "organisationName" : {"type" : "string", "index" : "analyzed"},
@@ -296,9 +295,8 @@ class ElasticSearchService {
                             }
                         },
                         "type": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "fields" : {
-                                "type" : {"type" : "string", "index" : "analyzed"},
                                 "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
@@ -307,24 +305,21 @@ class ElasticSearchService {
                             "analyzer":"facetKeyword"
                         },
                         "associatedProgram": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "fields" : {
-                                "associatedProgram" : {"type" : "string", "index" : "analyzed"},
                                 "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
                         "associatedSubProgram": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "fields" : {
-                                "associatedSubProgram" : {"type" : "string", "index" : "analyzed"},
                                 "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
 
                         "name": {
-                            "type" : "multi_field",
+                            "type" : "string",
                             "fields" : {
-                                "name" : {"type" : "string", "index" : "analyzed"},
                                 "nameSort" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
@@ -358,20 +353,18 @@ class ElasticSearchService {
                         "activities":{
                             "properties":{
                                 "mainTheme": {
-                                    "type":"multi_field",
+                                    "type":"string",
                                     "path":"just_name",
                                     "fields": {
-                                        "mainTheme": {"type":"string", "index":"analyzed"},
                                         "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
                                     }
                                 }
                             }
                         },
                         "mainTheme": {
-                            "type":"multi_field",
+                            "type":"string",
                             "path":"just_name",
                             "fields": {
-                                "mainTheme": {"type":"string", "index":"analyzed"},
                                 "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
                             }
                         },
@@ -824,7 +817,7 @@ class ElasticSearchService {
         // handle facet filter
         if (params.fq) {
             log.debug "fq detected: ${params.fq}"
-            source.filter(buildFilters(params.fq))
+            source.postFilter(buildFilters(params.fq))
         }
 
         if (params.highlight) {

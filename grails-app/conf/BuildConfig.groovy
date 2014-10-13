@@ -60,7 +60,7 @@ grails.project.dependency.resolution = {
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 
         // ElasticSearch
-        compile "org.elasticsearch:elasticsearch:0.90.12"
+        compile "org.elasticsearch:elasticsearch:1.1.2"
 
         // Schema validation for external web service clients
         compile "com.github.fge:json-schema-validator:2.1.6"
