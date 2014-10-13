@@ -94,7 +94,8 @@ grails.project.dependency.resolution = {
 
         build ":tomcat:7.0.52.1"
 
-        compile ':cache:1.1.7'
+        compile ':cache:1.1.8'
+        compile ":cache-ehcache:1.0.2"
 
         test ":geb:0.9.0"
         test(":spock:0.7") {
