@@ -294,7 +294,8 @@ log4j = {
             'grails.app.filters.au.org.ala.ecodata'
     ]
 
-    debug 'grails.app.controllers.au.org.ala','au.org.ala.ecodata'
+    debug 'grails.app.controllers.au.org.ala','au.org.ala.ecodata','grails.plugin.cache.ehcache'
+
 
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
