@@ -85,12 +85,6 @@ grails.mongo.default.mapping = {
     version false
 }
 
-grails.cache.config = {
-    provider {
-        name "ehcache-${appName}"
-    }
-}
-
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/
@@ -232,6 +226,16 @@ environments {
         app.elasticsearch.indexOnGormEvents = true
     }
     production {
+        grails{
+            cache {
+                enabled = true
+                ehcache {
+                    ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
+                    reloadable = false
+                }
+            }
+        }
+
         grails.logging.jul.usebridge = false
     }
 }
