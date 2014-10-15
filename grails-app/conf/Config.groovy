@@ -291,7 +291,8 @@ log4j = {
             'grails.app.services.au.org.ala.ecodata',
             'grails.app.taglib.au.org.ala.ecodata',
             'grails.app.conf.au.org.ala.ecodata',
-            'grails.app.filters.au.org.ala.ecodata'
+            'grails.app.filters.au.org.ala.ecodata',
+            'grails.plugin.cache.ehcache'
     ]
 
     debug 'grails.app.controllers.au.org.ala','au.org.ala.ecodata','grails.plugin.cache.ehcache'
