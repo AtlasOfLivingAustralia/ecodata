@@ -50,14 +50,12 @@ grails.project.dependency.resolution = {
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
-        // runtime 'mysql:mysql-connector-java:5.1.22'
-        test "org.gebish:geb-spock:0.9.0"
+        test "org.gebish:geb-spock:0.9.3"
         test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
             exclude "xml-apis"
         }
         test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 
         // ElasticSearch
         compile "org.elasticsearch:elasticsearch:1.1.2"
@@ -73,6 +71,10 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
+
+
+        test 'org.grails:grails-datastore-test-support:1.0.1-grails-2.4'
+        test 'com.github.fakemongo:fongo:1.5.4'
 
     }
 
@@ -97,10 +99,8 @@ grails.project.dependency.resolution = {
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.2"
 
-        test ":geb:0.9.0"
-        test(":spock:0.7") {
-            exclude "spock-grails-support"
-        }
+        test ":geb:0.9.3"
+
 
     }
 }
