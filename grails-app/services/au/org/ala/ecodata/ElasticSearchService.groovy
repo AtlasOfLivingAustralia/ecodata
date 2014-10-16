@@ -891,6 +891,7 @@ class ElasticSearchService {
      */
     def addFacetFilter(filterList) {
         def fb
+		List repeatFacets = getRepeatFacetList(filterList)
 
         filterList.each {
             if (it) {
@@ -899,7 +900,13 @@ class ElasticSearchService {
                 }
                 def fqs = it.tokenize(":")
                 if (fqs.size() > 1) {
-                    fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+					
+					if(repeatFacets.find{it == fqs[0]}){
+						fb.should(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+					}
+					else{
+						fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+					}
                 }
                 else {
                     fb.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
@@ -921,6 +928,8 @@ class ElasticSearchService {
         //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
         List filterList = getFilterList(filters) // allow for multiple fq params
+		
+		List repeatFacets = getRepeatFacetList(filterList)
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
         filterList.each { fq ->
@@ -929,9 +938,13 @@ class ElasticSearchService {
             if (fqs.size() > 1) {
                 if (fqs[0].getAt(0) == "-") {
                     boolFilter.mustNot(FilterBuilders.prefixFilter(fqs[0][1..-1], fqs[1]))
-                } else {
-                    boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
                 }
+				else if(repeatFacets.find{it == fqs[0]}){
+					boolFilter.should(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+				}
+				else{
+					boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+				}
             }
             else {
                 boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
@@ -962,6 +975,38 @@ class ElasticSearchService {
 
         filterList
     }
+	
+	private getRepeatFacetList (filters) {
+		def allFilters = getFilterList(filters)
+		def facetNames = []
+		def repeatFacets = []
+		Set uniqueFacets
+
+		if(allFilters.size() <= 1){
+            return repeatFacets
+        }
+		allFilters.collect{
+			def fqs = it.tokenize(":")
+			facetNames.add(fqs[0])
+		}
+		uniqueFacets = facetNames as Set
+		int repeatCount = 0;
+
+		uniqueFacets.each { facet->
+			allFilters.each {filter->
+				def fqs = filter.tokenize(":")
+				if(facet.equals(fqs[0])){
+					repeatCount++;
+				}
+			}
+			if(repeatCount >= 2){
+				repeatFacets.add(facet)
+			}
+			repeatCount = 0
+		}
+
+		repeatFacets
+	}
 
     /**
      * Delete a doc given the toMap version of it
