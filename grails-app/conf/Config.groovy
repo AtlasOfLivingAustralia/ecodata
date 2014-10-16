@@ -225,6 +225,20 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.indexOnGormEvents = true
     }
+    test {
+        rails.logging.jul.usebridge = true
+        ecodata.use.uuids = false
+        app.external.model.dir = "/data/ecodata/models/"
+        grails.hostname = "devt.ala.org.au"
+        serverName = "http://${grails.hostname}:8080"
+        grails.app.context = "ecodata"
+        grails.serverURL = serverName + "/" + grails.app.context
+        security.cas.appServerName = serverName
+        security.cas.contextPath = "/" + appName
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+    }
     production {
         grails{
             cache {
@@ -261,6 +275,19 @@ log4j = {
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
                         file: logging.dir+"/ecodata-stacktrace.log"
+            }
+            test {
+                console name: "stdout",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
+                        threshold: org.apache.log4j.Level.DEBUG
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: logging.dir+"/ecodata-test.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: logging.dir+"/ecodata-test-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
