@@ -94,7 +94,7 @@ grails.project.dependency.resolution = {
         compile ":excel-import:1.0.1"
 
         build ":tomcat:7.0.52.1"
-
+        build ":release:3.0.1"
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.2"
 
