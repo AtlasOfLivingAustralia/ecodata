@@ -89,8 +89,10 @@ class OutputService {
         assert getCommonService()
         def activity = Activity.findByActivityId(props.activityId)
         if (activity) {
-            def o = new Output(/*activityId: activity.activityId, */outputId: Identifiers.getNew(true,''))
+            def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
             try {
+                o.save(failOnError: true) // Getting dynamic properties not saving without this.
+
                 getCommonService().updateProperties(o, props)
                 return [status:'ok',outputId:o.outputId]
             } catch (Exception e) {

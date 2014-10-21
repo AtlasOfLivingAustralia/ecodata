@@ -82,6 +82,7 @@ class SiteService {
         assert getCommonService()
         def o = new Site(siteId: Identifiers.getNew(true,''))
         try {
+            o.save(failOnError: true)
             assignPOIIds(props)
             props.remove('id')
             o.save(failOnError: true)

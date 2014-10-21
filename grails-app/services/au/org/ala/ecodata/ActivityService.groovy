@@ -105,6 +105,8 @@ class ActivityService {
     def create(props) {
         def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
         try {
+            o.save(failOnError: true)
+
             props.remove('id')
             def outputs = props.remove('outputs')
             commonService.updateProperties(o, props)
