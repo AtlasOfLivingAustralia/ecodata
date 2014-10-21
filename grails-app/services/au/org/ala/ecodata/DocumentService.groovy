@@ -80,6 +80,7 @@ class DocumentService {
      */
     def create(props, fileIn) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
+        d.save([failOnError: true]) // The document appears to need to be associated with a session before setting any dynamic properties. The exact reason for this is unclear - I am unable to reproduce in a test app.
         props.remove 'documentId'
         try {
             if (fileIn) {
@@ -87,7 +88,7 @@ class DocumentService {
                 def partition = dateFormat.format(new Date())
 				if(props.saveAs?.equals("pdf")){
 					props.filename = saveAsPDF(fileIn, partition, props.filename,false)
-				}					
+				}
 				else {
                     props.filename = saveFile(partition, props.filename, fileIn, false)
                     if (props.type == Document.DOCUMENT_TYPE_IMAGE) {

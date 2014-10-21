@@ -260,6 +260,7 @@ environments {
 if (!logging.dir) {
     logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 }
+def loggingDir = logging.dir
 log4j = {
     appenders {
         environments{
@@ -269,12 +270,12 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata.log",
+                        file: loggingDir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-stacktrace.log"
+                        file: loggingDir+"/ecodata-stacktrace.log"
             }
             test {
                 console name: "stdout",
@@ -282,22 +283,22 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-test.log",
+                        file: loggingDir+"/ecodata-test.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-test-stacktrace.log"
+                        file: loggingDir+"/ecodata-test-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata.log",
+                        file: loggingDir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-stacktrace.log"
+                        file: loggingDir+"/ecodata-stacktrace.log"
             }
         }
     }
