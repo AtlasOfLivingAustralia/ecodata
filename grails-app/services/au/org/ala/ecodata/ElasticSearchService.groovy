@@ -549,12 +549,13 @@ class ElasticSearchService {
                     if (pDoc) {
                         indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                     } else {
-                        log.warn "Project not foound for id: ${it}"
+                        log.warn "Project not found for id: ${it}"
                     }
                 }
                 break;
             case "au.org.ala.ecodata.Activity":
-                def doc = activityService.get(docId, ActivityService.FLAT)
+                Activity activity = Activity.findByActivityId(docId)
+                def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
                 indexDoc(doc, DEFAULT_INDEX)
                 break;
