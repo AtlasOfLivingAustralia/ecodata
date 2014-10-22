@@ -103,10 +103,11 @@ grails.project.dependency.resolution = {
             exclude "spock-grails-support"
         }
 
+        build ":release:2.2.1"
 
-        build ':release:2.2.1', ':rest-client-builder:1.0.3', {
-            export = false
-        }
+        //build ':release:2.2.1', ':rest-client-builder:1.0.3', {
+        //    export = false
+        //}
 
     }
 }
