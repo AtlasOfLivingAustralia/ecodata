@@ -12,30 +12,34 @@
 
 environments {
     development {
-        mongo {
-            host = "localhost"
-            port = "27017"
-            databaseName = "ecodata-dev"
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata-dev"
+            }
         }
     }
     test {
-        mongo {
-            host = "localhost"
-            port = "27017"
-            databaseName = "ecodata-test"
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata-test"
+            }
         }
     }
     production {
-        mongo {
-            host = "localhost"
-            port = "27017"
-            databaseName = "ecodata"
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata"
+            }
         }
     }
 }
-grails {
 
-}
 // environment specific settings
 //environments {
 //    development {
