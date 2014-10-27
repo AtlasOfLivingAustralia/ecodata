@@ -80,10 +80,13 @@ class DocumentService {
      */
     def create(props, fileIn) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
+        props.remove('url')
+        props.remove('thumbnailUrl')
 
         try {
             d.save([failOnError: true]) // The document appears to need to be associated with a session before setting any dynamic properties. The exact reason for this is unclear - I am unable to reproduce in a test app.
             props.remove 'documentId'
+
             if (fileIn) {
                 DateFormat dateFormat = new SimpleDateFormat(DIRECTORY_PARTITION_FORMAT)
                 def partition = dateFormat.format(new Date())
@@ -124,6 +127,8 @@ class DocumentService {
                 if (fileIn) {
                     props.filename = saveFile(d.filepath, props.filename, fileIn, true)
                 }
+                props.remove('url')
+                props.remove('thumbnailUrl')
                 commonService.updateProperties(d, props)
                 return [status:'ok',documentId:d.documentId, url:d.url]
             } catch (Exception e) {
