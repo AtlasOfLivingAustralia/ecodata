@@ -81,6 +81,8 @@ class DocumentService {
     def create(props, fileIn) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
         props.remove 'documentId'
+        props.remove('url')
+        props.remove('thumbnailUrl')
         try {
             if (fileIn) {
                 DateFormat dateFormat = new SimpleDateFormat(DIRECTORY_PARTITION_FORMAT)
@@ -122,6 +124,8 @@ class DocumentService {
                 if (fileIn) {
                     props.filename = saveFile(d.filepath, props.filename, fileIn, true)
                 }
+                props.remove('url')
+                props.remove('thumbnailUrl')
                 commonService.updateProperties(d, props)
                 return [status:'ok',documentId:d.documentId, url:d.url]
             } catch (Exception e) {
