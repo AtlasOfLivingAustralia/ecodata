@@ -69,6 +69,10 @@ class ProjectService {
                 mapOfProperties.outputSummary = projectMetrics(prj.projectId, false, true)
             }
         }
+		
+		if(!mapOfProperties["state"]){
+			mapOfProperties["state"] = "Active";
+		}
         mapOfProperties.findAll {k,v -> v != null}
     }
 

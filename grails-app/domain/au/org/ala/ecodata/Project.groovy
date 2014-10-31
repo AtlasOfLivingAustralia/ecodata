@@ -13,6 +13,7 @@ class Project {
         name index: true
         projectId index: true
         version false
+		state defaultValue:'Active'
     }
 
     ObjectId id
@@ -40,6 +41,8 @@ class Project {
 	Map risks
 	Date dateCreated
     Date lastUpdated
+	String state
+	List variations = []
 	
     static constraints = {
         externalId nullable:true
@@ -61,6 +64,6 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
-		
+		state nullable:true
     }
 }
