@@ -279,11 +279,11 @@ class ElasticSearchService {
                         "store": "yes"
                     },
                     "properties": {
-						"state": {
+						"status": {
                             "type" : "string",
                             "path" : "just_name",
                             "fields" : {
-                                "state" : {"type" : "string", "index" : "not_analyzed"}
+                                "status" : {"type" : "string", "index" : "not_analyzed"}
                             }
                         },
                         "organisationName": {
