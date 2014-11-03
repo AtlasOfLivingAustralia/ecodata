@@ -4,9 +4,7 @@
             "status": "deleted",
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
-            "outputs": [
-                "Biodiversity Fund Outcomes & Monitoring Methodology"
-            ]
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         },
         {
             "category": "Implementation actions",
@@ -127,9 +125,7 @@
             "category": "Training",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
-            "outputs": [
-                "Indigenous Knowledge Transfer Details"
-            ],
+            "outputs": ["Indigenous Knowledge Transfer Details"],
             "gmsId": "IKM IKT"
         },
         {
@@ -146,9 +142,7 @@
             "category": "Implementation actions",
             "name": "Management Practice Change",
             "type": "Activity",
-            "outputs": [
-                "Management Practice Change Details"
-            ],
+            "outputs": ["Management Practice Change Details"],
             "gmsId": "MPC MPCFE MPCSP"
         },
         {
@@ -271,9 +265,7 @@
             "category": "Assessment & monitoring",
             "name": "Site Monitoring Plan",
             "type": "Activity",
-            "outputs": [
-                "Planned Monitoring Approach"
-            ]
+            "outputs": ["Planned Monitoring Approach"]
         },
         {
             "category": "Implementation actions",
@@ -302,9 +294,7 @@
             "category": "Implementation actions",
             "name": "Water Management",
             "type": "Activity",
-            "outputs": [
-                "Water Management Details"
-            ],
+            "outputs": ["Water Management Details"],
             "gmsId": "WMA WMN"
         },
         {
@@ -397,9 +387,7 @@
             "status": "deleted",
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
             "status": "deleted",
@@ -416,9 +404,7 @@
             "status": "deleted",
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "type": "Assessment",
-            "outputs": [
-                "Floristic Composition"
-            ]
+            "outputs": ["Floristic Composition"]
         },
         {
             "status": "deleted",
@@ -498,9 +484,7 @@
             "status": "deleted",
             "name": "Upload of stage 1 and 2 reporting data",
             "type": "Activity",
-            "outputs": [
-                "Upload of stage 1 and 2 reporting data"
-            ],
+            "outputs": ["Upload of stage 1 and 2 reporting data"],
             "gmsId": ""
         }
     ],
@@ -532,7 +516,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
-                    "description": "The aggregate total number of seedlings planted.",
+                    "description": "The total number of seedlings planted.",
                     "displayType": "",
                     "name": "totalNumberPlanted",
                     "aggregationType": "SUM",
@@ -543,11 +527,11 @@
                 {
                     "category": "Revegetation",
                     "listName": "planting",
-                    "description": "The total number of species as an aggregate of the number of species in each revegetation activity. Individual species may be multi-counted if the same species has been planted in multiple activities.",
+                    "description": "The total number of species occurrence records as an aggregate of the number of species in each revegetation activity. Individual species may be multi-counted if the same species has been planted in multiple activities.",
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
-                    "label": "Total No. of species records"
+                    "label": "Total No. of species occurrence records"
                 },
                 {
                     "groupBy": "output:species.name",
@@ -603,6 +587,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "The proportional break-down of revegetation activities contributing to landscape connectivity by connectivity category.",
                     "displayType": "piechart",
                     "name": "connectivityIndex",
                     "aggregationType": "HISTOGRAM",
@@ -613,10 +598,11 @@
                     "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "planting",
-                    "displayType": "barchart",
+                    "description": "Total number of plants planted which will grow to a mature height of greater than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+                    "displayType": "",
                     "name": "numberPlanted",
                     "aggregationType": "SUM",
-                    "label": "No. of plants planted by mature height class (eg. >2m)",
+                    "label": "No. of plants planted > 2 metres in height",
                     "filterBy": "> 2 metres",
                     "gmsId": "RVT2A"
                 }
@@ -630,6 +616,7 @@
                     "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "The total weight of seed collected for storage or propagation.",
                     "displayType": "",
                     "name": "totalSeedCollectedKg",
                     "aggregationType": "SUM",
@@ -640,6 +627,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "seedsList",
+                    "description": "The total number of species occurrence records as an aggregate of the number of species in each seed collection activity. Individual species may be multi-counted if seed has been collecteted from the same species in multiple activities.",
                     "displayType": "",
                     "name": "seedSourceSpecies",
                     "aggregationType": "COUNT",
@@ -649,6 +637,7 @@
                     "groupBy": "output:seedSourceSpecies.name",
                     "category": "Revegetation",
                     "listName": "seedsList",
+                    "description": "The total weight of seed collected from each recorded species.",
                     "displayType": "barchart",
                     "name": "seedCollectedKg",
                     "aggregationType": "SUM",
@@ -663,7 +652,8 @@
             "scores": [
                 {
                     "isOutputTarget": true,
-                    "category": "Revegetation",
+                    "category": "Sites and Activity Planning",
+                    "description": "Sum of the area of land specifically recorded as having preparatory works undertaken in advance of another associated activity. Site preparation works include activities such as fencing, weed or pest treatment, drainage or soil moisture management actions, etc.",
                     "displayType": "",
                     "name": "preparationAreaTotal",
                     "aggregationType": "SUM",
@@ -673,60 +663,27 @@
                 },
                 {
                     "groupBy": "output:actionsList.groundPreparationWorks",
-                    "category": "Revegetation",
+                    "category": "Sites and Activity Planning",
                     "listName": "",
+                    "description": "Breakdown of the area prepared for a follow-up action by the type of preparation action.",
                     "displayType": "piechart",
                     "name": "preparationAreaTotal",
                     "aggregationType": "SUM",
                     "label": "Area prepared (Ha) by type of preparation works",
                     "units": "Ha"
+                },
+                {
+                    "groupBy": "output:associatedActivity",
+                    "category": "Sites and Activity Planning",
+                    "listName": "actionsList",
+                    "description": "Count of the number of actions of each type associated with the site preparation activity. ",
+                    "displayType": "piechart",
+                    "name": "groundPreparationWorks",
+                    "aggregationType": "COUNT",
+                    "label": "Proportion of actions contributing to the preparation of land for subsequent actions by the type of subsequent action"
                 }
             ],
             "name": "Site Preparation Actions"
-        },
-        {
-            "template": "fencing",
-            "scores": [
-                {
-                    "isOutputTarget": true,
-                    "category": "Biodiversity Management",
-                    "displayType": "",
-                    "name": "lengthOfFence",
-                    "aggregationType": "SUM",
-                    "label": "Total length of fence (Km)",
-                    "units": "kilometres",
-                    "gmsId": "FNC"
-                },
-                {
-                    "groupBy": "output:purposeOfFence",
-                    "category": "Biodiversity Management",
-                    "listName": "",
-                    "displayType": "piechart",
-                    "name": "lengthOfFence",
-                    "aggregationType": "SUM",
-                    "label": "Length of fence (as a %) by fence purpose",
-                    "units": ""
-                },
-                {
-                    "isOutputTarget": false,
-                    "category": "Biodiversity Management",
-                    "listName": "",
-                    "displayType": "piechart",
-                    "name": "purposeOfFence",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Proportion of activities by fence purpose",
-                    "units": ""
-                },
-                {
-                    "category": "Biodiversity Management",
-                    "displayType": "piechart",
-                    "name": "fenceType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Proportion of activities by fence type",
-                    "units": ""
-                }
-            ],
-            "name": "Fence Details"
         },
         {
             "template": "fenceCostCalculator",
@@ -755,6 +712,7 @@
                 {
                     "isOutputTarget": false,
                     "category": "Community Engagement and Capacity Building",
+                    "description": "The total number of people attending and/or participating in activities and events, across all types of activities. Individuals attending multiple activities will be counted for their attendance at each event.",
                     "displayType": "",
                     "name": "totalParticipants",
                     "aggregationType": "SUM",
@@ -764,6 +722,7 @@
                 {
                     "isOutputTarget": false,
                     "category": "Community Engagement and Capacity Building",
+                    "description": "The number of participants at activities and events who are not employed on projects. Individuals attending multiple activities will be counted for their attendance at each event.",
                     "displayType": "",
                     "name": "numberOfVolunteers",
                     "aggregationType": "SUM",
@@ -773,15 +732,17 @@
                 {
                     "isOutputTarget": false,
                     "category": "Indigenous Capacity",
+                    "description": "The number of Indigenous people attending and/or participating in activities and events.",
                     "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "aggregationType": "SUM",
-                    "label": "No of Indigenous participants at project events",
+                    "label": "No of Indigenous participants at project events. Individuals attending multiple activities will be counted for their attendance at each event.",
                     "units": ""
                 },
                 {
                     "isOutputTarget": false,
                     "category": "Community Engagement and Capacity Building",
+                    "description": "The total number of unique individuals who attended at least one project event. This measure is an attempt to determine new vs repeat participation as a measure of the effectiveness of projects/programmes in reaching out and engaging with their communities.",
                     "displayType": "",
                     "name": "totalParticipantsNew",
                     "aggregationType": "SUM",
@@ -791,6 +752,7 @@
                 {
                     "isOutputTarget": false,
                     "category": "Farm Management Practices",
+                    "description": "The total number of unique/individual farming entities (farm businesses)  engaged in project activities. This data may double-count entities which participate in more than one activity/event in a given project.",
                     "displayType": "",
                     "name": "numberOfFarmingEntitiesNew",
                     "aggregationType": "SUM",
@@ -802,15 +764,13 @@
         },
         {
             "template": "photoPoints",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "name": "numberOfPoints",
-                    "aggregationType": "SUM",
-                    "label": "No. of photo points",
-                    "units": ""
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "name": "numberOfPoints",
+                "aggregationType": "SUM",
+                "label": "No. of photo points",
+                "units": ""
+            }],
             "name": "Photo Points"
         },
         {
@@ -902,17 +862,15 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [
-                {
-                    "isOutputTarget": false,
-                    "category": "Invasive Species Management - Weeds",
-                    "displayType": "",
-                    "name": "effectivenessOfPreviousTreatment",
-                    "aggregationType": "AVERAGE",
-                    "label": "Effectiveness of Previous Treatment (% killed)",
-                    "units": "%"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": false,
+                "category": "Invasive Species Management - Weeds",
+                "displayType": "",
+                "name": "effectivenessOfPreviousTreatment",
+                "aggregationType": "AVERAGE",
+                "label": "Effectiveness of Previous Treatment (% killed)",
+                "units": "%"
+            }],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -953,12 +911,15 @@
             "template": "Weed",
             "scores": [
                 {
+                    "groupBy": "output:treatmentEventType",
                     "isOutputTarget": true,
                     "category": "Invasive Species Management - Weeds",
+                    "description": "The total area of weeds for which an initial treatment was undertaken.",
                     "displayType": "",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
-                    "label": "Total area treated (Ha)",
+                    "label": "Total new area treated (Ha)",
+                    "filterBy": "Initial treatment",
                     "units": "Ha",
                     "gmsId": "WDT"
                 },
@@ -1088,6 +1049,7 @@
                 {
                     "category": "Project Management, Planning and Research Outputs",
                     "listName": "",
+                    "description": "The total number of plans developed",
                     "displayType": "",
                     "name": "typeOfPlan",
                     "aggregationType": "COUNT",
@@ -1095,8 +1057,19 @@
                     "gmsId": "MPD"
                 },
                 {
+                    "category": "Project Management, Planning and Research Outputs",
+                    "listName": "",
+                    "description": "Count of the number of plans developed which have been classified as NEW plans (ie. not revisions of existing plans).",
+                    "displayType": "",
+                    "name": "versionOfPlan",
+                    "aggregationType": "SUM",
+                    "label": "No. of new plans developed",
+                    "filterBy": "New plan"
+                },
+                {
                     "isOutputTarget": false,
                     "category": "Project Management, Planning and Research Outputs",
+                    "description": "Total of the number of actions specified in plans which have been addressed by scheduled activities.",
                     "displayType": "",
                     "name": "noOfPlanActionsAddressed",
                     "aggregationType": "SUM",
@@ -1105,6 +1078,7 @@
                 {
                     "isOutputTarget": false,
                     "category": "Project Management, Planning and Research Outputs",
+                    "description": "Breakdown of the number of different types of plans developed",
                     "displayType": "piechart",
                     "name": "typeOfPlan",
                     "aggregationType": "HISTOGRAM",
@@ -1119,6 +1093,7 @@
                 {
                     "category": "Project Management, Planning and Research Outputs",
                     "listName": "",
+                    "description": "The total number of research activities undertaken which have recorded data.",
                     "displayType": "",
                     "name": "typeOfResearch",
                     "aggregationType": "COUNT",
@@ -1126,6 +1101,7 @@
                 },
                 {
                     "category": "Project Management, Planning and Research Outputs",
+                    "description": "Breakdown of the number of research projects by type of project",
                     "displayType": "",
                     "name": "typeOfResearch",
                     "aggregationType": "HISTOGRAM",
@@ -1201,6 +1177,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Community Engagement and Capacity Building",
+                    "description": "Sum of the number of people who complete formal/accredited training courses.",
                     "displayType": "",
                     "name": "totalCompletingCourses",
                     "aggregationType": "SUM",
@@ -1210,6 +1187,7 @@
                 {
                     "category": "Community Engagement and Capacity Building",
                     "listName": "",
+                    "description": "Count of the total number of activities which recorded details of individuals completing formal/accredited training courses.",
                     "displayType": "",
                     "name": "totalCompletingCourses",
                     "aggregationType": "COUNT",
@@ -1218,6 +1196,7 @@
                 {
                     "category": "Community Engagement and Capacity Building",
                     "listName": "courseAttendance",
+                    "description": "Count of the total number of formal/accredited training courses for which participation details have been recorded. Each class is counted as a a course.",
                     "displayType": "",
                     "name": "courseTitle",
                     "aggregationType": "COUNT",
@@ -1227,19 +1206,21 @@
                     "groupBy": "output:typeOfCourse",
                     "category": "Community Engagement and Capacity Building",
                     "listName": "courseAttendance",
+                    "description": "Breakdown of the total number of people who completed a formal/accredited training course by the type of course attended.",
                     "displayType": "piechart",
                     "name": "numberCompleted",
                     "aggregationType": "SUM",
-                    "label": "No. attending courses by course type"
+                    "label": "No. completing courses by course type"
                 },
                 {
                     "groupBy": "output:qualificationLevel",
                     "category": "Community Engagement and Capacity Building",
                     "listName": "courseAttendance",
+                    "description": "Breakdown of the number of people who completed a formal/accredited training course by standard Australian qualification level.of courses.",
                     "displayType": "barchart",
                     "name": "numberCompleted",
                     "aggregationType": "SUM",
-                    "label": "No. attending courses by qualification level"
+                    "label": "No. completing courses by qualification level"
                 }
             ],
             "name": "Training Details"
@@ -1250,6 +1231,7 @@
                 {
                     "category": "Community Engagement and Capacity Building",
                     "listName": "",
+                    "description": "Count of the number of activities which have recorded at least one application of skills developed as a result of project participation and/or project-based formal training.",
                     "displayType": "",
                     "name": "skillsApplication",
                     "aggregationType": "COUNT",
@@ -1258,6 +1240,7 @@
                 {
                     "category": "Community Engagement and Capacity Building",
                     "listName": "",
+                    "description": "Proportional breakdown of the ways in which skills developed as a result of project participation have been applied. This is a count of the number of occurrences recorded for each type of application.",
                     "displayType": "piechart",
                     "name": "skillsApplication",
                     "aggregationType": "HISTOGRAM",
@@ -1268,17 +1251,16 @@
         },
         {
             "template": "riskAssessment",
-            "scores": [
-                {
-                    "groupBy": "output:riskType",
-                    "category": "Sites and Activity Planning",
-                    "listName": "riskTable",
-                    "displayType": "barchart",
-                    "name": "riskType",
-                    "aggregationType": "COUNT",
-                    "label": "No. of threat and risk issues by type of issue"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:riskType",
+                "category": "Sites and Activity Planning",
+                "listName": "riskTable",
+                "description": "Count of the number of times a particular issue has been recorded. Activities can have multiple threats and risks.",
+                "displayType": "barchart",
+                "name": "riskType",
+                "aggregationType": "COUNT",
+                "label": "No. of threat and risk issues by type of issue"
+            }],
             "name": "Threatening Processes & Site Condition Risks"
         },
         {
@@ -1287,33 +1269,15 @@
                 {
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "The number of activities which have recorded debris removal information.",
                     "displayType": "",
                     "name": "debrisRemovalMethod",
                     "aggregationType": "COUNT",
                     "label": "Total No. of debris removal activities"
                 },
                 {
-                    "isOutputTarget": true,
                     "category": "Natural Resources Management",
-                    "displayType": "",
-                    "name": "debrisWeightTonnes",
-                    "aggregationType": "SUM",
-                    "label": "Weight of debris removed (Tonnes)",
-                    "units": "Tonnes",
-                    "gmsId": "DRW"
-                },
-                {
-                    "isOutputTarget": true,
-                    "category": "Natural Resources Management",
-                    "displayType": "",
-                    "name": "debrisVolumeM3",
-                    "aggregationType": "SUM",
-                    "label": "Volume of debris removed (m3)",
-                    "units": "m3",
-                    "gmsId": "DRV"
-                },
-                {
-                    "category": "Natural Resources Management",
+                    "description": "Breakdown of the number of activities that have removed debris by the type of debris removed",
                     "displayType": "piechart",
                     "name": "debrisType",
                     "aggregationType": "HISTOGRAM",
@@ -1322,10 +1286,67 @@
                 {
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Proportional distribution of the number of activities that have removed debris by the removal methods. A single activity can use multiple methods.",
                     "displayType": "piechart",
                     "name": "debrisRemovalMethod",
                     "aggregationType": "HISTOGRAM",
                     "label": "No. of activities removing debris by removal method"
+                },
+                {
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "The area over which debris removal activities have been undertaken. Revisits to the same area will be double-counted.",
+                    "displayType": "",
+                    "name": "debrisActivityArea",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha) covered by debris removal activities",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "description": "The total mass of debris removed.",
+                    "displayType": "",
+                    "name": "debrisWeightTonnes",
+                    "aggregationType": "SUM",
+                    "label": "Weight of debris removed (Tonnes)",
+                    "units": "Tonnes",
+                    "gmsId": "DRW"
+                },
+                {
+                    "groupBy": "debrisType",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "Breakdown of the mass of debris removed by the type of debris removed",
+                    "displayType": "piechart",
+                    "name": "debrisWeightTonnes",
+                    "aggregationType": "SUM",
+                    "label": "Weight of debris removed by type of material",
+                    "filterBy": "",
+                    "units": "Tonnes"
+                },
+                {
+                    "isOutputTarget": true,
+                    "category": "Natural Resources Management",
+                    "description": "The total volume of debris removed.",
+                    "displayType": "",
+                    "name": "debrisVolumeM3",
+                    "aggregationType": "SUM",
+                    "label": "Volume of debris removed (m3)",
+                    "units": "m3",
+                    "gmsId": "DRV"
+                },
+                {
+                    "groupBy": "debrisType",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "Breakdown of the mass of debris removed by the type of debris removed",
+                    "displayType": "piechart",
+                    "name": "debrisVolumeM3",
+                    "aggregationType": "SUM",
+                    "label": "Volume of debris removed by type of material",
+                    "filterBy": "",
+                    "units": "m3"
                 }
             ],
             "name": "Debris Removal Details"
@@ -1441,15 +1462,17 @@
                 {
                     "isOutputTarget": true,
                     "category": "Farm Management Practices",
+                    "description": "The total number of unique/individual farming/fisher entities (farming/fishing businesses) that have made changes towards more sustainable management and primary production practices.",
                     "displayType": "",
                     "name": "totalEntitiesAdoptingChange",
                     "aggregationType": "SUM",
-                    "label": "No. of farming entities adopting sustainable practice change",
+                    "label": "Total No. of farming entities adopting sustainable practice change",
                     "gmsId": "MPCFE"
                 },
                 {
                     "isOutputTarget": true,
                     "category": "Farm Management Practices",
+                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects. ",
                     "displayType": "",
                     "name": "totalChangePracticeTreatedArea",
                     "aggregationType": "SUM",
@@ -1460,6 +1483,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Farm Management Practices",
+                    "description": "The surface area of land/water which is now managed using sustainable practices and resulting from implementation of funded projects.",
                     "displayType": "",
                     "name": "benefitAreaHa",
                     "aggregationType": "SUM",
@@ -1468,13 +1492,102 @@
                     "gmsId": "MPCSP"
                 },
                 {
+                    "groupBy": "output:practiceChange.industryType",
+                    "category": "Farm Management Practices",
+                    "listName": "",
+                    "description": "Breakdown of area covered by changed management practices (resulting from government funded projects) by the type of industry.",
+                    "displayType": "piechart",
+                    "name": "benefitAreaHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered by changed management practices by industry type"
+                },
+                {
+                    "groupBy": "output:industryType",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Breakdown of number of farm/fisher entities adopting changed management practices (resulting from government funded projects) by the type of industry.",
+                    "displayType": "piechart",
+                    "name": "entitiesAdoptingChange",
+                    "aggregationType": "SUM",
+                    "label": "No. of farm/fisher entities adopting changed management practices by industry type"
+                },
+                {
+                    "groupBy": "output:industryType",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Breakdown of the number of people influenced by changed management practices (resulting from government funded projects) by the type of industry.",
+                    "displayType": "piechart",
+                    "name": "noInfluenced",
+                    "aggregationType": "SUM",
+                    "label": "No. of people influenced by changed management practices by industry type"
+                },
+                {
                     "groupBy": "output:practiceChangeAction",
                     "category": "Farm Management Practices",
                     "listName": "practiceChange",
+                    "description": "Breakdown of the number of management change actions by different types of facilitation strategies used to encourage change to more sustainable management practices. Individual activities can employ multiple strategies and this result should only be interpreted as a proportional breakdown and not actual figures.",
                     "displayType": "piechart",
                     "name": "industryType",
                     "aggregationType": "COUNT",
-                    "label": "Proportion of activities implementing sustainable practices by type of initiative"
+                    "label": "Proportion of actions implementing sustainable practices by type of change facilitation strategy."
+                },
+                {
+                    "groupBy": "output:changePurpose",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Proportional breakdown of the area covered by practice changes (Ha) by the reasons for changing management practices. People can have multiple reasons for changing practices and therefore this should only be interpreted as proportional rather than actual figures.",
+                    "displayType": "piechart",
+                    "name": "changePracticeTreatedArea",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the area covered by practice changes (Ha) by the reasons for changing management practices"
+                },
+                {
+                    "groupBy": "output:changePurpose",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Proportional breakdown of the number of farming/fisher entities adopting practice change by the reasons for changing management practices. People can have multiple reasons for changing practices and therefore this should only be interpreted as proportional rather than actual figures.",
+                    "displayType": "piechart",
+                    "name": "entitiesAdoptingChange",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the No. of entities adopting practice change by the reasons for changing management practices"
+                },
+                {
+                    "groupBy": "output:changePurpose",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Proportional breakdown of the number of individual people influenced by the reasons for changing management practices. People can have multiple reasons for changing practices and therefore this should only be interpreted as proportional rather than actual figures.",
+                    "displayType": "piechart",
+                    "name": "noInfluenced",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the No. of people influenced by the reasons for changing management practices"
+                },
+                {
+                    "groupBy": "output:targetOutcomes",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "displayType": "piechart",
+                    "name": "changePracticeTreatedArea",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the area covered by practice changes by the public good outcomes from changing management practices"
+                },
+                {
+                    "groupBy": "output:targetOutcomes",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "displayType": "piechart",
+                    "name": "entitiesAdoptingChange",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the No. of entities adopting practice change by the public good outcomes from changing management practices"
+                },
+                {
+                    "groupBy": "output:targetOutcomes",
+                    "category": "Farm Management Practices",
+                    "listName": "practiceChange",
+                    "description": "Proportional breakdown of the number of individual people influenced by the reasons for changing management practices. People can have mu for changing practices and therefore this should only be interpreted as proportional rather than actual figures.",
+                    "displayType": "piechart",
+                    "name": "noInfluenced",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the No. of people influenced by the public good outcomes from changing management practices"
                 }
             ],
             "name": "Management Practice Change Details"
@@ -1515,6 +1628,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "A simple count of the number of activities undertaking work which is targeted at protecting/conserving specific species.",
                     "displayType": "",
                     "name": "targetSpecies",
                     "aggregationType": "COUNT",
@@ -1524,6 +1638,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "Breakdown of the number of activities undertaken to protect/conserve species by species.",
                     "displayType": "barchart",
                     "name": "targetSpecies",
                     "aggregationType": "HISTOGRAM",
@@ -1531,7 +1646,27 @@
                 },
                 {
                     "category": "Biodiversity Management",
+                    "listName": "conservationWorks",
+                    "description": "Count of the total number of species conservation actions undertaken",
+                    "displayType": "",
+                    "name": "conservationActionType",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of species conservation actions undertaken"
+                },
+                {
+                    "groupBy": "targetSpecies",
+                    "category": "Biodiversity Management",
+                    "listName": "conservationWorks",
+                    "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
+                    "displayType": "piechart",
+                    "name": "conservationActionType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of conservation actions undertaken by species protected. "
+                },
+                {
+                    "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The total number of individual animals in breeding programmes and plants in plant propagation programmes",
                     "displayType": "",
                     "name": "animalBreedingNos",
                     "aggregationType": "SUM",
@@ -1540,15 +1675,17 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The total number of plants and animals returned to the wild from ",
                     "displayType": "",
                     "name": "animalReleaseNumber",
                     "aggregationType": "SUM",
-                    "label": "No. of individual animals released back into the wild"
+                    "label": "No. of individual animals released back into the wild from breeding and propagation programmes."
                 },
                 {
                     "groupBy": "output:conservationActionType",
                     "category": "Biodiversity Management",
                     "listName": "conservationWorks",
+                    "description": "The total area impacted by different types of species conservation actions.",
                     "displayType": "piechart",
                     "name": "areaImpactedByWorks",
                     "aggregationType": "SUM",
@@ -1558,6 +1695,7 @@
                     "groupBy": "",
                     "category": "Biodiversity Management",
                     "listName": "protectionMechanisms",
+                    "description": "The total number of agreements/protection mechanisms implemented to conserve/protect species.",
                     "displayType": "",
                     "name": "numberOfProtectionMechanisms",
                     "aggregationType": "SUM",
@@ -1567,6 +1705,7 @@
                     "groupBy": "output:protectionMechanism",
                     "category": "Biodiversity Management",
                     "listName": "protectionMechanisms",
+                    "description": "Breakdown of the number of species protection mechanisms implemented of each type.",
                     "displayType": "piechart",
                     "name": "numberOfProtectionMechanisms",
                     "aggregationType": "COUNT",
@@ -1576,7 +1715,8 @@
                     "groupBy": "output:protectionMechanism",
                     "category": "Biodiversity Management",
                     "listName": "protectionMechanisms",
-                    "displayType": "piechart",
+                    "description": "Breakdown of the total area covered by each different type of agreement/protection mechanism",
+                    "displayType": "barchart",
                     "name": "areaUnderAgreement",
                     "aggregationType": "SUM",
                     "label": "Area (Ha) under agreement by protection mechanism type"
@@ -1586,17 +1726,16 @@
         },
         {
             "template": "adminActivities",
-            "scores": [
-                {
-                    "groupBy": "output:adminActionType",
-                    "category": "Project Management, Planning and Research Outputs",
-                    "listName": "adminActions",
-                    "displayType": "barchart",
-                    "name": "hoursActionTotal",
-                    "aggregationType": "SUM",
-                    "label": "Total hours spent undertaking different types of project administration tasks"
-                }
-            ],
+            "scores": [{
+                "groupBy": "output:adminActionType",
+                "category": "Project Management, Planning and Research Outputs",
+                "listName": "adminActions",
+                "description": "Proportional distribution of the time (hrs) spent undertaking different kinds of project administration activities.",
+                "displayType": "barchart",
+                "name": "hoursActionTotal",
+                "aggregationType": "SUM",
+                "label": "Total hours spent undertaking different types of project administration tasks"
+            }],
             "name": "Administration Activities"
         },
         {
@@ -1722,6 +1861,7 @@
                     "isOutputTarget": true,
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The number of activities undertaken of the type 'Fauna Survey - general'.",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
@@ -1731,6 +1871,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "surveyResults",
+                    "description": "Count of the total number of rows in the fauna survey details table.(ie. each row is a record of a species occurrence).",
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
@@ -1739,6 +1880,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The sum of the number of organisms recorded in all general survey events. Note that this does not include individuals recorded in site assessment and monitoring activities.",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "SUM",
@@ -1754,6 +1896,7 @@
                     "isOutputTarget": true,
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The number of activities undertaken of the type 'Flora Survey'.",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
@@ -1763,6 +1906,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "surveyResultsFlora",
+                    "description": "Count of the total number of rows in the flora survey details table.(ie. each row is a record of a species occurrence).",
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
@@ -1771,6 +1915,7 @@
                 {
                     "category": "Biodiversity Management",
                     "listName": "",
+                    "description": "The sum of the number of individual plants recorded in all general flora survey events. Note that this does not include individuals recorded in site assessment and monitoring activities.",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "SUM",
@@ -1781,17 +1926,15 @@
         },
         {
             "template": "employmentDetails",
-            "scores": [
-                {
-                    "category": "Indigenous Capacity",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalEmployees",
-                    "aggregationType": "SUM",
-                    "label": "Total No. of Indigenous people employed",
-                    "gmsId": "IPE"
-                }
-            ],
+            "scores": [{
+                "category": "Indigenous Capacity",
+                "listName": "",
+                "displayType": "",
+                "name": "totalEmployees",
+                "aggregationType": "SUM",
+                "label": "Total No. of Indigenous people employed",
+                "gmsId": "IPE"
+            }],
             "name": "Indigenous Employment"
         },
         {
@@ -1857,8 +2000,19 @@
                     "units": ""
                 },
                 {
-                    "groupBy": "output:targetSpecies.name",
                     "isOutputTarget": true,
+                    "category": "Invasive Species Management - Pest Animals",
+                    "listName": "pestManagement",
+                    "description": "The total number of individual pest animals killed and colonies (ants, wasps, etc.) destroyed.",
+                    "displayType": "",
+                    "name": "pestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of individuals or colonies of pest animals destroyed",
+                    "gmsId": "PMQ"
+                },
+                {
+                    "groupBy": "output:targetSpecies.name",
+                    "isOutputTarget": false,
                     "category": "Invasive Species Management - Pest Animals",
                     "listName": "pestManagement",
                     "displayType": "barchart",
@@ -1866,7 +2020,7 @@
                     "aggregationType": "SUM",
                     "label": "No. of individual animals killed / removed by species",
                     "units": "",
-                    "gmsId": "PMQ"
+                    "gmsId": ""
                 },
                 {
                     "groupBy": "output:pestManagementMethod",
@@ -2095,18 +2249,16 @@
         },
         {
             "template": "waterQualityMeasurements",
-            "scores": [
-                {
-                    "isOutputTarget": true,
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "instrumentCalibration",
-                    "aggregationType": "COUNT",
-                    "label": "No. of water quality monitoring events undertaken",
-                    "gmsId": "WQSA"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": true,
+                "category": "Natural Resources Management",
+                "listName": "",
+                "displayType": "",
+                "name": "instrumentCalibration",
+                "aggregationType": "COUNT",
+                "label": "No. of water quality monitoring events undertaken",
+                "gmsId": "WQSA"
+            }],
             "name": "Water Quality Measurements"
         },
         {
@@ -2146,18 +2298,16 @@
         },
         {
             "template": "bfSamplingSiteInfo",
-            "scores": [
-                {
-                    "isOutputTarget": true,
-                    "category": "Natural Resources Management",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "assessmentEventType",
-                    "aggregationType": "COUNT",
-                    "label": "No. of site assessments undertaken",
-                    "gmsId": "VAC"
-                }
-            ],
+            "scores": [{
+                "isOutputTarget": true,
+                "category": "Natural Resources Management",
+                "listName": "",
+                "displayType": "",
+                "name": "assessmentEventType",
+                "aggregationType": "COUNT",
+                "label": "No. of site assessments undertaken",
+                "gmsId": "VAC"
+            }],
             "name": "Sampling Site Information"
         },
         {
@@ -2167,7 +2317,15 @@
         },
         {
             "template": "exoticFauna",
-            "scores": [],
+            "scores": [{
+                "category": "Biodiversity - Site Condition Assessment",
+                "listName": "evidenceOfExoticFauna",
+                "description": "Count of the number of occurrences of evidence of the presence of exotic fauna by the type of evidence",
+                "displayType": "piechart",
+                "name": "evidence",
+                "aggregationType": "HISTOGRAM",
+                "label": "No. of occurrences of evidence of the presence of exotic fauna by the type of evidence"
+            }],
             "name": "Field Sheet 2 - Exotic Fauna"
         },
         {
@@ -2184,18 +2342,20 @@
             "template": "speciesDiversityMeri",
             "scores": [
                 {
-                    "category": "Biodiversity Management",
+                    "category": "Biodiversity - Site Condition Assessment",
                     "listName": "speciesList",
+                    "description": "Total count of the number of rows across all species diversity tables. Represents the number of species occurrence records from site condition assessments using the Commonwealth government methodology.",
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
                     "label": "Total No. of species records"
                 },
                 {
-                    "groupBy": "output:speciesList.nativeOrExotic",
-                    "category": "Biodiversity Management",
+                    "groupBy": "output:nativeOrExotic",
+                    "category": "Biodiversity - Site Condition Assessment",
                     "listName": "speciesList",
-                    "displayType": "barchart",
+                    "description": "Proportional breakdown of native vs exotic species recorded",
+                    "displayType": "piechart",
                     "name": "species",
                     "aggregationType": "COUNT",
                     "label": "Proportion of native : exotic species recorded"
@@ -2296,18 +2456,16 @@
         },
         {
             "template": "sitePlanningDetails",
-            "scores": [
-                {
-                    "category": "Project Management, Planning and Research Outputs",
-                    "listName": "",
-                    "description": "Represents the number of acitivities which have undertaken planning for intervention works.",
-                    "displayType": "",
-                    "name": "noOfWorksAreasTotal",
-                    "aggregationType": "COUNT",
-                    "label": "Number of site preparation actions undertaken",
-                    "gmsId": "STA"
-                }
-            ],
+            "scores": [{
+                "category": "Project Management, Planning and Research Outputs",
+                "listName": "",
+                "description": "Represents the number of acitivities which have undertaken planning for intervention works.",
+                "displayType": "",
+                "name": "noOfWorksAreasTotal",
+                "aggregationType": "COUNT",
+                "label": "Number of site preparation actions undertaken",
+                "gmsId": "STA"
+            }],
             "name": "Site Planning Details"
         },
         {
@@ -2324,6 +2482,65 @@
             "template": "smallGrantOutputs",
             "scores": [],
             "name": "Output Details"
+        },
+        {
+            "template": "fencing",
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "category": "Biodiversity Management",
+                    "description": "The total length of fencing erected.",
+                    "displayType": "",
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Total length of fence (Km)",
+                    "units": "kilometres",
+                    "gmsId": "FNC"
+                },
+                {
+                    "groupBy": "fenceType",
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "description": "Breakdown of the length of fence erected by the type of fence.",
+                    "displayType": "piechart",
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Total length of fence (Km) by the type of fence erected",
+                    "units": "kilometres"
+                },
+                {
+                    "category": "Biodiversity Management",
+                    "description": "Breakdown of the number of activities erecting fencing by the type of fence being erected.",
+                    "displayType": "piechart",
+                    "name": "fenceType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Proportion of activities by fence type",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:purposeOfFence",
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "description": "Breakdown of the proportion of the length of fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
+                    "displayType": "piechart",
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Length of fence (as a %) by fence purpose",
+                    "units": ""
+                },
+                {
+                    "isOutputTarget": false,
+                    "category": "Biodiversity Management",
+                    "listName": "",
+                    "description": "Breakdown of the proportion of the number of activities erecting fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
+                    "displayType": "piechart",
+                    "name": "purposeOfFence",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Proportion of activities by fence purpose",
+                    "units": ""
+                }
+            ],
+            "name": "Fence Details"
         },
         {
             "template": "smallGrantAquittal",
@@ -2346,6 +2563,96 @@
                     "aggregationType": "SUM",
                     "label": "Number of plants planted",
                     "filterBy": "Number of plants planted"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Area of revegetation works (Ha)",
+                    "filterBy": "Area of revegetation works (Ha)"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total seed collected (Kg)",
+                    "filterBy": "Total seed collected (Kg)"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Burnt area (Ha) - may be different to the total area managed",
+                    "filterBy": "Burnt area (Ha) - may be different to the total area managed"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total length of fence (Km)",
+                    "filterBy": "Total length of fence (Km)"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Area covered (Ha) by pest treatment",
+                    "filterBy": "Area covered (Ha) by pest treatment"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown",
+                    "filterBy": "Kilograms of seed sown"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total area treated (Ha)",
+                    "filterBy": "Total area treated (Ha)"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous people employed",
+                    "filterBy": "Total No. of Indigenous people employed"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of unique farming entities engaged",
+                    "filterBy": "Total No. of unique farming entities engaged"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of individuals or colonies of pest animals destroyed",
+                    "filterBy": "Total No. of individuals or colonies of pest animals destroyed"
                 }
             ],
             "name": "Upload of stage 1 and 2 reporting data"
