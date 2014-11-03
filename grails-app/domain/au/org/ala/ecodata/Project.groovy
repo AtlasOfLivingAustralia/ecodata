@@ -61,6 +61,5 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
-		
     }
 }
