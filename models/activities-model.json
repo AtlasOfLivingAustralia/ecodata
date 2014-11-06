@@ -2848,6 +2848,24 @@
                     "aggregationType": "SUM",
                     "label": "Total No. of individuals or colonies of pest animals destroyed",
                     "filterBy": "Total No. of individuals or colonies of pest animals destroyed"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous people employed",
+                    "filterBy": "Total No. of Indigenous people employed"
+                },
+                {
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "displayType": "",
+                    "name": "score",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of unique farming entities engaged",
+                    "filterBy": "Total No. of unique farming entities engaged"
                 }
             ],
             "name": "Upload of stage 1 and 2 reporting data"
