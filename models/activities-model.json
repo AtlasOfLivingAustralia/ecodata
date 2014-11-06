@@ -866,15 +866,28 @@
         },
         {
             "template": "evidenceOfWeedTreatment",
-            "scores": [{
-                "isOutputTarget": false,
-                "category": "Invasive Species Management - Weeds",
-                "displayType": "",
-                "name": "effectivenessOfPreviousTreatment",
-                "aggregationType": "AVERAGE",
-                "label": "Effectiveness of Previous Treatment (% killed)",
-                "units": "%"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": false,
+                    "category": "Invasive Species Management - Weeds",
+                    "description": "Average effectiveness of previous treatment (% killed) as assessed from the evidence of previous treatment events during weed mapping and monitoring activities",
+                    "displayType": "",
+                    "name": "effectivenessOfPreviousTreatment",
+                    "aggregationType": "AVERAGE",
+                    "label": "Average effectiveness of Previous Treatment (% killed)",
+                    "units": "%"
+                },
+                {
+                    "groupBy": "output:evidenceOfPreviousWeedTreatment",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "description": "Proportional breakdown of the number of reportings of different typs of evidence of previous weed treatment actions, as noted during weed mapping and monitoring activities.",
+                    "displayType": "piechart",
+                    "name": "effectivenessOfPreviousWeedTreatment",
+                    "aggregationType": "COUNT",
+                    "label": "Proportional breakdown of the No. of reports of different types of previous treatment evidence"
+                }
+            ],
             "name": "Evidence of Weed Treatment"
         },
         {
@@ -883,6 +896,7 @@
                 {
                     "category": "Invasive Species Management - Weeds",
                     "listName": "",
+                    "description": "Count of the number of weed observation, mapping and monitoring activities undertaken.",
                     "displayType": "",
                     "name": "weedObservationMonitoringDetails",
                     "aggregationType": "COUNT",
@@ -893,6 +907,7 @@
                     "isOutputTarget": false,
                     "category": "Invasive Species Management - Weeds",
                     "listName": "weedObservationMonitoringDetails",
+                    "description": "Sum of the assessed area of all weed species reported in mapping and monitoring activities. Several species may occur on the same area of land and therefore this figure IS NOT representative of the net area of land on which weeds have been reported (ie. the total area covered by weeds)",
                     "displayType": "",
                     "name": "weedCoverHa",
                     "aggregationType": "SUM",
@@ -903,10 +918,21 @@
                     "groupBy": "output:weedStatus",
                     "category": "Invasive Species Management - Weeds",
                     "listName": "weedObservationMonitoringDetails",
+                    "description": "Frequency count of reported weed observation/monitoring records by different infestation status classes",
                     "displayType": "piechart",
                     "name": "weedSpecies",
                     "aggregationType": "COUNT",
-                    "label": "No. of records with evidence of previous treatment by weed status"
+                    "label": "Frequency of reported weed observation/monitoring records by infestation status"
+                },
+                {
+                    "groupBy": "weedSpecies",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedObservationMonitoringDetails",
+                    "description": "Total area of reported weed cover by species. Note that the sum of areas will likely be greater than the net total area of weed cover.",
+                    "displayType": "barchart",
+                    "name": "weedCoverHa",
+                    "aggregationType": "SUM",
+                    "label": "Total area (Ha) of reported weed cover by species"
                 }
             ],
             "name": "Weed Observation and Monitoring Details"
@@ -928,14 +954,49 @@
                     "gmsId": "WDT"
                 },
                 {
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "description": "Total lineal length of stream frontage and/or roadside treated for weeds.",
+                    "displayType": "",
+                    "name": "linearAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Total lineal length (Km) of stream frontage and/or roadside treated for weeds."
+                },
+                {
+                    "category": "Invasive Species Management - Weeds",
+                    "description": "Average cost per hectare of weed treatment. This is a non-mandatory field and the calculated average may be skewed by incomplete data.",
+                    "displayType": "",
+                    "aggregationType": "AVERAGE",
+                    "label": "Average cost ($/Ha) of weed treatment"
+                },
+                {
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "weedsTreated",
+                    "description": "The total number of occurrence records of reported weed species.",
+                    "displayType": "",
+                    "name": "targetSpecies",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of weed records reported"
+                },
+                {
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "description": "Breakdown of the number of activities treating weeds by type of treatment",
+                    "displayType": "",
+                    "name": "treatmentEventType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Proportion of activities treating weeds by type of treatment event"
+                },
+                {
                     "groupBy": "output:targetSpecies.name",
                     "isOutputTarget": false,
                     "category": "Invasive Species Management - Weeds",
                     "listName": "weedsTreated",
+                    "description": "Breakdown of the number of weed treatment actions undertaken by species.",
                     "displayType": "barchart",
-                    "name": "controlStatus",
+                    "name": "treatmentMethod",
                     "aggregationType": "COUNT",
-                    "label": "Proportion of activities treating weeds by species",
+                    "label": "No. of activities treating weeds by species treated",
                     "units": ""
                 },
                 {
@@ -943,42 +1004,49 @@
                     "isOutputTarget": false,
                     "category": "Invasive Species Management - Weeds",
                     "listName": "",
+                    "description": "Proportional breakdown of the number of activities treating weeds by treatment method. A single activity may include multiple treatment methods being applied to different species in the activity, but for any given species the count is valid.",
                     "displayType": "barchart",
-                    "name": "treatmentEventType",
+                    "name": "treatmentObjective",
                     "aggregationType": "COUNT",
                     "label": "Proportion of activities treating weeds by treatment method"
                 },
                 {
                     "category": "Invasive Species Management - Weeds",
                     "listName": "",
+                    "description": "Breakdown of the number of activities treating weeds by treatment objective.",
                     "displayType": "",
                     "name": "treatmentObjective",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Proportion of activities treating weeds by treatment objective"
+                    "label": "No. of activities treating weeds by treatment objective"
                 },
                 {
                     "category": "Invasive Species Management - Weeds",
                     "listName": "",
-                    "displayType": "",
-                    "name": "treatmentEventType",
-                    "aggregationType": "HISTOGRAM",
-                    "label": "Proportion of activities treating weeds by type of treatment"
-                },
-                {
-                    "category": "Invasive Species Management - Weeds",
-                    "listName": "",
+                    "description": "Breakdown of the number of activities undertaking weed treatment by the main type of partner undertaking the action.",
                     "displayType": "",
                     "name": "partnerType",
                     "aggregationType": "HISTOGRAM",
-                    "label": "Proportion of activities treating weeds by type of delivery partner"
+                    "label": "No. of activities treating weeds by type of delivery partner"
                 },
                 {
+                    "groupBy": "output:partnerType",
                     "category": "Invasive Species Management - Weeds",
-                    "listName": "weedsTreated",
-                    "displayType": "",
-                    "name": "targetSpecies",
-                    "aggregationType": "COUNT",
-                    "label": "Total No. of weed records reported"
+                    "listName": "",
+                    "description": "Total area of weed treatment undertaken grouped by the main type of partner undertaking actions.",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Total area (Ha.) of weed treatment by main activity partner"
+                },
+                {
+                    "groupBy": "output:treatmentObjective",
+                    "category": "Invasive Species Management - Weeds",
+                    "listName": "",
+                    "description": "Total area of weed treatment undertaken grouped by the type of treatment objective.",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Total area (Ha.) of weed treatment by treatment objective"
                 }
             ],
             "name": "Weed Treatment Details"
@@ -1021,23 +1089,26 @@
             "scores": [
                 {
                     "category": "Natural Resources Management",
-                    "listName": "",
+                    "listName": "infrastructureInstallations",
+                    "description": "The total number of activities undertaken to build/install infrastructure for the protection, enhancement or public appreciation of native species and natural environments.",
                     "displayType": "",
-                    "name": "noInstallationsTotal",
+                    "name": "infrastructureType",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking infrastructure works"
                 },
                 {
                     "category": "Natural Resources Management",
+                    "description": "Total number of infrastructure installations / facilities established for the protection, enhancement or public appreciation of native species and natural environments.",
                     "displayType": "",
                     "name": "noInstallationsTotal",
                     "aggregationType": "SUM",
-                    "label": "Total No. of infrastructure installations / facilities established"
+                    "label": "No. of infrastructure installations / facilities established"
                 },
                 {
                     "groupBy": "output:infrastructureType",
                     "category": "Natural Resources Management",
                     "listName": "infrastructureInstallations",
+                    "description": "Total number of infrastructure installations / facilities established for the protection, enhancement or public appreciation of native species and natural environments by the type of facility built/installed.",
                     "displayType": "barchart",
                     "name": "noInstallations",
                     "aggregationType": "SUM",
@@ -1140,7 +1211,7 @@
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
                     "listName": "",
-                    "description": "The area of land actively managed by projects for enhanced water values.",
+                    "description": "The area of land actively managed with water management activities for enhanced environmental values.",
                     "displayType": "",
                     "name": "managedArea",
                     "aggregationType": "SUM",
@@ -1152,6 +1223,7 @@
                     "groupBy": "output:waterMgtEnviroBenefit",
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Breakdown of the area of land actively managed with water management activities by the type of environmental benefit achieved. Note that a single water management action may achieve multiple benefits and therefore this metric should only be interpreted as proportional.",
                     "displayType": "piechart",
                     "name": "managedArea",
                     "aggregationType": "SUM",
@@ -1161,6 +1233,7 @@
                     "groupBy": "output:waterbodyType",
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Breakdown of the area of land actively managed with water management activities by the type of water body managed.",
                     "displayType": "piechart",
                     "name": "managedArea",
                     "aggregationType": "SUM",
@@ -1170,6 +1243,7 @@
                     "groupBy": "output:waterUsePurpose",
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Breakdown of the area of land actively managed with water management activities by the purpose for which water is being managed. Note that a single water management action may apply to multiple purposes and therefore this metric should only be interpreted as proportional.",
                     "displayType": "piechart",
                     "name": "managedArea",
                     "aggregationType": "SUM",
@@ -1364,6 +1438,7 @@
                 {
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Count of the number of activities which have implemented erosion management actions.",
                     "displayType": "",
                     "name": "erosionAreaTreated",
                     "aggregationType": "COUNT",
@@ -1373,16 +1448,17 @@
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "The total number of structures installed to to control erosion.",
                     "displayType": "",
-                    "name": "erosionAreaTreated",
+                    "name": "erosionStructuresInstalled",
                     "aggregationType": "SUM",
-                    "label": "Erosion area treated (Ha)",
-                    "units": "Ha",
-                    "gmsId": "EMA"
+                    "label": "Total No. of erosion control structures installed"
                 },
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
+                    "description": "Total lineal length of stream frontage and/or coastline which has been treated with erosion management actions.",
                     "displayType": "",
                     "name": "erosionLength",
                     "aggregationType": "SUM",
@@ -1393,21 +1469,44 @@
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
-                    "listName": "",
+                    "description": "The total area of erosion treated by management actions.",
                     "displayType": "",
-                    "name": "erosionStructuresInstalled",
+                    "name": "erosionAreaTreated",
                     "aggregationType": "SUM",
-                    "label": "Total No. of erosion control structures installed"
+                    "label": "Erosion area treated (Ha)",
+                    "units": "Ha",
+                    "gmsId": "EMA"
                 },
                 {
                     "groupBy": "output:erosionControlStructures",
                     "isOutputTarget": false,
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Count of the number of activities which installed structures to control erosion by the type of structure installed.",
                     "displayType": "piechart",
                     "name": "erosionStructuresInstalled",
                     "aggregationType": "SUM",
                     "label": "No. of activities which installed erosion control structures by type of structure"
+                },
+                {
+                    "groupBy": "output:erosionType",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "Proportional breakdown of the erosion area treated by the type of erosion treated. Note that a single treatment may apply to multiple types of erosion over the same area and therefore this metric should only be interpreted as a proportional breakdown.",
+                    "displayType": "piechart",
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Proportion of erosion area treated (Ha) by the type of erosion treated"
+                },
+                {
+                    "groupBy": "output:erosionTreatmentMethod",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "Proportional breakdown of the erosion area treated by the type of erosion management/treatment method used. Note that a single treatment may apply multiple types of methods over the same area and therefore this metric should only be interpreted as a proportional breakdown.",
+                    "displayType": "piechart",
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Proportion of erosion area treated (Ha) by the type of management method used"
                 }
             ],
             "name": "Erosion Management Details"
@@ -1989,7 +2088,7 @@
                     "listName": "",
                     "description": "Count of the number of activities which are undertaking pest management actions",
                     "displayType": "",
-                    "name": "treatmentObjectiveBenefits",
+                    "name": "partnerType",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking pest management"
                 },
@@ -2097,60 +2196,99 @@
                 {
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "",
+                    "description": "Total number of activities undertaken to manage diseases  (includes outbreaks as well as experimental and research purposes).",
                     "displayType": "",
                     "name": "targetSpecies",
                     "aggregationType": "COUNT",
                     "label": "No. of activities undertaking disease management"
                 },
                 {
+                    "groupBy": "output:diseaseManagementPurpose",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "listName": "",
+                    "description": "Total number of activities undertaking disease management by the purpose for undertaking the activity (includes outbreaks as well as experimental and research purposes).",
+                    "displayType": "piechart",
+                    "name": "targetSpecies",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking disease management by purpose"
+                },
+                {
                     "groupBy": "output:diseaseManagementMethod",
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "",
+                    "description": "Proportion of activities undertaking disease management by method. An activity may apply multiple management methods and therefore this data should be interpreted as proportionally representative only.",
                     "displayType": "piechart",
                     "name": "targetSpecies",
                     "aggregationType": "COUNT",
                     "label": "Proportion of activities undertaking disease management by method"
                 },
                 {
-                    "groupBy": "output:diseaseManagementPurpose",
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "",
-                    "displayType": "piechart",
-                    "name": "targetSpecies",
-                    "aggregationType": "COUNT",
-                    "label": "Proportion of activities undertaking disease management by purpose"
-                },
-                {
-                    "isOutputTarget": true,
-                    "category": "Invasive Species Management - Pests & Diseases",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "areaTreatedHa",
-                    "aggregationType": "SUM",
-                    "label": "Total area (Ha) treated / quarantined by species",
-                    "gmsId": "DMA"
-                },
-                {
-                    "category": "Invasive Species Management - Pests & Diseases",
-                    "listName": "",
+                    "description": "Total number of individuals or colonies treated / quarantined",
                     "displayType": "",
                     "name": "numberTreated",
                     "aggregationType": "SUM",
                     "label": "Total number of individuals or colonies treated / quarantined"
                 },
                 {
-                    "groupBy": "output:diseaseManagementMethod",
+                    "groupBy": "",
+                    "isOutputTarget": true,
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "",
+                    "description": "Total area treated / quarantined",
                     "displayType": "",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
-                    "label": "Proportion of area treated / quarantined by method"
+                    "label": "Total area (Ha) treated / quarantined",
+                    "gmsId": "DMA"
                 },
                 {
+                    "groupBy": "output:targetSpecies.name",
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "",
-                    "displayType": "",
+                    "description": "Total area treated / quarantined by species",
+                    "displayType": "barchart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Total area (Ha) treated / quarantined by species"
+                },
+                {
+                    "groupBy": "output:diseaseManagementPurpose",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "listName": "",
+                    "description": "Total area covered by disease management actions by the purpose for undertaking the action.",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area (Ha.) covered by disease management actions by purpose"
+                },
+                {
+                    "groupBy": "output:diseaseManagementMethod",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "listName": "",
+                    "description": "Breakdown of area treated / quarantined by management method. Note that multiple methods may be used in a single treatment event and therefore this data should only interpreted as proportionally representative.",
+                    "displayType": "piechart",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Proportion of area treated / quarantined (Ha.) by management method"
+                },
+                {
+                    "groupBy": "output:diseaseManagementMethod",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "listName": "",
+                    "description": "Total number of individuals or colonies treated / quarantined by management method. Note that multiple methods may be used in a single treatment event and therefore this data should only interpreted as proportionally representative.",
+                    "displayType": "piechart",
+                    "name": "numberTreated",
+                    "aggregationType": "SUM",
+                    "label": "Total number of individuals or colonies treated / quarantined by management method"
+                },
+                {
+                    "groupBy": "output:diseaseManagementPurpose",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "listName": "",
+                    "description": "Average cost  per hectare of undertaking disease treatment actions.",
+                    "displayType": "piechart",
                     "name": "treatmentCostPerHa",
                     "aggregationType": "AVERAGE",
                     "label": "Average cost of treatment per hectare ($ / Ha.) ($/Ha)"
@@ -2169,6 +2307,7 @@
                 {
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestObservationMonitoringDetails",
+                    "description": "Sum of sampling/monitoring area for each pest species record. Different species may occur over the same area of land and therefore this figure IS NOT representative of the net area sampled/monitored for all species.",
                     "displayType": "",
                     "name": "pestSampledArea",
                     "aggregationType": "SUM",
@@ -2178,34 +2317,38 @@
                 {
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestObservationMonitoringDetails",
+                    "description": "The total number of actions undertaken to monitor pest species.",
                     "displayType": "",
                     "name": "assessmentMethod",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities monitoring pest animals",
+                    "label": "No. of pest species monitoring actions undertaken",
                     "gmsId": "PSA"
                 },
                 {
                     "groupBy": "output:pestSpecies.name",
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestObservationMonitoringDetails",
+                    "description": "No. of pest monitoring actions by species",
                     "displayType": "barchart",
                     "name": "pestSpecies",
                     "aggregationType": "COUNT",
-                    "label": "No. of activities monitoring pest animals by species"
+                    "label": "No. of pest monitoring actions by species"
                 },
                 {
                     "groupBy": "output:pestSpecies.name",
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestObservationMonitoringDetails",
+                    "description": "Area (Ha) sampled/monitored for pest animals by species. The value for any given species is valid, but the aggregate sum of all values will be greater than the net area actually sampled/monitored.",
                     "displayType": "barchart",
                     "name": "pestSampledArea",
                     "aggregationType": "SUM",
-                    "label": "Area (Ha) of pest monitoring by species",
+                    "label": "Area (Ha) sampled/monitored for pest animals by species",
                     "units": ""
                 },
                 {
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestObservationMonitoringDetails",
+                    "description": "Total number of observation records by assessment method",
                     "displayType": "",
                     "name": "assessmentMethod",
                     "aggregationType": "HISTOGRAM",
@@ -2221,7 +2364,7 @@
                     "category": "Revegetation",
                     "displayType": "",
                     "name": "revegetationType",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "SUM",
                     "label": "Total number of revegetation monitoring activities undertaken",
                     "gmsId": "PSS"
                 },
@@ -2329,16 +2472,37 @@
         },
         {
             "template": "bfSamplingSiteInfo",
-            "scores": [{
-                "isOutputTarget": true,
-                "category": "Natural Resources Management",
-                "listName": "",
-                "displayType": "",
-                "name": "assessmentEventType",
-                "aggregationType": "COUNT",
-                "label": "No. of site assessments undertaken",
-                "gmsId": "VAC"
-            }],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "category": "Biodiversity - Site Condition Assessment",
+                    "listName": "",
+                    "description": "Total number of site assessments undertaken using the Commonwealth government vegetation assessment methodology.",
+                    "displayType": "",
+                    "name": "assessmentEventType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of site assessments undertaken using the Commonwealth government vegetation assessment methodology",
+                    "gmsId": "VAC"
+                },
+                {
+                    "category": "Biodiversity - Site Condition Assessment",
+                    "listName": "",
+                    "description": "Breakdown of the number of vegetation assessments using the Commonwealth methodology by the type of assessment event.",
+                    "displayType": "piechart",
+                    "name": "assessmentEventType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of vegetation assessments using the Commonwealth methodology by the type of assessment event"
+                },
+                {
+                    "category": "Biodiversity - Site Condition Assessment",
+                    "listName": "",
+                    "description": "Breakdown of the number of vegetation assessments using the Commonwealth methodology by the type of site.",
+                    "displayType": "piechart",
+                    "name": "typeOfSite",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of vegetation assessments using the Commonwealth methodology by the type of site"
+                }
+            ],
             "name": "Sampling Site Information"
         },
         {
@@ -2351,11 +2515,11 @@
             "scores": [{
                 "category": "Biodiversity - Site Condition Assessment",
                 "listName": "evidenceOfExoticFauna",
-                "description": "Count of the number of occurrences of evidence of the presence of exotic fauna by the type of evidence",
+                "description": "Count of the number of occurrences of evidence of the presence of exotic fauna by the type of evidence, as identified using the Commonwealth government vegetation assessment methodology.",
                 "displayType": "piechart",
                 "name": "evidence",
                 "aggregationType": "HISTOGRAM",
-                "label": "No. of occurrences of evidence of the presence of exotic fauna by the type of evidence"
+                "label": "No. of occurrences of evidence of the presence of exotic fauna by the type of evidence (using the Commonwealth government vegetation assessment methodology)"
             }],
             "name": "Field Sheet 2 - Exotic Fauna"
         },
@@ -2379,17 +2543,17 @@
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
-                    "label": "Total No. of species records"
+                    "label": "Total No. of species records (as identified using the Commonwealth government vegetation assessment methodology)"
                 },
                 {
                     "groupBy": "output:nativeOrExotic",
                     "category": "Biodiversity - Site Condition Assessment",
                     "listName": "speciesList",
-                    "description": "Proportional breakdown of native vs exotic species recorded",
+                    "description": "Proportional breakdown of native vs exotic species recorded as identified using the Commonwealth government vegetation assessment methodology.",
                     "displayType": "piechart",
                     "name": "species",
                     "aggregationType": "COUNT",
-                    "label": "Proportion of native : exotic species recorded"
+                    "label": "Proportion of native : exotic species recorded (as identified using the Commonwealth government vegetation assessment methodology)"
                 }
             ],
             "name": "Field Sheet 5 - Species Diversity"
