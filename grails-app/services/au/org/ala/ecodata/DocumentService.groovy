@@ -277,11 +277,14 @@ class DocumentService {
 
     }
 
-    def findAllByOwner(ownerType, owner) {
+    def findAllByOwner(ownerType, owner, includeDeleted = true) {
         def query = Document.createCriteria()
 
         def results = query {
            eq(ownerType, owner)
+           if (!includeDeleted) {
+               ne('status', 'deleted')
+           }
         }
 
         results.collect{toMap(it, 'flat')}
