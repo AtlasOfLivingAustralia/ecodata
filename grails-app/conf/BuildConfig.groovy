@@ -72,7 +72,7 @@ grails.project.dependency.resolution = {
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
 
 
-        test 'org.grails:grails-datastore-test-support:1.0.1-grails-2.4'
+        test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
         test 'com.github.fakemongo:fongo:1.5.4'
 
     }
