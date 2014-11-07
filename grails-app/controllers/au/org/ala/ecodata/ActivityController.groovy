@@ -147,4 +147,29 @@ class ActivityController {
             render status:404, text: 'No such id'
         }
     }
+
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a list of the projects that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+
+        def activityList = activityService.search(searchCriteria, 'all')
+
+        asJson activities:activityList
+    }
+
 }
