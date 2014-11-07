@@ -36,7 +36,9 @@ class UrlMappings {
             action = [POST:'createPoi']
         }
 
-
+        "/ws/$controller/search" {
+            action = [POST:"search"]
+        }
 
 		"/ws/$controller/$action?/$id?(.$format)?" {
 		}
