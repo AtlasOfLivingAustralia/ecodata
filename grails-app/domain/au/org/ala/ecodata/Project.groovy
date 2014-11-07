@@ -26,6 +26,7 @@ class Project {
     String groupId
     String groupName
     String organisationName
+    String organisationId
     Date plannedStartDate
     Date plannedEndDate
     Date actualStartDate
@@ -61,6 +62,6 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
-		
+        organisationId nullable:true
     }
 }
