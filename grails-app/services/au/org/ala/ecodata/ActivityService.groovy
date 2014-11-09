@@ -276,7 +276,7 @@ class ActivityService {
             }
 
         }
-        activities.collect{activityService.toMap(it, levelOfDetail)}
+        activities.collect{toMap(it, levelOfDetail)}
     }
 
 }
