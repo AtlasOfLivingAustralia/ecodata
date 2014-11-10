@@ -55,6 +55,7 @@ class ProjectService {
         }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
+		mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
         mapOfProperties.remove("_id")
         if (levelOfDetail != FLAT) {
 
@@ -69,6 +70,7 @@ class ProjectService {
                 mapOfProperties.outputSummary = projectMetrics(prj.projectId, false, true)
             }
         }
+	
         mapOfProperties.findAll {k,v -> v != null}
     }
 
@@ -83,6 +85,7 @@ class ProjectService {
         def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
+		mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
         mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, true)

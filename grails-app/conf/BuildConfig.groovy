@@ -99,7 +99,6 @@ grails.project.dependency.resolution = {
         compile ":cache-ehcache:1.0.2"
 
         test ":geb:0.9.3"
-
-
+        
     }
 }
