@@ -1,4 +1,24 @@
 {
+    "selectedActivity": {
+        "category": "Assessment & monitoring",
+        "status": "active",
+        "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+        "type": "Assessment",
+        "outputs": [
+            "Bushland Condition - Site Health Summary",
+            "Indicator 1 - Plant Species Diversity",
+            "Indicator 2 - Weed Abundance & Threat",
+            "Indicator 3 - Structural Diversity",
+            "Indicator 4 - Regeneration",
+            "Indicator 5 - Tree and Shrub Health",
+            "Indicator 6 - Tree Habitat",
+            "Indicator 7 - Feral Animals",
+            "Indicator 8 - Total Grazing Pressure",
+            "Indicator 9 - Animal Species",
+            "Indicator 10 - Bushland Degradation Risk",
+            "Benchmarks - SA"
+        ]
+    },
     "activities": [
         {
             "status": "deleted",
@@ -344,6 +364,17 @@
             "gmsId": "STA"
         },
         {
+            "category": "Administration, management & reporting",
+            "name": "Progress, Outcomes and Learning - stage report",
+            "type": "Activity",
+            "outputs": [
+                "Overview of Project Progress",
+                "Environmental, Economic and Social Outcomes",
+                "Implementation Update",
+                "Lessons Learned and Improvements"
+            ]
+        },
+        {
             "category": "Assessment & monitoring",
             "name": "Vegetation Assessment - Commonwealth government methodology",
             "type": "Assessment",
@@ -359,18 +390,8 @@
             "gmsId": "VAC"
         },
         {
-            "category": "Administration, management & reporting",
-            "name": "Progress, Outcomes and Learning - stage report",
-            "type": "Activity",
-            "outputs": [
-                "Overview of Project Progress",
-                "Environmental, Economic and Social Outcomes",
-                "Implementation Update",
-                "Lessons Learned and Improvements"
-            ]
-        },
-        {
-            "status": "deleted",
+            "category": "Assessment & monitoring",
+            "status": "active",
             "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "outputs": [
@@ -390,14 +411,25 @@
             "outputs": ["Floristic Composition"]
         },
         {
-            "status": "deleted",
-            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
+            "category": "Assessment & monitoring",
+            "status": "active",
+            "name": "Vegetation Assessment - Habitat Hectares v1 (VIC)",
             "type": "Assessment",
             "outputs": [
-                "EVC Benchmark Values - Victoria",
-                "Vegetation Assessment - Species List",
+                "Vegetation Assessment - Survey Information",
                 "Site Condition Components",
                 "Landscape Context Components"
+            ]
+        },
+        {
+            "category": "Assessment & monitoring",
+            "name": "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+            "type": "Assessment",
+            "outputs": [
+                "Vegetation Assessment - Survey Information",
+                "Native Species",
+                "Weed Species",
+                "Trees"
             ]
         },
         {
@@ -407,7 +439,8 @@
             "outputs": ["Floristic Composition"]
         },
         {
-            "status": "deleted",
+            "category": "Assessment & monitoring",
+            "status": "active",
             "name": "Vegetation Assessment - TasVeg (TAS)",
             "type": "Assessment",
             "outputs": [
@@ -440,12 +473,11 @@
             ]
         },
         {
-            "category": "assessment",
-            "status": "deleted",
+            "category": "Assessment & monitoring",
+            "status": "active",
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
             "outputs": [
-                "Benchmarks - SA",
                 "Bushland Condition - Site Health Summary",
                 "Indicator 1 - Plant Species Diversity",
                 "Indicator 2 - Weed Abundance & Threat",
@@ -456,7 +488,8 @@
                 "Indicator 7 - Feral Animals",
                 "Indicator 8 - Total Grazing Pressure",
                 "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk"
+                "Indicator 10 - Bushland Degradation Risk",
+                "Benchmarks - SA"
             ]
         },
         {
@@ -475,7 +508,7 @@
             "outputs": [
                 "Final Report Details",
                 "Output Details",
-                "Project Aquittal",
+                "Project Acquittal",
                 "Attachments"
             ]
         },
@@ -486,6 +519,21 @@
             "type": "Activity",
             "outputs": ["Upload of stage 1 and 2 reporting data"],
             "gmsId": ""
+        },
+        {
+            "category": "Programme Reporting",
+            "name": "Green Army - Monthly project status report",
+            "type": "Assessment",
+            "outputs": [
+                "Monthly Status Report Data",
+                "Participant Details"
+            ]
+        },
+        {
+            "category": "Programme Reporting",
+            "name": "Green Army - Quarterly project report",
+            "type": "Assessment",
+            "outputs": ["Three Monthly Report"]
         }
     ],
     "outputs": [
@@ -712,31 +760,22 @@
                 {
                     "isOutputTarget": false,
                     "category": "Community Engagement and Capacity Building",
-                    "description": "The total number of people attending and/or participating in activities and events, across all types of activities. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "displayType": "",
-                    "name": "totalParticipants",
-                    "aggregationType": "SUM",
-                    "label": "Total No. of participants",
-                    "units": ""
-                },
-                {
-                    "isOutputTarget": false,
-                    "category": "Community Engagement and Capacity Building",
+                    "listName": "",
                     "description": "The number of participants at activities and events who are not employed on projects. Individuals attending multiple activities will be counted for their attendance at each event.",
                     "displayType": "",
-                    "name": "numberOfVolunteers",
+                    "name": "totalParticipantsNotEmployed",
                     "aggregationType": "SUM",
-                    "label": "No of volunteers",
+                    "label": "No of volunteers participating in project activities",
                     "units": ""
                 },
                 {
                     "isOutputTarget": false,
                     "category": "Indigenous Capacity",
-                    "description": "The number of Indigenous people attending and/or participating in activities and events.",
+                    "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
                     "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "aggregationType": "SUM",
-                    "label": "No of Indigenous participants at project events. Individuals attending multiple activities will be counted for their attendance at each event.",
+                    "label": "No of Indigenous participants at project events. ",
                     "units": ""
                 },
                 {
@@ -779,16 +818,20 @@
                 {
                     "isOutputTarget": true,
                     "category": "Community Engagement and Capacity Building",
+                    "listName": "events",
+                    "description": "Count of the number of community participation and engagement events run.",
                     "displayType": "",
-                    "name": "eventTopics",
+                    "name": "eventType",
                     "aggregationType": "COUNT",
-                    "label": "Total No. of Community Participation and Engagement events run",
+                    "label": "Total No. of community participation and engagement events run",
                     "gmsId": "CPEE"
                 },
                 {
                     "category": "Community Engagement and Capacity Building",
+                    "listName": "",
+                    "description": "Sum of the duration of events run",
                     "displayType": "",
-                    "name": "eventDurationHrs",
+                    "name": "totalEventHrs",
                     "aggregationType": "SUM",
                     "label": "Total amount of time (Hrs) over which events have run",
                     "units": ""
@@ -796,20 +839,34 @@
                 {
                     "isOutputTarget": false,
                     "category": "Community Engagement and Capacity Building",
+                    "listName": "events",
+                    "description": "Breakdown of the number of events run for different purposes",
                     "displayType": "piechart",
                     "name": "eventPurpose",
                     "aggregationType": "HISTOGRAM",
-                    "label": "No. of activities by purpose of event",
+                    "label": "No. of events run by purpose of event",
                     "units": ""
                 },
                 {
-                    "groupBy": "output:industryType",
+                    "groupBy": "",
+                    "category": "Community Engagement and Capacity Building",
+                    "listName": "events",
+                    "description": "Breakdown of the number of events run by the type of industry that they are targeted at.",
+                    "displayType": "piechart",
+                    "name": "industryType",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "No. of events by type of industry"
+                },
+                {
+                    "isOutputTarget": true,
                     "category": "Community Engagement and Capacity Building",
                     "listName": "",
-                    "displayType": "piechart",
-                    "name": "eventPurpose",
-                    "aggregationType": "COUNT",
-                    "label": "No. of events by type of industry"
+                    "description": "The target number of community participation and engagements events planned to be run.",
+                    "displayType": "",
+                    "name": "numberOfEvents",
+                    "aggregationType": "SUM",
+                    "label": "Number of events planned to be implemented",
+                    "gmsId": "CPEE"
                 }
             ],
             "name": "Event Details"
@@ -845,9 +902,10 @@
                 {
                     "isOutputTarget": false,
                     "category": "Natural Resources Management",
+                    "listName": "",
                     "description": "Proportional breakdown of the number of fire management activities by the reason for using fire as a management tool. Activities may be undertaken for multiple reasons and therefore may be double-counted in the total figures. This graph should only be interpreted as a proportional breakdown.",
                     "displayType": "",
-                    "name": "burnReason",
+                    "name": "fireReason",
                     "aggregationType": "HISTOGRAM",
                     "label": "No. of activities by reason for burn",
                     "units": ""
@@ -870,9 +928,10 @@
                 {
                     "isOutputTarget": false,
                     "category": "Invasive Species Management - Weeds",
+                    "listName": "",
                     "description": "Average effectiveness of previous treatment (% killed) as assessed from the evidence of previous treatment events during weed mapping and monitoring activities",
                     "displayType": "",
-                    "name": "effectivenessOfPreviousTreatment",
+                    "name": "evidenceOfPreviousWeedTreatment",
                     "aggregationType": "AVERAGE",
                     "label": "Average effectiveness of Previous Treatment (% killed)",
                     "units": "%"
@@ -925,7 +984,7 @@
                     "label": "Frequency of reported weed observation/monitoring records by infestation status"
                 },
                 {
-                    "groupBy": "weedSpecies",
+                    "groupBy": "output:weedSpecies.name",
                     "category": "Invasive Species Management - Weeds",
                     "listName": "weedObservationMonitoringDetails",
                     "description": "Total area of reported weed cover by species. Note that the sum of areas will likely be greater than the net total area of weed cover.",
@@ -1057,6 +1116,7 @@
                 {
                     "category": "Natural Resources Management",
                     "listName": "",
+                    "description": "Count of the total number of activities undertaken involving conservation grazing",
                     "displayType": "",
                     "name": "areaOfStockManagementHa",
                     "aggregationType": "COUNT",
@@ -1065,6 +1125,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
+                    "description": "Total area managed with conservation grazing",
                     "displayType": "",
                     "name": "areaOfStockManagmentHa",
                     "aggregationType": "SUM",
@@ -1075,11 +1136,22 @@
                 {
                     "isOutputTarget": false,
                     "category": "Natural Resources Management",
+                    "description": "Breakdown of the number of activities undertaking conservation management actions by the reason for undertaking actions",
                     "displayType": "",
                     "name": "stockManagementReason",
                     "aggregationType": "HISTOGRAM",
                     "label": "Proportion of activities undertaking conservation grazing by stock management reason",
                     "units": ""
+                },
+                {
+                    "groupBy": "output:stockingDetails.stockingManagementSpecies",
+                    "category": "Natural Resources Management",
+                    "listName": "",
+                    "description": "Proportional breakdown of the area managed with conservation grazing by species used. Multiple species may be used concurrently and therefore area may be double-counted in such cases. This data should only be interpreted as proportional representation.",
+                    "displayType": "barchart",
+                    "name": "areaOfStockManagementHa",
+                    "aggregationType": "SUM",
+                    "label": "Proportional breakdown of the area managed with conservation grazing by species used"
                 }
             ],
             "name": "Stock Management Details"
@@ -1132,12 +1204,13 @@
                     "gmsId": "MPD"
                 },
                 {
+                    "groupBy": "output:versionOfPlan",
                     "category": "Project Management, Planning and Research Outputs",
                     "listName": "",
                     "description": "Count of the number of plans developed which have been classified as NEW plans (ie. not revisions of existing plans).",
                     "displayType": "",
-                    "name": "versionOfPlan",
-                    "aggregationType": "SUM",
+                    "name": "typeOfPlan",
+                    "aggregationType": "COUNT",
                     "label": "No. of new plans developed",
                     "filterBy": "New plan"
                 },
@@ -1220,7 +1293,7 @@
                     "gmsId": "WMA"
                 },
                 {
-                    "groupBy": "output:waterMgtEnviroBenefit",
+                    "groupBy": "output:waterMgtEnvironBenefit",
                     "category": "Natural Resources Management",
                     "listName": "",
                     "description": "Breakdown of the area of land actively managed with water management activities by the type of environmental benefit achieved. Note that a single water management action may achieve multiple benefits and therefore this metric should only be interpreted as proportional.",
@@ -1395,7 +1468,7 @@
                     "gmsId": "DRW"
                 },
                 {
-                    "groupBy": "debrisType",
+                    "groupBy": "output:debrisType",
                     "category": "Natural Resources Management",
                     "listName": "",
                     "description": "Breakdown of the mass of debris removed by the type of debris removed",
@@ -1418,7 +1491,7 @@
                     "gmsId": "DRV"
                 },
                 {
-                    "groupBy": "debrisType",
+                    "groupBy": "output:debrisType",
                     "category": "Natural Resources Management",
                     "listName": "",
                     "description": "Breakdown of the mass of debris removed by the type of debris removed",
@@ -1517,6 +1590,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Natural Resources Management",
+                    "description": "Count of the number of activities implementing access control works",
                     "displayType": "",
                     "name": "structuresInstalled",
                     "aggregationType": "COUNT",
@@ -1525,6 +1599,7 @@
                 },
                 {
                     "category": "Natural Resources Management",
+                    "description": "Sum of the total number of structures installed for access management.",
                     "displayType": "",
                     "name": "numberOfInstallations",
                     "aggregationType": "SUM",
@@ -1533,6 +1608,7 @@
                 {
                     "groupBy": "output:structuresInstalled",
                     "category": "Natural Resources Management",
+                    "description": "Breakdown of the number of structures installed for access management by type of structure",
                     "displayType": "piechart",
                     "name": "numberOfInstallations",
                     "aggregationType": "COUNT",
@@ -1541,18 +1617,20 @@
                 {
                     "groupBy": "output:accessControlPurpose",
                     "category": "Natural Resources Management",
+                    "description": "Breakdown of the number of access control actions undertaken by the purpose for which access control structures were installed. A single action may include more than one structure and address multiple purposes. Therefore this metric should only be interpreted as proportionally representative.",
                     "displayType": "piechart",
                     "name": "numberOfInstallations",
                     "aggregationType": "COUNT",
-                    "label": "Proportion of structures installed for access management by purpose"
+                    "label": "Proportion of actions undertaken for access management by purpose"
                 },
                 {
                     "groupBy": "output:accessManagementMethod",
                     "category": "Natural Resources Management",
+                    "description": "Breakdown of the number of access control actions undertaken by the broad method used to control the access. A single action may include more than one structure and address multiple purposes. Therefore this metric should only be interpreted as proportionally representative.",
                     "displayType": "piechart",
                     "name": "numberOfInstallations",
                     "aggregationType": "COUNT",
-                    "label": "Proportion of structures installed for access management by management method"
+                    "label": "Proportion of actions undertaken for access management by management method"
                 }
             ],
             "name": "Access Control Details"
@@ -1767,7 +1845,7 @@
                     "label": "Total No. of species conservation actions undertaken"
                 },
                 {
-                    "groupBy": "targetSpecies",
+                    "groupBy": "output:targetSpecies.name",
                     "category": "Biodiversity Management",
                     "listName": "conservationWorks",
                     "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
@@ -1829,7 +1907,7 @@
                     "category": "Biodiversity Management",
                     "listName": "protectionMechanisms",
                     "description": "Breakdown of the total area covered by each different type of agreement/protection mechanism",
-                    "displayType": "barchart",
+                    "displayType": "piechart",
                     "name": "areaUnderAgreement",
                     "aggregationType": "SUM",
                     "label": "Area (Ha) under agreement by protection mechanism type"
@@ -1883,7 +1961,7 @@
                     "listName": "",
                     "description": "Count of the number of activities which were organised or run by indigenous decision makers",
                     "displayType": "",
-                    "name": "indigenousDecisionMakers",
+                    "name": "numberOnCountryVisits",
                     "aggregationType": "COUNT",
                     "label": "No. of activities organised or run by Indigenous people",
                     "filterBy": "indigenousDecisionMakers:Yes"
@@ -1903,7 +1981,7 @@
                     "listName": "",
                     "description": "Count of the number of activities recording the documentation of indigenous knowledge.",
                     "displayType": "",
-                    "name": "indigenousKnowledgeDocumented",
+                    "name": "numberOnCountryVisits",
                     "aggregationType": "COUNT",
                     "label": "No. of activities in which Indigenous knowledge was documented",
                     "filterBy": "indigenousKnowledgeDocumented:Yes"
@@ -1936,6 +2014,7 @@
                 {
                     "isOutputTarget": true,
                     "category": "Revegetation",
+                    "description": "The total number of plants which have been propagated and nurtured to the point of being ready for planting out.",
                     "displayType": "",
                     "name": "totalNumberGrown",
                     "aggregationType": "SUM",
@@ -1944,15 +2023,17 @@
                 },
                 {
                     "category": "Revegetation",
+                    "description": "The total weight of seed which has been germinated and grown into plants ready for planting out.",
                     "displayType": "",
                     "name": "totalSeedWeight",
                     "aggregationType": "SUM",
-                    "label": "Total weight of seed germinated to produce the finished stock"
+                    "label": "Total weight (Kg) of seed germinated to produce the finished stock"
                 },
                 {
                     "groupBy": "output:finishedStockType",
                     "category": "Revegetation",
                     "listName": "plantPropagation",
+                    "description": "Breakdown of the number of plants grown and ready for planting out by the type of finished stock.",
                     "displayType": "piechart",
                     "name": "numberGrown",
                     "aggregationType": "COUNT",
@@ -1962,6 +2043,7 @@
                     "groupBy": "output:germinationMethod",
                     "category": "Revegetation",
                     "listName": "plantPropagation",
+                    "description": "Breakdown of the number of plants germinated from seed by the type of seed preparation technique used.",
                     "displayType": "piechart",
                     "name": "numberGrown",
                     "aggregationType": "SUM",
@@ -1986,7 +2068,7 @@
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
-                    "label": "No. of surveys undertaken",
+                    "label": "No. of fauna surveys undertaken",
                     "gmsId": "FBS"
                 },
                 {
@@ -1996,7 +2078,7 @@
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
-                    "label": "Total number of species records"
+                    "label": "Total number of fauna species records"
                 },
                 {
                     "category": "Biodiversity Management",
@@ -2017,11 +2099,11 @@
                     "isOutputTarget": true,
                     "category": "Biodiversity Management",
                     "listName": "",
-                    "description": "The number of activities undertaken of the type 'Flora Survey'.",
+                    "description": "The number of activities undertaken of the type 'Flora Survey - general'.",
                     "displayType": "",
                     "name": "totalNumberOfOrganisms",
                     "aggregationType": "COUNT",
-                    "label": "No. of surveys undertaken",
+                    "label": "No. of flora surveys undertaken",
                     "gmsId": "FRBS"
                 },
                 {
@@ -2031,7 +2113,7 @@
                     "displayType": "",
                     "name": "species",
                     "aggregationType": "COUNT",
-                    "label": "Total number of species records"
+                    "label": "Total number of flora species records"
                 },
                 {
                     "category": "Biodiversity Management",
@@ -2065,6 +2147,7 @@
                 {
                     "isOutputTarget": false,
                     "category": "Indigenous Capacity",
+                    "description": "Count of the number of unique (new) Indigenous enterprises established as a result of project implementation",
                     "displayType": "",
                     "name": "totalNewEnterprises",
                     "aggregationType": "SUM",
@@ -2072,10 +2155,11 @@
                 },
                 {
                     "category": "Indigenous Capacity",
+                    "description": "Count of the number of unique engagements of Indigenous enterprises which have been formalised in contracts/agreements.",
                     "displayType": "",
                     "name": "totalIndigenousEnterprisesEngaged",
                     "aggregationType": "SUM",
-                    "label": "No of formal (contractual) engagements with Indigenous enterprises"
+                    "label": "No. of formal (contractual) engagements with Indigenous enterprises"
                 }
             ],
             "name": "Indigenous Businesses"
@@ -2106,6 +2190,7 @@
                     "isOutputTarget": true,
                     "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "pestManagement",
+                    "description": "The total area over which pest treatment activities have been undertaken. Note that re-treatments of the same area may be double-counted.",
                     "displayType": "",
                     "name": "areaTreatedHa",
                     "aggregationType": "SUM",
@@ -2167,7 +2252,7 @@
                     "name": "treatmentCostPerHa",
                     "aggregationType": "AVERAGE",
                     "label": "Average cost of treatment per hectare ($ / Ha.)",
-                    "units": "$/Ha"
+                    "units": ""
                 },
                 {
                     "category": "Invasive Species Management - Pests & Diseases",
@@ -2362,6 +2447,7 @@
             "scores": [
                 {
                     "category": "Revegetation",
+                    "description": "The total number of follow-up activities undertaken to monitor the success of revegetation actions carried out under sponsored projects.",
                     "displayType": "",
                     "name": "revegetationType",
                     "aggregationType": "SUM",
@@ -2370,6 +2456,7 @@
                 },
                 {
                     "category": "Revegetation",
+                    "description": "Breakdown of the number of follow-up monitoring activities by the type of counting method used.",
                     "displayType": "piechart",
                     "name": "countingMethod",
                     "aggregationType": "HISTOGRAM",
@@ -2378,6 +2465,7 @@
                 {
                     "category": "Revegetation",
                     "listName": "",
+                    "description": "Breakdown of the number of follow-up monitoring activities by the types of revegetation method used.",
                     "displayType": "",
                     "name": "revegetationType",
                     "aggregationType": "HISTOGRAM",
@@ -2385,6 +2473,7 @@
                 },
                 {
                     "category": "Revegetation",
+                    "description": "The total number of plants estimated to be surviving as an aggregate of all counting methods used.",
                     "displayType": "",
                     "name": "totalNumberSurviving",
                     "aggregationType": "SUM",
@@ -2394,15 +2483,17 @@
                     "isOutputTarget": true,
                     "category": "Revegetation",
                     "listName": "revegetationMonitoring",
+                    "description": "Estimate of the average survivability of both tubestock and seedstock expressed as a percentage of plants planted. For seedstock, this includes both counted and estimated germination establishment rates.",
                     "displayType": "",
                     "name": "survivalRate",
                     "aggregationType": "AVERAGE",
                     "label": "Average survivability of tubestock and seedstock (%)"
                 },
                 {
-                    "groupBy": "output:revegetationMonitoring.species",
+                    "groupBy": "output:species.name",
                     "category": "Revegetation",
                     "listName": "revegetationMonitoring",
+                    "description": "Breakdown of the estimated survival rate of plants by the species planted.",
                     "displayType": "barchart",
                     "name": "survivalRate",
                     "aggregationType": "AVERAGE",
@@ -2427,6 +2518,7 @@
                 "isOutputTarget": true,
                 "category": "Natural Resources Management",
                 "listName": "",
+                "description": "The number of water quality monitoring activities undertaken.",
                 "displayType": "",
                 "name": "instrumentCalibration",
                 "aggregationType": "COUNT",
@@ -2444,6 +2536,26 @@
             "template": "siteAssessment",
             "scores": [],
             "name": "Vegetation Assessment"
+        },
+        {
+            "template": "vicSurveyInfo",
+            "scores": [],
+            "name": "Vegetation Assessment - Survey Information"
+        },
+        {
+            "template": "vicHabHaV2-nativeSpecies",
+            "scores": [],
+            "name": "Native Species"
+        },
+        {
+            "template": "vicHabHaV2-weedSpecies",
+            "scores": [],
+            "name": "Weed Species"
+        },
+        {
+            "template": "vicHabHaV2-trees",
+            "scores": [],
+            "name": "Trees"
         },
         {
             "template": "siteConditionComponents",
@@ -2599,26 +2711,29 @@
                 {
                     "category": "Heritage Asset Management",
                     "listName": "",
+                    "description": "Count of the total number of activities undertaking heritage conservation actions",
                     "displayType": "",
                     "name": "siteName",
-                    "aggregationType": "SUM",
+                    "aggregationType": "COUNT",
                     "label": "Total No. of activities undertaking heritage conservation actions",
                     "gmsId": "HC HSA"
                 },
                 {
                     "category": "Heritage Asset Management",
                     "listName": "",
+                    "description": "Breakdown of the total number of activities undertaking heritage conservation actions by type of heritage work",
                     "displayType": "",
                     "name": "typeOfHeritage",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "HISTOGRAM",
                     "label": "No. of activities by type of heritage work"
                 },
                 {
                     "category": "Heritage Asset Management",
                     "listName": "",
+                    "description": "Breakdown of the total number of activities undertaking heritage conservation actions by level of heritage listing.",
                     "displayType": "",
                     "name": "levelOfHeritageListing",
-                    "aggregationType": "COUNT",
+                    "aggregationType": "HISTOGRAM",
                     "label": "No. of activities on sites by the level of heritage listing"
                 }
             ],
@@ -2693,7 +2808,7 @@
                     "gmsId": "FNC"
                 },
                 {
-                    "groupBy": "fenceType",
+                    "groupBy": "output:fenceType",
                     "category": "Biodiversity Management",
                     "listName": "",
                     "description": "Breakdown of the length of fence erected by the type of fence.",
@@ -2740,7 +2855,7 @@
         {
             "template": "smallGrantAquittal",
             "scores": [],
-            "name": "Project Aquittal"
+            "name": "Project Acquittal"
         },
         {
             "template": "activityAttachments",
@@ -2752,6 +2867,7 @@
             "scores": [
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Revegetation",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2761,6 +2877,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Revegetation",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2770,6 +2887,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Revegetation",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2779,15 +2897,17 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Natural Resources Management",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
                     "aggregationType": "SUM",
-                    "label": "Burnt area (Ha) - may be different to the total area managed",
+                    "label": "Burnt area (Ha)",
                     "filterBy": "Burnt area (Ha) - may be different to the total area managed"
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Biodiversity Management",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2797,15 +2917,17 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
                     "aggregationType": "SUM",
-                    "label": "Area covered (Ha) by pest treatment",
+                    "label": "Area covered (Ha) by pest treatment actions",
                     "filterBy": "Area covered (Ha) by pest treatment"
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Revegetation",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2824,6 +2946,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Indigenous Capacity",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2833,6 +2956,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Farm Management Practices",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2842,6 +2966,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Invasive Species Management - Pests & Diseases",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2851,6 +2976,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Indigenous Capacity",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2860,6 +2986,7 @@
                 },
                 {
                     "groupBy": "output:scoreLabel",
+                    "category": "Farm Management Practices",
                     "listName": "scores",
                     "displayType": "",
                     "name": "score",
@@ -2869,6 +2996,31 @@
                 }
             ],
             "name": "Upload of stage 1 and 2 reporting data"
+        },
+        {
+            "template": "gaMonthlyReportData",
+            "scores": [],
+            "name": "Monthly Status Report Data"
+        },
+        {
+            "template": "gaQuarterlyProjectReport",
+            "scores": [],
+            "name": "Three Monthly Report"
+        },
+        {
+            "template": "gaParticipantDetails",
+            "scores": [],
+            "name": "Participant Details"
+        },
+        {
+            "template": "saStructuralDiversity",
+            "scores": [],
+            "name": "Indicator 1 - Plant Species Diversity"
+        },
+        {
+            "template": "saWeedAbundanceAndThreat",
+            "scores": [],
+            "name": "Indicator 2 - Weed Abundance & Threat"
         }
     ]
 }

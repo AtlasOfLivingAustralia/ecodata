@@ -77,40 +77,30 @@
     ],
     "viewModel": [
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "Total weed cover (%)",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalCoverPercent",
-                                "computed": null,
-                                "type": "number"
-                            },
-                            {
-                                "colspan": "2",
-                                "source": "Total Abundance & Threat Score",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "totalAbundanceAndThreatScore",
-                                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"abundanceAndThreatScore\",\"fromList\":\"weedAbundanceAndThreatScore\"}}",
-                                "type": "number"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "type": "literal"
+                },
+                {
+                    "source": "Total weed cover (%)",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalCoverPercent",
+                    "type": "number"
+                },
+                {
+                    "colspan": "2",
+                    "source": "Total Abundance & Threat Score",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalAbundanceAndThreatScore",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"abundanceAndThreatScore\",\"fromList\":\"weedAbundanceAndThreatScore\"}}",
+                    "type": "number"
+                }
+            ]}]},
             "source": "weedAbundanceAndThreatScore",
             "columns": [
                 {
@@ -158,7 +148,6 @@
             "items": [
                 {
                     "source": "Your Weed Abundance & Threat Score",
-                    "computed": null,
                     "width": "17%",
                     "type": "literal",
                     "css": "heavy-border span5 offset4"
