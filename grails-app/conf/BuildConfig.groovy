@@ -65,6 +65,8 @@ grails.project.dependency.resolution = {
         test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
         test 'com.github.fakemongo:fongo:1.5.4'
 
+        compile 'org.codehaus.gpars:gpars:0.11'
+        compile 'org.apache.activemq:activemq-core:5.3.0'
     }
 
     plugins {
