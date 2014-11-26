@@ -75,7 +75,8 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
-
+        compile 'org.codehaus.gpars:gpars:0.11'
+        compile 'org.apache.activemq:activemq-core:5.3.0'
     }
 
     plugins {
