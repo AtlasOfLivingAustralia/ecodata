@@ -16,7 +16,7 @@ environments {
             mongo {
                 host = "localhost"
                 port = "27017"
-                databaseName = "ecodata-prod"
+                databaseName = "ecodata"
             }
         }
     }
