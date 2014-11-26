@@ -12,11 +12,6 @@ class LocationController {
 
     def ignores = ["action","controller"]
 
-    def asJson = { model ->
-        response.setContentType("application/json; charset=\"UTF-8\"")
-        model
-    }
-
     def index(){
         redirect(action: "list")
     }
@@ -35,7 +30,8 @@ class LocationController {
             mapOfProperties.remove("_id")
 
             response.setContentType("application/json")
-            [record:mapOfProperties] asJson
+            def model = [record:mapOfProperties]
+            render model as JSON
         } else {
             response.sendError(404, 'Unrecognised Location ID. This location may have been removed.')
         }
@@ -91,7 +87,8 @@ class LocationController {
         }
         response.setStatus(200)
         response.setContentType("application/json")
-        [success:true] asJson
+        def model = [success:true]
+        render model as JSON
     }
 
     def listForUser(){

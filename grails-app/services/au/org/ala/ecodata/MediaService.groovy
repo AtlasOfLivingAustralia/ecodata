@@ -37,8 +37,8 @@ class MediaService {
 
                 mapOfProperties["associatedMedia"].each {
 
-                    def imagePath = it.replaceAll(grailsApplication.config.fielddata.mediaDir,
-                            grailsApplication.config.fielddata.mediaUrl)
+                    def imagePath = it.replaceAll(grailsApplication.config.app.file.upload.path,
+                            grailsApplication.config.app.uploads.url)
                     def extension = FilenameUtils.getExtension(imagePath)
                     def pathWithoutExt = imagePath.substring(0, imagePath.length() - extension.length() - 1 )
                     def image = [
@@ -53,8 +53,8 @@ class MediaService {
                 mapOfProperties['associatedMedia'] = originalsArray
                 mapOfProperties['images'] = imagesArray
             } else {
-                def imagePath = mapOfProperties["associatedMedia"].replaceAll(grailsApplication.config.fielddata.mediaDir,
-                        grailsApplication.config.fielddata.mediaUrl)
+                def imagePath = mapOfProperties["associatedMedia"].replaceAll(grailsApplication.config.app.file.upload.path,
+                        grailsApplication.config.app.uploads.url)
                 def extension = FilenameUtils.getExtension(imagePath)
                 def pathWithoutExt = imagePath.substring(0, imagePath.length() - extension.length() - 1 )
                 def image = [
@@ -75,16 +75,15 @@ class MediaService {
             if (isCollectionOrArray(mapOfProperties["associatedMedia"])){
                 def originalsArray = []
                 mapOfProperties["associatedMedia"].each {
-                    def imagePath = it.replaceAll(grailsApplication.config.fielddata.mediaDir,
-                            grailsApplication.config.fielddata.mediaUrl)
+                    def imagePath = it.replaceAll(grailsApplication.config.app.file.upload.path,
+                            grailsApplication.config.app.uploads.url)
                     originalsArray << imagePath
                 }
                 mapOfProperties['associatedMedia'] = originalsArray
             } else {
-                def imagePath = mapOfProperties["associatedMedia"].replaceAll(grailsApplication.config.fielddata.mediaDir,
-                        grailsApplication.config.fielddata.mediaUrl)
+                def imagePath = mapOfProperties["associatedMedia"].replaceAll(grailsApplication.config.app.file.upload.path,
+                        grailsApplication.config.app.uploads.url)
                 mapOfProperties['associatedMedia'] = [imagePath]
-                //mapOfProperties['images'] = [image]
             }
         }
     }
@@ -132,11 +131,11 @@ class MediaService {
     }
 
     def download(recordId, idx, address){
-        File mediaDir = new File(grailsApplication.config.fielddata.mediaDir  + recordId + File.separator)
+        File mediaDir = new File(grailsApplication.config.fielddata.mediaDir + File.separator + recordId + File.separator)
         if (!mediaDir.exists()){
             FileUtils.forceMkdir(mediaDir)
         }
-        def destFile = new File(grailsApplication.config.fielddata.mediaDir + recordId + File.separator + idx + "_" +address.tokenize("/")[-1])
+        def destFile = new File(grailsApplication.config.app.file.upload.path + File.separator  + recordId + File.separator + idx + "_" +address.tokenize("/")[-1])
         def out = new BufferedOutputStream(new FileOutputStream(destFile))
         log.debug("Trying to download..." + address)
         String decodedAddress = StringEscapeUtils.unescapeXml(address);
@@ -168,10 +167,7 @@ class MediaService {
     /** Generate an image of the specified size.*/
     def generateThumbnail(source, imageSize){
         def extension = FilenameUtils.getExtension(source.getPath())
-        //def targetFilePath = source.getPath().replace("." + extension, imageSize.suffix + "." + extension)
         def sourcePath = source.getPath()
-        def oldExtension = extension.length()
-
         def targetFilePath = sourcePath.substring(0, sourcePath.length() - (extension.length() + 1)) + imageSize.suffix + "." + extension
         def target = new File(targetFilePath)
         generateThumbnail(source, target, imageSize.size)
