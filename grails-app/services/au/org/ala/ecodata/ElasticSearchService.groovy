@@ -666,7 +666,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         Project.withNewSession {
             def batchParams = [offset:0, max:50]
-            def projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+            def projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -676,7 +676,7 @@ class ElasticSearchService {
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+                projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
             }
         }
         log.debug "Indexing all sites"

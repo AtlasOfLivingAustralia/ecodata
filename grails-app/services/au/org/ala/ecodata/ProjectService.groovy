@@ -6,6 +6,7 @@ class ProjectService {
 
     static transactional = false
     static final ACTIVE = "active"
+	static final COMPLETED = "completed"
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
@@ -194,9 +195,9 @@ class ProjectService {
                     }
                 }
             }
-
+			
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
-
+			
 
             // Add project output target information where it exists.
 
