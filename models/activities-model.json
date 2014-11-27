@@ -2,21 +2,12 @@
     "selectedActivity": {
         "category": "Assessment & monitoring",
         "status": "active",
-        "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+        "name": "Vegetation Assessment - TasVeg (TAS)",
         "type": "Assessment",
         "outputs": [
-            "Bushland Condition - Site Health Summary",
-            "Indicator 1 - Plant Species Diversity",
-            "Indicator 2 - Weed Abundance & Threat",
-            "Indicator 3 - Structural Diversity",
-            "Indicator 4 - Regeneration",
-            "Indicator 5 - Tree and Shrub Health",
-            "Indicator 6 - Tree Habitat",
-            "Indicator 7 - Feral Animals",
-            "Indicator 8 - Total Grazing Pressure",
-            "Indicator 9 - Animal Species",
-            "Indicator 10 - Bushland Degradation Risk",
-            "Benchmarks - SA"
+            "Site Condition - TasVeg",
+            "Landscape Context - TasVeg",
+            "Floristic Composition"
         ]
     },
     "activities": [
@@ -444,10 +435,9 @@
             "name": "Vegetation Assessment - TasVeg (TAS)",
             "type": "Assessment",
             "outputs": [
-                "Benchmarks - TAS",
-                "Floristic Composition",
-                "Site Condition",
-                "Landscape Context"
+                "Site Condition - TasVeg",
+                "Landscape Context - TasVeg",
+                "Floristic Composition"
             ]
         },
         {
@@ -524,10 +514,7 @@
             "category": "Programme Reporting",
             "name": "Green Army - Monthly project status report",
             "type": "Assessment",
-            "outputs": [
-                "Monthly Status Report Data",
-                "Participant Details"
-            ]
+            "outputs": ["Monthly Status Report Data"]
         },
         {
             "category": "Programme Reporting",
@@ -2679,6 +2666,21 @@
             "template": "habitatHectaresLandscapeContext",
             "scores": [],
             "name": "Landscape Context"
+        },
+        {
+            "template": "tasVegSiteCondition",
+            "scores": [],
+            "name": "Site Condition - TasVeg"
+        },
+        {
+            "template": "tasVegLandscaprContext",
+            "scores": [],
+            "name": "Landscape Context - TasVeg"
+        },
+        {
+            "template": "tasVegFloristicComposition",
+            "scores": [],
+            "name": "Floristic Composition"
         },
         {
             "template": "bioCondition100x50m",
