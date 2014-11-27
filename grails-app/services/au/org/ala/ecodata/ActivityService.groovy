@@ -261,6 +261,19 @@ class ActivityService {
      * @return a list of the activities that match the supplied criteria
      */
     public search(Map searchCriteria, levelOfDetail = []) {
+        return search(searchCriteria, null, null, null, levelOfDetail)
+    }
+
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     * @param startDate if supplied will constrain the returned activities to those with a start date on or after this date.
+     * @param endDate if supplied will constrain the returned activities to those with a end date on or after this date.
+     * @param planned if true uses the plannedStartDate and plannedEndDate instead of startDate and endDate for the date range.
+     * @return a list of the activities that match the supplied criteria
+     */
+    public search(Map searchCriteria, Date startDate, Date endDate, Boolean planned, levelOfDetail = []) {
 
         def criteria = Activity.createCriteria()
         def activities = criteria.list {
@@ -274,6 +287,16 @@ class ActivityService {
                     eq(prop, value)
                 }
             }
+
+            if (startDate) {
+                def dateProperty = planned ? 'plannedStartDate':'startDate'
+                ge(dateProperty, startDate)
+            }
+            if (endDate) {
+                def dateProperty = planned ? 'plannedEndDate':'endDate'
+                le(dateProperty, endDate)
+            }
+
 
         }
         activities.collect{toMap(it, levelOfDetail)}
