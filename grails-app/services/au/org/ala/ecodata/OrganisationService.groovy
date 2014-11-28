@@ -26,7 +26,7 @@ class OrganisationService {
     }
 
     def list(levelOfDetail = []) {
-        return Organisation.findByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
+        return Organisation.findAllByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
     }
 
     def create(props) {

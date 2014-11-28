@@ -10,7 +10,7 @@ class ActivityController {
     static final SCORES = 'scores'
     static final BRIEF = 'brief'
 
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
+    static dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -157,6 +157,11 @@ class ActivityController {
      * }
      * where valueN may be a primitive type or array.
      * The criteria are ANDed together.
+     *
+     * Dates are treated specially by this method - the properties "plannedStartDate" and "startDate" will be
+     * searched using greater than or equals, "plannedEndDate" and "endDate" will be searched using less than or
+     * equals.  This is to support range / stage based searching of activities.  Dates should be formatted as UTC.
+     *
      * If a property is supplied that isn't a property of the project, it will not cause
      * an error, but no results will be returned.  (this is an effect of mongo allowing
      * a dynamic schema)
@@ -167,7 +172,32 @@ class ActivityController {
     def search() {
         def searchCriteria = request.JSON
 
-        def activityList = activityService.search(searchCriteria, 'all')
+        def startDate = null, endDate = null, planned = null
+        def df = new SimpleDateFormat(dateFormat)
+        if (searchCriteria.startDate) {
+            startDate = df.parse(searchCriteria.remove('startDate'))
+            planned = Boolean.FALSE
+        }
+        if (searchCriteria.endDate) {
+            endDate = df.parse(searchCriteria.remove('endDate'))
+            planned = Boolean.FALSE
+        }
+        if (searchCriteria.plannedStartDate) {
+            if (planned == Boolean.FALSE) {
+                throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
+            }
+            planned = Boolean.TRUE
+            startDate = df.parse(searchCriteria.remove('plannedStartDate'))
+        }
+        if (searchCriteria.plannedEndDate) {
+            if (planned == Boolean.FALSE) {
+                throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
+            }
+            planned = Boolean.TRUE
+            endDate = df.parse(searchCriteria.remove('plannedEndDate'))
+        }
+
+        def activityList = activityService.search(searchCriteria, startDate, endDate, planned, 'all')
 
         asJson activities:activityList
     }

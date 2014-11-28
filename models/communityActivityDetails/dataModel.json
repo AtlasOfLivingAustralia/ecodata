@@ -109,6 +109,10 @@
             "validate": "min[0]"
         },
         {
+            "dataType": "number",
+            "name": "numberOfEvents"
+        },
+        {
             "dataType": "text",
             "name": "eventNotes"
         }

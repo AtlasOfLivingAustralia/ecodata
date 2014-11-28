@@ -1,5 +1,5 @@
 {
-    "modelName": "Site Condition - Habitat Hectares (Vic)",
+    "modelName": "Site Condition Components",
     "dataModel": [
         {
             "dataType": "number",
@@ -55,7 +55,7 @@
                 },
                 {
                     "dataType": "boolean",
-                    "name": "modified"
+                    "name": "present"
                 }
             ]
         },
