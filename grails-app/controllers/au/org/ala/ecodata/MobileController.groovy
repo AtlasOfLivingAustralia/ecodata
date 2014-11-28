@@ -42,8 +42,7 @@ class MobileController {
                         response.setStatus(200)
                         response.setContentType("application/json")
                         [success:true, recordId:record.id.toString()]
-                    }
-                    else{
+                    } else {
                         record.delete(flush: true)
                         response.setContentType("application/json")
                         log.error("Unable to create record. " + errors)

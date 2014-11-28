@@ -23,15 +23,10 @@ class LocationController {
         if(r){
             r.metaPropertyValues.each { println "meta: "  + it.name }
             def dbo = r.getProperty("dbo")
-
             def mapOfProperties = dbo.toMap()
-            def id = mapOfProperties["_id"].toString()
-            mapOfProperties["id"] = id
             mapOfProperties.remove("_id")
-
             response.setContentType("application/json")
-            def model = [record:mapOfProperties]
-            render model as JSON
+            render mapOfProperties as JSON
         } else {
             response.sendError(404, 'Unrecognised Location ID. This location may have been removed.')
         }
@@ -102,14 +97,11 @@ class LocationController {
         Location.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
             def dbo = it.getProperty("dbo")
             def mapOfProperties = dbo.toMap()
-            def id = mapOfProperties["_id"].toString()
-            mapOfProperties["id"] = id
             mapOfProperties.remove("_id")
             locations.add(mapOfProperties)
         }
         response.setContentType("application/json")
-        def model = [locations: locations]
-        render model as JSON
+        render locations as JSON
     }
 
     def list(){
@@ -123,13 +115,10 @@ class LocationController {
         Location.findAllWhere([:], [sort:sort,order:order,offset:offset,max:max]).each {
             def dbo = it.getProperty("dbo")
             def mapOfProperties = dbo.toMap()
-            def id = mapOfProperties["_id"].toString()
-            mapOfProperties["id"] = id
             mapOfProperties.remove("_id")
             locations.add(mapOfProperties)
         }
         response.setContentType("application/json")
-        def model = [locations: locations]
-        render model as JSON
+        render locations as JSON
     }
 }

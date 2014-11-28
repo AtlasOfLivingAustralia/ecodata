@@ -27,17 +27,16 @@ class RecordController {
         def csvWriter = new CSVWriter(new OutputStreamWriter(response.outputStream))
         csvWriter.writeNext(
             [
-              "modified",
-              "decimalLatitude",
-              "decimalLongitude",
-              "eventDate",
-              "eventTime",
-              "userId",
-              "recordedBy",
-              "usingReverseGeocodedLocality",
+              "occurrenceID",
               "scientificName",
               "family",
               "kingdom",
+              "decimalLatitude",
+              "decimalLongitude",
+              "eventDate",
+              "userId",
+              "recordedBy",
+              "usingReverseGeocodedLocality",
               "individualCount",
               "submissionMethod",
               "georeferenceProtocol",
@@ -48,7 +47,7 @@ class RecordController {
               "imageLicence",
               "locality",
               "associatedMedia",
-              "occurrenceID"
+              "modified",
             ] as String[]
         )
 
@@ -58,17 +57,16 @@ class RecordController {
 
           csvWriter.writeNext(
             [
-             it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : "",
-             map.decimalLatitude?:"",
-             map.decimalLongitude?:"",
-             map.eventDate?:"",
-             map.eventTime?:"",
-             map.userId?:"",
-             map.recordedBy?:"",
-             map.usingReverseGeocodedLocality?:"",
+             map.occurrenceID?:"",
              map.scientificName?:"",
              map.family?:"",
              map.kingdom?:"",
+             map.decimalLatitude?:"",
+             map.decimalLongitude?:"",
+             map.eventDate?:"",
+             map.userId?:"",
+             map.recordedBy?:"",
+             map.usingReverseGeocodedLocality?:"",
              map.individualCount?:"",
              map.submissionMethod?:"",
              map.georeferenceProtocol?:"",
@@ -79,7 +77,7 @@ class RecordController {
              map.imageLicence?:"",
              map.locality?:"",
              map.associatedMedia ? map.associatedMedia.join(";") : "",
-             map.occurrenceID?:"",
+             it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
             ] as String[]
           )
         }
@@ -124,7 +122,8 @@ class RecordController {
                 }
                 record.save(true)
                 response.setContentType("application/json")
-                [id: record.id.toString(), images:record['associatedMedia']]
+                def model = [id: record.id.toString(), images:record['associatedMedia']]
+                render model as JSON
             } else {
                 response.sendError(404, 'Record ID not recognised. JSON payload must contain "id" element for existing record.')
             }
@@ -134,10 +133,11 @@ class RecordController {
     }
 
     def getById(){
-        Record r = Record.get(params.id)
+        Record r = Record.findByOccurrenceID(params.id)
         if(r){
             response.setContentType("application/json")
-            [record:recordService.toMap(r)]
+            def model = recordService.toMap(r)
+            render model as JSON
         } else {
             response.sendError(404, 'Unrecognised Record ID. This record may have been removed.')
         }
@@ -161,12 +161,13 @@ class RecordController {
             records.add(recordService.toMap(it))
         }
         response.setContentType("application/json")
-        [records:records]
+        render records as JSON
     }
 
     def count(){
         response.setContentType("application/json")
-        [count:Record.count()]
+        def model = [count:Record.count()]
+        render model as JSON
     }
 
     def list(){
@@ -181,8 +182,7 @@ class RecordController {
             records.add(recordService.toMap(it))
         }
         response.setContentType("application/json")
-        def model = [records:records]
-        render model as JSON
+        render records as JSON
     }
 
     def listForUser(){
@@ -223,17 +223,16 @@ class RecordController {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
         if (json.userId){
-            def (record,errors) = recordService.createRecord(json)
+            def (record, errors) = recordService.createRecord(json)
             if(errors.size() == 0){
                 setResponseHeadersForRecord(response, record)
                 response.setContentType("application/json")
-                def model = [id:record.id.toString()]
+                def model = recordService.toMap(record)
                 render model as JSON
-            }
-            else{
+            } else {
                 record.delete(flush: true)
                 response.addHeader 'errors', (errors as grails.converters.JSON).toString()
-                response.sendError(400,"Unable to create a new record. See errors for more details." )
+                response.sendError(400, "Unable to create a new record. See errors for more details." )
             }
         } else {
             response.sendError(400, 'Missing userId')
