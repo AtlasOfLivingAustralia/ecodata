@@ -379,7 +379,6 @@ class ElasticSearchService {
                             "type":"string",
                             "index":"not_analyzed"
                         }
-
                     },
                     "dynamic_templates": [
                         {
@@ -390,7 +389,16 @@ class ElasticSearchService {
                                     "index": "analyzed"
                                 }
                             }
+                        },
+                        {   "custom_dollars_template": {
+                                "path_match":"custom.details.budget.rows.costs.dollar",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                }
+                            }
                         }
+
                     ]
                 }
             },
