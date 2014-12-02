@@ -10,6 +10,7 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
+	static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
 
     def grailsApplication
@@ -40,7 +41,12 @@ class ProjectService {
         def list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
         list.collect { toMap(it, levelOfDetail) }
     }
-
+	
+	def listPromotionalProjects(){
+		def list = Project.findAllByPromoteOnHomepage("yes")
+		list.collect { toMap(it, PROMO) }
+	}
+	
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -54,6 +60,10 @@ class ProjectService {
         if (levelOfDetail == BRIEF) {
             return [projectId: prj.projectId, name: prj.name]
         }
+		if (levelOfDetail == PROMO) {
+			return [projectId: prj.projectId, name: prj.name, organisationName: prj.organisationName, file:"${(int)10 + Math.random() * 3}.jpg",
+					description: prj.description?.take(200), documents:documentService.findAllForProjectId(prj.projectId, ALL)]
+		}
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
 		mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();

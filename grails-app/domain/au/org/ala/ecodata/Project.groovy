@@ -12,6 +12,7 @@ class Project {
     static mapping = {
         name index: true
         projectId index: true
+		promoteOnHomepage index: true
         version false
     }
 
@@ -40,6 +41,7 @@ class Project {
 	Map risks
 	Date dateCreated
     Date lastUpdated
+	String promoteOnHomepage = 'no'
 	
     static constraints = {
         externalId nullable:true
