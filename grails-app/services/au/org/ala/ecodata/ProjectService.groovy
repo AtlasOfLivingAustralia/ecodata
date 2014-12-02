@@ -42,7 +42,7 @@ class ProjectService {
         list.collect { toMap(it, levelOfDetail) }
     }
 	
-	def listPromotionalProjects(){
+	def promoted(){
 		def list = Project.findAllByPromoteOnHomepage("yes")
 		list.collect { toMap(it, PROMO) }
 	}
@@ -61,8 +61,8 @@ class ProjectService {
             return [projectId: prj.projectId, name: prj.name]
         }
 		if (levelOfDetail == PROMO) {
-			return [projectId: prj.projectId, name: prj.name, organisationName: prj.organisationName, file:"${(int)10 + Math.random() * 3}.jpg",
-					description: prj.description?.take(200), documents:documentService.findAllForProjectId(prj.projectId, ALL)]
+			return [projectId: prj.projectId, name: prj.name, organisationName: prj.organisationName, description: prj.description?.take(200), 
+					documents:documentService.findAllForProjectIdAndIsPrimaryProjectImage(prj.projectId, ALL)]
 		}
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id

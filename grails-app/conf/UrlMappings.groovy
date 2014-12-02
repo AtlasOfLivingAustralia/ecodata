@@ -6,9 +6,10 @@ class UrlMappings {
             controller = 'activity'
             action = 'activitiesForProject'
         }
-		"/ws/listPromotionalProjects" {
+
+		"/ws/project/promoted" {
 			controller = 'project'
-			action = 'listPromotionalProjects'
+			action = 'promoted'
 		}
 
         "/ws/assessment/$id?" {

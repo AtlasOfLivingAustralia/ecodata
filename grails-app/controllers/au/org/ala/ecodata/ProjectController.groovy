@@ -32,8 +32,8 @@ class ProjectController {
         render list as JSON
     }
 	
-	def listPromotionalProjects() {
-        def list = projectService.listPromotionalProjects()
+	def promoted() {
+        def list = projectService.promoted()
         list.sort {it.name}
         render list as JSON
 	}
