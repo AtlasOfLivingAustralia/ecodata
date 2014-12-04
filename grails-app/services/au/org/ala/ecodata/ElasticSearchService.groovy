@@ -397,6 +397,14 @@ class ElasticSearchService {
                                     "index":"not_analyzed"
                                 }
                             }
+                        },
+                        {   "custom_event_date_template": {
+                                "path_match":"custom.details.events.scheduledDate",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                }
+                            }
                         }
 
                     ]
