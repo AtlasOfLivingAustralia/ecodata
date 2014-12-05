@@ -3,13 +3,13 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "",
+            "description": "The name of the assessor or the assessment team leader.",
             "name": "assessor",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Brief description of the land use of the assessment zone.",
             "name": "currentLandUse"
         },
         {
