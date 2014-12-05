@@ -116,18 +116,18 @@
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Short description of where the assessment zone is located",
             "name": "location"
         },
         {
             "dataType": "text",
-            "description": "",
+            "description": "Record any additional information which may be relevant/useful in understanding or interpreting the assessment results.",
             "name": "comments"
         },
         {
             "dataType": "number",
             "name": "surveyArea",
-            "description": "",
+            "description": "The area of the assessment zone in hectares",
             "validate": "min[0]"
         },
         {
@@ -165,7 +165,7 @@
         {
             "dataType": "text",
             "name": "largeTreeCanopyHealthPercent",
-            "description": "",
+            "description": "3. Determine the canopy health of large trees",
             "constraints": [
                 "> 70%",
                 "30 - 70%",
@@ -289,13 +289,13 @@
         {
             "dataType": "number",
             "name": "canopyCoverPercent",
-            "description": "",
+            "description": "2. Estimate tree canopy cover, record and compare to the benchmark",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
             "name": "canopyCoverClass",
-            "description": "",
+            "description": "3. Select the appropriate canopy cover class within the assessment zone",
             "constraints": [
                 "< 10% of benchmark cover",
                 "< 50% or > 150% of benchmark cover",
@@ -306,7 +306,7 @@
         {
             "dataType": "text",
             "name": "canopyHealthPercent",
-            "description": "",
+            "description": "4. Determine the tree canopy health within the assessment zone",
             "constraints": [
                 "> 70%",
                 "30 - 70%",
@@ -317,7 +317,7 @@
         {
             "dataType": "number",
             "name": "canopyCoverBenchmark",
-            "description": "",
+            "description": "1. Record benchmark tree canopy cover",
             "validate": "min[0],max[100]"
         },
         {
@@ -515,31 +515,31 @@
                 {
                     "dataType": "number",
                     "name": "numberObserved",
-                    "description": "",
+                    "description": "2. Record observed number of species for each life form.",
                     "validate": "min[0]"
                 },
                 {
                     "dataType": "number",
                     "name": "numberBenchmark",
-                    "description": "",
+                    "description": "1. Record benchmark number of species for each life form.",
                     "validate": "min[0]"
                 },
                 {
                     "dataType": "number",
                     "name": "coverPercentObserved",
-                    "description": "",
+                    "description": "2. Record observed % cover for each life form.",
                     "validate": "min[0],max[100]"
                 },
                 {
                     "dataType": "number",
                     "name": "coverPercentBenchmark",
-                    "description": "",
+                    "description": "1. Record benchmark % cover for each life form.",
                     "validate": "min[0],max[100]"
                 },
                 {
                     "dataType": "text",
                     "name": "present",
-                    "description": "",
+                    "description": "Life forms with benchmark cover of < 10% are considered ‘present’ if any specimens are observed Life forms with benchmark cover of ≥ 10% are considered ‘present’ if the life form occupies at least 10% of benchmark cover.",
                     "constraints": [
                         "Yes",
                         "No"
@@ -548,13 +548,23 @@
                 {
                     "dataType": "text",
                     "name": "modified",
-                    "description": "",
+                    "description": "(Apply only where life form is ‘present’) Life forms with benchmark cover of <10% are considered substantially modified if the life form has either: - <50% of benchmark species diversity; or - no reproductively mature specimens are observed Life forms with benchmark cover of ≥ 10% are considered substantially modified if the life form has either: - <50% of benchmark cover; or - < 50% of benchmark species diversity.",
                     "constraints": [
                         "Yes",
                         "No"
                     ]
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "name": "lifeformsPresentNoBenchmark",
+            "description": "1. Record benchmark number of life forms."
+        },
+        {
+            "dataType": "boolean",
+            "name": "lifeformsPhytophthoraPresent",
+            "description": "3. Tick if symptoms of Phytophthora cinnamomi are observed in the zone."
         },
         {
             "dataType": "number",
@@ -577,13 +587,13 @@
         {
             "dataType": "number",
             "name": "lifeformsPresentPercentBenchmark",
-            "description": "",
+            "description": "1. Record the % of life forms present (see Understorey Life Forms table).",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
             "name": "lifeformsPresentClass",
-            "description": "",
+            "description": "2. Determine the % of life forms assessed as present vs the benchmark. 3. If ≥50% of benchmark no. of life forms are present determine the % modified.",
             "constraints": [
                 "All strata and life forms effectively absent",
                 "Up to 50% of life forms present",
@@ -639,19 +649,19 @@
         {
             "dataType": "number",
             "name": "totalWeedCoverPercent",
-            "description": "",
+            "description": "1. Record the observed overall % weed cover and place in appropriate weed cover category.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "number",
             "name": "highThreatWeedCoverPercent",
-            "description": "",
+            "description": "2. Estimate the % cover of ‘high threat’ weed species, record and determine appropriate category.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
             "name": "weedCoverClass",
-            "description": "",
+            "description": "1. Choose the appropriate category for total weed cover.",
             "constraints": [
                 "> 75% cover of weeds",
                 "25 - 75% cover of weeds",
@@ -664,7 +674,7 @@
         {
             "dataType": "text",
             "name": "highThreatWeedClass",
-            "description": "",
+            "description": "2. Choose the appropriate category for the percentage of 'high threat' weeds.",
             "constraints": [
                 "None",
                 "<= 50%",
@@ -697,13 +707,13 @@
                 {
                     "dataType": "species",
                     "name": "speciesRecruited",
-                    "description": "",
+                    "description": "1. Record each woody species observed in the zone and the total number.",
                     "noEdit": "true"
                 },
                 {
                     "dataType": "text",
                     "name": "recruitmentAdequate",
-                    "description": "",
+                    "description": "2. Determine if recruitment of each woody species is adequate and record the number of adequately recruiting woody species.",
                     "constraints": [
                         "Yes",
                         "No"
@@ -714,21 +724,21 @@
         {
             "dataType": "text",
             "name": "recruitmentCohorts",
-            "description": "",
+            "description": "1. Is there any evidence of woody recruitment? 2. Is vegetation community reliant on episodic events for recruitment? 3. Determine if episodic event has occurred. 4. Determine proportion of woody spp. with adequate recruitment. ’Cohort’ refers to a group of woody plants established in a single episode (can include suppressed canopy species individuals). Refer to benchmark for clarification.",
             "constraints": [
-                "No evidence of a recruitment cohort",
-                "No evidence of a recruitment cohort - no clear evidence of appropriate episodic event",
-                "Evidence of a recruitment cohort",
-                "< 30% adequate",
-                "30% - 70% adequate",
-                ">= 70% adequate"
+                "No evidence of a recruitment cohort within community - not driven by episodic events",
+                "No evidence of a recruitment cohort - driven by episodic events - clear evidence of appropriate episodic event",
+                "No evidence of a recruitment cohort - driven by episodic events - no clear evidence of appropriate episodic event",
+                "Evidence of >=1 recruitment cohort in >=1 life form - < 30% species with adequate recruitment",
+                "Evidence of >=1 recruitment cohort in >=1 life form - 30% - 70% species with adequate recruitment",
+                "Evidence of >=1 recruitment cohort in >=1 life form - >= 70% species with adequate recruitment"
             ],
             "validate": "required"
         },
         {
             "dataType": "text",
             "name": "recruitmentDiversity",
-            "description": "",
+            "description": "4. Determine proportion of woody spp. with adequate recruitment. High diversity defined as ≥50% of benchmark woody species diversity.",
             "constraints": [
                 "High diversity",
                 "Low diversity"
@@ -757,19 +767,19 @@
         {
             "dataType": "number",
             "name": "organicLitterBenchmarkPercent",
-            "description": "",
+            "description": "1. Refer to vegetation community benchmark and record benchmark % litter cover.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "number",
             "name": "organicLitterObservedPercent",
-            "description": "",
+            "description": "2. Determine the % cover of organic litter in the zone and record. Compare to benchmark %.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
             "name": "organicLitterCoverCategory",
-            "description": "",
+            "description": "3. Select the appropriate organic litter cover category.",
             "constraints": [
                 "< 10% of benchmark cover",
                 "< 50% of benchmark cover",
@@ -780,7 +790,7 @@
         {
             "dataType": "text",
             "name": "organicLitterType",
-            "description": "",
+            "description": "4. Determine if organic litter dominated by native or non-native litter.",
             "constraints": [
                 "Dominated by native organic litter",
                 "Dominated by non-native organic litter"
@@ -809,19 +819,19 @@
         {
             "dataType": "number",
             "name": "logLengthBenchmark",
-            "description": "",
+            "description": "1. Refer to vegetation community benchmark and record benchmark log length.",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
             "name": "logLengthObserved",
-            "description": "",
+            "description": "2. Record the total length of logs within the zone. Compare to benchmark.",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
             "name": "logLengthCategory",
-            "description": "",
+            "description": "3. Select the appropriate large logs category.",
             "constraints": [
                 "< 10% of benchmark length",
                 "< 50% of benchmark length",
@@ -832,7 +842,7 @@
         {
             "dataType": "text",
             "name": "largeLogsPresent",
-            "description": "",
+            "description": "4. Determine the presence of 'large logs' in the zone.",
             "constraints": [
                 "Large logs present",
                 "Large logs absent"
@@ -900,13 +910,13 @@
         {
             "dataType": "number",
             "name": "patchSize",
-            "description": "",
+            "description": "1. Determine the size of the patch. Record and assign to a patch size class.",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
             "name": "patchCategory",
-            "description": "",
+            "description": "2. Select the appropriate patch size category. If patch >20ha, decide if it is 'significantly disturbed'.",
             "constraints": [
                 "< 2 ha",
                 "Between 2 and 5 ha",
@@ -968,7 +978,7 @@
                 {
                     "dataType": "number",
                     "name": "nativeVegetationPercent",
-                    "description": "",
+                    "description": "1. Determine and record the % of native vegetation within 3 radii from perimeter of the zone to nearest 20%.",
                     "validate": "min[0],max[100]"
                 },
                 {
@@ -1018,7 +1028,7 @@
         {
             "dataType": "text",
             "name": "distanceToCoreArea",
-            "description": "",
+            "description": "1. Determine the distance to the nearest core area.",
             "constraints": [
                 "> 5 km",
                 "1 to 5 km",
@@ -1030,7 +1040,7 @@
         {
             "dataType": "text",
             "name": "coreAreaSignificantlyDisturbed",
-            "description": "",
+            "description": "2. Determine if core area is significantly disturbed.",
             "constraints": [
                 "Yes",
                 "No"
@@ -1178,7 +1188,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Large Trees</h4>",
+                    "source": "<h4>Large Trees</h4>Large trees are defined by diameter at breast height (dbh) – see benchmark.  *Estimate the proportion of an expected healthy canopy cover that is present (ie. not missing due to tree death or decline).",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1243,7 +1253,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Tree Canopy Cover</h4>",
+                    "source": "<h4>Tree Canopy Cover</h4>Tree canopy cover is defined as those canopy tree species reaching ≥80% of mature height – see benchmark description.  *Estimate proportion of an expected healthy canopy cover that is present (ie not missing due to tree death or decline)",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1308,6 +1318,22 @@
                 }
             ],
             "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "type": "number",
+                    "source": "lifeformsPresentNoBenchmark",
+                    "preLabel": "Benchmark No. of Life forms:"
+                },
+                {
+                    "type": "boolean",
+                    "source": "lifeformsPhytophthoraPresent",
+                    "preLabel": "Phytophthora cinnamomi symptoms (tick if observed):"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
         },
         {
             "footer": {
@@ -1442,7 +1468,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Lack of Weeds</h4>",
+                    "source": "<h4>Lack of Weeds</h4>‘High threat’ weed species are defined as introduced species (including non-indigenous ‘natives’) that achieve >5% cover in the zone or those weed species listed as high threat weeds in Tasmania. A list of high threat weeds in Tasmania is provided in the TASVEG Vegetation Condition Assessment manual. **If total weed cover is negligible (<1%) and high threat weed species are present then score ‘13’. The Assessor should determine the threat posed by any weed listed in the zone.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1501,7 +1527,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Recruitment</h4>",
+                    "source": "<h4>Recruitment</h4>Treat multiple canopy species as a single species. Adequate recruitment of canopy species requires at least 2 cohorts to be present (seedlings <2m and saplings >2m tall) and where canopy cover is less than benchmark, sufficient recruitment to attain benchmark cover over time. Adequate recruitment of other woody species requires observed immature individuals to be at least 10% of number of mature individuals for each species.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1584,7 +1610,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Organic Litter</h4>",
+                    "source": "<h4>Organic Litter</h4>Litter is defined as dead organic material detached from the parent plant, including plant debris, fallen leaves and twigs <10cm.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1604,7 +1630,7 @@
                         {
                             "source": "organicLitterObservedPercent",
                             "computed": null,
-                            "preLabel": "High threat weed cover %:",
+                            "preLabel": "Observed cover of organic litter %:",
                             "type": "number"
                         },
                         {
@@ -1643,7 +1669,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Logs</h4>",
+                    "source": "<h4>Logs</h4>Large logs defined as those with diameter ≥0.5 of benchmark large tree DBH.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1712,7 +1738,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Patch Size</h4>",
+                    "source": "<h4>Patch Size</h4>The patch is the area of native vegetation continuous with the assessment area (zone), regardless of EVC, condition or land tenure. Includes adjoining wetlands. It will be 'significantly disturbed' if activities such as grazing, timber harvesting, roading, fuel reduction burning or Phytophthora infestation have occurred. Effectively most patches within fragmented landscapes are significantly disturbed.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1760,7 +1786,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Neighbourhood</h4>",
+                    "source": "<h4>Neighbourhood</h4>The neighbourhood score represents the amount and configuration of native vegetation within proximity of the zone being assessed.",
                     "computed": null,
                     "type": "literal"
                 }
@@ -1864,7 +1890,7 @@
         {
             "items": [
                 {
-                    "source": "<h4>Distance to Core Area</h4>",
+                    "source": "<h4>Distance to Core Area</h4>A ‘core area’ is native vegetation > 50 ha regardless of type, condition or tenure. Includes natural wetlands and lakes, estuaries and rivers. Determine the shortest distance from the edge of the zone being assessed to the edge of the nearest core area and place the vegetation in the appropriate core area distance category.",
                     "computed": null,
                     "type": "literal"
                 }

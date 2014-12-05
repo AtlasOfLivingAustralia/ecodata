@@ -70,7 +70,7 @@
     "viewModel": [
         {
             "items": [{
-                "source": "<h2>Landscape Context Score<\/h2>",
+                "source": "<h2>Landscape Context Score</h2>",
                 "type": "literal"
             }],
             "type": "row"
@@ -120,7 +120,7 @@
         },
         {
             "items": [{
-                "source": "<h4>Neighbourhood<\/h4>",
+                "source": "<h4>Neighbourhood</h4>",
                 "type": "literal"
             }],
             "type": "row"
