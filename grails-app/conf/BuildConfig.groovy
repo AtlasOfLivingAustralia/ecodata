@@ -13,6 +13,8 @@ grails.project.fork.run=false
 //   run: [maxMemory:1024, minMemory:64, debug:false, maxPerm:256]
 //]
 
+grails.project.dependency.resolver = "maven"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -26,24 +28,8 @@ grails.project.dependency.resolution = {
     legacyResolve true // whether to do a secondary resolve on plugin installation, not advised and here for backwards compatibility
 
     repositories {
-        inherits true // Whether to inherit repository definitions from plugins
-
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
-
-        mavenLocal()
-        mavenCentral()
-
-        // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
-		mavenRepo "http://mvnrepository.com"
-        mavenRepo "http://maven.ala.org.au/repository"
-        mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
-        mavenRepo "http://download.osgeo.org/webdav/geotools/"
+      mavenLocal()
+      mavenRepo "http://nexus.ala.org.au/content/groups/public/"
     }
 
     def seleniumVersion = "2.21.0"
