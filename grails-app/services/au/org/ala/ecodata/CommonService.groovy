@@ -39,7 +39,7 @@ class CommonService {
              * not used. All conversions to and from local time are the responsibility of the service consumer.
              */
             if (v instanceof String && domainDescriptor.hasProperty(k) && domainDescriptor?.getPropertyByName(k)?.getType() == Date) {
-                v = v ? dateFormat.parse(v.replace("Z", "+0000")) : null
+                v = v ? parse(v) : null
             }
             if (v == "false") {
                 v = false
@@ -53,6 +53,10 @@ class CommonService {
             o.errors.each { log.error it }
             throw new Exception(o.errors[0] as String);
         }
+    }
+
+    Date parse(String dateStr) {
+        return dateFormat.parse(dateStr.replace("Z", "+0000"))
     }
 
     /**
