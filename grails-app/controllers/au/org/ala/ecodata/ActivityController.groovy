@@ -6,11 +6,9 @@ import java.text.SimpleDateFormat
 
 class ActivityController {
 
-    def activityService, siteService
+    def activityService, siteService, commonService
     static final SCORES = 'scores'
     static final BRIEF = 'brief'
-
-    static dateFormat = "yyyy-MM-dd'T'hh:mm:ssZ"
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -173,13 +171,14 @@ class ActivityController {
         def searchCriteria = request.JSON
 
         def startDate = null, endDate = null, planned = null
-        def df = new SimpleDateFormat(dateFormat)
         if (searchCriteria.startDate) {
-            startDate = df.parse(searchCriteria.remove('startDate'))
+            def startDateStr = searchCriteria.remove('startDate')
+            startDate = commonService.parse(startDateStr)
             planned = Boolean.FALSE
         }
         if (searchCriteria.endDate) {
-            endDate = df.parse(searchCriteria.remove('endDate'))
+            def endDateStr = searchCriteria.remove('endDate')
+            endDate = commonService.parse(endDateStr)
             planned = Boolean.FALSE
         }
         if (searchCriteria.plannedStartDate) {
@@ -187,14 +186,17 @@ class ActivityController {
                 throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
             }
             planned = Boolean.TRUE
-            startDate = df.parse(searchCriteria.remove('plannedStartDate'))
+            def startDateStr = searchCriteria.remove('plannedStartDate')
+            startDate = commonService.parse(startDateStr)
         }
         if (searchCriteria.plannedEndDate) {
             if (planned == Boolean.FALSE) {
                 throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
             }
             planned = Boolean.TRUE
-            endDate = df.parse(searchCriteria.remove('plannedEndDate'))
+
+            def endDateStr = searchCriteria.remove('plannedEndDate')
+            endDate = commonService.parse(endDateStr)
         }
 
         def activityList = activityService.search(searchCriteria, startDate, endDate, planned, 'all')
