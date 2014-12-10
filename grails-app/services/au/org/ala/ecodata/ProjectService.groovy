@@ -51,7 +51,7 @@ class ProjectService {
         def dbo = prj.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         if (levelOfDetail == BRIEF) {
-            return [projectId: prj.projectId, name: prj.name]
+            return [projectId: prj.projectId, name: prj.name, description:prj.description, plannedStartDate:prj.plannedStartDate, plannedEndDate:prj.plannedEndDate, associatedProgram:prj.associatedProgram, associatedSubProgram:prj.associatedSubProgram]
         }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
