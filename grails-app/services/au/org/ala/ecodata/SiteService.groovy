@@ -105,7 +105,7 @@ class SiteService {
         }
     }
 
-    def update(props, id) {
+    def update(props, id, boolean enableCentroidRefresh = true) {
         def site = Site.findBySiteId(id)
         if (site) {
             try {
@@ -113,7 +113,7 @@ class SiteService {
 
                 // If the site location is being updated, refresh the location metadata.
                 def centroid = props.extent?.geometry?.centre
-                if (centroid && centroid.size() == 2) {
+                if (centroid && centroid.size() == 2 && enableCentroidRefresh) {
                     props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
                 }
                 getCommonService().updateProperties(site, props)

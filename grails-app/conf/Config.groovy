@@ -123,6 +123,9 @@ if(!spatial.baseUrl){
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
 }
+if (!spatial.intersectBatchUrl) {
+    spatial.intersectBatchUrl = spatial.baseUrl + '/ws/intersect/batch/'
+}
 if(!google.geocode.url){
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
@@ -144,6 +147,7 @@ app {
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
+                elect = 'cl958';
             }
             grouped {
                 other {

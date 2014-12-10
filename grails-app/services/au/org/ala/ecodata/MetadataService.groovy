@@ -4,12 +4,17 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
 
 import java.text.SimpleDateFormat
+import java.util.zip.ZipFile
+import java.util.zip.ZipInputStream
+import java.util.zip.ZipEntry
 
 class MetadataService {
 
     private static final String ACTIVE = 'active'
     // The spatial portal returns n/a when the point does not intersect a layer.
     private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
+
+    private static final int BATCH_LIMIT = 200
 
     def grailsApplication, webService, cacheService, messageSource
 
@@ -201,6 +206,7 @@ class MetadataService {
         annotatedModel
     }
 
+
     /**
      * This method produces the location metadata for a point, used in particular to provide the geographic facet terms
      * for a site.  This is done by intersecting the site centroid against a configured set of spatial portal layers
@@ -277,4 +283,201 @@ class MetadataService {
         facetTerms
     }
 
+     private def buildPointsArray(sites) {
+
+        def points = ""
+        def pointsArray = []
+
+        sites?.eachWithIndex { site, i ->
+            if(points){
+                points = "${points},${site.extent.geometry.centre[1]},${site.extent.geometry.centre[0]}"
+            }
+            else{
+                points = "${site.extent.geometry.centre[1]},${site.extent.geometry.centre[0]}"
+            }
+            if(((i+1) % BATCH_LIMIT) == 0){
+                pointsArray.add(points)
+                points = ""
+            }
+        }
+        if(points){
+            pointsArray.add(points)
+        }
+
+        pointsArray
+    }
+
+    private def buildFieldIds(sites){
+        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        def fieldIds = griddedLayers.collect { k, v -> v }
+        groupedFacets.each { k, v ->
+            fieldIds.addAll(v.collect { k1, v1 -> v1 })
+        }
+        fieldIds
+    }
+
+    /**
+     * Download spatial layers.
+     * Spatial service api: http://spatial.ala.org.au/ws/
+     * Example format: http://spatial-dev.ala.org.au/ws/intersect/batch?fids=cl958,cl927&points=-29.911,132.769,-20.911,122.769
+     * @param list of available sites.
+     * @return raw spatial data
+     */
+    private def downloadSpatialLayers(sites){
+
+        def pointsArray = buildPointsArray(sites)
+
+        def fieldIds = buildFieldIds(sites)
+
+        def rawData = []
+
+        for(int i = 0; i < pointsArray?.size(); i++) {
+            log.info("${(i+1)}/${pointsArray.size()} batch process started..")
+
+            def featuresUrl = grailsApplication.config.spatial.intersectBatchUrl + "?fids=${fieldIds.join(',')}&points=${pointsArray[i]}"
+            def status = webService.getJsonRepeat(featuresUrl)
+            if(status?.error){
+                throw new Exception("Webservice error, failed to get JSON after 12 tries.. - ${status}")
+            }
+
+            def download, timeout = 0
+            while ( !(download = webService.getJson(status?.statusUrl))?.status?.equals("finished") && timeout < 12){ // break out after 1 min
+                sleep(5000)
+                timeout++
+                log.info("${(i+1)}/${pointsArray.size()} - In the waiting queue, trying again..")
+            }
+            if(download?.error || timeout >= 12){
+                log.info("${(i+1)}/${pointsArray.size()} - failed after 12 tries..")
+                throw new Exception("Webservice error, failed to get JSON - ${download}")
+            }
+
+            URL downloadURL = new URL(download?.downloadUrl)
+            ZipInputStream zipIn = new ZipInputStream(downloadURL?.openStream());
+            ZipEntry entry;
+
+            StringBuilder s = new StringBuilder();
+            byte[] buffer = new byte[1024];
+            int read = 0;
+            while ((entry = zipIn?.getNextEntry()) !=  null) {
+                while ((read = zipIn.read(buffer, 0, 1024)) >= 0) {
+                    s.append(new String(buffer, 0, read));
+                }
+                rawData << s.readLines().toArray()
+            }
+
+            log.info("${(i+1)}/${pointsArray.size()} batch process completed..")
+        }
+
+        rawData
+    }
+
+    private def getValidSites(allSites){
+
+        def sites = []
+
+        log.info("Total sites = ${allSites?.size()}")
+
+        allSites.each{ site ->
+            def centroid = site.extent?.geometry?.centre
+            if (centroid && centroid.size() == 2) {
+                sites.add(site)
+            }
+            else {
+                log.error("Unable to update metadata for site: ${site.siteId}, no centroid exists.")
+            }
+        }
+
+        log.info("Total sites with valid points = ${sites.size()}")
+
+        sites
+    }
+
+    private def getGridAndFacetLayers(layers,lat,lng){
+
+        def siteResult = [:]
+        found:
+        for(int i = 0; i < layers?.size(); i++){
+            def set = layers[i]
+            for(int j = 1; j < set?.size(); j++){
+                def tokens = set[j].tokenize(',')
+                if(tokens && tokens[0].equals(lat) && tokens[1].equals(lng)){
+                    def headerTokens = set[0].tokenize(',')
+                    headerTokens.eachWithIndex{ key, index ->
+                        siteResult[key] = tokens[index]
+                    }
+                    break found
+                }
+            }
+        }
+
+        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
+        def facetTerms = [:]
+
+        griddedLayers.each { name, fid ->
+            def match = siteResult.find { it.key == fid }
+            if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                facetTerms << [(name): match.value]
+            }
+        }
+
+        groupedFacets.each { group, entry ->
+            def groupTerms = []
+            entry.each { name, fid ->
+                def match = siteResult.find { it.key == fid }
+                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    groupTerms << match.value
+                }
+            }
+            if (groupTerms) {
+                facetTerms << [(group): groupTerms]
+            }
+        }
+
+        facetTerms
+    }
+
+    /**
+     * Updates sites extent properties from the values obtained from
+     * 1. Spatial server for layer information.
+     * 2. Google server for location and
+     * 3. NVIS classes info.
+     * These data's are used for geographic facet terms for a site.
+     *
+     * @param list of available sites.
+     * @return sites with the updated extent values.
+     */
+    def getLocationMetadataForSites(allSites) {
+
+        def sites = getValidSites(allSites)
+
+        def layers = downloadSpatialLayers(sites);
+
+        log.info("Initiating extent mapping")
+
+        sites.eachWithIndex { site, index ->
+
+            def lat = site.extent.geometry.centre[1]
+            def lng = site.extent.geometry.centre[0]
+
+            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
+            def result = webService.getJson(localityUrl)
+            def localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
+
+            def features = [:]
+            features << [locality: localityValue]
+            features << getNvisClassesForPoint(lat as Double, lng as Double)
+            features << getGridAndFacetLayers(layers,lat,lng)
+
+            site.extent.geometry.putAll(features)
+            if(index > 0 && (index % BATCH_LIMIT) == 0){
+                log.info("Completed (${index+1}) extent mapping")
+            }
+        }
+
+        log.info("Completed batch processing and site extent mapping..")
+
+        sites
+    }
 }
