@@ -444,7 +444,7 @@ class ElasticSearchService {
             client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
     }
 
     def buildFacetMapping() {
