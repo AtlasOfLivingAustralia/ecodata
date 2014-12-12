@@ -77,7 +77,8 @@ class ElasticSearchService {
         //settings.put("number_of_replicas",0);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
+
     }
 
     /**
@@ -388,6 +389,25 @@ class ElasticSearchService {
                                 "mapping": {
                                     "type": "string",
                                     "index": "analyzed"
+                                }
+                            }
+                        },
+                        {
+                            "custom_dollars_template": {
+                                "path_match":"custom.details.budget.rows.costs.dollar",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                }
+                            }
+                        },
+
+                        {
+                            "custom_event_date_template": {
+                                "path_match":"custom.details.events.scheduledDate",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
                                 }
                             }
                         }
