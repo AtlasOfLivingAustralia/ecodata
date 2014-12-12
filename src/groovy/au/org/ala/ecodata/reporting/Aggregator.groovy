@@ -89,7 +89,7 @@ class Aggregator {
 
         output.activity = activity
         // TODO the grouping function should probably specify the default group.
-        def group = builder.createGroupingFunction(score)(output)
+        def group = builder.groupingStategyFor(score).group(output)
 
         if (group instanceof List) {
             return group.grep{score.filterBy ? it == score.filterBy : true}.collect { aggregatorsByGroup[it]}

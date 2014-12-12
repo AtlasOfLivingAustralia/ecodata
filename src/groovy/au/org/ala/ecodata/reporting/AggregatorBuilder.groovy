@@ -73,7 +73,7 @@ class AggregatorBuilder {
      * }
      * @return
      */
-    Closure createGroupingFunction(Score score, groupingSpec = null) {
+    ReportGroups.GroupingStrategy groupingStategyFor(Score score, groupingSpec = null) {
 
         if (!groupingSpec) {
             groupingSpec = score.defaultGrouping()
@@ -83,17 +83,17 @@ class AggregatorBuilder {
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return buildClosure(property, 'activity')
+                return buildGroupingStrategy(property, 'activity')
             case 'output':
                 def start = 'data'
                 if (score.listName) {
                     start = ''
                 }
-                return buildClosure(property, start)
+                return buildGroupingStrategy(property, start)
             case 'site':
-                return buildClosure(property, 'site')
+                return buildGroupingStrategy(property, 'site')
             case 'project':
-                return buildClosure(property, 'project')
+                return buildGroupingStrategy(property, 'project')
             case '*':
                 return {""}  // No grouping required.
             default:
@@ -104,32 +104,17 @@ class AggregatorBuilder {
     }
 
 
-    static Map cachedClosures = [:]
-    def buildClosure(String property, String start) {
+    static Map cachedStrategies = [:]
+    def buildGroupingStrategy(String property, String start) {
 
-        def key = property+":"+start
-        if (cachedClosures.containsKey(key)) {
-            return cachedClosures[key]
+        def nestedProperty = start ? start+'.'+property : property
+        if (cachedStrategies.containsKey(nestedProperty)) {
+            return cachedStrategies[nestedProperty]
         }
-        def closure
-        if (!property.contains('.')) {
-            closure = { row -> return start?row[start][property]:row[property]}
-        }
-        else {
-            def parts = property.split('\\.')
-            closure = { row ->
 
-                def data = start?row[start]:row
-                for (String part : parts) {
-                    if (!data) {
-                        return null
-                    }
-                    data = data[part]
-                }
-                return data
-            }
-        }
-        cachedClosures.put(key, closure)
-        return closure
+        def strategy = new ReportGroups.DiscreteGroup(nestedProperty)
+        cachedStrategies.put(nestedProperty, strategy)
+
+        return strategy
     }
 }

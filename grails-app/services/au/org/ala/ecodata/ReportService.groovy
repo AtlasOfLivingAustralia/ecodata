@@ -67,8 +67,10 @@ class ReportService {
     }
 
     def aggregate(List filters) {
+        aggregate(filters, buildReportSpec())
+    }
 
-        def toAggregate = buildReportSpec()
+    def aggregate(List filters, toAggregate) {
 
         List<Aggregator> aggregators = buildAggregators(toAggregate)
         def metadata = [activities: 0, distinctSites:new HashSet(), distinctProjects:new HashSet()]

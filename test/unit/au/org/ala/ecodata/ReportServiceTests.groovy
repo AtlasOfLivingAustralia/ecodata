@@ -55,7 +55,7 @@ class ReportServiceTests extends TestCase {
         def results = service.aggregate([])
 
         assertEquals(1, results.outputData.size())
-        assertEquals values.values().sum() as Double, results.outputData[0].results[0].result
+        assertEquals values.values().sum() as Double, results.outputData[0].results[0].result, 0
 
         assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
@@ -83,12 +83,12 @@ class ReportServiceTests extends TestCase {
         assertEquals 1, results.outputData.results.size()
 
         def expected = 1+2+5
-        assertEquals expected as Double, results.outputData[0].results[0].result
+        assertEquals expected as Double, results.outputData[0].results[0].result, 0
         assertEquals "theme1", results.outputData[0].results[0].group
         assertEquals 3, results.outputData[0].results[0].count
 
         expected = 3+4
-        assertEquals expected as Double, results.outputData[0].results[1].result
+        assertEquals expected as Double, results.outputData[0].results[1].result, 0
         assertEquals "theme2", results.outputData[0].results[1].group
         assertEquals 2, results.outputData[0].results[1].count
 
@@ -118,8 +118,8 @@ class ReportServiceTests extends TestCase {
         assertEquals 1, results.outputData.results.size()
 
         def expected = 1+2+5
-        assertEquals expected as Double, results.outputData[0].results[0].result
-        assertEquals "theme1", results.outputData[0].results[0].group
+        assertEquals expected as Double, results.outputData[0].results[0].result, 0
+        assertEquals "", results.outputData[0].results[0].group // Groups are removed from filtered scores.
         assertEquals 3, results.outputData[0].results[0].count
 
         assertEquals 5, results.metadata.activities
@@ -149,15 +149,15 @@ class ReportServiceTests extends TestCase {
         assertEquals(1, results.outputData.size())
         assertEquals 3, results.outputData[0].results.size()
 
-        assertEquals new Double(11), results.outputData[0].results[0].result
+        assertEquals new Double(11), results.outputData[0].results[0].result, 0
         assertEquals "group1", results.outputData[0].results[0].group
         assertEquals 2, results.outputData[0].results[0].count
 
-        assertEquals new Double(14), results.outputData[0].results[1].result
+        assertEquals new Double(14), results.outputData[0].results[1].result, 0
         assertEquals "group2", results.outputData[0].results[1].group
         assertEquals 2, results.outputData[0].results[1].count
 
-        assertEquals new Double(3), results.outputData[0].results[2].result
+        assertEquals new Double(3), results.outputData[0].results[2].result, 0
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 1, results.outputData[0].results[2].count
 
@@ -189,15 +189,15 @@ class ReportServiceTests extends TestCase {
         assertEquals(1, results.outputData.size())
         assertEquals 3, results.outputData[0].results.size()
 
-        assertEquals new Double(11), results.outputData[0].results[0].result
+        assertEquals new Double(11), results.outputData[0].results[0].result, 0
         assertEquals "group1", results.outputData[0].results[0].group
         assertEquals 2, results.outputData[0].results[0].count
 
-        assertEquals new Double(18), results.outputData[0].results[1].result
+        assertEquals new Double(18), results.outputData[0].results[1].result, 0
         assertEquals "group2", results.outputData[0].results[1].group
         assertEquals 4, results.outputData[0].results[1].count
 
-        assertEquals new Double(5), results.outputData[0].results[2].result
+        assertEquals new Double(5), results.outputData[0].results[2].result, 0
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 2, results.outputData[0].results[2].count
 
@@ -205,6 +205,8 @@ class ReportServiceTests extends TestCase {
         assertEquals 1, results.metadata.projects.size()
 
     }
+
+
 
 
     def createOutput(activityId, name, property, value) {
