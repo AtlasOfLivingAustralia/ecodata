@@ -135,11 +135,11 @@ class WebService {
         }
     }
 
-    def getJsonRepeat(String url, Integer timeout = null){
+    def getJsonRepeat(String url, int repeatCount = 12, Integer timeout = null){
 
         def status
         int repeat = 0;
-        while((status = getJson(url,timeout))?.error && repeat < 12){ // try 5 times with 5 sec delay.
+        while((status = getJson(url,timeout))?.error && repeat < repeatCount){
             sleep(5000)
             repeat++
         }
