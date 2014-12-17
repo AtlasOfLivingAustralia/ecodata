@@ -26,7 +26,26 @@ class ReportGroups {
         }
 
         def group(data) {
+
             return propertyAccessor.getPropertyValue(data)
+        }
+    }
+
+    static class FilteredGroup extends DiscreteGroup {
+        def filterValue
+        public FilteredGroup(nestedProperty, filterValue) {
+            super(nestedProperty)
+            this.filterValue = filterValue
+        }
+
+        def group(data) {
+            def group = super.propertyAccessor.getPropertyValue(data)
+            if (group instanceof List) { // values are lists when the data is collected via multi select
+                return group.contains(filterValue) ? Aggregator.DEFAULT_GROUP : null
+            }
+            else {
+                return group == filterValue ? Aggregator.DEFAULT_GROUP : null
+            }
         }
     }
 
@@ -62,6 +81,12 @@ class ReportGroups {
                 return "[${buckets[buckets.size()-1]},-)"
             }
             return "[${buckets[index]},${buckets[index+1]})"
+        }
+    }
+
+    static class NotGrouped implements GroupingStrategy {
+        public group(data) {
+            return Aggregator.DEFAULT_GROUP
         }
     }
 

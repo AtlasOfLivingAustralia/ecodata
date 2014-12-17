@@ -17,6 +17,7 @@ class Aggregators {
         String group
         int count;
         String label
+        PropertyAccessor propertyAccessor = new PropertyAccessor('')
 
         public void aggregateValue(value) {
             if (value != null) {
@@ -39,7 +40,7 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            def numericValue = PropertyAccessor.getValueAsNumeric(value)
+            def numericValue = propertyAccessor.getValueAsNumeric(value)
             if (numericValue) {
                 total += numericValue
             }
@@ -59,7 +60,7 @@ class Aggregators {
 
         public void doAggregation(value) {
 
-            def numericValue = PropertyAccessor.getValueAsNumeric(value)
+            def numericValue = propertyAccessor.getValueAsNumeric(value)
             if (numericValue) {
                 total += numericValue
             }

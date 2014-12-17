@@ -161,10 +161,44 @@ class ReportServiceTests extends TestCase {
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 1, results.outputData[0].results[2].count
 
-        assertEquals 5, results.metadata.activities
+        assertEquals 3, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
 
 
+    }
+
+
+    void testFilteredSumAggregationOfListAttribute() {
+
+        def output = "output"
+        def property = "prop"
+        def list = 'mylist'
+        def score = [aggregationType:Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group", filterBy:'group1']
+
+        def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
+
+        def values = [1:[[prop:1, group:'group1'], [prop:2, group:'group2']],
+                      2:[[prop:2, group:'group3'], [prop:2, group:'group2']],
+                      3:[[prop:3, group:'group1'], [prop:2, group:'group2']],
+                      4:[[prop:4, group:'group2']],
+                      5:[[prop:5, group:'group4'], [prop:2, group:'group1'], [prop:3, group:'group1']]]
+        def activities = themes.collect{[activityId:it.key, mainTheme:it.value]}
+        def outputs = values.collectEntries{[(it.key):[createOutput(it.key, output, list, it.value)]]}
+
+        setupInputs([[name:output, scores:[score]]], activities, outputs)
+
+        def results = service.aggregate([])
+
+        assertEquals(1, results.outputData.size())
+        assertEquals 1, results.outputData.results.size()
+
+        def expected = 1+3+2+3
+        assertEquals expected as Double, results.outputData[0].results[0].result, 0
+        assertEquals "", results.outputData[0].results[0].group // Groups are removed from filtered scores.
+        assertEquals 4, results.outputData[0].results[0].count
+
+        assertEquals 5, results.metadata.activities
+        assertEquals 1, results.metadata.projects.size()
     }
 
     void testGroupByMultiValueField() {
@@ -201,11 +235,49 @@ class ReportServiceTests extends TestCase {
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 2, results.outputData[0].results[2].count
 
-        assertEquals 5, results.metadata.activities
+        assertEquals 3, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
 
     }
 
+    void testTopLevelGropuing() {
+        def output = "output"
+        def property = "prop"
+        def list = 'mylist'
+        def score = [aggregationType:Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group"]
+
+        def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
+
+        def values = [1:[[prop:1, group:'group1'], [prop:2, group:'group2']],
+                      2:[[prop:2, group:'group3'], [prop:2, group:'group2']],
+                      3:[[prop:3, group:'group1'], [prop:2, group:'group2']],
+                      4:[[prop:4, group:'group2']],
+                      5:[[prop:5, group:'group4'], [prop:2, group:'group1'], [prop:3, group:'group1']]]
+        def activities = themes.collect{[activityId:it.key, mainTheme:it.value]}
+        def outputs = values.collectEntries{[(it.key):[createOutput(it.key, output, list, it.value)]]}
+
+        setupInputs([[name:output, scores:[score]]], activities, outputs)
+
+        def results = service.aggregate([], [[score:new Score(score)]], [entity:'activity', property:'mainTheme'])
+        assertEquals 2, results.outputData.size()
+        assertEquals 'theme1', results.outputData[0].group
+
+        def theme1Results = results.outputData[0].results[0].results
+        assertEquals 4, theme1Results.size()
+        def groupResults = [group1:6, group2:4, group3:2, group4:5]
+        groupResults.each { k, v ->
+            def nestedResult = theme1Results.find{it.group == k}
+            assertEquals new Double(v), nestedResult.result, 0
+        }
+
+        assertEquals 'theme2', results.outputData[1].group
+        def theme2Results = results.outputData[1].results[0].results
+        groupResults = [group1:3, group2:6]
+        groupResults.each { k, v ->
+            def nestedResult = theme2Results.find{it.group == k}
+            assertEquals new Double(v), nestedResult.result, 0
+        }
+    }
 
 
 

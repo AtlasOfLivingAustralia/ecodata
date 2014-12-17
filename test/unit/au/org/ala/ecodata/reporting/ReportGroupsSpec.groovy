@@ -1,4 +1,5 @@
-package au.org.ala.ecodata.reporting;
+package au.org.ala.ecodata.reporting
+
 
 import spock.lang.Specification;
 
@@ -7,7 +8,7 @@ import spock.lang.Specification;
  */
 public class ReportGroupsSpec extends Specification {
 
-    def "test property access"(propertyName, data) {
+    def "grouping on a single property returns the value of the property as the group"(propertyName, data) {
 
         given:
         ReportGroups.DiscreteGroup groupingStrategy = new ReportGroups.DiscreteGroup(propertyName)
@@ -27,7 +28,7 @@ public class ReportGroupsSpec extends Specification {
     }
 
 
-    def "test missing property access"(propertyName, data) {
+    def "grouping on a missing property should return null"(propertyName, data) {
 
         given:
         ReportGroups.DiscreteGroup groupingStrategy = new ReportGroups.DiscreteGroup(propertyName)
@@ -47,7 +48,7 @@ public class ReportGroupsSpec extends Specification {
     }
 
 
-    def "test histogram grouping #data"(buckets, result, data) {
+    def "groups can be defined as half open buckets #data"(buckets, result, data) {
         given:
         ReportGroups.HistogramGroup groupingStrategy = new ReportGroups.HistogramGroup('simple', buckets)
 
@@ -66,6 +67,25 @@ public class ReportGroupsSpec extends Specification {
         [1,2,3,4] | '[-,1)'  | [simple:0.5]
         [1,2,3,4] | '[4,-)'  | [simple:4]
         [1,2,3,4] | '[4,-)'  | [simple:5]
+
+    }
+
+    def "the grouping mechanism can be used to produce a single score by filtering on a single group value #value"(value, expected) {
+        given:
+        ReportGroups.FilteredGroup filteredGroup = new ReportGroups.FilteredGroup('simple', 'value1')
+
+        when:
+        def group = filteredGroup.group(['simple':value])
+
+        then:
+        group == expected
+
+        where:
+
+        value    | expected
+        'value1' | Aggregator.DEFAULT_GROUP
+        'value2' | null
+        null     | null
 
     }
 

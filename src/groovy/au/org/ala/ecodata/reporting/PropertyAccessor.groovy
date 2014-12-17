@@ -13,7 +13,7 @@ class PropertyAccessor {
 
     static def log = Logger.getLogger(getClass())
 
-    static ThreadLocal<NumberFormat> numberFormat
+    static ThreadLocal<NumberFormat> numberFormat = new ThreadLocal<NumberFormat>()
 
     private String[] propertyToGroupOn
 
@@ -36,7 +36,7 @@ class PropertyAccessor {
         return getValueAsNumeric(getPropertyValue(data))
     }
 
-    static BigDecimal getValueAsNumeric(value) {
+    BigDecimal getValueAsNumeric(value) {
         def numeric = null
         if (value instanceof String) {
 
@@ -56,13 +56,14 @@ class PropertyAccessor {
         return numeric
     }
 
-    private NumberFormat getFormatter() {
+    private static NumberFormat getFormatter() {
         DecimalFormat formatter = numberFormat.get()
         if (!formatter) {
             formatter =  DecimalFormat.getInstance(Locale.default)
             formatter.setParseBigDecimal(true)
             numberFormat.set(formatter)
         }
+        return formatter
     }
 
 

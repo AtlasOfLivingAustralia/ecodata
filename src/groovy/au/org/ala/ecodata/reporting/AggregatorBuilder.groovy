@@ -41,19 +41,19 @@ class AggregatorBuilder {
 
         def params = [label:label, group:group]
         switch (aggregationType) {
-            case Score.AGGREGATION_TYPE.SUM:
+            case Score.AGGREGATION_TYPE.SUM.name():
                 return new Aggregators.SummingAggegrator(params)
                 break;
-            case Score.AGGREGATION_TYPE.COUNT:
+            case Score.AGGREGATION_TYPE.COUNT.name():
                 return new Aggregators.CountingAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.AVERAGE:
+            case Score.AGGREGATION_TYPE.AVERAGE.name():
                 return new Aggregators.AverageAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.HISTOGRAM:
+            case Score.AGGREGATION_TYPE.HISTOGRAM.name():
                 return new Aggregators.HistogramAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.SET:
+            case Score.AGGREGATION_TYPE.SET.name():
                 return new Aggregators.SetAggregator(params)
                 break;
             default:
@@ -73,27 +73,25 @@ class AggregatorBuilder {
      * }
      * @return
      */
-    ReportGroups.GroupingStrategy groupingStategyFor(Score score, groupingSpec = null) {
+    ReportGroups.GroupingStrategy groupingStategyFor(groupingSpec) {
 
         if (!groupingSpec) {
-            groupingSpec = score.defaultGrouping()
+            return new ReportGroups.NotGrouped()
         }
+
         final String property = groupingSpec.property
 
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return buildGroupingStrategy(property, 'activity')
+                return buildGroupingStrategy(property, 'activity', groupingSpec.filterBy)
             case 'output':
-                def start = 'data'
-                if (score.listName) {
-                    start = ''
-                }
-                return buildGroupingStrategy(property, start)
+
+                return buildGroupingStrategy(property, '', groupingSpec.filterBy)
             case 'site':
-                return buildGroupingStrategy(property, 'site')
+                return buildGroupingStrategy(property, 'site', groupingSpec.filterBy)
             case 'project':
-                return buildGroupingStrategy(property, 'project')
+                return buildGroupingStrategy(property, 'project', groupingSpec.filterBy)
             case '*':
                 return {""}  // No grouping required.
             default:
@@ -105,15 +103,24 @@ class AggregatorBuilder {
 
 
     static Map cachedStrategies = [:]
-    def buildGroupingStrategy(String property, String start) {
+    def buildGroupingStrategy(String property, String propertyPrefix, String filterValue) {
 
-        def nestedProperty = start ? start+'.'+property : property
-        if (cachedStrategies.containsKey(nestedProperty)) {
-            return cachedStrategies[nestedProperty]
+        def nestedProperty = propertyPrefix ? propertyPrefix+'.'+property : property
+
+        def key = filterValue ? nestedProperty + ':' + filterValue : nestedProperty
+        if (cachedStrategies.containsKey(key)) {
+            return cachedStrategies[key]
         }
 
-        def strategy = new ReportGroups.DiscreteGroup(nestedProperty)
-        cachedStrategies.put(nestedProperty, strategy)
+        ReportGroups.GroupingStrategy strategy
+
+        if (!filterValue) {
+            strategy = new ReportGroups.DiscreteGroup(nestedProperty)
+        }
+        else {
+            strategy = new ReportGroups.FilteredGroup(nestedProperty, filterValue)
+        }
+        cachedStrategies.put(key, strategy)
 
         return strategy
     }

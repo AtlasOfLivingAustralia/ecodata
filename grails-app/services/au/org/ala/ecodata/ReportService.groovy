@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.Aggregator
 import au.org.ala.ecodata.reporting.AggregatorBuilder
+import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.Score
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
@@ -43,7 +44,7 @@ class ReportService {
         toAggregate
     }
 
-    def queryPaginated(List filters, Closure action) {
+    def queryPaginated(List filters, GroupingAggregator aggregator, Closure action) {
 
         // Only dealing with approved activities.
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
@@ -58,7 +59,7 @@ class ReportService {
 
             def hits = results.hits.hits
             for (def hit : hits) {
-                action(hit.source)
+                action(aggregator, hit.source)
             }
             params.offset += params.max
 
@@ -70,30 +71,33 @@ class ReportService {
         aggregate(filters, buildReportSpec())
     }
 
-    def aggregate(List filters, toAggregate) {
+    def aggregate(List filters, toAggregate, topLevelGrouping = null) {
 
-        List<Aggregator> aggregators = buildAggregators(toAggregate)
-        def metadata = [activities: 0, distinctSites:new HashSet(), distinctProjects:new HashSet()]
+        GroupingAggregator aggregator = new GroupingAggregator(topLevelGrouping, toAggregate)
 
-        def aggregateActivity = { activity ->
-            metadata.activities++
-            metadata.distinctProjects << activity.projectId
-            if (activity.sites) {
-                metadata.distinctSites << activity.sites.siteId
-            }
+        queryPaginated(filters, aggregator, this.&aggregateActivity)
 
-            Output.withNewSession {
-                def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
-                activity.outputs = outputs
-                aggregators.each { it.aggregate(activity) }
-            }
+        def allResults = aggregator.results()
+        def metadata = allResults.metadata
+        def results = allResults.results
+        if (!topLevelGrouping) {
+            results = results?results[0].results:[]
         }
 
-        queryPaginated(filters, aggregateActivity)
+        def outputData = results.findAll{it.results}
+        [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects]]
+    }
 
-        def allResults = aggregators.collect {it.results()}
-        def outputData = allResults.findAll{it.results}
-        [outputData:outputData, metadata:[activities: metadata.activities, sites:metadata.distinctSites.size(), projects:metadata.distinctProjects]]
+    private def aggregateActivity (aggregator, activity) {
+
+        Output.withNewSession {
+            def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
+            outputs.each { output ->
+                output.activity = activity
+                aggregator.aggregate(output)
+            }
+
+        }
     }
 
     /**
@@ -115,49 +119,15 @@ class ReportService {
         if (approvedActivitiesOnly) {
             activities = activities.findAll{it.publicationStatus == 'published'}
         }
-        List outputs = Output.findAllByActivityIdInListAndStatus(activities.collect{it.activityId}, OutputService.ACTIVE).collect {outputService.toMap(it)}
-        Map outputsByActivityId = outputs.groupBy{it.activityId}
 
-        return aggregate(aggregationSpec, activities, outputsByActivityId)
-    }
-
-
-    def aggregate(aggregationSpec, List<Activity> activities, Map outputsByActivityId) {
-
-        // Determine if we need to group by site or project properties, if not we can avoid a lot of queries.
-        boolean projectGrouping = aggregationSpec.find {it.groupBy?.entity == 'project'}
-        boolean siteGrouping = aggregationSpec.find {it.groupBy?.entity == 'site'}
-
-        List<Aggregator> aggregators = buildAggregators(aggregationSpec)
+        GroupingAggregator aggregator = new GroupingAggregator(null, aggregationSpec)
 
         activities.each { activity ->
-            // This is really a bad way to do this as we are going to be running a lot of queries do do the aggregation.
-            // I think the best way is going to be to index Activities with project and site data and do the
-            // query via the search index.
-            if (projectGrouping && activity.projectId) {
-                activity['project'] = projectService.toMap(Project.findByProjectId(activity.projectId), ProjectService.BRIEF)
-            }
-            if (siteGrouping && activity.siteId) {
-                activity['site'] = siteService.toMap(Site.findBySiteId(activity.siteId), SiteService.BRIEF)
-            }
-            activity['outputs'] = outputsByActivityId[activity.activityId]
-            aggregators.each { it.aggregate(activity) }
+            aggregateActivity(aggregator, activity)
         }
 
-        aggregators.collect {it.results()}
-
-    }
-
-    def buildAggregators(aggregationSpec) {
-        List<Aggregator> aggregators = []
-
-        def groupedScores = aggregationSpec.groupBy{it.score.label}
-
-        groupedScores.each { k, v ->
-            aggregators << new AggregatorBuilder().scores(v.collect{it.score}).build()
-        }
-
-        aggregators
+        def results = aggregator.results().results
+        return results?results[0].results:[]
     }
 
     /** Temporary method to assist running the user report.  Needs work */
