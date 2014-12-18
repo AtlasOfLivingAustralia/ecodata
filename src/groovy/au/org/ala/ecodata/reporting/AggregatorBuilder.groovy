@@ -68,8 +68,11 @@ class AggregatorBuilder {
      * supplied grouping specification.
      * @param groupingSpec specifies the grouping criteria.  Should be of the format:
      * {
+     *     type : String <one of 'discrete', 'histogram', 'date', 'filter'>
      *     entity : String <one of 'activity', 'output', '*'>
      *     property : String <the property of the entity used to determine the group.  Unused if the entity is '*'>
+     *     buckets: List<String> list of values defining the buckets for a histogram or date group.  Each bucket will be inclusive of
+     *     the first value and exclusive of the next.
      * }
      * @return
      */
@@ -84,14 +87,12 @@ class AggregatorBuilder {
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return buildGroupingStrategy(property, 'activity', groupingSpec.filterBy)
-            case 'output':
-
-                return buildGroupingStrategy(property, '', groupingSpec.filterBy)
-            case 'site':
-                return buildGroupingStrategy(property, 'site', groupingSpec.filterBy)
             case 'project':
-                return buildGroupingStrategy(property, 'project', groupingSpec.filterBy)
+            case 'site':
+                property = groupingSpec.entity+'.'+property
+                break
+            case 'output':
+                break // aggregation is done on outputs at the moment.
             case '*':
                 return {""}  // No grouping required.
             default:
@@ -99,27 +100,47 @@ class AggregatorBuilder {
         }
 
 
+        return buildGroupingStrategy(property, groupingSpec)
     }
 
-
     static Map cachedStrategies = [:]
-    def buildGroupingStrategy(String property, String propertyPrefix, String filterValue) {
 
-        def nestedProperty = propertyPrefix ? propertyPrefix+'.'+property : property
+    private String buildCacheKey(String nestedProperty, groupingSpec) {
+        def key = groupingSpec.type + ':' + nestedProperty
 
-        def key = filterValue ? nestedProperty + ':' + filterValue : nestedProperty
-        if (cachedStrategies.containsKey(key)) {
+        if (groupingSpec.filterBy) {
+            key += ':'+groupingSpec.filterBy
+        }
+        key
+    }
+
+    def buildGroupingStrategy(String nestedProperty, groupingSpec) {
+
+        def key = buildCacheKey(nestedProperty, groupingSpec)
+            if (cachedStrategies.containsKey(key)) {
             return cachedStrategies[key]
         }
 
         ReportGroups.GroupingStrategy strategy
 
-        if (!filterValue) {
-            strategy = new ReportGroups.DiscreteGroup(nestedProperty)
+
+        switch (groupingSpec.type) {
+            case 'histogram':
+                strategy = new ReportGroups.HistogramGroup(nestedProperty, groupingSpec.buckets)
+                break
+            case 'date':
+                strategy = new ReportGroups.DateGroup(nestedProperty, groupingSpec.buckets, groupingSpec.format)
+                break
+            case 'filter':
+                strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterBy)
+                break
+            case 'discrete':
+            default:
+                strategy = new ReportGroups.DiscreteGroup(nestedProperty)
+                break
+
         }
-        else {
-            strategy = new ReportGroups.FilteredGroup(nestedProperty, filterValue)
-        }
+
         cachedStrategies.put(key, strategy)
 
         return strategy

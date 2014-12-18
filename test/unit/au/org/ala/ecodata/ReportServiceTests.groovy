@@ -240,7 +240,7 @@ class ReportServiceTests extends TestCase {
 
     }
 
-    void testTopLevelGropuing() {
+    void testTopLevelGrouping() {
         def output = "output"
         def property = "prop"
         def list = 'mylist'
@@ -279,6 +279,50 @@ class ReportServiceTests extends TestCase {
         }
     }
 
+    void testTopLevelDateGrouping() {
+        def output = "output"
+        def property = "prop"
+        def list = 'mylist'
+        def score = [aggregationType:Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group"]
+
+        def activityDates = [1:"2013-01-02T00:00:00Z", 2:"2014-01-02T00:00:00Z", 3:"2014-07-02T00:00:00Z", 4:"2015-01-01T00:00:00Z", 5:"2015-01-02T00:00:00Z"]
+
+        def values = [1:[[prop:1, group:'group1'], [prop:2, group:'group2']],
+                      2:[[prop:2, group:'group3'], [prop:2, group:'group2']],
+                      3:[[prop:3, group:'group1'], [prop:2, group:'group2']],
+                      4:[[prop:4, group:'group2']],
+                      5:[[prop:5, group:'group4'], [prop:2, group:'group1'], [prop:3, group:'group1']]]
+        def activities = activityDates.collect{[activityId:it.key, plannedEndDate:it.value]}
+        def outputs = values.collectEntries{[(it.key):[createOutput(it.key, output, list, it.value)]]}
+
+        setupInputs([[name:output, scores:[score]]], activities, outputs)
+
+        def results = service.aggregate([], [[score:new Score(score)]], [entity:'activity', property:'plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
+        assertEquals 'Before Jan 2014', results.outputData[0].group
+        def group1Results = results.outputData[0].results[0].results
+        def groupResults = [group1:1, group2:2]
+        groupResults.each { k, v ->
+            def nestedResult = group1Results.find{it.group == k}
+            assertEquals new Double(v), nestedResult.result, 0
+        }
+
+        assertEquals 'Jan 2014 - Dec 2014', results.outputData[1].group
+        def group2Results = results.outputData[1].results[0].results
+        groupResults = [group1:3, group2:4, group3:2]
+        groupResults.each { k, v ->
+            def nestedResult = group2Results.find{it.group == k}
+            assertEquals new Double(v), nestedResult.result, 0
+        }
+
+        assertEquals 'After Dec 2014', results.outputData[2].group
+        def group3Results = results.outputData[2].results[0].results
+        groupResults = [group1:5, group2:4, group4:5]
+        groupResults.each { k, v ->
+            def nestedResult = group3Results.find{it.group == k}
+            assertEquals new Double(v), nestedResult.result, 0
+        }
+
+    }
 
 
     def createOutput(activityId, name, property, value) {

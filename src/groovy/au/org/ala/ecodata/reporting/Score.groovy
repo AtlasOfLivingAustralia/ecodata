@@ -56,9 +56,10 @@ class Score {
                 if (bits[0] == 'output') {
                     property = listName?bits[1]:'data.'+bits[1] // lists are unrolled before the property value is obtained.
                 }
-                def grouping = [entity: bits[0], property: property, groupTitle: label]
+                def grouping = [entity: bits[0], property: property, groupTitle: label, type:'discrete']
                 if (filterBy) {
-                    grouping << [filterBy: filterBy]
+                    grouping.filterBy = filterBy
+                    grouping.type = 'filter'
                 }
                 return grouping
 
