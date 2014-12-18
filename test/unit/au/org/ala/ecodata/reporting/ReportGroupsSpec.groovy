@@ -61,12 +61,12 @@ public class ReportGroupsSpec extends Specification {
         where:
 
         buckets   | result   | data
-        [1,2,3,4] | '[1,2)'  | [simple:1]
-        [1,2,3,4] | '[1,2)'  | [simple:1.1]
-        [1,2,3,4] | '[2,3)'  | [simple:2]
-        [1,2,3,4] | '[-,1)'  | [simple:0.5]
-        [1,2,3,4] | '[4,-)'  | [simple:4]
-        [1,2,3,4] | '[4,-)'  | [simple:5]
+        [1,2,3,4] | '1 - 2'  | [simple:1]
+        [1,2,3,4] | '1 - 2'  | [simple:1.1]
+        [1,2,3,4] | '2 - 3'  | [simple:2]
+        [1,2,3,4] | '< 1'  | [simple:0.5]
+        [1,2,3,4] | '> 4'  | [simple:4]
+        [1,2,3,4] | '> 4'  | [simple:5]
 
     }
 
@@ -86,6 +86,26 @@ public class ReportGroupsSpec extends Specification {
         'value1' | Aggregator.DEFAULT_GROUP
         'value2' | null
         null     | null
+
+    }
+
+    def "the grouping mechanism can be used to group scores by date range"(buckets, date, format, expected) {
+        given:
+        ReportGroups.DateGroup dateGroup = new ReportGroups.DateGroup('simple', buckets, format)
+
+        when:
+        def group = dateGroup.group([simple:date])
+
+        then:
+        group == expected
+
+        where:
+        buckets                                                                   | date                   | format     | expected
+        ['2014-09-01T00:00:00Z', '2014-10-01T00:00:00Z', '2014-11-01T00:00:00Z']  | '2014-10-13T00:00:00Z' | 'MMM yyyy' | 'Oct 2014'
+        ['2014-09-01T00:00:00Z', '2014-10-01T00:00:00Z', '2014-11-01T00:00:00Z']  | '2014-08-13T00:00:00Z' | 'MMM yyyy' | 'Before Sep 2014'
+        ['2014-09-01T00:00:00Z', '2014-10-01T00:00:00Z', '2014-11-01T00:00:00Z']  | '2014-11-01T00:00:01Z' | 'MMM yyyy' | 'After Oct 2014'
+        ['2014-10-01T00:00:00Z', '2015-01-01T00:00:00Z', '2015-04-01T00:00:00Z']  | '2014-10-13T00:00:00Z' | 'MMM yyyy' | 'Oct 2014 - Dec 2014'
+
 
     }
 
