@@ -1,9 +1,12 @@
 package au.org.ala.ecodata
 
+import junit.framework.TestCase
+
 /**
  * Tests for the SchemaBuilder class.
  */
-class SchemaBuilderTests {
+
+class SchemaBuilderTests extends TestCase {
 
     def schemaGenerator = new SchemaBuilder(['grails.serverURL':'http://localhost:8080/', 'app.external.api.version':'test'], [])
 
