@@ -98,10 +98,11 @@ class ActivityServiceSpec extends Specification {
     def "activities can be searched by start date #startDate"(startDate, planned, criteria, expectedActivityIds) {
         when:
         def results
+        def dateProperty = planned?'plannedStartDate':'startDate'
         Activity.withNewTransaction { // There is probably a neater way to do this but the MongoDbTestMixin doesn't work with the ServiceUnitTestMixin
 
             DateFormat df = new SimpleDateFormat('yyyy/MM/dd')
-            results = service.search(criteria, df.parse(startDate), null, planned, LevelOfDetail.NO_OUTPUTS.name())
+            results = service.search(criteria, df.parse(startDate), null, dateProperty, LevelOfDetail.NO_OUTPUTS.name())
             results.sort { a1, a2 -> a1.activityId <=> a2.activityId }
         }
         then:
@@ -121,10 +122,11 @@ class ActivityServiceSpec extends Specification {
     def "activities can be searched by end date"(endDate, planned, criteria, expectedActivityIds) {
         when:
         def results
+        def dateProperty = planned?'plannedEndDate':'endDate'
         Activity.withNewTransaction { // There is probably a neater way to do this but the MongoDbTestMixin doesn't work with the ServiceUnitTestMixin
 
             DateFormat df = new SimpleDateFormat('yyyy/MM/dd')
-            results = service.search(criteria, null, df.parse(endDate), planned, LevelOfDetail.NO_OUTPUTS.name())
+            results = service.search(criteria, null, df.parse(endDate), dateProperty, LevelOfDetail.NO_OUTPUTS.name())
             results.sort { a1, a2 -> a1.activityId <=> a2.activityId }
         }
         then:
@@ -135,18 +137,20 @@ class ActivityServiceSpec extends Specification {
         '2014/01/02' | Boolean.TRUE  | [:]             | []
         '2016/01/02' | Boolean.TRUE  | [:]             | ['activity0', 'activity1', 'activity2', 'activity3', 'activity4', 'activity5']
         '2015/01/02' | Boolean.FALSE | [:]             | ['activity0', 'activity1', 'activity2', 'activity3']
-        '2015/01/01' | Boolean.FALSE | [type:'type 1'] | ['activity0', 'activity1']
+        '2015/01/01' | Boolean.FALSE | [type:'type 1'] | ['activity0'] // End dates are exclusive
     }
 
     def "activities can be searched by start and end date"(startDate, endDate, planned, criteria, expectedActivityIds) {
 
+
         when:
         def results
+        def dateProperty = planned?'plannedEndDate':'endDate'
         Activity.withNewTransaction {
             // There is probably a neater way to do this but the MongoDbTestMixin doesn't work with the ServiceUnitTestMixin
 
             DateFormat df = new SimpleDateFormat('yyyy/MM/dd')
-            results = service.search(criteria, null, df.parse(endDate), planned, LevelOfDetail.NO_OUTPUTS.name())
+            results = service.search(criteria, null, df.parse(endDate), dateProperty, LevelOfDetail.NO_OUTPUTS.name())
             results.sort { a1, a2 -> a1.activityId <=> a2.activityId }
         }
         then:
