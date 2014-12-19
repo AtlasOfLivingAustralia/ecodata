@@ -1,6 +1,4 @@
 package au.org.ala.ecodata
-import au.org.ala.ecodata.reporting.Aggregator
-import au.org.ala.ecodata.reporting.AggregatorBuilder
 import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.Score
 import com.vividsolutions.jts.geom.Geometry
@@ -25,9 +23,8 @@ import java.util.zip.ZipOutputStream
  */
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService
+    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService
 
-    static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
 
     /**
      * Creates an aggregation specification from the Scores defined in the activities model.
@@ -44,15 +41,39 @@ class ReportService {
         toAggregate
     }
 
+    def findScoresByLabel(List labels) {
+        def scores = []
+        metadataService.activitiesModel().outputs?.each{
+            println it
+            Score.outputScores(it).each { score ->
+                if (score.label in labels) {
+                    scores << [score:score]
+                }
+            }
+        }
+        scores
+    }
+
+    def runReport(List filters, String reportName, params) {
+
+
+        //def report = JSON.parse(settingService.getSetting("report.${reportName}"))
+
+        def report = [:]
+        report.groupingSpec = [entity:'activity', property:'plannedEndDate', type:'date', format:'MMM yyyy', buckets:params.getList("dates")]
+        report.scores = ['No. starting accredited training', 'No. starting non-accredited training', 'Total No. of participants who completed training', 'No. who exited training', 'No. who completed training', 'No. of Participants who commenced Projects in period', 'No. of Participants who did not complete projects in period', 'No. of Participants who completed Projects in period']
+
+        aggregate(filters, findScoresByLabel(report.scores), report.groupingSpec)
+    }
+
     def queryPaginated(List filters, GroupingAggregator aggregator, Closure action) {
 
         // Only dealing with approved activities.
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
+
 
         Map params = [offset:0, max:100]
 
-        def results = elasticSearchService.searchActivities(additionalFilters, params)
+        def results = elasticSearchService.searchActivities(filters, params)
 
         def total = results.hits.totalHits
         while (params.offset < total) {
@@ -63,7 +84,7 @@ class ReportService {
             }
             params.offset += params.max
 
-            results  = elasticSearchService.searchActivities(additionalFilters, params)
+            results  = elasticSearchService.searchActivities(filters, params)
         }
     }
 

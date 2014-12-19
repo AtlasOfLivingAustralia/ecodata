@@ -111,6 +111,9 @@ class AggregatorBuilder {
         if (groupingSpec.filterBy) {
             key += ':'+groupingSpec.filterBy
         }
+        if (groupingSpec.buckets) {
+            key += ':'+groupingSpec.buckets.join(',')
+        }
         key
     }
 

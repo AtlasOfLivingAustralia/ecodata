@@ -108,7 +108,7 @@ class ReportGroups {
             super(nestedProperty)
 
             this.buckets = new ArrayList(buckets)
-            Collections.sort(buckets)
+            Collections.sort(this.buckets)
 
             this.dateFormatter = DateTimeFormat.forPattern(dateFormat).withZoneUTC()
 
