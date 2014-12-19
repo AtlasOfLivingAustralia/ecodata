@@ -52,12 +52,21 @@ class Score {
         if (groupBy) {
             def bits = groupBy.split(':')
             if (bits.length == 2) {
-                return [entity: bits[0], property: bits[1], groupTitle: label]
+                def property = bits[1]
+                if (bits[0] == 'output') {
+                    property = listName?bits[1]:'data.'+bits[1] // lists are unrolled before the property value is obtained.
+                }
+                def grouping = [entity: bits[0], property: property, groupTitle: label, type:'discrete']
+                if (filterBy) {
+                    grouping.filterBy = filterBy
+                    grouping.type = 'filter'
+                }
+                return grouping
+
             }
         }
         return [entity: '*']
     }
-
 
     /**
      * Returns a List of Scores as defined for the supplied output metadata.

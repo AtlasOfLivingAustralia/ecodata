@@ -9,6 +9,9 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
 class SearchController {
+
+    static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
+
     def searchService
     def elasticSearchService
     def reportService
@@ -78,8 +81,20 @@ class SearchController {
     }
 
     def dashboardReport() {
+
         def filters = params.getList("fq")
-        def results = reportService.aggregate(filters)
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+        additionalFilters.addAll(filters)
+        def results = reportService.aggregate(additionalFilters)
+        render results as JSON
+    }
+
+
+    def report() {
+
+        def filters = params.getList("fq")
+
+        def results = reportService.runReport(filters, 'Green Army Monthly Summary', params)
         render results as JSON
     }
 
