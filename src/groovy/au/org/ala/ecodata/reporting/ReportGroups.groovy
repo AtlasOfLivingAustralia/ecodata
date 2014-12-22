@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
@@ -52,6 +53,7 @@ class ReportGroups {
                 return group == filterValue ? Aggregator.DEFAULT_GROUP : null
             }
         }
+
     }
 
     static class HistogramGroup extends SinglePropertyGroupingStrategy {
@@ -80,19 +82,27 @@ class ReportGroups {
         def groupName(index) {
 
             if (index == -1) {
-                return "< ${buckets[0]}"
+                return "< ${buckets[0]}".toString()
             }
             else if (index >= buckets.size() - 1) {
-                return "> ${buckets[buckets.size()-1]}"
+                return "> ${buckets[buckets.size()-1]}".toString()
             }
-            return "${buckets[index]} - ${buckets[index+1]}"
+            return "${buckets[index]} - ${buckets[index+1]}".toString()
+        }
+
+        def groups() {
+            def labels = []
+            for (i in -1..buckets.size()-1) {
+                labels << groupName(i)
+            }
+            labels
         }
     }
 
 
     static class DateGroup extends SinglePropertyGroupingStrategy {
 
-        static DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis().withZoneUTC()
+        static DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.default)
         DateTimeFormatter dateFormatter
         def buckets
         def bucketStartLabels
@@ -110,16 +120,16 @@ class ReportGroups {
             this.buckets = new ArrayList(buckets)
             Collections.sort(this.buckets)
 
-            this.dateFormatter = DateTimeFormat.forPattern(dateFormat).withZoneUTC()
+            this.dateFormatter = DateTimeFormat.forPattern(dateFormat).withZone(DateTimeZone.default)
 
             this.bucketStartLabels = buckets.collect{
                 this.dateFormatter.print(parser.parseDateTime(it))
             }
             this.bucketEndLabels = buckets.collect {
-                // Because the buckets are half open, we subtract one millisecond from the end dates so
+                // Because the buckets are half open, we subtract one day from the end dates so
                 // that a range of 1 Jan - 1 Feb is printed as Jan (otherwise it would be Jan - Feb which is
-                // incorrect)
-                this.dateFormatter.print(parser.parseDateTime(it).minusMillis(1))
+                // incorrect). The day is so we don't have to worry about time zone problems
+                this.dateFormatter.print(parser.parseDateTime(it).minusDays(1))
             }
 
         }
@@ -135,17 +145,25 @@ class ReportGroups {
         def groupName(index) {
 
             if (index == -1) {
-                return "Before ${bucketStartLabels[0]}"
+                return "Before ${bucketStartLabels[0]}".toString()
             }
             else if (index >= buckets.size() - 1) {
-                return "After ${bucketEndLabels[buckets.size()-1]}"
+                return "After ${bucketEndLabels[buckets.size()-1]}".toString()
             }
             def start = bucketStartLabels[index]
             def end = bucketEndLabels[index+1]
             if (start == end) {
                 return start
             }
-            return "${start} - ${end}"
+            return "${start} - ${end}".toString()
+        }
+
+        def groups() {
+            def labels = []
+            for (i in -1..buckets.size()-1) {
+                labels << groupName(i)
+            }
+            labels
         }
     }
 
