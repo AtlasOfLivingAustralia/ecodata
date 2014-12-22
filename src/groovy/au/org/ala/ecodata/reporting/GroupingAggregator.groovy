@@ -17,9 +17,13 @@ class GroupingAggregator {
 
         this.groupingStrategy = new AggregatorBuilder().groupingStategyFor(groupingSpec)
 
-        aggregatorsByGroup = [:].withDefault { key ->
+        aggregatorsByGroup = new LinkedHashMap().withDefault { key ->
 
             newAggregator(scores)
+        }
+
+        if (groupingSpec?.buckets) {
+            groupingStrategy.groups().each { aggregatorsByGroup.get(it) }  // Prepop the groups in the correct order.
         }
     }
 
@@ -57,7 +61,11 @@ class GroupingAggregator {
     }
 
     def results() {
-        [metadata:metadata, results:aggregatorsByGroup.collect {k, v ->  [group:k, results: v.collect{it.results()}]}]
+
+        def results = aggregatorsByGroup.collect {k, v ->  [group:k, results: v.collect{it.results()}]}
+
+
+        [metadata:metadata, results:results]
     }
 
     /**

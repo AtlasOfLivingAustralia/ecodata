@@ -54,6 +54,19 @@ class ReportService {
         scores
     }
 
+    def findScoresByCategory(String category) {
+        def scores = []
+        metadataService.activitiesModel().outputs?.each{
+            println it
+            Score.outputScores(it).each { score ->
+                if (score.category == category) {
+                    scores << [score:score]
+                }
+            }
+        }
+        scores
+    }
+
     def runReport(List filters, String reportName, params) {
 
 
@@ -61,9 +74,8 @@ class ReportService {
 
         def report = [:]
         report.groupingSpec = [entity:'activity', property:'plannedEndDate', type:'date', format:'MMM yyyy', buckets:params.getList("dates")]
-        report.scores = ['No. starting accredited training', 'No. starting non-accredited training', 'Total No. of participants who completed training', 'No. who exited training', 'No. who completed training', 'No. of Participants who commenced Projects in period', 'No. of Participants who did not complete projects in period', 'No. of Participants who completed Projects in period']
-
-        aggregate(filters, findScoresByLabel(report.scores), report.groupingSpec)
+        report.scores = findScoresByCategory("Green Army")
+        aggregate(filters, report.scores, report.groupingSpec)
     }
 
     def queryPaginated(List filters, GroupingAggregator aggregator, Closure action) {
