@@ -43,8 +43,7 @@ class SearchController {
             return geo
 
         def layerName, layerType
-        def name =  hit.source[markBy.replaceAll("Facet", "")] ? hit.source[markBy.replaceAll("Facet", "")] :
-                    hit.source[markBy.replaceAll("Facet", "Name")] ? hit.source[markBy.replaceAll("Facet", "Name")] : ""
+        def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
 
         if(name){
             for(int i = 0; i < selectedFacet.size(); i++){
@@ -63,8 +62,8 @@ class SearchController {
         else {
             hit.source.sites.each { site ->
                 if(site.extent?.geometry) {
-                    name =  site.extent?.geometry[markBy.replaceAll("Facet", "")] ? site.extent?.geometry[markBy.replaceAll("Facet", "")] :
-                            site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ? site.extent?.geometry[markBy.replaceAll("Facet", "Name")] : ""
+                    name =  site.extent?.geometry[markBy.replaceAll("Facet", "")] ?:
+                            site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ?: ""
 
                     if(name) {
                         for(int i = 0; i < selectedFacet.size(); i++){
