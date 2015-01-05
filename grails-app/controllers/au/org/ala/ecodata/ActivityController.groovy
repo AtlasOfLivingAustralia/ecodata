@@ -171,35 +171,17 @@ class ActivityController {
         def searchCriteria = request.JSON
 
         def startDate = null, endDate = null, planned = null
-        if (searchCriteria.startDate) {
+        def dateProperty = searchCriteria.remove('dateProperty')
+        if (dateProperty && searchCriteria.startDate) {
             def startDateStr = searchCriteria.remove('startDate')
             startDate = commonService.parse(startDateStr)
-            planned = Boolean.FALSE
         }
-        if (searchCriteria.endDate) {
+        if (dateProperty && searchCriteria.endDate) {
             def endDateStr = searchCriteria.remove('endDate')
             endDate = commonService.parse(endDateStr)
-            planned = Boolean.FALSE
-        }
-        if (searchCriteria.plannedStartDate) {
-            if (planned == Boolean.FALSE) {
-                throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
-            }
-            planned = Boolean.TRUE
-            def startDateStr = searchCriteria.remove('plannedStartDate')
-            startDate = commonService.parse(startDateStr)
-        }
-        if (searchCriteria.plannedEndDate) {
-            if (planned == Boolean.FALSE) {
-                throw new IllegalArgumentException("Please specify either planned or actual dates, not both")
-            }
-            planned = Boolean.TRUE
-
-            def endDateStr = searchCriteria.remove('plannedEndDate')
-            endDate = commonService.parse(endDateStr)
         }
 
-        def activityList = activityService.search(searchCriteria, startDate, endDate, planned, 'all')
+        def activityList = activityService.search(searchCriteria, startDate, endDate, dateProperty, 'all')
 
         asJson activities:activityList
     }

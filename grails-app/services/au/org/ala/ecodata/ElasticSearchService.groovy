@@ -740,13 +740,23 @@ class ElasticSearchService {
         // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
         // faceting for reporting.
 
+
+        def project = projectService.get(activity.projectId, ProjectService.FLAT)
+        if (project) {
+            project.remove('custom')
+            project.remove('timeline')
+            project.remove('outputTargets')
+            project.remove('plannedStartDate')
+            project.remove('plannedEndDate')
+            project.remove('startDate')
+            project.remove('endDate')
+            project.remove('description')
+            activity.putAll(project)
+
+        }
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
             activity.sites = [site]
-        }
-        def project = projectService.get(activity.projectId, ProjectService.FLAT)
-        if (project) {
-            activity.putAll(project)
         }
         activity
     }

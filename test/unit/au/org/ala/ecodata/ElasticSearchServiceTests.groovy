@@ -74,7 +74,7 @@ class ElasticSearchServiceTests {
      */
     public void testActivitySearch() {
 
-        Thread.sleep(1000); // Indexing appears to be asynchronous.
+        //Thread.sleep(1000); // Indexing appears to be asynchronous.
         def activityFilters = ["mainThemeFacet:${THEME1}"]
         def results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
         assert results.hits.totalHits == 8
