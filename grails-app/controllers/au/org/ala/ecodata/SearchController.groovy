@@ -50,6 +50,7 @@ class SearchController {
                 if(selectedFacet[i].layerName.equals(name)){
                     layerName = selectedFacet[i].layerName
                     layerType = selectedFacet[i].layerType
+                    selectedFacet[i].count++
                     break;
                 }
             }
@@ -70,6 +71,7 @@ class SearchController {
                             if(selectedFacet[i].layerName.equals(name)){
                                 layerName = selectedFacet[i].layerName
                                 layerType = selectedFacet[i].layerType
+                                selectedFacet[i].count++
                                 break;
                             }
                         }
@@ -100,6 +102,7 @@ class SearchController {
                         def data = [:]
                         data.layerName = val.term.toString()
                         data.layerType = index
+                        data.count = 0
                         selectedFacet << data
                     }
                 }
