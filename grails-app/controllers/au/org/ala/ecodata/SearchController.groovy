@@ -26,9 +26,7 @@ class SearchController {
 
     def elastic() {
         def res = elasticSearchService.search(params.query, params, "")
-        //log.debug "res = ${res}"
         response.setContentType("application/json; charset=\"UTF-8\"")
-        //response.setCharacterEncoding("UTF-8")
         render res
     }
 
@@ -38,24 +36,96 @@ class SearchController {
         render res
     }
 
+    private def populateGeoLayers(markBy, hit, selectedFacet){
+
+        def geo = hit.source.geo
+        if(!markBy)
+            return geo
+
+        def layerName, layerType
+        def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
+
+        if(name){
+            for(int i = 0; i < selectedFacet.size(); i++){
+                if(selectedFacet[i].layerName.equals(name)){
+                    layerName = selectedFacet[i].layerName
+                    layerType = selectedFacet[i].layerType
+                    selectedFacet[i].count++
+                    break;
+                }
+            }
+
+            geo.each{ data ->
+                data.layerName = layerName
+                data.layerType = layerType
+            }
+        }
+        else {
+            hit.source.sites.each { site ->
+                if(site.extent?.geometry) {
+                    name =  site.extent?.geometry[markBy.replaceAll("Facet", "")] ?:
+                            site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ?: ""
+
+                    if(name) {
+                        for(int i = 0; i < selectedFacet.size(); i++){
+                            if(selectedFacet[i].layerName.equals(name)){
+                                layerName = selectedFacet[i].layerName
+                                layerType = selectedFacet[i].layerType
+                                selectedFacet[i].count++
+                                break;
+                            }
+                        }
+
+                        geo.each{ data ->
+                            if(data.siteId.equals(site.siteId)) {
+                                data.layerName = layerName
+                                data.layerType = layerType
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        geo
+    }
+
     def elasticGeo() {
         def res = elasticSearchService.search(params.query, params, "homepage")
+        def selectedFacet = []
+        def markBy = params.markBy
+
+        if(markBy){
+            res.facets.facets.each{ facet ->
+                if(facet.key.equals(markBy)){
+                    facet.value.eachWithIndex{ val, index ->
+                        def data = [:]
+                        data.layerName = val.term.toString()
+                        data.layerType = index
+                        data.count = 0
+                        selectedFacet << data
+                    }
+                }
+            }
+        }
+
         def geoRes = []
+
         res.hits.hits.each { hit ->
-            if(hit.source?.geo){
+            if(hit.source?.geo) {
                 def proj = [:]
-                proj.projectId =hit.source.projectId
+                proj.projectId = hit.source.projectId
                 proj.name = hit.source.name
                 proj.org = hit.source.organisationName
-                proj.geo = hit.source.geo
+                proj.geo = populateGeoLayers(markBy, hit, selectedFacet)
+
                 geoRes << proj
             }
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
-        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes]
+        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes,'selectedFacet':selectedFacet]
         render projectsAndTotal as JSON
     }
-
     def elasticPost() {
         def paramsObj = request.JSON
         def paramMap = new GrailsParameterMap(paramsObj, request)
