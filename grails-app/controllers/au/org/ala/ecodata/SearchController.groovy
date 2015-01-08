@@ -36,28 +36,28 @@ class SearchController {
         render res
     }
 
-    private def populateGeoLayers(markBy, hit, selectedFacet){
+    private def populateGeoInfo(markBy, hit, selectedFacetTerms){
 
         def geo = hit.source.geo
         if(!markBy)
             return geo
 
-        def layerName, layerType
+        def legendName, index
         def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
 
         if(name){
-            for(int i = 0; i < selectedFacet.size(); i++){
-                if(selectedFacet[i].layerName.equals(name)){
-                    layerName = selectedFacet[i].layerName
-                    layerType = selectedFacet[i].layerType
-                    selectedFacet[i].count++
+            for(int i = 0; i < selectedFacetTerms.size(); i++){
+                if(selectedFacetTerms[i].legendName.equals(name)){
+                    legendName = selectedFacetTerms[i].legendName
+                    index = selectedFacetTerms[i].index
+                    selectedFacetTerms[i].count++
                     break;
                 }
             }
 
             geo.each{ data ->
-                data.layerName = layerName
-                data.layerType = layerType
+                data.legendName = legendName
+                data.index = index
             }
         }
         else {
@@ -67,19 +67,19 @@ class SearchController {
                             site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ?: ""
 
                     if(name) {
-                        for(int i = 0; i < selectedFacet.size(); i++){
-                            if(selectedFacet[i].layerName.equals(name)){
-                                layerName = selectedFacet[i].layerName
-                                layerType = selectedFacet[i].layerType
-                                selectedFacet[i].count++
+                        for(int i = 0; i < selectedFacetTerms.size(); i++){
+                            if(selectedFacetTerms[i].legendName.equals(name)){
+                                legendName = selectedFacetTerms[i].legendName
+                                index = selectedFacetTerms[i].index
+                                selectedFacetTerms[i].count++
                                 break;
                             }
                         }
 
                         geo.each{ data ->
                             if(data.siteId.equals(site.siteId)) {
-                                data.layerName = layerName
-                                data.layerType = layerType
+                                data.legendName = legendName
+                                data.index = index
                             }
                         }
                     }
@@ -92,7 +92,7 @@ class SearchController {
 
     def elasticGeo() {
         def res = elasticSearchService.search(params.query, params, "homepage")
-        def selectedFacet = []
+        def selectedFacetTerms = []
         def markBy = params.markBy
 
         if(markBy){
@@ -100,10 +100,10 @@ class SearchController {
                 if(facet.key.equals(markBy)){
                     facet.value.eachWithIndex{ val, index ->
                         def data = [:]
-                        data.layerName = val.term.toString()
-                        data.layerType = index
+                        data.legendName = val.term.toString()
+                        data.index = index
                         data.count = 0
-                        selectedFacet << data
+                        selectedFacetTerms << data
                     }
                 }
             }
@@ -117,13 +117,14 @@ class SearchController {
                 proj.projectId = hit.source.projectId
                 proj.name = hit.source.name
                 proj.org = hit.source.organisationName
-                proj.geo = populateGeoLayers(markBy, hit, selectedFacet)
+                proj.geo = populateGeoInfo(markBy, hit, selectedFacetTerms)
 
                 geoRes << proj
             }
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
-        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes,'selectedFacet':selectedFacet]
+        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes,'selectedFacetTerms':selectedFacetTerms]
+
         render projectsAndTotal as JSON
     }
     def elasticPost() {
@@ -158,7 +159,6 @@ class SearchController {
         def results = reportService.aggregate(additionalFilters)
         render results as JSON
     }
-
 
     def report() {
 
