@@ -27,12 +27,13 @@ class ProjectController {
 
     def list() {
         println 'brief = ' + params.brief
-        def list = projectService.list(params.brief, params.includeDeleted)
+        def list = projectService.list(params.brief, params.includeDeleted, params.citizenScienceOnly)
         list.sort {it.name}
         render list as JSON
     }
 
     def get(String id) {
+        def citizenScienceOnly = params.boolean('citizenScienceOnly', false)
         def includeDeleted = params.boolean('includeDeleted', false)
         def levelOfDetail = []
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
@@ -40,7 +41,7 @@ class ProjectController {
         if (params.view == ProjectService.ALL) { levelOfDetail = ProjectService.ALL }
         if (params.view == ProjectService.OUTPUT_SUMMARY) {levelOfDetail = ProjectService.OUTPUT_SUMMARY}
         if (!id) {
-            def list = projectService.list(levelOfDetail, includeDeleted)
+            def list = projectService.list(levelOfDetail, includeDeleted, citizenScienceOnly)
             list.sort {it.name}
             asJson([list: list])
         } else {

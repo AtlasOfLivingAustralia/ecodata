@@ -35,9 +35,15 @@ class ProjectService {
         return p?toMap(p, levelOfDetail):null
     }
 
-    def list(levelOfDetail = [], includeDeleted = false) {
-        def list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
-        list.collect { toMap(it, levelOfDetail) }
+    def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
+        def list
+        if (!citizenScienceOnly)
+            list = includeDeleted ? Project.list(): Project.findAllByStatus(ACTIVE)
+        else if (includeDeleted)
+            list = Project.findAllByIsCitizenScience(true)
+        else
+            list = Project.findAllByIsCitizenScienceAndStatus(true, ACTIVE)
+        list?.collect { toMap(it, levelOfDetail) }
     }
 
     /**
@@ -102,7 +108,13 @@ class ProjectService {
     def create(props) {
         assert getCommonService()
         try {
-            def o = new Project(projectId: Identifiers.getNew(true,''), name:props.name) // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
+            if (props.projectId && Project.findByProjectId(props.projectId)) {
+                // clear session to avoid exception when GORM tries to autoflush the changes
+                Project.withSession { session -> session.clear() }
+                return [status:'error',error:'Duplicate project id for create ' + props.projectId]
+            }
+            // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
+            def o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
             o.save(failOnError: true)
 
             props.remove('sites')
