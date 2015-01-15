@@ -3,23 +3,6 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "serviceProviderName",
-            "constraints": [
-                "Australian Trust for Conservation Volunteers",
-                "Campbell Page",
-                "Job Futures",
-                "Manpower"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "name": "projectId",
-            "description": "Enter the Departmental reference number of the project being audited. If multiple projects are being audited, complete a separate form for each project.",
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
             "description": "Enter the name of the Departmental Contract Manager undertaking this review/audit.",
             "name": "contractManager",
             "validate": "required"
@@ -278,21 +261,6 @@
     "viewModel": [
         {
             "items": [
-                {
-                    "items": [
-                        {
-                            "source": "serviceProviderName",
-                            "preLabel": "Service Provider:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "projectId",
-                            "preLabel": "Project ID:",
-                            "type": "text"
-                        }
-                    ],
-                    "type": "col"
-                },
                 {
                     "items": [
                         {
