@@ -45,7 +45,7 @@ class Project {
     boolean isCitizenScience
     String projectType    // survey, works
     String aim, keywords, urlAndroid, urlITunes, urlWeb
-    String getInvolved, scienceType
+    String getInvolved, scienceType, projectSiteId
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
@@ -83,6 +83,7 @@ class Project {
         orgIdGrantee nullable:true
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
+        projectSiteId nullable:true // nullable for backward compatibility
         userCreated nullable:true
         userLastModified nullable:true
     }
