@@ -97,7 +97,7 @@ class MetadataService {
 
     def institutionList() {
         return cacheService.get('institutions',{
-            webService.getJson(grailsApplication.config.collectory.baseURL + '/ws/institution')
+            webService.getJson(grailsApplication.config.collectory.baseURL + 'ws/institution')
         })
     }
 
