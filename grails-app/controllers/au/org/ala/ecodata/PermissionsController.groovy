@@ -254,7 +254,7 @@ class PermissionsController {
                 log.debug "it.projectId = ${it.projectId}"
                 t.project = projectService.get(it.projectId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
-                out.add t
+                if (t.project) out.add t
             }
             render out as JSON
         } else {
