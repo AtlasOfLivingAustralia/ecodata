@@ -164,7 +164,7 @@ class ActivityController {
      * an error, but no results will be returned.  (this is an effect of mongo allowing
      * a dynamic schema)
      *
-     * @return a list of the projects that match the supplied criteria
+     * @return a list of the activities that match the supplied criteria
      */
     @RequireApiKey
     def search() {

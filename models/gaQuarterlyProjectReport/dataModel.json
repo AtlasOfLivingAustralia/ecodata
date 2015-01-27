@@ -2,47 +2,6 @@
     "modelName": "Three Monthly Report",
     "dataModel": [
         {
-            "dataType": "text",
-            "description": "The 3 month period for which this report applies.",
-            "name": "reportQuarter",
-            "constraints": [
-                "Q1 - 1 July - 30 September",
-                "Q2 - 1 October - 31 December",
-                "Q3 - 1 January - 31 March",
-                "Q4 - 1 April - 30 June"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "The year for which this report applies.",
-            "name": "reportYear",
-            "constraints": [
-                "2014",
-                "2015"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": ".",
-            "name": "projectStatus",
-            "constraints": [
-                "Not started",
-                "Commenced",
-                "Progressing - behind schedule",
-                "Progressing - on schedule",
-                "Progressing - ahead of schedule",
-                "Completed"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "date",
-            "description": ".",
-            "name": "projectStatusReason"
-        },
-        {
             "dataType": "list",
             "name": "training",
             "columns": [
@@ -80,8 +39,9 @@
                 {
                     "dataType": "number",
                     "description": ".",
+                    "primaryResult": "true",
                     "name": "participantWithdrawals",
-                    "validate": "required"
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -97,8 +57,9 @@
                 {
                     "dataType": "number",
                     "description": ".",
+                    "primaryResult": "true",
                     "name": "participantExits",
-                    "validate": "required"
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -114,8 +75,9 @@
                 {
                     "dataType": "number",
                     "description": "The number of participants who commenced or made a commitment to undertake non-accredited training.",
+                    "primaryResult": "true",
                     "name": "participantTrainingNaNumber",
-                    "validate": "required"
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -131,8 +93,9 @@
                 {
                     "dataType": "number",
                     "description": "The number of participants who did commenced, but did not complete training.",
+                    "primaryResult": "true",
                     "name": "participantTrainingNcNumber",
-                    "validate": "required"
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -168,46 +131,55 @@
             "columns": [
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no17Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no18Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no19Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no20Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no21Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no22Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no23Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "no24Years",
-                    "validate": "required,min[0]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",
+                    "primaryResult": "true",
                     "name": "totalParticipants",
                     "computed": {
                         "operation": "sum",
@@ -222,7 +194,7 @@
                             "no24Years"
                         ]
                     },
-                    "validate": "required,min[0]"
+                    "validate": "min[0]"
                 }
             ]
         },
@@ -293,9 +265,13 @@
                     ]
                 },
                 {
-                    "dataType": "checkbox",
+                    "dataType": "text",
                     "description": "Indicate whether this injury or illness was notifiable.",
-                    "name": "incidentNotifiable"
+                    "name": "incidentNotifiable",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -303,38 +279,16 @@
                     "name": "incidentDescription"
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (minutes) you have taken to complete this report.",
+            "primaryResult": "true",
+            "name": "reportingTimeTaken",
+            "validate": "required, min[0]"
         }
     ],
     "viewModel": [
-        {
-            "items": [
-                {
-                    "source": "reportQuarter",
-                    "computed": null,
-                    "preLabel": "Report period:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "reportYear",
-                    "computed": null,
-                    "preLabel": "Year:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "projectStatus",
-                    "computed": null,
-                    "preLabel": "How is the project tracking?:",
-                    "type": "selectOne"
-                },
-                {
-                    "source": "projectStatusReason",
-                    "computed": null,
-                    "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
-                    "type": "textarea"
-                }
-            ],
-            "type": "row"
-        },
         {
             "items": [{
                 "source": "<h4>List of Training Activities<\/h4>",
@@ -559,7 +513,7 @@
         },
         {
             "items": [{
-                "source": "Please provide information on the age range of all participants that commenced on the Project during this reporting period.",
+                "source": "Please provide information on the age range of all participants that commenced on the Project during this reporting period. The total number must agree with the sum of the monthly totals for this three month period for Participants commencing.",
                 "computed": null,
                 "type": "literal"
             }],
@@ -620,9 +574,23 @@
                 },
                 {
                     "title": "Total Participants",
-                    "readOnly": "true",
                     "source": "totalParticipants",
+                    "primaryResult": "true",
                     "width": "10%",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [
+                            "no17Years",
+                            "no18Years",
+                            "no19Years",
+                            "no20Years",
+                            "no21Years",
+                            "no22Years",
+                            "no23Years",
+                            "no24Years"
+                        ]
+                    },
+                    "noEdit": "true",
                     "type": "number"
                 }
             ],
@@ -666,7 +634,7 @@
                     "title": "Was the incident notifiable?",
                     "source": "incidentNotifiable",
                     "width": "10%",
-                    "type": "checkbox"
+                    "type": "selectOne"
                 },
                 {
                     "title": "Description of incident and resulting injury/illness and remedial action/s taken to address incident <br><i>(including any insurance claim by the Participant, and/or to decrease the likelihood of re-occurrence where required)<\/i>",
@@ -678,6 +646,15 @@
             "userAddedRows": true,
             "class": "output-section",
             "type": "table"
+        },
+        {
+            "items": [{
+                "source": "reportingTimeTaken",
+                "computed": null,
+                "preLabel": "Time taken to complete this report (minutes):",
+                "type": "number"
+            }],
+            "type": "row"
         }
     ]
 }
