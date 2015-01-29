@@ -8,8 +8,8 @@ modules = {
         dependsOn 'jquery'
         resource url: '/bootstrap/js/bootstrap.min.js'
         resource url: '/bootstrap/css/bootstrap.min.css'
-        resource url: '/bootstrap/img/glyphicons-halflings-white.png'
-        resource url: '/bootstrap/img/glyphicons-halflings.png'
+        resource url: '/bootstrap/images/glyphicons-halflings-white.png'
+        resource url: '/bootstrap/images/glyphicons-halflings.png'
     }
 
     bootstrap_combo {
