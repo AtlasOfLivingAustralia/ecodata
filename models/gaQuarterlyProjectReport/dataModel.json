@@ -290,19 +290,23 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "<h4>List of Training Activities<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>List of Training Activities</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a list of the training activities (from nationally endorsed skills sets) undertaken by Participants in this Project during this reporting period.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a list of the training activities (from nationally endorsed skills sets) undertaken by Participants in this Project during this reporting period.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -333,19 +337,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>Participant Withdrawals and Exits<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Participant Withdrawals and Exits</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a summary of reasons for Participant withdrawals (Participant initiated) and Participant exits (Service Provider initiated) during this reporting period in the two tables below. The summary should provide a short explanation for each withdrawal and exit.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a summary of reasons for Participant withdrawals (Participant initiated) and Participant exits (Service Provider initiated) during this reporting period in the two tables below. The summary should provide a short explanation for each withdrawal and exit.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -389,19 +397,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>Participants Commencing Non-Accredited Training<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Participants Commencing Non-Accredited Training</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a summary of reasons why Participants entered into Training Plans for the Project in the current period that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a summary of reasons why Participants entered into Training Plans for the Project in the current period that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -425,19 +437,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>Participants Exiting Training<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Participants Exiting Training</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -461,19 +477,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>Complaints Received<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Complaints Received</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -504,19 +524,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>Participant Demographics<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Participant Demographics</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Please provide information on the age range of all participants that commenced on the Project during this reporting period. The total number must agree with the sum of the monthly totals for this three month period for Participants commencing.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please provide information on the age range of all participants that commenced on the Project during this reporting period. The total number must agree with the sum of the monthly totals for this three month period for Participants commencing.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -598,19 +622,23 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "<h4>List of Incidents<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>List of Incidents</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Provide a list of all incidents, whether Notifiable  or not, including breaches of the Participant code of conduct, that occurred during this reporting period.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Provide a list of all incidents, whether Notifiable  or not, including breaches of the Participant code of conduct, that occurred during this reporting period.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -637,7 +665,7 @@
                     "type": "selectOne"
                 },
                 {
-                    "title": "Description of incident and resulting injury/illness and remedial action/s taken to address incident <br><i>(including any insurance claim by the Participant, and/or to decrease the likelihood of re-occurrence where required)<\/i>",
+                    "title": "Description of incident and resulting injury/illness and remedial action/s taken to address incident <br><i>(including any insurance claim by the Participant, and/or to decrease the likelihood of re-occurrence where required)</i>",
                     "source": "incidentDescription",
                     "width": "50%",
                     "type": "textarea"
@@ -648,12 +676,14 @@
             "type": "table"
         },
         {
-            "items": [{
-                "source": "reportingTimeTaken",
-                "computed": null,
-                "preLabel": "Time taken to complete this report (minutes):",
-                "type": "number"
-            }],
+            "items": [
+                {
+                    "source": "reportingTimeTaken",
+                    "computed": null,
+                    "preLabel": "Time taken to complete this report (minutes):",
+                    "type": "number"
+                }
+            ],
             "type": "row"
         }
     ]
