@@ -1,15 +1,8 @@
 modules = {
     application {
+        dependsOn 'jquery'
         resource url:'js/application.js'
         resource url: 'css/ecodata.css'
-    }
-
-    app_bootstrap {
-        dependsOn 'jquery'
-        resource url: '/bootstrap/js/bootstrap.min.js'
-        resource url: '/bootstrap/css/bootstrap.min.css'
-        resource url: '/bootstrap/images/glyphicons-halflings-white.png'
-        resource url: '/bootstrap/images/glyphicons-halflings.png'
     }
 
     bootstrap_combo {
@@ -23,14 +16,8 @@ modules = {
         resource url: 'js/bootbox.min.js'
     }
 
-    app_bootstrap_responsive {
-        dependsOn 'app_bootstrap'
-        resource url: '/bootstrap/css/bootstrap-responsive.min.css'
-    }
-
     vkbeautify {
         dependsOn 'jquery'
         resource url: 'js/vkbeautify.0.99.00.beta.js'
     }
-
 }
