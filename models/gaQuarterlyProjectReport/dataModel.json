@@ -33,6 +33,16 @@
             "name": "training"
         },
         {
+            "dataType":"number",
+            "name":"trainingActivityCount",
+            "computed":{
+                "operation":"count",
+                "dependents": {
+                    "source":"training"
+                }
+            }
+        },
+        {
             "primaryResult": "true",
             "dataType": "number",
             "name": "participantWithdrawals",
@@ -100,6 +110,17 @@
             ],
             "dataType": "list",
             "name": "complaints"
+        },
+        {
+            "name":"complaintCount",
+            "description":"The number of complaints recorded.",
+            "dataType":"number",
+            "computed": {
+                "operation":"count",
+                "dependents" : {
+                    "source": "complaints"
+                }
+            }
         },
         {
             "primaryResult": "true",
@@ -251,7 +272,15 @@
             "name": "incidents"
         },
         {
-
+            "name":"incidentCount",
+            "description":"The number of incidents recorded.",
+            "dataType":"number",
+            "computed": {
+                "operation":"count",
+                "dependents" : {
+                    "source": "incidents"
+                }
+            }
         },
         {
             "primaryResult": "true",
