@@ -181,8 +181,10 @@ class RecordController {
             recordService.toMap(it)
             records.add(recordService.toMap(it))
         }
+        def totalRecords = Record.count()
         response.setContentType("application/json")
-        render records as JSON
+        def model = [totalRecords: totalRecords, records:records]
+        render model as JSON
     }
 
     def listForUser(){
@@ -197,8 +199,9 @@ class RecordController {
         Record.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
             records.add(recordService.toMap(it))
         }
+        def totalRecords = Record.countByUserId(params.userId)
         response.setContentType("application/json")
-        def model = [records:records]
+        def model = [totalRecords: totalRecords, records:records]
         render model as JSON
     }
 
