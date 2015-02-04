@@ -3,13 +3,10 @@
     "dataModel": [
         {
             "dataType": "text",
-            "shortDescription": "Project status",
             "description": "Indicate the most appropriate status of the project at the end of the reporting month.",
             "name": "projectStatus",
             "constraints": [
                 "Not started",
-                "Agreement signed",
-                "Agreement signed and project commenced",
                 "Commenced",
                 "Progressing - behind schedule",
                 "Progressing - on schedule",
@@ -21,226 +18,111 @@
         },
         {
             "dataType": "date",
-            "shortDescription": "Project status reason",
             "description": "If the project is running behind schedule you are required to explain why.",
             "name": "projectStatusReason"
         },
         {
             "dataType": "text",
-            "shortDescription": "Project status remediation",
             "description": "If the project is running behind schedule, please explain how you intend to bring it back on schedule, including what actions you plan to take.",
             "name": "remedialActions"
         },
         {
             "dataType": "number",
-            "shortDescription": "Accredited training - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
-            "name": "trainingCommencedAccreditedNonIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the number of Participants who entered into a Participant Agreement for the Project in the current month.",
+            "name": "totalParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Accredited training - Indigenous",
-            "description": "Record the number of Indigenous Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
-            "name": "trainingCommencedAccreditedIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "name": "totalParticipantsCompleted",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Exited training - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
-            "name": "trainingNoExitedNonIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "name": "totalParticipantsNotCompleted",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Exited training - Indigenous",
-            "description": "Record the number of Indigenous Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
-            "name": "trainingNoExitedIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the total number of Indigenous people who commenced participation in the Project in the current month.",
+            "name": "totalIndigenousParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Completed training - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
-            "name": "trainingNoCompletedNonIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the total number of Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
+            "name": "trainingCommencedAccredited",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Completed training - Indigenous",
-            "description": "Record the number of Indigenous Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
-            "name": "trainingNoCompletedIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the total number of Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
+            "name": "trainingNoExited",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Commenced projects - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who entered into a Participant Agreement for the Project in the current month.",
-            "name": "totalParticipantsCommencedNonIndigenous",
-            "validate": "required,min[0]"
+            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
+            "name": "trainingNoCompleted",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "shortDescription": "Commenced projects - Indigenous",
-            "description": "Record the number of Indigenous Participants who entered into a Participant Agreement for the Project in the current month.",
-            "name": "totalParticipantsCommencedIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "shortDescription": "Project withdrawals - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
-            "name": "totalParticipantsNotCompletedNonIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "shortDescription": "Project withdrawals - Indigenous",
-            "description": "Record the number of Indigenous Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
-            "name": "totalParticipantsNotCompletedIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "shortDescription": "Participants completing projects - Non indigenous",
-            "description": "Record the number of non-Indigenous Participants who fulfilled the requirements of their Participant Agreement and therefore completed (passed) the Project in the current month.",
-            "name": "totalParticipantsCompletedNonIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "shortDescription": "Participants completing projects - Indigenous",
-            "description": "Record the number of Indigenous Participants who fulfilled the requirements of their Participant Agreement and therefore completed (passed) the Project in the current month.",
-            "name": "totalParticipantsCompletedIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "shortDescription": "Time (mins) to complete this report",
             "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (in minutes) you have taken to complete this report.",
             "name": "reportingTimeTaken",
-            "validate": "required, min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "trainingCommencedAccreditedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "trainingCommencedAccreditedNonIndigenous",
-                    "trainingCommencedAccreditedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "trainingNoExitedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "trainingNoExitedNonIndigenous",
-                    "trainingNoExitedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "trainingNoCompletedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "trainingNoCompletedNonIndigenous",
-                    "trainingNoCompletedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "totalParticipantsCommencedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsCommencedNonIndigenous",
-                    "totalParticipantsCommencedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "totalParticipantsNotCompletedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsNotCompletedNonIndigenous",
-                    "totalParticipantsNotCompletedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "totalParticipantsCompletedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsCompletedNonIndigenous",
-                    "totalParticipantsCompletedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
+            "validate": "required,min[0],max[9]"
         }
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [{
-                        "source": "projectStatus",
-                        "computed": null,
-                        "preLabel": "How is the project tracking?:",
-                        "type": "selectOne"
-                    }],
+                    "items": [
+                        {
+                            "source": "projectStatus",
+                            "computed": null,
+                            "preLabel": "How is the project tracking?:",
+                            "type": "selectOne"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "projectStatusReason",
-                        "computed": null,
-                        "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "projectStatusReason",
+                            "computed": null,
+                            "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "remedialActions",
-                        "computed": null,
-                        "preLabel": "Intended remedial actions (if appropriate):",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "remedialActions",
+                            "computed": null,
+                            "preLabel": "Intended remedial actions (if appropriate):",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
@@ -250,19 +132,13 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<h4>Participant Training<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "Please record training participation information.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'</i> to be provided separately.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -270,26 +146,32 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Non-Indigenous Participants<\/h4>",
+                            "source": "<h4>Project Participation</h4>",
                             "computed": null,
                             "type": "literal"
                         },
                         {
-                            "source": "trainingCommencedAccreditedNonIndigenous ",
+                            "source": "totalParticipantsCommenced",
                             "computed": null,
-                            "preLabel": "Commenced accredited training:",
+                            "preLabel": "Total No. commencing projects:",
                             "type": "number"
                         },
                         {
-                            "source": "trainingNoExitedNonIndigenous",
+                            "source": "totalParticipantsCompleted",
                             "computed": null,
-                            "preLabel": "Exited training:",
+                            "preLabel": "Total No. completing projects:",
                             "type": "number"
                         },
                         {
-                            "source": "trainingNoCompletedNonIndigenous",
+                            "source": "totalParticipantsNotCompleted",
                             "computed": null,
-                            "preLabel": "Completed training (accredited and non-accredited):",
+                            "preLabel": "No. not completing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalIndigenousParticipantsCommenced",
+                            "computed": null,
+                            "preLabel": "No. of indigenous participants commenced:",
                             "type": "number"
                         }
                     ],
@@ -299,24 +181,24 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Indigenous Participants<\/h4>",
+                            "source": "<h4>Participant Training</h4>",
                             "computed": null,
                             "type": "literal"
                         },
                         {
-                            "source": "trainingCommencedAccreditedIndigenous ",
+                            "source": "trainingCommencedAccredited",
                             "computed": null,
                             "preLabel": "Commenced accredited training:",
                             "type": "number"
                         },
                         {
-                            "source": "trainingNoExitedIndigenous",
+                            "source": "trainingNoExited",
                             "computed": null,
                             "preLabel": "Exited training:",
                             "type": "number"
                         },
                         {
-                            "source": "trainingNoCompletedIndigenous",
+                            "source": "trainingNoCompleted",
                             "computed": null,
                             "preLabel": "Completed training:",
                             "type": "number"
@@ -324,169 +206,20 @@
                     ],
                     "computed": null,
                     "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Total Number of Participants<\/h4>",
-                            "computed": null,
-                            "type": "literal"
-                        },
-                        {
-                            "source": "trainingCommencedAccreditedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"trainingCommencedAccreditedNonIndigenous\",\"trainingCommencedAccreditedIndigenous\"]}}",
-                            "preLabel": "Commenced accredited training:",
-                            "noEdit": "true",
-                            "type": "number"
-                        },
-                        {
-                            "source": "trainingCommencedNonaccreditedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"trainingCommencedNonaccreditedNonIndigenous\",\"trainingCommencedNonaccreditedIndigenous\"]}}",
-                            "preLabel": "Commenced non-accredited training:",
-                            "noEdit": "true",
-                            "type": "number"
-                        },
-                        {
-                            "source": "trainingNoExitedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"trainingNoExitedNonIndigenous\",\"trainingNoExitedIndigenous\"]}}",
-                            "preLabel": "Exited training:",
-                            "noEdit": "true",
-                            "type": "number"
-                        },
-                        {
-                            "source": "trainingNoCompletedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"trainingNoCompletedNonIndigenous\",\"trainingNoCompletedIndigenous\"]}}",
-                            "preLabel": "Completed training:",
-                            "noEdit": "true",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
                 }
             ],
             "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "<h4>Participant Details<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'<\/i> to be provided separately.",
-                "computed": null,
-                "type": "literal"
-            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "<h4>No. of Non-Indigenous Participants<\/h4>",
-                            "computed": null,
-                            "type": "literal"
-                        },
-                        {
-                            "source": "totalParticipantsCommencedNonIndigenous",
-                            "computed": null,
-                            "preLabel": "Commenced Projects:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsNotCompletedNonIndigenous",
-                            "computed": null,
-                            "preLabel": "Did not complete projects:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsCompletedNonIndigenous",
-                            "computed": null,
-                            "preLabel": "Completed Projects:",
-                            "type": "number"
-                        }
-                    ],
+                    "source": "reportingTimeTaken",
                     "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "<h4>No. of Indigenous Participants<\/h4>",
-                            "computed": null,
-                            "type": "literal"
-                        },
-                        {
-                            "source": "totalParticipantsCommencedIndigenous",
-                            "computed": null,
-                            "preLabel": "Commenced Projects:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsNotCompletedIndigenous",
-                            "computed": null,
-                            "preLabel": "Did not complete projects:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsCompletedIndigenous",
-                            "computed": null,
-                            "preLabel": "Completed Projects:",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Total Number of Participants<\/h4>",
-                            "computed": null,
-                            "type": "literal"
-                        },
-                        {
-                            "source": "totalParticipantsCommencedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"totalParticipantsCommencedNonIndigenous\",\"totalParticipantsCommencedIndigenous\"]}}",
-                            "preLabel": "Commenced Projects:",
-                            "noEdit": "true",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsNotCompletedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"totalParticipantsNotCompletedNonIndigenous\",\"totalParticipantsNotCompletedIndigenous\"]}}",
-                            "preLabel": "Did not complete projects:",
-                            "noEdit": "true",
-                            "type": "number"
-                        },
-                        {
-                            "source": "totalParticipantsCompletedTotal",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":[\"totalParticipantsCompletedNonIndigenous\",\"totalParticipantsCompletedIndigenous\"]}}",
-                            "preLabel": "Completed Projects:",
-                            "noEdit": "true",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    "preLabel": "Time taken to complete this report (minutes):",
+                    "type": "number"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "reportingTimeTaken",
-                "computed": null,
-                "preLabel": "Time taken to complete this report (minutes):",
-                "type": "number"
-            }],
             "class": "output-section",
             "type": "row"
         }
