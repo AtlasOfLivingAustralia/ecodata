@@ -203,7 +203,7 @@ class RecordController {
     }
 
     def deleteById(){
-        Record r = Record.get(params.id)
+        Record r = Record.findByOccurrenceID(params.id)
         if (r){
             r.delete(flush: true)
             broadcastService.sendDelete(r["occurrenceID"])
