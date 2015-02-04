@@ -3037,122 +3037,66 @@
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingCommencedAccreditedNonIndigenous",
+                    "name": "trainingCommencedAccredited",
                     "aggregationType": "SUM",
-                    "label": "No. non indigenous participants starting accredited training"
+                    "label": "No. participants starting accredited training"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingCommencedAccreditedIndigenous",
+                    "name": "trainingNoExited",
                     "aggregationType": "SUM",
-                    "label": "No. indigenous participants starting accredited training"
+                    "label": "No. of Participants who exited training"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingCommencedNonaccreditedNonIndigenous",
+                    "name": "trainingNoCompleted",
                     "aggregationType": "SUM",
-                    "label": "No. non indigenous participants commencing non-accredited training"
+                    "label": "No. of Participants who completed training"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingCommencedNonaccreditedIndigenous",
+                    "name": "totalParticipantsCommenced",
                     "aggregationType": "SUM",
-                    "label": "No. indigenous participants commencing non-accredited training"
+                    "label": "No. of Participants who commenced projects"
+                },
+
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalParticipantsNotCompleted",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who did not complete projects"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingNoExitedNonIndigenous",
+                    "name": "totalParticipantsCompleted",
                     "aggregationType": "SUM",
-                    "label": "No. of non indigenous Participants who exited training during period"
+                    "label": "No. of Participants who completed projects"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingNoExitedIndigenous",
+                    "name": "totalIndigenousParticipantsCommenced",
                     "aggregationType": "SUM",
-                    "label": "No. of indigenous Participants who exited training during period"
+                    "label": "No. of Indigenous Participants who commenced projects"
                 },
                 {
                     "category": "Green Army",
                     "listName": "",
                     "displayType": "",
-                    "name": "trainingNoCompletedNonIndigenous",
+                    "name": "reportingTimeTaken",
                     "aggregationType": "SUM",
-                    "label": "No. of non indigenous Participants who completed training in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "trainingNoCompletedIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous Participants who completed training in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsCommencedNonIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of non indigenous Participants who commenced projects in period"
-                },
-                {
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsCommencedIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous Participants who commenced projects in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsNotCompletedNonIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of non indigenous Participants who did not complete projects in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsNotCompletedIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous Participants who did not complete projects in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsCompletedNonIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of non indigenous Participants who completed projects in period"
-                },
-                {
-                    "category": "Green Army",
-                    "listName": "",
-                    "displayType": "",
-                    "name": "totalParticipantsCompletedIndigenous",
-                    "aggregationType": "SUM",
-                    "label": "No. of indigenous Participants who completed projects in period"
-                },
-                {
-                    "groupBy": "",
-                    "category": "Green Army",
-                    "listName": "",
-                    "description": "No. of participants who commenced accredited training",
-                    "displayType": "piechart",
-                    "name": "trainingCommencedAccreditedTotal",
-                    "aggregationType": "SUM",
-                    "label": "No. of participants who commenced accredited training"
+                    "label": "Time taken to fulfill reporting requirements"
                 },
                 {
                     "groupBy": "",
