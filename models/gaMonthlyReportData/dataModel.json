@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "text",
+            "shortDescription": "Project status",
             "description": "Indicate the most appropriate status of the project at the end of the reporting month.",
             "name": "projectStatus",
             "constraints": [
@@ -20,100 +21,103 @@
         },
         {
             "dataType": "date",
+            "shortDescription": "Project status reason",
             "description": "If the project is running behind schedule you are required to explain why.",
             "name": "projectStatusReason"
         },
         {
             "dataType": "text",
+            "shortDescription": "Project status remediation",
             "description": "If the project is running behind schedule, please explain how you intend to bring it back on schedule, including what actions you plan to take.",
             "name": "remedialActions"
         },
         {
             "dataType": "number",
+            "shortDescription": "Accredited training - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
             "name": "trainingCommencedAccreditedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Accredited training - Indigenous",
             "description": "Record the number of Indigenous Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
             "name": "trainingCommencedAccreditedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "Record the number of non-Indigenous Participants who entered into Training Plans for the Project in the current month that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
-            "name": "trainingCommencedNonaccreditedNonIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
-            "description": "Record the number of Indigenous Participants who entered into Training Plans for the Project in the current month that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
-            "name": "trainingCommencedNonaccreditedIndigenous",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "number",
+            "shortDescription": "Exited training - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
             "name": "trainingNoExitedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Exited training - Indigenous",
             "description": "Record the number of Indigenous Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
             "name": "trainingNoExitedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Completed training - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
             "name": "trainingNoCompletedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Completed training - Indigenous",
             "description": "Record the number of Indigenous Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
             "name": "trainingNoCompletedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Commenced projects - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who entered into a Participant Agreement for the Project in the current month.",
             "name": "totalParticipantsCommencedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Commenced projects - Indigenous",
             "description": "Record the number of Indigenous Participants who entered into a Participant Agreement for the Project in the current month.",
             "name": "totalParticipantsCommencedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Project withdrawals - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
             "name": "totalParticipantsNotCompletedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Project withdrawals - Indigenous",
             "description": "Record the number of Indigenous Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
             "name": "totalParticipantsNotCompletedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Participants completing projects - Non indigenous",
             "description": "Record the number of non-Indigenous Participants who fulfilled the requirements of their Participant Agreement and therefore completed (passed) the Project in the current month.",
             "name": "totalParticipantsCompletedNonIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Participants completing projects - Indigenous",
             "description": "Record the number of Indigenous Participants who fulfilled the requirements of their Participant Agreement and therefore completed (passed) the Project in the current month.",
             "name": "totalParticipantsCompletedIndigenous",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "shortDescription": "Time (mins) to complete this report",
             "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (in minutes) you have taken to complete this report.",
             "name": "reportingTimeTaken",
             "validate": "required, min[0]"
@@ -127,19 +131,6 @@
                 "dependents": {"source": [
                     "trainingCommencedAccreditedNonIndigenous",
                     "trainingCommencedAccreditedIndigenous"
-                ]}
-            },
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "name": "trainingCommencedNonaccreditedTotal",
-            "computed": {
-                "operation": "sum",
-                "dependents": {"source": [
-                    "trainingCommencedNonaccreditedNonIndigenous",
-                    "trainingCommencedNonaccreditedIndigenous"
                 ]}
             },
             "validate": "min[0]"
@@ -290,12 +281,6 @@
                             "type": "number"
                         },
                         {
-                            "source": "trainingCommencedNonaccreditedNonIndigenous",
-                            "computed": null,
-                            "preLabel": "Commenced non-accredited training:",
-                            "type": "number"
-                        },
-                        {
                             "source": "trainingNoExitedNonIndigenous",
                             "computed": null,
                             "preLabel": "Exited training:",
@@ -322,12 +307,6 @@
                             "source": "trainingCommencedAccreditedIndigenous ",
                             "computed": null,
                             "preLabel": "Commenced accredited training:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "trainingCommencedNonaccreditedIndigenous",
-                            "computed": null,
-                            "preLabel": "Commenced non-accredited training:",
                             "type": "number"
                         },
                         {
