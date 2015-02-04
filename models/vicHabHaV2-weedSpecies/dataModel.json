@@ -1,0 +1,232 @@
+{
+    "modelName": "vicHabHaV2-weeds",
+    "dataModel": [
+        {
+            "dataType": "matrix",
+            "name": "perennialWeedLifeForms",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "perennialWoodyWeeds"
+                },
+                {
+                    "dataType": "number",
+                    "name": "perennialGrassAndHerbWeeds"
+                },
+                {
+                    "dataType": "number",
+                    "name": "perennialBryoAndLichenWeeds"
+                }
+            ],
+            "rowValues": "perennialWLF",
+            "rows": [
+                {
+                    "dataType": "number",
+                    "name": "perennialGsLargestWeedLifeForm"
+                },
+                {
+                    "dataType": "number",
+                    "name": "perennialGsNonLargestWeedLifeForm"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "perennialWeedSpecies",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "",
+                    "name": "perennialWeedSpeciesName"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "perennialWeedSpeciesComments"
+                }
+            ]
+        },
+        {
+            "dataType": "matrix",
+            "name": "annualWeedLifeForms",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "annualGrassAndHerbWeeds"
+                },
+                {
+                    "dataType": "number",
+                    "name": "annualBryoAndLichenWeeds"
+                }
+            ],
+            "rowValues": "annualWLF",
+            "rows": [
+                {
+                    "dataType": "number",
+                    "name": "annualGsLargestWeedLifeForm"
+                },
+                {
+                    "dataType": "number",
+                    "name": "annualGsNonLargestWeedLifeForm"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "annualWeedSpecies",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "",
+                    "name": "annualWeedSpeciesName"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "annualWeedSpeciesComments"
+                }
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Perennial Weeds<\/h4> (Estimate weed life form cover within the plot only)",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "perennialWeedLifeForms",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "<b>Perennial Weeds<\/b> <i>(estimate weed life form cover within the plot only)<\/i>",
+                    "source": "",
+                    "width": "30%",
+                    "type": "text"
+                },
+                {
+                    "title": "Woody weeds",
+                    "source": "perennialWoodyWeeds",
+                    "type": "number"
+                },
+                {
+                    "title": "Grassy herbaceous weeds",
+                    "source": "perennialGrassAndHerbWeeds",
+                    "type": "number"
+                },
+                {
+                    "title": "Bryophytes and lichens",
+                    "source": "perennialBryoAndLichenWeeds",
+                    "type": "number"
+                }
+            ],
+            "type": "grid",
+            "rows": [
+                {
+                    "title": "GS largest weed life form cover estimates",
+                    "source": "perennialGsLargestWeedLifeForm",
+                    "type": "text"
+                },
+                {
+                    "title": "Non-GS largest weed life form cover estimates",
+                    "source": "perennialGsNonLargestWeedLifeForm",
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "title": "<b>Species List<\/b> <i>(include any incidental records in this list but do not count them in the weed cover estimates)<\/i>",
+            "source": "perennialWeedSpecies",
+            "primaryResult": "true",
+            "columns": [
+                {
+                    "title": "Species List:",
+                    "source": "perennialWeedSpeciesName",
+                    "width": "35%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Comments",
+                    "source": "perennialWeedSpeciesComments",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "<h4>Annual Weeds<\/h4> (Estimate weed life form cover within the plot only)",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "annualWeedLifeForms",
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "title": "<b>Annual Weeds<\/b> <i>(estimate weed life form cover within the plot only)<\/i>",
+                    "source": "",
+                    "width": "30%",
+                    "type": "text"
+                },
+                {
+                    "title": "Grassy herbaceous weeds",
+                    "source": "annualGrassAndHerbWeeds",
+                    "type": "number"
+                },
+                {
+                    "title": "Bryophytes and lichens",
+                    "source": "annualBryoAndLichenWeeds",
+                    "type": "number"
+                }
+            ],
+            "type": "grid",
+            "rows": [
+                {
+                    "title": "GS largest weed life form cover estimates",
+                    "source": "annuallGsLargestWeedLifeForm",
+                    "type": "text"
+                },
+                {
+                    "title": "Non-GS largest weed life form cover estimates",
+                    "source": "annualGsNonLargestWeedLifeForm",
+                    "type": "text"
+                }
+            ]
+        },
+        {
+            "title": "<b>Species List<\/b> <i>(include any incidental records in this list but do not count them in the weed cover estimates)<\/i>",
+            "source": "annualWeedSpecies",
+            "primaryResult": "true",
+            "columns": [
+                {
+                    "title": "Species List:",
+                    "source": "annualWeedSpeciesName",
+                    "width": "35%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "Comments",
+                    "source": "annualWeedSpeciesComments",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        }
+    ]
+}

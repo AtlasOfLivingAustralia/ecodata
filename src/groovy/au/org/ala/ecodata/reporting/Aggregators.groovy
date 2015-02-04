@@ -17,6 +17,7 @@ class Aggregators {
         String group
         int count;
         String label
+        PropertyAccessor propertyAccessor = new PropertyAccessor('')
 
         public void aggregateValue(value) {
             if (value != null) {
@@ -25,32 +26,9 @@ class Aggregators {
             }
         }
 
-        def getValueAsNumeric(value) {
-            def numeric = null
-            if (value instanceof String) {
-                NumberFormat format = NumberFormat.getInstance(Locale.default)
-
-                try {
-                    numeric = format.parse(value)
-                }
-                catch (ParseException e) {
-                    log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${label}")
-                }
-            }
-            else if (value instanceof Number) {
-                numeric = value
-            }
-            else {
-                log.warn("Attemping to aggregate non-numeric value: ${value} for score: ${label}")
-            }
-            return numeric
-        }
-
         public abstract void doAggregation(output);
 
         public abstract AggregrationResult result();
-
-
 
     }
 
@@ -62,7 +40,7 @@ class Aggregators {
         double total
 
         public void doAggregation(value) {
-            def numericValue = getValueAsNumeric(value)
+            def numericValue = propertyAccessor.getValueAsNumeric(value)
             if (numericValue) {
                 total += numericValue
             }
@@ -82,7 +60,7 @@ class Aggregators {
 
         public void doAggregation(value) {
 
-            def numericValue = getValueAsNumeric(value)
+            def numericValue = propertyAccessor.getValueAsNumeric(value)
             if (numericValue) {
                 total += numericValue
             }

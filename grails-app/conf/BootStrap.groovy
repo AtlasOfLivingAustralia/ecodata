@@ -49,7 +49,7 @@ class BootStrap {
         }
 
         JSON.registerObjectMarshaller(ObjectId) { ObjectId objId ->
-            return objId.toStringMongod()
+            return objId.toString()
         }
 
         JSON.registerObjectMarshaller(AuditEventType) { AuditEventType eventType ->

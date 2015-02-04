@@ -9,13 +9,37 @@
 //    cache.use_query_cache = false
 //    cache.region.factory_class = 'net.sf.ehcache.hibernate.EhCacheRegionFactory'
 //}
-grails {
-    mongo {
-        host = "localhost"
-        port = "27017"
-        databaseName = "ecodata"
+
+environments {
+    development {
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata"
+            }
+        }
+    }
+    test {
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata-test"
+            }
+        }
+    }
+    production {
+        grails {
+            mongo {
+                host = "localhost"
+                port = "27017"
+                databaseName = "ecodata"
+            }
+        }
     }
 }
+
 // environment specific settings
 //environments {
 //    development {

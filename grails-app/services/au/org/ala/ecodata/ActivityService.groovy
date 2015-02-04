@@ -105,6 +105,8 @@ class ActivityService {
     def create(props) {
         def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
         try {
+            o.save(failOnError: true)
+
             props.remove('id')
             def outputs = props.remove('outputs')
             commonService.updateProperties(o, props)
@@ -250,6 +252,52 @@ class ActivityService {
                 startDate: mapOfProperties.startDate,
                 endDate: mapOfProperties.endDate,
                 collector: mapOfProperties.collector]
+    }
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the activities that match the supplied criteria
+     */
+    public search(Map searchCriteria, levelOfDetail = []) {
+        return search(searchCriteria, null, null, null, levelOfDetail)
+    }
+
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     * @param startDate if supplied will constrain the returned activities to those with 'dateProperty' on or after this date.
+     * @param endDate if supplied will constrain the returned activities to those with 'dateProperty' before this date.
+     * @param dateProperty the property to use for the date range. (plannedStartDate, plannedEndDate, startDate, endDate)
+     * @return a listbuilof the activities that match the supplied criteria
+     */
+    public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = []) {
+
+        def criteria = Activity.createCriteria()
+        def activities = criteria.list {
+            ne("status", "deleted")
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+            if (dateProperty && startDate) {
+                ge(dateProperty, startDate)
+            }
+            if (dateProperty && endDate) {
+                lt(dateProperty, endDate)
+            }
+
+
+        }
+        activities.collect{toMap(it, levelOfDetail)}
     }
 
 }

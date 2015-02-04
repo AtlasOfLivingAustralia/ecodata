@@ -6,6 +6,7 @@ class ProjectService {
 
     static transactional = false
     static final ACTIVE = "active"
+	static final COMPLETED = "completed"
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
@@ -35,9 +36,15 @@ class ProjectService {
         return p?toMap(p, levelOfDetail):null
     }
 
-    def list(levelOfDetail = [], includeDeleted = false) {
-        def list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
-        list.collect { toMap(it, levelOfDetail) }
+    def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
+        def list
+        if (!citizenScienceOnly)
+            list = includeDeleted ? Project.list(): Project.findAllByStatus(ACTIVE)
+        else if (includeDeleted)
+            list = Project.findAllByIsCitizenScience(true)
+        else
+            list = Project.findAllByIsCitizenScienceAndStatus(true, ACTIVE)
+        list?.collect { toMap(it, levelOfDetail) }
     }
 
     /**
@@ -51,7 +58,7 @@ class ProjectService {
         def dbo = prj.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         if (levelOfDetail == BRIEF) {
-            return [projectId: prj.projectId, name: prj.name]
+            return [projectId: prj.projectId, name: prj.name, grantId:prj.grantId, externalId:prj.externalId, funding:prj.funding, description:prj.description, status:prj.status, plannedStartDate:prj.plannedStartDate, plannedEndDate:prj.plannedEndDate, associatedProgram:prj.associatedProgram, associatedSubProgram:prj.associatedSubProgram]
         }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
@@ -101,10 +108,16 @@ class ProjectService {
 
     def create(props) {
         assert getCommonService()
-        def o = new Project(projectId: Identifiers.getNew(true,''))
-        o.name = props.name // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-
         try {
+            if (props.projectId && Project.findByProjectId(props.projectId)) {
+                // clear session to avoid exception when GORM tries to autoflush the changes
+                Project.withSession { session -> session.clear() }
+                return [status:'error',error:'Duplicate project id for create ' + props.projectId]
+            }
+            // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
+            def o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
+            o.save(failOnError: true)
+
             props.remove('sites')
             props.remove('id')
             getCommonService().updateProperties(o, props)
@@ -194,9 +207,9 @@ class ProjectService {
                     }
                 }
             }
-
+			
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
-
+			
 
             // Add project output target information where it exists.
 
@@ -239,6 +252,31 @@ class ProjectService {
             results << it.toString()
         }
         return results
+    }
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the projects that match the supplied criteria
+     */
+    public search(Map searchCriteria, levelOfDetail = []) {
+
+        def criteria = Project.createCriteria()
+        def projects = criteria.list {
+            ne("status", "deleted")
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+        }
+        projects.collect{toMap(it, levelOfDetail)}
     }
 
 }

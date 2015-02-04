@@ -77,7 +77,8 @@ class ElasticSearchService {
         //settings.put("number_of_replicas",0);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
+
     }
 
     /**
@@ -390,6 +391,25 @@ class ElasticSearchService {
                                     "index": "analyzed"
                                 }
                             }
+                        },
+                        {
+                            "custom_dollars_template": {
+                                "path_match":"custom.details.budget.rows.costs.dollar",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                }
+                            }
+                        },
+
+                        {
+                            "custom_event_date_template": {
+                                "path_match":"custom.details.events.scheduledDate",
+                                "mapping": {
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                }
+                            }
                         }
                     ]
                 }
@@ -424,7 +444,7 @@ class ElasticSearchService {
             client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
     }
 
     def buildFacetMapping() {
@@ -666,7 +686,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         Project.withNewSession {
             def batchParams = [offset:0, max:50]
-            def projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+            def projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -676,7 +696,7 @@ class ElasticSearchService {
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatus(ProjectService.ACTIVE, batchParams)
+                projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
             }
         }
         log.debug "Indexing all sites"
@@ -720,13 +740,23 @@ class ElasticSearchService {
         // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
         // faceting for reporting.
 
+
+        def project = projectService.get(activity.projectId, ProjectService.FLAT)
+        if (project) {
+            project.remove('custom')
+            project.remove('timeline')
+            project.remove('outputTargets')
+            project.remove('plannedStartDate')
+            project.remove('plannedEndDate')
+            project.remove('startDate')
+            project.remove('endDate')
+            project.remove('description')
+            activity.putAll(project)
+
+        }
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
             activity.sites = [site]
-        }
-        def project = projectService.get(activity.projectId, ProjectService.FLAT)
-        if (project) {
-            activity.putAll(project)
         }
         activity
     }
