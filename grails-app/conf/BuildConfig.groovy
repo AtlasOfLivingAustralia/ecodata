@@ -81,8 +81,8 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-auth:1.0.0"
-        runtime ":ala-web-theme:1.1.0"
+        runtime ":ala-auth:1.0.0-SNAPSHOT"
+        runtime ":ala-bootstrap2:1.0-SNAPSHOT"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
