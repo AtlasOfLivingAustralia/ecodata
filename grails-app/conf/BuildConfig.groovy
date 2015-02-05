@@ -10,7 +10,7 @@ grails.project.source.level = 1.6
 // uncomment (and adjust settings) to fork the JVM to isolate classpaths
 grails.project.fork = [
    run: false,
-   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true] // configure settings for the test-app JVM
+   test: false // [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true] // configure settings for the test-app JVM
 ]
 grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
@@ -18,7 +18,7 @@ grails.project.dependency.resolution = {
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
         // excludes 'ehcache'
-        excludes 'xercesImpl'
+        excludes 'xercesImpl', 'xml-apis'
 
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
@@ -70,6 +70,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
+        compile "org.apache.poi:ooxml-schemas:1.0"
 
 
         test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
@@ -90,7 +91,7 @@ grails.project.dependency.resolution = {
 
         compile ":mongodb:3.0.2"
         compile ":quartz:1.0.2"
-        compile ":excel-export:0.2.0"
+        compile ":excel-export:0.2.1"
         compile ":excel-import:1.0.1"
 
         build ":tomcat:7.0.52.1"

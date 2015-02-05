@@ -1,22 +1,13 @@
 {
     "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "status": "active",
-        "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-        "type": "Assessment",
+        "supportsSites": false,
+        "category": "Administration, management & reporting",
+        "name": "Project Administration",
+        "supportsPhotoPoints": false,
+        "type": "Activity",
         "outputs": [
-            "Bushland Condition - Site Health Summary",
-            "Indicator 1 - Plant Species Diversity",
-            "Indicator 2 - Weed Abundance & Threat",
-            "Indicator 3 - Structural Diversity",
-            "Indicator 4 - Regeneration",
-            "Indicator 5 - Tree and Shrub Health",
-            "Indicator 6 - Tree Habitat",
-            "Indicator 7 - Feral Animals",
-            "Indicator 8 - Total Grazing Pressure",
-            "Indicator 9 - Animal Species",
-            "Indicator 10 - Bushland Degradation Risk",
-            "Benchmarks - SA"
+            "Administration Activities",
+            "Participant Information"
         ]
     },
     "activities": [
@@ -27,6 +18,7 @@
             "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"]
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Community Participation and Engagement",
             "type": "Activity",
@@ -38,8 +30,10 @@
             "gmsId": "CPEE"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Conservation Grazing Management",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Stock Management Details",
@@ -48,8 +42,10 @@
             "gmsId": "CGM"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Debris Removal",
+            "supportsPhotoPoints": false,
             "type": "Activity",
             "outputs": [
                 "Debris Removal Details",
@@ -58,8 +54,10 @@
             "gmsId": "DRV DRW"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Disease Management",
+            "supportsPhotoPoints": false,
             "type": "Activity",
             "outputs": [
                 "Disease Management Details",
@@ -68,8 +66,10 @@
             "gmsId": "DMA"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Erosion Management",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Erosion Management Details",
@@ -78,8 +78,10 @@
             "gmsId": "EMA EML"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Fauna Survey - general",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -89,6 +91,7 @@
             "gmsId": "FBS"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Fencing",
             "type": "Activity",
@@ -99,8 +102,10 @@
             "gmsId": "FNC"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Fire Management",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Fire Management Details",
@@ -110,8 +115,10 @@
             "gmsId": "FMA"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Flora Survey - general",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Survey Information",
@@ -121,6 +128,7 @@
             "gmsId": "FRBS"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Heritage Conservation",
             "type": "Activity",
@@ -132,9 +140,11 @@
             "gmsId": "HC HSA"
         },
         {
+            "supportsSites": false,
             "category": "Administration, management & reporting",
             "name": "Indigenous Employment and Businesses",
-            "type": "Activity",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": [
                 "Indigenous Employment",
                 "Indigenous Businesses"
@@ -149,6 +159,7 @@
             "gmsId": "IKM IKT"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Management Plan Development",
             "type": "Activity",
@@ -159,13 +170,16 @@
             "gmsId": "MPD"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Management Practice Change",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": ["Management Practice Change Details"],
             "gmsId": "MPC MPCFE MPCSP"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Conservation Actions for Threatened Species",
             "type": "Activity",
@@ -176,9 +190,11 @@
             "gmsId": "CATS"
         },
         {
+            "supportsSites": false,
             "category": "Administration, management & reporting",
             "name": "Outcomes, Evaluation and Learning - final report",
-            "type": "Activity",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": [
                 "Outcomes",
                 "Evaluation",
@@ -186,9 +202,11 @@
             ]
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "status": "active",
             "name": "Pest Animal Survey",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Evidence of Pest Management Activity",
@@ -199,8 +217,10 @@
             "gmsId": "PSA"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Pest Management",
+            "supportsPhotoPoints": false,
             "type": "Activity",
             "outputs": [
                 "Pest Management Details",
@@ -211,6 +231,7 @@
             "gmsId": "PMA PMQ"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Plant Propagation",
             "type": "Activity",
@@ -221,8 +242,10 @@
             "gmsId": "PPRP"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Plant Survival Survey",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Vegetation Monitoring Results",
@@ -232,8 +255,10 @@
             "gmsId": "PSS"
         },
         {
+            "supportsSites": false,
             "category": "Administration, management & reporting",
             "name": "Project Administration",
+            "supportsPhotoPoints": false,
             "type": "Activity",
             "outputs": [
                 "Administration Activities",
@@ -241,6 +266,7 @@
             ]
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Public Access and Infrastructure",
             "type": "Activity",
@@ -252,6 +278,7 @@
             "gmsId": "PAM"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Research",
             "type": "Activity",
@@ -261,8 +288,10 @@
             ]
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Revegetation",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Revegetation Details",
@@ -272,8 +301,10 @@
             "gmsId": "RVA RVN RVSS RVT2A RVT2B"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Seed Collection",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Seed Collection Details",
@@ -282,14 +313,17 @@
             "gmsId": "SDC"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Site Monitoring Plan",
             "type": "Activity",
             "outputs": ["Planned Monitoring Approach"]
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Site Preparation",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Site Preparation Actions",
@@ -311,6 +345,7 @@
             "gmsId": "TSD"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Water Management",
             "type": "Activity",
@@ -318,8 +353,10 @@
             "gmsId": "WMA WMN"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Water Quality Survey",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "General information & Participants",
@@ -329,8 +366,10 @@
             "gmsId": "WQSA"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Weed Mapping & Monitoring",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Evidence of Weed Treatment",
@@ -341,8 +380,10 @@
             "gmsId": "WMM WSA"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Weed Treatment",
+            "supportsPhotoPoints": false,
             "type": "Activity",
             "outputs": [
                 "Weed Treatment Details",
@@ -352,8 +393,10 @@
             "gmsId": "WDT"
         },
         {
+            "supportsSites": true,
             "category": "Implementation actions",
             "name": "Works Planning and Risk",
+            "supportsPhotoPoints": true,
             "type": "Activity",
             "outputs": [
                 "Site Planning Details",
@@ -364,9 +407,11 @@
             "gmsId": "STA"
         },
         {
+            "supportsSites": false,
             "category": "Administration, management & reporting",
             "name": "Progress, Outcomes and Learning - stage report",
-            "type": "Activity",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": [
                 "Overview of Project Progress",
                 "Environmental, Economic and Social Outcomes",
@@ -375,8 +420,10 @@
             ]
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "name": "Vegetation Assessment - Commonwealth government methodology",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
                 "Sampling Site Information",
@@ -390,19 +437,13 @@
             "gmsId": "VAC"
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "status": "active",
             "name": "Vegetation Assessment - BioCondition (QLD)",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
-            "outputs": [
-                "Benchmarks - QLD",
-                "Floristic Composition",
-                "100 x 50m area - Ecologically Dominant Layer",
-                "50 x 10m area",
-                "50 x 20m area - Coarse Woody Debris",
-                "Five 1 x 1m plots",
-                "100m Transect"
-            ]
+            "outputs": ["BioCondition Method"]
         },
         {
             "status": "deleted",
@@ -411,25 +452,17 @@
             "outputs": ["Floristic Composition"]
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "status": "active",
-            "name": "Vegetation Assessment - Habitat Hectares v1 (VIC)",
+            "name": "Vegetation Assessment - Habitat Hectares (VIC)",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
             "outputs": [
-                "Vegetation Assessment - Survey Information",
                 "Site Condition Components",
-                "Landscape Context Components"
-            ]
-        },
-        {
-            "category": "Assessment & monitoring",
-            "name": "Vegetation Assessment - Habitat Hectares v2 (VIC)",
-            "type": "Assessment",
-            "outputs": [
-                "Vegetation Assessment - Survey Information",
-                "Native Species",
-                "Weed Species",
-                "Trees"
+                "Landscape Context Components",
+                "Vegetation Assessment - Species List",
+                "EVC Benchmark Values - Victoria"
             ]
         },
         {
@@ -439,16 +472,21 @@
             "outputs": ["Floristic Composition"]
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "status": "active",
-            "name": "Vegetation Assessment - TasVeg (TAS)",
+            "name": "TasVeg - Native Vegetation Assessment - Forest Vegetation",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
-            "outputs": [
-                "Benchmarks - TAS",
-                "Floristic Composition",
-                "Site Condition",
-                "Landscape Context"
-            ]
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"]
+        },
+        {
+            "supportsSites": true,
+            "category": "Assessment & monitoring",
+            "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
+            "supportsPhotoPoints": true,
+            "type": "Assessment",
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"]
         },
         {
             "status": "deleted",
@@ -473,38 +511,31 @@
             ]
         },
         {
+            "supportsSites": true,
             "category": "Assessment & monitoring",
             "status": "active",
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "supportsPhotoPoints": true,
             "type": "Assessment",
-            "outputs": [
-                "Bushland Condition - Site Health Summary",
-                "Indicator 1 - Plant Species Diversity",
-                "Indicator 2 - Weed Abundance & Threat",
-                "Indicator 3 - Structural Diversity",
-                "Indicator 4 - Regeneration",
-                "Indicator 5 - Tree and Shrub Health",
-                "Indicator 6 - Tree Habitat",
-                "Indicator 7 - Feral Animals",
-                "Indicator 8 - Total Grazing Pressure",
-                "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk",
-                "Benchmarks - SA"
-            ]
+            "outputs": ["Bushland Condition Method"]
         },
         {
+            "supportsSites": false,
             "category": "Small Grants",
             "name": "Progress Report",
-            "type": "Assessment",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": [
                 "Progress Report Details",
                 "Attachments"
             ]
         },
         {
+            "supportsSites": false,
             "category": "Small Grants",
             "name": "Final Report",
-            "type": "Assessment",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": [
                 "Final Report Details",
                 "Output Details",
@@ -521,19 +552,52 @@
             "gmsId": ""
         },
         {
+            "supportsSites": false,
             "category": "Programme Reporting",
             "name": "Green Army - Monthly project status report",
-            "type": "Assessment",
-            "outputs": [
-                "Monthly Status Report Data",
-                "Participant Details"
-            ]
+            "supportsPhotoPoints": false,
+            "type": "Report",
+            "outputs": ["Monthly Status Report Data"]
         },
         {
+            "supportsSites": false,
             "category": "Programme Reporting",
             "name": "Green Army - Quarterly project report",
-            "type": "Assessment",
+            "supportsPhotoPoints": false,
+            "type": "Report",
             "outputs": ["Three Monthly Report"]
+        },
+        {
+            "supportsSites": false,
+            "category": "Programme Reporting",
+            "name": "Green Army - End of Project Report",
+            "supportsPhotoPoints": false,
+            "type": "Report",
+            "outputs": ["End of Project Report Details"]
+        },
+        {
+            "supportsSites": false,
+            "category": "Programme Reporting",
+            "name": "Green Army - Desktop Audit Checklist",
+            "supportsPhotoPoints": false,
+            "type": "Report",
+            "outputs": ["Desktop Audit Checklist Details"]
+        },
+        {
+            "supportsSites": false,
+            "category": "Programme Reporting",
+            "name": "Green Army - Change or Absence of Team Supervisor",
+            "supportsPhotoPoints": false,
+            "type": "Report",
+            "outputs": ["Change or Absence of Team Supervisor Report"]
+        },
+        {
+            "supportsSites": false,
+            "category": "Programme Reporting",
+            "name": "Green Army - Site Visit Checklist",
+            "supportsPhotoPoints": false,
+            "type": "Report",
+            "outputs": ["Site Visit Details"]
         }
     ],
     "outputs": [
@@ -856,17 +920,6 @@
                     "name": "industryType",
                     "aggregationType": "HISTOGRAM",
                     "label": "No. of events by type of industry"
-                },
-                {
-                    "isOutputTarget": true,
-                    "category": "Community Engagement and Capacity Building",
-                    "listName": "",
-                    "description": "The target number of community participation and engagements events planned to be run.",
-                    "displayType": "",
-                    "name": "numberOfEvents",
-                    "aggregationType": "SUM",
-                    "label": "Number of events planned to be implemented",
-                    "gmsId": "CPEE"
                 }
             ],
             "name": "Event Details"
@@ -2538,26 +2591,6 @@
             "name": "Vegetation Assessment"
         },
         {
-            "template": "vicSurveyInfo",
-            "scores": [],
-            "name": "Vegetation Assessment - Survey Information"
-        },
-        {
-            "template": "vicHabHaV2-nativeSpecies",
-            "scores": [],
-            "name": "Native Species"
-        },
-        {
-            "template": "vicHabHaV2-weedSpecies",
-            "scores": [],
-            "name": "Weed Species"
-        },
-        {
-            "template": "vicHabHaV2-trees",
-            "scores": [],
-            "name": "Trees"
-        },
-        {
             "template": "siteConditionComponents",
             "scores": [],
             "name": "Site Condition Components"
@@ -2999,12 +3032,251 @@
         },
         {
             "template": "gaMonthlyReportData",
-            "scores": [],
+            "scores": [
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "trainingCommencedAccredited",
+                    "aggregationType": "SUM",
+                    "label": "No. participants starting accredited training"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "trainingNoExited",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who exited training"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "trainingNoCompleted",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who completed training"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalParticipantsCommenced",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who commenced projects"
+                },
+
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalParticipantsNotCompleted",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who did not complete projects"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalParticipantsCompleted",
+                    "aggregationType": "SUM",
+                    "label": "No. of Participants who completed projects"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "totalIndigenousParticipantsCommenced",
+                    "aggregationType": "SUM",
+                    "label": "No. of Indigenous Participants who commenced projects"
+                },
+                {
+                    "category": "Green Army",
+                    "listName": "",
+                    "displayType": "",
+                    "name": "reportingTimeTaken",
+                    "aggregationType": "SUM",
+                    "label": "Time taken to fulfill reporting requirements"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Projects by status",
+                    "displayType": "piechart",
+                    "name": "projectStatus",
+                    "aggregationType": "HISTOGRAM",
+                    "label": "Count of projects by project status"
+                }
+
+            ],
             "name": "Monthly Status Report Data"
         },
         {
             "template": "gaQuarterlyProjectReport",
-            "scores": [],
+            "scores": [
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of incidents",
+                    "displayType": "",
+                    "name": "incidentCount",
+                    "aggregationType": "SUM",
+                    "label": "Total number of incidents recorded"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of complaints",
+                    "displayType": "",
+                    "name": "complaintCount",
+                    "aggregationType": "SUM",
+                    "label": "Total number of complaints recorded"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of training activities",
+                    "displayType": "",
+                    "name": "trainingActivityCount",
+                    "aggregationType": "SUM",
+
+                    "label": "Total number of training activities"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participant withdrawals",
+                    "displayType": "",
+                    "name": "participantWithdrawals",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participant withdrawals"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participant exits",
+                    "displayType": "",
+                    "name": "participantExits",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participant exits"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants starting training",
+                    "displayType": "",
+                    "name": "participantTrainingNumber",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants starting training"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants exiting training",
+                    "displayType": "",
+                    "name": "participantTrainingNcNumber",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants exiting training"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 17 years old",
+                    "displayType": "",
+                    "name": "no17Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 17 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 18 years old",
+                    "displayType": "",
+                    "name": "no18Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 18 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 19 years old",
+                    "displayType": "",
+                    "name": "no19Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 19 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 20 years old",
+                    "displayType": "",
+                    "name": "no20Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 20 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 21 years old",
+                    "displayType": "",
+                    "name": "no21Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 21 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 22 years old",
+                    "displayType": "",
+                    "name": "no22Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 22 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 23 years old",
+                    "displayType": "",
+                    "name": "no23Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 23 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants 24 years old",
+                    "displayType": "",
+                    "name": "no24Years",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants 24 years old"
+                },
+                {
+                    "groupBy": "",
+                    "category": "Green Army",
+                    "listName": "",
+                    "description": "Total number of participants",
+                    "displayType": "",
+                    "name": "totalParticipants",
+                    "aggregationType": "SUM",
+                    "label": "Total number of participants"
+                }
+            ],
             "name": "Three Monthly Report"
         },
         {
@@ -3013,14 +3285,59 @@
             "name": "Participant Details"
         },
         {
-            "template": "saStructuralDiversity",
+            "template": "tasVegNvaMethod_F",
             "scores": [],
-            "name": "Indicator 1 - Plant Species Diversity"
+            "name": "TasVeg Native Vegetation Assessment Method - Forest Vegetation"
         },
         {
-            "template": "saWeedAbundanceAndThreat",
+            "template": "tasVegNvaMethod_NF",
             "scores": [],
-            "name": "Indicator 2 - Weed Abundance & Threat"
+            "name": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"
+        },
+        {
+            "template": "tasVegFloristicComposition",
+            "scores": [],
+            "name": "Floristic Composition"
+        },
+        {
+            "template": "tasVegNvaMethod",
+            "scores": [],
+            "name": "TasVeg Native Vegetation Assessment Method"
+        },
+        {
+            "template": "tasVegSurveyInfo",
+            "scores": [],
+            "name": "Vegetation Assessment - Survey Information"
+        },
+        {
+            "template": "bioConditionConsolidated",
+            "scores": [],
+            "name": "BioCondition Method"
+        },
+        {
+            "template": "saBushlandConditionMethod",
+            "scores": [],
+            "name": "Bushland Condition Method"
+        },
+        {
+            "template": "gaTeamSupervisorAttendance",
+            "scores": [],
+            "name": "Change or Absence of Team Supervisor Report"
+        },
+        {
+            "template": "gaDesktopAuditChecklist",
+            "scores": [],
+            "name": "Desktop Audit Checklist Details"
+        },
+        {
+            "template": "gaEndOfProjectReport",
+            "scores": [],
+            "name": "End of Project Report Details"
+        },
+        {
+            "template": "gaSiteVisitDetails",
+            "scores": [],
+            "name": "Site Visit Details"
         }
     ]
 }
