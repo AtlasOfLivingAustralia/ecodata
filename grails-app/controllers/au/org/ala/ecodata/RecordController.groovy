@@ -265,7 +265,7 @@ class RecordController {
         def json = jsonSlurper.parse(request.getReader())
         //json.eventDate = new Date().parse("yyyy-MM-dd", json.eventDate)
         //TODO add some data validation....
-        Record r = Record.get(params.id)
+        Record r = Record.findByOccurrenceID(params.id)
         def errors=recordService.updateRecord(r,json)
         setResponseHeadersForRecord(response, r)
         //add the errors to the header too
