@@ -10,10 +10,11 @@ import org.bson.types.ObjectId
 class UserPermission {
     ObjectId id
     String userId
-    String projectId
+    String entityId
     AccessLevel accessLevel
+    String entityType
 
     static constraints = {
-        userId(unique: ['accessLevel', 'projectId']) // prevent duplicate entries
+        userId(unique: ['accessLevel', 'entityId']) // prevent duplicate entries
     }
 }
