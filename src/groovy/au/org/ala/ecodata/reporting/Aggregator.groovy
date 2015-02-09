@@ -4,13 +4,14 @@ package au.org.ala.ecodata.reporting
  * An Aggregator is responsible for aggregating a list of scores.
  * It is capable of grouping the results by a single value.
  */
+
 class Aggregator {
 
     static String DEFAULT_GROUP = ""
 
     Map<String, Aggregators.OutputAggregator> aggregatorsByGroup
 
-    def scores = []
+    List<Score> scores = []
     String title
     AggregatorBuilder builder
 
@@ -22,29 +23,28 @@ class Aggregator {
 
         aggregatorsByGroup = [:].withDefault { key ->
             // It's safe to use the first score as grouped scores must have the same label and aggregation type.
-            builder.createAggregator(scores[0].label, scores[0].aggregationType, key)
+            builder.createAggregator(scores[0].label, scores[0].aggregationType.name(), key)
         }
     }
 
-    def aggregate(activity) {
+    def aggregate(output) {
 
-        activity.outputs?.each { output ->
 
-            scores.each { score ->
-                if (output.name == score.outputName) {
-                    if (score.listName) {
-                        output.data[score.listName].each{
-                            List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, activity, it)
-                            aggregators.each {aggregator -> aggregateOutput(score, aggregator, it)}
-                        }
+        scores.each { score ->
+            if (output.name == score.outputName) {
+                if (score.listName) {
+                    output.data[score.listName].each{
+                        List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, it)
+                        aggregators.each {aggregator -> aggregateOutput(score, aggregator, it)}
                     }
-                    else {
-                        List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, activity, output)
-                        aggregators.each {aggregator -> aggregateOutput(score, aggregator, output.data)}
-                    }
+                }
+                else {
+                    List<Aggregators.OutputAggregator> aggregators = aggregatorFor(score, output)
+                    aggregators.each {aggregator -> aggregateOutput(score, aggregator, output.data)}
                 }
             }
         }
+
 
     }
 
@@ -85,25 +85,18 @@ class Aggregator {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    List<Aggregators.OutputAggregator> aggregatorFor(score, activity, output) {
+    List<Aggregators.OutputAggregator> aggregatorFor(score, output) {
 
-        output.activity = activity
-        // TODO the grouping function should probably specify the default group.
-        def group = builder.createGroupingFunction(score)(output)
+        ReportGroups.GroupingStrategy groupingStrategy = builder.groupingStategyFor(score.defaultGrouping())
+        def group = groupingStrategy.group(output)
 
-        if (group instanceof List) {
-            return group.grep{score.filterBy ? it == score.filterBy : true}.collect { aggregatorsByGroup[it]}
-        }
-
-        if (score.filterBy && group != score.filterBy) {
+        if (group == null) {
             return []
         }
-        // Remove the group when using filtered scores as it will prevent aggregration with other grouped or non-grouped scores.
-        if (!group || score.filterBy) {
-            group = DEFAULT_GROUP
+        if (group instanceof List) { // values are lists when the data is collected via multi select
+            return group.collect { aggregatorsByGroup[it] }
         }
+
         return [aggregatorsByGroup[group]]
     }
-
-
 }

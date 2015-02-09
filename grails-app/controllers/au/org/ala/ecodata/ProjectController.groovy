@@ -15,7 +15,7 @@ class ProjectController {
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json; charset=\"UTF-8\"")
+        response.setContentType("application/json;charset=UTF-8")
         model
     }
 
@@ -27,7 +27,7 @@ class ProjectController {
 
     def list() {
         println 'brief = ' + params.brief
-        def list = projectService.list(params.brief, params.includeDeleted)
+        def list = projectService.list(params.brief, params.includeDeleted, params.citizenScienceOnly)
         list.sort {it.name}
         render list as JSON
     }
@@ -39,6 +39,7 @@ class ProjectController {
 	}
 	
     def get(String id) {
+        def citizenScienceOnly = params.boolean('citizenScienceOnly', false)
         def includeDeleted = params.boolean('includeDeleted', false)
         def levelOfDetail = []
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
@@ -46,7 +47,7 @@ class ProjectController {
         if (params.view == ProjectService.ALL) { levelOfDetail = ProjectService.ALL }
         if (params.view == ProjectService.OUTPUT_SUMMARY) {levelOfDetail = ProjectService.OUTPUT_SUMMARY}
         if (!id) {
-            def list = projectService.list(levelOfDetail, includeDeleted)
+            def list = projectService.list(levelOfDetail, includeDeleted, citizenScienceOnly)
             list.sort {it.name}
             asJson([list: list])
         } else {
@@ -218,6 +219,29 @@ class ProjectController {
         } else {
             render (status: 404, text: 'No such id')
         }
+    }
+
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a list of the projects that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+
+        def projectList = projectService.search(searchCriteria, ProjectService.BRIEF)
+        asJson projects:projectList
     }
 
 

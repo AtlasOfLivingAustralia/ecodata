@@ -84,16 +84,19 @@ class DocumentService {
      */
     def create(props, fileIn) {
         def d = new Document(documentId: Identifiers.getNew(true,''))
-        props.remove 'documentId'
         props.remove('url')
         props.remove('thumbnailUrl')
+
         try {
+            d.save([failOnError: true]) // The document appears to need to be associated with a session before setting any dynamic properties. The exact reason for this is unclear - I am unable to reproduce in a test app.
+            props.remove 'documentId'
+
             if (fileIn) {
                 DateFormat dateFormat = new SimpleDateFormat(DIRECTORY_PARTITION_FORMAT)
                 def partition = dateFormat.format(new Date())
 				if(props.saveAs?.equals("pdf")){
 					props.filename = saveAsPDF(fileIn, partition, props.filename,false)
-				}					
+				}
 				else {
                     props.filename = saveFile(partition, props.filename, fileIn, false)
                     if (props.type == Document.DOCUMENT_TYPE_IMAGE) {
@@ -278,11 +281,14 @@ class DocumentService {
 
     }
 
-    def findAllByOwner(ownerType, owner) {
+    def findAllByOwner(ownerType, owner, includeDeleted = true) {
         def query = Document.createCriteria()
 
         def results = query {
            eq(ownerType, owner)
+           if (!includeDeleted) {
+               ne('status', 'deleted')
+           }
         }
 
         results.collect{toMap(it, 'flat')}

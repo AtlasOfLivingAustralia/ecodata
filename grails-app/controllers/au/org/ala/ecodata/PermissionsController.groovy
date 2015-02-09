@@ -9,7 +9,7 @@ import grails.converters.JSON
  * @see au.org.ala.ecodata.UserPermission
  */
 class PermissionsController {
-    def permissionService, projectService
+    def permissionService, projectService, organisationService
 
     def index() {
         def msg = [message: "Hello"]
@@ -65,6 +65,27 @@ class PermissionsController {
             }
         } else {
             render status:404, text: 'Required params not provided: adminId, userId, projectId'
+        }
+    }
+
+    def addAdminToOrganisation() {
+        def userId = params.userId
+        def organisationId = params.projectId
+
+        if (userId && organisationId) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                def ps = permissionService.addUserAsAdminToProject(userId, organisationId)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Error adding editor: ${ps}"
+                }
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:404, text: 'Required params not provided: adminId, userId, organisationId'
         }
     }
 
@@ -247,14 +268,38 @@ class PermissionsController {
     def getProjectsForUserId() {
         def userId = params.id
         if (userId) {
-            def up = UserPermission.findAllByUserIdAndAccessLevelNotEqual(userId, AccessLevel.starred, params)
+            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred, params)
             def out  = []
             up.each {
                 def t = [:]
-                log.debug "it.projectId = ${it.projectId}"
-                t.project = projectService.get(it.projectId, ProjectService.FLAT)
+                log.debug "it.projectId = ${it.entityId}"
+                t.project = projectService.get(it.entityId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
-                out.add t
+                if (t.project) out.add t
+            }
+            render out as JSON
+        } else {
+            render status:400, text: "Required params not provided: userId"
+        }
+    }
+
+    /**
+     * Get a list of {@link Organisation organisations} with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def getOrganisationsForUserId() {
+        def userId = params.id
+        if (userId) {
+            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
+            def out  = []
+            up.each {
+                def t = [:]
+                log.debug "it.organisationId = ${it.entityId}"
+                t.organisation = organisationService.get(it.entityId)
+                t.accessLevel = it.accessLevel
+                if (t.organisation) out.add t
             }
             render out as JSON
         } else {
@@ -273,7 +318,7 @@ class PermissionsController {
 
         if (userId) {
             def up = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
-            render up.collect { Project.findByProjectId(it.projectId) } as JSON
+            render up.collect { Project.findByProjectId(it.entityId) } as JSON
         } else {
             render status:400, text: "Required params not provided: id"
         }
@@ -292,7 +337,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def up = UserPermission.findAllByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.starred)
+                def up = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, projectId, Project.class.name, AccessLevel.starred)
                 def outMap = [ isProjectStarredByUser: !up.isEmpty()]
                 render outMap as JSON
             } else {
@@ -340,7 +385,7 @@ class PermissionsController {
         if (userId && projectId) {
             def project = Project.findByProjectId(projectId)
             if (project) {
-                def cm = UserPermission.findByUserIdAndProjectIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
+                def cm = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
                 def out = [userIsCaseManager: (cm) ? true : false]
                 render out as JSON
             } else {
@@ -373,6 +418,8 @@ class PermissionsController {
             render status:400, text: 'Required params not provided: adminId, userId, projectId'
         }
     }
+
+
 
     /**
      * Admin function to clear all UserPermissions entries for the

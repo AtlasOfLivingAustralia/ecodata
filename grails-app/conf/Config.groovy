@@ -26,7 +26,7 @@ if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
 
 println "[${appName}] (*) grails.config.locations = ${grails.config.locations}"
 
-grails.project.groupId = 'au.org.ala'  // change this to alter the default package name and Maven publishing destination
+grails.project.groupId = 'au.org.ala' // change this to alter the default package name and Maven publishing destination
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [
@@ -123,6 +123,9 @@ if(!spatial.baseUrl){
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
 }
+if (!spatial.intersectBatchUrl) {
+    spatial.intersectBatchUrl = spatial.baseUrl + '/ws/intersect/batch/'
+}
 if(!google.geocode.url){
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
@@ -144,6 +147,7 @@ app {
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
+                elect = 'cl958';
             }
             grouped {
                 other {
@@ -225,7 +229,31 @@ environments {
         app.elasticsearch.indexAllOnStartup = true
         app.elasticsearch.indexOnGormEvents = true
     }
+    test {
+        rails.logging.jul.usebridge = true
+        ecodata.use.uuids = false
+        app.external.model.dir = "/data/ecodata/models/"
+        grails.hostname = "devt.ala.org.au"
+        serverName = "http://${grails.hostname}:8080"
+        grails.app.context = "ecodata"
+        grails.serverURL = serverName + "/" + grails.app.context
+        security.cas.appServerName = serverName
+        security.cas.contextPath = "/" + appName
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
+        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+    }
     production {
+        grails{
+            cache {
+                enabled = true
+                ehcache {
+                    ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
+                    reloadable = false
+                }
+            }
+        }
+
         grails.logging.jul.usebridge = false
     }
 }
@@ -234,8 +262,9 @@ environments {
 
 //this can be overridden in the external configuration
 if (!logging.dir) {
-    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat6')
+    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 }
+def loggingDir = logging.dir
 log4j = {
     appenders {
         environments{
@@ -245,22 +274,35 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata.log",
+                        file: loggingDir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-stacktrace.log"
+                        file: loggingDir+"/ecodata-stacktrace.log"
+            }
+            test {
+                console name: "stdout",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
+                        threshold: org.apache.log4j.Level.DEBUG
+                rollingFile name: "ecodataLog",
+                        maxFileSize: 104857600,
+                        file: loggingDir+"/ecodata-test.log",
+                        threshold: org.apache.log4j.Level.INFO,
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
+                rollingFile name: "stacktrace",
+                        maxFileSize: 104857600,
+                        file: loggingDir+"/ecodata-test-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata.log",
+                        file: loggingDir+"/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: logging.dir+"/ecodata-stacktrace.log"
+                        file: loggingDir+"/ecodata-stacktrace.log"
             }
         }
     }

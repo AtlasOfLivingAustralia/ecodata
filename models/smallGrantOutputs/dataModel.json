@@ -161,21 +161,19 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "<h4>4. Total Project Outputs</h4> (Please only report on outputs relevant to your project as defined in your Funding Agreement. You are not required to complete those outputs that are not relevant to your project.)",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>4. Total Project Outputs<\/h4> (Please only report on outputs relevant to your project as defined in your Funding Agreement. You are not required to complete those outputs that are not relevant to your project.)",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Actual Achievements - Physical Outputs</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Actual Achievements - Physical Outputs<\/h5>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -184,32 +182,38 @@
                     "items": [
                         {
                             "source": "areaRevegHa",
+                            "computed": null,
                             "preLabel": "Area of Revegetation (Ha):",
                             "type": "number"
                         },
                         {
                             "source": "totalNumberPlanted",
+                            "computed": null,
                             "preLabel": "Plants planted (No.):",
                             "type": "number"
                         },
                         {
                             "source": "percentSurvivalRate",
+                            "computed": null,
                             "preLabel": "Survival rate (%):",
                             "type": "number"
                         },
                         {
                             "source": "totalSeedCollectedKg",
+                            "computed": null,
                             "preLabel": "Seed collected\t(Kg):",
                             "type": "number"
                         },
                         {
                             "source": "totalNumberGrown",
+                            "computed": null,
                             "preLabel": "Plant propagation (No.):",
                             "type": "number"
                         },
                         {
                             "title": "Pest Animals",
                             "source": "pestManagement",
+                            "computed": null,
                             "allowHeaderWrap": "true",
                             "columns": [
                                 {
@@ -235,33 +239,39 @@
                             "type": "table"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [
                         {
                             "source": "erosionAreaTreated",
+                            "computed": null,
                             "preLabel": "Erosion area treated (Ha):",
                             "type": "number"
                         },
                         {
                             "source": "changePracticeTreatedArea",
+                            "computed": null,
                             "preLabel": "Area of land with improved management practices implemented (Ha):",
                             "type": "number"
                         },
                         {
                             "source": "crossTenure",
+                            "computed": null,
                             "preLabel": "Did the project work across tenure?:",
                             "type": "selectOne"
                         },
                         {
                             "source": "lengthOfFence",
+                            "computed": null,
                             "preLabel": "Length of fence erected (Km):",
                             "type": "number"
                         },
                         {
                             "title": "Weeds",
                             "source": "weedManagement",
+                            "computed": null,
                             "allowHeaderWrap": "true",
                             "columns": [
                                 {
@@ -281,6 +291,7 @@
                             "type": "table"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -288,12 +299,11 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Actual Achievements - Community, Social and Indigenous Outputs</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Actual Achievements - Community, Social and Indigenous Outputs<\/h5>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -302,80 +312,96 @@
                     "items": [
                         {
                             "source": "skillsDevelopmentActivitiesNo",
+                            "computed": null,
                             "preLabel": "Enhancing Community Skills and Knowledge (No.):",
                             "type": "number"
                         },
                         {
                             "source": "typeOfCourse",
+                            "computed": null,
                             "preLabel": "Types of training undertaken:",
                             "type": "selectMany"
                         },
                         {
                             "source": "entitiesAdoptingChange",
+                            "computed": null,
                             "preLabel": "No. of farming/fisher entities adopting sustainable practice change:",
                             "type": "number"
                         },
                         {
                             "source": "numberOfFarmingEntitiesParticipating",
+                            "computed": null,
                             "preLabel": "No. of farming/fisher entities involved in delivery of project activities:",
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [
                         {
                             "source": "numberOfEvents",
+                            "computed": null,
                             "preLabel": "No. of Workshops/Field Days events:",
                             "type": "number"
                         },
                         {
                             "source": "publicSurveysNo",
+                            "computed": null,
                             "preLabel": "No. of Public Surveys:",
                             "type": "number"
                         },
                         {
                             "source": "surveysNo",
+                            "computed": null,
                             "preLabel": "No. of Surveys:",
                             "type": "number"
                         },
                         {
                             "source": "numberOfVolunteers",
+                            "computed": null,
                             "preLabel": "No. of volunteers who participated in the delivery of project activities:",
                             "type": "number"
                         },
                         {
                             "source": "numberOfCommunityGroups",
+                            "computed": null,
                             "preLabel": "No. of community groups that participated in delivery of the project:",
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [
                         {
                             "source": "numberOfIndigenousParticipants",
+                            "computed": null,
                             "preLabel": "No. of Indigenous participants involved in delivery of project activities (excluding those employed):",
                             "type": "number"
                         },
                         {
                             "source": "totalIndigenousEmployees",
+                            "computed": null,
                             "preLabel": "No. of Indigenous people employed/sub-contracted:",
                             "type": "number"
                         },
                         {
                             "source": "indigenousPlansCompleted",
+                            "computed": null,
                             "preLabel": "No. of Indigenous Land and Sea Plans completed:",
                             "type": "number"
                         },
                         {
                             "source": "indigenousProductsDeveloped",
+                            "computed": null,
                             "preLabel": "Indigenous Ecological Knowledge (No. of publications/products developed):",
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 }
             ],

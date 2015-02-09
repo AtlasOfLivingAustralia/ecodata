@@ -135,6 +135,16 @@ class WebService {
         }
     }
 
+    def getJsonRepeat(String url, int repeatCount = 12, Integer timeout = null){
+
+        def status
+        int repeat = 0;
+        while((status = getJson(url,timeout))?.error && repeat < repeatCount){
+            sleep(5000)
+            repeat++
+        }
+        status
+    }
     /**
      * Reads the response from a URLConnection taking into account the character encoding.
      * @param urlConnection the URLConnection to read the response from.

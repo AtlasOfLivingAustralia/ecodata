@@ -1,0 +1,643 @@
+{
+    "modelName": "Three Monthly Report",
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "trainingActivityName",
+                    "description": "."
+                },
+                {
+                    "dataType": "text",
+                    "name": "trainingProvider",
+                    "description": "."
+                },
+                {
+                    "dataType": "text",
+                    "name": "trainingState",
+                    "description": ".",
+                    "constraints": [
+                        "ACT",
+                        "NSW",
+                        "NT",
+                        "QLD",
+                        "SA",
+                        "TAS",
+                        "VIC",
+                        "WA"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "training"
+        },
+        {
+            "dataType":"number",
+            "name":"trainingActivityCount",
+            "computed":{
+                "operation":"count",
+                "dependents": {
+                    "source":"training"
+                }
+            }
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "participantWithdrawals",
+            "description": ".",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "participantWithdrawalReasons",
+            "description": "."
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "participantExits",
+            "description": ".",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "participantExitReasons",
+            "description": "."
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "participantTrainingNumber",
+            "description": "The number of participants who commenced or made a commitment to undertake training.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "participantTrainingReasons",
+            "description": "Provide a summary of the reasons why participants are entering into training."
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "participantTrainingNcNumber",
+            "description": "The number of participants who did commenced, but did not complete training.",
+            "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "participantTrainingNcReasons",
+            "description": "Provide a summary of the reasons why participants did not complete training."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "date",
+                    "name": "complaintDate",
+                    "description": "The date on which a complaint was received by the Service Provider."
+                },
+                {
+                    "dataType": "text",
+                    "name": "complaintDescription",
+                    "description": "Describe the nature of the complaint and any relevant details."
+                },
+                {
+                    "dataType": "text",
+                    "name": "complaintHandling",
+                    "description": "Explain how the complaint was handled by the Service Provider."
+                }
+            ],
+            "dataType": "list",
+            "name": "complaints"
+        },
+        {
+            "name":"complaintCount",
+            "description":"The number of complaints recorded.",
+            "dataType":"number",
+            "computed": {
+                "operation":"count",
+                "dependents" : {
+                    "source": "complaints"
+                }
+            }
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no17Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no18Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no19Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no20Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no21Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no22Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no23Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "no24Years",
+            "validate": "required, min[0]"
+        },
+        {
+            "computed": {
+                "dependents": {"source": [
+                    "no17Years",
+                    "no18Years",
+                    "no19Years",
+                    "no20Years",
+                    "no21Years",
+                    "no22Years",
+                    "no23Years",
+                    "no24Years"
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalParticipants",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "incidentType",
+                    "description": "Select the most appropriate type of incident.",
+                    "constraints": [
+                        "Animal Attack",
+                        "Assault",
+                        "Bullying and/or Harassment",
+                        "Caught or Crushed Between Objects",
+                        "Explosion",
+                        "Exposure to Biological Factors (eg. virus, bacteria, disease, etc)",
+                        "Exposure to Chemical Materials or Fumes",
+                        "Exposure to Electricity",
+                        "Exposure to Heat/Cold",
+                        "Exposure to Noise",
+                        "Exposure to Flora",
+                        "Exposure to Radiation",
+                        "Fall From Height",
+                        "Hit By Moving or Falling Object",
+                        "Hit Object With Part of Body (including rubbing and chaffing)",
+                        "Insect or Spider Attack",
+                        "Manual Handling/Body Stressors (eg. lifting, carrying, putting down, repetitive movement, etc)",
+                        "Slip or Trip",
+                        "Vehicle Accident",
+                        "Other"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "resultingInjury",
+                    "description": "Select the most appropriate type on injury or illness.",
+                    "constraints": [
+                        "Not applicable/None",
+                        "Asphyxiation",
+                        "Burn (including electrical, chemical and friction)",
+                        "Contusion, Bruising and Superficial Crushing",
+                        "Death",
+                        "Digestive System Disorder",
+                        "Dislocation",
+                        "Drowning",
+                        "Effect of Heat/Cold Exposure (eg. hyperthermia, hypothermia, etc)",
+                        "Electrocution",
+                        "Foreign Body",
+                        "Fracture or Break",
+                        "Head Injury",
+                        "Infectious or Parasitic Disease",
+                        "Internal Injury",
+                        "Laceration or Open Wound",
+                        "Medical Sharp or Needle-Stick Puncture",
+                        "Mental Disorder (including stress and shock)",
+                        "Muscle, Tendon or Soft Tissue Disorder",
+                        "Nervous System or Spinal Disorder",
+                        "Poisoning and Toxic Effects",
+                        "Respiratory System Disease",
+                        "Sense Organ Disorder",
+                        "Skin Disease",
+                        "Superficial Injury (eg. abrasion, bite from non-venomous spider or insect, etc)",
+                        "Traumatic Amputation",
+                        "Travel/Motion Sickness",
+                        "Other"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "incidentNotifiable",
+                    "description": "Indicate whether this injury or illness was notifiable.",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "incidentDescription",
+                    "description": "Provide a brief description of the injury or illness."
+                }
+            ],
+            "dataType": "list",
+            "name": "incidents"
+        },
+        {
+            "name":"incidentCount",
+            "description":"The number of incidents recorded.",
+            "dataType":"number",
+            "computed": {
+                "operation":"count",
+                "dependents" : {
+                    "source": "incidents"
+                }
+            }
+        },
+        {
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "reportingTimeTaken",
+            "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (minutes) you have taken to complete this report.",
+            "validate": "required, min[0]"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>List of Training Activities<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a list of the training activities (from nationally endorsed skills sets) undertaken by Participants in this Project during this reporting period.",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "40%",
+                    "source": "trainingActivityName",
+                    "title": "Name of Training Activity",
+                    "type": "text"
+                },
+                {
+                    "width": "40%",
+                    "source": "trainingProvider",
+                    "title": "Training Provider",
+                    "type": "text"
+                },
+                {
+                    "width": "20%",
+                    "source": "trainingState",
+                    "title": "State/Territory Training Undertaken",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "training",
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Participant Withdrawals and Exits<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a summary of reasons for Participant withdrawals (Participant initiated) and Participant exits (Service Provider initiated) during this reporting period in the two tables below. The summary should provide a short explanation for each withdrawal and exit.",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "20%",
+                    "source": "participantWithdrawals",
+                    "title": "No. of Withdrawals",
+                    "type": "number"
+                },
+                {
+                    "width": "80%",
+                    "source": "participantWithdrawalReasons",
+                    "title": "Summary of Reasons",
+                    "type": "textarea"
+                }
+            ],
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "columns": [
+                {
+                    "width": "20%",
+                    "source": "participantExits",
+                    "title": "No. of Exits",
+                    "type": "number"
+                },
+                {
+                    "width": "80%",
+                    "source": "participantExitReasons",
+                    "title": "Summary of Reasons",
+                    "type": "textarea"
+                }
+            ],
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Participants Commencing Non-Accredited Training<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a summary of reasons why Participants entered into Training Plans for the Project in the current period that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "20%",
+                    "source": "participantTrainingNumber",
+                    "title": "No. who entered into non-accredited training",
+                    "type": "number"
+                },
+                {
+                    "width": "80%",
+                    "source": "participantTrainingReasons",
+                    "title": "Summary of Reasons",
+                    "type": "textarea"
+                }
+            ],
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Participants Exiting Training<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "20%",
+                    "source": "participantTrainingNcNumber",
+                    "title": "No. who did not complete training",
+                    "type": "number"
+                },
+                {
+                    "width": "80%",
+                    "source": "participantTrainingNcReasons",
+                    "title": "Summary of Reasons",
+                    "type": "textarea"
+                }
+            ],
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Complaints Received<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a summary of reasons why Participants did not fulfil the requirements of their Training Plans during this reporting period in the table below. This might include Participants who exited the Project early or opted out of training for the remainder of the Project. The summary should provide a short explanation for each identified Participant.",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "width": "15%",
+                    "source": "complaintDate",
+                    "title": "Date complaint received",
+                    "type": "date"
+                },
+                {
+                    "width": "42%",
+                    "source": "complaintDescription",
+                    "title": "Brief description of complaint",
+                    "type": "textarea"
+                },
+                {
+                    "width": "43%",
+                    "source": "complaintHandling",
+                    "title": "How was the complaint handled?",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "complaints",
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>Participant Demographics<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Please provide information on the age range of all participants that commenced on the Project during this reporting period. The total number must agree with the sum of the monthly totals for this three month period for Participants commencing.",
+                "type": "literal"
+            }]
+        },
+        {
+            "allowHeaderWrap": "true",
+            "columns": [
+                {
+                    "width": "10%",
+                    "source": "no17Years",
+                    "title": "17 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no18Years",
+                    "title": "18 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no19Years",
+                    "title": "19 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no20Years",
+                    "title": "20 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no21Years",
+                    "title": "21 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no22Years",
+                    "title": "22 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no23Years",
+                    "title": "23 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "no24Years",
+                    "title": "24 yrs",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "noEdit": "true",
+                    "source": "totalParticipants",
+                    "title": "Total Participants",
+                    "type": "number"
+                }
+            ],
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h4>List of Incidents<\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Provide a list of all incidents, whether Notifiable  or not, including breaches of the Participant code of conduct, that occurred during this reporting period.",
+                "type": "literal"
+            }]
+        },
+        {
+            "allowHeaderWrap": true,
+            "columns": [
+                {
+                    "width": "20%",
+                    "source": "incidentType",
+                    "title": "Incident Type",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "20%",
+                    "source": "resultingInjury",
+                    "title": "Resulting Injury/Illness",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "10%",
+                    "source": "incidentNotifiable",
+                    "title": "Was the incident notifiable?",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "50%",
+                    "source": "incidentDescription",
+                    "title": "Description of incident and resulting injury/illness and remedial action/s taken to address incident <br><i>(including any insurance claim by the Participant, and/or to decrease the likelihood of re-occurrence where required)<\/i>",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "incidents",
+            "title": ":",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Time taken to complete this report (minutes):",
+                "computed": null,
+                "source": "reportingTimeTaken",
+                "type": "number"
+            }]
+        }
+    ]
+}

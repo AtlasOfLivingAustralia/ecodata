@@ -77,7 +77,8 @@ class ElasticSearchService {
         //settings.put("number_of_replicas",0);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
+
     }
 
     /**
@@ -379,6 +380,7 @@ class ElasticSearchService {
                             "type":"string",
                             "index":"not_analyzed"
                         }
+
                     },
                     "dynamic_templates": [
                         {
@@ -390,7 +392,8 @@ class ElasticSearchService {
                                 }
                             }
                         },
-                        {   "custom_dollars_template": {
+                        {
+                            "custom_dollars_template": {
                                 "path_match":"custom.details.budget.rows.costs.dollar",
                                 "mapping": {
                                     "type":"string",
@@ -398,7 +401,9 @@ class ElasticSearchService {
                                 }
                             }
                         },
-                        {   "custom_event_date_template": {
+
+                        {
+                            "custom_event_date_template": {
                                 "path_match":"custom.details.events.scheduledDate",
                                 "mapping": {
                                     "type":"string",
@@ -406,7 +411,6 @@ class ElasticSearchService {
                                 }
                             }
                         }
-
                     ]
                 }
             },
@@ -440,7 +444,7 @@ class ElasticSearchService {
             client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
         //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().execute().actionGet()
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
     }
 
     def buildFacetMapping() {
@@ -735,14 +739,23 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
         // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
         // faceting for reporting.
+        
+        def project = projectService.get(activity.projectId, ProjectService.FLAT)
+        if (project) {
+            project.remove('custom')
+            project.remove('timeline')
+            project.remove('outputTargets')
+            project.remove('plannedStartDate')
+            project.remove('plannedEndDate')
+            project.remove('startDate')
+            project.remove('endDate')
+            project.remove('description')
+            activity.putAll(project)
 
+        }
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
             activity.sites = [site]
-        }
-        def project = projectService.get(activity.projectId, ProjectService.FLAT)
-        if (project) {
-            activity.putAll(project)
         }
         activity
     }

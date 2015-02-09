@@ -83,6 +83,7 @@
         {
             "items": [{
                 "source": "Please list the details of each participant on the project during the reporting period.",
+
                 "type": "literal"
             }],
             "type": "row"
@@ -105,6 +106,7 @@
                     "type": "number"
                 }
             ]}]},
+            "hearderWrap": true,
             "source": "participants",
             "columns": [
                 {

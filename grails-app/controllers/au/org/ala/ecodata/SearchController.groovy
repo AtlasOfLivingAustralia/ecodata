@@ -9,6 +9,9 @@ import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
 class SearchController {
+
+    static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
+
     def searchService
     def elasticSearchService
     def reportService
@@ -23,9 +26,7 @@ class SearchController {
 
     def elastic() {
         def res = elasticSearchService.search(params.query, params, "")
-        //log.debug "res = ${res}"
         response.setContentType("application/json; charset=\"UTF-8\"")
-        //response.setCharacterEncoding("UTF-8")
         render res
     }
 
@@ -35,24 +36,97 @@ class SearchController {
         render res
     }
 
+    private def populateGeoInfo(markBy, hit, selectedFacetTerms){
+
+        def geo = hit.source.geo
+        if(!markBy)
+            return geo
+
+        def legendName, index
+        def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
+
+        if(name){
+            for(int i = 0; i < selectedFacetTerms.size(); i++){
+                if(selectedFacetTerms[i].legendName.equals(name)){
+                    legendName = selectedFacetTerms[i].legendName
+                    index = selectedFacetTerms[i].index
+                    selectedFacetTerms[i].count++
+                    break;
+                }
+            }
+
+            geo.each{ data ->
+                data.legendName = legendName
+                data.index = index
+            }
+        }
+        else {
+            hit.source.sites.each { site ->
+                if(site.extent?.geometry) {
+                    name =  site.extent?.geometry[markBy.replaceAll("Facet", "")] ?:
+                            site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ?: ""
+
+                    if(name) {
+                        for(int i = 0; i < selectedFacetTerms.size(); i++){
+                            if(selectedFacetTerms[i].legendName.equals(name)){
+                                legendName = selectedFacetTerms[i].legendName
+                                index = selectedFacetTerms[i].index
+                                selectedFacetTerms[i].count++
+                                break;
+                            }
+                        }
+
+                        geo.each{ data ->
+                            if(data.siteId.equals(site.siteId)) {
+                                data.legendName = legendName
+                                data.index = index
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        geo
+    }
+
     def elasticGeo() {
         def res = elasticSearchService.search(params.query, params, "homepage")
+        def selectedFacetTerms = []
+        def markBy = params.markBy
+
+        if(markBy){
+            res.facets.facets.each{ facet ->
+                if(facet.key.equals(markBy)){
+                    facet.value.eachWithIndex{ val, index ->
+                        def data = [:]
+                        data.legendName = val.term.toString()
+                        data.index = index
+                        data.count = 0
+                        selectedFacetTerms << data
+                    }
+                }
+            }
+        }
+
         def geoRes = []
+
         res.hits.hits.each { hit ->
-            if(hit.source?.geo){
+            if(hit.source?.geo) {
                 def proj = [:]
-                proj.projectId =hit.source.projectId
+                proj.projectId = hit.source.projectId
                 proj.name = hit.source.name
                 proj.org = hit.source.organisationName
-                proj.geo = hit.source.geo
+                proj.geo = populateGeoInfo(markBy, hit, selectedFacetTerms)
+
                 geoRes << proj
             }
         }
         response.setContentType("application/json; charset=\"UTF-8\"")
-        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes]
+        def projectsAndTotal = ['total':res.hits.getTotalHits(),'projects':geoRes,'selectedFacetTerms':selectedFacetTerms]
+
         render projectsAndTotal as JSON
     }
-
     def elasticPost() {
         def paramsObj = request.JSON
         def paramMap = new GrailsParameterMap(paramsObj, request)
@@ -78,8 +152,19 @@ class SearchController {
     }
 
     def dashboardReport() {
+
         def filters = params.getList("fq")
-        def results = reportService.aggregate(filters)
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+        additionalFilters.addAll(filters)
+        def results = reportService.aggregate(additionalFilters)
+        render results as JSON
+    }
+
+    def report() {
+
+        def filters = params.getList("fq")
+
+        def results = reportService.runReport(filters, 'Green Army Monthly Summary', params)
         render results as JSON
     }
 
