@@ -12,6 +12,7 @@ class Project {
     static mapping = {
         name index: true
         projectId index: true
+		promoteOnHomepage index: true
         version false
     }
 
@@ -42,6 +43,8 @@ class Project {
 	Map risks
 	Date dateCreated
     Date lastUpdated
+	String promoteOnHomepage = 'no'
+	
     boolean isCitizenScience
     String projectType    // survey, works
     String aim, keywords, urlAndroid, urlITunes, urlWeb
@@ -70,6 +73,7 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
+        promoteOnHomepage nullable:true
         organisationId nullable:true
         projectType nullable:true    // nullable for backward compatibility; survey, works
         dataResourceId nullable:true // nullable for backward compatibility

@@ -7,6 +7,11 @@ class UrlMappings {
             action = 'activitiesForProject'
         }
 
+		"/ws/project/promoted" {
+			controller = 'project'
+			action = 'promoted'
+		}
+
         "/ws/assessment/$id?" {
             controller = 'activity'
             type = 'assessment'

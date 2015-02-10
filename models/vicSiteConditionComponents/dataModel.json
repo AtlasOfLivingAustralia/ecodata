@@ -255,7 +255,7 @@
         },
         {
             "items": [{
-                "source": "<h4>Understory life forms<\/h4>",
+                "source": "<h4>Understory life forms</h4>",
                 "type": "literal"
             }],
             "type": "row"
@@ -268,7 +268,7 @@
                     "type": "literal"
                 },
                 {
-                    "source": "<b>Understorey Score<\/b>",
+                    "source": "<b>Understorey Score</b>",
                     "type": "literal"
                 },
                 {

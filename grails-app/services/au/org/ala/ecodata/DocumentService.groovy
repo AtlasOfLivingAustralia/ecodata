@@ -60,6 +60,10 @@ class DocumentService {
     def findAllForProjectId(id, levelOfDetail = []) {
         Document.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
+	
+	def findAllForProjectIdAndIsPrimaryProjectImage(id, levelOfDetail = []) {
+		Document.findAllByProjectIdAndStatusAndIsPrimaryProjectImage(id, ACTIVE,true).collect { toMap(it, levelOfDetail) }
+	}
 
     def findAllForActivityId(id, levelOfDetail = []) {
         Document.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }

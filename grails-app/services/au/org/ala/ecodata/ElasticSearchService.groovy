@@ -739,8 +739,7 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
         // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
         // faceting for reporting.
-
-
+        
         def project = projectService.get(activity.projectId, ProjectService.FLAT)
         if (project) {
             project.remove('custom')

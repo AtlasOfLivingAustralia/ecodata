@@ -7,8 +7,6 @@
             "name": "projectStatus",
             "constraints": [
                 "Not started",
-                "Agreement signed",
-                "Agreement signed and project commenced",
                 "Commenced",
                 "Progressing - behind schedule",
                 "Progressing - on schedule",
@@ -111,6 +109,45 @@
             "description": "Record the number of Indigenous Participants who fulfilled the requirements of their Participant Agreement and therefore completed (passed) the Project in the current month.",
             "name": "totalParticipantsCompletedIndigenous",
             "validate": "required,min[0]"
+            "description": "Record the number of Participants who entered into a Participant Agreement for the Project in the current month.",
+            "name": "totalParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "name": "totalParticipantsCompleted",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "name": "totalParticipantsNotCompleted",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Indigenous people who commenced participation in the Project in the current month.",
+            "name": "totalIndigenousParticipantsCommenced",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who entered into a Training Plan for the Project in the current month that included training accredited under the Australian Qualifications Framework.",
+            "name": "trainingCommencedAccredited",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who did not fulfil the requirements of their Training Plan and therefore did not complete (failed) their required training under the Project in the current month. This might include Participants who exited the Project early, opted out of training for the remainder of the Project, or were unable to satisfy their training requirements.",
+            "name": "trainingNoExited",
+            "validate": "required,min[0],max[9]"
+        },
+        {
+            "dataType": "number",
+            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
+            "name": "trainingNoCompleted",
+            "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
@@ -124,10 +161,12 @@
             "name": "trainingCommencedAccreditedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "trainingCommencedAccreditedNonIndigenous",
-                    "trainingCommencedAccreditedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "trainingCommencedAccreditedNonIndigenous",
+                        "trainingCommencedAccreditedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -137,10 +176,12 @@
             "name": "trainingCommencedNonaccreditedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "trainingCommencedNonaccreditedNonIndigenous",
-                    "trainingCommencedNonaccreditedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "trainingCommencedNonaccreditedNonIndigenous",
+                        "trainingCommencedNonaccreditedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -150,10 +191,12 @@
             "name": "trainingNoExitedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "trainingNoExitedNonIndigenous",
-                    "trainingNoExitedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "trainingNoExitedNonIndigenous",
+                        "trainingNoExitedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -163,10 +206,12 @@
             "name": "trainingNoCompletedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "trainingNoCompletedNonIndigenous",
-                    "trainingNoCompletedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "trainingNoCompletedNonIndigenous",
+                        "trainingNoCompletedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -176,10 +221,12 @@
             "name": "totalParticipantsCommencedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsCommencedNonIndigenous",
-                    "totalParticipantsCommencedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "totalParticipantsCommencedNonIndigenous",
+                        "totalParticipantsCommencedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -189,10 +236,12 @@
             "name": "totalParticipantsNotCompletedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsNotCompletedNonIndigenous",
-                    "totalParticipantsNotCompletedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "totalParticipantsNotCompletedNonIndigenous",
+                        "totalParticipantsNotCompletedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
         },
@@ -202,54 +251,67 @@
             "name": "totalParticipantsCompletedTotal",
             "computed": {
                 "operation": "sum",
-                "dependents": {"source": [
-                    "totalParticipantsCompletedNonIndigenous",
-                    "totalParticipantsCompletedIndigenous"
-                ]}
+                "dependents": {
+                    "source": [
+                        "totalParticipantsCompletedNonIndigenous",
+                        "totalParticipantsCompletedIndigenous"
+                    ]
+                }
             },
             "validate": "min[0]"
+=======
+            "validate": "required,min[0],max[9]"
+>>>>>>> project_collections
         }
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [{
-                        "source": "projectStatus",
-                        "computed": null,
-                        "preLabel": "How is the project tracking?:",
-                        "type": "selectOne"
-                    }],
+                    "items": [
+                        {
+                            "source": "projectStatus",
+                            "computed": null,
+                            "preLabel": "How is the project tracking?:",
+                            "type": "selectOne"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "projectStatusReason",
-                        "computed": null,
-                        "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "projectStatusReason",
+                            "computed": null,
+                            "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "remedialActions",
-                        "computed": null,
-                        "preLabel": "Intended remedial actions (if appropriate):",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "remedialActions",
+                            "computed": null,
+                            "preLabel": "Intended remedial actions (if appropriate):",
+                            "type": "textarea"
+                        }
+                    ],
                     "computed": null,
                     "width": "30%",
                     "type": "col"
@@ -259,19 +321,24 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<h4>Participant Training<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'</i> to be provided separately.",
+                    "source": "<h4>Participant Training</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Please record training participation information.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please record training participation information.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -279,11 +346,15 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Non-Indigenous Participants<\/h4>",
+                            "source": "<h4>Project Participation</h4>",
+                            "source": "<h4>No. of Non-Indigenous Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
                         {
+                            "source": "totalParticipantsCommenced",
+                            "computed": null,
+                            "preLabel": "Total No. commencing projects:",
                             "source": "trainingCommencedAccreditedNonIndigenous ",
                             "computed": null,
                             "preLabel": "Commenced accredited training:",
@@ -306,6 +377,24 @@
                             "computed": null,
                             "preLabel": "Completed training (accredited and non-accredited):",
                             "type": "number"
+                        },
+                        {
+                            "source": "totalParticipantsCompleted",
+                            "computed": null,
+                            "preLabel": "Total No. completing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalParticipantsNotCompleted",
+                            "computed": null,
+                            "preLabel": "No. not completing projects:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalIndigenousParticipantsCommenced",
+                            "computed": null,
+                            "preLabel": "No. of indigenous participants commenced:",
+                            "type": "number"
                         }
                     ],
                     "computed": null,
@@ -314,17 +403,20 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Indigenous Participants<\/h4>",
+                            "source": "<h4>Participant Training</h4>",
+                            "source": "<h4>No. of Indigenous Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
                         {
+                            "source": "trainingCommencedAccredited",
                             "source": "trainingCommencedAccreditedIndigenous ",
                             "computed": null,
                             "preLabel": "Commenced accredited training:",
                             "type": "number"
                         },
                         {
+                            "source": "trainingNoExited",
                             "source": "trainingCommencedNonaccreditedIndigenous",
                             "computed": null,
                             "preLabel": "Commenced non-accredited training:",
@@ -337,6 +429,9 @@
                             "type": "number"
                         },
                         {
+                            "source": "trainingNoCompleted",
+                            "computed": null,
+                            "preLabel": "Completed training:",
                             "source": "trainingNoCompletedIndigenous",
                             "computed": null,
                             "preLabel": "Completed training:",
@@ -349,7 +444,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Total Number of Participants<\/h4>",
+                            "source": "<h4>Total Number of Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
@@ -390,19 +485,23 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<h4>Participant Details<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<h4>Participant Details</h4>",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'<\/i> to be provided separately.",
-                "computed": null,
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'</i> to be provided separately.",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
@@ -410,7 +509,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Non-Indigenous Participants<\/h4>",
+                            "source": "<h4>No. of Non-Indigenous Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
@@ -439,7 +538,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>No. of Indigenous Participants<\/h4>",
+                            "source": "<h4>No. of Indigenous Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
@@ -468,7 +567,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Total Number of Participants<\/h4>",
+                            "source": "<h4>Total Number of Participants</h4>",
                             "computed": null,
                             "type": "literal"
                         },
@@ -502,12 +601,14 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "reportingTimeTaken",
-                "computed": null,
-                "preLabel": "Time taken to complete this report (minutes):",
-                "type": "number"
-            }],
+            "items": [
+                {
+                    "source": "reportingTimeTaken",
+                    "computed": null,
+                    "preLabel": "Time taken to complete this report (minutes):",
+                    "type": "number"
+                }
+            ],
             "class": "output-section",
             "type": "row"
         }

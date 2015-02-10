@@ -19,7 +19,7 @@ class ProjectController {
         model
     }
 
-    static ignore = ['action','controller','id']
+	static ignore = ['action','controller','id']
 
     def index() {
         render "${Project.count()} sites"
@@ -31,7 +31,13 @@ class ProjectController {
         list.sort {it.name}
         render list as JSON
     }
-
+	
+	def promoted() {
+        def list = projectService.promoted()
+        list.sort {it.name}
+        render list as JSON
+	}
+	
     def get(String id) {
         def citizenScienceOnly = params.boolean('citizenScienceOnly', false)
         def includeDeleted = params.boolean('includeDeleted', false)

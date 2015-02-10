@@ -10,7 +10,7 @@ grails.project.source.level = 1.6
 // uncomment (and adjust settings) to fork the JVM to isolate classpaths
 grails.project.fork = [
    run: false,
-   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true] // configure settings for the test-app JVM
+   test: false // [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true] // configure settings for the test-app JVM
 ]
 grails.project.dependency.resolver = "maven"
 grails.project.dependency.resolution = {
@@ -18,29 +18,15 @@ grails.project.dependency.resolution = {
     inherits("global") {
         // specify dependency exclusions here; for example, uncomment this to disable ehcache:
         // excludes 'ehcache'
-        excludes 'xercesImpl'
+        excludes 'xercesImpl', 'xml-apis'
 
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     //checksums true // Whether to verify checksums on resolve
 
     repositories {
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
-
         mavenLocal()
-        mavenCentral()
-
-        // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
-		mavenRepo "http://mvnrepository.com"
-        mavenRepo "http://maven.ala.org.au/repository"
-        mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
-        mavenRepo "http://download.osgeo.org/webdav/geotools/"
+        mavenRepo "http://nexus.ala.org.au/content/groups/public/"
     }
 
     def seleniumVersion = "2.21.0"
@@ -55,6 +41,7 @@ grails.project.dependency.resolution = {
         }
         test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
         test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
+        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
 
         // ElasticSearch
         compile "org.elasticsearch:elasticsearch:1.1.2"
@@ -70,6 +57,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
+        compile "org.apache.poi:ooxml-schemas:1.0"
 
 
         test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
@@ -81,8 +69,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-auth:1.0-SNAPSHOT"
-        runtime ":ala-bootstrap2:1.0-SNAPSHOT"
+        runtime ":ala-web-theme:1.0.1"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
@@ -91,7 +78,7 @@ grails.project.dependency.resolution = {
 
         compile ":mongodb:3.0.2"
         compile ":quartz:1.0.2"
-        compile ":excel-export:0.2.0"
+        compile ":excel-export:0.2.1"
         compile ":excel-import:1.0.1"
 
         build ":tomcat:7.0.55"

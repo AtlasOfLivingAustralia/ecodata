@@ -1,0 +1,226 @@
+{
+    "modelName": "End of Project Report",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "description": "Enter the date on which the project was actually completed.",
+            "name": "projectCompletionDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Confirm whether all of the activity data for the project has been completed.",
+            "name": "activityDataCompleted",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If applicable, enter reasons for not completing activity data for the project.",
+            "name": "activityDataComments"
+        },
+        {
+            "dataType": "text",
+            "description": "Confirm whether all participants on the project, including those that withdrew early, have completed a Participant Survey and that these surveys have been attached to the project as a document.",
+            "name": "participantSurveysCompleted",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If applicable, enter reasons for not completing / attaching Participant Surveys.",
+            "name": "participantSurveyComments"
+        },
+        {
+            "dataType": "text",
+            "description": "Confirm whether the Project Sponsor for the project has completed a Project Sponsor Survey and that it has been attached to the project as a document.",
+            "name": "projectSponsorSurveyCompleted",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If applicable, enter reasons for not completing / attaching Project Sponsor Survey.",
+            "name": "projectSponsorSurveyComments"
+        },
+
+        {
+            "dataType": "text",
+            "description": "Enter the name of the person submitting this report.",
+            "name": "submittedByName",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "description": "Enter the contact number for the person submitting this report.",
+            "name": "submittedByNumber"
+        },
+        {
+            "dataType": "text",
+            "description": "Enter the email address of the person submitting this report.",
+            "name": "submittedByEmail"
+        },
+        {
+            "dataType": "date",
+            "description": "Enter the date that this report was submitted.",
+            "name": "submittedDate",
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "projectCompletionDate",
+                    "preLabel": "Project completion date:",
+                    "type": "date"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "activityDataCompleted",
+                            "preLabel": "Activity information for this project has been finalised and submitted in MERIT.",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "Please attach the completed document to the project.",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "activityDataComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "participantSurveysCompleted",
+                            "preLabel": "Participant Surveys have been completed by all project participants:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "Please attach the completed document to the project.",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "participantSurveyComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "projectSponsorSurveyCompleted",
+                            "preLabel": "Project Sponsor Survey has been completed:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "Please attach the completed document to the project.",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "projectSponsorSurveyComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Declaration</h4><h5>I affirm that I have completed all of the requested information and that the information contained in this report is full and accurate to the best of my knowledge.</h5>",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "Details of Green Army Service Provider Officer submitting the report:",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "submittedByName",
+                            "preLabel": "Name:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "submittedByNumber",
+                            "preLabel": "Contact number:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "submittedByEmail",
+                            "preLabel": "Email address:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "submittedDate",
+                            "preLabel": "Date:",
+                            "type": "date"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        }
+    ]
+}

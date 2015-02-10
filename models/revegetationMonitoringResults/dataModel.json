@@ -54,7 +54,8 @@
                 {
                     "dataType": "number",
                     "description": "The number of individual seedlings surviving at the time of this survey",
-                    "name": "numberSurviving"
+                    "name": "numberSurviving",
+                    "validate": "required"
                 },
                 {
                     "dataType": "number",
