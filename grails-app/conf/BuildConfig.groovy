@@ -25,22 +25,8 @@ grails.project.dependency.resolution = {
     //checksums true // Whether to verify checksums on resolve
 
     repositories {
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
-
         mavenLocal()
-        mavenCentral()
-
-        // uncomment these (or add new ones) to enable remote dependency resolution from public Maven repositories
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
-		mavenRepo "http://mvnrepository.com"
-        mavenRepo "http://maven.ala.org.au/repository"
-        mavenRepo "http://oss.sonatype.org/content/repositories/releases/"
-        mavenRepo "http://download.osgeo.org/webdav/geotools/"
+        mavenRepo "http://nexus.ala.org.au/content/groups/public/"
     }
 
     def seleniumVersion = "2.21.0"
@@ -83,7 +69,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-web-theme:1.0.0"
+        runtime ":ala-web-theme:1.0.1"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
