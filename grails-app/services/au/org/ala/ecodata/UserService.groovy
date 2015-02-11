@@ -23,24 +23,10 @@ class UserService {
     }
 
     synchronized def getUserForUserId(String userId) {
-
-        def um = cacheService.get('userNameMap' , {
-            def userMap = authService.getAllUserNameMap()
-            userMap.values().collectEntries { [(it.userId): it] }
-
-        })
-
-        if (!um || um.containsKey('error')) {
-            cacheService.clear('userNameMap')
+        if (!userId) {
+            return null
         }
-
-        def ud = null;
-
-        if (um && um.containsKey(userId)) {
-            ud = um.get(userId)
-        }
-
-        return ud
+        return authService.getUserForUserId(userId)
     }
 
     /**
