@@ -1,10 +1,10 @@
 {
-    "modelName":"BioConditionConsolidated",
-    "dataModel":[
+    "modelName": "BioConditionConsolidated",
+    "dataModel": [
         {
             "dataType": "text",
-            "name": "bioregion",
             "description": "The bioregion in which the assessment unit is located.",
+            "name": "bioregion",
             "constraints": [
                 "BRB - Brigalow Belt",
                 "CHC - Channel Country",
@@ -24,8 +24,8 @@
         },
         {
             "dataType": "text",
-            "name": "regionalEcosystem",
             "description": "The code for the regional ecosystem (RE) in which the assessment unit is located.",
+            "name": "regionalEcosystem",
             "constraints": [
                 "1.3.5",
                 "1.3.6",
@@ -413,376 +413,363 @@
         },
         {
             "dataType": "text",
-            "name": "property",
-            "description": "The name of the property in which the assessment unit is situated."
+            "description": "The name of the property in which the assessment unit is situated.",
+            "name": "property"
         },
         {
             "dataType": "number",
-            "name": "transectBearing",
             "description": "The compass bearing of the 100m transect and long axis of the 100x50m assessment plot.",
             "primaryResult": "true",
+            "name": "transectBearing",
             "validate": "required,min[1],max[360]"
         },
         {
             "dataType": "number",
-            "name": "patchArea",
             "description": "The area in hectares of the the patch of vegetation in which this assessment unit occurs.",
+            "name": "patchArea",
             "validate": "required,min[0]"
         },
         {
             "dataType": "text",
-            "name": "assessmentSiteDescription",
-            "description": "General description of the assessment area."
+            "description": "General description of the assessment area.",
+            "name": "assessmentSiteDescription"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkEucalyptLargeTreeDBH",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkEucalyptLargeTreeNo",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNonEucalyptLargeTreeNo",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNonEucalyptLargeTreeDBH",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkCWD",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkTreeEDLHeight",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkSubCanopyHeight",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkEdlSpeciesRecruitment",
-            "primaryResult": "true",
             "validate": "required,min[0],max[100]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNumTreeSpeciesTotal",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNumShrubSpeciesTotal",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNumGrassSpeciesTotal",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "benchmarkNumForbSpeciesTotal",
-            "primaryResult": "true",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "benchmarkSpeciesCoverExotic",
             "primaryResult": "true",
+            "name": "benchmarkSpeciesCoverExotic",
             "validate": "required,min[0],max[100]"
         },
         {
             "dataType": "number",
-            "name": "numLargeEucalypt",
             "description": "Count the number of living large eucalypt trees within the 100x50m area. Large trees are defined as having a DBH greater than the DBH threshold provided in the benchmark document.",
             "primaryResult": "true",
+            "name": "numLargeEucalypt",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numLargeNonEucalypt",
             "description": "Count the number of living large non-eucalypt trees within the 100x50m area.",
             "primaryResult": "true",
+            "name": "numLargeNonEucalypt",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "totalLargeTrees",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "totalLargeTrees"
         },
         {
             "dataType": "number",
-            "name": "numLargeEucalyptPerHa",
             "description": "The number of eucalypt large trees multiplied by 2 to give a per hectare figure.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numLargeEucalyptPerHa"
         },
         {
             "dataType": "number",
-            "name": "numLargeNonEucalyptPerHa",
             "description": "The number of non-eucalypt large trees multiplied by 2 to give a per hectare figure.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numLargeNonEucalyptPerHa"
         },
         {
             "dataType": "number",
-            "name": "totalLargeTreesPerHa",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "totalLargeTreesPerHa"
         },
         {
             "dataType": "number",
-            "name": "largeTreesScore",
             "description": "Calculated score for large trees.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "largeTreesScore"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "emergentHeight",
-            "description": ".",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "treeCanopyHeight",
-            "description": ".",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "subcanopyHeight",
-            "description": ".",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "emergentHeightScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "emergentHeightScore"
         },
         {
             "dataType": "number",
-            "name": "edlCanopyHeightScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "edlCanopyHeightScore"
         },
         {
             "dataType": "number",
-            "name": "subcanopyHeightScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "subcanopyHeightScore"
         },
         {
             "dataType": "number",
-            "name": "aveCanopyHeightScore",
             "description": "Calculated canopy height score as an average of individual layer scores >0.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "aveCanopyHeightScore"
         },
         {
             "dataType": "number",
-            "name": "proportionDominantCanopySpeciesWithEvidenceOfRecruitment",
             "description": "The proportion of dominant species present at a site that are regenerating, i.e. having individuals with a DBH <5 cm.",
+            "name": "proportionDominantCanopySpeciesWithEvidenceOfRecruitment",
             "validate": "required,min[0],max[100]"
         },
         {
             "dataType": "number",
-            "name": "edlRecruitmentScore",
             "description": "Calculated recruitment score for all species in the EDL with evidence of recruitment.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "edlRecruitmentScore"
         },
-
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "treeSpeciesRichness",
-            "columns": [
-                {
-                    "dataType": "species",
-                    "name": "speciesNameTree",
-                    "description": "List the names of all native tree species which can be identified in the 100x50m area."
-                }
-            ]
+            "columns": [{
+                "dataType": "species",
+                "description": "List the names of all native tree species which can be identified in the 100x50m area.",
+                "name": "speciesNameTree"
+            }]
         },
         {
             "dataType": "number",
-            "name": "numTreeSpecies",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numTreeSpecies"
         },
         {
             "dataType": "number",
-            "name": "numTreeSpeciesTotal",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numTreeSpeciesTotal"
         },
         {
             "dataType": "number",
-            "name": "numUnknownTreeSpecies",
             "description": "Enter the number of native tree species in the 100x50m area which cannot be identified.",
+            "name": "numUnknownTreeSpecies",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "totalTreeSpeciesRichness",
             "description": "Count of the total number of different species of native trees within the 100x50m plot area, not just EDL species. Trees are defined as single-stemmed plants >2m height.",
+            "name": "totalTreeSpeciesRichness",
             "validate": "min[0]"
         },
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "shrubSpeciesRichness",
-            "columns": [
-                {
-                    "dataType": "species",
-                    "name": "speciesNameShrub",
-                    "description": "List the names of all native shrub species which can be identified in the 50x10m area."
-                }
-            ]
+            "columns": [{
+                "dataType": "species",
+                "description": "List the names of all native shrub species which can be identified in the 50x10m area.",
+                "name": "speciesNameShrub"
+            }]
         },
         {
             "dataType": "number",
-            "name": "numShrubSpecies",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numShrubSpecies"
         },
         {
             "dataType": "number",
-            "name": "numUnknownShrubSpecies",
             "description": "Enter the number of native shrub species in the 50x10m area which cannot be identified.",
+            "name": "numUnknownShrubSpecies",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numShrubSpeciesTotal",
             "description": "Count of the total number of different species of native shrubs within the 50x10m plot area.",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numShrubSpeciesTotal"
         },
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "grassSpeciesRichness",
-            "columns": [
-                {
-                    "dataType": "species",
-                    "name": "speciesNameGrass",
-                    "description": "List the names of all native grass species which can be identified in the 50x10m area."
-                }
-            ]
+            "columns": [{
+                "dataType": "species",
+                "description": "List the names of all native grass species which can be identified in the 50x10m area.",
+                "name": "speciesNameGrass"
+            }]
         },
         {
             "dataType": "number",
-            "name": "numGrassSpecies",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numGrassSpecies"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "numUnknownGrassSpecies",
-            "description": ".",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numGrassSpeciesTotal",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numGrassSpeciesTotal"
         },
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "forbsAndOtherNonGrassGroundSpeciesRichness",
-            "columns": [
-                {
-                    "dataType": "species",
-                    "name": "speciesNameForb",
-                    "description": "List the names of all native species of forbs and other life forms which can be identified in the 50x10m area."
-                }
-            ]
+            "columns": [{
+                "dataType": "species",
+                "description": "List the names of all native species of forbs and other life forms which can be identified in the 50x10m area.",
+                "name": "speciesNameForb"
+            }]
         },
         {
             "dataType": "number",
-            "name": "numForbSpecies",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numForbSpecies"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "numUnknownForbSpecies",
-            "description": ".",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numForbSpeciesTotal",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numForbSpeciesTotal"
         },
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "nonNativeSpeciesRichness",
-            "columns": [
-                {
-                    "dataType": "species",
-                    "name": "speciesNameNonNative",
-                    "description": "List the names of all non-native species which can be identified in the 50x10m area."
-                }
-            ]
+            "columns": [{
+                "dataType": "species",
+                "description": "List the names of all non-native species which can be identified in the 50x10m area.",
+                "name": "speciesNameNonNative"
+            }]
         },
         {
             "dataType": "number",
-            "name": "numNonNativeSpecies",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numNonNativeSpecies"
         },
         {
             "dataType": "number",
+            "description": ".",
             "name": "numUnknownNonNativeSpecies",
-            "description": ".",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numNonNativeSpeciesTotal",
             "description": ".",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "numNonNativeSpeciesTotal"
         },
         {
             "dataType": "number",
-            "name": "nonNativePlantCoverPercent",
             "description": "Estimated percentage cover of the total vegetation cover that is comprised of exotic and non-indigenous species, assessed within the 50 x 10 m sub-plot.",
+            "name": "nonNativePlantCoverPercent",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "nonNativePlantCoverScore",
             "description": "Calculated score for vegetation cover that is comprised of exotic and non-indigenous species.",
+            "name": "nonNativePlantCoverScore",
             "validate": "min[0]"
         },
         {
             "defaultRows": [],
             "dataType": "list",
             "name": "cwdLengths",
-            "columns": [
-                {
-                    "dataType": "number",
-                    "name": "cwdLength",
-                    "validate": "min[0]"
-                }
-            ]
+            "columns": [{
+                "dataType": "number",
+                "name": "cwdLength",
+                "validate": "min[0]"
+            }]
         },
         {
             "dataType": "number",
@@ -799,75 +786,142 @@
         {
             "dataType": "number",
             "primaryResult": "true",
-            "name": "cwdScore",
-            "description": "Calculated score for coarse woody debris."
+            "description": "Calculated score for coarse woody debris.",
+            "name": "cwdScore"
         },
-        {"name":"groundCover", "dataType":"list","columns":[
-            {"name":"groundCoverType","dataType":"text"},
-            {"name":"plot1","dataType":"number","validate": "min[0],max[100]"},
-            {"name":"plot2","dataType":"number","validate": "min[0],max[100]"},
-            {"name":"plot3","dataType":"number","validate": "min[0],max[100]"},
-            {"name":"plot4","dataType":"number","validate": "min[0],max[100]"},
-            {"name":"plot5","dataType":"number","validate": "min[0],max[100]"},
-            {"name":"plotsMean","dataType":"number","computed":{"dependents":["plot1","plot2","plot3","plot4","plot5"],"operation":"sum"}},
-            {"name":"groundCoverScore","dataType":"number","computed":{"dependents":["plot1","plot2","plot3","plot4","plot5"],"operation":"sum"}}
-        ],
-            "defaultRows":[
-                {"groundCoverType":"% Native Perennial ('decreaser') grass cover*"},
-                {"groundCoverType":"% Native other grass cover (if relevant)*"},
-                {"groundCoverType":"% Native forbs and other species (non-grass)"},
-                {"groundCoverType":"% Native shrubs (< 1m height)"},
-                {"groundCoverType":"% Non-native grass"},
-                {"groundCoverType":"% Non-native forbs and shrubs"},
-                {"groundCoverType":"% Litter*"},
-                {"groundCoverType":"% Rock"},
-                {"groundCoverType":"% Bare ground"},
-                {"groundCoverType":"% Cryptograms"}
+        {
+            "defaultRows": [
+                {"groundCoverType": "% Native Perennial ('decreaser') grass cover*"},
+                {"groundCoverType": "% Native other grass cover (if relevant)*"},
+                {"groundCoverType": "% Native forbs and other species (non-grass)"},
+                {"groundCoverType": "% Native shrubs (< 1m height)"},
+                {"groundCoverType": "% Non-native grass"},
+                {"groundCoverType": "% Non-native forbs and shrubs"},
+                {"groundCoverType": "% Litter*"},
+                {"groundCoverType": "% Rock"},
+                {"groundCoverType": "% Bare ground"},
+                {"groundCoverType": "% Cryptograms"}
+            ],
+            "dataType": "list",
+            "name": "groundCover",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "groundCoverType"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot1",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot2",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot3",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot4",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plot5",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "plotsMean",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [
+                            "plot1",
+                            "plot2",
+                            "plot3",
+                            "plot4",
+                            "plot5"
+                        ]
+                    }
+                },
+                {
+                    "dataType": "number",
+                    "name": "groundCoverScore",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [
+                            "plot1",
+                            "plot2",
+                            "plot3",
+                            "plot4",
+                            "plot5"
+                        ]
+                    }
+                }
             ]
         },
-
-        {"name":"totalPlot1","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"groundCover",
-                    "source":"plot1"
-                },"operation":"sum"
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot1",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot1",
+                    "fromList": "groundCover"
+                }
             }
         },
-
-        {"name":"totalPlot2","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"groundCover",
-                    "source":"plot2"
-                },"operation":"sum"
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot2",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot2",
+                    "fromList": "groundCover"
+                }
             }
         },
-
-        {"name":"totalPlot3","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"groundCover",
-                    "source":"plot3"
-                },"operation":"sum"
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot3",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot3",
+                    "fromList": "groundCover"
+                }
             }
         },
-
-        {"name":"totalPlot4","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"groundCover",
-                    "source":"plot4"
-                },"operation":"sum"
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot4",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot4",
+                    "fromList": "groundCover"
+                }
             }
         },
-
-        {"name":"totalPlot5","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"groundCover",
-                    "source":"plot5"
-                },"operation":"sum"
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalPlot5",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "plot5",
+                    "fromList": "groundCover"
+                }
             }
         },
         {
@@ -906,45 +960,45 @@
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "percentCoverC",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "percentCoverS",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "percentCoverE",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "coverScoreC",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "coverScoreS",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "coverScoreE",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "treeCanopyCoverScoreAve",
             "description": "Calculated score for native tree canopy cover.",
             "primaryResult": "true",
+            "name": "treeCanopyCoverScoreAve",
             "validate": "min[0]"
         },
         {
@@ -974,24 +1028,23 @@
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "percentCoverNative",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "primaryResult": "true",
             "name": "percentCoverExotic",
-            "primaryResult": "true",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "shrubCanopyCoverScoreN",
             "description": "Calculated score for native shrub canopy cover.",
             "primaryResult": "true",
+            "name": "shrubCanopyCoverScoreN",
             "validate": "min[0]"
         },
-
         {
             "dataType": "text",
             "name": "patchSize",
@@ -1057,38 +1110,36 @@
         },
         {
             "dataType": "number",
-            "name": "patchSizeScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "patchSizeScore"
         },
         {
             "dataType": "number",
-            "name": "connectivityScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "connectivityScore"
         },
         {
             "dataType": "number",
-            "name": "landscapeContextScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "landscapeContextScore"
         },
         {
             "dataType": "number",
-            "name": "distanceFromWaterScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "distanceFromWaterScore"
         },
         {
             "dataType": "number",
-            "name": "siteBcScore",
-            "primaryResult": "true"
+            "primaryResult": "true",
+            "name": "siteBcScore"
         }
     ],
-    "viewModel":[
+    "viewModel": [
         {
-            "items": [
-                {
-                    "source": "<h2>Assessment Area Information</h2>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h2>Assessment Area Information<\/h2>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -1139,16 +1190,14 @@
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Regional ecosystem benchmark values</h4>Please enter the published benchmark values which are applicable to the selected regional ecosystem. These values are required for the calculation of scores.<br>If a particular value is not applicable for the selected RE, leave the value as '0'.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Regional ecosystem benchmark values<\/h4>Please enter the published benchmark values which are applicable to the selected regional ecosystem. These values are required for the calculation of scores.<br>If a particular value is not applicable for the selected RE, leave the value as '0'.",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -1234,25 +1283,21 @@
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h2>Assessment - Site Attributes</h2>",
-                    "type": "literal"
-                }
-            ],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>100 x 50m Area - Ecologically Dominant Layer</h4>Record details for the ecologically dominant stratum over the 100 x 50m survey area.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h2>Assessment - Site Attributes<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>100 x 50m Area - Ecologically Dominant Layer<\/h4>Record details for the ecologically dominant stratum over the 100 x 50m survey area.",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -1272,8 +1317,8 @@
                         {
                             "source": "totalLargeTrees",
                             "preLabel": "Total No. of large trees counted:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
@@ -1283,38 +1328,36 @@
                         {
                             "source": "numLargeEucalyptPerHa",
                             "preLabel": "No. of large eucalypt trees / Ha:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "numLargeNonEucalyptPerHa",
                             "preLabel": "No. of large non-eucalypt trees / Ha:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "totalLargeTreesPerHa",
                             "preLabel": "Total No. of large trees / Ha.:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "largeTreesScore",
-                            "preLabel": "Large trees score:",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "largeTreesScore",
+                        "preLabel": "Large trees score:",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
             "items": [
@@ -1348,113 +1391,95 @@
                         {
                             "source": "emergentHeightScore",
                             "preLabel": "Emergent canopy height score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "edlCanopyHeightScore",
                             "preLabel": "EDL tree canopy height score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "subcanopyHeightScore",
                             "preLabel": "Tree subcanopy height score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "aveCanopyHeightScore",
-                            "preLabel": "Averaged canopy height score:",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "aveCanopyHeightScore",
+                        "preLabel": "Averaged canopy height score:",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "proportionDominantCanopySpeciesWithEvidenceOfRecruitment",
-                            "preLabel": "Proportion of canopy EDL species with evidence of recruitment (%):",
-                            "type": "number"
-                        }
-                    ],
+                    "items": [{
+                        "source": "proportionDominantCanopySpeciesWithEvidenceOfRecruitment",
+                        "preLabel": "Proportion of canopy EDL species with evidence of recruitment (%):",
+                        "type": "number"
+                    }],
                     "computed": null,
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "emptyColumn",
-                            "preLabel": " ",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "emptyColumn",
+                        "preLabel": " ",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "edlRecruitmentScore",
-                            "preLabel": "EDL species recruitment score:",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "edlRecruitmentScore",
+                        "preLabel": "EDL species recruitment score:",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "treeSpeciesRichness",
-                            "columns": [
-                                {
-                                    "title": "Native tree species names",
-                                    "source": "speciesNameTree",
-                                    "type": "autocomplete"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": "No. of listed tree species:",
-                                                "type": "literal"
-                                            },
-                                            {
-                                                "source": "numTreeSpecies",
-                                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameTree\",\"fromList\":\"treeSpeciesRichness\"}}",
-                                                "type": "number",
-                                                "noEdit": "true"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [
+                            {
+                                "source": "No. of listed tree species:",
+                                "type": "literal"
                             },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "source": "numTreeSpecies",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameTree\",\"fromList\":\"treeSpeciesRichness\"}}",
+                                "noEdit": "true",
+                                "type": "number"
+                            }
+                        ]}]},
+                        "source": "treeSpeciesRichness",
+                        "columns": [{
+                            "title": "Native tree species names",
+                            "source": "speciesNameTree",
+                            "type": "autocomplete"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1467,78 +1492,62 @@
                         {
                             "source": "numTreeSpeciesTotal",
                             "preLabel": "Total native tree species richness:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "The number of native tree species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
-                            "type": "literal"
-                        }
-                    ],
+                    "items": [{
+                        "source": "The number of native tree species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
+                        "type": "literal"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>50 x 10m Area - Understorey & Sub-dominant Layer</h4>Record all understorey species within the 50 x 10m area boundary.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>50 x 10m Area - Understorey & Sub-dominant Layer<\/h4>Record all understorey species within the 50 x 10m area boundary.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h5>Native shrub species richness<\/h5> (List all species for plants which are: single-stemmed below 2m height, multi-stemmed from base, or below 20cm above ground level):",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "source": "<h5>Native shrub species richness</h5> (List all species for plants which are: single-stemmed below 2m height, multi-stemmed from base, or below 20cm above ground level):",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "shrubSpeciesRichness",
-                            "columns": [
-                                {
-                                    "title": "Native shrub species names",
-                                    "source": "speciesNameShrub",
-                                    "type": "autocomplete"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": "No. of listed native shrub species:",
-                                                "type": "literal"
-                                            },
-                                            {
-                                                "source": "numShrubSpecies",
-                                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameShrub\",\"fromList\":\"shrubSpeciesRichness\"}}",
-                                                "type": "number",
-                                                "noEdit": "true"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [
+                            {
+                                "source": "No. of listed native shrub species:",
+                                "type": "literal"
                             },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "source": "numShrubSpecies",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameShrub\",\"fromList\":\"shrubSpeciesRichness\"}}",
+                                "noEdit": "true",
+                                "type": "number"
+                            }
+                        ]}]},
+                        "source": "shrubSpeciesRichness",
+                        "columns": [{
+                            "title": "Native shrub species names",
+                            "source": "speciesNameShrub",
+                            "type": "autocomplete"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1551,69 +1560,55 @@
                         {
                             "source": "numShrubSpeciesTotal",
                             "preLabel": "Total native shrub species richness:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "The number of native shrub species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
-                            "type": "literal"
-                        }
-                    ],
+                    "items": [{
+                        "source": "The number of native shrub species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
+                        "type": "literal"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Native grass species richness</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Native grass species richness<\/h5>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "grassSpeciesRichness",
-                            "columns": [
-                                {
-                                    "title": "Native grass species names",
-                                    "source": "speciesNameGrass",
-                                    "type": "autocomplete"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": "No. of listed native grass species:",
-                                                "type": "literal"
-                                            },
-                                            {
-                                                "source": "numGrassSpecies",
-                                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameGrass\",\"fromList\":\"grassSpeciesRichness\"}}",
-                                                "type": "number",
-                                                "noEdit": "true"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [
+                            {
+                                "source": "No. of listed native grass species:",
+                                "type": "literal"
                             },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "source": "numGrassSpecies",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameGrass\",\"fromList\":\"grassSpeciesRichness\"}}",
+                                "noEdit": "true",
+                                "type": "number"
+                            }
+                        ]}]},
+                        "source": "grassSpeciesRichness",
+                        "columns": [{
+                            "title": "Native grass species names",
+                            "source": "speciesNameGrass",
+                            "type": "autocomplete"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1626,69 +1621,55 @@
                         {
                             "source": "numGrassSpeciesTotal",
                             "preLabel": "Total grass species richness:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "The number of native grass species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
-                            "type": "literal"
-                        }
-                    ],
+                    "items": [{
+                        "source": "The number of native grass species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
+                        "type": "literal"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Native forbs and other (non-grass groundcover) species richness:</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Native forbs and other (non-grass groundcover) species richness:<\/h5>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "forbsAndOtherNonGrassGroundSpeciesRichness",
-                            "columns": [
-                                {
-                                    "title": "Native forb species and other life form names",
-                                    "source": "speciesNameForb",
-                                    "type": "autocomplete"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": "No. of listed native forbs and other species:",
-                                                "type": "literal"
-                                            },
-                                            {
-                                                "source": "numForbSpecies",
-                                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameForb\",\"fromList\":\"forbsAndOtherNonGrassGroundSpeciesRichness\"}}",
-                                                "type": "number",
-                                                "noEdit": "true"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [
+                            {
+                                "source": "No. of listed native forbs and other species:",
+                                "type": "literal"
                             },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "source": "numForbSpecies",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameForb\",\"fromList\":\"forbsAndOtherNonGrassGroundSpeciesRichness\"}}",
+                                "noEdit": "true",
+                                "type": "number"
+                            }
+                        ]}]},
+                        "source": "forbsAndOtherNonGrassGroundSpeciesRichness",
+                        "columns": [{
+                            "title": "Native forb species and other life form names",
+                            "source": "speciesNameForb",
+                            "type": "autocomplete"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1701,69 +1682,55 @@
                         {
                             "source": "numForbSpeciesTotal",
                             "preLabel": "Total richness of native forbs & other species:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "The number of native forbs and other species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
-                            "type": "literal"
-                        }
-                    ],
+                    "items": [{
+                        "source": "The number of native forbs and other species is combined with the total number of other native plant life forms present to calculate a total native plant species richness score.",
+                        "type": "literal"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Non-native species richness:</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Non-native species richness:<\/h5>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "nonNativeSpeciesRichness",
-                            "columns": [
-                                {
-                                    "title": "Non-native species names",
-                                    "source": "speciesNameNonNative",
-                                    "type": "autocomplete"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": "No. of listed non-native species:",
-                                                "type": "literal"
-                                            },
-                                            {
-                                                "source": "numNonNativeSpecies",
-                                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameNonNative\",\"fromList\":\"nonNativeSpeciesRichness\"}}",
-                                                "type": "number",
-                                                "noEdit": "true"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [
+                            {
+                                "source": "No. of listed non-native species:",
+                                "type": "literal"
                             },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "source": "numNonNativeSpecies",
+                                "computed": "{\"operation\":\"count\",\"dependents\":{\"source\":\"speciesNameNonNative\",\"fromList\":\"nonNativeSpeciesRichness\"}}",
+                                "noEdit": "true",
+                                "type": "number"
+                            }
+                        ]}]},
+                        "source": "nonNativeSpeciesRichness",
+                        "columns": [{
+                            "title": "Non-native species names",
+                            "source": "speciesNameNonNative",
+                            "type": "autocomplete"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1776,8 +1743,8 @@
                         {
                             "source": "numNonNativeSpeciesTotal",
                             "preLabel": "Total richness of non-native species:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "nonNativePlantCoverPercent",
@@ -1800,187 +1767,202 @@
                         {
                             "source": "nonNativePlantCoverScore",
                             "preLabel": "Non-native plant cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>50 x 20m area - Coarse Woody Debris</h4> Includes all logs > 10cm diameter and > 0.5m length (and >80% contact with the ground), within the boundary of the 50 x 20m plot area.",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>50 x 20m area - Coarse Woody Debris<\/h4> Includes all logs > 10cm diameter and > 0.5m length (and >80% contact with the ground), within the boundary of the 50 x 20m plot area.",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "cwdLengths",
-                            "columns": [
-                                {
-                                    "title": "CWD Length (m):",
-                                    "source": "cwdLength",
-                                    "type": "number"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": " ",
-                                                "colspan": "1",
-                                                "type": "literal"
-                                            }
-                                        ]
-                                    }
-                                ]
-                            },
-                            "userAddedRows": "true",
-                            "type": "table"
-                        }
-                    ],
+                    "items": [{
+                        "footer": {"rows": [{"columns": [{
+                            "colspan": "1",
+                            "source": " ",
+                            "type": "literal"
+                        }]}]},
+                        "source": "cwdLengths",
+                        "columns": [{
+                            "title": "CWD Length (m):",
+                            "source": "cwdLength",
+                            "type": "number"
+                        }],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "preLabel": "Total length of coarse woody debris (m):",
-                            "source": "totalCwdLength",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"cwdLength\",\"fromList\":\"cwdLengths\"}}",
-                            "type": "number"
-                        }
-                    ],
+                    "items": [{
+                        "source": "totalCwdLength",
+                        "preLabel": "Total length of coarse woody debris (m):",
+                        "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"cwdLength\",\"fromList\":\"cwdLengths\"}}",
+                        "type": "number"
+                    }],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "preLabel": "Coarse woody debris score:",
-                            "source": "cwdScore",
-                            "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"cwdLength\",\"fromList\":\"cwdLengths\"}}",
-                            "type": "number"
-                        }
-                    ],
+                    "items": [{
+                        "source": "cwdScore",
+                        "preLabel": "Coarse woody debris score:",
+                        "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"cwdLength\",\"fromList\":\"cwdLengths\"}}",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "type": "row",
-            "items": [
+            "items": [{
+                "source": "<h4>Five 1x1m plots - Ground Cover<\/h4>* attributes are essential to assess as used in scoring, however assessment of all attributes improves your ability to more accurately visualise proportions on each of the attributes)",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
                 {
-                    "type": "literal",
-                    "source":"<h4>Five 1x1m plots - Ground Cover</h4>* attributes are essential to assess as used in scoring, however assessment of all attributes improves your ability to more accurately visualise proportions on each of the attributes)"
+                    "source": "Total (%) - each column must be <= 100%",
+                    "type": "literal"
+                },
+                {
+                    "source": "totalPlot1",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot2",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot3",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot4",
+                    "type": "number"
+                },
+                {
+                    "source": "totalPlot5",
+                    "type": "number"
                 }
-            ]
-        },
-        {
-            "type": "table",
-            "source":"groundCover",
+            ]}]},
+            "source": "groundCover",
             "columns": [
-                {"title":"Ground cover", "source":"groundCoverType","type":"text", "noEdit":"true"},
-                {"title":"Plot 1","source":"plot1","type":"number"},
-                {"title":"Plot 2","source":"plot2","type":"number"},
-                {"title":"Plot 3","source":"plot3","type":"number"},
-                {"title":"Plot 4","source":"plot4","type":"number"},
-                {"title":"Plot 5","source":"plot5","type":"number"},
-                {"title":"Mean","source":"plotsMean","type":"number","noEdit":"true"},
-                {"title":"Score","source":"groundCoverScore","type":"number","noEdit":"true"}
-            ],
-            "footer": {
-                "rows": [
-                    {"columns":[
-                        {"type":"literal","source":"Total (%) - each column must be <= 100%"},
-                        {"type":"number","source":"totalPlot1"},
-                        {"type":"number","source":"totalPlot2"},
-                        {"type":"number","source":"totalPlot3"},
-                        {"type":"number","source":"totalPlot4"},
-                        {"type":"number","source":"totalPlot5"}
-                    ]}
-                ]
-            },
-            "class": "output-section"
-        },
-        {
-            "items": [
                 {
-                    "source": "<h4>100m Transect</h4>",
-                    "type": "literal"
+                    "title": "Ground cover",
+                    "source": "groundCoverType",
+                    "noEdit": "true",
+                    "type": "text"
+                },
+                {
+                    "title": "Plot 1",
+                    "source": "plot1",
+                    "type": "number"
+                },
+                {
+                    "title": "Plot 2",
+                    "source": "plot2",
+                    "type": "number"
+                },
+                {
+                    "title": "Plot 3",
+                    "source": "plot3",
+                    "type": "number"
+                },
+                {
+                    "title": "Plot 4",
+                    "source": "plot4",
+                    "type": "number"
+                },
+                {
+                    "title": "Plot 5",
+                    "source": "plot5",
+                    "type": "number"
+                },
+                {
+                    "title": "Mean",
+                    "source": "plotsMean",
+                    "noEdit": "true",
+                    "type": "number"
+                },
+                {
+                    "title": "Score",
+                    "source": "groundCoverScore",
+                    "noEdit": "true",
+                    "type": "number"
                 }
             ],
+            "class": "output-section",
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "<h4>100m Transect<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h5>Tree canopy cover<\/h5> Estimate of the length of vertically projected foliage cover (over the 100 m transect) of the species making up the EDL or tree canopy cover, if applicable for the RE. Canopy cover equates to crown cover as defined by Walker and Hopkins (1990).<br>(Only assess Emergent (E) or Subcanopy (S) layers if the RE benchmark document stipulates that layers are present.) *If trees are in the same layer and continuous along the transect you can group them",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "source": "<h5>Tree canopy cover</h5> Estimate of the length of vertically projected foliage cover (over the 100 m transect) of the species making up the EDL or tree canopy cover, if applicable for the RE. Canopy cover equates to crown cover as defined by Walker and Hopkins (1990).<br>(Only assess Emergent (E) or Subcanopy (S) layers if the RE benchmark document stipulates that layers are present.) *If trees are in the same layer and continuous along the transect you can group them",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "treeCanopyRecords",
-                            "columns": [
-                                {
-                                    "title": "Tree or tree group",
-                                    "source": "treeOrTreeGroup",
-                                    "type": "selectOne",
-                                    "width": "20%"
-                                },
-                                {
-                                    "title": "Type of tree",
-                                    "source": "treeType",
-                                    "type": "selectOne",
-                                    "width": "30%"
-                                },
-                                {
-                                    "title": "Distance along transect (m)",
-                                    "source": "distance",
-                                    "type": "number",
-                                    "width": "20%"
-                                },
-                                {
-                                    "title": "Length (m)",
-                                    "source": "totalTCCover",
-                                    "type": "number",
-                                    "width": "15%"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": " ",
-                                                "colspan": "4",
-                                                "type": "literal"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [{
+                            "colspan": "4",
+                            "source": " ",
+                            "type": "literal"
+                        }]}]},
+                        "source": "treeCanopyRecords",
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "title": "Tree or tree group",
+                                "source": "treeOrTreeGroup",
+                                "width": "20%",
+                                "type": "selectOne"
                             },
-                            "userAddedRows": "true",
-                            "allowHeaderWrap": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "title": "Type of tree",
+                                "source": "treeType",
+                                "width": "30%",
+                                "type": "selectOne"
+                            },
+                            {
+                                "title": "Distance along transect (m)",
+                                "source": "distance",
+                                "width": "20%",
+                                "type": "number"
+                            },
+                            {
+                                "title": "Length (m)",
+                                "source": "totalTCCover",
+                                "width": "15%",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -1988,20 +1970,20 @@
                         {
                             "source": "percentCoverC",
                             "preLabel": "% cover of C:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "percentCoverS",
                             "preLabel": "% cover of S:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "percentCoverE",
                             "preLabel": "% cover of E:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "Note: Only the projected foliage cover for native species is included in the calculated score.",
@@ -2015,87 +1997,75 @@
                         {
                             "source": "coverScoreC",
                             "preLabel": "Canopy cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "coverScoreS",
                             "preLabel": "Sub-canopy cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "coverScoreE",
                             "preLabel": "Emergent cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "treeCanopyCoverScoreAve",
                             "preLabel": "Average tree canopy cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h5>Shrub canopy cover</h5>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h5>Shrub canopy cover<\/h5>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "shrubCanopyRecords",
-                            "columns": [
-                                {
-                                    "title": "Shrub type*",
-                                    "source": "shrubType",
-                                    "type": "selectOne",
-                                    "width": "45%"
-                                },
-                                {
-                                    "title": "Distance along transect (m)",
-                                    "source": "distance",
-                                    "type": "number",
-                                    "width": "30%"
-                                },
-                                {
-                                    "title": "Length (m)",
-                                    "source": "totalSCCover",
-                                    "type": "number",
-                                    "width": "20%"
-                                }
-                            ],
-                            "footer": {
-                                "rows": [
-                                    {
-                                        "columns": [
-                                            {
-                                                "source": " ",
-                                                "colspan": "3",
-                                                "type": "literal"
-                                            }
-                                        ]
-                                    }
-                                ]
+                    "items": [{
+                        "footer": {"rows": [{"columns": [{
+                            "colspan": "3",
+                            "source": " ",
+                            "type": "literal"
+                        }]}]},
+                        "source": "shrubCanopyRecords",
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "title": "Shrub type*",
+                                "source": "shrubType",
+                                "width": "45%",
+                                "type": "selectOne"
                             },
-                            "userAddedRows": "true",
-                            "allowHeaderWrap": "true",
-                            "type": "table"
-                        }
-                    ],
+                            {
+                                "title": "Distance along transect (m)",
+                                "source": "distance",
+                                "width": "30%",
+                                "type": "number"
+                            },
+                            {
+                                "title": "Length (m)",
+                                "source": "totalSCCover",
+                                "width": "20%",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "type": "table"
+                    }],
                     "type": "col"
                 },
                 {
@@ -2103,14 +2073,14 @@
                         {
                             "source": "percentCoverNative",
                             "preLabel": "% cover of natives:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "percentCoverExotic",
                             "preLabel": "% cover of exotics:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "Note: Only the projected foliage cover for native species is included in the calculated score.",
@@ -2120,27 +2090,23 @@
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "shrubCanopyCoverScoreN",
-                            "preLabel": "Native shrub cover score:",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "shrubCanopyCoverScoreN",
+                        "preLabel": "Native shrub cover score:",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h2>Assessment - Landscape Attributes</h2>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h2>Assessment - Landscape Attributes<\/h2>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -2180,41 +2146,39 @@
                         {
                             "source": "patchSizeScore",
                             "preLabel": "Patch size score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "connectivityScore",
                             "preLabel": "Connectivity score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "landscapeContextScore",
                             "preLabel": "Landscape context score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "distanceFromWaterScore",
                             "preLabel": "Distance from water score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h2>BioCondition Score</h2>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h2>BioCondition Score<\/h2>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -2222,68 +2186,68 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Site-based Condition Attributes</h4>",
+                            "source": "<h4>Site-based Condition Attributes<\/h4>",
                             "type": "literal"
                         },
                         {
                             "source": "largeTreesScore",
                             "preLabel": "Large trees score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "aveCanopyHeightScore",
                             "preLabel": "Tree canopy height score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "edlRecruitmentScore",
                             "preLabel": "Recruitment of canopy species:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "treeCanopyCoverScoreAve",
                             "preLabel": "Tree canopy cover (%) score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "shrubCanopyCoverScoreN",
                             "preLabel": "Shrub layer cover (%):",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "cwdScore",
                             "preLabel": "Coarse woody debris score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "nativePlantSpeciesRichnessScore",
                             "preLabel": "Native plant species richness score (4 life forms):",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "nonNativePlantCoverScore",
                             "preLabel": "Non-native plant cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "nativePerennialGrassCoverScore",
                             "preLabel": "Native perennial grass cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "litterCoverScore",
                             "preLabel": "Litter cover score:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
@@ -2291,50 +2255,48 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Landscape Attributes</h4>",
+                            "source": "<h4>Landscape Attributes<\/h4>",
                             "type": "literal"
                         },
                         {
                             "source": "patchSizeScore",
                             "preLabel": "Patch size:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "connectivityScore",
                             "preLabel": "Connectivity:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         },
                         {
                             "source": "landscapeContextScore",
                             "preLabel": "Landscape context:",
-                            "type": "selectOne",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "selectOne"
                         },
                         {
                             "source": "distanceFromWaterScore",
                             "preLabel": "Distance from water:",
-                            "type": "number",
-                            "noEdit": "true"
+                            "noEdit": "true",
+                            "type": "number"
                         }
                     ],
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "siteBcScore",
-                            "preLabel": "Site BC Score:",
-                            "type": "number",
-                            "noEdit": "true"
-                        }
-                    ],
+                    "items": [{
+                        "source": "siteBcScore",
+                        "preLabel": "Site BC Score:",
+                        "noEdit": "true",
+                        "type": "number"
+                    }],
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

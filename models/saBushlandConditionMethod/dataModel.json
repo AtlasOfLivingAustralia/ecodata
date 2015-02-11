@@ -3,8 +3,8 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "regionId",
             "description": ".",
+            "name": "regionId",
             "constraints": [
                 "Adelaide and Mt. Lofty Ranges",
                 "Alinytljara Wilurara",
@@ -19,48 +19,48 @@
         },
         {
             "dataType": "text",
+            "description": ".",
             "name": "propertyId",
-            "description": ".",
             "validate": "required"
         },
         {
             "dataType": "text",
+            "description": ".",
             "name": "propertyName",
-            "description": ".",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "name": "propertyLocation",
-            "description": "."
+            "description": ".",
+            "name": "propertyLocation"
         },
         {
             "dataType": "text",
+            "description": ".",
             "name": "assessmentAreaId",
-            "description": ".",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "name": "recordedBy",
             "description": ".",
+            "name": "recordedBy",
             "validate": "required"
         },
         {
             "dataType": "number",
-            "name": "assessmentUnitSize",
             "description": ".",
+            "name": "assessmentUnitSize",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "patchSize",
             "description": ".",
+            "name": "patchArea",
             "validate": "required,min[0]"
         },
         {
             "title": "Structural Diversity A - Ground Cover",
-            "dataType": "matrix",
+            "dataType": "list",
             "name": "structuralDiversityA",
             "columnValues": "groundCoverValues",
             "columns": [
@@ -287,12 +287,11 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "<h3>Assessment Area Description</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h3>Assessment Area Description<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -300,236 +299,290 @@
                 {
                     "items": [
                         {
-                            "source": "replace",
-                            "preLabel": "placeholder",
+                            "source": "regionId",
+                            "preLabel": "Region::",
                             "type": "selectOne"
+                        },
+                        {
+                            "source": "propertyId",
+                            "preLabel": "Property name:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "propertyLocation",
+                            "preLabel": "Property location:",
+                            "type": "textarea"
                         }
                     ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "assessmentAreaId",
+                            "preLabel": "Assessment Area Id:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "assessmentUnitArea",
+                            "preLabel": "Assessment area (Ha.):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "patchArea",
+                            "preLabel": "Area of patch (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "recordedBy",
+                            "preLabel": "Recorded by:",
+                            "type": "text"
+                        }
+                    ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
-
         {
-            "items": [
-                {
-                    "source": "<h4>Part A: Vegetation Structure</h4>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Part A: Vegetation Structure<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Part B: Landscape Description<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Part C: Disturbance History<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<hr><h3>Condition Indicator 1: Plant Species Diversity<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Condition Indicator 2: Weed Abundance and Threat<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Weed Abundance and Threat - Score Sheet<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Weed Abundance and Threat - Red Alert Weeds<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Condition Indicator 3: Structural Diversity<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Structural Diversity A - Ground Cover<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
+                    "items": [{
+                        "source": "<h4>Structural Diversity A: Ground Cover<\/h4>",
+                        "computed": null,
+                        "type": "literal"
+                    }],
+                    "computed": null,
+                    "type": "row"
+                },
+                {
+                    "footer": {"rows": [{"columns": [
                         {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Part B: Landscape Description</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
+                            "colspan": 2,
+                            "source": "<strong>Ground Cover Score<\/strong><br><small><i>(Sum of Total Ground Cover Rating and Total Bare Ground Rating)<\/i><\/small>",
+                            "align": "right",
+                            "computed": null,
+                            "type": "literal"
+                        },
                         {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Part C: Disturbance History</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
+                            "source": "groundCoverScore",
+                            "computed": {
+                                "operation": "sum",
+                                "dependents": [{
+                                    "source": [
+                                        "totalGroundCoverRating",
+                                        "totalBareGroundRating"
+                                    ],
+                                    "fromMatrix": "structuralDiversityA"
+                                }]
+                            },
+                            "type": "number"
+                        },
                         {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<hr><h3>Condition Indicator 1: Plant Species Diversity</h3>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 2: Weed Abundance and Threat</h3>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Weed Abundance and Threat - Score Sheet</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Weed Abundance and Threat - Red Alert Weeds</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 3: Structural Diversity</h3>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Structural Diversity A - Ground Cover</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Structural Diversity A: Ground Cover</h4>",
+                            "source": "",
                             "computed": null,
                             "type": "literal"
                         }
-                    ],
-                    "type": "row"
-                },
-
-                {
+                    ]}]},
                     "source": "structuralDiversityA",
+                    "computed": null,
                     "columns": [
                         {
                             "dataType": "text",
                             "title": "Ground cover components",
                             "source": "groundCoverComponents",
-                            "width": "20%"
+                            "width": "20%",
+                            "type": "text"
                         },
                         {
                             "dataType": "number",
                             "title": "Est. % ground cover",
                             "source": "estPercentCover",
-                            "width": "10%"
+                            "width": "10%",
+                            "type": "number"
                         },
                         {
                             "dataType": "selectOne",
                             "title": "Total ground cover rating",
                             "source": "totalCoverRating",
-                            "width": "10%"
+                            "width": "10%",
+                            "type": "number"
                         },
                         {
                             "dataType": "textarea",
                             "title": "Comments",
                             "source": "notesA",
-                            "width": "60%"
+                            "width": "60%",
+                            "type": "text"
                         }
                     ],
+                    "class": "output-section",
+                    "type": "table",
                     "rows": [
                         {
                             "title": "Leaf Litter",
@@ -559,125 +612,76 @@
                             "title": "Total bare ground rating",
                             "source": "totalBareGroundRating"
                         }
-                    ],
-                    "footer": {
-                        "rows": [
-                            {
-                                "columns": [
-                                    {
-                                        "colspan": 2,
-                                        "source": "<strong>Ground Cover Score</strong><br><small><i>(Sum of Total Ground Cover Rating and Total Bare Ground Rating)</i></small>",
-                                        "align": "right",
-                                        "computed": null,
-                                        "type": "literal"
-                                    },
-                                    {
-                                        "source": "groundCoverScore",
-                                        "computed": {
-                                            "operation": "sum",
-                                            "dependents": [
-                                                {
-                                                    "source": [
-                                                        "totalGroundCoverRating",
-                                                        "totalBareGroundRating"
-                                                    ],
-                                                    "fromMatrix": "structuralDiversityA"
-                                                }
-                                            ]
-                                        },
-                                        "type": "number"
-                                    },
-                                    {
-                                        "source": "",
-                                        "computed": null,
-                                        "type": "literal"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
-                    "class": "output-section",
-                    "type": "table"
+                    ]
                 }
             ],
-            "type": "row",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Structural Diversity B - Plant Life Forms</h4>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Structural Diversity B - Plant Life Forms<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "<h4>Structural Diversity B: Plant Life Forms</h4>",
-                            "computed": null,
-                            "type": "literal"
-                        }
-                    ],
+                    "items": [{
+                        "source": "<h4>Structural Diversity B: Plant Life Forms<\/h4>",
+                        "computed": null,
+                        "type": "literal"
+                    }],
+                    "computed": null,
                     "type": "row"
                 },
                 {
-                    "footer": {
-                        "rows": [
-                            {
-                                "columns": [
-                                    {
-                                        "source": "<strong>No. of Plant forms Observed</strrong>",
-                                        "computed": null,
-                                        "align": "right",
-                                        "type": "literal"
-                                    },
-                                    {
-                                        "source": "noOfPlantForms",
-                                        "computed": {
-                                            "operation": "sum",
-                                            "dependents": [
-                                                {
-                                                    "source": "present",
-                                                    "fromMatrix": "structuralDiversityB"
-                                                }
-                                            ]
-                                        },
-                                        "type": "number"
-                                    },
-                                    {
-                                        "source": "<strong>Plant Life forms Score</strong><br><small><i>(Total of cover ratings)</i></small>",
-                                        "computed": null,
-                                        "align": "right",
-                                        "type": "literal"
-                                    },
-                                    {
-                                        "source": "plantLifeFormsScore",
-                                        "computed": {
-                                            "operation": "sum",
-                                            "dependents": [
-                                                {
-                                                    "source": "canopyCoverRating",
-                                                    "fromMatrix": "structuralDiversityB"
-                                                }
-                                            ]
-                                        },
-                                        "type": "number"
-                                    },
-                                    {
-                                        "source": "",
-                                        "computed": null,
-                                        "type": "literal"
-                                    }
-                                ]
-                            }
-                        ]
-                    },
+                    "footer": {"rows": [{"columns": [
+                        {
+                            "source": "<strong>No. of Plant forms Observed<\/strrong>",
+                            "computed": null,
+                            "align": "right",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "noOfPlantForms",
+                            "computed": {
+                                "operation": "sum",
+                                "dependents": [{
+                                    "source": "present",
+                                    "fromMatrix": "structuralDiversityB"
+                                }]
+                            },
+                            "type": "number"
+                        },
+                        {
+                            "source": "<strong>Plant Life forms Score<\/strong><br><small><i>(Total of cover ratings)<\/i><\/small>",
+                            "computed": null,
+                            "align": "right",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "plantLifeFormsScore",
+                            "computed": {
+                                "operation": "sum",
+                                "dependents": [{
+                                    "source": "canopyCoverRating",
+                                    "fromMatrix": "structuralDiversityB"
+                                }]
+                            },
+                            "type": "number"
+                        },
+                        {
+                            "source": "",
+                            "computed": null,
+                            "type": "literal"
+                        }
+                    ]}]},
                     "title": "Ground Cover Table:",
                     "source": "structuralDiversityB",
+                    "computed": null,
                     "columns": [
                         {
                             "dataType": "text",
@@ -710,6 +714,8 @@
                             "width": "50%"
                         }
                     ],
+                    "class": "output-section",
+                    "type": "grid",
                     "rows": [
                         {
                             "title": "Tall Trees > 15 m",
@@ -783,281 +789,247 @@
                             "title": "Ferns",
                             "source": "ferns"
                         }
-                    ],
-                    "class": "output-section",
-                    "type": "grid"
+                    ]
                 }
             ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 4: Regeneration</h3>",
-                    "type": "literal"
-                }
-            ],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 5: Tree and Shrub Health</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h3>Condition Indicator 4: Regeneration<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Indicators 5 & 6 - Tree Map</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Indicator 5: Tree Health</h4>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h3>Condition Indicator 5: Tree and Shrub Health<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 6: Tree Habitat Features</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Indicators 5 & 6 - Tree Map<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 2: Weed Abundance and Threat</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 7: Feral Animals</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Indicator 5: Tree Health<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Feral Animal Abundance</h4>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Feral Animal Frequency</h4>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h3>Condition Indicator 6: Tree Habitat Features<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 8: Total Grazing Pressure</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h3>Condition Indicator 9: Fauna species Diversity</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h3>Condition Indicator 2: Weed Abundance and Threat<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<hr><h3>Condition Indicator 10: Bushland Degradation Risk</h3>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "replace",
-                            "preLabel": "placeholder",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "type": "row",
-            "class": "output-section"
+            "items": [{
+                "source": "<h3>Condition Indicator 7: Feral Animals<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Feral Animal Abundance<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Feral Animal Frequency<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Condition Indicator 8: Total Grazing Pressure<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h3>Condition Indicator 9: Fauna species Diversity<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<hr><h3>Condition Indicator 10: Bushland Degradation Risk<\/h3>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "source": "replace",
+                    "computed": null,
+                    "preLabel": "placeholder",
+                    "type": "selectOne"
+                }],
+                "computed": null,
+                "type": "col"
+            }],
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

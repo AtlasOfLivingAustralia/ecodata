@@ -210,22 +210,12 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Large Trees</h4>",
+                            "source": "<h4>Large Trees<\/h4>",
                             "type": "literal"
                         },
                         {
                             "source": "numberOfLargeTrees",
-                            "preLabel": "Number of trees observed:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "largeTreesBenchmarkDbh",
-                            "preLabel": "Benchmark large trees DBH:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "largeTreesPerHaBenchmark",
-                            "preLabel": "Benchmark No. of large trees/Ha:",
+                            "preLabel": "Number of trees >= benchmark DBH",
                             "type": "number"
                         },
                         {
@@ -244,7 +234,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Tree Canopy Cover</h4>",
+                            "source": "<h4>Tree Canopy Cover<\/h4>",
                             "type": "literal"
                         },
                         {
@@ -266,41 +256,32 @@
                     "type": "col"
                 }
             ],
-            "type":  "row",
-            "class": "output-section"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Understory life forms</h4>",
-                    "type": "literal"
-                }
-            ],
+            "class": "output-section",
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "colspan": "4",
-                                "source": "",
-                                "type": "literal"
-                            },
-                            {
-                                "source": "<b>Understorey Score</b>",
-                                "type": "literal"
-                            },
-                            {
-                                "source": "understoreyScore",
-                                "type": "number"
-                            }
-                        ]
-                    }
-                ]
-            },
-            "title": "<h4>Understory life forms</h4>",
+            "items": [{
+                "source": "<h4>Understory life forms<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": "4",
+                    "source": "",
+                    "type": "literal"
+                },
+                {
+                    "source": "<b>Understorey Score<\/b>",
+                    "type": "literal"
+                },
+                {
+                    "source": "understoreyScore",
+                    "type": "number"
+                }
+            ]}]},
             "source": "underStoreyLifeforms",
             "columns": [
                 {
@@ -335,15 +316,15 @@
                 }
             ],
             "userAddedRows": true,
-            "type": "table",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "table"
         },
         {
             "items": [
                 {
                     "items": [
                         {
-                            "source": "<h4>Lack of Weeds</h4>",
+                            "source": "<h4>Lack of Weeds<\/h4>",
                             "type": "literal"
                         },
                         {
@@ -367,7 +348,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Organic Litter</h4>",
+                            "source": "<h4>Organic Litter<\/h4>",
                             "type": "literal"
                         },
                         {
@@ -386,7 +367,7 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Logs</h4>",
+                            "source": "<h4>Logs<\/h4>",
                             "type": "literal"
                         },
                         {
@@ -408,8 +389,8 @@
                     "type": "col"
                 }
             ],
-            "type": "section",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "section"
         }
     ]
 }
