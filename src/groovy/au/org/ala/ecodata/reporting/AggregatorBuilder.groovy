@@ -41,19 +41,19 @@ class AggregatorBuilder {
 
         def params = [label:label, group:group]
         switch (aggregationType) {
-            case Score.AGGREGATION_TYPE.SUM:
+            case Score.AGGREGATION_TYPE.SUM.name():
                 return new Aggregators.SummingAggegrator(params)
                 break;
-            case Score.AGGREGATION_TYPE.COUNT:
+            case Score.AGGREGATION_TYPE.COUNT.name():
                 return new Aggregators.CountingAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.AVERAGE:
+            case Score.AGGREGATION_TYPE.AVERAGE.name():
                 return new Aggregators.AverageAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.HISTOGRAM:
+            case Score.AGGREGATION_TYPE.HISTOGRAM.name():
                 return new Aggregators.HistogramAggregator(params)
                 break;
-            case Score.AGGREGATION_TYPE.SET:
+            case Score.AGGREGATION_TYPE.SET.name():
                 return new Aggregators.SetAggregator(params)
                 break;
             default:
@@ -68,32 +68,31 @@ class AggregatorBuilder {
      * supplied grouping specification.
      * @param groupingSpec specifies the grouping criteria.  Should be of the format:
      * {
+     *     type : String <one of 'discrete', 'histogram', 'date', 'filter'>
      *     entity : String <one of 'activity', 'output', '*'>
      *     property : String <the property of the entity used to determine the group.  Unused if the entity is '*'>
+     *     buckets: List<String> list of values defining the buckets for a histogram or date group.  Each bucket will be inclusive of
+     *     the first value and exclusive of the next.
      * }
      * @return
      */
-    Closure createGroupingFunction(Score score, groupingSpec = null) {
+    ReportGroups.GroupingStrategy groupingStategyFor(groupingSpec) {
 
         if (!groupingSpec) {
-            groupingSpec = score.defaultGrouping()
+            return new ReportGroups.NotGrouped()
         }
+
         final String property = groupingSpec.property
 
         switch (groupingSpec.entity) {
 
             case 'activity':
-                return buildClosure(property, 'activity')
-            case 'output':
-                def start = 'data'
-                if (score.listName) {
-                    start = ''
-                }
-                return buildClosure(property, start)
-            case 'site':
-                return buildClosure(property, 'site')
             case 'project':
-                return buildClosure(property, 'project')
+            case 'site':
+                property = groupingSpec.entity+'.'+property
+                break
+            case 'output':
+                break // aggregation is done on outputs at the moment.
             case '*':
                 return {""}  // No grouping required.
             default:
@@ -101,35 +100,52 @@ class AggregatorBuilder {
         }
 
 
+        return buildGroupingStrategy(property, groupingSpec)
     }
 
+    static Map cachedStrategies = [:]
 
-    static Map cachedClosures = [:]
-    def buildClosure(String property, String start) {
+    private String buildCacheKey(String nestedProperty, groupingSpec) {
+        def key = groupingSpec.type + ':' + nestedProperty
 
-        def key = property+":"+start
-        if (cachedClosures.containsKey(key)) {
-            return cachedClosures[key]
+        if (groupingSpec.filterBy) {
+            key += ':'+groupingSpec.filterBy
         }
-        def closure
-        if (!property.contains('.')) {
-            closure = { row -> return start?row[start][property]:row[property]}
+        if (groupingSpec.buckets) {
+            key += ':'+groupingSpec.buckets.join(',')
         }
-        else {
-            def parts = property.split('\\.')
-            closure = { row ->
+        key
+    }
 
-                def data = start?row[start]:row
-                for (String part : parts) {
-                    if (!data) {
-                        return null
-                    }
-                    data = data[part]
-                }
-                return data
-            }
+    def buildGroupingStrategy(String nestedProperty, groupingSpec) {
+
+        def key = buildCacheKey(nestedProperty, groupingSpec)
+            if (cachedStrategies.containsKey(key)) {
+            return cachedStrategies[key]
         }
-        cachedClosures.put(key, closure)
-        return closure
+
+        ReportGroups.GroupingStrategy strategy
+
+
+        switch (groupingSpec.type) {
+            case 'histogram':
+                strategy = new ReportGroups.HistogramGroup(nestedProperty, groupingSpec.buckets)
+                break
+            case 'date':
+                strategy = new ReportGroups.DateGroup(nestedProperty, groupingSpec.buckets, groupingSpec.format)
+                break
+            case 'filter':
+                strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterBy)
+                break
+            case 'discrete':
+            default:
+                strategy = new ReportGroups.DiscreteGroup(nestedProperty)
+                break
+
+        }
+
+        cachedStrategies.put(key, strategy)
+
+        return strategy
     }
 }

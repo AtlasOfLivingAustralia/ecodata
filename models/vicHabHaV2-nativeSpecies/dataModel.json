@@ -1,0 +1,1035 @@
+{
+    "modelName": "vicHabHaV2-nativeSpecies",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "nativeLifeFormsCover",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "description": "ET - Eucalypt tree (Eucalypts and allied genera > 5m tall (not Mallee Trees))",
+                    "name": "lifeFormET",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "T - Non-eucalypt tree (Woody plants greater than 5 m tall (not eucalypts), that may be canopy or understorey trees.)",
+                    "name": "lifeFormT",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "MT - Mallee tree (Eucalypts with multiple stems arising from a lignotuber.)",
+                    "name": "lifeFormMT",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "S - Shrub (Upright woody plants up to 5m tall (includes immature eucalypts).)",
+                    "name": "lifeFormS",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "PS - Prostrate shrub (Prostrate woody species (stems grow horizontally), usually less than 40 cm in height.)",
+                    "name": "lifeFormPS",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "F - Forb (Non-woody dicot plants (generally not with grass-like leaves), excludes carpet-forming or prostrate forbs.)",
+                    "name": "lifeFormF",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "CPF - Carpet-forming or prostrate forb (Non-woody dicot plants (generally non grass-like leaves) that are prostrate or carpet-forming forbs. Many species are ephemeral.)",
+                    "name": "lifeFormCPF",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "TG - Tussock grass (Grasses that form discrete tussocks.)",
+                    "name": "lifeFormTG",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "NTG - Non-tussock grass (Grasses that scramble, climb, spread in mats or hummocks by rhizomes or stolons.)",
+                    "name": "lifeFormNTG",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "PNM - Perennial non-grass monocot (Monocot plants with perennial foliage that are not grasses. Leaves are usually coarse-textured, narrow and strap-like. Includes many sedges, rushes, large lilies and large monocots that have woody bases or trunks such as grass trees and palms.)",
+                    "name": "lifeFormPNM",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "EGM - Ephemeral or geophyte monocot (Monocot plants with narrow, strap-like leaves that appear seasonally. Includes annual species and plants which emerge annually from underground e.g. many terrestrial orchids and lilies.)",
+                    "name": "lifeFormEGM",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "GF - Ground fern (Ferns without a trunk, growing on the ground.)",
+                    "name": "lifeFormGF",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "TF - Tree fern (Ferns with a trunk.)",
+                    "name": "lifeFormTF",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "EP - Epiphyte (Non-parasitic plants that grow entirely upon other plants (root system not in the soil or water). Includes numerous ferns. Excludes Aerial Parasites.)                    ",
+                    "name": "lifeFormEP",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "CV - Canopy  (Woody vines or lianas that ascend to the tree canopy.)",
+                    "name": "lifeFormCV",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "SC - Small climber (Small climbing or twining plants which generally use other understorey species for support.)",
+                    "name": "lifeFormSC",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "AP - Aerial parasite (Parasitic plants that grow from the trunk, branches or foliage of other plants, with no root system in the soil or water.)                    ",
+                    "name": "lifeFormAP",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "L - Lichen (Organisms composed of fungus and green or blue-green algae. Includes crustose (crust-forming) and foliose (leaf-like) lichens. May grow on the ground, rocks, logs or tree trunks.)                    ",
+                    "name": "lifeFormL",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "B - Bryophyte (Small non-flowering, non- vascular green plants (Includes mosses, liverworts and hornworts). May grow on the ground, rocks, logs or tree trunks.)                    ",
+                    "name": "lifeFormB",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Log - Log (Dead trunks or branches at least 10cm in diameter either detached from living plants and lying on the ground or dead stumps <1.3m)",
+                    "name": "lifeFormLog",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "R - Rock (Exposed bare rock of at least 10 cm x 10 cm (not covered in living organisms). Smaller stones are treated as bare ground.)",
+                    "name": "lifeFormR",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "totalNativeCoverPercent",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [
+                            "lifeFormET",
+                            "lifeFormT",
+                            "lifeFormMT",
+                            "lifeFormS",
+                            "lifeFormPS",
+                            "lifeFormF",
+                            "lifeFormCPF",
+                            "lifeFormTG",
+                            "lifeFormNTG",
+                            "lifeFormPNM",
+                            "lifeFormEGM",
+                            "lifeFormGF",
+                            "lifeFormTF",
+                            "lifeFormEP",
+                            "lifeFormCV",
+                            "lifeFormSC",
+                            "lifeFormAP",
+                            "lifeFormL",
+                            "lifeFormB",
+                            "lifeFormLog",
+                            "lifeFormR"
+                        ]
+                    },
+                    "validate": "min[0],max[100]"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "nativeSpeciesStructure",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpET",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpT",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpMT",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpS",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpPS",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpF",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpCPF",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpTG",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpNTG",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpPNM",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpEGM",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpGF",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpTF",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpEP",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpCV",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpSC",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpAP",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpL",
+                    "validate": "min[0],max[1]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "lifeFormSpB",
+                    "validate": "min[0],max[1]"
+                }
+            ],
+            "userAddedRows": "true"
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountET",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpET",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountT",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpT",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountMT",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpMT",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountS",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpS",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountPS",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpPS",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountF",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpF",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountCPF",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpCPF",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountTG",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpTG",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountNTG",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpNTG",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountPNM",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpPNM",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountEGM",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpEGM",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountGF",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpGF",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountTF",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpTF",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountEP",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpEP",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountCV",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpCV",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountSC",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpSC",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountAP",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpAP",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountL",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpL",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "speciesCountB",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "lifeFormSpB",
+                    "fromList": "nativeSpeciesStructure"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalSpeciesCount",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "totalNativeCoverPercent",
+                    "fromList": "nativeLifeFormsCover"
+                }
+            }
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalLifeFormsCount",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "totalNativeCoverPercent",
+                    "fromList": "nativeLifeFormsCover"
+                }
+            }
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Life Forms<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "nativeLifeFormsCover",
+            "columns": [
+                {
+                    "title": "% Cover estimate by Life Form",
+                    "width": "10%",
+                    "type": "literal"
+                },
+                {
+                    "title": "ET",
+                    "source": "lifeFormET",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "T",
+                    "source": "lifeFormT",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "MT",
+                    "source": "lifeFormMT",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "S",
+                    "source": "lifeFormS",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "PS",
+                    "source": "lifeFormPS",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "F",
+                    "source": "lifeFormF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "CPF",
+                    "source": "lifeFormCPF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "TG",
+                    "source": "lifeFormTG",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "NTG",
+                    "source": "lifeFormNTG",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "PNM",
+                    "source": "lifeFormPNM",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "EGM",
+                    "source": "lifeFormEGM",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "GF",
+                    "source": "lifeFormGF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "TF",
+                    "source": "lifeFormTF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "EP",
+                    "source": "lifeFormEP",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "CV",
+                    "source": "lifeFormCV",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "SC",
+                    "source": "lifeFormSC",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "AP",
+                    "source": "lifeFormAP",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "L",
+                    "source": "lifeFormL",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "B",
+                    "source": "lifeFormB",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "Log",
+                    "source": "lifeFormLog",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "R",
+                    "source": "lifeFormR",
+                    "width": "4%",
+                    "type": "number"
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "<h4>Species List<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "speciesCount",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeForm",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountET",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpET",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountT",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpT",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountMT",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpMT",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountS",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpS",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountPS",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpPS",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountF",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpF",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountCPF",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpCPF",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountTG",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpTG",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountNTG",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpNTG",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountPNM",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpPNM",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountEGM",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpEGM",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountGF",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpGF",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountTG",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpTG",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountEP",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpEP",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountCV",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpCV",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountSC",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpSC",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountAP",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpAP",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountL",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpL",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "speciesCountB",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": {
+                            "source": "lifeFormSpB",
+                            "fromList": "nativeSpeciesStructure"
+                        }
+                    },
+                    "type": "number"
+                }
+            ]}]},
+            "source": "nativeSpeciesStructure",
+            "columns": [
+                {
+                    "title": "Species name",
+                    "source": "species",
+                    "width": "10%",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "ET",
+                    "source": "lifeFormSpET",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "T",
+                    "source": "lifeFormSpT",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "MT",
+                    "source": "lifeFormSpMT",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "S",
+                    "source": "lifeFormSpS",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "PS",
+                    "source": "lifeFormSpPS",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "F",
+                    "source": "lifeFormSpF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "CPF",
+                    "source": "lifeFormSpCPF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "TG",
+                    "source": "lifeFormSpTG",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "NTG",
+                    "source": "lifeFormSpNTG",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "PNM",
+                    "source": "lifeFormSpPNM",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "EGM",
+                    "source": "lifeFormSpEGM",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "GF",
+                    "source": "lifeFormSpGF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "TF",
+                    "source": "lifeFormSpTF",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "EP",
+                    "source": "lifeFormSpEP",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "CV",
+                    "source": "lifeFormSpCV",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "SC",
+                    "source": "lifeFormSpSC",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "AP",
+                    "source": "lifeFormSpAP",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "L",
+                    "source": "lifeFormSpL",
+                    "width": "4%",
+                    "type": "number"
+                },
+                {
+                    "title": "B",
+                    "source": "lifeFormSpB",
+                    "width": "4%",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": "true",
+            "type": "table"
+        }
+    ]
+}

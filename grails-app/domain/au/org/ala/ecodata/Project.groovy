@@ -12,11 +12,13 @@ class Project {
     static mapping = {
         name index: true
         projectId index: true
+		promoteOnHomepage index: true
         version false
     }
 
     ObjectId id
-    String projectId  // required
+    String projectId      // same as collectory dataProvider id
+    String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
     String externalId
     String name  // required
@@ -26,6 +28,7 @@ class Project {
     String groupId
     String groupName
     String organisationName
+    String organisationId
     Date plannedStartDate
     Date plannedEndDate
     Date actualStartDate
@@ -40,7 +43,16 @@ class Project {
 	Map risks
 	Date dateCreated
     Date lastUpdated
+	String promoteOnHomepage = 'no'
 	
+    boolean isCitizenScience
+    String projectType    // survey, works
+    String aim, keywords, urlAndroid, urlITunes, urlWeb
+    String getInvolved, scienceType, projectSiteId
+    double funding
+    String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
+    String userCreated, userLastModified
+
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
@@ -61,5 +73,22 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
+        promoteOnHomepage nullable:true
+        organisationId nullable:true
+        projectType nullable:true    // nullable for backward compatibility; survey, works
+        dataResourceId nullable:true // nullable for backward compatibility
+        aim nullable:true
+        keywords nullable:true
+        urlAndroid nullable:true
+        urlITunes nullable:true
+        urlWeb nullable:true
+        getInvolved nullable:true
+        scienceType nullable:true
+        orgIdGrantee nullable:true
+        orgIdSponsor nullable:true
+        orgIdSvcProvider nullable:true
+        projectSiteId nullable:true // nullable for backward compatibility
+        userCreated nullable:true
+        userLastModified nullable:true
     }
 }

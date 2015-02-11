@@ -52,6 +52,7 @@
             "description": "If applicable, enter reasons for not completing / attaching Project Sponsor Survey.",
             "name": "projectSponsorSurveyComments"
         },
+
         {
             "dataType": "text",
             "description": "Enter the name of the person submitting this report.",
@@ -77,13 +78,15 @@
     ],
     "viewModel": [
         {
-            "items": [{
-                "source": "projectCompletionDate",
-                "preLabel": "Project completion date:",
-                "type": "date"
-            }],
-            "class": "output-section",
-            "type": "row"
+            "items": [
+                {
+                    "source": "projectCompletionDate",
+                    "preLabel": "Project completion date:",
+                    "type": "date"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
         },
         {
             "items": [
@@ -102,16 +105,18 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "activityDataComments",
-                        "preLabel": "Comments:",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "activityDataComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "type": "row",
+            "class": "output-section"
         },
         {
             "items": [
@@ -130,16 +135,18 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "participantSurveyComments",
-                        "preLabel": "Comments:",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "participantSurveyComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "type": "row",
+            "class": "output-section"
         },
         {
             "items": [
@@ -158,24 +165,28 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "projectSponsorSurveyComments",
-                        "preLabel": "Comments:",
-                        "type": "textarea"
-                    }],
+                    "items": [
+                        {
+                            "source": "projectSponsorSurveyComments",
+                            "preLabel": "Comments:",
+                            "type": "textarea"
+                        }
+                    ],
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "type": "row",
+            "class": "output-section"
         },
         {
             "items": [
                 {
-                    "items": [{
-                        "source": "<h4>Declaration<\/h4><h5>I affirm that I have completed all of the requested information and that the information contained in this report is full and accurate to the best of my knowledge.<\/h5>",
-                        "type": "literal"
-                    }],
+                    "items": [
+                        {
+                            "source": "<h4>Declaration</h4><h5>I affirm that I have completed all of the requested information and that the information contained in this report is full and accurate to the best of my knowledge.</h5>",
+                            "type": "literal"
+                        }
+                    ],
                     "type": "col"
                 },
                 {
@@ -208,8 +219,8 @@
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "type": "row",
+            "class": "output-section"
         }
     ]
 }

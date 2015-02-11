@@ -59,6 +59,7 @@
                 ]
             }
         ],
+        "activities": [],
         "reportingPeriodAlignedToCalendar": true
     },
     {
@@ -118,6 +119,7 @@
                 "themes": []
             }
         ],
+        "activities": [],
         "reportingPeriodAlignedToCalendar": true
     },
     {
@@ -127,7 +129,8 @@
         "subprograms": [{
             "name": "Cumberland Plain Projects",
             "themes": []
-        }]
+        }],
+        "activities": []
     },
     {
         "reportingPeriod": "3",
@@ -142,6 +145,24 @@
                 {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
             ]
         }],
+        "activities": [
+            "Green Army - Monthly project status report",
+            "Green Army - Quarterly project report",
+            "Debris Removal",
+            "Fencing",
+            "Pest Management",
+            "Weed Treatment",
+            "Site Preparation",
+            "Seed Collection",
+            "Revegetation",
+            "Public Access and Infrastructure",
+            "Plant Propagation",
+            "Heritage Conservation",
+            "Fire Management",
+            "Erosion Management",
+            "Water Management",
+            "Works Planning and Risk"
+        ],
         "reportingPeriodAlignedToCalendar": true
     },
     {
@@ -149,6 +170,7 @@
         "isMeritProgramme": true,
         "name": "20 Million Trees",
         "subprograms": [],
+        "activities": [],
         "reportingPeriodAlignedToCalendar": true
     },
     {
@@ -159,19 +181,81 @@
             "name": "Environmental Stewardship 1318",
             "themes": []
         }],
+        "activities": [],
         "reportingPeriodAlignedToCalendar": false
     },
     {
         "name": "None",
-        "subprograms": []
+        "subprograms": [],
+        "activities": []
     },
     {
         "reportingPeriod": "6",
         "isMeritProgramme": true,
         "name": "National Landcare Programme",
+        "subprograms": [
+            {
+                "name": "Regional Delivery",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            },
+            {
+                "name": "Local Programmes",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            },
+            {
+                "name": "Small Grants",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            },
+            {
+                "name": "20 Million Trees",
+                "themes": [
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            },
+            {
+                "name": "World Heritage",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            },
+            {
+                "name": "Regional Funding",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
+            }
+        ],
+        "activities": [],
+        "reportingPeriodAlignedToCalendar": true
+    },
+    {
+        "name": "Reef Trust",
         "subprograms": [{
-            "name": "Regional Delivery",
+            "name": "Reef Trust Phase 1 Investment",
             "themes": []
-        }]
+        }],
+        "activities": []
     }
 ]}

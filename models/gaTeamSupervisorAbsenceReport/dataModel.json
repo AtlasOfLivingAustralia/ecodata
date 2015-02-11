@@ -1,0 +1,221 @@
+{
+    "modelName": "Change or Absence of Team Supervisor",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "description": "Enter the date on which th.",
+            "name": "notificationDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "description": "Confirm whether all of the activity data for the project has been completed.",
+            "name": "absenceFromDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "description": "Confirm whether all of the activity data for the project has been completed.",
+            "name": "absenceToDate",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether it was necessary to replace the Team Supervisor during the period of absence.",
+            "name": "replacementRequired",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "description": "If applicable, enter reasons for not completing activity data for the project.",
+            "name": "replacementDate"
+        },
+        {
+            "dataType": "text",
+            "description": "Confirm whether the Project Sponsor for the project has completed a Project Sponsor Survey and that it has been attached to the project as a document.",
+            "name": "supervisorRemovedNotification",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "If applicable, enter reasons for not completing / attaching Project Sponsor Survey.",
+            "name": "supervisorRemovedDetails"
+        },
+
+        {
+            "dataType": "text",
+            "description": "Enter the name of the person submitting this report.",
+            "name": "supervisorAbsenceDetails"
+        },
+        {
+            "dataType": "text",
+            "description": "Enter the contact number for the person submitting this report.",
+            "name": "supervisorExitDetails"
+        },
+        {
+            "dataType": "text",
+            "description": "Enter the email address of the person submitting this report.",
+            "name": "supervisionAbsenceImpacts"
+        },
+        {
+            "dataType": "text",
+            "description": "Enter the date that this report was submitted.",
+            "name": "supervisionAlternateArrangements"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "notificationDate",
+                            "preLabel": "Notification date:",
+                            "type": "date"
+                        },
+                        {
+                            "source": "absenceFromDate",
+                            "preLabel": "Date of absence From:",
+                            "type": "date"
+                        },
+                        {
+                            "source": "absenceToDate",
+                            "preLabel": "Date of absence To:",
+                            "type": "date"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "replacementRequired",
+                            "preLabel": "Replacement required?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "replacementDate",
+                            "preLabel": "Date replaced:",
+                            "type": "date"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Provide details of the replacement of the team supervisor from one of the options below</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Team Supervisor was removed from the project for any reason.</h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "supervisorRemovedNotification",
+                            "preLabel": "Was prior notification provided to the Department?:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "supervisorRemovedDetails",
+                            "preLabel": "Details:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Team Supervisor is or will be absent from the project for more than 10 business days.</h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "supervisorAbsenceDetails",
+                            "preLabel": "Details:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Team Supervisor was otherwise unwilling to continue as a Team Supervisor.</h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "supervisorExitDetails",
+                            "preLabel": "Details:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h4>Provide details for any period this Project did not have a Team Supervisor</h4>",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "supervisionAbsenceImpacts",
+                            "preLabel": "Impacts to participants and/or to the Project:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "supervisionAlternateArrangements",
+                            "preLabel": "Arrangements that were put in place to continue Project activities:",
+                            "type": "textarea"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row",
+            "class": "output-section"
+        }
+    ]
+}

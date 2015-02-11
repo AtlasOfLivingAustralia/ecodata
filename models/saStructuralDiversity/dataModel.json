@@ -230,52 +230,42 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "<h4>Structural Diversity A: Ground Cover</h4>",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Structural Diversity A: Ground Cover<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "colspan": 2,
-                                "source": "<strong>Ground Cover Score</strong><br><small><i>(Sum of Total Ground Cover Rating and Total Bare Ground Rating)</i></small>",
-                                "align": "right",
-                                "computed": null,
-                                "type": "literal"
-                            },
-                            {
-                                "source": "groundCoverScore",
-                                "computed": {
-                                    "operation": "sum",
-                                    "dependents": [
-                                        {
-                                            "source": [
-                                                "totalGroundCoverRating",
-                                                "totalBareGroundRating"
-                                            ],
-                                            "fromMatrix": "structuralDiversityA"
-                                        }
-                                    ]
-                                },
-                                "type": "number"
-                            },
-                            {
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 2,
+                    "source": "<strong>Ground Cover Score<\/strong><br><small><i>(Sum of Total Ground Cover Rating and Total Bare Ground Rating)<\/i><\/small>",
+                    "align": "right",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "groundCoverScore",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [{
+                            "source": [
+                                "totalGroundCoverRating",
+                                "totalBareGroundRating"
+                            ],
+                            "fromMatrix": "structuralDiversityA"
+                        }]
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
             "source": "structuralDiversityA",
             "columns": [
                 {
@@ -337,67 +327,55 @@
             ]
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Structural Diversity B: Plant Life Forms</h4>",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Structural Diversity B: Plant Life Forms<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "footer": {
-                "rows": [
-                    {
-                        "columns": [
-                            {
-                                "source": "<strong>No. of Plant forms Observed</strrong>",
-                                "computed": null,
-                                "align": "right",
-                                "type": "literal"
-                            },
-                            {
-                                "source": "noOfPlantForms",
-                                "computed": {
-                                    "operation": "sum",
-                                    "dependents": [
-                                        {
-                                            "source": "present",
-                                            "fromMatrix": "structuralDiversityB"
-                                        }
-                                    ]
-                                },
-                                "type": "number"
-                            },
-                            {
-                                "source": "<strong>Plant Life forms Score</strong><br><small><i>(Total of cover ratings)</i></small>",
-                                "computed": null,
-                                "align": "right",
-                                "type": "literal"
-                            },
-                            {
-                                "source": "plantLifeFormsScore",
-                                "computed": {
-                                    "operation": "sum",
-                                    "dependents": [
-                                        {
-                                            "source": "canopyCoverRating",
-                                            "fromMatrix": "structuralDiversityB"
-                                        }
-                                    ]
-                                },
-                                "type": "number"
-                            },
-                            {
-                                "source": "",
-                                "computed": null,
-                                "type": "literal"
-                            }
-                        ]
-                    }
-                ]
-            },
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "<strong>No. of Plant forms Observed<\/strrong>",
+                    "computed": null,
+                    "align": "right",
+                    "type": "literal"
+                },
+                {
+                    "source": "noOfPlantForms",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [{
+                            "source": "present",
+                            "fromMatrix": "structuralDiversityB"
+                        }]
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "<strong>Plant Life forms Score<\/strong><br><small><i>(Total of cover ratings)<\/i><\/small>",
+                    "computed": null,
+                    "align": "right",
+                    "type": "literal"
+                },
+                {
+                    "source": "plantLifeFormsScore",
+                    "computed": {
+                        "operation": "sum",
+                        "dependents": [{
+                            "source": "canopyCoverRating",
+                            "fromMatrix": "structuralDiversityB"
+                        }]
+                    },
+                    "type": "number"
+                },
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
             "title": "Ground Cover Table:",
             "source": "structuralDiversityB",
             "columns": [

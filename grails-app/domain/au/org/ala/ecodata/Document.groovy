@@ -39,6 +39,7 @@ class Document {
 
     Date dateCreated
     Date lastUpdated
+	boolean isPrimaryProjectImage = false
 
     def isImage() {
         return DOCUMENT_TYPE_IMAGE == type
@@ -101,5 +102,6 @@ class Document {
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
+		isPrimaryProjectImage nullable: true
     }
 }

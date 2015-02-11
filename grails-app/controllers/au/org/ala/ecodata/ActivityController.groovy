@@ -6,17 +6,15 @@ import java.text.SimpleDateFormat
 
 class ActivityController {
 
-    def activityService, siteService
+    def activityService, siteService, commonService
     static final SCORES = 'scores'
     static final BRIEF = 'brief'
-
-    static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
     // for universal JSONP support.
     def asJson = { model ->
-        response.setContentType("application/json; charset=\"UTF-8\"")
+        response.setContentType("application/json;charset=UTF-8")
         model
     }
 
@@ -147,4 +145,45 @@ class ActivityController {
             render status:404, text: 'No such id'
         }
     }
+
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     *
+     * Dates are treated specially by this method - the properties "plannedStartDate" and "startDate" will be
+     * searched using greater than or equals, "plannedEndDate" and "endDate" will be searched using less than or
+     * equals.  This is to support range / stage based searching of activities.  Dates should be formatted as UTC.
+     *
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a list of the activities that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+
+        def startDate = null, endDate = null, planned = null
+        def dateProperty = searchCriteria.remove('dateProperty')
+        if (dateProperty && searchCriteria.startDate) {
+            def startDateStr = searchCriteria.remove('startDate')
+            startDate = commonService.parse(startDateStr)
+        }
+        if (dateProperty && searchCriteria.endDate) {
+            def endDateStr = searchCriteria.remove('endDate')
+            endDate = commonService.parse(endDateStr)
+        }
+
+        def activityList = activityService.search(searchCriteria, startDate, endDate, dateProperty, 'all')
+
+        asJson activities:activityList
+    }
+
 }

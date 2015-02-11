@@ -238,35 +238,32 @@ class AdminController {
     }
 
     /**
-     * Refreshes site metadata (geographical facets & geocodes) every site in the system.
+     * Refreshes site metadata (geographical facets & geocodes) for every site in the system.
      * @return {"result":"success"} if the operation is successful.
      */
     def reloadSiteMetadata() {
+
         def sites = siteService.list()
-        for (site in sites) {
-            def siteId = site.siteId
-            def centroid = site.extent?.geometry?.centre
-            if (centroid && centroid.size() == 2) {
+        def code = "success"
 
-                def longitude = centroid[0]
-                def latitude = centroid[1]
+        try {
+            def results = metadataService.getLocationMetadataForSites(sites)
 
-                try {
-                    def metadata = metadataService.getLocationMetadataForPoint(latitude, longitude)
-
-                    site.extent.geometry.putAll(metadata)
-                    siteService.update([extent: site.extent], siteId)
-                }
-                catch (Exception e) {
-                    log.error("Unable to update metadata for site: ${siteId}", e)
+            log.info("Initiating database update..")
+            results.eachWithIndex { site, index ->
+                siteService.update([extent: site.extent], site.siteId, false)
+                if(index > 0 && (index % 200) == 0) {
+                    log.debug("(${index+1}) records updated in db..")
                 }
             }
-            else {
-                log.error("Unable to update metadata for site: ${siteId}, no centroid exists.")
-            }
-
+            log.info("Database updated completed.")
         }
-        def result = [result: "success"]
+        catch(Exception e) {
+            log.error("Unable to complete the operation ", e)
+            code = "error"
+        }
+
+        def result = [result: "${code}"]
         render result as grails.converters.JSON
     }
 

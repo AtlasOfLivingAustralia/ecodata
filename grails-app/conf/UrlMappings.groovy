@@ -7,13 +7,18 @@ class UrlMappings {
             action = 'activitiesForProject'
         }
 
+		"/ws/project/promoted" {
+			controller = 'project'
+			action = 'promoted'
+		}
+
         "/ws/assessment/$id?" {
             controller = 'activity'
             type = 'assessment'
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
-        "/ws/$controller/$id?" {
+        "/ws/$controller/$id?(.$format)?" {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
@@ -36,12 +41,14 @@ class UrlMappings {
             action = [POST:'createPoi']
         }
 
+        "/ws/$controller/search" {
+            action = [POST:"search"]
+        }
 
-
-		"/ws/$controller/$action?/$id?" {
+		"/ws/$controller/$action?/$id?(.$format)?" {
 		}
 
-		"/$controller/$action?/$id?" {
+		"/$controller/$action?/$id?(.$format)?" {
 		}
 
         "/ws/documentation/$version" {
