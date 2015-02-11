@@ -3,8 +3,8 @@
     "dataModel": [
         {
             "dataType": "list",
-            "name": "participants",
             "allowHeaderWrap": "true",
+            "name": "participants",
             "columns": [
                 {
                     "dataType": "text",
@@ -83,7 +83,7 @@
         {
             "items": [{
                 "source": "Please list the details of each participant on the project during the reporting period.",
-
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -91,13 +91,15 @@
         {
             "footer": {"rows": [{"columns": [
                 {
-                    "source": "",
                     "colspan": 5,
+                    "source": "",
+                    "computed": null,
                     "type": "literal"
                 },
                 {
-                    "source": "Total No. of agreed hours:",
                     "colspan": 2,
+                    "source": "Total No. of agreed hours:",
+                    "computed": null,
                     "type": "literal"
                 },
                 {
@@ -166,7 +168,6 @@
             ],
             "class": "output-section",
             "userAddedRows": true,
-            "hearderWrap": true,
             "type": "table"
         }
     ]
