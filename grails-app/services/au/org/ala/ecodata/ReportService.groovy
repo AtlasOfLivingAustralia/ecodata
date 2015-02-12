@@ -44,7 +44,6 @@ class ReportService {
     def findScoresByLabel(List labels) {
         def scores = []
         metadataService.activitiesModel().outputs?.each{
-            println it
             Score.outputScores(it).each { score ->
                 if (score.label in labels) {
                     scores << [score:score]
@@ -57,7 +56,6 @@ class ReportService {
     def findScoresByCategory(String category) {
         def scores = []
         metadataService.activitiesModel().outputs?.each{
-            println it
             Score.outputScores(it).each { score ->
                 if (score.category == category) {
                     scores << [score:score]
