@@ -226,6 +226,7 @@
             "footer": {"rows": [{"columns": [
                 {
                     "source": "Total Seedlings Planted:",
+                    "computed": null,
                     "type": "literal"
                 },
                 {
@@ -235,6 +236,7 @@
                 },
                 {
                     "source": "Total Seed Sown (Kg):",
+                    "computed": null,
                     "type": "literal"
                 },
                 {
@@ -245,6 +247,7 @@
                 {
                     "colspan": 3,
                     "source": "",
+                    "computed": null,
                     "type": "literal"
                 }
             ]}]},
@@ -255,18 +258,21 @@
                     "title": "Species:",
                     "source": "species",
                     "width": "20%",
+                    "computed": null,
                     "type": "autocomplete"
                 },
                 {
                     "title": "No. Planted:",
                     "source": "numberPlanted",
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
                     "title": "Seed Sown (Kg):",
                     "source": "seedSownKg",
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
@@ -297,6 +303,7 @@
                     "title": "Cost / unit ($)",
                     "source": "stockCostPerUnit",
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 }
             ],
@@ -311,60 +318,73 @@
                         {
                             "source": "vegDescriptionAtPlanting",
                             "preLabel": "Vegetation at time of planting:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "revegetationMethod",
                             "preLabel": "Revegetation method:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "equipmentUsed",
                             "preLabel": "Equipment used:",
+                            "computed": null,
                             "type": "textarea"
                         },
                         {
                             "source": "adjacentLanduse",
                             "preLabel": "Adjacent landuse:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "connectivityIndex",
                             "preLabel": "Landscape connectivity:",
+                            "computed": null,
                             "type": "selectOne"
                         },
                         {
                             "source": "areaRevegHa",
                             "preLabel": "Area of revegetation works (Ha):",
+                            "computed": null,
                             "type": "number"
                         },
                         {
                             "source": "lengthReveg",
                             "preLabel": "Length of planting (metres) - if site is linear:",
+                            "computed": null,
                             "type": "number"
                         },
                         {
                             "source": "activityDuration",
                             "preLabel": "Duration of the activity (hours):",
+                            "computed": null,
                             "type": "number"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [{
                         "source": "environmentalBenefits",
+                        "computed": null,
                         "preLabel": "Environmental benefits / outcomes expected to be achieved:",
                         "type": "selectMany"
                     }],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [{
                         "source": "guardType",
+                        "computed": null,
                         "preLabel": "Type(s) of guard used",
                         "type": "selectMany"
                     }],
+                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -374,6 +394,7 @@
         {
             "items": [{
                 "source": "notes",
+                "computed": null,
                 "width": "90%",
                 "preLabel": "Comments / Notes:",
                 "type": "textarea"
