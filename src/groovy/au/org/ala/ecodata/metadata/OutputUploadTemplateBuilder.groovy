@@ -10,12 +10,21 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
     def model
     def outputName
+    def data
 
     public OutputUploadTemplateBuilder(outputName, model) {
         super(outputName)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
     }
+
+    public OutputUploadTemplateBuilder(outputName, model, data) {
+        super(outputName)
+        this.outputName = outputName
+        this.model = model.findAll{!it.computed}
+        this.data = data
+    }
+
 
     public void build() {
 
@@ -29,6 +38,9 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         AdditionalSheet outputSheet = addSheet(outputName, headers)
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
+
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle()).process()
+
         finalise()
     }
 
@@ -38,6 +50,59 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
 }
 
+class OutputDataProcessor {
+    private Workbook workbook
+    private Sheet sheet
+    def model
+    def data
+    def rowHeaderStyle
+
+    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle){
+        this.workbook = workbook
+        this.sheet = sheet
+        this.model = model
+        this.data = data
+        this.rowHeaderStyle = rowHeaderStyle
+    }
+
+    public void process() {
+
+        data?.eachWithIndex { rowValue, rowCount ->
+            Row row = sheet.createRow((rowCount+1))
+
+            for(int i = 0; i < rowValue.size(); i++){
+                def dataType, value, rowHeader
+                model.eachWithIndex { modelVal, modelIndex ->
+                    if(modelIndex == i) {
+                        rowValue?.each{key, val ->
+                            if(key.equals(modelVal.name)){
+                                value = val
+                                dataType = modelVal.dataType
+                                rowHeader = modelVal.rowHeader
+                            }
+                        }
+                    }
+                }
+                if(dataType) {
+                    Cell cell = row.createCell(i)
+                    switch(dataType){
+                        case 'number':
+                            cell.setCellValue(value.toInteger())
+                            break
+                        case 'date':
+                        case 'text':
+                        default:
+                            cell.setCellValue(value.toString())
+                            break
+                    }
+                    if(rowHeader){
+                        cell.setCellStyle(rowHeaderStyle);
+                    }
+                }
+            }
+        }
+    }
+}
 
 class ValidationProcessor extends OutputModelProcessor {
 
