@@ -153,9 +153,7 @@ class MetadataController {
             def data = [projectName: project.name,grantId:project.grantId]
             if(val.outputs?.size() > 0) {
                 val.outputs?.each{ content ->
-                    if(!"abandoned".equalsIgnoreCase(content.data?.projectStatus)){
-                        outputData.add( data << content.data)
-                    }
+                    outputData.add( data << content.data)
                 }
             }
             else {
