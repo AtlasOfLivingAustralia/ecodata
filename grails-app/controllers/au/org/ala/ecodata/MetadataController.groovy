@@ -5,7 +5,7 @@ import grails.converters.JSON
 
 class MetadataController {
 
-    def metadataService, cacheService
+    def metadataService, activityService, commonService, projectService
 
     def activitiesModel() {
         render metadataService.activitiesModel()
@@ -125,6 +125,52 @@ class MetadataController {
 
         builder.save(response.outputStream)
 
+    }
+
+    /**
+     * Returns an Excel template with data that can be populated  and uploaded.
+     */
+    def excelBulkActivityTemplate() {
+        def props = request.JSON
+        def activityType = props?.type
+        List activityIds = props?.ids?.split(',')
+
+        if (!activityType || !activityIds)  {
+            def result = [status:400, error:'type and ids are required']
+            render result as JSON
+            return null
+        }
+
+        def activityModel = metadataService.activitiesModel().activities.find { it.name == activityType }
+        def outputModels = activityModel.outputs?.collect {
+            [name:it, annotatedModel:metadataService.annotatedOutputDataModel(it), dataModel:metadataService.getDataModelFromOutputName(it)]
+        }
+
+        def activities = activityIds?.collect{act-> activityService.getAll(activityIds).find{it.activityId == act}}
+        def outputData = []
+        activities?.each { val ->
+            def project = projectService.get(val.projectId)
+            def data = [projectName: project.name,grantId:project.grantId]
+            if(val.outputs?.size() > 0) {
+                val.outputs?.each{ content ->
+                    outputData.add( data << content.data)
+                }
+            }
+            else {
+                outputData.add(data)
+            }
+        }
+
+        def model = [[name:"projectName", label:"Project Name",dataType:"text",description:"Project Description",rowHeader:true],
+                     [name:"grantId", label:"Project",dataType:"text",description:"Grant Id",rowHeader:true]]
+        outputModels?.first().annotatedModel.collect { model.add(it) }
+
+        def outputName = "${outputModels?.first().name}"
+        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, model, outputData)
+        builder.build()
+        builder.setResponseHeaders(response)
+        builder.save(response.outputStream)
+        return null
     }
 
     def getLocationMetadataForPoint(double lat, double lng) {
