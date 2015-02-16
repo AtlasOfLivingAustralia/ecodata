@@ -59,6 +59,8 @@ grails.project.dependency.resolution = {
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
         compile "org.apache.poi:ooxml-schemas:1.0"
 
+        runtime "javax.transaction:jta:1.1" // Required as a side effect of ehcache field walking.
+
 
         test 'org.grails:grails-datastore-test-support:1.0.2-grails-2.4'
         test 'com.github.fakemongo:fongo:1.5.4'
@@ -85,7 +87,7 @@ grails.project.dependency.resolution = {
         build ":tomcat:7.0.55"
         build ":release:3.0.1"
         compile ':cache:1.1.8'
-        compile ":cache-ehcache:1.0.2"
+        compile ":cache-ehcache:1.0.5-SNAPSHOT"
 
         test ":geb:0.9.3"
         

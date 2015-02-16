@@ -1,31 +1,25 @@
 {
     "modelName": "activityAttachments",
-    "dataModel": [
-        {
-            "dataType": "text",
-            "description": "Please provide any additional comments on the project's income, expenditure or budget.",
-            "name": "budgetNotes"
-        }
-    ],
-    "viewModel": [
-        {
+    "dataModel": [{
+        "dataType": "",
+        "description": "",
+        "name": ""
+    }],
+    "viewModel": [{
+        "items": [{
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "<b>Supporting documents: </b> Please attach relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.",
-                            "type": "literal"
-                        },
-                        {
-                            "source": "<b>Additional information (optional): </b> You may attach other documents relevant to your project for the Department's information.",
-                            "type": "literal"
-                        }
-                    ],
-                    "type": "col"
+                    "source": "<b>Supporting documents: <\/b> Please attach <b>(via the ADMIN tab)<\/b> relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.",
+                    "type": "literal"
+                },
+                {
+                    "source": "<b>Additional information (optional): <\/b> You may attach other documents <b>(via the ADMIN tab)<\/b> relevant to your project for the Department's information.",
+                    "type": "literal"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        }
-    ]
+            "type": "col"
+        }],
+        "class": "output-section",
+        "type": "row"
+    }]
 }
