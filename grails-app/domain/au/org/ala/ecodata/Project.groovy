@@ -28,9 +28,11 @@ class Project {
     String groupId
     String groupName
     String organisationName
+    String serviceProviderName
     String organisationId
     Date plannedStartDate
     Date plannedEndDate
+    Date serviceProviderAgreementDate
     Date actualStartDate
     Date actualEndDate
     String fundingSource
@@ -60,8 +62,10 @@ class Project {
         groupId nullable:true
         groupName nullable:true
         organisationName nullable:true
+        serviceProviderName nullable:true
         plannedStartDate nullable:true
         plannedEndDate nullable:true
+        serviceProviderAgreementDate nullable:true
         actualStartDate nullable:true
         actualEndDate nullable:true
         fundingSource nullable:true
