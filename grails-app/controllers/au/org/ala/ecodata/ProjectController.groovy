@@ -240,7 +240,8 @@ class ProjectController {
     def search() {
         def searchCriteria = request.JSON
 
-        def projectList = projectService.search(searchCriteria, ProjectService.BRIEF)
+        def view = searchCriteria.remove('view') ?: ProjectService.BRIEF
+        def projectList = projectService.search(searchCriteria, view)
         asJson projects:projectList
     }
 
