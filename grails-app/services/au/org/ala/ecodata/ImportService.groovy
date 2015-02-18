@@ -13,7 +13,7 @@ class ImportService {
     def loadFile(filePath, reloadImages){
         def columns = []
         println "Starting import of data....."
-        String[] dateFormats = ["yyyy-MM-dd HH:mm:ss.s", "dd/MM/yyyy"]
+        String[] dateFormats = ["yyyy-MM-dd HH:mm:ss.s", "yyyy-MM-dd HH:mm:ss.sz", "dd/MM/yyyy","yyyy-MM-dd"]
 
         def count = 0
         def imported = 0
@@ -24,6 +24,7 @@ class ImportService {
             count += 1
             //println "Starting....." + count
             if(count == 1){
+                // header row (column titles)
                 columns = it
                 columns.eachWithIndex { obj, i ->
                     if(obj == "occurrenceID")
@@ -58,12 +59,19 @@ class ImportService {
                            }
                         } else if(columns[idx] == "eventDate" && column){
                             try {
-                                def suppliedDate = DateUtils.parseDate(column, dateFormats)
+                                def dateTimeString = column
+                                def timeString = it[columns.indexOf("eventTime")] // will be HH:MM
+
+                                if (timeString && timeString.size() == 5) {
+                                    dateTimeString += " " + timeString + ":00.0+10:00" // assume EST (TZ not captured by sightings)
+                                }
+
+                                def suppliedDate = DateUtils.parseDate(dateTimeString, dateFormats)
                                 SimpleDateFormat yyymmdd = new SimpleDateFormat("yyyy-MM-dd")
                                 SimpleDateFormat hhmm = new SimpleDateFormat("HH:mm")
                                 r[columns[idx]] = yyymmdd.format(suppliedDate)
-                                def eventTimeFormatted = hhmm.format(suppliedDate)
-                                r.eventTime = eventTimeFormatted
+                                //def eventTimeFormatted = hhmm.format(suppliedDate)
+                                //r.eventTime = eventTimeFormatted
                             } catch (Exception e) {}
                         } else if(columns[idx] == "decimalLatitude"){
                             if(column && column != "null"){
@@ -72,6 +80,24 @@ class ImportService {
                         } else if(columns[idx] == "decimalLongitude"){
                             if(column && column != "null"){
                                 r[columns[idx]] = Float.parseFloat(column)
+                            }
+                        } else if(columns[idx] == "coordinateUncertaintyInMeters"){
+                            if(column && column != "null"){
+                                r[columns[idx]] = Integer.parseInt(column)
+                            }
+                        } else if(columns[idx] == "individualCount"){
+                            if(column && column != "null"){
+                                r[columns[idx]] = Integer.parseInt(column)
+                            }
+                        } else if(columns[idx] == "modified"){
+                            if(column && column != "null"){
+                                try {
+                                    // 15-02-2012 format
+                                    r.dateCreated = DateUtils.parseDate(column,["dd-MM-yyyy"].toArray(new String[0]))
+                                    r.lastUpdated = DateUtils.parseDate(column,["dd-MM-yyyy"].toArray(new String[0]))
+                                } catch (Exception e) {
+                                    println("Problem parsing modified: " + column)
+                                }
                             }
                         } else {
                             r[columns[idx]] = column
