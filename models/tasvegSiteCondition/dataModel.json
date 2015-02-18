@@ -1,5 +1,5 @@
 {
-    "modelName": "Site Condition Components",
+    "modelName": "Site Condition - TasVeg",
     "dataModel": [
         {
             "dataType": "number",
@@ -55,7 +55,7 @@
                 },
                 {
                     "dataType": "boolean",
-                    "name": "present"
+                    "name": "modified"
                 }
             ]
         },
@@ -206,56 +206,62 @@
     ],
     "viewModel": [
         {
-            "title": "Large Trees",
-            "items": [{
-                "items": [
-                    {
-                        "source": "numberOfLargeTrees",
-                        "preLabel": "Number of trees >= benchmark DBH",
-                        "type": "number"
-                    },
-                    {
-                        "source": "largeTreeCanopyHealthPercent",
-                        "preLabel": "Large tree canopy health (%)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "largeTreesScore",
-                        "preLabel": "Large Trees Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Large Trees<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "numberOfLargeTrees",
+                            "preLabel": "Number of trees >= benchmark DBH",
+                            "type": "number"
+                        },
+                        {
+                            "source": "largeTreeCanopyHealthPercent",
+                            "preLabel": "Large tree canopy health (%)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "largeTreesScore",
+                            "preLabel": "Large Trees Score",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Tree Canopy Cover<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "canopyCoverPercent",
+                            "preLabel": "Tree canopy cover (%)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "canopyHealthPercent",
+                            "preLabel": "Tree canopy health (%)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "canopyCoverScore",
+                            "preLabel": "Canopy Cover Score",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "title": "Tree Canopy Cover",
             "items": [{
-                "items": [
-                    {
-                        "source": "canopyCoverPercent",
-                        "preLabel": "Tree canopy cover (%)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "canopyHealthPercent",
-                        "preLabel": "Tree canopy health (%)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "canopyCoverScore",
-                        "preLabel": "Canopy Cover Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "items": [{
-                "source": "<h4>Understory life forms</h4>",
+                "source": "<h4>Understory life forms<\/h4>",
                 "type": "literal"
             }],
             "type": "row"
@@ -263,12 +269,12 @@
         {
             "footer": {"rows": [{"columns": [
                 {
-                    "colspan": "3",
+                    "colspan": "4",
                     "source": "",
                     "type": "literal"
                 },
                 {
-                    "source": "<b>Understorey Score</b>",
+                    "source": "<b>Understorey Score<\/b>",
                     "type": "literal"
                 },
                 {
@@ -280,93 +286,110 @@
             "columns": [
                 {
                     "title": "Lifeform",
+                    "source": "lifeform",
                     "type": "selectOne"
                 },
                 {
-                    "title": "#spp observed",
+                    "title": "Species",
+                    "source": "species",
+                    "type": "autocomplete"
+                },
+                {
+                    "title": "No. of species observed",
+                    "source": "number",
                     "type": "number"
                 },
                 {
                     "title": "% cover observed",
+                    "source": "coverPercent",
                     "type": "number"
                 },
                 {
                     "title": "Present",
+                    "source": "present",
                     "type": "boolean"
                 },
                 {
                     "title": "Modified",
+                    "source": "modified",
                     "type": "boolean"
                 }
             ],
             "userAddedRows": true,
+            "class": "output-section",
             "type": "table"
         },
         {
-            "title": "Lack of Weeds",
-            "items": [{
-                "items": [
-                    {
-                        "source": "totalWeedCoverPercent",
-                        "preLabel": "Total weed cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "highThreatWeedCoverPercent",
-                        "preLabel": "High threat weed cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "weedScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "title": "Organic Litter",
-            "items": [{
-                "items": [
-                    {
-                        "source": "organicLitterCoverPercent",
-                        "preLabel": "Organic litter cover %",
-                        "type": "number"
-                    },
-                    {
-                        "source": "organicLitterScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "title": "Logs",
-            "items": [{
-                "items": [
-                    {
-                        "source": "averageLogLength",
-                        "preLabel": "Average log length (m)",
-                        "type": "number"
-                    },
-                    {
-                        "source": "largeLogsPresent",
-                        "preLabel": "Large logs present?",
-                        "type": "boolean"
-                    },
-                    {
-                        "source": "logScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Lack of Weeds<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "totalWeedCoverPercent",
+                            "preLabel": "Total weed cover %",
+                            "type": "number"
+                        },
+                        {
+                            "source": "highThreatWeedCoverPercent",
+                            "preLabel": "High threat weed cover %",
+                            "type": "number"
+                        },
+                        {
+                            "source": "weedScore",
+                            "preLabel": "Score",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Organic Litter<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "organicLitterCoverPercent",
+                            "preLabel": "Organic litter cover %",
+                            "type": "number"
+                        },
+                        {
+                            "source": "organicLitterScore",
+                            "preLabel": "Score",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Logs<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "averageLogLength",
+                            "preLabel": "Average log length (m)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "largeLogsPresent",
+                            "preLabel": "Large logs present?",
+                            "type": "boolean"
+                        },
+                        {
+                            "source": "logScore",
+                            "preLabel": "Score",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
             "type": "section"
         }
     ]

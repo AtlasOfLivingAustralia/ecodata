@@ -1,14 +1,17 @@
 {
     "selectedActivity": {
-        "supportsSites": false,
-        "category": "Administration, management & reporting",
-        "name": "Project Administration",
-        "supportsPhotoPoints": false,
+        "supportsSites": true,
+        "category": "Implementation actions",
+        "name": "Works Planning and Risk",
+        "supportsPhotoPoints": true,
         "type": "Activity",
         "outputs": [
-            "Administration Activities",
-            "Participant Information"
-        ]
+            "Site Planning Details",
+            "Threatening Processes and Site Condition Risks",
+            "Participant Information",
+            "Photo Points"
+        ],
+        "gmsId": "STA"
     },
     "activities": [
         {
@@ -400,7 +403,7 @@
             "type": "Activity",
             "outputs": [
                 "Site Planning Details",
-                "Threatening Processes & Site Condition Risks",
+                "Threatening Processes and Site Condition Risks",
                 "Participant Information",
                 "Photo Points"
             ],
@@ -1468,7 +1471,7 @@
                 "aggregationType": "COUNT",
                 "label": "No. of threat and risk issues by type of issue"
             }],
-            "name": "Threatening Processes & Site Condition Risks"
+            "name": "Threatening Processes and Site Condition Risks"
         },
         {
             "template": "debrisRemovalDetails",
@@ -3031,6 +3034,46 @@
             "name": "Upload of stage 1 and 2 reporting data"
         },
         {
+            "template": "gaParticipantDetails",
+            "scores": [],
+            "name": "Participant Details"
+        },
+        {
+            "template": "tasVegNvaMethod_F",
+            "scores": [],
+            "name": "TasVeg Native Vegetation Assessment Method - Forest Vegetation"
+        },
+        {
+            "template": "tasVegNvaMethod_NF",
+            "scores": [],
+            "name": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"
+        },
+        {
+            "template": "tasVegFloristicComposition",
+            "scores": [],
+            "name": "Floristic Composition"
+        },
+        {
+            "template": "tasVegNvaMethod",
+            "scores": [],
+            "name": "TasVeg Native Vegetation Assessment Method"
+        },
+        {
+            "template": "tasVegSurveyInfo",
+            "scores": [],
+            "name": "Vegetation Assessment - Survey Information"
+        },
+        {
+            "template": "bioConditionConsolidated",
+            "scores": [],
+            "name": "BioCondition Method"
+        },
+        {
+            "template": "saBushlandConditionMethod",
+            "scores": [],
+            "name": "Bushland Condition Method"
+        },
+        {
             "template": "gaMonthlyReportData",
             "scores": [
                 {
@@ -3065,7 +3108,6 @@
                     "aggregationType": "SUM",
                     "label": "No. of Participants who commenced projects"
                 },
-
                 {
                     "category": "Green Army",
                     "listName": "",
@@ -3108,7 +3150,6 @@
                     "aggregationType": "HISTOGRAM",
                     "label": "Count of projects by project status"
                 }
-
             ],
             "name": "Monthly Status Report Data"
         },
@@ -3143,7 +3184,6 @@
                     "displayType": "",
                     "name": "trainingActivityCount",
                     "aggregationType": "SUM",
-
                     "label": "Total number of training activities"
                 },
                 {
@@ -3278,46 +3318,6 @@
                 }
             ],
             "name": "Three Monthly Report"
-        },
-        {
-            "template": "gaParticipantDetails",
-            "scores": [],
-            "name": "Participant Details"
-        },
-        {
-            "template": "tasVegNvaMethod_F",
-            "scores": [],
-            "name": "TasVeg Native Vegetation Assessment Method - Forest Vegetation"
-        },
-        {
-            "template": "tasVegNvaMethod_NF",
-            "scores": [],
-            "name": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"
-        },
-        {
-            "template": "tasVegFloristicComposition",
-            "scores": [],
-            "name": "Floristic Composition"
-        },
-        {
-            "template": "tasVegNvaMethod",
-            "scores": [],
-            "name": "TasVeg Native Vegetation Assessment Method"
-        },
-        {
-            "template": "tasVegSurveyInfo",
-            "scores": [],
-            "name": "Vegetation Assessment - Survey Information"
-        },
-        {
-            "template": "bioConditionConsolidated",
-            "scores": [],
-            "name": "BioCondition Method"
-        },
-        {
-            "template": "saBushlandConditionMethod",
-            "scores": [],
-            "name": "Bushland Condition Method"
         },
         {
             "template": "gaTeamSupervisorAttendance",

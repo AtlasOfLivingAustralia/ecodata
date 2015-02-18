@@ -199,10 +199,7 @@ if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
 if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = "http://auth.ala.org.au/apikey/ws/check?apikey="
-}
-if(!security.cas.logoutUrl){
-    security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
+    security.apikey.serviceUrl = 'http://auth.ala.org.au/apikey/ws/check?apikey='
 }
 if(!security.cas.bypass){
     security.cas.bypass = false
@@ -212,6 +209,17 @@ if(!security.cas.adminRole){
 }
 if(!ecodata.use.uuids){
     ecodata.use.uuids = false
+}
+
+if (!grails.cache.ehcache) {
+    grails {
+        cache {
+            ehcache {
+                cacheManagerName = appName + '-ehcache'
+                reloadable = false
+            }
+        }
+    }
 }
 
 environments {
@@ -244,16 +252,6 @@ environments {
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
     }
     production {
-        grails{
-            cache {
-                enabled = true
-                ehcache {
-                    ehcacheXmlLocation = 'classpath:ehcache.xml' // conf/ehcache.xml
-                    reloadable = false
-                }
-            }
-        }
-
         grails.logging.jul.usebridge = false
     }
 }

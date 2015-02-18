@@ -70,7 +70,7 @@
     "viewModel": [
         {
             "items": [{
-                "source": "<h2>Landscape Context Score</h2>",
+                "source": "<h2>Landscape Context Score<\/h2>",
                 "type": "literal"
             }],
             "type": "row"
@@ -120,7 +120,7 @@
         },
         {
             "items": [{
-                "source": "<h4>Neighbourhood</h4>",
+                "source": "<h4>Neighbourhood<\/h4>",
                 "type": "literal"
             }],
             "type": "row"
@@ -130,12 +130,10 @@
                 "footer": {"rows": [{"columns": [
                     {
                         "source": "neighbourhoodSignificantlyDisturbed",
-                        "preLabel": "Neighbourhood significantly disturbed",
                         "type": "boolean"
                     },
                     {
                         "source": "neighbourhoodScore",
-                        "preLabel": "Score",
                         "type": "number"
                     }
                 ]}]},
@@ -145,8 +143,7 @@
                         "title": "Radius from site",
                         "source": "radiusFromSite",
                         "noEdit": true,
-                        "type": "text",
-                        "postLabel": "km"
+                        "type": "text"
                     },
                     {
                         "title": "% native vegetation",

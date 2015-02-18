@@ -239,12 +239,7 @@
             },
             {
                 "name": "Regional Funding",
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ]
+                "themes": []
             },
             {
                 "name": "Landcare Network Grants 2014-15",

@@ -77,53 +77,38 @@
     ],
     "viewModel": [
         {
-            "items": [
-                {
-                    "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Please indicate the current status of the project at the time of this report. Note that it is mandatory to provide a reason and the remedial actions to be implemented if the project is tracking behind schedule.",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
             "items": [
                 {
-                    "items": [
-                        {
-                            "source": "projectStatus",
-                            "computed": null,
-                            "preLabel": "How is the project tracking?:",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "computed": null,
+                    "items": [{
+                        "source": "projectStatus",
+                        "preLabel": "How is the project tracking?:",
+                        "type": "selectOne"
+                    }],
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "projectStatusReason",
-                            "computed": null,
-                            "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
-                            "type": "textarea"
-                        }
-                    ],
-                    "computed": null,
+                    "items": [{
+                        "source": "projectStatusReason",
+                        "preLabel": "Reason project is behind schedule or that MERIT has not been updated:",
+                        "type": "textarea"
+                    }],
                     "width": "30%",
                     "type": "col"
                 },
                 {
-                    "items": [
-                        {
-                            "source": "remedialActions",
-                            "computed": null,
-                            "preLabel": "Intended remedial actions (if appropriate):",
-                            "type": "textarea"
-                        }
-                    ],
-                    "computed": null,
+                    "items": [{
+                        "source": "remedialActions",
+                        "preLabel": "Intended remedial actions (if appropriate):",
+                        "type": "textarea"
+                    }],
                     "width": "30%",
                     "type": "col"
                 }
@@ -132,13 +117,10 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'</i> to be provided separately.",
-                    "computed": null,
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "Enter the total number of participants commencing, completing and not completing projects. These values MUST agree with participant details provided in the <i>'Report on Participant Details spreadsheet'<\/i> to be provided separately.",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
@@ -146,31 +128,26 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Project Participation</h4>",
-                            "computed": null,
+                            "source": "<h4>Project Participation<\/h4>",
                             "type": "literal"
                         },
                         {
                             "source": "totalParticipantsCommenced",
-                            "computed": null,
                             "preLabel": "Total No. commencing projects:",
                             "type": "number"
                         },
                         {
                             "source": "totalParticipantsCompleted",
-                            "computed": null,
                             "preLabel": "Total No. completing projects:",
                             "type": "number"
                         },
                         {
                             "source": "totalParticipantsNotCompleted",
-                            "computed": null,
                             "preLabel": "No. not completing projects:",
                             "type": "number"
                         },
                         {
                             "source": "totalIndigenousParticipantsCommenced",
-                            "computed": null,
                             "preLabel": "No. of indigenous participants commenced:",
                             "type": "number"
                         }
@@ -181,30 +158,25 @@
                 {
                     "items": [
                         {
-                            "source": "<h4>Participant Training</h4>",
-                            "computed": null,
+                            "source": "<h4>Participant Training<\/h4>",
                             "type": "literal"
                         },
                         {
                             "source": "trainingCommencedAccredited",
-                            "computed": null,
                             "preLabel": "Commenced accredited training:",
                             "type": "number"
                         },
                         {
                             "source": "trainingNoExited",
-                            "computed": null,
                             "preLabel": "Exited training:",
                             "type": "number"
                         },
                         {
                             "source": "trainingNoCompleted",
-                            "computed": null,
                             "preLabel": "Completed training:",
                             "type": "number"
                         }
                     ],
-                    "computed": null,
                     "type": "col"
                 }
             ],
@@ -212,14 +184,11 @@
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "reportingTimeTaken",
-                    "computed": null,
-                    "preLabel": "Time taken to complete this report (minutes):",
-                    "type": "number"
-                }
-            ],
+            "items": [{
+                "source": "reportingTimeTaken",
+                "preLabel": "Time taken to complete this report (minutes):",
+                "type": "number"
+            }],
             "class": "output-section",
             "type": "row"
         }

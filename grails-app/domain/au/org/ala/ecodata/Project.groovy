@@ -12,6 +12,7 @@ class Project {
     static mapping = {
         name index: true
         projectId index: true
+		promoteOnHomepage index: true
         version false
     }
 
@@ -27,9 +28,11 @@ class Project {
     String groupId
     String groupName
     String organisationName
+    String serviceProviderName
     String organisationId
     Date plannedStartDate
     Date plannedEndDate
+    Date serviceProviderAgreementDate
     Date actualStartDate
     Date actualEndDate
     String fundingSource
@@ -42,13 +45,18 @@ class Project {
 	Map risks
 	Date dateCreated
     Date lastUpdated
-    boolean isCitizenScience
+	String promoteOnHomepage = 'no'
+	
+    boolean isCitizenScience, isDataSharing
+    String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
     String aim, keywords, urlAndroid, urlITunes, urlWeb
     String getInvolved, scienceType, projectSiteId
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
+
+    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
 
     static constraints = {
         externalId nullable:true
@@ -57,8 +65,10 @@ class Project {
         groupId nullable:true
         groupName nullable:true
         organisationName nullable:true
+        serviceProviderName nullable:true
         plannedStartDate nullable:true
         plannedEndDate nullable:true
+        serviceProviderAgreementDate nullable:true
         actualStartDate nullable:true
         actualEndDate nullable:true
         fundingSource nullable:true
@@ -70,6 +80,7 @@ class Project {
         grantId nullable:true
 		custom nullable:true
 		risks nullable:true
+        promoteOnHomepage nullable:true
         organisationId nullable:true
         projectType nullable:true    // nullable for backward compatibility; survey, works
         dataResourceId nullable:true // nullable for backward compatibility
@@ -84,6 +95,8 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
+        projectPrivacy inList: ['Open','Closed']
+        dataSharingLicense inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }

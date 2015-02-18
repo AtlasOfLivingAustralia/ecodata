@@ -55,6 +55,10 @@ class XlsExporter extends WebXlsxExporter {
         return headerStyle
     }
 
+    def getStyle(){
+        headerStyle(getWorkbook())
+    }
+
     WebXlsxExporter setResponseHeaders(HttpServletResponse response) {
         super.setResponseHeaders(response, fileName+filenameSuffix)
         this
