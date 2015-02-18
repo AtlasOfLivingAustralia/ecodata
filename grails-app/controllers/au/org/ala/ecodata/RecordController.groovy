@@ -243,7 +243,7 @@ class RecordController {
     }
 
     def resyncRecord(){
-        def r = Record.get(params.id)
+        def r = Record.findByOccurrenceID(params.id)
         if (r) {
             broadcastService.sendUpdate(r)
             response.setStatus(200)
