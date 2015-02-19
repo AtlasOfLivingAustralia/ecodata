@@ -60,6 +60,7 @@ class ImportService {
                         } else if(columns[idx] == "eventDate" && column){
                             try {
                                 def dateTimeString = column
+
                                 def timeString = it[columns.indexOf("eventTime")] // will be HH:MM
 
                                 if (timeString && timeString.size() == 5) {
@@ -83,11 +84,18 @@ class ImportService {
                             }
                         } else if(columns[idx] == "coordinateUncertaintyInMeters"){
                             if(column && column != "null"){
-                                r[columns[idx]] = Integer.parseInt(column)
+                                def value = "${column}"
+                                if (!column.isInteger() && column.isFloat()) {
+                                    // some values come in as "10.0"
+                                    value = column.toFloat()?.trunc().toInteger()
+                                    r[columns[idx]] = value
+                                } else {
+                                    r[columns[idx]] = Integer.parseInt(value)
+                                }
                             }
                         } else if(columns[idx] == "individualCount"){
                             if(column && column != "null"){
-                                r[columns[idx]] = Integer.parseInt(column)
+                                r[columns[idx]] = Integer.parseInt(column.replaceAll("[^0-9]", ""))
                             }
                         } else if(columns[idx] == "modified"){
                             if(column && column != "null"){
