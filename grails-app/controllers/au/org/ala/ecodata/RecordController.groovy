@@ -253,17 +253,23 @@ class RecordController {
         //json.eventDate = new Date().parse("yyyy-MM-dd", json.eventDate)
         //TODO add some data validation....
         Record r = Record.findByOccurrenceID(params.id)
-        def errors=recordService.updateRecord(r,json)
+        Map errors = recordService.updateRecord(r,json)
+        log.debug "updateById() - errors = ${errors}"
         setResponseHeadersForRecord(response, r)
         //add the errors to the header too
         response.addHeader('errors', (errors as grails.converters.JSON).toString())
-        response.setContentType("application/json")
-        try {
-            broadcastService.sendUpdate(r)
-        } catch (Exception e){
-            log.error(e.getMessage(), e)
+
+        if (errors) {
+            response.sendError(400, (errors as JSON).toString())
+        } else {
+            try {
+                broadcastService.sendUpdate(r)
+            } catch (Exception e){
+                log.error(e.getMessage(), e)
+            }
+
+            render r as JSON
         }
-        [id:r.id.toString()]
     }
 
     private def setResponseHeadersForRecord(response, record){

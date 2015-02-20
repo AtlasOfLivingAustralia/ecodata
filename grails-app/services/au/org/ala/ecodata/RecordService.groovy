@@ -41,10 +41,14 @@ class RecordService {
             //persist an images into image service
             if(json.multimedia){
                 json.multimedia.eachWithIndex { image, idx ->
-                    def address = image.identifier ? image.identifier : image.url
-                    def downloadedFile = download(record.occurrenceID, idx, address)
-                    def imageId = uploadImage(record, downloadedFile)
-                    record.multimedia[idx].imageId = imageId
+                    // Only upload images that are NOT already in images.ala.org.au
+                    if (!image.identifier.contains(grailsApplication.config.imagesService.baseURL)) {
+                        def address = image.identifier ? image.identifier : image.url
+                        def downloadedFile = download(record.occurrenceID, idx, address)
+                        log.debug "Uploading image - ${address}"
+                        def imageId = uploadImage(record, downloadedFile, image)
+                        record.multimedia[idx].imageId = imageId
+                    }
                 }
             }
             record.save(flush: true)
