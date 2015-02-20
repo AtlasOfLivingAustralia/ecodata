@@ -275,12 +275,12 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata.log",
+                        file: "/tmp/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-stacktrace.log"
+                        file: "/tmp/ecodata-stacktrace.log"
             }
             test {
                 console name: "stdout",

@@ -14,13 +14,7 @@ class RecordController {
 
     def recordService
 
-    def ignores = ["action","controller","associatedMedia"]
-
     static defaultAction = "list"
-
-    def index(){
-        redirect(action: "list")
-    }
 
     def csv(){
         response.setContentType("text/csv")
@@ -133,16 +127,19 @@ class RecordController {
     }
 
     def getById(){
-        Record r = Record.findByOccurrenceID(params.id)
-        if(r){
+        Record record = Record.findByOccurrenceID(params.id)
+        if(record){
             response.setContentType("application/json")
-            def model = recordService.toMap(r)
+            def model = recordService.toMap(record)
             render model as JSON
         } else {
             response.sendError(404, 'Unrecognised Record ID. This record may have been removed.')
         }
     }
 
+    /**
+     * Retrieve list of records with images.
+     */
     def listRecordWithImages(){
         def records = []
         def sort = params.sort ?: "dateCreated"
@@ -150,8 +147,8 @@ class RecordController {
         def offsetBy = params.start ?: 0
         def max = params.pageSize ?: 10
 
-        def c = Record.createCriteria()
-        def results = c.list {
+        def criteria = Record.createCriteria()
+        def results = criteria.list {
             isNotNull("associatedMedia")
             maxResults(max)
             order(sort,orderBy)
@@ -164,6 +161,9 @@ class RecordController {
         render records as JSON
     }
 
+    /**
+     * Retrieve the current record count.
+     */
     def count(){
         response.setContentType("application/json")
         def model = [count:Record.count()]
@@ -187,6 +187,9 @@ class RecordController {
         render model as JSON
     }
 
+    /**
+     * Retrieve a list of record for the supplied user ID
+     */
     def listForUser(){
         log.debug("list request for user...." + params.userId)
         def records = []
@@ -205,11 +208,13 @@ class RecordController {
         render model as JSON
     }
 
+    /**
+     * Delete by occurrence ID
+     */
     def deleteById(){
-        Record r = Record.findByOccurrenceID(params.id)
-        if (r){
-            r.delete(flush: true)
-            broadcastService.sendDelete(r["occurrenceID"])
+        Record record = Record.findByOccurrenceID(params.id)
+        if (record){
+            record.delete(flush: true)
             response.setStatus(200)
             response.setContentType("application/json")
             def model = [success:true]
@@ -242,24 +247,6 @@ class RecordController {
         }
     }
 
-    def resyncRecord(){
-        def r = Record.findByOccurrenceID(params.id)
-        if (r) {
-            broadcastService.sendUpdate(r)
-            response.setStatus(200)
-            response.setContentType("application/json")
-            [recordSynced:true]
-        } else {
-            response.sendError(404)
-        }
-    }
-
-    def resyncAll(){
-        def count = broadcastService.resyncAll()
-        response.setContentType("application/json")
-        [recordsSynced:count]
-    }
-
     def updateById(){
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
@@ -279,7 +266,7 @@ class RecordController {
         [id:r.id.toString()]
     }
 
-    def setResponseHeadersForRecord(response, record){
+    private def setResponseHeadersForRecord(response, record){
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/fielddata/record/" + record.id.toString())
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/fielddata/record/" + record.id.toString())
         response.addHeader("entityId", record.id.toString())

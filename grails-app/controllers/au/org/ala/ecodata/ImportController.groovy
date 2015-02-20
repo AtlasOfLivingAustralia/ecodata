@@ -8,22 +8,29 @@ class ImportController {
 
     def importService
 
-    def index() { }
+    static defaultAction = "importFile"
 
     def importFile(){
 
-       def filePath = params.filePath
-       def reloadImages = params.reloadImages
+        def model = [:]
 
-       def theActor = actor {
-            println "Starting a thread.....reload images: " + reloadImages
-            importService.loadFile(filePath, reloadImages)
-            println "Finishing thread."
+       if(params.filePath && new File(params.filePath).exists()){
+           def filePath = params.filePath
+           def reloadImages = params.reloadImages
+
+           def theActor = actor {
+               println "Starting a thread.....reload images: " + reloadImages
+               importService.loadFile(filePath, reloadImages)
+               println "Finishing thread."
+           }
+
+           model = [started:true]
+       } else {
+           model = [started:false, reason:"please supply a file"]
        }
 
        response.setContentType("application/json")
-       def model = [started:true]
+
        render model as JSON
     }
-
 }

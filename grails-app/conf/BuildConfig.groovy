@@ -32,6 +32,7 @@ grails.project.dependency.resolution = {
     def seleniumVersion = "2.21.0"
     def geoToolsVersion = "11.2"
     def imgscalrVersion = "4.2"
+
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
@@ -66,7 +67,11 @@ grails.project.dependency.resolution = {
         test 'com.github.fakemongo:fongo:1.5.4'
 
         compile 'org.codehaus.gpars:gpars:0.11'
-        compile 'org.apache.activemq:activemq-core:5.3.0'
+//        compile 'org.apache.activemq:activemq-core:5.3.0'
+
+//        runtime 'org.springframework:spring-jms:3.0.2.RELEASE'
+//        runtime 'org.springframework:spring-beans:3.0.2.RELEASE'
+//        runtime 'org.springframework:spring-core:3.0.2.RELEASE'
     }
 
     plugins {
@@ -74,6 +79,7 @@ grails.project.dependency.resolution = {
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
         runtime ":ala-web-theme:1.0.1"
+//        compile ":jms:1.3"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"

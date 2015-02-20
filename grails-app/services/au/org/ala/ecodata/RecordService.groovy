@@ -19,35 +19,22 @@ class RecordService {
 
     final def ignores = ["action","controller","associatedMedia"]
 
-    def mediaService
-
-    def webService
-
     def broadcastService
 
     def userFielddataService
 
     def createRecord(json){
-        Record r = new Record().save(true)
-        def errors = updateRecord(r,json)
-        //download the supplied images......
-        if(errors.size() ==0){
-            try {
-                broadcastService.sendCreate(r)
-            } catch(Exception e) {
-                //TODO a retry mechanism...
-                log.error(e.getMessage(), e)
-            }
-        }
-        [r, errors]
+        Record record = new Record().save(true)
+        def errors = updateRecord(record,json)
+        [record, errors]
     }
 
-    def updateRecord(Record r,  json){
+    private def updateRecord(Record record,  json){
         def errors =[:]
-        try{
+        try {
             json.each {
                 if(!ignores.contains(it.key) && it.value){
-                    r[it.key] = it.value
+                    record[it.key] = it.value
                 }
             }
 
@@ -55,12 +42,12 @@ class RecordService {
             if(json.multimedia){
                 json.multimedia.eachWithIndex { image, idx ->
                     def address = image.identifier ? image.identifier : image.url
-                    def downloadedFile = download(r.occurrenceID, idx, address)
-                    def imageId = uploadImage(r, downloadedFile)
-                    r.multimedia[idx].imageId = imageId
+                    def downloadedFile = download(record.occurrenceID, idx, address)
+                    def imageId = uploadImage(record, downloadedFile)
+                    record.multimedia[idx].imageId = imageId
                 }
             }
-            r.save(flush: true)
+            record.save(flush: true)
         } catch(Exception e) {
             log.error(e.getMessage(), e)
             //NC catch an unhandled errors so that we don't insert records that have major issues. ie missing userID
@@ -70,7 +57,7 @@ class RecordService {
     }
 
 
-    def uploadImage (Record record, File fileToUpload) {
+    private def uploadImage (Record record, File fileToUpload) {
 
         def remoteImageRepo = "http://images-dev.ala.org.au/"
         //upload an image
@@ -85,18 +72,7 @@ class RecordService {
 
         entity.addPart("image", fileBody)
         entity.addPart("metadata", new StringBody((["occurrenceId": record.occurrenceID] as JSON).toString()))
-//        entity.addPart("metadata",
-//                new StringBody(
-//                        Json.toJSON(
-//                                Map(
-//                                        "occurrenceId" -> uuid,
-////                                        "dataResourceUid" -> resourceUID,
-////                                        "originalFileName" -> extractFileName(urlToMedia),
-////                                        "fullOriginalUrl" -> urlToMedia
-//                                )
-//                        )
-//                )
-//        )
+
 
         def httpPost = new HttpPost(remoteImageRepo + "/ws/uploadImage")
         httpPost.setEntity(entity)
@@ -111,7 +87,6 @@ class RecordService {
         log.debug("Image ID: " + map["imageId"])
         map["imageId"]
     }
-
 
     private File download(recordId, idx, address){
         def directory = grailsApplication.config.app.file.upload.path + File.separator + "record" + File.separator  + recordId
@@ -129,12 +104,11 @@ class RecordService {
         destFile
     }
 
-
     def toMap(record){
         def dbo = record.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         mapOfProperties.remove("_id")
-        //add userDisplayName - Cacheable not working....
+        //add userDisplayName - Cache-able not working....
         if(mapOfProperties["userId"]){
             def userMap = userFielddataService.getUserNamesForIdsMap()
             def userId = mapOfProperties["userId"]
