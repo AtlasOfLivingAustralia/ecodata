@@ -204,6 +204,9 @@ if (!security.apikey.serviceUrl) {
 if(!security.cas.logoutUrl){
     security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
 }
+if(!imagesService.baseURL){
+    imagesService.baseURL = 'http://images-dev.ala.org.au'
+}
 if(!security.cas.bypass){
     security.cas.bypass = false
 }

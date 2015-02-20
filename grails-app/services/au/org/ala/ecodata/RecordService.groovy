@@ -56,10 +56,9 @@ class RecordService {
         errors
     }
 
+    def uploadImage (Record record, File fileToUpload, image) {
 
-    private def uploadImage (Record record, File fileToUpload) {
-
-        def remoteImageRepo = "http://images-dev.ala.org.au/"
+        def remoteImageRepo = grailsApplication.config.imagesService.baseURL
         //upload an image
         def httpClient = new DefaultHttpClient()
         def entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
@@ -69,13 +68,24 @@ class RecordService {
             log.debug("File to upload: " + fileToUpload.getAbsolutePath() + ", size:" + fileToUpload.length())
         }
         def fileBody = new FileBody(fileToUpload, "image/jpeg")
-
+        log.debug "image upload: ${image}"
         entity.addPart("image", fileBody)
-        entity.addPart("metadata", new StringBody((["occurrenceId": record.occurrenceID] as JSON).toString()))
+        entity.addPart("metadata", new StringBody(([
+                "occurrenceId": record.occurrenceID,
+                "license": image?.license,
+                "copyright": image?.license,
+                "originalFilename": image?.title,
+                "attribution": image?.creator,
+                "dateTaken": image?.created
+        ] as JSON).toString()))
 
+        if (record.tags?.size() > 0) {
+            entity.addPart("tags", record.tags.join(","))
+        }
 
         def httpPost = new HttpPost(remoteImageRepo + "/ws/uploadImage")
         httpPost.setEntity(entity)
+        httpPost.addHeader("X-ALA-userId","${record.userId}");
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
         def responseBody = response.getEntity().getContent().getText()
@@ -115,8 +125,35 @@ class RecordService {
             def userDisplayName = userMap.get(userId)
             if(userDisplayName){
                  mapOfProperties["userDisplayName"] = userDisplayName
+                    r.multimedia[idx].imageId = imageId
+                    r.multimedia[idx].identifier = getImageUrl(imageId, false)
+                    r.multimedia[idx].thumbnailUrl = getImageUrl(imageId, true)
             }
         }
         mapOfProperties
+    }
+
+
+
+    /**
+     * Generate the URL to the original|thumb version of the images
+     * based on the imageId
+     *
+     * E.g. http://images-dev.ala.org.au/data/images/store/b/5/6/a/557634dc-0df4-47d9-9c74-2d62c579a65b/original
+     *
+     * @param record
+     * @param fileToUpload
+     * @param image
+     * @return
+     */
+    private String getImageUrl(String imageId, Boolean isThumbnail) {
+        String url = ""
+
+        if (imageId && imageId.size() > 10) {
+            def directoryList = imageId[-1..-4].split('') //  get first 4 directories
+            url = "${grailsApplication.config.imagesService.baseURL}/data/images/store" + directoryList.join("/") + "/${imageId}/" + ((isThumbnail) ? "thumbnail" : "original")
+        }
+
+        url
     }
 }
