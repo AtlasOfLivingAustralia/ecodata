@@ -3,33 +3,58 @@ package au.org.ala.ecodata
 import groovy.json.JsonSlurper
 import org.apache.commons.lang.time.DateUtils
 import java.text.SimpleDateFormat
-import org.apache.commons.lang.StringUtils
 
-class ImportService {
+/**
+ * Service for importing darwin core CSV records into the system.
+ *
+ * This controller was written to aid data migration from fielddata into ecodata.
+ * Once this is done, this class and the accompanying service should probably
+ * be removed or generalised.
+ */
+class RecordImportService {
 
-    def mediaService
+    def userService
 
     def serviceMethod() {}
 
-    def linkWithBiocache(){
+    def linkWithImages(){
 
         def js  = new JsonSlurper()
         Record.findAll().each { record ->
-           def response = new URL("http://biocache.ala.org.au/ws/occurrences/search?facet=off&q="+ URLEncoder.emcode(record.occurrenceID)).text
+
+           def url = "http://biocache.ala.org.au/ws/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
+
+           println(url)
+           def response = new URL(url).text
            def json = js.parseText(response)
            if(json.totalRecords == 1){
-               //we have a match
 
-               //get the UUID
-
+               def userDetails = userService.getUserForUserId(record.userId)
                //get the image references
-
-
+               if(json.occurrences[0].imageUrls){
+                   record.multimedia = []
+                   json.occurrences[0].imageUrls.each {
+                       def imageId = it.substring(it.indexOf("=") + 1)
+                       def imageMetadata = js.parseText(new URL("http://images.ala.org.au/ws/getImageInfo?id=" + imageId).text)
+                       record.multimedia << [
+                               created: imageMetadata.dateUploaded,         //image service
+                               title: imageMetadata.originalFileName,           //image service
+                               format: imageMetadata.mimeType,          //image service
+                               creator: userDetails.displayName,         //CAS
+                               rightsHolder: userDetails.displayName,    //CAS
+                               license: record.imageLicence?:"Creative Commons Attribution",
+                               type: "StillImage",
+                               imageId: imageId,
+                               identifier: it
+                       ]
+                   }
+               }
+               record.save(flush:true)
            }
         }
     }
 
-    def loadFile(filePath, reloadImages){
+    def loadFile(filePath){
         def columns = [] as List
         println "Starting import of data....."
         String[] dateFormats = ["yyyy-MM-dd HH:mm:ss.s", "yyyy-MM-dd HH:mm:ssZ", "dd/MM/yyyy","yyyy-MM-dd", "dd/MM/yy"]
@@ -95,7 +120,6 @@ class ImportService {
                                 SimpleDateFormat utcf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ") //get UTC
                                 utcf.setTimeZone(TimeZone.getTimeZone("UTC"));
                                 record.eventDate = utcf.format(suppliedDate)
-                                //record.eventTime = eventTimeFormatted
                             } catch (Exception e) {
                                 e.printStackTrace()
                             }
@@ -165,25 +189,6 @@ class ImportService {
                     record.save(flush: true)
                     imported ++
                     log.info("Importing record: " + record.id + ", count: " + count + ", imported: " + imported + ", skipped: " + (count-imported))
-
-                    if(!preloaded || reloadImages){
-                        if(associatedMediaIdx >= 0 && it[associatedMediaIdx]){
-                            try {
-                                def mediaFile = mediaService.copyToImageDir(record.id.toString(), it[associatedMediaIdx])
-                                println "Media filepath: " + mediaFile.getPath()
-                                if(mediaFile){
-                                    record['associatedMedia'] = mediaFile.getPath()
-                                    record.save(flush:true)
-                                } else {
-                                    println "Unable to import media for path: " +  it[associatedMediaIdx]
-                                }
-                            } catch(Exception e){
-                                println("Error loading images: " + it[associatedMediaIdx])
-                                record['associatedMedia'] = null
-                                record.save(flush:true)
-                            }
-                        }
-                    }
                 }
             }
         }

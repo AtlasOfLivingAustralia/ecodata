@@ -17,6 +17,8 @@ class RecordController {
     static defaultAction = "list"
 
     def csv(){
+
+        response.setHeader("Content-Disposition","attachment; filename=\"records.csv\"");
         response.setContentType("text/csv")
         def csvWriter = new CSVWriter(new OutputStreamWriter(response.outputStream))
         csvWriter.writeNext(
@@ -70,7 +72,7 @@ class RecordController {
              map.geodeticDatum?:"",
              map.imageLicence?:"",
              map.locality?:"",
-             map.associatedMedia ? map.associatedMedia.join(";") : "",
+             map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
              it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
             ] as String[]
           )
