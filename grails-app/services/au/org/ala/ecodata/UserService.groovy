@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 class UserService {
 
     static transactional = false
-    def authService, cacheService
+    def authService, grailsApplication, webService
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
@@ -30,7 +30,7 @@ class UserService {
     }
 
     /**
-     * This method gets called by a filter at the beginning of the request (if a userId paramter is on the URL)
+     * This method gets called by a filter at the beginning of the request (if a userId parameter is on the URL)
      * It sets the user details in a thread local for extraction by the audit service.
      * @param userId
      */
@@ -51,4 +51,17 @@ class UserService {
         }
     }
 
+    /**
+     * Returns null if lookup fails
+     * @param email
+     * @return
+     */
+    def syncUserIdLookup(email){
+        def result = webService.doPost(grailsApplication.config.userDetailsSingleUrl, ["userName": email])
+        if (!result.error){
+            result.resp.userId
+        } else {
+            null
+        }
+    }
 }
