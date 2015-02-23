@@ -216,6 +216,13 @@ if(!security.cas.adminRole){
 if(!ecodata.use.uuids){
     ecodata.use.uuids = false
 }
+if(!userDetailsSingleUrl){
+    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
+}
+if(!userDetailsUrl) {
+    userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+}
+
 
 if (!grails.cache.ehcache) {
     grails {

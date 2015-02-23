@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
@@ -19,18 +20,90 @@ class RecordService {
 
     final def ignores = ["action","controller","associatedMedia"]
 
-    def broadcastService
+    /**
+     * Export records to CSV.
+     */
+    def exportCSV(OutputStream outputStream){
+        def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
+        csvWriter.writeNext(
+                [
+                        "occurrenceID",
+                        "scientificName",
+                        "family",
+                        "kingdom",
+                        "decimalLatitude",
+                        "decimalLongitude",
+                        "eventDate",
+                        "userId",
+                        "recordedBy",
+                        "usingReverseGeocodedLocality",
+                        "individualCount",
+                        "submissionMethod",
+                        "georeferenceProtocol",
+                        "identificationVerificationStatus",
+                        "occurrenceRemarks",
+                        "coordinateUncertaintyInMeters",
+                        "geodeticDatum",
+                        "imageLicence",
+                        "locality",
+                        "associatedMedia",
+                        "modified",
+                ] as String[]
+        )
 
-    def userFielddataService
+        Record.list().each {
+            def map = recordService.toMap(it)
+            csvWriter.writeNext(
+                    [
+                            map.occurrenceID?:"",
+                            map.scientificName?:"",
+                            map.family?:"",
+                            map.kingdom?:"",
+                            map.decimalLatitude?:"",
+                            map.decimalLongitude?:"",
+                            map.eventDate?:"",
+                            map.userId?:"",
+                            map.recordedBy?:"",
+                            map.usingReverseGeocodedLocality?:"",
+                            map.individualCount?:"",
+                            map.submissionMethod?:"",
+                            map.georeferenceProtocol?:"",
+                            map.identificationVerificationStatus?:"",
+                            map.occurrenceRemarks?:"",
+                            map.coordinateUncertaintyInMeters?:"",
+                            map.geodeticDatum?:"",
+                            map.imageLicence?:"",
+                            map.locality?:"",
+                            map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
+                            it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
+                    ] as String[]
+            )
+        }
+        csvWriter.flush()
+        csvWriter.close()
+    }
 
+    /**
+     * Create a record based on the supplied JSON
+     *
+     * @param json
+     * @return
+     */
     def createRecord(json){
         Record record = new Record().save(true)
         def errors = updateRecord(record,json)
         [record, errors]
     }
 
+    /**
+     * Update the supplied record including updates to any supplied images.
+     *
+     * @param record
+     * @param json
+     * @return
+     */
     private def updateRecord(Record record,  json){
-        def errors =[:]
+        def errors = [:]
         try {
             json.each {
                 if(!ignores.contains(it.key) && it.value){
@@ -48,6 +121,7 @@ class RecordService {
                         log.debug "Uploading image - ${address}"
                         def imageId = uploadImage(record, downloadedFile, image)
                         record.multimedia[idx].imageId = imageId
+                        record.multimedia[idx].identifier = grailsApplication.config.imagesService.baseURL + "/image/proxyImageThumbnailLarge?imageId=" + imageId
                     }
                 }
             }
@@ -60,7 +134,15 @@ class RecordService {
         errors
     }
 
-    def uploadImage (Record record, File fileToUpload, image) {
+    /**
+     * Upload the supplied image to the image service.
+     *
+     * @param record
+     * @param fileToUpload
+     * @param image
+     * @return
+     */
+    private def uploadImage (Record record, File fileToUpload, image) {
 
         def remoteImageRepo = grailsApplication.config.imagesService.baseURL
         //upload an image
@@ -122,22 +204,8 @@ class RecordService {
         def dbo = record.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
         mapOfProperties.remove("_id")
-        //add userDisplayName - Cache-able not working....
-        if(mapOfProperties["userId"]){
-            def userMap = userFielddataService.getUserNamesForIdsMap()
-            def userId = mapOfProperties["userId"]
-            def userDisplayName = userMap.get(userId)
-            if(userDisplayName){
-                 mapOfProperties["userDisplayName"] = userDisplayName
-                    r.multimedia[idx].imageId = imageId
-                    r.multimedia[idx].identifier = getImageUrl(imageId, false)
-                    r.multimedia[idx].thumbnailUrl = getImageUrl(imageId, true)
-            }
-        }
         mapOfProperties
     }
-
-
 
     /**
      * Generate the URL to the original|thumb version of the images
@@ -152,12 +220,10 @@ class RecordService {
      */
     private String getImageUrl(String imageId, Boolean isThumbnail) {
         String url = ""
-
         if (imageId && imageId.size() > 10) {
             def directoryList = imageId[-1..-4].split('') //  get first 4 directories
             url = "${grailsApplication.config.imagesService.baseURL}/data/images/store" + directoryList.join("/") + "/${imageId}/" + ((isThumbnail) ? "thumbnail" : "original")
         }
-
         url
     }
 }

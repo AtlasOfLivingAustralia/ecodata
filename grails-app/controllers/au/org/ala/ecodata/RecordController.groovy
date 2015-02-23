@@ -4,11 +4,12 @@ import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.bson.types.ObjectId
 
+/**
+ * Controller for record CRUD operations.
+ */
 class RecordController {
 
     def grailsApplication
-
-    def mediaService
 
     def broadcastService
 
@@ -16,118 +17,18 @@ class RecordController {
 
     static defaultAction = "list"
 
+    /**
+     * Download service for all records.
+     */
     def csv(){
-
         response.setHeader("Content-Disposition","attachment; filename=\"records.csv\"");
         response.setContentType("text/csv")
-        def csvWriter = new CSVWriter(new OutputStreamWriter(response.outputStream))
-        csvWriter.writeNext(
-            [
-              "occurrenceID",
-              "scientificName",
-              "family",
-              "kingdom",
-              "decimalLatitude",
-              "decimalLongitude",
-              "eventDate",
-              "userId",
-              "recordedBy",
-              "usingReverseGeocodedLocality",
-              "individualCount",
-              "submissionMethod",
-              "georeferenceProtocol",
-              "identificationVerificationStatus",
-              "occurrenceRemarks",
-              "coordinateUncertaintyInMeters",
-              "geodeticDatum",
-              "imageLicence",
-              "locality",
-              "associatedMedia",
-              "modified",
-            ] as String[]
-        )
-
-        Record.list().each {
-
-          def map = recordService.toMap(it)
-
-          csvWriter.writeNext(
-            [
-             map.occurrenceID?:"",
-             map.scientificName?:"",
-             map.family?:"",
-             map.kingdom?:"",
-             map.decimalLatitude?:"",
-             map.decimalLongitude?:"",
-             map.eventDate?:"",
-             map.userId?:"",
-             map.recordedBy?:"",
-             map.usingReverseGeocodedLocality?:"",
-             map.individualCount?:"",
-             map.submissionMethod?:"",
-             map.georeferenceProtocol?:"",
-             map.identificationVerificationStatus?:"",
-             map.occurrenceRemarks?:"",
-             map.coordinateUncertaintyInMeters?:"",
-             map.geodeticDatum?:"",
-             map.imageLicence?:"",
-             map.locality?:"",
-             map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
-             it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
-            ] as String[]
-          )
-        }
-        csvWriter.flush()
-        csvWriter.close()
+        recordService.exportCSV(response.outputStream)
     }
 
     /**
-     * JSON body looks like:
-     * {
-     *  "id":"34234324324"
-     *  "addImages":[....]   //array of urls to new images
-     *  "removeImages":[...]  //array of urls to existing images
-     * }
+     * Get record by ID (UUID)
      */
-    def updateImages(){
-        def jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parse(request.getReader())
-        if (json.id){
-            def record = Record.findById(new ObjectId(json.id))
-            if (record){
-                if(json.addImages){
-                   json.addImages.each {
-                    def mediaFiles = record['associatedMedia']
-                    def createdFile = mediaService.download(record.id.toString(), mediaFiles.length-1, obj)
-                    mediaFiles.add createdFile.getAbsolutePath()
-                    record['associatedMedia'] = mediaFiles
-                   }
-                }
-                if (json.removeImages){
-                   json.removeImages.each {
-                    def mediaFiles = record['associatedMedia']
-                    //translate the full URL to actual path
-                    def imagePath = it.replaceAll(
-                            grailsApplication.config.fielddata.mediaUrl,
-                            grailsApplication.config.fielddata.mediaDir
-                    )
-                    mediaFiles.remove(createdFile.getPath())
-                    record['associatedMedia'] = mediaFiles
-                    mediaService.removeImage(imagePath) //delete original & the derivatives
-                   }
-                }
-                record.save(true)
-                response.setContentType("application/json")
-                def model = [id: record.id.toString(), images:record['associatedMedia']]
-                render model as JSON
-            } else {
-                response.sendError(404, 'Record ID not recognised. JSON payload must contain "id" element for existing record.')
-            }
-        } else {
-            response.sendError(400, 'No record ID was supplied. JSON payload must contain "id" element.')
-        }
-    }
-
     def getById(){
         Record record = Record.findByOccurrenceID(params.id)
         if(record){
@@ -172,6 +73,9 @@ class RecordController {
         render model as JSON
     }
 
+    /**
+     * Retrieve a list of records with paging support.
+     */
     def list(){
         log.debug("list request....")
         def records = []
@@ -249,15 +153,18 @@ class RecordController {
         }
     }
 
+    /**
+     * Update the supplied record.
+     */
     def updateById(){
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
         //json.eventDate = new Date().parse("yyyy-MM-dd", json.eventDate)
         //TODO add some data validation....
-        Record r = Record.findByOccurrenceID(params.id)
-        Map errors = recordService.updateRecord(r,json)
+        Record record = Record.findByOccurrenceID(params.id)
+        Map errors = recordService.updateRecord(record,json)
         log.debug "updateById() - errors = ${errors}"
-        setResponseHeadersForRecord(response, r)
+        setResponseHeadersForRecord(response, record)
         //add the errors to the header too
         response.addHeader('errors', (errors as grails.converters.JSON).toString())
 
@@ -265,18 +172,18 @@ class RecordController {
             response.sendError(400, (errors as JSON).toString())
         } else {
             try {
-                broadcastService.sendUpdate(r)
+                broadcastService.sendUpdate(record)
             } catch (Exception e){
                 log.error(e.getMessage(), e)
             }
 
-            render r as JSON
+            render record as JSON
         }
     }
 
     private def setResponseHeadersForRecord(response, record){
-        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/fielddata/record/" + record.id.toString())
-        response.addHeader("location", grailsApplication.config.grails.serverURL + "/fielddata/record/" + record.id.toString())
+        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
+        response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("entityId", record.id.toString())
     }
 }

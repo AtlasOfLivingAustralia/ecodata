@@ -15,27 +15,26 @@ class RecordImportService {
 
     def userService
 
+    def grailsApplication
+
     def serviceMethod() {}
 
     def linkWithImages(){
 
         def js  = new JsonSlurper()
         Record.findAll().each { record ->
-
            def url = "http://biocache.ala.org.au/ws/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
-
-           println(url)
+           log.debug("Retrieving from biocache: " + url)
            def response = new URL(url).text
            def json = js.parseText(response)
            if(json.totalRecords == 1){
-
                def userDetails = userService.getUserForUserId(record.userId)
                //get the image references
                if(json.occurrences[0].imageUrls){
                    record.multimedia = []
                    json.occurrences[0].imageUrls.each {
                        def imageId = it.substring(it.indexOf("=") + 1)
-                       def imageMetadata = js.parseText(new URL("http://images.ala.org.au/ws/getImageInfo?id=" + imageId).text)
+                       def imageMetadata = js.parseText(new URL(grailsApplication.config.imagesService.baseURL + "/ws/getImageInfo?id=" + imageId).text)
                        record.multimedia << [
                                created: imageMetadata.dateUploaded,         //image service
                                title: imageMetadata.originalFileName,           //image service
@@ -49,6 +48,7 @@ class RecordImportService {
                        ]
                    }
                }
+               record.userDisplayName = userDetails.displayName
                record.save(flush:true)
            }
         }

@@ -8,14 +8,20 @@ import grails.converters.JSON
 import org.apache.commons.codec.binary.Base64
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
+/**
+ * Controller providing functions for mobile record submission from OzAtlas.
+ */
 class MobileController {
 
     def index() { }
 
     def recordService
 
-    def userFielddataService
+    def userService
 
+    /**
+     * Handle a multipart post with record details
+     */
     def submitRecordMultipart(){
         log.debug("Mobile - submitRecordMultipart POST received...userName:" + params.userName + ", authKey:" + params.authenticationKey)
         def authenticated = checkAuthenticationKey(params.userName, params.authenticationKey)
@@ -66,6 +72,9 @@ class MobileController {
         }
     }
 
+    /**
+     * Handles a record post.
+     */
     def submitRecord(){
         log.debug("Mobile - submitRecord POST received...userName:" + params.userName + ", authKey:" + params.authenticationKey)
         def authenticated = checkAuthenticationKey(params.userName, params.authenticationKey)
@@ -109,19 +118,9 @@ class MobileController {
     }
 
     private def boolean checkAuthenticationKey(String userName, String authKey) throws Exception {
-//        HttpClient httpClient = new DefaultHttpClient();
-//        HttpPost post = new HttpPost("https://m.ala.org.au/mobileauth/mobileKey/checkKey");
-//        def nameValuePairs = new ArrayList<NameValuePair>();
-//        nameValuePairs.add(new BasicNameValuePair("userName", userName))
-//        nameValuePairs.add(new BasicNameValuePair("authKey", authKey))
-//        post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-//        HttpResponse httpResponse = httpClient.execute(post)
-//        log.debug("Authentication check:" + httpResponse.getStatusLine().getStatusCode() + ", for username: " + userName + ", and auth key " + authKey)
-//        httpResponse.getStatusLine().getStatusCode() == 200
-
         //do we recognise the userName ?
         if(userName){
-            userFielddataService.syncUserIdLookup(userName.toLowerCase()) != null
+            userService.syncUserIdLookup(userName.toLowerCase()) != null
         } else {
             log.info("Supplied username is blank")
             false
