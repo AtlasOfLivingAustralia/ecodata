@@ -12,6 +12,9 @@ import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
 import org.apache.http.impl.client.DefaultHttpClient
 
+/**
+ * Services for handling the creation of records with images.
+ */
 class RecordService {
 
     def grailsApplication
@@ -162,7 +165,8 @@ class RecordService {
                 "copyright": image?.license,
                 "originalFilename": image?.title,
                 "attribution": image?.creator,
-                "dateTaken": image?.created
+                "dateTaken": image?.created,
+                "systemSupplier": grailsApplication.config.imageSysteSupplier?:"ecodata"
         ] as JSON).toString()))
 
         if (record.tags?.size() > 0) {
@@ -205,25 +209,5 @@ class RecordService {
         def mapOfProperties = dbo.toMap()
         mapOfProperties.remove("_id")
         mapOfProperties
-    }
-
-    /**
-     * Generate the URL to the original|thumb version of the images
-     * based on the imageId
-     *
-     * E.g. http://images-dev.ala.org.au/data/images/store/b/5/6/a/557634dc-0df4-47d9-9c74-2d62c579a65b/original
-     *
-     * @param record
-     * @param fileToUpload
-     * @param image
-     * @return
-     */
-    private String getImageUrl(String imageId, Boolean isThumbnail) {
-        String url = ""
-        if (imageId && imageId.size() > 10) {
-            def directoryList = imageId[-1..-4].split('') //  get first 4 directories
-            url = "${grailsApplication.config.imagesService.baseURL}/data/images/store" + directoryList.join("/") + "/${imageId}/" + ((isThumbnail) ? "thumbnail" : "original")
-        }
-        url
     }
 }
