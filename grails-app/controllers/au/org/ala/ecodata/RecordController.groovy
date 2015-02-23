@@ -11,8 +11,6 @@ class RecordController {
 
     def grailsApplication
 
-    def broadcastService
-
     def recordService
 
     static defaultAction = "list"
