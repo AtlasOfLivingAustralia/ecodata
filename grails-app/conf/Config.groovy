@@ -201,6 +201,9 @@ if (!headerAndFooter.baseURL) {
 if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = 'http://auth.ala.org.au/apikey/ws/check?apikey='
 }
+if(!imagesService.baseURL){
+    imagesService.baseURL = 'http://images-dev.ala.org.au'
+}
 if(!security.cas.bypass){
     security.cas.bypass = false
 }
@@ -210,6 +213,13 @@ if(!security.cas.adminRole){
 if(!ecodata.use.uuids){
     ecodata.use.uuids = false
 }
+if(!userDetailsSingleUrl){
+    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
+}
+if(!userDetailsUrl) {
+    userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+}
+
 
 if (!grails.cache.ehcache) {
     grails {
@@ -234,8 +244,8 @@ environments {
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
         app.uploads.url = "${grails.serverURL}/document/download?filename="
-        app.elasticsearch.indexAllOnStartup = true
-        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexAllOnStartup = false
+        app.elasticsearch.indexOnGormEvents = false
     }
     test {
         rails.logging.jul.usebridge = true
@@ -272,12 +282,12 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata.log",
+                        file: "/tmp/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-stacktrace.log"
+                        file: "/tmp/ecodata-stacktrace.log"
             }
             test {
                 console name: "stdout",

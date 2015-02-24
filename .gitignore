@@ -35,3 +35,5 @@
 # Intellij files
 /*.iml
 /.idea
+
+out
