@@ -388,6 +388,10 @@ class MetadataService {
         log.info("Total sites = ${allSites?.size()}")
 
         allSites.each{ site ->
+            if (!site.projects) {
+                log.info("Ignoring site ${site.siteId} due to no associated projects")
+                return
+            }
             def centroid = site.extent?.geometry?.centre
             if (centroid && centroid.size() == 2) {
                 sites.add(site)
