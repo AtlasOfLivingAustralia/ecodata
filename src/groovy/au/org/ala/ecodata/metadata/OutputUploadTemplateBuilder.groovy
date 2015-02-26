@@ -12,14 +12,14 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     def outputName
     def data
 
-    public OutputUploadTemplateBuilder(outputName, model) {
-        super(outputName)
+    public OutputUploadTemplateBuilder(filename, outputName, model) {
+        super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
     }
 
-    public OutputUploadTemplateBuilder(outputName, model, data) {
-        super(outputName)
+    public OutputUploadTemplateBuilder(filename, outputName, model, data) {
+        super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
         this.data = data
