@@ -115,11 +115,17 @@ class MetadataController {
             return null
         }
 
+        def fileName = outputName
+
         if (listName) {
-            annotatedModel = annotatedModel.find { it.name == listName }?.columns
+            def listModel = annotatedModel.find { it.name == listName }
+            if (listModel.description) {
+                fileName += " - ${listModel.description}"
+            }
+            annotatedModel = listModel?.columns
         }
 
-        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, annotatedModel);
+        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel);
         builder.build()
         builder.setResponseHeaders(response)
 
@@ -166,7 +172,7 @@ class MetadataController {
         outputModels?.first().annotatedModel.collect { model.add(it) }
 
         def outputName = "${outputModels?.first().name}"
-        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, model, outputData)
+        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(outputName, outputName, model, outputData)
         builder.build()
         builder.setResponseHeaders(response)
         builder.save(response.outputStream)
