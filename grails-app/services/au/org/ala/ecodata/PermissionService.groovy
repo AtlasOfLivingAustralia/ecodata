@@ -13,7 +13,16 @@ class PermissionService {
 
         if (userId && projectId) {
             isAdmin = ( UserPermission.findAllByUserIdAndEntityTypeAndEntityIdAndAccessLevel(userId, Project.class.name, projectId, AccessLevel.admin) )
-            log.debug "isAdmin = ${isAdmin}"
+        }
+
+        return isAdmin
+    }
+
+    public boolean isUserAdminForOrganisation(String userId, String organisationId) {
+        def isAdmin = false
+
+        if (userId && organisationId) {
+            isAdmin = ( UserPermission.findAllByUserIdAndEntityTypeAndEntityIdAndAccessLevel(userId, Organisation.class.name, organisationId, AccessLevel.admin) )
         }
 
         return isAdmin

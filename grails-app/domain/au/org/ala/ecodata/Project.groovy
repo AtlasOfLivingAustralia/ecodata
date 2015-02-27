@@ -25,6 +25,7 @@ class Project {
     String description
     String manager
     String grantId
+    String workOrderId
     String groupId
     String groupName
     String organisationName
@@ -58,6 +59,7 @@ class Project {
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
+        workOrderId nullable:true
         manager nullable:true
         groupId nullable:true
         groupName nullable:true
