@@ -415,7 +415,24 @@ class PermissionsController {
                 render status:404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+            render status:400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    def isUserAdminForOrganisation() {
+        def userId = params.userId
+        def organisationId = params.organisationId
+
+        if (userId && organisationId) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                def out = [userIsAdmin: permissionService.isUserAdminForOrganisation(userId, organisationId)]
+                render out as JSON
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, organisationId'
         }
     }
 
