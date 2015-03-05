@@ -71,6 +71,7 @@ class ActivityService {
     def toMap(act, levelOfDetail = ['all']) {
         def dbo = act.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
+        mapOfProperties.complete = act.complete // This is not a persistent property so is not in the dbo.
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
