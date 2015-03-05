@@ -80,6 +80,21 @@ class PermissionService {
         out
     }
 
+    def getMembersForOrganisation(String organisationId) {
+        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(organisationId, Organisation.class.name, AccessLevel.starred)
+        def out = []
+        up.each {
+            def rec = [:]
+            def u = userService.getUserForUserId(it.userId?:"0")
+            rec.role = it.accessLevel?.toString()
+            rec.userId = it.userId
+            rec.displayName = u?.displayName
+            rec.userName = u?.userName
+            out.add(rec)
+        }
+        out
+    }
+
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         def prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
