@@ -456,6 +456,23 @@ class PermissionsController {
         }
     }
 
+    def isUserGrantManagerForOrganisation() {
+        def userId = params.userId
+        def organisationId = params.organisationId
+
+        if (userId && organisationId) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                def out = [userIsGrantManager: permissionService.isUserGrantManagerForOrganisation(userId, organisationId)]
+                render out as JSON
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, organisationId'
+        }
+    }
+
 
 
     /**

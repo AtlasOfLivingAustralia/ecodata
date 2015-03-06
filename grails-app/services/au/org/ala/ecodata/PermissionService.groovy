@@ -45,6 +45,20 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    def isUserGrantManagerForOrganisation(String userId, String organisationId) {
+        def isGrantManager = false
+        if (userId && organisationId) {
+            def ups = getUserAccessForEntity(userId, Organisation, organisationId)
+            ups.findAll {
+                if (it.accessLevel.code >= AccessLevel.caseManager.code) {
+                    isGrantManager = true
+                }
+            }
+        }
+
+        return isGrantManager
+    }
+
     private def getUserAccessForEntity(String userId, Class entityType, String entityId ) {
         return UserPermission.findAllByUserIdAndEntityTypeAndEntityId(userId, entityType.name, entityId)
 
