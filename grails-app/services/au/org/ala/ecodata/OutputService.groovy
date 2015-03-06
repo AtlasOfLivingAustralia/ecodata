@@ -26,6 +26,10 @@ class OutputService {
         Output.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    def findAllForActivityIdAndName(id, name, levelOfDetail = []) {
+        Output.findAllByActivityIdAndNameAndStatus(id, name, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
     def delete(String id, destroy) {
         def a = Output.findByOutputId(id)
         if (a) {

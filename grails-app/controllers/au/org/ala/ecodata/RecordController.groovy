@@ -25,6 +25,17 @@ class RecordController {
     }
 
     /**
+     * Download service for project sightings (for given project only if projectId is given).
+     * Optional query param "?model=<modelname>" to restrict output to matching records
+     */
+    def csvProject(){
+        def filename = params.id? "project-" + params.id + ".csv": "projects.csv"
+        response.setHeader("Content-Disposition","attachment; filename=\"" + filename + "\"");
+        response.setContentType("text/csv")
+        recordService.exportCSVProject(response.outputStream, params.id, params.model)
+    }
+
+    /**
      * Get record by ID (UUID)
      */
     def getById(){

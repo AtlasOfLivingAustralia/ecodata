@@ -18,6 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient
 class RecordService {
 
     def grailsApplication
+    def activityService, metadataService, outputService, projectService, siteService
 
     def serviceMethod() {}
 
@@ -209,5 +210,218 @@ class RecordService {
         def mapOfProperties = dbo.toMap()
         mapOfProperties.remove("_id")
         mapOfProperties
+    }
+
+
+    /**
+     * Export project sightings to CSV.
+     */
+    def exportCSVProject(OutputStream outputStream, projectId, modelName){
+        def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
+        csvWriter.writeNext(
+                [
+                        "occurrenceID",
+                        "scientificName",
+                        "family",
+                        "kingdom",
+                        "decimalLatitude",
+                        "decimalLongitude",
+                        "eventDate",
+                        "userId",
+                        "recordedBy",
+                        "usingReverseGeocodedLocality",
+                        "individualCount",
+                        "submissionMethod",
+                        "georeferenceProtocol",
+                        "identificationVerificationStatus",
+                        "occurrenceRemarks",
+                        "coordinateUncertaintyInMeters",
+                        "geodeticDatum",
+                        "imageLicence",
+                        "locality",
+                        "associatedMedia",
+                        "modified",
+                        "locationID"
+                ] as String[]
+        )
+
+        def modelsMap = [:] // cache of output models by name
+        def projects
+        if (projectId)
+            projects = [projectService.get(projectId, projectService.FLAT)]
+        else
+            projects = projectService.search([:], projectService.FLAT)
+        for (def project in projects) {
+            if (project) exportOneProject(csvWriter, project, modelsMap, modelName)
+        }
+
+        csvWriter.flush()
+        csvWriter.close()
+    }
+
+    private def exportOneProject(csvWriter, project, modelsMap, modelName) {
+        def projectSite = siteService.get(project.projectSiteId)
+        def today = (new Date()).format("dd-MM-yyyy")
+        def projectDates = mapDates(today, project.plannedStartDate, project.plannedEndDate, project.actualStartDate, project.actualEndDate)
+        for (def activity in activityService.findAllForProjectId(project.projectId, activityService.FLAT)) {
+            def site, activityDWC = [:]
+
+            // map collector to activity record
+            if (activity.collector) activityDWC.userId = activity.collector
+
+            // map site info to activity record
+            if (activity.siteId) site = siteService.get(activity.siteId)
+            if (!site) site = projectSite
+            if (site) mapSiteToDWC(activityDWC, site)
+
+            // map date info to activity record
+            activityDWC.eventDate = mapDates(today, activity.plannedStartDate, activity.plannedEndDate, activity.startDate, activity.endDate)
+            if (!activityDWC.eventDate) activityDWC.eventDate = projectDates
+
+            // map each output to a record
+            def outputs
+            if (modelName)
+                outputs = outputService.findAllForActivityIdAndName(activity.activityId, modelName)
+            else
+                outputs = outputService.findAllForActivityId(activity.activityId)
+            for (def output in outputs) {
+                def model = modelsMap[output.name]
+                if (!model) model = modelsMap[output.name] = metadataService.getOutputDataModelByName(output.name)
+                if (!model || !model.darwinCore) continue
+                def dwc = activityDWC.clone()
+                if (output.dateCreated) dwc.eventDate = output.dateCreated.format("dd-MM-yyyy")
+                exportOutputTree(csvWriter, dwc, output.data, model.dataModel)
+            }
+        }
+    }
+
+    private def mapSiteToDWC(dwc, site) {
+        def extent = site.extent, geom = extent?.geometry
+        if (!geom) return // can't do much with this site
+        if (extent.source == "pid" && geom.centre?.size() != 2 && site.poi?.size() > 0)
+            geom = site.poi[0].geometry
+        if (geom.locality) dwc.locality = geom.locality
+        if (geom.uncertainty) dwc.coordinateUncertaintyInMeters = geom.uncertainty
+        if (site.siteId) dwc.locationID = site.siteId
+        def centre = geom.centre
+        if (centre && centre.size() == 2) {
+            dwc.decimalLatitude = centre[1]
+            dwc.decimalLongitude = centre[0]
+        }
+    }
+
+    private def mapDates(today, plannedStart, plannedEnd, actualStart, actualEnd) {
+        def dStart = actualStart?: plannedStart
+        def dEnd = actualEnd?: plannedEnd
+        if (dStart && dEnd) return dStart.format("dd-MM-yyyy") + ' ' + dEnd.format("dd-MM-yyyy")
+        if (dStart) return dStart.format("dd-MM-yyyy") + ' ' + today
+        return null
+    }
+
+    /*
+     * DarwinCore export mappings for project sightings (outputs)
+     * (in order of increasing overwrite preference)
+     *
+     * Project:
+     *     site(projectSiteId) {
+     *       siteId -> locationId
+     *       extent.geometry or poi[0].geometry {
+     *         locality -> locality
+     *         uncertainty -> coordinateUncertaintyInMeters
+     *         centre[0] -> decimalLongitude
+     *         centre[1] -> decimalLatitude
+     *       }
+     *     }
+     *     plannedStartDate/actualStartDate plannedEndDate/actualEndDate/today -> eventDate
+     *
+     * Activity:
+     *     site(siteId) -> [overwrite mappings from project site]
+     *     plannedStartDate/startDate plannedEndDate/endDate/today -> eventDate
+     *     collector -> userId
+     *
+     * Output: only for model marked "darwinCore: true"
+     *     dateCreated -> eventDate
+     *     assessmentDate -> eventDate
+     *     lastUpdated -> modified
+     *     collector -> recordedBy
+     *     assessor -> recordedBy
+     *     eventNotes -> occurrenceRemarks
+     *     notes -> occurrenceRemarks
+     *     (dataType:species).name -> scientificName
+     *     fields marked "darwinCore: <dwcName>" -> dwcName
+     *
+     * Output sublist marked "darwinCore: true"
+     *     recursive generation of records
+     */
+    private def exportOutputTree(csvWriter, dwc, output, model) {
+        // map leaf-level fields to darwin core
+        if (output.assessmentDate) dwc.eventDate = output.assessmentDate.format("dd-MM-yyyy")
+        if (output.lastUpdated) dwc.modified = output.lastUpdated.format("dd-MM-yyyy")
+        if (output.locality) dwc.locality = output.locality
+        if (output.assessor)
+            dwc.recordedBy = output.assessor
+        else if (output.collector)
+            dwc.recordedBy = output.collector
+        if (output.notes)
+            dwc.occurrenceRemarks = output.notes
+        else if (output.eventNotes)
+            dwc.occurrenceRemarks = output.eventNotes
+
+        // map species info
+        def species = model.find {it.dataType == "species"}
+        if (species) dwc.scientificName = output[species.name].name
+
+        // process exlpicit mappings
+        model.each {
+            def dwcName = it.darwinCore
+            if (dwcName) {
+                def val = output[it.name]
+                if (val) dwc[dwcName] = val
+            }
+        }
+
+        // determine potential subtree for recursive record generation
+        def subtree = model.find {it.dataType == "list" && it.darwinCore}
+        if (subtree) {
+            output = output[subtree.name]
+            if (output && output[0] instanceof Object) {
+                model = subtree.columns
+                output.each {
+                    exportOutputTree(csvWriter, dwc.clone(), it, model)
+                }
+                return
+            }
+        }
+
+        // only emit if there is a valid scientificName
+        if (!dwc.scientificName || dwc.scientificName.size() == 0) return
+
+        // if no valid subtree was found, we are at a leaf node, so emit it
+        csvWriter.writeNext(
+                [
+                        dwc.occurrenceID?:"",
+                        dwc.scientificName?:"",
+                        dwc.family?:"",
+                        dwc.kingdom?:"",
+                        dwc.decimalLatitude?:"",
+                        dwc.decimalLongitude?:"",
+                        dwc.eventDate?:"",
+                        dwc.userId?:"",
+                        dwc.recordedBy?:"",
+                        dwc.usingReverseGeocodedLocality?:"",
+                        dwc.individualCount?:"",
+                        dwc.submissionMethod?:"",
+                        dwc.georeferenceProtocol?:"",
+                        dwc.identificationVerificationStatus?:"",
+                        dwc.occurrenceRemarks?:"",
+                        dwc.coordinateUncertaintyInMeters?:"",
+                        dwc.geodeticDatum?:"",
+                        dwc.imageLicence?:"",
+                        dwc.locality?:"",
+                        dwc.multimedia ? dwc.multimedia.collect {it.identifier}.join(";") : "",
+                        dwc.modified?:"",
+                        dwc.locationID?:""
+                ] as String[]
+        )
     }
 }
