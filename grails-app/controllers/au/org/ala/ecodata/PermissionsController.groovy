@@ -260,6 +260,26 @@ class PermissionsController {
     }
 
     /**
+     * Get a list of users with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link Organisation organisation} (via {@link Organisation#organisationId organisationId})
+     */
+    def getMembersForOrganisation() {
+        def organisationId = params.id
+
+        if (organisationId) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                def members = permissionService.getMembersForOrganisation(organisationId)
+                render members as JSON
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required parameters not provided: organisationId.'
+        }
+    }
+
+    /**
      * Get a list of {@link Project projects} with {@link AccessLevel#editor editor} level access or higher
      * for a given {@link UserDetails#userId userId}
      *
@@ -427,6 +447,23 @@ class PermissionsController {
             def organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
                 def out = [userIsAdmin: permissionService.isUserAdminForOrganisation(userId, organisationId)]
+                render out as JSON
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, organisationId'
+        }
+    }
+
+    def isUserGrantManagerForOrganisation() {
+        def userId = params.userId
+        def organisationId = params.organisationId
+
+        if (userId && organisationId) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            if (organisation) {
+                def out = [userIsGrantManager: permissionService.isUserGrantManagerForOrganisation(userId, organisationId)]
                 render out as JSON
             } else {
                 render status:404, text: "Organisation not found for organisationId: ${organisationId}"

@@ -45,6 +45,20 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    def isUserGrantManagerForOrganisation(String userId, String organisationId) {
+        def isGrantManager = false
+        if (userId && organisationId) {
+            def ups = getUserAccessForEntity(userId, Organisation, organisationId)
+            ups.findAll {
+                if (it.accessLevel.code >= AccessLevel.caseManager.code) {
+                    isGrantManager = true
+                }
+            }
+        }
+
+        return isGrantManager
+    }
+
     private def getUserAccessForEntity(String userId, Class entityType, String entityId ) {
         return UserPermission.findAllByUserIdAndEntityTypeAndEntityId(userId, entityType.name, entityId)
 
@@ -67,6 +81,21 @@ class PermissionService {
 
     def getMembersForProject(String projectId) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(projectId, Project.class.name, AccessLevel.starred)
+        def out = []
+        up.each {
+            def rec = [:]
+            def u = userService.getUserForUserId(it.userId?:"0")
+            rec.role = it.accessLevel?.toString()
+            rec.userId = it.userId
+            rec.displayName = u?.displayName
+            rec.userName = u?.userName
+            out.add(rec)
+        }
+        out
+    }
+
+    def getMembersForOrganisation(String organisationId) {
+        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(organisationId, Organisation.class.name, AccessLevel.starred)
         def out = []
         up.each {
             def rec = [:]

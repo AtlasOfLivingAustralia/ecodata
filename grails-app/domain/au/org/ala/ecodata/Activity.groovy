@@ -13,6 +13,10 @@ class Activity {
      */
     public static final String PLANNED = 'planned'
     public static final String STARTED = 'started'
+    public static final String FINISHED = 'finished'
+    public static final String DEFERRED = 'deferred'
+    public static final String CANCELLED = 'cancelled'
+
     /*
     Note:
         activities and assessments are both described by this domain - 'activities' can be used to mean both
@@ -57,6 +61,14 @@ class Activity {
     String notes
     Date dateCreated
     Date lastUpdated
+
+    /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
+    public boolean isComplete() {
+        def completedStates = [FINISHED, DEFERRED, CANCELLED]
+        return progress in completedStates
+    }
+
+    static transients = ['complete']
 
     static constraints = {
         siteId nullable: true
