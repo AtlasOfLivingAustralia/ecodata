@@ -180,16 +180,9 @@ class RecordController {
         setResponseHeadersForRecord(response, record)
         //add the errors to the header too
         response.addHeader('errors', (errors as grails.converters.JSON).toString())
-
         if (errors) {
             response.sendError(400, (errors as JSON).toString())
         } else {
-            try {
-                broadcastService.sendUpdate(record)
-            } catch (Exception e){
-                log.error(e.getMessage(), e)
-            }
-
             render record as JSON
         }
     }
