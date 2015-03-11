@@ -204,8 +204,11 @@ if (!security.apikey.serviceUrl) {
 if(!security.cas.logoutUrl){
     security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
 }
+if(!biocacheService.baseURL){
+    biocacheService.baseURL = 'http://biocache.ala.org.au/ws'
+}
 if(!imagesService.baseURL){
-    imagesService.baseURL = 'http://images-dev.ala.org.au'
+    imagesService.baseURL = 'http://images.ala.org.au'
 }
 if(!security.cas.bypass){
     security.cas.bypass = false
