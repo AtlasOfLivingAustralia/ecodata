@@ -1,8 +1,17 @@
 package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import org.joda.time.Duration
+import org.joda.time.Interval
+import org.joda.time.Period
+import org.joda.time.Weeks
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.ISODateTimeFormat
 
 class Project {
+
+    static final COMPLETED = "completed"
 
     /*
     Associations:
@@ -47,6 +56,7 @@ class Project {
 	Date dateCreated
     Date lastUpdated
 	String promoteOnHomepage = 'no'
+    List activities
 	
     boolean isCitizenScience
     String projectType    // survey, works
@@ -55,6 +65,47 @@ class Project {
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
+
+    static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
+
+    Date getActualStartDate() {
+        if (actualStartDate) {
+            return actualStartDate
+        }
+        if (activities) {
+            return activities.min{it.startDate}?.startDate ?: null
+        }
+        return null;
+    }
+
+    Date getActualEndDate() {
+        if (actualEndDate) {
+            return actualEndDate
+        }
+        if (status == COMPLETED && activities) {
+            return activities.max{it.endDate}?.endDate ?: null
+        }
+        return null;
+    }
+
+    Integer getActualDurationInWeeks() {
+        return intervalInWeeks(getActualStartDate(), getActualEndDate())
+    }
+
+    Integer getPlannedDurationInWeeks() {
+        return intervalInWeeks(plannedStartDate, plannedEndDate)
+    }
+
+    private Integer intervalInWeeks(Date startDate, Date endDate) {
+        if (!startDate || !endDate) {
+            return null
+        }
+        DateTime start = new DateTime(startDate)
+        DateTime end = new DateTime(endDate);
+
+        Interval interval = new Interval(start, end)
+        return Weeks.weeksIn(interval).weeks
+    }
 
     static constraints = {
         externalId nullable:true
