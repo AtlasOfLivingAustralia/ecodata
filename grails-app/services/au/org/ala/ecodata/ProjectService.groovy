@@ -12,6 +12,7 @@ class ProjectService {
     static final ALL = 'all'
 	static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
+    static final ENHANCED = 'enhanced'
 
     def grailsApplication
     def siteService
@@ -85,6 +86,15 @@ class ProjectService {
             }
             else if (levelOfDetail == OUTPUT_SUMMARY) {
                 mapOfProperties.outputSummary = projectMetrics(prj.projectId, false, true)
+            }
+            if (levelOfDetail == ENHANCED) {
+                def activities = activityService.findAllForProjectId(prj.projectId, ActivityService.FLAT, includeDeletedActivites)
+                prj.activities = activities
+
+                mapOfProperties.actualStartDate = prj.actualStartDate?:''
+                mapOfProperties.actualEndDate = prj.actualEndDate?:''
+                mapOfProperties.plannedDurationInWeeks = prj.plannedDurationInWeeks
+                mapOfProperties.actualDurationInWeeks = prj.actualDurationInWeeks
             }
         }
 	
