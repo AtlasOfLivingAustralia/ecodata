@@ -19,6 +19,7 @@ class RecordService {
 
     def grailsApplication
 
+
     def serviceMethod() {}
 
     final def ignores = ["action","controller","associatedMedia"]
@@ -26,7 +27,7 @@ class RecordService {
     /**
      * Export records to CSV.
      */
-    def exportCSV(OutputStream outputStream){
+    def exportCSV(OutputStream outputStream, Date cutOffDate = null){
         def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
         csvWriter.writeNext(
                 [
@@ -54,8 +55,16 @@ class RecordService {
                 ] as String[]
         )
 
-        Record.list().each {
-            def map = recordService.toMap(it)
+        def recordList = null
+
+        if(cutOffDate){
+            recordList = Record.where { lastUpdated >= cutOffDate }
+        } else {
+            recordList =  Record.list()
+        }
+
+        recordList.each {
+            def map = toMap(it)
             csvWriter.writeNext(
                     [
                             map.occurrenceID?:"",

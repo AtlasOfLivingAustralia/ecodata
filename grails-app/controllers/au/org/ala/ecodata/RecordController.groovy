@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.apache.http.impl.cookie.DateUtils
 import org.bson.types.ObjectId
 
 /**
@@ -21,7 +22,21 @@ class RecordController {
     def csv(){
         response.setHeader("Content-Disposition","attachment; filename=\"records.csv\"");
         response.setContentType("text/csv")
-        recordService.exportCSV(response.outputStream)
+        def cutoff = null
+        if(params.lastUpdated){
+            if(params.lastUpdated.toLowerCase() == "day") {
+                cutoff = new Date().minus(1)
+            } else if(params.lastUpdated.toLowerCase() == "week"){
+                cutoff = new Date().minus(7)
+            } else if(params.lastUpdated.toLowerCase() == "month"){
+                cutoff = new Date().minus(30)
+            } else if(params.lastUpdated.toLowerCase() == "year"){
+                cutoff = new Date().minus(365)
+            } else {
+                cutoff = DateUtils.parseDate(params.lastUpdated, ["yyyy-MM-dd"] as String[])
+            }
+        }
+        recordService.exportCSV(response.outputStream, cutoff)
     }
 
     /**

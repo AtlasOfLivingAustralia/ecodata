@@ -20,6 +20,8 @@ class RecordImportService {
     def serviceMethod() {}
 
     def linkWithImages(){
+        def count = 0
+        def images = 0
 
         def js  = new JsonSlurper()
         def userLookupCache = [:]
@@ -30,7 +32,7 @@ class RecordImportService {
            def response = new URL(url).text
            def json = js.parseText(response)
            if(json.totalRecords == 1){
-
+               count++
                def userDetails = userLookupCache.get(record.userId)
                if(!userDetails){
                    userDetails = userService.getUserForUserId(record.userId)
@@ -38,6 +40,7 @@ class RecordImportService {
                }
                //get the image references
                if(json.occurrences[0].imageUrls){
+                   images++
                    record.multimedia = []
                    json.occurrences[0].imageUrls.each {
                        def imageId = it.substring(it.indexOf("=") + 1)
@@ -60,6 +63,7 @@ class RecordImportService {
            }
         }
         log.info("Finished linking auth and image information")
+        [count: count, images: images]
     }
 
     def loadFile(filePath){
