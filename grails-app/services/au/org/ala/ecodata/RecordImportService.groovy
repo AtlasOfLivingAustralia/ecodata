@@ -19,50 +19,74 @@ class RecordImportService {
 
     def serviceMethod() {}
 
+    def linkWithAuth(){
+        def count = 0
+        def images = 0
+        def userLookupCache = [:]
+
+        Record.findAll().each { record ->
+            try {
+                count++
+                log.info("[record ${count}]  Syncing auth for: " + record.occurrenceID)
+                def userDetails = userLookupCache.get(record.userId)
+                if (!userDetails) {
+                    userDetails = userService.getUserForUserId(record.userId)
+                    userLookupCache.put(record.userId, userDetails)
+                }
+                record.userDisplayName = userDetails.displayName
+                record.save(flush: true)
+            } catch (Exception e){
+                log.error("Problem syncing record: " + record.occurrenceID, e)
+            }
+        }
+        log.info("Finished linking auth and image information. Count ${count}")
+        [count: count, images: images]
+    }
+
     def linkWithImages(){
         def count = 0
         def images = 0
 
         def js  = new JsonSlurper()
-        def userLookupCache = [:]
 
         Record.findAll().each { record ->
-           def url = grailsApplication.config.biocacheService.baseURL + "/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
-           log.debug("Retrieving from biocache: " + url)
-           def response = new URL(url).text
-           def json = js.parseText(response)
-           if(json.totalRecords == 1){
-               count++
-               def userDetails = userLookupCache.get(record.userId)
-               if(!userDetails){
-                   userDetails = userService.getUserForUserId(record.userId)
-                   userLookupCache.put(record.userId, userDetails)
-               }
-               //get the image references
-               if(json.occurrences[0].imageUrls){
-                   images++
-                   record.multimedia = []
-                   json.occurrences[0].imageUrls.each {
-                       def imageId = it.substring(it.indexOf("=") + 1)
-                       def imageMetadata = js.parseText(new URL(grailsApplication.config.imagesService.baseURL + "/ws/getImageInfo?id=" + imageId).text)
-                       record.multimedia << [
-                               created: imageMetadata.dateUploaded,         //image service
-                               title: imageMetadata.originalFileName,           //image service
-                               format: imageMetadata.mimeType,          //image service
-                               creator: userDetails.displayName,         //CAS
-                               rightsHolder: userDetails.displayName,    //CAS
-                               license: record.imageLicence?:"Creative Commons Attribution",
-                               type: "StillImage",
-                               imageId: imageId,
-                               identifier: it
-                       ]
+
+           try {
+               def url = grailsApplication.config.biocacheService.baseURL + "/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
+               log.info("[record ${count}] Retrieving from biocache: " + url)
+               def response = new URL(url).text
+               def json = js.parseText(response)
+               if (json.totalRecords == 1) {
+                   count++
+                   //get the image references
+                   if (json.occurrences[0].imageUrls) {
+                       images++
+                       record.multimedia = []
+                       json.occurrences[0].imageUrls.each {
+                           def imageId = it.substring(it.indexOf("=") + 1)
+                           def imageUrl = grailsApplication.config.imagesService.baseURL + "/ws/getImageInfo?id=" + imageId
+                           log.info("[images ${images}] Retrieving from images: " + imageUrl)
+                           def imageMetadata = js.parseText(new URL(imageUrl).text)
+                           record.multimedia << [
+                                   created   : imageMetadata.dateUploaded,         //image service
+                                   title     : imageMetadata.originalFileName,           //image service
+                                   format    : imageMetadata.mimeType,          //image service
+                                   creator   : userDetails.displayName,         //CAS
+                                   rightsHolder: userDetails.displayName,    //CAS
+                                   license   : record.imageLicence ?: "Creative Commons Attribution",
+                                   type      : "StillImage",
+                                   imageId   : imageId,
+                                   identifier: it
+                           ]
+                       }
                    }
+                   record.save(flush: true)
                }
-               record.userDisplayName = userDetails.displayName
-               record.save(flush:true)
+           } catch (Exception e){
+               log.error("Problem syncing record: " + record.occurrenceID)
            }
         }
-        log.info("Finished linking auth and image information")
+        log.info("Finished linking auth and image information. Count ${count}, Images ${images}")
         [count: count, images: images]
     }
 

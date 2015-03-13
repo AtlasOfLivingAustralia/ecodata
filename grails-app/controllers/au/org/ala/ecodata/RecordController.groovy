@@ -89,6 +89,17 @@ class RecordController {
     /**
      * Retrieve a list of records with paging support.
      */
+    def listUncertainIdentifications(){
+        log.debug("list request....")
+        def ids = Record.findAllWhere( ["identificationVerificationStatus" : "Uncertain"]).collect { it.occurrenceID }
+        response.setContentType("application/json")
+        def model = ids
+        render model as JSON
+    }
+
+    /**
+     * Retrieve a list of records with paging support.
+     */
     def list(){
         log.debug("list request....")
         def records = []

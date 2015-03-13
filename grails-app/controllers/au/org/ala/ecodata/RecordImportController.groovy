@@ -17,8 +17,19 @@ class RecordImportController {
 
     static defaultAction = "importFile"
 
+    def linkWithAuth(){
+        def theActor = actor {
+            recordImportService.linkWithAuth()
+        }
+        def model = [started:true]
+        render model as JSON
+    }
+
     def linkWithImages(){
-        def model = recordImportService.linkWithImages()
+        def theActor = actor {
+            recordImportService.linkWithImages()
+        }
+        def model = [started:true]
         render model as JSON
     }
 
