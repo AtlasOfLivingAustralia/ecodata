@@ -3,7 +3,7 @@ jdk:
 - oraclejdk7
 branches:
   only:
-  - master
+  - sightings-support
 before_install:
 - rm -rf ~/.gvm
 - curl -s get.gvmtool.net > ~/install_gvm.sh
