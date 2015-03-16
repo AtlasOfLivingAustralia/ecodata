@@ -175,11 +175,11 @@ class RecordService {
                 "originalFilename": image?.title,
                 "attribution": image?.creator,
                 "dateTaken": image?.created,
-                "systemSupplier": grailsApplication.config.imageSysteSupplier?:"ecodata"
+                "systemSupplier": grailsApplication.config.imageSystemSupplier?:"ecodata"
         ] as JSON).toString()))
 
-        if (record.tags?.size() > 0) {
-            entity.addPart("tags", record.tags.join(","))
+        if (record.tags) {
+            entity.addPart("tags", new StringBody((record.tags as JSON).toString()))
         }
 
         def httpPost = new HttpPost(remoteImageRepo + "/ws/uploadImage")
@@ -194,6 +194,9 @@ class RecordService {
 
         def map = jsonSlurper.parseText(responseBody)
         log.debug("Image ID: " + map["imageId"])
+        if(!map["imageId"]){
+            log.error("Problem uploading images. Response: " + map)
+        }
         map["imageId"]
     }
 

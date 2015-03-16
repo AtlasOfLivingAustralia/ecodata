@@ -208,7 +208,7 @@ if(!biocacheService.baseURL){
     biocacheService.baseURL = 'http://biocache.ala.org.au/ws'
 }
 if(!imagesService.baseURL){
-    imagesService.baseURL = 'http://images.ala.org.au'
+    imagesService.baseURL = 'http://images-dev.ala.org.au'
 }
 if(!security.cas.bypass){
     security.cas.bypass = false
@@ -312,7 +312,7 @@ log4j = {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
                         file: loggingDir+"/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
+                        threshold: org.apache.log4j.Level.DEBUG,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
