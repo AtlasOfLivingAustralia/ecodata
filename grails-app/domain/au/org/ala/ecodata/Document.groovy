@@ -37,6 +37,9 @@ class Document {
     String activityId
     String outputId
 
+    boolean thirdPartyConsentDeclarationMade = false
+    String thirdPartyConsentDeclarationText
+
     Date dateCreated
     Date lastUpdated
 	boolean isPrimaryProjectImage = false
@@ -103,5 +106,7 @@ class Document {
         dateCreated nullable: true
         lastUpdated nullable: true
 		isPrimaryProjectImage nullable: true
+        thirdPartyConsentDeclarationMade nullable: true
+        thirdPartyConsentDeclarationText nullable: true
     }
 }
