@@ -147,6 +147,8 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
+        projectPrivacy nullable:true, inList: ['Open','Closed']
+        dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }
