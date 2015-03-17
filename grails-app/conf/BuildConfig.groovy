@@ -78,8 +78,8 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-web-theme:1.0.1"
-//        compile ":jms:1.3"
+        runtime ":ala-auth:1.0"
+        runtime ":ala-bootstrap2:1.2"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"
@@ -91,7 +91,7 @@ grails.project.dependency.resolution = {
         compile ":excel-export:0.2.1"
         compile ":excel-import:1.0.1"
 
-        build ":tomcat:7.0.52.1"
+        build ":tomcat:7.0.55"
         build ":release:3.0.1"
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.5-SNAPSHOT"
