@@ -47,13 +47,16 @@ class Project {
     Date lastUpdated
 	String promoteOnHomepage = 'no'
 	
-    boolean isCitizenScience
+    boolean isCitizenScience, isDataSharing
+    String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
     String aim, keywords, urlAndroid, urlITunes, urlWeb
     String getInvolved, scienceType, projectSiteId
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
+
+    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
 
     static constraints = {
         externalId nullable:true
@@ -92,6 +95,8 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
+        projectPrivacy inList: ['Open','Closed']
+        dataSharingLicense inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }
