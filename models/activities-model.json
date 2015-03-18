@@ -9,6 +9,7 @@
       ]
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Community Participation and Engagement",
       "type": "Activity",
@@ -23,7 +24,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Debris Removal",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Debris Removal Details",
@@ -35,7 +35,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Disease Management",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Disease Management Details",
@@ -72,7 +71,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Fencing",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Fence Details",
@@ -122,7 +120,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Heritage Conservation",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Heritage Conservation Information",
@@ -164,7 +161,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Management Practice Change",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Management Practice Change Details"
@@ -175,7 +171,6 @@
       "supportsSites": true,
       "category": "Implementation actions",
       "name": "Conservation Actions for Threatened Species",
-      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Conservation Works Details",
@@ -233,8 +228,10 @@
       "gmsId": "PPRP"
     },
     {
+      "supportsSites": true,
       "category": "Assessment & monitoring",
       "name": "Plant Survival Survey",
+      "supportsPhotoPoints": true,
       "type": "Assessment",
       "outputs": [
         "Vegetation Monitoring Results",
@@ -253,6 +250,7 @@
       ]
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Public Access and Infrastructure",
       "type": "Activity",
@@ -264,6 +262,7 @@
       "gmsId": "PAM"
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Research",
       "type": "Activity",
@@ -273,8 +272,10 @@
       ]
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Revegetation",
+      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Revegetation Details",
@@ -284,6 +285,7 @@
       "gmsId": "RVA RVN RVSS RVT2A RVT2B RVS2B"
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Seed Collection",
       "type": "Activity",
@@ -294,6 +296,7 @@
       "gmsId": "SDC"
     },
     {
+      "supportsSites": true,
       "category": "Assessment & monitoring",
       "name": "Site Monitoring Plan",
       "type": "Activity",
@@ -327,6 +330,7 @@
       "gmsId": "TSD"
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Water Management",
       "type": "Activity",
@@ -336,6 +340,7 @@
       "gmsId": "WMA WMN"
     },
     {
+      "supportsSites": true,
       "category": "Assessment & monitoring",
       "name": "Water Quality Survey",
       "type": "Assessment",
@@ -347,8 +352,10 @@
       "gmsId": "WQSA"
     },
     {
+      "supportsSites": true,
       "category": "Assessment & monitoring",
       "name": "Weed Mapping & Monitoring",
+      "supportsPhotoPoints": true,
       "type": "Assessment",
       "outputs": [
         "Evidence of Weed Treatment",
@@ -359,8 +366,10 @@
       "gmsId": "WMM WSA"
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Weed Treatment",
+      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Weed Treatment Details",
@@ -370,14 +379,15 @@
       "gmsId": "WDT"
     },
     {
+      "supportsSites": true,
       "category": "Implementation actions",
       "name": "Works Planning and Risk",
+      "supportsPhotoPoints": true,
       "type": "Activity",
       "outputs": [
         "Site Planning Details",
-        "Participant Information",
-        "Photo Points",
-        "Threatening Processes and Site Condition Risks"
+        "Threatening Processes and Site Condition Risks",
+        "Participant Information"
       ],
       "gmsId": "STA"
     },
@@ -393,8 +403,10 @@
       ]
     },
     {
+      "supportsSites": true,
       "category": "Assessment & monitoring",
       "name": "Vegetation Assessment - Commonwealth government methodology",
+      "supportsPhotoPoints": true,
       "type": "Assessment",
       "outputs": [
         "Sampling Site Information",
@@ -409,7 +421,7 @@
     },
     {
       "category": "Assessment & monitoring",
-      "status": "active",
+      "status": "deleted",
       "name": "Vegetation Assessment - BioCondition (QLD)",
       "type": "Assessment",
       "outputs": [
@@ -417,22 +429,13 @@
       ]
     },
     {
+      "supportsSites": true,
       "status": "deleted",
       "name": "Vegetation Assessment - BioMetric (NSW)",
+      "supportsPhotoPoints": true,
       "type": "Assessment",
       "outputs": [
         "Floristic Composition"
-      ]
-    },
-    {
-      "category": "Assessment & monitoring",
-      "status": "active",
-      "name": "Vegetation Assessment - Habitat Hectares v1 (VIC)",
-      "type": "Assessment",
-      "outputs": [
-        "Vegetation Assessment - Survey Information",
-        "Site Condition Components",
-        "Landscape Context Components"
       ]
     },
     {
@@ -447,8 +450,10 @@
       ]
     },
     {
+      "supportsSites": true,
       "status": "deleted",
       "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
+      "supportsPhotoPoints": true,
       "type": "Assessment",
       "outputs": [
         "Floristic Composition"
@@ -465,6 +470,7 @@
     },
     {
       "category": "Assessment & monitoring",
+      "status":"deleted",
       "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
       "type": "Assessment",
       "outputs": [
@@ -489,13 +495,13 @@
         "Vegetation Assessment",
         "Site Condition Components",
         "Landscape Context Components",
-        "Threatening Processes & Site Condition Risks",
+        "Threatening Processes and Site Condition Risks",
         "Photo Points"
       ]
     },
     {
       "category": "Assessment & monitoring",
-      "status": "active",
+      "status": "deleted",
       "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
       "type": "Assessment",
       "outputs": [
@@ -515,6 +521,7 @@
     },
     {
       "category": "Small Grants",
+      "status": "deleted",
       "name": "Progress Report",
       "type": "Assessment",
       "outputs": [
@@ -524,6 +531,7 @@
     },
     {
       "category": "Small Grants",
+      "status": "deleted",
       "name": "Final Report",
       "type": "Assessment",
       "outputs": [
@@ -839,7 +847,7 @@
           "displayType": "",
           "name": "totalParticipantsNotEmployed",
           "aggregationType": "SUM",
-          "label": "Total No of participants attending project activities",
+          "label": "No of volunteers participating in project activities",
           "units": ""
         },
         {
@@ -2342,6 +2350,7 @@
           "units": ""
         },
         {
+          "groupBy": "output:treatmentType",
           "isOutputTarget": true,
           "category": "Invasive Species Management - Pests & Diseases",
           "listName": "pestManagement",
@@ -2350,6 +2359,7 @@
           "name": "areaTreatedHa",
           "aggregationType": "SUM",
           "label": "Area covered (Ha) by pest treatment actions",
+          "filterBy": "Initial treatment",
           "units": "Ha",
           "gmsId": "PMA"
         },
