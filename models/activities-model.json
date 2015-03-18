@@ -241,7 +241,7 @@
         "Participant Information",
         "Photo Points"
       ],
-      "gmsId": "PSS"
+      "gmsId": "PSS PSC"
     },
     {
       "category": "Administration, management & reporting",
@@ -281,7 +281,7 @@
         "Participant Information",
         "Photo Points"
       ],
-      "gmsId": "RVA RVN RVSS RVT2A RVT2B"
+      "gmsId": "RVA RVN RVSS RVT2A RVT2B RVS2B"
     },
     {
       "category": "Implementation actions",
@@ -721,6 +721,33 @@
           "label": "No. of plants planted > 2 metres in height",
           "filterBy": "> 2 metres",
           "gmsId": "RVT2A"
+        },
+        {
+          "groupBy": "output:matureHeight",
+          "isOutputTarget": true,
+          "category": "Revegetation",
+          "listName": "planting",
+          "description": "Kilograms of seed sown of species expected to grow  < 2 metres in height",
+          "displayType": "",
+          "name": "seedSownKg",
+          "aggregationType": "SUM",
+          "label": "Kilograms of seed sown of species expected to grow  > 2 metres in height",
+          "filterBy": "< 2 metres",
+          "units": "Kg",
+          "gmsId": "RVS2B"
+        },
+        {
+          "groupBy": "output:matureHeight",
+          "isOutputTarget": true,
+          "category": "Revegetation",
+          "listName": "planting",
+          "description": "Total number of plants planted which will grow to a mature height of less than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+          "displayType": "",
+          "name": "numberPlanted",
+          "aggregationType": "SUM",
+          "label": "No. of plants planted < 2 metres in height",
+          "filterBy": "< 2 metres",
+          "gmsId": "RVT2B"
         }
       ],
       "name": "Revegetation Details"
@@ -2608,7 +2635,8 @@
           "displayType": "",
           "name": "totalNumberSurviving",
           "aggregationType": "SUM",
-          "label": "Total No. of plants surviving"
+          "label": "Total No. of plants surviving",
+          "gmsId": "PSC"
         },
         {
           "isOutputTarget": true,
