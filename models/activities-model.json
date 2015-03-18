@@ -940,17 +940,6 @@
           "name": "industryType",
           "aggregationType": "HISTOGRAM",
           "label": "No. of events by type of industry"
-        },
-        {
-          "isOutputTarget": true,
-          "category": "Community Engagement and Capacity Building",
-          "listName": "",
-          "description": "The target number of community participation and engagements events planned to be run.",
-          "displayType": "",
-          "name": "numberOfEvents",
-          "aggregationType": "SUM",
-          "label": "Number of events planned to be implemented",
-          "gmsId": "CPEE"
         }
       ],
       "name": "Event Details"
