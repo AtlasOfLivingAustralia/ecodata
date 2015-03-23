@@ -244,13 +244,19 @@ class SiteService {
                 if (!site.extent.geometry) {
                     site.extent.geometry = [:]
                 }
-                centroid =  [Double.toString(geom.centroid.x), Double.toString(geom.centroid.y)]
-                site.extent.geometry.centre = centroid
+                if (geom) {
+                    centroid = [Double.toString(geom.centroid.x), Double.toString(geom.centroid.y)]
+                    site.extent.geometry.centre = centroid
+                }
+                else {
+                    log.error("No geometry for site: ${site.siteId}")
+                }
             }
 
         }
-        site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
-
+        if (centroid) {
+            site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
+        }
     }
 
 }

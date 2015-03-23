@@ -267,7 +267,7 @@ class MetadataService {
         if (features instanceof List) {
             griddedLayers.each { name, fid ->
                 def match = features.find { it.field == fid }
-                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                     facetTerms << [(name): match.value]
                 }
             }
@@ -276,7 +276,7 @@ class MetadataService {
                 def groupTerms = []
                 layers.each { name, fid ->
                     def match = features.find { it.field == fid }
-                    if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                         groupTerms << match.layername
                     }
                 }
@@ -430,7 +430,7 @@ class MetadataService {
 
         griddedLayers.each { name, fid ->
             def match = siteResult.find { it.key == fid }
-            if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+            if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                 facetTerms << [(name): match.value]
             }
         }
@@ -439,7 +439,7 @@ class MetadataService {
             def groupTerms = []
             entry.each { name, fid ->
                 def match = siteResult.find { it.key == fid }
-                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                     groupTerms << match.value
                 }
             }
