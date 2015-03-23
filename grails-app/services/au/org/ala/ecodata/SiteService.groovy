@@ -257,6 +257,7 @@ class SiteService {
         if (centroid) {
             site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
         }
+        site
     }
 
 }
