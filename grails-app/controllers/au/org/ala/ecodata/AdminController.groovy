@@ -267,6 +267,38 @@ class AdminController {
         render result as grails.converters.JSON
     }
 
+    def updateSitesWithoutCentroids() {
+        def code = 'success'
+        def sites
+        if (params.siteId) {
+            sites = Site.findAllBySiteId(params.siteId)
+        }
+        else {
+            sites = siteService.list()
+        }
+        try {
+
+            sites.eachWithIndex { site, index ->
+                if (!site.projects) {
+                    log.info("Ignoring site ${site.siteId} due to no associated projects")
+                    return
+                }
+                def centroid = site.extent?.geometry?.centre
+                if (!centroid) {
+                    def updatedSite = siteService.populateLocationMetadataForSite(site)
+                    siteService.update(updatedSite, site.siteId, false)
+                }
+            }
+            log.info("Database updated completed.")
+        }
+        catch(Exception e) {
+            log.error("Unable to complete the operation ", e)
+            code = "error"
+        }
+        def result = [code:code]
+        render result as JSON
+    }
+
     def audit() { }
     def auditMessagesByEntity() { }
     def auditMessagesByProject() { }
