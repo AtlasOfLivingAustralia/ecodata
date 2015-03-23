@@ -209,7 +209,9 @@ class SearchController {
 
         def defaultCategory = "Not categorized"
         def filters = params.getList("fq")
-        def results = reportService.aggregate(filters)
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER] + filters
+
+        def results = reportService.aggregate(additionalFilters)
         def scores = results.outputData
         def scoresByCategory = scores.groupBy{
             (it.score.category?:defaultCategory)
