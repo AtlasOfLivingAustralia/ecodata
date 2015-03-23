@@ -1,5 +1,10 @@
 package au.org.ala.ecodata
 
+import com.vividsolutions.jts.geom.Geometry
+import grails.converters.JSON
+import org.geotools.geojson.GeoJSON
+import org.geotools.geojson.geom.GeometryJSON
+
 class SiteService {
 
     static transactional = false
@@ -224,6 +229,28 @@ class SiteService {
     def geometryForPid(pid) {
         def url = "${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/${pid}"
         webService.getJson(url)
+    }
+
+    def populateLocationMetadataForSite(site) {
+        def centroid = site?.extent?.geometry?.centre
+        if (!centroid || centroid.size() != 2) {
+            def siteGeom = geometryAsGeoJson(site)
+            if (siteGeom) {
+                GeometryJSON gjson = new GeometryJSON()
+                Geometry geom = gjson.read((siteGeom as JSON).toString())
+                if (!site.extent) {
+                    site.extent = [geometry:[:]]
+                }
+                if (!site.extent.geometry) {
+                    site.extent.geometry = [:]
+                }
+                centroid =  [Double.toString(geom.centroid.x), Double.toString(geom.centroid.y)]
+                site.extent.geometry.centre = centroid
+            }
+
+        }
+        site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
+
     }
 
 }
