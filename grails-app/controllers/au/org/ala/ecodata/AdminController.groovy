@@ -286,7 +286,7 @@ class AdminController {
                 def centroid = site.extent?.geometry?.centre
                 if (!centroid) {
                     def updatedSite = siteService.populateLocationMetadataForSite(site)
-                    siteService.update(updatedSite, site.siteId, false)
+                    siteService.update([extent: updatedSite.extent], site.siteId, false)
                 }
             }
             log.info("Database updated completed.")
