@@ -268,8 +268,11 @@ class MetadataService {
         if (features instanceof List) {
             griddedLayers.each { name, fid ->
                 def match = features.find { it.field == fid }
-                if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                if (match && match.value && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match.value)) {
                     facetTerms << [(name): match.value]
+                }
+                else {
+                    facetTerms << [(name): null]
                 }
             }
 
@@ -277,13 +280,11 @@ class MetadataService {
                 def groupTerms = []
                 layers.each { name, fid ->
                     def match = features.find { it.field == fid }
-                    if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    if (match && match.value && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match.value)) {
                         groupTerms << match.layername
                     }
                 }
-                if (groupTerms) {
-                    facetTerms << [(group): groupTerms]
-                }
+                facetTerms << [(group): groupTerms]
             }
         }
         else {
@@ -420,7 +421,7 @@ class MetadataService {
 
         griddedLayers.each { name, fid ->
             def match = siteResult[fid]
-            if (match && match != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+            if (match && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match)) {
                 facetTerms << [(name): match]
             }
             else {
@@ -432,7 +433,7 @@ class MetadataService {
             def groupTerms = []
             entry.each { name, fid ->
                 def match = siteResult[fid]
-                if (match && match != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                if (match && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match)) {
                     groupTerms << match
                 }
             }
@@ -452,7 +453,7 @@ class MetadataService {
      * @param list of available sites.
      * @return sites with the updated extent values.
      */
-    def getLocationMetadataForSites(allSites) {
+    def getLocationMetadataForSites(allSites, boolean includeLocality = true) {
 
         def sites = getValidSites(allSites)
 
@@ -465,12 +466,13 @@ class MetadataService {
             def lat = site.extent.geometry.centre[1]
             def lng = site.extent.geometry.centre[0]
 
-            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
-            def result = webService.getJson(localityUrl)
-            def localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
-
             def features = [:]
-            features << [locality: localityValue]
+            if (includeLocality) {
+                def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
+                def result = webService.getJson(localityUrl)
+                def localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
+                features << [locality: localityValue]
+            }
             features << getNvisClassesForPoint(lat as Double, lng as Double)
             features << getGridAndFacetLayers(layers,lat,lng)
 

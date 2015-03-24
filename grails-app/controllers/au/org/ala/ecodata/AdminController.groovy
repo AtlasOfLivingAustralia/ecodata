@@ -264,7 +264,7 @@ class AdminController {
                         siteService.update([extent: site.extent], site.siteId, false)
                         total++
                         if(total > 0 && (total % 200) == 0) {
-                            log.debug("(${total+1}) records updated in db..")
+                            log.info("(${total+1}) records updated in db..")
                         }
                     }
                 }
@@ -284,31 +284,44 @@ class AdminController {
 
     def updateSitesWithoutCentroids() {
         def code = 'success'
-        def sites
-        if (params.siteId) {
-            sites = Site.findAllBySiteId(params.siteId)
-        }
-        else {
-            sites = siteService.list()
-        }
-        try {
 
-            sites.eachWithIndex { site, index ->
-                if (!site.projects) {
-                    log.info("Ignoring site ${site.siteId} due to no associated projects")
-                    return
-                }
-                def centroid = site.extent?.geometry?.centre
-                if (!centroid) {
-                    def updatedSite = siteService.populateLocationMetadataForSite(site)
-                    siteService.update([extent: updatedSite.extent], site.siteId, false)
-                }
+        def total = 0
+        def offset = 0
+        def batchSize = 200
+
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            def sites = Site.findAllByStatus('active', [offset: offset, max: batchSize]).collect {
+                siteService.toMap(it, 'flat')
             }
-            log.info("Database updated completed.")
-        }
-        catch(Exception e) {
-            log.error("Unable to complete the operation ", e)
-            code = "error"
+            count = sites.size()
+            try {
+                Site.withSession { session -> session.clear() }
+                Site.withNewSession {
+                    sites.eachWithIndex { site, index ->
+                        if (!site.projects) {
+                            log.info("Ignoring site ${site.siteId} due to no associated projects")
+                            return
+                        }
+                        def centroid = site.extent?.geometry?.centre
+                        if (!centroid) {
+                            def updatedSite = siteService.populateLocationMetadataForSite(site)
+                            siteService.update([extent: updatedSite.extent], site.siteId, false)
+                            total++
+                            if(total > 0 && (total % 200) == 0) {
+                                log.debug("(${total+1}) records updated in db..")
+                            }
+                        }
+                    }
+                }
+                log.info("Database updated completed.")
+            }
+            catch (Exception e) {
+                log.error("Unable to complete the operation ", e)
+                code = "error"
+            }
+
+            offset += batchSize
         }
         def result = [code:code]
         render result as JSON
