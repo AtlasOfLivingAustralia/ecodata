@@ -420,8 +420,8 @@ class MetadataService {
 
         griddedLayers.each { name, fid ->
             def match = siteResult[fid]
-            if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                facetTerms << [(name): match.value]
+            if (match && match != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                facetTerms << [(name): match]
             }
         }
 
@@ -429,8 +429,8 @@ class MetadataService {
             def groupTerms = []
             entry.each { name, fid ->
                 def match = siteResult[fid]
-                if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                    groupTerms << match.value
+                if (match && match != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    groupTerms << match
                 }
             }
             if (groupTerms) {
