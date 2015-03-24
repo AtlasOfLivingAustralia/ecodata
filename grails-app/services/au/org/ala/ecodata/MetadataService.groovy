@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
+import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipFile
@@ -339,7 +340,7 @@ class MetadataService {
 
         def fieldIds = buildFieldIds(sites)
 
-        def rawData = []
+        def results = []
 
         for(int i = 0; i < pointsArray?.size(); i++) {
             log.info("${(i+1)}/${pointsArray.size()} batch process started..")
@@ -372,13 +373,13 @@ class MetadataService {
                 while ((read = zipIn.read(buffer, 0, 1024)) >= 0) {
                     s.append(new String(buffer, 0, read));
                 }
-                rawData << s.readLines().toArray()
+                results += new CSVMapReader(new StringReader(s.toString())).readAll()
             }
 
             log.info("${(i+1)}/${pointsArray.size()} batch process completed..")
         }
 
-        rawData
+        results
     }
 
     private def getValidSites(allSites){
@@ -408,20 +409,9 @@ class MetadataService {
 
     private def getGridAndFacetLayers(layers,lat,lng){
 
-        def siteResult = [:]
-        found:
-        for(int i = 0; i < layers?.size(); i++){
-            def set = layers[i]
-            for(int j = 1; j < set?.size(); j++){
-                def tokens = set[j].tokenize(',')
-                if(tokens && tokens[0].equals(lat) && tokens[1].equals(lng)){
-                    def headerTokens = set[0].tokenize(',')
-                    headerTokens.eachWithIndex{ key, index ->
-                        siteResult[key] = tokens[index]
-                    }
-                    break found
-                }
-            }
+        def siteResult = layers.find{it['latitude'] == (lat as String) && it['longitude'] == (lng as String)} ?: [:]
+        if (!siteResult) {
+            log.error("Missing result for ${lat}, ${lng}")
         }
 
         def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
@@ -429,7 +419,7 @@ class MetadataService {
         def facetTerms = [:]
 
         griddedLayers.each { name, fid ->
-            def match = siteResult.find { it.key == fid }
+            def match = siteResult[fid]
             if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                 facetTerms << [(name): match.value]
             }
@@ -438,7 +428,7 @@ class MetadataService {
         groupedFacets.each { group, entry ->
             def groupTerms = []
             entry.each { name, fid ->
-                def match = siteResult.find { it.key == fid }
+                def match = siteResult[fid]
                 if (match && match.value && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                     groupTerms << match.value
                 }
@@ -465,7 +455,7 @@ class MetadataService {
 
         def sites = getValidSites(allSites)
 
-        def layers = downloadSpatialLayers(sites);
+        def layers = downloadSpatialLayers(sites)
 
         log.info("Initiating extent mapping")
 
