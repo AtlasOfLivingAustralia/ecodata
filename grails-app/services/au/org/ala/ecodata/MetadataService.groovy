@@ -423,6 +423,9 @@ class MetadataService {
             if (match && match != SPATIAL_PORTAL_NO_MATCH_VALUE) {
                 facetTerms << [(name): match]
             }
+            else {
+                facetTerms << [(name): null]
+            }
         }
 
         groupedFacets.each { group, entry ->
@@ -433,9 +436,7 @@ class MetadataService {
                     groupTerms << match
                 }
             }
-            if (groupTerms) {
-                facetTerms << [(group): groupTerms]
-            }
+            facetTerms << [(group): groupTerms]
         }
 
         facetTerms
