@@ -243,24 +243,39 @@ class AdminController {
      */
     def reloadSiteMetadata() {
 
-        def sites = siteService.list()
         def code = "success"
 
-        try {
-            def results = metadataService.getLocationMetadataForSites(sites)
+        def total = 0
+        def offset = 0
+        def batchSize = 200
 
-            log.info("Initiating database update..")
-            results.eachWithIndex { site, index ->
-                siteService.update([extent: site.extent], site.siteId, false)
-                if(index > 0 && (index % 200) == 0) {
-                    log.debug("(${index+1}) records updated in db..")
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            def sites = Site.findAllByStatus('active', [offset:offset, max:batchSize]).collect{siteService.toMap(it, 'flat')}
+            count = sites.size()
+
+            try {
+                def results = metadataService.getLocationMetadataForSites(sites)
+
+                log.info("Initiating database update..")
+                Site.withSession { session -> session.clear() }
+                Site.withNewSession {
+                    results.eachWithIndex { site, index ->
+                        siteService.update([extent: site.extent], site.siteId, false)
+                        total++
+                        if(total > 0 && (total % 200) == 0) {
+                            log.debug("(${total+1}) records updated in db..")
+                        }
+                    }
                 }
+                log.info("Database updated completed.")
             }
-            log.info("Database updated completed.")
-        }
-        catch(Exception e) {
-            log.error("Unable to complete the operation ", e)
-            code = "error"
+            catch(Exception e) {
+                log.error("Unable to complete the operation ", e)
+                code = "error"
+            }
+            offset += batchSize
+
         }
 
         def result = [result: "${code}"]
