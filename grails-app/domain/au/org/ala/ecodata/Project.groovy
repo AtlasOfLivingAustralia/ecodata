@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
+import org.joda.time.Days
 import org.joda.time.Duration
 import org.joda.time.Interval
 import org.joda.time.Period
@@ -35,6 +36,8 @@ class Project {
     String manager
     String grantId
     String workOrderId
+    Date workOrderStartDate
+    Date workOrderEndDate
     String groupId
     String groupName
     String organisationName
@@ -104,13 +107,17 @@ class Project {
         DateTime end = new DateTime(endDate);
 
         Interval interval = new Interval(start, end)
-        return Weeks.weeksIn(interval).weeks
+        int numDays = Days.daysIn(interval).days
+        double numWeeks = numDays / 7.0
+        return (int)Math.ceil(numWeeks)
     }
 
     static constraints = {
         externalId nullable:true
         description nullable:true, maxSize: 40000
         workOrderId nullable:true
+        workOrderStartDate nullable: true
+        workOrderEndDate nullable: true
         manager nullable:true
         groupId nullable:true
         groupName nullable:true
