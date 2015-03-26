@@ -2638,6 +2638,7 @@
           "gmsId": ""
         },
         {
+          "groupBy": "output:matureHeight",
           "isOutputTarget": true,
           "category": "Revegetation",
           "listName": "revegetationMonitoring",
@@ -2646,7 +2647,7 @@
           "name": "numberSurviving",
           "aggregationType": "SUM",
           "label": "Total No. of plants surviving with mature height > 2 metres",
-          "filterBy": "matureHeight: > 2 metres",
+          "filterBy": "> 2 metres",
           "gmsId": "PSC"
         },
         {
