@@ -146,6 +146,9 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Project, projectId)
     }
 
+    def addUserAsRoleToOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
+    }
 
     private def removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         def up = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, entityId, entityType.name, accessLevel)
@@ -165,6 +168,9 @@ class PermissionService {
         removeUserAsRoleToEntity(userId, accessLevel, Project, projectId)
     }
 
+    def removeUserAsRoleFromOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
+        removeUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
+    }
     /**
      * Deletes all permissions associated with the supplied project.  Used as a part of a project delete operation.
      * UserPermissions don't support soft deletes, even if the project itself is soft-deleted.

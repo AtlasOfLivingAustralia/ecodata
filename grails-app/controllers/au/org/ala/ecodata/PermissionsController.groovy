@@ -126,6 +126,42 @@ class PermissionsController {
     }
 
     /**
+     * Create a {@link UserDetails user}-{@link Organisation organisation}-{@link UserPermission role}
+     * {@link UserPermission} object
+     *
+     * @return
+     */
+    def addUserAsRoleToOrganisation() {
+        String userId = params.userId
+        String organisationId = params.organisationId
+        String role = params.role
+
+        if (userId && organisationId && role) {
+            def organisation = Organisation.findByOrganisationId(organisationId)
+            AccessLevel ac
+            try {
+                ac = AccessLevel.valueOf(role)
+            } catch (Exception e) {
+                render status:500, text: "Error determining role: ${e.message}"
+            }
+
+            if (organisation) {
+                log.debug "addUserAsRoleToOrganisation: ${userId}, ${ac}, ${organisationId}"
+                def ps = permissionService.addUserAsRoleToOrganisation(userId, ac, organisationId)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Error adding editor: ${ps}"
+                }
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, role, organisationId'
+        }
+    }
+
+    /**
      * Delete a {@link UserDetails user}-{@link Project project}-{@link UserPermission role}
      * {@link UserPermission} object
      *
@@ -158,6 +194,42 @@ class PermissionsController {
             }
         } else {
             render status:400, text: 'Required params not provided: userId, role, projectId'
+        }
+    }
+
+    /**
+     * Delete a {@link UserDetails user}-{@link Organisation project}-{@link UserPermission role}
+     * {@link UserPermission} object
+     *
+     * @return
+     */
+    def removeUserWithRoleFromOrganisation() {
+        String userId = params.userId
+        String organisationId = params.organisationId
+        String role = params.role
+
+        if (userId && organisationId && role) {
+            def project = Organisation.findByOrganisationId(organisationId)
+            AccessLevel ac
+            try {
+                ac = AccessLevel.valueOf(role)
+            } catch (Exception e) {
+                render status:500, text: "Error determining role: ${e.message}"
+            }
+
+            if (project) {
+                log.debug "removeUserWithRoleFromOrganisation: ${userId}, ${ac}, ${project}"
+                def ps = permissionService.removeUserAsRoleFromOrganisation(userId, ac, organisationId)
+                if (ps.status == "ok") {
+                    render "success: ${ps.id}"
+                } else {
+                    render status:500, text: "Organisation removing user/role: ${ps}"
+                }
+            } else {
+                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            }
+        } else {
+            render status:400, text: 'Required params not provided: userId, role, organisationId'
         }
     }
 
