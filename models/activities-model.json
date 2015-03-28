@@ -470,7 +470,7 @@
     },
     {
       "category": "Assessment & monitoring",
-      "status":"deleted",
+      "status": "deleted",
       "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
       "type": "Assessment",
       "outputs": [
@@ -2628,13 +2628,26 @@
           "label": "No. of activities monitoring revegetation works by revegetation method"
         },
         {
-          "isOutputTarget": true,
+          "isOutputTarget": false,
           "category": "Revegetation",
           "description": "The total number of plants estimated to be surviving as an aggregate of all counting methods used.",
           "displayType": "",
           "name": "totalNumberSurviving",
           "aggregationType": "SUM",
           "label": "Total No. of plants surviving",
+          "gmsId": ""
+        },
+        {
+          "groupBy": "output:matureHeight",
+          "isOutputTarget": true,
+          "category": "Revegetation",
+          "listName": "revegetationMonitoring",
+          "description": "Total No. of plants surviving with mature height > 2 metres",
+          "displayType": "",
+          "name": "numberSurviving",
+          "aggregationType": "SUM",
+          "label": "Total No. of plants surviving with mature height > 2 metres",
+          "filterBy": "> 2 metres",
           "gmsId": "PSC"
         },
         {
