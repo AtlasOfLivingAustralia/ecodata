@@ -95,6 +95,7 @@ class ProjectService {
                 mapOfProperties.actualEndDate = prj.actualEndDate?:''
                 mapOfProperties.plannedDurationInWeeks = prj.plannedDurationInWeeks
                 mapOfProperties.actualDurationInWeeks = prj.actualDurationInWeeks
+                mapOfProperties.contractDurationInWeeks = prj.contractDurationInWeeks
             }
         }
 	
