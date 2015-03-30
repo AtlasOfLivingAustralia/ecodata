@@ -99,6 +99,10 @@ class Project {
         return intervalInWeeks(plannedStartDate, plannedEndDate)
     }
 
+    Integer getContractDurationInWeeks() {
+        return intervalInWeeks(contractStartDate, contractEndDate)
+    }
+
     private Integer intervalInWeeks(Date startDate, Date endDate) {
         if (!startDate || !endDate) {
             return null
