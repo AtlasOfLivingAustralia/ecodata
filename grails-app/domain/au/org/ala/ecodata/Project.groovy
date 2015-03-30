@@ -36,8 +36,8 @@ class Project {
     String manager
     String grantId
     String workOrderId
-    Date workOrderStartDate
-    Date workOrderEndDate
+    Date contractStartDate
+    Date contractEndDate
     String groupId
     String groupName
     String organisationName
@@ -116,8 +116,8 @@ class Project {
         externalId nullable:true
         description nullable:true, maxSize: 40000
         workOrderId nullable:true
-        workOrderStartDate nullable: true
-        workOrderEndDate nullable: true
+        contractStartDate nullable: true
+        contractEndDate nullable: true
         manager nullable:true
         groupId nullable:true
         groupName nullable:true
