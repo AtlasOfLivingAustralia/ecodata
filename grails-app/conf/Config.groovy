@@ -237,7 +237,7 @@ environments {
         security.cas.appServerName = serverName
         security.cas.contextPath = "/" + appName
         app.uploads.url = "${grails.serverURL}/document/download?filename="
-        app.elasticsearch.indexAllOnStartup = true
+        app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
     }
     test {
