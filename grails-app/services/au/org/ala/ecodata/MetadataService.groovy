@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
 import grails.converters.JSON
+import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
 import java.util.zip.ZipFile
@@ -267,8 +268,11 @@ class MetadataService {
         if (features instanceof List) {
             griddedLayers.each { name, fid ->
                 def match = features.find { it.field == fid }
-                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                if (match && match.value && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match.value)) {
                     facetTerms << [(name): match.value]
+                }
+                else {
+                    facetTerms << [(name): null]
                 }
             }
 
@@ -276,13 +280,11 @@ class MetadataService {
                 def groupTerms = []
                 layers.each { name, fid ->
                     def match = features.find { it.field == fid }
-                    if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
+                    if (match && match.value && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match.value)) {
                         groupTerms << match.layername
                     }
                 }
-                if (groupTerms) {
-                    facetTerms << [(group): groupTerms]
-                }
+                facetTerms << [(group): groupTerms]
             }
         }
         else {
@@ -339,7 +341,7 @@ class MetadataService {
 
         def fieldIds = buildFieldIds(sites)
 
-        def rawData = []
+        def results = []
 
         for(int i = 0; i < pointsArray?.size(); i++) {
             log.info("${(i+1)}/${pointsArray.size()} batch process started..")
@@ -372,13 +374,13 @@ class MetadataService {
                 while ((read = zipIn.read(buffer, 0, 1024)) >= 0) {
                     s.append(new String(buffer, 0, read));
                 }
-                rawData << s.readLines().toArray()
+                results += new CSVMapReader(new StringReader(s.toString())).readAll()
             }
 
             log.info("${(i+1)}/${pointsArray.size()} batch process completed..")
         }
 
-        rawData
+        results
     }
 
     private def getValidSites(allSites){
@@ -388,6 +390,10 @@ class MetadataService {
         log.info("Total sites = ${allSites?.size()}")
 
         allSites.each{ site ->
+            if (!site.projects) {
+                log.info("Ignoring site ${site.siteId} due to no associated projects")
+                return
+            }
             def centroid = site.extent?.geometry?.centre
             if (centroid && centroid.size() == 2) {
                 sites.add(site)
@@ -404,20 +410,9 @@ class MetadataService {
 
     private def getGridAndFacetLayers(layers,lat,lng){
 
-        def siteResult = [:]
-        found:
-        for(int i = 0; i < layers?.size(); i++){
-            def set = layers[i]
-            for(int j = 1; j < set?.size(); j++){
-                def tokens = set[j].tokenize(',')
-                if(tokens && tokens[0].equals(lat) && tokens[1].equals(lng)){
-                    def headerTokens = set[0].tokenize(',')
-                    headerTokens.eachWithIndex{ key, index ->
-                        siteResult[key] = tokens[index]
-                    }
-                    break found
-                }
-            }
+        def siteResult = layers.find{it['latitude'] == (lat as String) && it['longitude'] == (lng as String)} ?: [:]
+        if (!siteResult) {
+            log.error("Missing result for ${lat}, ${lng}")
         }
 
         def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
@@ -425,23 +420,24 @@ class MetadataService {
         def facetTerms = [:]
 
         griddedLayers.each { name, fid ->
-            def match = siteResult.find { it.key == fid }
-            if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                facetTerms << [(name): match.value]
+            def match = siteResult[fid]
+            if (match && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match)) {
+                facetTerms << [(name): match]
+            }
+            else {
+                facetTerms << [(name): null]
             }
         }
 
         groupedFacets.each { group, entry ->
             def groupTerms = []
             entry.each { name, fid ->
-                def match = siteResult.find { it.key == fid }
-                if (match && match.value != SPATIAL_PORTAL_NO_MATCH_VALUE) {
-                    groupTerms << match.value
+                def match = siteResult[fid]
+                if (match && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match)) {
+                    groupTerms << match
                 }
             }
-            if (groupTerms) {
-                facetTerms << [(group): groupTerms]
-            }
+            facetTerms << [(group): groupTerms]
         }
 
         facetTerms
@@ -457,11 +453,11 @@ class MetadataService {
      * @param list of available sites.
      * @return sites with the updated extent values.
      */
-    def getLocationMetadataForSites(allSites) {
+    def getLocationMetadataForSites(allSites, boolean includeLocality = true) {
 
         def sites = getValidSites(allSites)
 
-        def layers = downloadSpatialLayers(sites);
+        def layers = downloadSpatialLayers(sites)
 
         log.info("Initiating extent mapping")
 
@@ -470,12 +466,13 @@ class MetadataService {
             def lat = site.extent.geometry.centre[1]
             def lng = site.extent.geometry.centre[0]
 
-            def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
-            def result = webService.getJson(localityUrl)
-            def localityValue = (result?.results && result.results)?result.results[0].formatted_address:''
-
             def features = [:]
-            features << [locality: localityValue]
+            if (includeLocality) {
+                def localityUrl = grailsApplication.config.google.geocode.url + "${lat},${lng}"
+                def result = webService.getJson(localityUrl)
+                def localityValue = (result?.results && result.results) ? result.results[0].formatted_address : ''
+                features << [locality: localityValue]
+            }
             features << getNvisClassesForPoint(lat as Double, lng as Double)
             features << getGridAndFacetLayers(layers,lat,lng)
 

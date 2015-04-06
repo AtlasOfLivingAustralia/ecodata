@@ -13,7 +13,16 @@ class PermissionService {
 
         if (userId && projectId) {
             isAdmin = ( UserPermission.findAllByUserIdAndEntityTypeAndEntityIdAndAccessLevel(userId, Project.class.name, projectId, AccessLevel.admin) )
-            log.debug "isAdmin = ${isAdmin}"
+        }
+
+        return isAdmin
+    }
+
+    public boolean isUserAdminForOrganisation(String userId, String organisationId) {
+        def isAdmin = false
+
+        if (userId && organisationId) {
+            isAdmin = ( UserPermission.findAllByUserIdAndEntityTypeAndEntityIdAndAccessLevel(userId, Organisation.class.name, organisationId, AccessLevel.admin) )
         }
 
         return isAdmin
@@ -34,6 +43,20 @@ class PermissionService {
         }
 
         return isEditor // bolean
+    }
+
+    def isUserGrantManagerForOrganisation(String userId, String organisationId) {
+        def isGrantManager = false
+        if (userId && organisationId) {
+            def ups = getUserAccessForEntity(userId, Organisation, organisationId)
+            ups.findAll {
+                if (it.accessLevel.code >= AccessLevel.caseManager.code) {
+                    isGrantManager = true
+                }
+            }
+        }
+
+        return isGrantManager
     }
 
     private def getUserAccessForEntity(String userId, Class entityType, String entityId ) {
@@ -58,6 +81,21 @@ class PermissionService {
 
     def getMembersForProject(String projectId) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(projectId, Project.class.name, AccessLevel.starred)
+        def out = []
+        up.each {
+            def rec = [:]
+            def u = userService.getUserForUserId(it.userId?:"0")
+            rec.role = it.accessLevel?.toString()
+            rec.userId = it.userId
+            rec.displayName = u?.displayName
+            rec.userName = u?.userName
+            out.add(rec)
+        }
+        out
+    }
+
+    def getMembersForOrganisation(String organisationId) {
+        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(organisationId, Organisation.class.name, AccessLevel.starred)
         def out = []
         up.each {
             def rec = [:]
@@ -108,6 +146,9 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Project, projectId)
     }
 
+    def addUserAsRoleToOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
+    }
 
     private def removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         def up = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, entityId, entityType.name, accessLevel)
@@ -127,6 +168,9 @@ class PermissionService {
         removeUserAsRoleToEntity(userId, accessLevel, Project, projectId)
     }
 
+    def removeUserAsRoleFromOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
+        removeUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
+    }
     /**
      * Deletes all permissions associated with the supplied project.  Used as a part of a project delete operation.
      * UserPermissions don't support soft deletes, even if the project itself is soft-deleted.

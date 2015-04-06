@@ -199,7 +199,7 @@ if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
 if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = 'http://auth.ala.org.au/apikey/ws/check?apikey='
+    security.apikey.serviceUrl = "https://auth.ala.org.au/apikey/ws/check?apikey="
 }
 if(!imagesService.baseURL){
     imagesService.baseURL = 'http://images-dev.ala.org.au'
@@ -245,7 +245,7 @@ environments {
         security.cas.contextPath = "/" + appName
         app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexAllOnStartup = false
-        app.elasticsearch.indexOnGormEvents = false
+        app.elasticsearch.indexOnGormEvents = true
     }
     test {
         rails.logging.jul.usebridge = true

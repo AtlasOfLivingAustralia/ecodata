@@ -243,28 +243,88 @@ class AdminController {
      */
     def reloadSiteMetadata() {
 
-        def sites = siteService.list()
         def code = "success"
 
-        try {
-            def results = metadataService.getLocationMetadataForSites(sites)
+        def total = 0
+        def offset = 0
+        def batchSize = 200
 
-            log.info("Initiating database update..")
-            results.eachWithIndex { site, index ->
-                siteService.update([extent: site.extent], site.siteId, false)
-                if(index > 0 && (index % 200) == 0) {
-                    log.debug("(${index+1}) records updated in db..")
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            def sites = Site.findAllByStatus('active', [offset:offset, max:batchSize]).collect{siteService.toMap(it, 'flat')}
+            count = sites.size()
+
+            try {
+                def results = metadataService.getLocationMetadataForSites(sites)
+
+                log.info("Initiating database update..")
+                Site.withSession { session -> session.clear() }
+                Site.withNewSession {
+                    results.eachWithIndex { site, index ->
+                        siteService.update([extent: site.extent], site.siteId, false)
+                        total++
+                        if(total > 0 && (total % 200) == 0) {
+                            log.info("(${total+1}) records updated in db..")
+                        }
+                    }
                 }
+                log.info("Database updated completed.")
             }
-            log.info("Database updated completed.")
-        }
-        catch(Exception e) {
-            log.error("Unable to complete the operation ", e)
-            code = "error"
+            catch(Exception e) {
+                log.error("Unable to complete the operation ", e)
+                code = "error"
+            }
+            offset += batchSize
+
         }
 
         def result = [result: "${code}"]
         render result as grails.converters.JSON
+    }
+
+    def updateSitesWithoutCentroids() {
+        def code = 'success'
+
+        def total = 0
+        def offset = 0
+        def batchSize = 200
+
+        def count = batchSize // For first loop iteration
+        while (count == batchSize) {
+            def sites = Site.findAllByStatus('active', [offset: offset, max: batchSize]).collect {
+                siteService.toMap(it, 'flat')
+            }
+            count = sites.size()
+            try {
+                Site.withSession { session -> session.clear() }
+                Site.withNewSession {
+                    sites.eachWithIndex { site, index ->
+                        if (!site.projects) {
+                            log.info("Ignoring site ${site.siteId} due to no associated projects")
+                            return
+                        }
+                        def centroid = site.extent?.geometry?.centre
+                        if (!centroid) {
+                            def updatedSite = siteService.populateLocationMetadataForSite(site)
+                            siteService.update([extent: updatedSite.extent], site.siteId, false)
+                            total++
+                            if(total > 0 && (total % 200) == 0) {
+                                log.debug("(${total+1}) records updated in db..")
+                            }
+                        }
+                    }
+                }
+                log.info("Database updated completed.")
+            }
+            catch (Exception e) {
+                log.error("Unable to complete the operation ", e)
+                code = "error"
+            }
+
+            offset += batchSize
+        }
+        def result = [code:code]
+        render result as JSON
     }
 
     def audit() { }
