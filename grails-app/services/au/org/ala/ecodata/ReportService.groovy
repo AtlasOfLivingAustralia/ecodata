@@ -167,14 +167,14 @@ class ReportService {
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        def users = UserPermission.findAll().groupBy{it.userId}
+        def users = UserPermission.findAllByEntityType('au.org.ala.ecodata.Project').groupBy{it.userId}
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 
 
-            userSummary[userId] = [id:userDetails.userId, name:userDetails.displayName, email:userDetails.userName, role:'FC_USER']
+            userSummary[userId] = [userId:userDetails.userId, name:userDetails.displayName, email:userDetails.userName, role:'FC_USER']
             userSummary[userId].projects = projects.collect {
-                def project = projectService.get(it.projectId, ProjectService.FLAT)
+                def project = projectService.get(it.entityId, ProjectService.FLAT)
 
                 [projectId: project.projectId, grantId:project.grantId, externalId:project.externalId, name:project.name, access:levels[it.accessLevel.code]]
             }
