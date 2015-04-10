@@ -11,8 +11,6 @@ function renameOutputTargetScore(outputLabel, oldName, newName) {
         var perProjectCount = 0;
         var project = projects.next();
 
-        printjson(project);
-
         for (var i=0; i<project.outputTargets.length; i++) {
             if (project.outputTargets[i].scoreLabel === oldName && project.outputTargets[i].outputLabel === outputLabel) {
                 project.outputTargets[i].scoreLabel = newName;
@@ -34,3 +32,5 @@ renameOutputTargetScore('Flora Survey Details', 'No. of surveys undertaken', 'No
 
 renameOutputTargetScore('Weed Treatment Details', 'Total area treated (Ha)', 'Total new area treated (Ha)');
 renameOutputTargetScore('Pest Management Details', 'No. of individual animals killed / removed by species', 'Total No. of individuals or colonies of pest animals destroyed');
+
+renameOutputTargetScore('Revegetation Details', 'Kilograms of seed sown of species expected to grow  > 2 metres in height', 'Kilograms of seed sown of species expected to grow < 2 metres in height');
