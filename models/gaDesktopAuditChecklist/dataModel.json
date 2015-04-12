@@ -10,7 +10,7 @@
         {
             "dataType": "date",
             "description": "Enter the date on which the site visit was undertaken.",
-            "name": "siteVisitDate",
+            "name": "reviewDate",
             "validate": "required"
         },
         {
@@ -265,19 +265,23 @@
                     "items": [
                         {
                             "source": "contractManager",
+                            "computed": null,
                             "preLabel": "Contract Manager:",
                             "type": "text"
                         },
                         {
                             "source": "reviewDate",
+                            "computed": null,
                             "preLabel": "Review date:",
                             "type": "date"
                         }
                     ],
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "source": "The table below outlines all of the documents you must obtain and assess, plus any other checks required, in conducting your Desktop Audit of the Project. These documents are grouped according to the categories specified in clause 32 of the Deed. Where required, use the comments box to outline any issues associated with any document or check, including the relevant reference number. When you finish a step below you can mark the step as complete by selecting 'Completed' or 'Not completed'.",
+                    "computed": null,
                     "type": "literal"
                 }
             ],
@@ -287,6 +291,7 @@
         {
             "items": [{
                 "source": "<h3>Documents and Checks for Desktop Audit<\/h3>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -294,6 +299,7 @@
         {
             "items": [{
                 "source": "<h4>Service Provider’s operation practices and procedures (including security procedures)<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -301,6 +307,7 @@
         {
             "items": [{
                 "source": "<h5>Participant-related documents and checks<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -310,50 +317,60 @@
                 "items": [
                     {
                         "source": "auditProofAgeResidencyCitizenship",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory copies of all Proof of Age and Proof of Residency or Citizenship?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditParticipantAgreements",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory copies of all Individual Participant Agreements (including Training Plans)?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditTrainingModules",
+                        "computed": null,
                         "preLabel": "Have you received evidence of completed individual training modules (accredited and on-the-job) in relation to First Aid and WHS for each Participant?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditParticipantPoliceChecks",
+                        "computed": null,
                         "preLabel": "Have you received evidence that Police checks have been undertaken (including working with vulnerable people checks) for each Participant?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditParticipantRiskAssessments",
+                        "computed": null,
                         "preLabel": "Have you received evidence that Risk Assessments for each Participant have been undertaken where appropriate?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditParticipantCommencementLetters",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory copies of Participant commencement letters?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditTimesheets",
+                        "computed": null,
                         "preLabel": "Have you received accurate and complete copies of timesheets (including medical certificates)?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditPaymentsToParticipants",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory evidence of payments to Participants?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsParticipants",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -362,6 +379,7 @@
         {
             "items": [{
                 "source": "<h5>Team Supervisor-related documents and checks<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -371,25 +389,30 @@
                 "items": [
                     {
                         "source": "auditSupervisorPoliceChecks",
+                        "computed": null,
                         "preLabel": "Have you received evidence that Police checks have been undertaken (including working with vulnerable people checks) for Team Supervisors?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditFirstAidCertificates",
+                        "computed": null,
                         "preLabel": "Have you received copies of current First Aid Certificates for Team Supervisors?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditSupervisorProofOfAge",
+                        "computed": null,
                         "preLabel": "Have you received Proof of Age (minimum of 18 years)?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsTeamSupervisors",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -398,6 +421,7 @@
         {
             "items": [{
                 "source": "<h5>Project Sponsors<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -407,25 +431,30 @@
                 "items": [
                     {
                         "source": "auditReceiptOfAgreements",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory copies of Project Agreements?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditGovtLogoUse",
+                        "computed": null,
                         "preLabel": "Have you received evidence of Australian Government logo use on relevant signage?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditGovtLogoUseAppropriateness",
+                        "computed": null,
                         "preLabel": "Is use of the Australian Government logo use on relevant signage appropriate?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsProjectSponsors",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -434,6 +463,7 @@
         {
             "items": [{
                 "source": "<h5>Service Provider’s accuracy in reporting<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -443,15 +473,18 @@
                 "items": [
                     {
                         "source": "auditServiceProviderReporting",
+                        "computed": null,
                         "preLabel": "Is the Service Provider reporting accurately (either for Monthly, Three Monthly or End of Project Reporting) and in accordance with the reporting requirements?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsServiceProviderReporting",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -460,6 +493,7 @@
         {
             "items": [{
                 "source": "<h5>Service Provider’s compliance with confidentiality, privacy and security obligations<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -469,15 +503,18 @@
                 "items": [
                     {
                         "source": "auditServiceProviderCompliance",
+                        "computed": null,
                         "preLabel": "Are you satisfied the Service Provider is adhering to its Security requirements as outlined in the Deed? (see Section 30):",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsServiceProviderCompliance",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -486,6 +523,7 @@
         {
             "items": [{
                 "source": "<h5>Service Provider’s material (including documents, books and records)<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -495,20 +533,24 @@
                 "items": [
                     {
                         "source": "auditServiceProviderRecordKeeping",
+                        "computed": null,
                         "preLabel": "Are you satisfied that the Service Provider is keeping books and records in accordance with the requirements outlined in the Deed? (see Section 31):",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditServiceProviderInsurance",
+                        "computed": null,
                         "preLabel": "Are you satisfied that current appropriate insurance policies are being maintained in accordance with the Deed? (Section 35):",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsServiceProviderRecordKeeping",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -517,6 +559,7 @@
         {
             "items": [{
                 "source": "<h5>Service Provider’s Work Health and Safety management systems<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -526,15 +569,18 @@
                 "items": [
                     {
                         "source": "auditServiceProviderWHS",
+                        "computed": null,
                         "preLabel": "Have you received a satisfactory copy of the Project specific WHS plan, Risk Plan and Work Plan?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditCommentsServiceProviderWHS",
+                        "computed": null,
                         "preLabel": "Comments:",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -543,6 +589,7 @@
         {
             "items": [{
                 "source": "<h5>Other documents and checks<\/h5>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -552,30 +599,36 @@
                 "items": [
                     {
                         "source": "auditSubcontractingArrangements",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory details of any existing sub-contracting arrangements for this Project?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditWGEObligations",
+                        "computed": null,
                         "preLabel": "Are you satisfied the Service Provider is adhering to its obligations regarding Workplace Gender Equality for this Project?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditIndigenousOpportunities",
+                        "computed": null,
                         "preLabel": "Are you satisfied the Service Provider is adhering to its obligations regarding the Australian Government’s Indigenous Opportunities Policy for this Project?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditEmergencyManagement",
+                        "computed": null,
                         "preLabel": "Have you received satisfactory copies of the emergency management procedures and documents for this Project?:",
                         "type": "selectOne"
                     },
                     {
                         "source": "auditDocsInSpire",
+                        "computed": null,
                         "preLabel": "Have you saved all documents generated through this checklist appropriately in SPIRE?:",
                         "type": "selectOne"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
