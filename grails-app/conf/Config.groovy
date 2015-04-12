@@ -199,10 +199,13 @@ if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
 if (!security.apikey.serviceUrl) {
-    security.apikey.serviceUrl = "https://auth.ala.org.au/apikey/ws/check?apikey="
+    security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
 }
-if(!security.cas.logoutUrl){
-    security.cas.logoutUrl = 'https://auth.ala.org.au/cas/logout'
+if(!biocacheService.baseURL){
+    biocacheService.baseURL = 'http://biocache.ala.org.au/ws'
+}
+if(!imagesService.baseURL){
+    imagesService.baseURL = 'http://images-dev.ala.org.au'
 }
 if(!security.cas.bypass){
     security.cas.bypass = false
@@ -213,6 +216,13 @@ if(!security.cas.adminRole){
 if(!ecodata.use.uuids){
     ecodata.use.uuids = false
 }
+if(!userDetailsSingleUrl){
+    userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
+}
+if(!userDetailsUrl) {
+    userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+}
+
 
 if (!grails.cache.ehcache) {
     grails {
@@ -238,7 +248,7 @@ environments {
         security.cas.contextPath = "/" + appName
         app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexAllOnStartup = false
-        app.elasticsearch.indexOnGormEvents = true
+        app.elasticsearch.indexOnGormEvents = false
     }
     test {
         rails.logging.jul.usebridge = true

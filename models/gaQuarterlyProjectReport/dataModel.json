@@ -90,6 +90,7 @@
         },
         {
             "dataType": "list",
+            "description": "Complaints",
             "name": "complaints",
             "columns": [
                 {

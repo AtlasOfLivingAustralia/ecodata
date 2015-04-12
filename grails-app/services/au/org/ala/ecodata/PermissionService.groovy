@@ -6,7 +6,7 @@ package au.org.ala.ecodata
 class PermissionService {
 
     static transactional = false
-    def authService, userService // found in ala-web-theme plugin
+    def authService, userService // found in ala-auth-plugin
 
     public boolean isUserAdminForProject(String userId, String projectId) {
         def isAdmin = false
