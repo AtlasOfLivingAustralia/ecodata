@@ -13,6 +13,7 @@ import org.joda.time.format.ISODateTimeFormat
 class Project {
 
     static final COMPLETED = "completed"
+    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
 
     /*
     Associations:
@@ -61,7 +62,8 @@ class Project {
 	String promoteOnHomepage = 'no'
     List activities
 	
-    boolean isCitizenScience
+    boolean isCitizenScience, isDataSharing
+    String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
     String aim, keywords, urlAndroid, urlITunes, urlWeb
     String getInvolved, scienceType, projectSiteId
@@ -156,6 +158,8 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
+        projectPrivacy nullable:true, inList: ['Open','Closed']
+        dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }
