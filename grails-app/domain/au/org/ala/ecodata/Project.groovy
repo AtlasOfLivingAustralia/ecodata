@@ -13,6 +13,7 @@ import org.joda.time.format.ISODateTimeFormat
 class Project {
 
     static final COMPLETED = "completed"
+    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
 
     /*
     Associations:
@@ -70,7 +71,6 @@ class Project {
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
 
-    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
     Date getActualStartDate() {
@@ -158,8 +158,8 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
-        projectPrivacy inList: ['Open','Closed']
-        dataSharingLicense inList: collectoryLicenseTypes
+        projectPrivacy nullable:true, inList: ['Open','Closed']
+        dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }

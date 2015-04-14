@@ -20,6 +20,7 @@ class RecordService {
     def grailsApplication
     def activityService, metadataService, outputService, projectService, siteService
 
+
     def serviceMethod() {}
 
     final def ignores = ["action","controller","associatedMedia"]
@@ -27,7 +28,7 @@ class RecordService {
     /**
      * Export records to CSV.
      */
-    def exportCSV(OutputStream outputStream){
+    def exportCSV(OutputStream outputStream, Date cutOffDate = null){
         def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
         csvWriter.writeNext(
                 [
@@ -55,8 +56,16 @@ class RecordService {
                 ] as String[]
         )
 
-        Record.list().each {
-            def map = recordService.toMap(it)
+        def recordList = null
+
+        if(cutOffDate){
+            recordList = Record.where { lastUpdated >= cutOffDate }
+        } else {
+            recordList =  Record.list()
+        }
+
+        recordList.each {
+            def map = toMap(it)
             csvWriter.writeNext(
                     [
                             map.occurrenceID?:"",
@@ -167,11 +176,11 @@ class RecordService {
                 "originalFilename": image?.title,
                 "attribution": image?.creator,
                 "dateTaken": image?.created,
-                "systemSupplier": grailsApplication.config.imageSysteSupplier?:"ecodata"
+                "systemSupplier": grailsApplication.config.imageSystemSupplier?:"ecodata"
         ] as JSON).toString()))
 
-        if (record.tags?.size() > 0) {
-            entity.addPart("tags", record.tags.join(","))
+        if (record.tags) {
+            entity.addPart("tags", new StringBody((record.tags as JSON).toString()))
         }
 
         def httpPost = new HttpPost(remoteImageRepo + "/ws/uploadImage")
@@ -186,6 +195,9 @@ class RecordService {
 
         def map = jsonSlurper.parseText(responseBody)
         log.debug("Image ID: " + map["imageId"])
+        if(!map["imageId"]){
+            log.error("Problem uploading images. Response: " + map)
+        }
         map["imageId"]
     }
 
