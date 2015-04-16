@@ -37,7 +37,7 @@ class AuditController {
             redirect(controller: 'admin', action: 'auditMessagesByProject')
             return
         }
-        def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'asc'])
+        def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'desc'])
 
         [projectInstance: projectInstance, auditMessages: auditMessages]
     }
@@ -79,8 +79,14 @@ class AuditController {
             retVal.message = "Invalid project id ${params.projectId}"
         } else {
             def auditMessages = auditService.getAllMessagesForProject(projectInstance.projectId)
-            // def auditMessages = AuditMessage.findAllByProjectId(projectInstance.projectId, [sort:'date', order:'asc'])
-            if (auditMessages) {
+
+             if (auditMessages) {
+                auditMessages.each{ audit ->
+                    def matches = auditMessages.findAll{it.entityId == audit.entityId && it.date < audit.date }
+                    if(matches?.size() > 1){
+                        audit.entity['compareId'] = matches.get(0).id
+                    }
+                }
                 retVal.success = true
                 retVal.messages = auditMessages
                 retVal.userMap = auditService.getUserDisplayNamesForMessages(auditMessages)
