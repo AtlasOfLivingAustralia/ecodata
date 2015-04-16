@@ -66,7 +66,7 @@ class AuditService {
             def map = entity.dbo ?: entity.properties
             map.keySet().each { key ->
                 if (!EXCLUDED_ENTITY_PROPERTIES.contains(key)) {
-                    props[key] = map[key]
+                     props[key] = map[key]
                 }
             }
             message.entity = props
@@ -189,7 +189,7 @@ class AuditService {
         def documentMessages = AuditMessage.findAllByEntityIdInList(documentIds)
         results.addAll(documentMessages)
 
-        return results.sort { it.date }
+        return results.sort { it.date }.reverse()
     }
 
     def getUserDisplayNamesForMessages(auditMessages) {
