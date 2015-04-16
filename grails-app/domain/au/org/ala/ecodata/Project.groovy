@@ -70,6 +70,7 @@ class Project {
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
+    boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
@@ -149,9 +150,9 @@ class Project {
         dataResourceId nullable:true // nullable for backward compatibility
         aim nullable:true
         keywords nullable:true
-        urlAndroid nullable:true
-        urlITunes nullable:true
-        urlWeb nullable:true
+        urlAndroid nullable:true, url:true
+        urlITunes nullable:true, url:true
+        urlWeb nullable:true, url:true
         getInvolved nullable:true
         scienceType nullable:true
         orgIdGrantee nullable:true
