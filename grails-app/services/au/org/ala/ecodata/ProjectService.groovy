@@ -7,6 +7,7 @@ class ProjectService {
     static transactional = false
     static final ACTIVE = "active"
 	static final COMPLETED = "completed"
+    static final DELETED = "deleted"
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
@@ -27,7 +28,7 @@ class ProjectService {
     }
 
     def getBrief(listOfIds) {
-        Project.findAllByProjectIdInListAndStatus(listOfIds, ACTIVE).collect {
+        Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
             [projectId: it.projectId, name: it.name]
         }
     }
