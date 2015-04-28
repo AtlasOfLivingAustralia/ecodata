@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.codehaus.groovy.grails.web.servlet.GrailsRequestContext
+
 class UserService {
 
     static transactional = false
@@ -17,9 +19,14 @@ class UserService {
     }
 
     def lookupUserDetails(String userId) {
-        // DONE: lookup user details from AUTH
-        def userDetails = new UserDetails(userId: '9999', userName: 'mark.woolston@csiro.au', displayName: 'Mark Woolston')
-        getUserForUserId(userId)?:userDetails
+
+        def userDetails = getUserForUserId(userId)
+        if (!userDetails) {
+            log.warn("Unable to lookup user details for userId: ${userId}")
+            userDetails = new UserDetails(userId: userId?:'<not recorded>', userName: 'unknown', displayName: 'Unknown')
+        }
+
+        userDetails
     }
 
     synchronized def getUserForUserId(String userId) {
