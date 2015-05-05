@@ -376,6 +376,23 @@ class PermissionsController {
     }
 
     /**
+     * Lightweight version of getOrganisationsForUserId() to return just the organisation ids
+     *
+     * @return
+     */
+    def getOrganisationIdsForUserId() {
+        def userId = params.id
+        if (userId) {
+            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
+            def out = []
+            up.each { out.push(it.entityId) }
+            render out as JSON
+        } else {
+            render status:400, text: "Required params not provided: userId"
+        }
+    }
+
+    /**
      * Get a list of {@link Organisation organisations} with {@link AccessLevel#editor editor} level access or higher
      * for a given {@link UserDetails#userId userId}
      *
