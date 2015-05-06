@@ -3,21 +3,21 @@
     "dataModel": [
         {
             "dataType": "list",
+            "description": "Training Activities",
             "name": "training",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": ".",
+                    "description": "Title of each distinct training course that participants attended during the reporting period.",
                     "name": "trainingActivityName"
                 },
                 {
                     "dataType": "text",
-                    "description": ".",
+                    "description": "The name of the provider of each distinct training course.",
                     "name": "trainingProvider"
                 },
                 {
                     "dataType": "text",
-                    "description": ".",
                     "name": "trainingState",
                     "constraints": [
                         "ACT",
@@ -43,43 +43,31 @@
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": ".",
+            "description": "The number of participants that voluntarily withdrew from the Green Army Programme during the reporting period.",
             "name": "participantWithdrawals",
             "validate": "required,min[0]"
         },
         {
             "dataType": "text",
-            "description": ".",
+            "description": "Provide a summary of the reasons why participants withdrew from the Programme.",
             "name": "participantWithdrawalReasons"
         },
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": ".",
+            "description": "The number of participants that the service provider 'exited' from the Green Army Programme during the reporting period.",
             "name": "participantExits",
             "validate": "required,min[0]"
         },
         {
             "dataType": "text",
-            "description": ".",
+            "description": "Provide a summary of the reasons why participants were 'exited' from the Programme.",
             "name": "participantExitReasons"
         },
         {
             "dataType": "number",
             "primaryResult": "true",
-            "description": "The number of participants who commenced or made a commitment to undertake training.",
-            "name": "participantTrainingNumber",
-            "validate": "required,min[0]"
-        },
-        {
-            "dataType": "text",
-            "description": "Provide a summary of the reasons why participants are entering into training.",
-            "name": "participantTrainingReasons"
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "The number of participants who did commenced, but did not complete training.",
+            "description": "The number of participants who commenced, but did not complete training.",
             "name": "participantTrainingNcNumber",
             "validate": "required,min[0]"
         },
@@ -90,7 +78,7 @@
         },
         {
             "dataType": "list",
-            "description": "Complaints",
+            "description": "Complaints Received",
             "name": "complaints",
             "columns": [
                 {
@@ -188,6 +176,7 @@
         },
         {
             "dataType": "list",
+            "description": "Incidents List",
             "name": "incidents",
             "columns": [
                 {
@@ -254,7 +243,7 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicate whether this injury or illness was notifiable.",
+                    "description": "Indicate whether this injury or illness was notifiable. Refer to programme guidelines for a list of notifiable incidents.",
                     "name": "incidentNotifiable",
                     "constraints": [
                         "Yes",
@@ -276,13 +265,6 @@
                 "operation": "count",
                 "dependents": {"source": "incidents"}
             }
-        },
-        {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (minutes) you have taken to complete this report.",
-            "name": "reportingTimeTaken",
-            "validate": "required, min[0]"
         }
     ],
     "viewModel": [
@@ -376,41 +358,6 @@
                 {
                     "title": "Summary of Reasons",
                     "source": "participantExitReasons",
-                    "width": "80%",
-                    "type": "textarea"
-                }
-            ],
-            "class": "output-section",
-            "type": "table"
-        },
-        {
-            "items": [{
-                "source": "<h4>Participants Commencing Non-Accredited Training<\/h4>",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "Provide a summary of reasons why Participants entered into Training Plans for the Project in the current period that did not include training accredited under the Australian Qualifications Framework. These Participants are therefore undertaking the minimum level of training required for participation in the Project.",
-                "computed": null,
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "title": ":",
-            "columns": [
-                {
-                    "title": "No. who entered into non-accredited training",
-                    "source": "participantTrainingNumber",
-                    "width": "20%",
-                    "type": "number"
-                },
-                {
-                    "title": "Summary of Reasons",
-                    "source": "participantTrainingReasons",
                     "width": "80%",
                     "type": "textarea"
                 }
@@ -624,15 +571,6 @@
             "userAddedRows": true,
             "class": "output-section",
             "type": "table"
-        },
-        {
-            "items": [{
-                "source": "reportingTimeTaken",
-                "preLabel": "Time taken to complete this report (minutes):",
-                "computed": null,
-                "type": "number"
-            }],
-            "type": "row"
         }
     ]
 }

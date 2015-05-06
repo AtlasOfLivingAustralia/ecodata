@@ -3,16 +3,17 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "Indicate whether there has been a change in the details of your organisation or key project personnel since the application or previous report. (e.g. Organisation name, ABN, Trust Deed;  Name, position, role, email, telephone or address of key contacts)",
+            "description": "Indicate whether there has been a change in the details of your organisation or key project personnel since the application or previous report. Changes may include: Organisation name, Trust Deed; name, position, role, email, telephone, or address of key contacts. If ‘Yes’, provide details to the Department by email prior to submitting your project report.",
             "name": "orgDetailsChange",
             "constraints": [
                 "Yes",
                 "No"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Provide a summary of what has been achieved to date against each Activity and the Outcomes identified in your Funding Agreement. ",
+            "description": "Please ensure you outline the extent to which you have addressed/achieved each activity and, where relevant, its unit of measure to date. Also comment on the extent of planning/preparation undertaken for activities to be completed in the next stage. Issues encountered are to be addressed in the next question. ",
             "name": "achievementsSummary",
             "validate": "required"
         },
@@ -22,44 +23,40 @@
             "columns": [
                 {
                     "dataType": "number",
-                    "description": "A sequential reference number for the issue. Please do not duplicate reference numbers.",
-                    "name": "issueReference",
-                    "validate": "required"
+                    "description": "A sequential reference number for the issue (e.g. 1, 2, 3, etc.). Please do not duplicate reference numbers.",
+                    "name": "issueReference"
                 },
                 {
                     "dataType": "text",
-                    "description": "Describe the nature of the issue.",
-                    "name": "issueDescription",
-                    "validate": "required"
+                    "description": "Describe the nature of the issue. (e.g. The order placed with our preferred supplier for tubestock and seed could not be fully met)",
+                    "name": "issueDescription"
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicate how you are intending to manage, or are currently managing this issue.",
-                    "name": "issueManagement",
-                    "validate": "required"
+                    "description": "Indicate how you are intending to manage, or are currently managing this issue (e.g. An alternate supplier has been found with seed and tubestock in stock. An order was placed on 10 April 2015.). Note – variations from what is contracted must first be approved by the Department.",
+                    "name": "issueManagement"
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicate how this issue will impact on the project if left un-managed (include impacts on timeframes, feasibility, costs, ability to meet contracted deliverables).",
-                    "name": "issuesImpacts",
-                    "validate": "required"
+                    "description": "Indicate what impacts (if any) the issue may have on the project – such as timeframes, feasibility, costs, ability to meet contracted deliverables. (e.g. This will cause a temporary delay of one month but seasonal conditions will still allow planting. Other project elements remain on-track and project objectives and outputs can still be met. The order will cost $60 more than originally budgeted, but costs will be met by savings gained in herbicide purchase). Note – Changes to budget line item expenditure of >10% are to first be approved by the Department.",
+                    "name": "issuesImpacts"
                 }
             ]
         },
         {
             "dataType": "text",
-            "description": "Provide a summary of a) what project monitoring and/or evaluation activities have been undertaken to date; b) any key findings and/or learnings gained from the project; and c) any changes you are making in response to these.(Detailed information, such as survey data, can be submitted as an attachment to the report).",
+            "description": "May include: a) Photopoints, feedback surveys, flora/fauna/pest/weed surveys, mapping, analyses undertaken, etc.; b) Comments on what the findings are revealing about the issue, trends, and progress or how aspects can be done better? (Attachments may be added to your project record); and c) Whether there is a need to change your current approach? If so, what, when and how?",
             "name": "monitoringEvaluationLearning",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Please provide any further comments you may wish to make on the project and/or programme here.",
+            "description": "You may provide here: information on the project that does not fit more appropriately in other questions; notice of, or invitations to, important events (including those suitable for the Minister(s)); feedback to the Department on its programme and processes.",
             "name": "notes"
         },
         {
             "dataType": "text",
-            "description": "Indicate whether the the project's expenditure proceeding in accordance with the budget, the expected rate of expenditure and within the total project budget.",
+            "description": "Note – variations of >10% to budget line items will require Departmental approval. If you answer ‘No’ an explanation is required at 5.3.",
             "name": "budgetTracking",
             "constraints": [
                 "Yes",
@@ -69,11 +66,12 @@
         },
         {
             "dataType": "text",
-            "description": "Indicate whether all 'Recipient' or 'Other' cash contributions, have they been received and/or been contracted to be received, if such receipts are included in your project budget.",
+            "description": "This question is mandatory and seeks confirmation that these funds are being (or will be) provided to the project. If you have no CASH contributions (‘Recipient’ or ‘Other’) in your project budget, select “N/A”. If you answer ‘No’ an explanation is required at 5.3.",
             "name": "budgetReceiptsReceived",
             "constraints": [
                 "Yes",
-                "No"
+                "No",
+                "Not applicable"
             ],
             "validate": "required"
         },
@@ -83,33 +81,29 @@
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "A sequential reference number for the issue. Please do not duplicate reference numbers.",
-                    "name": "budgetIssueReference",
-                    "validate": "required"
+                    "description": "A sequential reference number for the issue (e.g. 1, 2, 3, etc.). Please do not duplicate reference numbers.",
+                    "name": "budgetIssueReference"
                 },
                 {
                     "dataType": "text",
-                    "description": "Describe the nature of the issue.",
-                    "name": "budgetIssueDescription",
-                    "validate": "required"
+                    "description": "Please clearly identify whether ‘Department’, ‘Recipient’ and/or ‘Other’ cash is involved, the amounts of each and the budget line item(s) affected.",
+                    "name": "budgetIssueDescription"
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicate how you are intending to manage, or are currently managing this issue.",
-                    "name": "budgetIssueManagement",
-                    "validate": "required"
+                    "description": "If already covered at Q2.2, you may enter - Refer to Q2.2.",
+                    "name": "budgetIssueManagement"
                 },
                 {
                     "dataType": "text",
                     "description": "Indicate how this issue will impact on the project if left un-managed (include impacts on timeframes, feasibility, costs, ability to meet contracted deliverables).",
-                    "name": "budgetIssueImpacts",
-                    "validate": "required"
+                    "name": "budgetIssueImpacts"
                 }
             ]
         },
         {
             "dataType": "text",
-            "description": "Please provide any additional comments on the project's income, expenditure or budget.",
+            "description": "Optional. You may add here information related to the budget that does not fit more appropriately in other fields.",
             "name": "budgetNotes"
         }
     ],
@@ -117,6 +111,7 @@
         {
             "items": [{
                 "source": "<h4>1. Organisation and contact Details<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -125,10 +120,12 @@
             "items": [{
                 "items": [{
                     "source": "orgDetailsChange",
-                    "preLabel": "1.1 Has there been a change in the details of your organisation or key project personnel?",
+                    "computed": null,
+                    "preLabel": "1.1 Has there been a change in the details of your organisation or key project personnel that you have not yet advised the Department of Environment?",
                     "width": "95%",
                     "type": "selectOne"
                 }],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -137,6 +134,7 @@
         {
             "items": [{
                 "source": "<h4>2. Summary of Project Progress for the Period<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -146,17 +144,19 @@
                 "items": [
                     {
                         "source": "achievementsSummary",
+                        "computed": null,
                         "preLabel": "2.1 Provide a summary of what has been achieved to date against each Activity and the Outcomes identified in your Funding Agreement.",
                         "width": "95%",
                         "type": "textarea"
                     },
                     {
-                        "source": "<h5>2.2 If you have encountered any issues or delays in delivering the project's Activities and / or Outcomes, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<\/h5>",
+                        "source": "<h5>2.2 If you have encountered any issues or delays in delivering the project's Activities and / or Outcomes, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<\/h5> <i>(only complete this question if relevant)<\/i>",
+                        "computed": null,
                         "type": "literal"
                     },
                     {
                         "source": "issues",
-                        "preLabel": "<h5>2.2 If you have encountered any issues or delays in delivering the project's Activities and / or Outcomes, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<\/h5>",
+                        "computed": null,
                         "allowHeaderWrap": "true",
                         "columns": [
                             {
@@ -189,6 +189,7 @@
                         "type": "table"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -197,6 +198,7 @@
         {
             "items": [{
                 "source": "<h4>3. Monitoring, Evaluation and Project Learnings<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -205,10 +207,12 @@
             "items": [{
                 "items": [{
                     "source": "achievementsSummary",
+                    "computed": null,
                     "preLabel": "3.1 Provide a summary of a) what project monitoring and/or evaluation activities have been undertaken to date; b) any key findings and / or learnings gained from the project; and c) any changes you are making in response to these.",
                     "width": "100%",
                     "type": "textarea"
                 }],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -217,24 +221,20 @@
         {
             "items": [{
                 "source": "<h4>4. Other Comments<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
         },
         {
             "items": [{
-                "items": [
-                    {
-                        "source": "(Please provide any further comments you may wish to make on the project and / or programme here)",
-                        "type": "literal"
-                    },
-                    {
-                        "source": "notes",
-                        "preLabel": "",
-                        "width": "100%",
-                        "type": "textarea"
-                    }
-                ],
+                "items": [{
+                    "source": "notes",
+                    "preLabel": "Please provide any further comments you may wish to make on the project and / or programme.",
+                    "width": "100%",
+                    "type": "textarea"
+                }],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",
@@ -243,6 +243,7 @@
         {
             "items": [{
                 "source": "<h4>5. Project Income and Expenditure<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -252,21 +253,25 @@
                 "items": [
                     {
                         "source": "budgetTracking",
+                        "computed": null,
                         "preLabel": "5.1 Is the project's expenditure proceeding in accordance with the budget, the expected rate of expenditure and within the total project budget?",
                         "type": "selectOne"
                     },
                     {
                         "source": "budgetReceiptsReceived",
+                        "computed": null,
                         "preLabel": "5.2 If your project budget includes 'Recipient' or 'Other' cash contributions, have they been received and / or been contracted to be received?",
                         "type": "selectOne"
                     },
                     {
-                        "source": "<h5>5.3 If you answered 'No' to question 5.1 or 5.2, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<\/h5>",
+                        "source": "<h5>5.3 If you answered 'No' to question 5.1 or 5.2, please explain here: a) the nature of the issues; b) how you are managing (or proposing to manage) the issues, and c) implications for the project.<\/h5><i>Only complete if applicable. Note - cash contributions are expected to be provided in line with the Funding Agreement, otherwise it constitutes a variation. The Government has a right under the Agreement (which it may or may not exercise) to reduce its contribution and recover some funds paid, or to terminate an Agreement.<\/i>",
+                        "computed": null,
                         "type": "literal"
                     },
                     {
                         "title": "5.3 If you answered 'No' to question 5.1 or 5.2, please explain here: a) the nature of the issues, b) how you are managing (or proposing to manage) the issues, and c) implications for the project.",
                         "source": "budgetIssues",
+                        "computed": null,
                         "allowHeaderWrap": "true",
                         "columns": [
                             {
@@ -300,11 +305,13 @@
                     },
                     {
                         "source": "budgetNotes",
+                        "computed": null,
                         "preLabel": "5.4 If you have additional comments on the project's income, expenditure or budget, please provide them here.",
                         "width": "95%",
                         "type": "textarea"
                     }
                 ],
+                "computed": null,
                 "type": "col"
             }],
             "class": "output-section",

@@ -12,6 +12,8 @@
                     "constraints": [
                         "Conference / seminar presentation",
                         "Field day activity",
+                        "Film / documentary production",
+                        "Media release (including publication to social media)",
                         "Meeting",
                         "Mentoring",
                         "Planning session",
@@ -75,16 +77,16 @@
         },
         {
             "dataType": "number",
-            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity.",
             "primaryResult": "true",
-            "name": "totalEventHrs",
+            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity.",
             "computed": {
                 "operation": "sum",
                 "dependents": {
                     "source": "eventDurationHrs",
                     "fromList": "events"
                 }
-            }
+            },
+            "name": "totalEventHrs"
         },
         {
             "dataType": "stringList",
@@ -107,6 +109,10 @@
             "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
             "name": "groupsSupported",
             "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfEvents"
         },
         {
             "dataType": "text",
@@ -139,41 +145,41 @@
                 {
                     "title": "Type of event:",
                     "source": "eventType",
-                    "computed": null,
                     "width": "15%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Purpose of event:",
                     "source": "eventPurpose",
-                    "computed": null,
                     "width": "25%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Main industry type addressed:",
                     "source": "industryType",
-                    "computed": null,
                     "width": "5%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Topics covered:",
                     "source": "eventTopics",
-                    "computed": null,
                     "width": "25%",
+                    "computed": null,
                     "type": "text"
                 },
                 {
                     "title": "Event Duration (Hrs):",
                     "source": "eventDurationHrs",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 }
             ],
-            "userAddedRows": true,
             "class": "output-section",
+            "userAddedRows": true,
             "type": "table"
         },
         {
@@ -181,31 +187,31 @@
                 {
                     "items": [{
                         "source": "deliveryPartner",
-                        "preLabel": "Delivery partners:",
                         "computed": null,
+                        "preLabel": "Delivery partners:",
                         "type": "selectMany"
                     }],
-                    "computed": null,
                     "width": "30%",
+                    "computed": null,
                     "type": "col"
                 },
                 {
                     "items": [
                         {
                             "source": "groupsSupported",
-                            "preLabel": "No. of groups supported financially:",
                             "computed": null,
+                            "preLabel": "No. of groups supported financially:",
                             "type": "number"
                         },
                         {
                             "source": "eventNotes",
-                            "computed": null,
                             "preLabel": "Comments / Notes:",
+                            "computed": null,
                             "type": "textarea"
                         }
                     ],
-                    "computed": null,
                     "width": "70%",
+                    "computed": null,
                     "type": "col"
                 }
             ],

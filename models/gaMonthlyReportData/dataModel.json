@@ -6,19 +6,17 @@
             "description": "Indicate the most appropriate status of the project at the end of the reporting month.",
             "name": "projectStatus",
             "constraints": [
-                "Not started",
                 "Commenced",
                 "Progressing - behind schedule",
                 "Progressing - on schedule",
-                "Progressing - ahead of schedule",
                 "Completed",
-                "Abandoned"
+                "Cancelled"
             ],
             "validate": "required"
         },
         {
             "dataType": "date",
-            "description": "If the project is running behind schedule you are required to explain why.",
+            "description": "If the project is running behind schedule and/or you have not completed data entry into MERIT for all relevant activities in the project schedule, you are required to explain why.",
             "name": "projectStatusReason"
         },
         {
@@ -28,13 +26,13 @@
         },
         {
             "dataType": "number",
-            "description": "Record the number of Participants who entered into a Participant Agreement for the Project in the current month.",
+            "description": "Record the number of participants who entered into a Participant Agreement for the Project and commenced the Project during the current month.",
             "name": "totalParticipantsCommenced",
             "validate": "required,min[0],max[9]"
         },
         {
             "dataType": "number",
-            "description": "Record the number of Participants who did not fulfil the requirements of their Participant Agreement and therefore did not complete (failed) the Project in the current month. This number should include Participants who withdrew from the Project voluntarily (Participant initiated) and those who were exited (Service Provider initiated).",
+            "description": "Record the number of Participants who fulfilled the requirements of their Participant Agreement and therefore completed the Project in the current month.",
             "name": "totalParticipantsCompleted",
             "validate": "required,min[0],max[9]"
         },
@@ -64,14 +62,8 @@
         },
         {
             "dataType": "number",
-            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
+            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month.",
             "name": "trainingNoCompleted",
-            "validate": "required,min[0],max[9]"
-        },
-        {
-            "dataType": "number",
-            "description": "We are interested in knowing how long it takes you to complete your reporting requirements. When submitting your reports to the Green Army Team, please tell us the time (in minutes) you have taken to complete this report.",
-            "name": "reportingTimeTaken",
             "validate": "required,min[0],max[9]"
         }
     ],
@@ -133,12 +125,12 @@
                         },
                         {
                             "source": "totalParticipantsCommenced",
-                            "preLabel": "Total No. commencing projects:",
+                            "preLabel": "No. commencing projects:",
                             "type": "number"
                         },
                         {
                             "source": "totalParticipantsCompleted",
-                            "preLabel": "Total No. completing projects:",
+                            "preLabel": "No. completing projects:",
                             "type": "number"
                         },
                         {
@@ -163,32 +155,23 @@
                         },
                         {
                             "source": "trainingCommencedAccredited",
-                            "preLabel": "Commenced accredited training:",
+                            "preLabel": "No. Commenced training:",
                             "type": "number"
                         },
                         {
                             "source": "trainingNoExited",
-                            "preLabel": "Exited training:",
+                            "preLabel": "No. Exited training:",
                             "type": "number"
                         },
                         {
                             "source": "trainingNoCompleted",
-                            "preLabel": "Completed training:",
+                            "preLabel": "No. Completed training:",
                             "type": "number"
                         }
                     ],
                     "type": "col"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "reportingTimeTaken",
-                "preLabel": "Time taken to complete this report (minutes):",
-                "type": "number"
-            }],
             "class": "output-section",
             "type": "row"
         }

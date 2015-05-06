@@ -16,7 +16,8 @@
         {
             "dataType": "number",
             "description": "The area in hectares being protected by installed access control measures.",
-            "name": "accessAreaProtected"
+            "name": "accessAreaProtected",
+            "validate": "required"
         },
         {
             "dataType": "stringList",
@@ -79,15 +80,16 @@
                 {
                     "items": [
                         {
-                            "source": "structuresInstalled",
-                            "preLabel": "Structure(s) installed:",
-                            "type": "selectMany"
-                        },
-                        {
                             "source": "numberOfInstallations",
                             "computed": null,
                             "preLabel": "No. of access management structures installed:",
                             "type": "number"
+                        },
+                        {
+                            "source": "structuresInstalled",
+                            "computed": null,
+                            "preLabel": "Structure(s) installed:",
+                            "type": "selectMany"
                         },
                         {
                             "source": "lengthOfLinealStructures",
@@ -97,6 +99,7 @@
                         },
                         {
                             "source": "accessControlIssues",
+                            "computed": null,
                             "preLabel": "Description of issue(s) requiring access management:",
                             "type": "textarea"
                         },
@@ -114,6 +117,7 @@
                     "items": [
                         {
                             "source": "accessManagementMethod",
+                            "computed": null,
                             "preLabel": "Access control method used:",
                             "type": "selectMany"
                         },
