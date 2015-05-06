@@ -121,6 +121,9 @@ class SiteService {
                 if (centroid && centroid.size() == 2 && enableCentroidRefresh) {
                     props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
                 }
+                else if (props.extent?.geometry && !centroid) { // Sites created from known shapes need a centroid to be calculated.
+                    populateLocationMetadataForSite(props)
+                }
                 getCommonService().updateProperties(site, props)
                 return [status:'ok']
             } catch (Exception e) {
