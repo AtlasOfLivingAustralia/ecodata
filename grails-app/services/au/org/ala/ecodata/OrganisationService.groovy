@@ -15,7 +15,7 @@ class OrganisationService {
     def grailsApplication, webService, commonService, projectService, permissionService, documentService
 
     private def mapAttributesToCollectory(props) {
-        def mapKeyEcoDataToCollectory = [
+        def mapKeyOrganisationDataToCollectory = [
                 orgType: 'institutionType',
                 description: 'pubDescription',
                 name: 'name',
@@ -27,7 +27,7 @@ class OrganisationService {
         ]
         props.each { k, v ->
             if (v != null) {
-                def keyCollectory = mapKeyEcoDataToCollectory[k]
+                def keyCollectory = mapKeyOrganisationDataToCollectory[k]
                 if (keyCollectory) collectoryProps[keyCollectory] = v
             }
         }
@@ -42,7 +42,6 @@ class OrganisationService {
         def institutions = webService.getJson(url)
         if (institutions instanceof List) {
             def orgs = Organisation.findAllByCollectoryInstitutionIdIsNotNull()
-            println orgs
             def map = orgs.collectEntries {
                [it.collectoryInstitutionId, it]
             }
@@ -81,8 +80,12 @@ class OrganisationService {
         try {
             def collectoryProps = mapAttributesToCollectory(props)
             def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/institution/', collectoryProps)
-            organisation.collectoryInstitutionId = webService.extractCollectoryIdFromHttpHeaders(result?.headers)
-
+            organisation.collectoryInstitutionId = webService.extractCollectoryIdFromResult(result)
+        }
+        catch (Exception e) {
+            def error = "Error creating collectory institution - ${e.message}"
+        }
+        try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             organisation.save(failOnError: true, flush:true)
             props.remove('id')
@@ -106,9 +109,9 @@ class OrganisationService {
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
             try {
-                getCommonService().updateProperties(organisation, props)
                 if (organisation.name != props.name)
                     projectService.updateOrgName(organisation.organisationId, props.name)
+                getCommonService().updateProperties(organisation, props)
                 return [status:'ok']
             } catch (Exception e) {
                 Organisation.withSession { session -> session.clear() }

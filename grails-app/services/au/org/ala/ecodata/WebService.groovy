@@ -291,8 +291,8 @@ class WebService {
         result
     }
 
-    def extractCollectoryIdFromHttpHeaders(headers) {
-        return headers?.location?.first().toString().tokenize('/').last()
+    def extractCollectoryIdFromResult(result) {
+        return result?.headers?.location?.first().toString().tokenize('/').last()
     }
 
 }

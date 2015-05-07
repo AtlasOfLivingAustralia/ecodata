@@ -24,7 +24,7 @@ class ProjectService {
     def permissionService
 
     private def mapAttributesToCollectory(props) {
-        def mapKeyEcoDataToCollectory = [
+        def mapKeyProjectDataToCollectory = [
                 description: 'pubDescription',
                 manager: 'email',
                 name: 'name',
@@ -39,7 +39,7 @@ class ProjectService {
         def hiddenJSON = [:]
         props.each { k, v ->
             if (v != null) {
-                def keyCollectory = mapKeyEcoDataToCollectory[k]
+                def keyCollectory = mapKeyProjectDataToCollectory[k]
                 if (keyCollectory == null) // not mapped to first class collectory property
                     hiddenJSON[k] = v
                 else if (keyCollectory != '') // not to be ignored
@@ -47,7 +47,6 @@ class ProjectService {
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON
-        println("collectory hiddenJSON = " + hiddenJSON)
         collectoryProps
     }
 
@@ -168,10 +167,22 @@ class ProjectService {
             def o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
             o.save(failOnError: true)
 
-            // create a dataProvider in collectory to hold project meta data
+            props.remove('sites')
+            props.remove('id')
+            getCommonService().updateProperties(o, props)
+        } catch (Exception e) {
+            // clear session to avoid exception when GORM tries to autoflush the changes
+            Project.withSession { session -> session.clear() }
+            def error = "Error creating project - ${e.message}"
+            log.error error
+            return [status:'error',error:error]
+        }
+
+        // create a dataProvider in collectory to hold project meta data
+        try {
             def collectoryProps = mapAttributesToCollectory(props)
             def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/', collectoryProps)
-            def dataProviderId = webService.extractCollectoryIdFromHttpHeaders(result?.headers)
+            def dataProviderId = webService.extractCollectoryIdFromResult(result)
             if (dataProviderId) {
                 // create a dataResource in collectory to hold project outputs
                 props.dataProviderId = dataProviderId
@@ -180,20 +191,14 @@ class ProjectService {
                 if (props.collectoryInstitutionId) collectoryProps.institution = [uid: props.collectoryInstitutionId]
                 collectoryProps.licenseType = props.dataSharingLicense
                 result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
-                props.dataResourceId = webService.extractCollectoryIdFromHttpHeaders(result?.headers)
+                props.dataResourceId = webService.extractCollectoryIdFromResult(result)
             }
-
-            props.remove('sites')
-            props.remove('id')
-            getCommonService().updateProperties(o, props)
-            return [status:'ok',projectId:o.projectId]
         } catch (Exception e) {
-            // clear session to avoid exception when GORM tries to autoflush the changes
-            Project.withSession { session -> session.clear() }
-            def error = "Error creating project - ${e.message}"
+            def error = "Error creating collectory info for project ${o.projectId} - ${e.message}"
             log.error error
-            return [status:'error',error:error]
         }
+
+        return [status:'ok',projectId:o.projectId]
     }
 
     def update(props, id) {
@@ -201,20 +206,27 @@ class ProjectService {
         if (a) {
             try {
                 getCommonService().updateProperties(a, props)
-                if (a.dataProviderId) { // recreate 'hiddenJSON' in collectory every time (minus some attributes)
-                    a = Project.findByProjectId(id)
-                    ['id','dateCreated','documents','lastUpdated','organisationName','projectId','sites'].each { a.remove(it) }
-                    webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + a.dataProviderId, mapAttributesToCollectory(a))
-                    if (a.dataResourceId)
-                        webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + a.dataResourceId, [licenseType:a.dataSharingLicense])
-                }
-                return [status:'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
                 def error = "Error updating project ${id} - ${e.message}"
                 log.error error
-                return [status:'error',error:error]
+                return [status: 'error', error: error]
             }
+            if (a.dataProviderId) { // recreate 'hiddenJSON' in collectory every time (minus some attributes)
+                try {
+                    a = Project.findByProjectId(id)
+                    ['id', 'dateCreated', 'documents', 'lastUpdated', 'organisationName', 'projectId', 'sites'].each {
+                        a.remove(it)
+                    }
+                    webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + a.dataProviderId, mapAttributesToCollectory(a))
+                    if (a.dataResourceId)
+                        webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + a.dataResourceId, [licenseType: a.dataSharingLicense])
+                } catch (Exception e ) {
+                    def error = "Error updating collectory info for project ${id} - ${e.message}"
+                    log.error error
+                }
+            }
+            return [status: 'ok']
         } else {
             def error = "Error updating project - no such id ${id}"
             log.error error
@@ -353,10 +365,11 @@ class ProjectService {
     }
 
     def updateOrgName(orgId, orgName) {
-        Project.executeUpdate("update Project p set p.organisationName=:name where p.organisationId=:id", [
-            id: orgId,
-            name: orgName
-        ])
+        println("updating " + orgId + " to " + orgName)
+//        Project.collection.update(
+//            [organisationId: orgId],
+//            [organisationName: orgName],
+//            [multi: true])
     }
 
 }
