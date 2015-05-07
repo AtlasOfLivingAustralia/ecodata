@@ -1,13 +1,14 @@
 {
     "selectedActivity": {
-        "category": "Small Grants",
-        "status": "active",
-        "name": "Progress Report",
-        "type": "Assessment",
+        "supportsSites": true,
+        "category": "Implementation actions",
+        "name": "Conservation Actions for Species and Communities",
+        "type": "Activity",
         "outputs": [
-            "Progress Report Details",
-            "Attachments"
-        ]
+            "Conservation Works Details",
+            "Participant Information"
+        ],
+        "gmsId": "CATS"
     },
     "activities": [
         {
@@ -174,7 +175,7 @@
         {
             "supportsSites": true,
             "category": "Implementation actions",
-            "name": "Conservation Actions for Threatened Species",
+            "name": "Conservation Actions for Species and Communities",
             "type": "Activity",
             "outputs": [
                 "Conservation Works Details",
