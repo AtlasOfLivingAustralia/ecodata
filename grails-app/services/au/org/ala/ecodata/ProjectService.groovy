@@ -157,6 +157,7 @@ class ProjectService {
 
     def create(props) {
         assert getCommonService()
+        def o
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
@@ -164,7 +165,7 @@ class ProjectService {
                 return [status:'error',error:'Duplicate project id for create ' + props.projectId]
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-            def o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
+            o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
             o.save(failOnError: true)
 
             props.remove('sites')
