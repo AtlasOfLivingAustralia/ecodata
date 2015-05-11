@@ -61,6 +61,7 @@ class Project {
     Date lastUpdated
 	String promoteOnHomepage = 'no'
     List activities
+    List iframes
 	
     boolean isCitizenScience, isDataSharing
     String projectPrivacy, dataSharingLicense
@@ -163,5 +164,6 @@ class Project {
         dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
+        iframes nullable:true
     }
 }
