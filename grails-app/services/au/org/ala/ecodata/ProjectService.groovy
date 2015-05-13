@@ -366,11 +366,9 @@ class ProjectService {
     }
 
     def updateOrgName(orgId, orgName) {
-        println("updating " + orgId + " to " + orgName)
-//        Project.collection.update(
-//            [organisationId: orgId],
-//            [organisationName: orgName],
-//            [multi: true])
+        Project.collection.update(
+            [organisationId: orgId],
+            ['$set': [organisationName: orgName]], false, true)
     }
 
 }
