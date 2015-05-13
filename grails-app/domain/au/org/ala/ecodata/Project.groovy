@@ -61,7 +61,7 @@ class Project {
     Date lastUpdated
 	String promoteOnHomepage = 'no'
     List activities
-	
+
     boolean isCitizenScience, isDataSharing
     String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
