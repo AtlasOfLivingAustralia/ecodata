@@ -250,11 +250,11 @@ class MetadataService {
     def performLayerIntersect(lat,lng) {
 
 
-        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
         def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
 
         // Extract all of the layer field ids from the facet configuration so we can make a single web service call to the spatial portal.
-        def fieldIds = griddedLayers.collect { k, v -> v }
+        def fieldIds = contextualLayers.collect { k, v -> v }
         groupedFacets.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
@@ -266,7 +266,7 @@ class MetadataService {
         def facetTerms = [:]
 
         if (features instanceof List) {
-            griddedLayers.each { name, fid ->
+            contextualLayers.each { name, fid ->
                 def match = features.find { it.field == fid }
                 if (match && match.value && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match.value)) {
                     facetTerms << [(name): match.value]
@@ -319,9 +319,9 @@ class MetadataService {
     }
 
     private def buildFieldIds(sites){
-        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
         def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
-        def fieldIds = griddedLayers.collect { k, v -> v }
+        def fieldIds = contextualLayers.collect { k, v -> v }
         groupedFacets.each { k, v ->
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
@@ -415,11 +415,11 @@ class MetadataService {
             log.error("Missing result for ${lat}, ${lng}")
         }
 
-        def griddedLayers = grailsApplication.config.app.facets.geographic.gridded
+        def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
         def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
         def facetTerms = [:]
 
-        griddedLayers.each { name, fid ->
+        contextualLayers.each { name, fid ->
             def match = siteResult[fid]
             if (match && !SPATIAL_PORTAL_NO_MATCH_VALUE.equalsIgnoreCase(match)) {
                 facetTerms << [(name): match]

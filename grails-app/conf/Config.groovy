@@ -24,6 +24,12 @@ if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
     println "[${appName}] No external configuration file defined."
 }
 
+// The layers config is best expressed in groovy format.
+def layers_config = "/data/${appName}/config/layers-config.groovy"
+if (new File(layers_config).exists()) {
+    grails.config.locations.add "file:" + layers_config
+}
+
 println "[${appName}] (*) grails.config.locations = ${grails.config.locations}"
 
 grails.project.groupId = 'au.org.ala' // change this to alter the default package name and Maven publishing destination
@@ -141,13 +147,14 @@ if(!google.geocode.url){
 app {
     facets {
         geographic {
-            gridded {
+            contextual {
                 state = 'cl927'
                 nrm = 'cl2111'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl958';
+                elect = 'cl958'
+                cmz = 'cl2112'
             }
             grouped {
                 other {
