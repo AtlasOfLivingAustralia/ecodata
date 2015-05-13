@@ -1,11 +1,9 @@
 {
     "modelName": "Weed Treatment Details",
-    "darwinCore": true,
     "dataModel": [
         {
             "dataType": "list",
             "name": "weedsTreated",
-            "darwinCore": true,
             "columns": [
                 {
                     "dataType": "species",
@@ -29,7 +27,6 @@
                     "dataType": "text",
                     "description": "The general health of the patch of the target species being treated",
                     "name": "plantHealth",
-                    "darwinCore": "occurrenceRemarks",
                     "constraints": [
                         "Healthy",
                         "Stressed",

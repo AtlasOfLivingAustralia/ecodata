@@ -29,6 +29,11 @@
             "name": "fenceCostPerKm"
         },
         {
+            "dataType": "number",
+            "description": "Area in hectares protected by the erected fence",
+            "name": "fenceAreaProtected"
+        },
+        {
             "dataType": "stringList",
             "description": "The purpose for which the fence has been erected",
             "name": "purposeOfFence",
@@ -75,6 +80,13 @@
                             "source": "lengthOfFence",
                             "computed": null,
                             "preLabel": "Length of fence (Km):",
+                            "width": "20%",
+                            "type": "number"
+                        },
+                        {
+                            "source": "fenceAreaProtected",
+                            "computed": null,
+                            "preLabel": "Area protected by erected fence (Ha):",
                             "width": "20%",
                             "type": "number"
                         },

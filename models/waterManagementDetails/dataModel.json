@@ -243,21 +243,25 @@
                     "items": [
                         {
                             "source": "waterbodyName",
+                            "computed": null,
                             "preLabel": "Name of water-body being managed:",
                             "type": "text"
                         },
                         {
                             "source": "waterbodyType",
+                            "computed": null,
                             "preLabel": "Type of water-body being managed:",
                             "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalRegimeChangeFrom",
+                            "computed": null,
                             "preLabel": "Hydrological regime changed from:",
                             "type": "selectOne"
                         },
                         {
                             "source": "hydrologicalRegimeChangeTo",
+                            "computed": null,
                             "preLabel": "Hydrological regime changed to:",
                             "type": "selectOne"
                         },
@@ -275,6 +279,7 @@
                     "items": [
                         {
                             "source": "isCurrentFlowNatural",
+                            "computed": null,
                             "preLabel": "Current flow regime of the subject water body?:",
                             "type": "selectOne"
                         },
@@ -293,7 +298,7 @@
                         {
                             "source": "managedArea",
                             "computed": null,
-                            "preLabel": "Area of catchment being managed/treated by this activity (Ha):",
+                            "preLabel": "Area managed for water values (Ha):",
                             "type": "number"
                         },
                         {

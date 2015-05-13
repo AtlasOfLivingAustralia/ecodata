@@ -60,12 +60,12 @@
                         "> 4 weeks",
                         "Ongoing"
                     ]
-                },
-                {
-                    "dataType": "text",
-                    "name": "notes"
                 }
             ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes"
         }
     ],
     "viewModel": [

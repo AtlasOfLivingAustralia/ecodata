@@ -90,6 +90,7 @@ class SiteService {
             o.save(failOnError: true)
             assignPOIIds(props)
             props.remove('id')
+            props.remove('siteId')
             o.save(failOnError: true)
             //props.activities = props.activities.collect {it.activityId}
             //props.assessments = props.assessments.collect {it.activityId}
@@ -112,6 +113,7 @@ class SiteService {
 
     def update(props, id, boolean enableCentroidRefresh = true) {
         def site = Site.findBySiteId(id)
+        props.remove('siteId')
         if (site) {
             try {
                 assignPOIIds(props)

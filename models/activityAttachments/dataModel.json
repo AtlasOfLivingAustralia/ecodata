@@ -1,25 +1,46 @@
 {
     "modelName": "activityAttachments",
-    "dataModel": [{
-        "dataType": "",
-        "description": "",
-        "name": ""
-    }],
-    "viewModel": [{
-        "items": [{
+    "dataModel": [
+        {
+            "dataType": "document",
+            "description": "Please attach relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.",
+            "name": "supportingDocs"
+        },
+        {
+            "dataType": "document",
+            "description": "You may attach other documents relevant to your project for the Department's information.",
+            "name": "additionalInfo"
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [{
+                "source": "Supporting documents are required (where available) to support the statements you have made regarding your progress/achievement.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
             "items": [
                 {
-                    "source": "<b>Supporting documents: <\/b> Please attach <b>(via the ADMIN tab)<\/b> relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.",
-                    "type": "literal"
+                    "items": [{
+                        "source": "supportingDocs",
+                        "preLabel": "Supporting documents:",
+                        "type": "document"
+                    }],
+                    "type": "col"
                 },
                 {
-                    "source": "<b>Additional information (optional): <\/b> You may attach other documents <b>(via the ADMIN tab)<\/b> relevant to your project for the Department's information.",
-                    "type": "literal"
+                    "items": [{
+                        "source": "additionalInfo",
+                        "preLabel": "Additional information (optional):",
+                        "type": "document"
+                    }],
+                    "type": "col"
                 }
             ],
-            "type": "col"
-        }],
-        "class": "output-section",
-        "type": "row"
-    }]
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

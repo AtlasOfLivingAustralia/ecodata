@@ -76,6 +76,7 @@
         "reportingPeriodAlignedToCalendar": true
     },
     {
+        "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
         "name": "Caring for Our Country 2",
@@ -150,6 +151,7 @@
         "reportingPeriodAlignedToCalendar": true
     },
     {
+        "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
         "name": "Cumberland Plain",
@@ -165,17 +167,25 @@
         "reportingPeriod": "3",
         "isMeritProgramme": true,
         "name": "Green Army",
-        "subprograms": [{
-            "startDate": "2014-08-31T14:00:00Z",
-            "name": "Green Army Round 1",
-            "endDate": "2015-04-02T13:00:00Z",
-            "themes": [
-                {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
-                {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
-                {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
-            ]
-        }],
+        "subprograms": [
+            {
+                "startDate": "2014-06-30T14:00:00Z",
+                "name": "Green Army Round 1",
+                "endDate": "",
+                "themes": [
+                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
+                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                    {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
+                ]
+            },
+            {
+                "startDate": "",
+                "name": "Green Army Round 2",
+                "endDate": "",
+                "themes": []
+            }
+        ],
         "activities": [
             "Green Army - Monthly project status report",
             "Green Army - Quarterly project report",
@@ -197,14 +207,21 @@
         "reportingPeriodAlignedToCalendar": true
     },
     {
+        "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
-        "name": "20 Million Trees",
-        "subprograms": [],
+        "name": "20 Million Trees (NLP)",
+        "subprograms": [{
+            "startDate": "",
+            "name": "Round One",
+            "endDate": "",
+            "themes": []
+        }],
         "activities": [],
         "reportingPeriodAlignedToCalendar": true
     },
     {
+        "projectDatesContracted": true,
         "reportingPeriod": "3",
         "isMeritProgramme": true,
         "name": "Environmental Stewardship",
@@ -220,9 +237,25 @@
     {
         "name": "None",
         "subprograms": [],
-        "activities": []
+        "activities": [
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Vegetation Assessment - BioCondition (QLD)",
+            "Vegetation Assessment - Habitat Hectares v1 (VIC)",
+            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+            "TasVeg - Native Vegetation Assessment - Forest Vegetation",
+            "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
+            "Vegetation Assessment - Bushland Condition Monitoring (SA)"
+        ]
     },
     {
+        "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
         "name": "National Landcare Programme",
@@ -284,19 +317,32 @@
                 "startDate": "",
                 "name": "Regional Funding",
                 "endDate": "",
-                "themes": []
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ]
             },
             {
                 "startDate": "",
                 "name": "Landcare Network Grants 2014-15",
                 "endDate": "",
-                "themes": []
+                "themes": [
+                    {"name": "Strategic Outcome 1. Maintain and improve ecosystem services through sustainable management of local and regional landscapes."},
+                    {"name": "Strategic Outcome 2. Increase in the number of farmers and fishers adopting practices that improve the quality of the natural resource base, and the area of land over which those practices are applied."},
+                    {"name": "Strategic Outcome 3. Increase engagement and participation of the community, including landcare, farmers and Indigenous people, in sustainable natural resource management."},
+                    {"name": "Strategic Outcome 4. Increase restoration and rehabilitation of the natural environment, including protecting and conserving nationally and internationally significant species, ecosystems, ecological communities, places and values."}
+                ]
             }
         ],
         "activities": [],
         "reportingPeriodAlignedToCalendar": true
     },
     {
+        "projectDatesContracted": true,
+        "reportingPeriod": "6",
+        "isMeritProgramme": true,
         "name": "Reef Trust",
         "subprograms": [{
             "startDate": "",
@@ -305,5 +351,13 @@
             "themes": []
         }],
         "activities": []
+    },
+    {
+        "name": "Weedwatcher",
+        "subprograms": [],
+        "activities": [
+            "Weed Mapping & Monitoring",
+            "Weed Treatment"
+        ]
     }
 ]}
