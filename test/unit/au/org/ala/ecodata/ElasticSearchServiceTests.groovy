@@ -4,7 +4,7 @@ import grails.test.mixin.TestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin
 import org.junit.Before
 /**
- * Created by god08d on 25/03/14.
+ * Tests the ElasticSearchService
  */
 @TestFor(ElasticSearchService)
 @TestMixin(ControllerUnitTestMixin) // Used to register JSON converters.
@@ -31,6 +31,7 @@ class ElasticSearchServiceTests {
     @Before
     public void indexEntities() {
 
+        grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
         service.deleteIndex("search") // The elastic search service relies on the search index, this actually forces it to be created.
         service.deleteIndex(INDEX_NAME) // this actually deletes and recreates the index.
@@ -67,6 +68,9 @@ class ElasticSearchServiceTests {
             service.indexDoc(it, INDEX_NAME)
         }
 
+        // Ensure results are available for searching
+        service.client.admin().indices().prepareFlush().execute().actionGet();
+
     }
 
     /**
@@ -74,20 +78,20 @@ class ElasticSearchServiceTests {
      */
     public void testActivitySearch() {
 
-        //Thread.sleep(1000); // Indexing appears to be asynchronous.
         def activityFilters = ["mainThemeFacet:${THEME1}"]
         def results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
         assert results.hits.totalHits == 8
 
         activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
+        println results
         assert results.hits.totalHits == 2
 
-        activityFilters = ["statesFacet:ACT"]
+        activityFilters = ["stateFacet:ACT"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
         assert results.hits.totalHits == 1
 
-        activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}", "statesFacet:ACT"]
+        activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}", "stateFacet:ACT"]
         results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
         assert results.hits.totalHits == 1
 
@@ -109,8 +113,6 @@ class ElasticSearchServiceTests {
         activity.putAll(project)
         activity.sites = site?[site]:[]
         activity.putAll([activityId:'activity'+(++activityId), mainTheme:theme, startDate:startDate, endDate:endDate, publicationStatus:status, className:Activity.class.name])
-
-        println activity
 
         activity
     }
