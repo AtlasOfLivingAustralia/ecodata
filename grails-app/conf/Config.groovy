@@ -270,6 +270,7 @@ environments {
         app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+        app.elasticsearch.location = "./target/elasticsearch/"
     }
     production {
         grails.logging.jul.usebridge = false
