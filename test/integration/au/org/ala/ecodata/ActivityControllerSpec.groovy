@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import com.mongodb.BasicDBObject
 import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
 
@@ -9,11 +10,16 @@ class ActivityControllerSpec extends IntegrationSpec {
     def activityController = new ActivityController()
 
     def setup() {
-        Activity.deleteAll()
-        Output.deleteAll()
+        deleteAll()
     }
 
     def cleanup() {
+        deleteAll()
+    }
+
+    private void deleteAll() {
+        Activity.collection.remove(new BasicDBObject())
+        Output.collection.remove(new BasicDBObject())
     }
 
     void "test create an activity"() {
@@ -68,13 +74,16 @@ class ActivityControllerSpec extends IntegrationSpec {
         savedActivity.type == activity.type
         savedActivity.dynamicProperty == activity.dynamicProperty
         savedActivity.outputs.size() == 2
-        savedActivity.outputs[0].name == 'Revegetation Details'
-        savedActivity.outputs[0].data.prop1 == 'prop1'
-        savedActivity.outputs[0].data.prop1 == 'prop2'
 
-        savedActivity.outputs[1].name == 'Participant Details'
-        savedActivity.outputs[1].data.prop3 == 'prop3'
-        savedActivity.outputs[1].data.prop4 == 'prop4'
+        def reveg = savedActivity.outputs.find{it.name == 'Revegetation Details'}
+        reveg != null
+        reveg.data.prop1 == 'prop1'
+        reveg.data.prop2 == 'prop2'
+
+        def particpantDetails = savedActivity.outputs.find{it.name == 'Participant Details'}
+        particpantDetails != null
+        particpantDetails.data.prop3 == 'prop3'
+        particpantDetails.data.prop4 == 'prop4'
 
     }
 
