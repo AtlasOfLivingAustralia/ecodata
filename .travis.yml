@@ -4,6 +4,8 @@ jdk:
 branches:
   except:
   - trunk
+services:
+  - mongodb
 before_install:
 - rm -rf ~/.gvm
 - curl -s get.gvmtool.net > ~/install_gvm.sh
@@ -18,7 +20,7 @@ before_script:
 - mkdir -p ~/.grails; wget -q -O ~/.grails/settings.groovy https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_settings_old.groovy
 - MAVEN_REPO="ala-repo-snapshot"; grep '^app\.version=' ./application.properties |
   grep -q "\-SNAPSHOT"; if [ "$?" = "1" ]; then MAVEN_REPO="ala-repo-release"; fi;
-script: grails clean; grails refresh-dependencies --non-interactive && grails prod
+script: grails clean; grails refresh-dependencies --non-interactive && grails test-app && grails prod
   war --non-interactive && grails prod maven-deploy --repository=$MAVEN_REPO --non-interactive
 env:
   global:
