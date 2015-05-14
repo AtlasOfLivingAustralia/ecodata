@@ -260,7 +260,7 @@ environments {
     test {
         rails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
+        app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
@@ -271,6 +271,7 @@ environments {
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
+        app.file.upload.path = "./target/uploads"
     }
     production {
         grails.logging.jul.usebridge = false
