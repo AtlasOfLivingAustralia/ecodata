@@ -1,26 +1,23 @@
 package au.org.ala.ecodata
 
-import grails.converters.JSON
-import grails.test.spock.IntegrationSpec
-
-class OrganisationControllerSpec extends IntegrationSpec {
+class OrganisationControllerSpec extends IntegrationTestHelper {
 
     def organisationController = new OrganisationController()
+    def organisationService
+    def stubbedCollectoryService = Stub(CollectoryService)
 
     def setup() {
-
-    }
-
-    def cleanup() {
+        organisationService.collectoryService = stubbedCollectoryService
+        organisationController.organisationService = organisationService
     }
 
     void "test create organisation"() {
 
         setup:
-        def org = [name: 'Test Organisation', description: 'Test description', dynamicProperty: 'dynamicProperty']
-        organisationController.request.contentType = 'application/json;charset=UTF-8'
-        organisationController.request.content = (org as JSON).toString().getBytes('UTF-8')
-        organisationController.request.method = 'POST'
+        def institutionId = "dr1"
+        stubbedCollectoryService.createInstitution(_) >> institutionId
+        def org = TestDataHelper.buildNewOrganisation([name: 'Test Organisation', description: 'Test description', dynamicProperty: 'dynamicProperty'])
+        setupPost(organisationController.request, org)
 
         when: "creating an organisation"
         def resp = organisationController.update('') // Empty or null ID triggers a create
@@ -42,6 +39,38 @@ class OrganisationControllerSpec extends IntegrationSpec {
         savedOrganisation.name == org.name
         savedOrganisation.description == org.description
         savedOrganisation.dynamicProperty == org.dynamicProperty
+        savedOrganisation.collectoryInstitutionId == institutionId
+
+    }
+
+    void "projects should be associated with an organisation by the organisationId property"() {
+        setup:
+
+        // Create some data for the database.
+        def organisation = TestDataHelper.buildOrganisation()
+        def projects = []
+        (1..2).each {
+            projects << TestDataHelper.buildProject([organisationId:organisation.organisationId])
+        }
+        (1..3).each {
+            projects << TestDataHelper.buildProject() // some projects without our organisation id.
+        }
+        TestDataHelper.saveAll(projects+[organisation])
+
+        def projectList = Project.findAll()
+
+        when: "retrieving the organisation"
+        organisationController.request.addParameter('view', 'all') // The 'all' view will return associated projects.
+        def org = organisationController.get(organisation.organisationId)
+
+        then: "ensure all of the projects are returned"
+        org.organisationId == organisation.organisationId
+        org.name == organisation.name
+        org.projects.size() == 2
+        org.projects.each {
+            it.organisationId == organisation.organisationId
+        }
+
 
     }
 

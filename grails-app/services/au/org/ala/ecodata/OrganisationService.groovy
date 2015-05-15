@@ -12,27 +12,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def grailsApplication, webService, commonService, projectService, permissionService, documentService
-
-    private def mapAttributesToCollectory(props) {
-        def mapKeyOrganisationDataToCollectory = [
-                orgType: 'institutionType',
-                description: 'pubDescription',
-                name: 'name',
-                organisationId: 'uid',
-                url: 'websiteUrl'
-        ]
-        def collectoryProps = [
-                api_key: grailsApplication.config.api_key
-        ]
-        props.each { k, v ->
-            if (v != null) {
-                def keyCollectory = mapKeyOrganisationDataToCollectory[k]
-                if (keyCollectory) collectoryProps[keyCollectory] = v
-            }
-        }
-        collectoryProps
-    }
+    def grailsApplication, webService, commonService, projectService, permissionService, documentService, collectoryService
 
     // create ecodata organisations for any institutions in collectory which are not yet in ecodata
     // return null if sucessful, or errors
@@ -77,18 +57,17 @@ class OrganisationService {
     def create(props) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
-        try {
-            def collectoryProps = mapAttributesToCollectory(props)
-            def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/institution/', collectoryProps)
-            organisation.collectoryInstitutionId = webService.extractCollectoryIdFromResult(result)
-        }
-        catch (Exception e) {
-            def error = "Error creating collectory institution - ${e.message}"
+
+        def institutionId = collectoryService.createInstitution(props)
+        if (institutionId) {
+            organisation.collectoryInstitutionId = institutionId
         }
         try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             organisation.save(failOnError: true, flush:true)
             props.remove('id')
+            props.remove('organisationId')
+            props.remove('collectoryInstitutionId')
             commonService.updateProperties(organisation, props)
 
             [status:'ok',organisationId:organisation.organisationId]
