@@ -57,8 +57,6 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         }
         TestDataHelper.saveAll(projects+[organisation])
 
-        def projectList = Project.findAll()
-
         when: "retrieving the organisation"
         organisationController.request.addParameter('view', 'all') // The 'all' view will return associated projects.
         def org = organisationController.get(organisation.organisationId)
@@ -72,6 +70,34 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         }
 
 
+    }
+
+    void "projects can be associated with an organisation by the serviceProviderOrganisationId property"() {
+        setup:
+
+        // Create some data for the database.
+        def organisation = TestDataHelper.buildOrganisation()
+        def projects = []
+        (1..2).each {
+            projects << TestDataHelper.buildProject([orgIdSvcProvider: organisation.organisationId])
+        }
+        projects << TestDataHelper.buildProject([organisationId: organisation.organisationId])
+        (1..3).each {
+            projects << TestDataHelper.buildProject() // some projects without our organisation id.
+        }
+        TestDataHelper.saveAll(projects+[organisation])
+
+        when: "retrieving the organisation"
+        organisationController.request.addParameter('view', 'all') // The 'all' view will return associated projects.
+        def org = organisationController.get(organisation.organisationId)
+
+        then: "ensure all of the projects are returned"
+        org.organisationId == organisation.organisationId
+        org.name == organisation.name
+        org.projects.size() == 3
+        org.projects.each {
+            it.organisationId == organisation.organisationId || it.orgIdSvcProvider == organisation.organisationId
+        }
     }
 
 }

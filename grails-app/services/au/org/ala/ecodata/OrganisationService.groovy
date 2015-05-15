@@ -139,7 +139,9 @@ class OrganisationService {
         def mapOfProperties = dbo.toMap()
 
         if ('projects' in levelOfDetail) {
-            mapOfProperties.projects = projectService.search(organisationId: org.organisationId)
+            mapOfProperties.projects = []
+            mapOfProperties.projects += projectService.search(organisationId: org.organisationId)
+            mapOfProperties.projects += projectService.search(orgIdSvcProvider: org.organisationId)
         }
         if ('documents' in levelOfDetail) {
             mapOfProperties.documents = documentService.findAllByOwner('organisationId', org.organisationId)
