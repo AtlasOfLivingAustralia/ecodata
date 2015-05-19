@@ -13,6 +13,8 @@
                         "Vocational - Occupational Health & Safety",
                         "Vocational - First aid",
                         "Other vocational skills - short course (specify)",
+                        "Cultural awareness",
+                        "Personal development",
                         "Science degree or higher",
                         "Other (specify in notes)"
                     ],
@@ -29,6 +31,7 @@
                     "name": "qualificationLevel",
                     "constraints": [
                         "Senior Secondary Certificate of Education",
+                        "Non-accredited training event/course",
                         "AQF Level 1 – Certificate I",
                         "AQF Level 2 – Certificate II",
                         "AQF Level 3 – Certificate III",

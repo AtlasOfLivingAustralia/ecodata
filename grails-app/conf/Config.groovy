@@ -24,6 +24,12 @@ if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
     println "[${appName}] No external configuration file defined."
 }
 
+// The layers config is best expressed in groovy format.
+def layers_config = "/data/${appName}/config/layers-config.groovy"
+if (new File(layers_config).exists()) {
+    grails.config.locations.add "file:" + layers_config
+}
+
 println "[${appName}] (*) grails.config.locations = ${grails.config.locations}"
 
 grails.project.groupId = 'au.org.ala' // change this to alter the default package name and Maven publishing destination
@@ -141,13 +147,14 @@ if(!google.geocode.url){
 app {
     facets {
         geographic {
-            gridded {
+            contextual {
                 state = 'cl927'
                 nrm = 'cl2111'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
-                elect = 'cl958';
+                elect = 'cl958'
+                cmz = 'cl2112'
             }
             grouped {
                 other {
@@ -193,7 +200,7 @@ if (!ala.baseURL) {
     ala.baseURL = "http://www.ala.org.au"
 }
 if (!collectory.baseURL) {
-    collectory.baseURL = "http://collections.ala.org.au/"
+    collectory.baseURL = "http://collections-dev.ala.org.au/"
 }
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
@@ -253,7 +260,7 @@ environments {
     test {
         rails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
+        app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
@@ -263,6 +270,8 @@ environments {
         app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
+        app.elasticsearch.location = "./target/elasticsearch/"
+        app.file.upload.path = "./target/uploads"
     }
     production {
         grails.logging.jul.usebridge = false

@@ -8,6 +8,22 @@
             "validate": "min[0]"
         },
         {
+            "dataType": "number",
+            "description": "Total area covered by this treatment event (Ha). This area must not be double counted.",
+            "name": "totalAreaTreatedHa",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+            "name": "treatmentType",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ],
+            "validate": "required"
+        },
+        {
             "dataType": "stringList",
             "description": "The main objective that you are aiming to achieve with this activity.",
             "name": "treatmentObjective",
@@ -47,6 +63,7 @@
         },
         {
             "dataType": "list",
+            "description": "Pest management table",
             "name": "pestManagement",
             "columns": [
                 {
@@ -111,9 +128,8 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "Area covered by treatment (Ha)",
-                    "name": "areaTreatedHa",
-                    "validate": "required"
+                    "description": "Area in hectares covered by treatment for selected species.",
+                    "name": "areaTreatedHa"
                 },
                 {
                     "dataType": "number",
@@ -151,12 +167,25 @@
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "treatmentCostPerHa",
-                        "computed": null,
-                        "preLabel": "Cost of treatment / Ha.:",
-                        "type": "number"
-                    }],
+                    "items": [
+                        {
+                            "source": "treatmentCostPerHa",
+                            "computed": null,
+                            "preLabel": "Cost of treatment / Ha.:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "totalAreaTreatedHa",
+                            "computed": null,
+                            "preLabel": "Total treatment area (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "treatmentType",
+                            "preLabel": "Type of treatment event:",
+                            "type": "selectOne"
+                        }
+                    ],
                     "computed": null,
                     "type": "col"
                 }

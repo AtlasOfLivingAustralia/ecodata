@@ -71,6 +71,7 @@
         {
             "items": [{
                 "source": "<h2>Landscape Context Score<\/h2>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -81,15 +82,18 @@
                 "items": [
                     {
                         "source": "patchCategory",
+                        "computed": null,
                         "preLabel": "Patch category & description)",
                         "type": "selectOne"
                     },
                     {
                         "source": "patchSizeScore",
+                        "computed": null,
                         "preLabel": "Score",
                         "type": "number"
                     }
                 ],
+                "computed": null,
                 "type": "row"
             }],
             "type": "section"
@@ -100,20 +104,24 @@
                 "items": [
                     {
                         "source": "distanceToCoreArea",
+                        "computed": null,
                         "preLabel": "Distance to core area",
                         "type": "selectOne"
                     },
                     {
                         "source": "coreAreaSignificantlyDisturbed",
+                        "computed": null,
                         "preLabel": "Core area significantly disturbed",
                         "type": "boolean"
                     },
                     {
                         "source": "distanceToCoreAreaScore",
+                        "computed": null,
                         "preLabel": "Score",
                         "type": "number"
                     }
                 ],
+                "computed": null,
                 "type": "row"
             }],
             "type": "section"
@@ -121,6 +129,7 @@
         {
             "items": [{
                 "source": "<h4>Neighbourhood<\/h4>",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -130,23 +139,21 @@
                 "footer": {"rows": [{"columns": [
                     {
                         "source": "neighbourhoodSignificantlyDisturbed",
-                        "preLabel": "Neighbourhood significantly disturbed",
                         "type": "boolean"
                     },
                     {
                         "source": "neighbourhoodScore",
-                        "preLabel": "Score",
                         "type": "number"
                     }
                 ]}]},
                 "source": "neighbourhood",
+                "computed": null,
                 "columns": [
                     {
                         "title": "Radius from site",
                         "source": "radiusFromSite",
                         "noEdit": true,
-                        "type": "text",
-                        "postLabel": "km"
+                        "type": "text"
                     },
                     {
                         "title": "% native vegetation",

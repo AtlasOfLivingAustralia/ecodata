@@ -8,7 +8,7 @@ import junit.framework.TestCase
 
 class SchemaBuilderTests extends TestCase {
 
-    def schemaGenerator = new SchemaBuilder(['grails.serverURL':'http://localhost:8080/', 'app.external.api.version':'test'], [])
+    def schemaGenerator = new SchemaBuilder([grails:[serverURL:'http://localhost:8080/'], app:[external:[api:[version:'test']]]], [])
 
     void testTextProperty() {
 

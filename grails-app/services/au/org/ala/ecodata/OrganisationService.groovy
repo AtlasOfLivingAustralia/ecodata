@@ -12,7 +12,32 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def commonService, projectService, permissionService, documentService
+    def grailsApplication, webService, commonService, projectService, permissionService, documentService, collectoryService
+
+    // create ecodata organisations for any institutions in collectory which are not yet in ecodata
+    // return null if sucessful, or errors
+    def collectorySync() {
+        def errors
+        def url = "${grailsApplication.config.collectory.baseURL}ws/institution/"
+        def institutions = webService.getJson(url)
+        if (institutions instanceof List) {
+            def orgs = Organisation.findAllByCollectoryInstitutionIdIsNotNull()
+            def map = orgs.collectEntries {
+               [it.collectoryInstitutionId, it]
+            }
+            institutions.each({it ->
+                if (!map[it.uid]) {
+                    def inst = webService.getJson(url + it.uid)
+                    def result = create([collectoryInstitutionId: inst.uid,
+                                        name: inst.name,
+                                        description: inst.pubDescription?:"",
+                                        url: inst.websiteUrl?:""])
+                    if (result.errors) errors = result.errors
+                }
+            })
+        }
+        errors
+    }
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -32,11 +57,17 @@ class OrganisationService {
     def create(props) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
+
+        def institutionId = collectoryService.createInstitution(props)
+        if (institutionId) {
+            organisation.collectoryInstitutionId = institutionId
+        }
         try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-
             organisation.save(failOnError: true, flush:true)
             props.remove('id')
+            props.remove('organisationId')
+            props.remove('collectoryInstitutionId')
             commonService.updateProperties(organisation, props)
 
             [status:'ok',organisationId:organisation.organisationId]
@@ -57,6 +88,8 @@ class OrganisationService {
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
             try {
+                if (organisation.name != props.name)
+                    projectService.updateOrgName(organisation.organisationId, props.name)
                 getCommonService().updateProperties(organisation, props)
                 return [status:'ok']
             } catch (Exception e) {
@@ -106,7 +139,9 @@ class OrganisationService {
         def mapOfProperties = dbo.toMap()
 
         if ('projects' in levelOfDetail) {
-            mapOfProperties.projects = projectService.search(organisationId: org.organisationId)
+            mapOfProperties.projects = []
+            mapOfProperties.projects += projectService.search(organisationId: org.organisationId)
+            mapOfProperties.projects += projectService.search(orgIdSvcProvider: org.organisationId)
         }
         if ('documents' in levelOfDetail) {
             mapOfProperties.documents = documentService.findAllByOwner('organisationId', org.organisationId)

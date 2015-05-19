@@ -46,13 +46,13 @@
                     {
                         "source": "totalParticipantsNotEmployed",
                         "computed": null,
-                        "preLabel": "No. of volunteers (ie. not employed on project):",
+                        "preLabel": "No. of participants (ie. not employed on project):",
                         "type": "number"
                     },
                     {
                         "source": "numberOfIndigenousParticipants",
                         "computed": null,
-                        "preLabel": "No. of Indigenous volunteers (ie. not employed on project):",
+                        "preLabel": "No. of Indigenous participants (ie. not employed on project):",
                         "type": "number"
                     }
                 ],

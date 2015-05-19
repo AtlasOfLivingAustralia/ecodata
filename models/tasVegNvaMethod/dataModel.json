@@ -1,118 +1,25 @@
 {
-    "modelName": "tasVegAssessmentMethod",
+    "modelName": "TasVeg Native Vegetation Assessment Method",
     "dataModel": [
         {
-            "dataType": "text",
-            "description": "",
-            "name": "assessor"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "currentLandUse"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "habitatZone"
+            "dataType": "number",
+            "name": "surveyArea"
         },
         {
             "dataType": "number",
-            "description": "",
-            "name": "zoneAreaHa",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "tasvegVcCode"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "location"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "comments"
+            "name": "numberOfLargeTrees"
         },
         {
             "dataType": "number",
-            "name": "surveyArea",
-            "validate": "min[0]"
+            "name": "largeTreeCanopyHealthPercent"
         },
         {
             "dataType": "number",
-            "name": "numberOfLargeTreesBenchmark",
-            "validate": "min[0]"
+            "name": "canopyCoverPercent"
         },
         {
             "dataType": "number",
-            "name": "largeTreeBenchmarkDbh",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "number",
-            "name": "numberOfLargeTreesObserved",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "text",
-            "name": "largeTreeDensityClass",
-            "constraints": [
-                "None present",
-                ">0 to 20% of the benchmark No. of large trees / Ha.",
-                ">20 to 40% of the benchmark No. of large trees / Ha.",
-                ">40 to 70% of the benchmark No. of large trees / Ha.",
-                ">70 to 100% of the benchmark No. of large trees / Ha.",
-                ">= the benchmark No. of large trees / Ha."
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "largeTreeCanopyHealthPercent",
-            "constraints": [
-                "> 70%",
-                "30 - 70%",
-                "< 30%"
-            ]
-        },
-        {
-            "dataType": "number",
-            "name": "largeTreesScore"
-        },
-        {
-            "dataType": "number",
-            "name": "canopyCoverPercent",
-            "validate": "min[0],max[100]"
-        },
-        {
-            "dataType": "text",
-            "name": "canopyCoverClass",
-            "constraints": [
-                "< 10% of benchmark cover",
-                "< 50% or > 150% of benchmark cover",
-                ">= 50% or <= 150% of benchmark cover"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "canopyHealthPercent",
-            "constraints": [
-                "> 70%",
-                "30 - 70%",
-                "< 30%"
-            ]
-        },
-        {
-            "dataType": "number",
-            "name": "canopyCoverBenchmark",
-            "validate": "min[0],max[100]"
-        },
-        {
-            "dataType": "number",
-            "name": "canopyCoverScore"
+            "name": "canopyHealthPercent"
         },
         {
             "dataType": "number",
@@ -158,20 +65,12 @@
                     "name": "coverPercent"
                 },
                 {
-                    "dataType": "text",
-                    "name": "present",
-                    "constraints": [
-                        "Yes",
-                        "No"
-                    ]
+                    "dataType": "boolean",
+                    "name": "present"
                 },
                 {
-                    "dataType": "text",
-                    "name": "modified",
-                    "constraints": [
-                        "Yes",
-                        "No"
-                    ]
+                    "dataType": "boolean",
+                    "name": "modified"
                 }
             ]
         },
@@ -184,12 +83,8 @@
                     "name": "species"
                 },
                 {
-                    "dataType": "text",
-                    "name": "adequateRecruitment",
-                    "constraints": [
-                        "Yes",
-                        "No"
-                    ]
+                    "dataType": "boolean",
+                    "name": "adequateRecruitment"
                 }
             ]
         },
@@ -212,12 +107,16 @@
             "name": "averageLogLength"
         },
         {
-            "dataType": "text",
-            "name": "largeLogsPresent",
-            "constraints": [
-                "Yes",
-                "No"
-            ]
+            "dataType": "boolean",
+            "name": "largeLogsPresent"
+        },
+        {
+            "dataType": "number",
+            "name": "largeTreesScore"
+        },
+        {
+            "dataType": "number",
+            "name": "canopyCoverScore"
         },
         {
             "dataType": "number",
@@ -318,152 +217,9 @@
                     "value2": "0"
                 }
             ]
-        },
-        {
-            "dataType": "text",
-            "name": "patchCategory",
-            "constraints": [
-                "< 2 ha",
-                "Between 2 and 5 ha",
-                "Between 5 and 10 ha",
-                "Between 10 and 20 ha",
-                "More than 20 ha, but significantly disturbed",
-                "More than 20 ha but not significantly disturbed"
-            ]
-        },
-        {
-            "dataType": "number",
-            "name": "patchSignificantlyDisturbed"
-        },
-        {
-            "dataType": "text",
-            "name": "distanceToCoreArea",
-            "constraints": [
-                "> 5 km",
-                "1 to 5 km",
-                "< 1 km",
-                "contiguous"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "coreAreaSignificantlyDisturbed",
-            "constraints": [
-                "Yes",
-                "No"
-            ]
-        },
-        {
-            "defaultRows": [
-                {"radiusFromSite": 0.1},
-                {"radiusFromSite": 1},
-                {"radiusFromSite": 5}
-            ],
-            "dataType": "list",
-            "name": "neighbourhood",
-            "columns": [
-                {
-                    "dataType": "number",
-                    "name": "radiusFromSite"
-                },
-                {
-                    "dataType": "number",
-                    "name": "nativeVegetationPercent"
-                }
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "neighbourhoodSignificantlyDisturbed",
-            "constraints": [
-                "Yes",
-                "No"
-            ]
-        },
-        {
-            "dataType": "number",
-            "name": "patchSizeScore"
-        },
-        {
-            "dataType": "number",
-            "name": "distanceToCoreAreaScore"
-        },
-        {
-            "dataType": "number",
-            "name": "neighbourhoodScore"
         }
     ],
     "viewModel": [
-        {
-            "items": [{
-                "source": "<h3>Survey Information<\/h3>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "assessor",
-                            "preLabel": "Assessor:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "currentLandUse",
-                            "preLabel": "Current land use",
-                            "type": "text"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "habitatZone",
-                            "preLabel": "Zone No./name:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "zoneAreaHa",
-                            "preLabel": "Size of zone (Ha):",
-                            "type": "number"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "location",
-                            "preLabel": "Location:",
-                            "type": "text"
-                        },
-                        {
-                            "source": "tasvegVcCode",
-                            "preLabel": "TasVeg VC code:",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "items": [{
-                    "source": "comments",
-                    "preLabel": "Comments:",
-                    "type": "textarea"
-                }],
-                "type": "col"
-            }],
-            "class": "output-section",
-            "type": "row"
-        },
         {
             "items": [{
                 "source": "<h3>Site Condition Components<\/h3>",
@@ -472,84 +228,27 @@
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<h4>Large Trees<\/h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
             "items": [
                 {
                     "items": [
                         {
-                            "source": "numberOfLargeTreesObserved",
-                            "preLabel": "No. of trees counted / Ha.:",
-                            "type": "number"
+                            "source": "<h4>Large Trees<\/h4>",
+                            "type": "literal"
                         },
                         {
-                            "source": "largeTreeDensityClass",
-                            "preLabel": "Large tree density category:",
-                            "type": "selectOne"
+                            "source": "numberOfLargeTrees",
+                            "preLabel": "Number of trees >= benchmark DBH",
+                            "type": "number"
                         },
                         {
                             "source": "largeTreeCanopyHealthPercent",
-                            "preLabel": "Large tree canopy health (%):",
-                            "type": "selectOne"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "numberOfLargeTreesBenchmark",
-                            "preLabel": "Large tree benchmark No. / Ha:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "largeTreeBenchmarkDbh",
-                            "preLabel": "Large tree benchmark DBH:",
+                            "preLabel": "Large tree canopy health (%)",
                             "type": "number"
                         },
                         {
                             "source": "largeTreesScore",
-                            "preLabel": "Large Trees Score:",
-                            "noEdit": "true",
+                            "preLabel": "Large Trees Score",
                             "type": "number"
-                        }
-                    ],
-                    "type": "col"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "<h4>Tree Canopy Cover<\/h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "canopyCoverPercent",
-                            "preLabel": "Tree canopy cover (observerd %):",
-                            "type": "number"
-                        },
-                        {
-                            "source": "canopyCoverClass",
-                            "preLabel": "Canopy cover category:",
-                            "type": "selectOne"
-                        },
-                        {
-                            "source": "canopyHealthPercent",
-                            "preLabel": "Tree canopy health (%):",
-                            "type": "selectOne"
                         }
                     ],
                     "type": "col"
@@ -557,14 +256,22 @@
                 {
                     "items": [
                         {
-                            "source": "canopyCoverBenchmark",
-                            "preLabel": "Canopy cover benchmark %:",
+                            "source": "<h4>Tree Canopy Cover<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "canopyCoverPercent",
+                            "preLabel": "Tree canopy cover (%)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "canopyHealthPercent",
+                            "preLabel": "Tree canopy health (%)",
                             "type": "number"
                         },
                         {
                             "source": "canopyCoverScore",
-                            "preLabel": "Canopy Cover Score:",
-                            "noEdit": "true",
+                            "preLabel": "Canopy Cover Score",
                             "type": "number"
                         }
                     ],
@@ -622,12 +329,12 @@
                 {
                     "title": "Present",
                     "source": "present",
-                    "type": "selectOne"
+                    "type": "boolean"
                 },
                 {
                     "title": "Modified",
                     "source": "modified",
-                    "type": "selectOne"
+                    "type": "boolean"
                 }
             ],
             "userAddedRows": true,
@@ -658,7 +365,6 @@
                             "type": "number"
                         }
                     ],
-                    "computed": null,
                     "type": "col"
                 },
                 {
@@ -694,7 +400,7 @@
                         {
                             "source": "largeLogsPresent",
                             "preLabel": "Large logs present?",
-                            "type": "selecOne"
+                            "type": "boolean"
                         },
                         {
                             "source": "logScore",
@@ -712,86 +418,6 @@
             "items": [{
                 "source": "<h3>Landscape Context Components<\/h3>",
                 "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "title": "Patch Size",
-            "items": [{
-                "items": [
-                    {
-                        "source": "patchCategory",
-                        "preLabel": "Patch category & description)",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "patchSizeScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "title": "Distance to Core Area",
-            "items": [{
-                "items": [
-                    {
-                        "source": "distanceToCoreArea",
-                        "preLabel": "Distance to core area",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "coreAreaSignificantlyDisturbed",
-                        "preLabel": "Core area significantly disturbed",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "distanceToCoreAreaScore",
-                        "preLabel": "Score",
-                        "type": "number"
-                    }
-                ],
-                "type": "row"
-            }],
-            "type": "section"
-        },
-        {
-            "items": [{
-                "source": "<h4>Neighbourhood<\/h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "footer": {"rows": [{"columns": [
-                    {
-                        "source": "neighbourhoodSignificantlyDisturbed",
-                        "type": "selectOne"
-                    },
-                    {
-                        "source": "neighbourhoodScore",
-                        "type": "number"
-                    }
-                ]}]},
-                "source": "neighbourhood",
-                "columns": [
-                    {
-                        "title": "Radius from site",
-                        "source": "radiusFromSite",
-                        "noEdit": true,
-                        "type": "text"
-                    },
-                    {
-                        "title": "% native vegetation",
-                        "source": "nativeVegetationPercent",
-                        "type": "number"
-                    }
-                ],
-                "type": "table"
             }],
             "type": "row"
         }

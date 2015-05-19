@@ -13,19 +13,24 @@ import spock.lang.Specification
 class OrganisationServiceSpec extends Specification {
 
     OrganisationService service = new OrganisationService()
+    def stubbedCollectoryService = Stub(CollectoryService)
+
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
         mongoDomain(fongo.mongo, [Organisation])
 
         service.commonService = new CommonService()
         service.commonService.grailsApplication = grailsApplication
+        service.collectoryService = stubbedCollectoryService
     }
     def "test create organisation"() {
         given:
             def orgData = [name:'test org', description: 'test org description', dynamicProperty: 'dynamicProperty']
+        def institutionId = 'dr1'
+        stubbedCollectoryService.createInstitution(_) >> institutionId
 
 
-            def result
+        def result
             when:
             Organisation.withNewTransaction {
                 result = service.create(orgData)
@@ -42,6 +47,7 @@ class OrganisationServiceSpec extends Specification {
             then: "ensure the properties are the same as the original"
                 savedOrg.name == orgData.name
                 savedOrg.description == orgData.description
+                savedOrg.collectoryInstitutionId == institutionId
                 //savedOrg['dynamicProperty'] == orgData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
 
     }
@@ -49,6 +55,7 @@ class OrganisationServiceSpec extends Specification {
     def "test organisation validation"() {
         given:
         def orgData = [description: 'test org description', dynamicProperty: 'dynamicProperty']
+        stubbedCollectoryService.createInstitution(_) >> ""
 
         when:
         def result = service.create(orgData)

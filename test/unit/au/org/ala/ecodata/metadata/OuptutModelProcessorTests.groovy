@@ -2,32 +2,32 @@ package au.org.ala.ecodata.metadata
 
 import grails.converters.JSON
 import grails.test.GrailsUnitTestCase
+import spock.lang.Specification
 
 /**
  * Tests the OutputModelProcessor
  */
-class OuptutModelProcessorTests extends GrailsUnitTestCase {
+class OuptutModelProcessorTests extends Specification {
 
     private OutputModelProcessor outputModelProcessor = new OutputModelProcessor()
 
     /** The regevetation details output has a single table */
-    def testRevegetationDetails() {
-        def regevetationDetailsMetadata = getJsonResource('revegetationDetailsMetadata')
-        def flat =  outputModelProcessor.flatten(
+    void "test the revegetation details output"() {
+        when:
+            def regevetationDetailsMetadata = getJsonResource('revegetationDetailsMetadata')
+            def flat =  outputModelProcessor.flatten(
                 getJsonResource('sampleRevegetationDetails1'), new OutputMetadata(regevetationDetailsMetadata))
+            def expectedNumberPlanted = [1,2]
 
-        assertEquals(2, flat.size())
 
-        def expectedNumberPlanted = [1,2]
-        flat.eachWithIndex { flatOutput, i ->
-            assertEquals('output1', flatOutput.outputId)
-            assertEquals('activity1', flatOutput.activityId)
-            assertEquals(expectedNumberPlanted[i], flatOutput.numberPlanted)
-        }
-    }
-    /** The management practice change output has two tables */
-    def testManagementPracticeChange() {
+        then:
+            flat.size() == 2
 
+            flat.eachWithIndex { flatOutput, i ->
+                flatOutput.outputId == 'output1'
+                flatOutput.activityId == 'activity1'
+                flatOutput.numberPlanted == expectedNumberPlanted[i]
+            }
     }
 
     private Map getJsonResource(name) {

@@ -452,7 +452,7 @@ class ElasticSearchService {
         def facetConfig = grailsApplication.config.app.facets.geographic
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
-        ['gridded', 'grouped', 'special'].each {
+        ['contextual', 'grouped', 'special'].each {
             facetList.addAll(facetConfig[it].collect {k, v -> k})
         }
 

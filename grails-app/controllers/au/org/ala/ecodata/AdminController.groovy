@@ -8,6 +8,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 class AdminController {
 
     def outputService, activityService, siteService, projectService, authService,
+        organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
@@ -32,6 +33,15 @@ class AdminController {
     def users() {
         def userList = authService.getAllUserNameList()
         [ userNamesList: userList ]
+    }
+
+    @RequireApiKey
+    def syncCollectoryOrgs() {
+        def errors = organisationService.collectorySync()
+        if (errors)
+            render (status: 503, text: errors)
+        else
+            render (status: 200)
     }
 
     def settings() {
