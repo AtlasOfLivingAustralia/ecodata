@@ -83,7 +83,7 @@ class AuditController {
              if (auditMessages) {
                 auditMessages.each{ audit ->
                     def matches = auditMessages.findAll{it.entityId == audit.entityId && it.date < audit.date }
-                    if(matches?.size() > 1){
+                    if(matches?.size() > 0){
                         audit.entity['compareId'] = matches.get(0).id
                     }
                 }
