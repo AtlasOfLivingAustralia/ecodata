@@ -32,6 +32,29 @@ class IdentifierHelper {
         return entityId
     }
 
+    /**
+     * If the supplied domainObject is associate with a project, this method will return the projectId of that Project.
+     * Otherwise null will be returned.
+     * @param domainObject the domain object
+     * @return the associated projectId or null if the domainObject is not associated with a Project.
+     */
+    public static String getProjectId(Object domainObject) {
+        String projectId = null
+        switch (domainObject.class.name) {
+            case UserPermission.class.name:
+                if (domainObject.entityType == Project.class.name) {
+                    projectId = domainObject.entityId
+                }
+                break
+            default:
+                if (domainObject.hasProperty('projectId')) {
+                    projectId = domainObject.projectId
+                }
+                break
+        }
+        return projectId
+    }
+
     private static String getIdPropertyValue(Object object) {
         if (object) {
             def name = object.class.simpleName

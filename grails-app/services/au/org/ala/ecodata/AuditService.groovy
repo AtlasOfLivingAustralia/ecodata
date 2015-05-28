@@ -51,7 +51,7 @@ class AuditService {
         def userId = user?.userId ?: '<anon>'   // if, for some reason, we don't have a user, probably should log anyway
         def auditEventType = getAuditEventTypeFromGormEventType(event.eventType)
         def entityId = IdentifierHelper.getEntityIdentifier(entity)
-        def projectId = entity.projectId?.toString()  // not all objects have a direct projectId, so it may be null
+        def projectId = IdentifierHelper.getProjectId(entity)  // not all objects have a direct projectId, so it may be null
 
         try {
 
