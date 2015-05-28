@@ -9,17 +9,36 @@ import grails.test.spock.IntegrationSpec
  */
 class IntegrationTestHelper extends IntegrationSpec {
 
-    private boolean cleanup = true
+    boolean deleteOnCleanup = true
+    boolean deleteOnSetup = true
+
+    def auditService
+
+    /** Delete everything from the database before running the tests */
+    def setup() {
+        if (deleteOnSetup) {
+            deleteAll()
+        }
+    }
 
     /** Delete everything from the database after running the tests */
     def cleanup() {
-        if (cleanup) {
-            Site.collection.remove(new BasicDBObject())
-            Activity.collection.remove(new BasicDBObject())
-            Output.collection.remove(new BasicDBObject())
-            Project.collection.remove(new BasicDBObject())
-            Organisation.collection.remove(new BasicDBObject())
+        if (deleteOnCleanup) {
+            deleteAll()
         }
+    }
+
+    def deleteAll() {
+        Site.collection.remove(new BasicDBObject())
+        Activity.collection.remove(new BasicDBObject())
+        Output.collection.remove(new BasicDBObject())
+        Project.collection.remove(new BasicDBObject())
+        Organisation.collection.remove(new BasicDBObject())
+        if (auditService) {
+            auditService.flushMessageQueue() // In case there are pending updates.
+        }
+        AuditMessage.collection.remove(new BasicDBObject())
+        UserPermission.collection.remove(new BasicDBObject())
     }
 
     def setupPost(request, Object domainObject) {
