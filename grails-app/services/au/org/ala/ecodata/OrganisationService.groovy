@@ -8,11 +8,11 @@ import grails.validation.ValidationException
 class OrganisationService {
 
     /** Use to include related projects in the toMap method */
-    public static final String PROJECTS = 'projects' //
+    public static final String PROJECTS = 'projects'
 
     static transactional = 'mongo'
 
-    def grailsApplication, webService, commonService, projectService, permissionService, documentService, collectoryService
+    def grailsApplication, webService, commonService, projectService, userService, documentService, collectoryService, permissionService
 
     // create ecodata organisations for any institutions in collectory which are not yet in ecodata
     // return null if sucessful, or errors
@@ -69,6 +69,9 @@ class OrganisationService {
             props.remove('organisationId')
             props.remove('collectoryInstitutionId')
             commonService.updateProperties(organisation, props)
+
+            // Assign the creating user as an admin.
+            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails().userId, AccessLevel.admin, organisation.organisationId)
 
             [status:'ok',organisationId:organisation.organisationId]
         }
