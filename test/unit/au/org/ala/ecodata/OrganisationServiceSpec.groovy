@@ -14,6 +14,8 @@ class OrganisationServiceSpec extends Specification {
 
     OrganisationService service = new OrganisationService()
     def stubbedCollectoryService = Stub(CollectoryService)
+    def stubbedUserService = Stub(UserService)
+    def mockedPermissionService = Mock(PermissionService)
 
     def setup() {
         Fongo fongo = new Fongo("ecodata-test")
@@ -22,12 +24,17 @@ class OrganisationServiceSpec extends Specification {
         service.commonService = new CommonService()
         service.commonService.grailsApplication = grailsApplication
         service.collectoryService = stubbedCollectoryService
+        service.userService = stubbedUserService
+        service.permissionService = mockedPermissionService
     }
+
     def "test create organisation"() {
         given:
-            def orgData = [name:'test org', description: 'test org description', dynamicProperty: 'dynamicProperty']
+        def orgData = [name:'test org', description: 'test org description', dynamicProperty: 'dynamicProperty']
         def institutionId = 'dr1'
+        def userId = '1234'
         stubbedCollectoryService.createInstitution(_) >> institutionId
+        stubbedUserService.getCurrentUserDetails() >> [userId:userId]
 
 
         def result
@@ -38,6 +45,7 @@ class OrganisationServiceSpec extends Specification {
             then: "ensure the response contains the id of the new organisation"
                 result.status == 'ok'
                 result.organisationId != null
+                1 * mockedPermissionService.addUserAsRoleToOrganisation(userId, AccessLevel.admin, !null)
 
 
             when: "select the new organisation back from the database"
