@@ -3,19 +3,37 @@
     "dataModel": [
         {
             "dataType": "document",
-            "description": "Please attach relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.",
-            "name": "supportingDocs"
+            "name": "supportingDocs1"
         },
         {
             "dataType": "document",
-            "description": "You may attach other documents relevant to your project for the Department's information.",
-            "name": "additionalInfo"
+            "name": "supportingDocs2"
+        },
+        {
+            "dataType": "document",
+            "name": "supportingDocs3"
+        },
+        {
+            "dataType": "document",
+            "description": "",
+            "name": "additionalInfo1"
+        },
+        {
+            "dataType": "document",
+            "description": "",
+            "name": "additionalInfo2"
+        },
+        {
+            "dataType": "document",
+            "description": "",
+            "name": "additionalInfo3"
         }
     ],
     "viewModel": [
         {
             "items": [{
                 "source": "Supporting documents are required (where available) to support the statements you have made regarding your progress/achievement.",
+                "computed": null,
                 "type": "literal"
             }],
             "type": "row"
@@ -23,23 +41,64 @@
         {
             "items": [
                 {
-                    "items": [{
-                        "source": "supportingDocs",
-                        "preLabel": "Supporting documents:",
-                        "type": "document"
-                    }],
+                    "items": [
+                        {
+                            "source": "<h4>Supporting Documents<\/h4><i>Please attach relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "supportingDocs1",
+                            "preLabel": "",
+                            "type": "document"
+                        },
+                        {
+                            "source": "supportingDocs2",
+                            "preLabel": "",
+                            "type": "document"
+                        },
+                        {
+                            "source": "supportingDocs3",
+                            "preLabel": "",
+                            "type": "document"
+                        }
+                    ],
                     "type": "col"
                 },
                 {
-                    "items": [{
-                        "source": "additionalInfo",
-                        "preLabel": "Additional information (optional):",
-                        "type": "document"
-                    }],
+                    "items": [
+                        {
+                            "source": "<h4>Additional Information (optional)<\/h4><i>You may attach other documents relevant to your project for the Department's information.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "additionalInfo1",
+                            "preLabel": "",
+                            "type": "document"
+                        },
+                        {
+                            "source": "additionalInfo2",
+                            "preLabel": "",
+                            "type": "document"
+                        },
+                        {
+                            "source": "additionalInfo3",
+                            "preLabel": "",
+                            "type": "document"
+                        }
+                    ],
+                    "computed": null,
                     "type": "col"
                 }
             ],
             "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "If you have additional documents, please add them via the <b>Admin > Documents<\/b> tab.",
+                "computed": null,
+                "type": "literal"
+            }],
             "type": "row"
         }
     ]
