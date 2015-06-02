@@ -2370,8 +2370,85 @@
             "name": "Site Planning Details"
         },
         {
+            "template": "fencing",
+            "scores": [
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "FNC",
+                    "name": "lengthOfFence",
+                    "description": "The total length of fencing erected.",
+                    "label": "Total length of fence (Km)",
+                    "units": "kilometres",
+                    "category": "Biodiversity Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "piechart",
+                    "name": "lengthOfFence",
+                    "description": "Breakdown of the length of fence erected by the type of fence.",
+                    "label": "Total length of fence (Km) by the type of fence erected",
+                    "units": "kilometres",
+                    "groupBy": "output:fenceType",
+                    "listName": "",
+                    "category": "Biodiversity Management"
+                },
+                {
+                    "aggregationType": "HISTOGRAM",
+                    "displayType": "piechart",
+                    "name": "fenceType",
+                    "description": "Breakdown of the number of activities erecting fencing by the type of fence being erected.",
+                    "label": "Proportion of activities by fence type",
+                    "units": "",
+                    "category": "Biodiversity Management"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "piechart",
+                    "name": "lengthOfFence",
+                    "description": "Breakdown of the proportion of the length of fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
+                    "label": "Length of fence (as a %) by fence purpose",
+                    "units": "",
+                    "groupBy": "output:purposeOfFence",
+                    "listName": "",
+                    "category": "Biodiversity Management"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "name": "fenceAreaProtected",
+                    "description": "The area in hectares enclosed within a protective fence",
+                    "label": "Area protected by fencing (Ha)",
+                    "listName": "",
+                    "category": "Biodiversity Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "HISTOGRAM",
+                    "displayType": "piechart",
+                    "name": "purposeOfFence",
+                    "description": "Breakdown of the proportion of the number of activities erecting fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
+                    "label": "Proportion of activities by fence purpose",
+                    "units": "",
+                    "listName": "",
+                    "category": "Biodiversity Management",
+                    "isOutputTarget": false
+                }
+            ],
+            "name": "Fence Details"
+        },
+        {
             "template": "smallGrantProgressReport",
-            "scores": [],
+            "scores": [{
+                "aggregationType": "COUNT",
+                "displayType": "",
+                "gmsId": "PR25ALG",
+                "name": "achievementsSummary",
+                "label": "No. of 25th Anniversary Landcare Grant progress reports submitted",
+                "listName": "",
+                "category": "Project Management, Planning and Research Outputs"
+            }],
             "name": "Progress Report Details"
         },
         {
@@ -2771,75 +2848,6 @@
             "name": "Output Details"
         },
         {
-            "template": "fencing",
-            "scores": [
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "gmsId": "FNC",
-                    "name": "lengthOfFence",
-                    "description": "The total length of fencing erected.",
-                    "label": "Total length of fence (Km)",
-                    "units": "kilometres",
-                    "category": "Biodiversity Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "piechart",
-                    "name": "lengthOfFence",
-                    "description": "Breakdown of the length of fence erected by the type of fence.",
-                    "label": "Total length of fence (Km) by the type of fence erected",
-                    "units": "kilometres",
-                    "groupBy": "output:fenceType",
-                    "listName": "",
-                    "category": "Biodiversity Management"
-                },
-                {
-                    "aggregationType": "HISTOGRAM",
-                    "displayType": "piechart",
-                    "name": "fenceType",
-                    "description": "Breakdown of the number of activities erecting fencing by the type of fence being erected.",
-                    "label": "Proportion of activities by fence type",
-                    "units": "",
-                    "category": "Biodiversity Management"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "piechart",
-                    "name": "lengthOfFence",
-                    "description": "Breakdown of the proportion of the length of fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
-                    "label": "Length of fence (as a %) by fence purpose",
-                    "units": "",
-                    "groupBy": "output:purposeOfFence",
-                    "listName": "",
-                    "category": "Biodiversity Management"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "fenceAreaProtected",
-                    "description": "The area in hectares enclosed within a protective fence",
-                    "label": "Area protected by fencing (Ha)",
-                    "listName": "",
-                    "category": "Biodiversity Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "HISTOGRAM",
-                    "displayType": "piechart",
-                    "name": "purposeOfFence",
-                    "description": "Breakdown of the proportion of the number of activities erecting fencing by purpose of fence. As a single fence can perform many purposes, the length may be multi-counted. Interpret only as length within a specific category or as a percentage of the whole.",
-                    "label": "Proportion of activities by fence purpose",
-                    "units": "",
-                    "listName": "",
-                    "category": "Biodiversity Management",
-                    "isOutputTarget": false
-                }
-            ],
-            "name": "Fence Details"
-        },
-        {
             "template": "smallGrantAquittal",
             "scores": [],
             "name": "Project Acquittal"
@@ -2983,6 +2991,109 @@
                 }
             ],
             "name": "Upload of stage 1 and 2 reporting data"
+        },
+        {
+            "template": "uploadOfHistoricalReportingData",
+            "scores": [
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "RVN-CEG",
+                    "name": "score",
+                    "description": "The total number of seedlings planted.",
+                    "label": "Number of plants planted",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Revegetation",
+                    "filterBy": "Number of plants planted"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "RVA-CEG",
+                    "name": "score",
+                    "description": "The area of land actually revegetated with native species by the planting of seedlings, sowing of seed and managed native regeneration actions.",
+                    "label": "Area of revegetation works (Ha)",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Revegetation",
+                    "filterBy": "Area of revegetation works (Ha)"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "RVSVL-CEG",
+                    "name": "score",
+                    "description": "Estimate of the average survivability of both tubestock and seedstock expressed as a percentage of plants planted. For seedstock, this includes both counted and estimated germination establishment rates.",
+                    "label": "Average survivability of tubestock and seedstock (%)",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Revegetation",
+                    "filterBy": "Average survivability of tubestock and seedstock (%)"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "WDT-CEG",
+                    "name": "score",
+                    "description": "The total area of weeds for which an initial treatment was undertaken.",
+                    "label": "Total new area treated for weeds (Ha)",
+                    "units": "Ha",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Invasive Species Management - Weeds",
+                    "filterBy": "Total new area treated for weeds (Ha)"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "CPEE-CEG",
+                    "name": "score",
+                    "description": "No. of workshops/field day events held",
+                    "label": "Total No. of community participation and engagement events run",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Community Engagement and Capacity Building",
+                    "filterBy": "Total No. of community participation and engagement events run"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "VOL-CEG",
+                    "name": "score",
+                    "description": "The number of participants at activities and events who are not employed on projects. Individuals attending multiple activities will be counted for their attendance at each event.",
+                    "label": "No of volunteers participating in project activities",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Community Engagement and Capacity Building",
+                    "filterBy": "No of volunteers participating in project activities"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "GRP-CEG",
+                    "name": "score",
+                    "description": "No. of groups involved in project events",
+                    "label": "No. of groups involved in project events",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Community Engagement and Capacity Building",
+                    "filterBy": "No. of groups involved in project events"
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "SGN-CEG",
+                    "name": "score",
+                    "description": "No. of signs permanently installed to manage public access and/or protect environmental assets",
+                    "label": "No. of signs permanently installed",
+                    "groupBy": "output:scoreLabel",
+                    "listName": "scores",
+                    "category": "Natural Resources Management",
+                    "filterBy": "No. of signs permanently installed"
+                }
+            ],
+            "name": "Upload of historical summary reporting data"
         },
         {
             "template": "gaParticipantDetails",
@@ -3271,19 +3382,6 @@
             "name": "Site Visit Details"
         }
     ],
-    "selectedActivity": {
-        "outputs": [
-            "Progress Report Details",
-            "Attachments"
-        ],
-        "supportsPhotoPoints": false,
-        "gmsId": "PR25ALG",
-        "name": "25th Anniversary Landcare Grants - Progress Report",
-        "supportsSites": false,
-        "type": "Report",
-        "category": "Small Grants",
-        "status": "active"
-    },
     "activities": [
         {
             "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
@@ -3805,7 +3903,7 @@
                 "Attachments"
             ],
             "supportsPhotoPoints": false,
-            "gmsId": "WDT25ALG FNC25ALG CPEE25ALG MPCFE25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG WSA25ALG STA25ALG WQSA25ALG HC25ALG HSA25ALG CGM25ALG VAC25ALG",
+            "gmsId": "WDT25ALG FNC25ALG CPEE25ALG MPCFE25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG WSA25ALG STA25ALG WQSA25ALG HC25ALG HSA25ALG CGM25ALG VAC25ALG RVA25ALG RVN25ALG EML25ALG ",
             "name": "25th Anniversary Landcare Grants - Final Report",
             "supportsSites": false,
             "type": "Report",
@@ -3819,6 +3917,13 @@
             "type": "Activity",
             "category": "None",
             "status": "deleted"
+        },
+        {
+            "outputs": ["Upload of historical summary reporting data"],
+            "gmsId": "RVN-CEG RVA-CEG RVSVL-CEG WDT-CEG CPEE-CEG VOL-CEG GRP-CEG SGN-CEG",
+            "name": "Upload of historical summary reporting data",
+            "type": "Activity",
+            "category": "None"
         },
         {
             "outputs": ["Monthly Status Report Data"],
