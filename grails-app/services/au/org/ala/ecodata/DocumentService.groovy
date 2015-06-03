@@ -19,6 +19,7 @@ import java.text.SimpleDateFormat
 class DocumentService {
 
     static final ACTIVE = "active"
+    static final LINKTYPE = "link"
     static final FILE_LOCK = new Object()
 
     static final DIRECTORY_PARTITION_FORMAT = 'yyyy-MM'
@@ -53,15 +54,25 @@ class DocumentService {
 
     def getAll(boolean includeDeleted = false, levelOfDetail = []) {
         includeDeleted ?
-            Document.list().collect { toMap(it, levelOfDetail) } :
-            Document.findAllByStatus(ACTIVE).collect { toMap(it, levelOfDetail) }
+            Document.findAllByNotType(LINKTYPE).collect { toMap(it, levelOfDetail) } :
+            Document.findAllByStatusAndNotType(ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+    }
+
+    def getAllLinks(boolean includeDeleted = false, levelOfDetail = []) {
+        includeDeleted ?
+                Document.findAllByType(LINKTYPE).collect { toMap(it, levelOfDetail) } :
+                Document.findAllByStatusAndType(ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllForProjectId(id, levelOfDetail = []) {
-        Document.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        Document.findAllByProjectIdAndStatusAndNotType(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
-	
-	def findAllForProjectIdAndIsPrimaryProjectImage(id, levelOfDetail = []) {
+
+    def findAllLinksForProjectId(id, levelOfDetail = []) {
+        Document.findAllByProjectIdAndStatusAndType(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+    }
+
+    def findAllForProjectIdAndIsPrimaryProjectImage(id, levelOfDetail = []) {
 		Document.findAllByProjectIdAndStatusAndIsPrimaryProjectImage(id, ACTIVE,true).collect { toMap(it, levelOfDetail) }
 	}
 
@@ -285,10 +296,25 @@ class DocumentService {
         def query = Document.createCriteria()
 
         def results = query {
+           ne('type', LINKTYPE)
            eq(ownerType, owner)
            if (!includeDeleted) {
                ne('status', 'deleted')
            }
+        }
+
+        results.collect{toMap(it, 'flat')}
+    }
+
+    def findAllLinksByOwner(ownerType, owner, includeDeleted = true) {
+        def query = Document.createCriteria()
+
+        def results = query {
+            eq('type', LINKTYPE)
+            eq(ownerType, owner)
+            if (!includeDeleted) {
+                ne('status', 'deleted')
+            }
         }
 
         results.collect{toMap(it, 'flat')}

@@ -28,7 +28,8 @@ class Project {
     }
 
     ObjectId id
-    String projectId      // same as collectory dataProvider id
+    String projectId
+    String dataProviderId // collectory dataProvider id
     String dataResourceId // one collectory dataResource stores all sightings
     String status = 'active'
     String externalId
@@ -147,6 +148,7 @@ class Project {
         promoteOnHomepage nullable:true
         organisationId nullable:true
         projectType nullable:true    // nullable for backward compatibility; survey, works
+        dataProviderId nullable:true // nullable for backward compatibility
         dataResourceId nullable:true // nullable for backward compatibility
         aim nullable:true
         keywords nullable:true

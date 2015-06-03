@@ -36,6 +36,7 @@ class Document {
     String siteId
     String activityId
     String outputId
+    String externalUrl
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -49,6 +50,9 @@ class Document {
     }
 
     def getUrl() {
+        if (externalUrl)
+            return externalUrl.encodeAsURL().replaceAll('\\+', '%20')
+
         return urlFor(filepath, filename)
     }
 
@@ -108,5 +112,6 @@ class Document {
 		isPrimaryProjectImage nullable: true
         thirdPartyConsentDeclarationMade nullable: true
         thirdPartyConsentDeclarationText nullable: true
+        externalUrl nullable: true
     }
 }

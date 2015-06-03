@@ -17,30 +17,39 @@ class DocumentController {
     }
 
     def index() {
-        log.debug "Total documents = ${Document.count()}"
+        log.debug "Total documents (including links) = ${Document.count()}"
         render "${Document.count()} documents"
     }
 
     def get(String id) {
         def detail = []
-        if (!id) {
-            def list = documentService.getAll(params.includeDeleted as boolean, params.view)
-            list.sort {it.name}
-            //log.debug list
-            asJson([list: list])
-        } else {
+        if (id) {
             def doc = documentService.get(id, detail)
             if (doc) {
                 asJson doc
             } else {
                 render status:404, text: 'No such id'
             }
+        } else if (params.links as boolean) {
+            def list = documentService.getAllLinks(params.includeDeleted as boolean, params.view)
+            //log.debug list
+            asJson([list: list])
+        } else {
+            def list = documentService.getAll(params.includeDeleted as boolean, params.view)
+            list.sort {it.name}
+            //log.debug list
+            asJson([list: list])
         }
     }
 
     def find(String entity, String id) {
-        def result = documentService.findAllByOwner(entity+'Id', id)
-        asJson([documents:result])
+        if (params.links as boolean) {
+            def result = documentService.findAllLinksByOwner(entity+'Id', id)
+            asJson([documents:result])
+        } else {
+            def result = documentService.findAllByOwner(entity+'Id', id)
+            asJson([documents:result])
+        }
     }
 
     @RequireApiKey
