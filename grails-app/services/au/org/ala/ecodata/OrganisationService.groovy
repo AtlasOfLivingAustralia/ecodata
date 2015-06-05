@@ -12,7 +12,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def commonService, projectService, permissionService, documentService, collectoryService
+    def commonService, projectService, userService, permissionService, documentService, collectoryService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
