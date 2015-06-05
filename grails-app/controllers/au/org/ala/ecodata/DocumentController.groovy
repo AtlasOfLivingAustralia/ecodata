@@ -31,7 +31,7 @@ class DocumentController {
                 render status:404, text: 'No such id'
             }
         } else if (params.links as boolean) {
-            def list = documentService.getAllLinks(params.includeDeleted as boolean, params.view)
+            def list = documentService.getAllLinks(params.view)
             //log.debug list
             asJson([list: list])
         } else {
@@ -56,10 +56,11 @@ class DocumentController {
     def delete(String id) {
         def a = Document.findByDocumentId(id)
         if (a) {
-            if (params.destroy) {
+            if (a.type == documentService.LINKTYPE) {
+                a.delete()
+            } else if (params.destroy) {
                 documentService.deleteFile(a)
                 a.delete()
-
             } else {
                 a.status = 'deleted'
                 a.save(flush: true)

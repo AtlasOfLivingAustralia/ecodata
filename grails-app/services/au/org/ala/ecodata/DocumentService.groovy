@@ -54,22 +54,20 @@ class DocumentService {
 
     def getAll(boolean includeDeleted = false, levelOfDetail = []) {
         includeDeleted ?
-            Document.findAllByNotType(LINKTYPE).collect { toMap(it, levelOfDetail) } :
-            Document.findAllByStatusAndNotType(ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+            Document.findAllByTypeNotEqual(LINKTYPE).collect { toMap(it, levelOfDetail) } :
+            Document.findAllByStatusAndTypeNotEqual(ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
-    def getAllLinks(boolean includeDeleted = false, levelOfDetail = []) {
-        includeDeleted ?
-                Document.findAllByType(LINKTYPE).collect { toMap(it, levelOfDetail) } :
-                Document.findAllByStatusAndType(ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+    def getAllLinks(levelOfDetail = []) {
+        Document.findAllByType(LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllForProjectId(id, levelOfDetail = []) {
-        Document.findAllByProjectIdAndStatusAndNotType(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+        Document.findAllByProjectIdAndStatusAndTypeNotEqual(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllLinksForProjectId(id, levelOfDetail = []) {
-        Document.findAllByProjectIdAndStatusAndType(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+        Document.findAllByProjectIdAndType(id, LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllForProjectIdAndIsPrimaryProjectImage(id, levelOfDetail = []) {
@@ -306,15 +304,12 @@ class DocumentService {
         results.collect{toMap(it, 'flat')}
     }
 
-    def findAllLinksByOwner(ownerType, owner, includeDeleted = true) {
+    def findAllLinksByOwner(ownerType, owner) {
         def query = Document.createCriteria()
 
         def results = query {
             eq('type', LINKTYPE)
             eq(ownerType, owner)
-            if (!includeDeleted) {
-                ne('status', 'deleted')
-            }
         }
 
         results.collect{toMap(it, 'flat')}

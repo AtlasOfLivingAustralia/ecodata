@@ -83,12 +83,6 @@ class ProjectService {
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, [SiteService.FLAT])
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
             mapOfProperties.links = documentService.findAllLinksForProjectId(prj.projectId, levelOfDetail)
-            // TEMP until this stuff is folded into documents properly
-            if (mapOfProperties.urlAndroid)
-                mapOfProperties.links.push([role: "android", type:"link", url: mapOfProperties.urlAndroid ])
-            if (mapOfProperties.urlITunes)
-                mapOfProperties.links.push([role: "iTunes", type:"link", url: mapOfProperties.urlITunes ])
-            mapOfProperties.links.push([role: "facebook", type:"link", url: "fb" ])
 
             if (levelOfDetail == ALL) {
                 mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)

@@ -50,8 +50,7 @@ class Document {
     }
 
     def getUrl() {
-        if (externalUrl)
-            return externalUrl.encodeAsURL().replaceAll('\\+', '%20')
+        if (externalUrl) return externalUrl
 
         return urlFor(filepath, filename)
     }
