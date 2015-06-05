@@ -12,32 +12,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def grailsApplication, webService, commonService, projectService, userService, documentService, collectoryService, permissionService
-
-    // create ecodata organisations for any institutions in collectory which are not yet in ecodata
-    // return null if sucessful, or errors
-    def collectorySync() {
-        def errors
-        def url = "${grailsApplication.config.collectory.baseURL}ws/institution/"
-        def institutions = webService.getJson(url)
-        if (institutions instanceof List) {
-            def orgs = Organisation.findAllByCollectoryInstitutionIdIsNotNull()
-            def map = orgs.collectEntries {
-               [it.collectoryInstitutionId, it]
-            }
-            institutions.each({it ->
-                if (!map[it.uid]) {
-                    def inst = webService.getJson(url + it.uid)
-                    def result = create([collectoryInstitutionId: inst.uid,
-                                        name: inst.name,
-                                        description: inst.pubDescription?:"",
-                                        url: inst.websiteUrl?:""])
-                    if (result.errors) errors = result.errors
-                }
-            })
-        }
-        errors
-    }
+    def commonService, projectService, userService, permissionService, documentService, collectoryService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
