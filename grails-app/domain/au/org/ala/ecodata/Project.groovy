@@ -64,8 +64,11 @@ class Project {
     List activities
 	
     boolean isCitizenScience, isDataSharing
+    boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
+    String difficulty, gear, task
     String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
+    // TODO urlAndroid and urlITunes need to be phased out; replaced by link-type documente
     String aim, keywords, urlAndroid, urlITunes, urlWeb
     String getInvolved, scienceType, projectSiteId
     double funding
@@ -152,8 +155,8 @@ class Project {
         dataResourceId nullable:true // nullable for backward compatibility
         aim nullable:true
         keywords nullable:true
-        urlAndroid nullable:true, url:true
-        urlITunes nullable:true, url:true
+        urlAndroid nullable:true, url:true // TODO phased out
+        urlITunes nullable:true, url:true // TODO phased out
         urlWeb nullable:true, url:true
         getInvolved nullable:true
         scienceType nullable:true
@@ -162,6 +165,9 @@ class Project {
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
         projectPrivacy nullable:true, inList: ['Open','Closed']
+        difficulty nullable:true, inList: ['Easy','Medium','Hard']
+        gear nullable:true
+        task nullable:true
         dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
