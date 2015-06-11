@@ -211,8 +211,13 @@ class SiteService {
         def result
         switch (geometry.type) {
             case 'Circle':
-                // We support circles, but they are not officially supported.
-                result = [type:'Point', coordinates:geometry.centre]
+                // We support circles, but they are not valid geojson. The spatial portal does a conversion for us.
+                if (geometry.pid) {
+                    result = geometryForPid(geometry.pid)
+                }
+                else {
+                    result = [type: 'Point', coordinates: geometry.centre]
+                }
                 break
             case 'Point':
             case 'point':
