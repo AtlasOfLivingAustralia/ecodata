@@ -3,8 +3,8 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "Indicate whether your project fully achieved everything you expected it to achieve and also whether all of the project funds were spent.",
             "name": "projectAcquittal",
+            "description": "Indicate if: a) ALL activities, outputs and outcomes specified in your Funding Agreement have been undertaken/fully met, and b) whether ALL cash funds specified in your Funding Agreement Project Budget have been spent.",
             "constraints": [
                 "Yes",
                 "No"
@@ -13,123 +13,149 @@
         },
         {
             "dataType": "text",
-            "description": "If the project was undertaken by a group or a legal entity representing member individuals, indicate whether you have attached the required acquittal documentation.",
             "name": "groupAuditedDoco",
+            "description": "A Department template will be provided to you. If the project was undertaken by a sponsoring organisation, group legal entity or a legal entity representing member individuals, indicate whether you have attached or forwarded the completed acquittal documentation. If 'No', provide comments why at Q5.3.",
             "constraints": [
                 "Yes",
                 "No",
-                "N / A"
+                "Not applicable"
             ],
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "If the project was undertaken in the name of an individual, indicate whether you have attached the required acquittal documentation.",
             "name": "individualAuditedDoco",
+            "description": "If the project was undertaken in the name of an individual, indicate whether you have attached or forwarded the required documentation. If 'No', provide comments why at Q5.3.",
             "constraints": [
                 "Yes",
                 "No",
-                "N / A"
+                "Not applicable"
             ],
             "validate": "required"
+        },
+        {
+            "dataType": "document",
+            "name": "acquittalDocs",
+            "description": "If you have more than one document to attach, please add them via the Admin > Documents tab."
         },
         {
             "dataType": "text",
             "name": "individualStatDec",
+            "description": "A Department template will be provided to you. Indicate whether you have attached or forwarded the completed documentation. If 'No', provide comments why at Q5.3.",
             "constraints": [
                 "Yes",
                 "No",
-                "N / A"
+                "Not applicable"
             ],
             "validate": "required"
         },
         {
             "dataType": "text",
             "name": "individualFinStatement",
+            "description": "A Department Excel template will be provided to you. Indicate whether you have attached or forwarded the completed documentation. If 'No', provide comments why at Q5.3.",
             "constraints": [
                 "Yes",
                 "No",
-                "N / A"
+                "Not applicable"
             ],
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Please provide any additional comments on the project's income, expenditure or budget.",
-            "name": "acquittalNotes"
+            "name": "acquittalNotes",
+            "description": "These may include comments on aspects such as explanations of variances (e.g. underspends/overspends on budget items, unexpected additional funds brought to the project), comments on approval of budget variations, savings made, reasons why acquittal documentation has not been submitted with the report, etc."
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h4>5. Project Income and Expenditure<\/h4>",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [{
+                "computed": null,
+                "type": "col",
                 "items": [
                     {
-                        "source": "Submission of financial acquittal documentation for the project is a Funding Agreement requirement and forms part of your final report submission. Templates are available from the Department.",
+                        "computed": null,
+                        "source": "Submission of financial acquittal documentation for the project is a Funding Agreement requirement and forms part of your final report submission.<br><b>Copies of completed and signed documents may be attached below, OR be emailed to the Department, OR may be forwarded as hard copies to the Department.<\/b>",
                         "type": "literal"
                     },
                     {
-                        "source": "Scanned copies of completed and signed documents may be attached (<b> via the ADMIN > Project documents tab<\/b>) to this report or emailed to the Department. Alternatively, hard copies may forwarded to the Department.",
+                        "computed": null,
+                        "source": "",
                         "type": "literal"
                     },
                     {
-                        "source": "projectAcquittal",
                         "preLabel": "5.1 Has your project fully achieved the objectives for which it was funded and have all funds been spent?",
+                        "computed": null,
+                        "source": "projectAcquittal",
                         "type": "selectOne"
                     },
                     {
+                        "computed": null,
                         "source": "If 'No', please contact the Department prior to completing your acquittal documentation and submitting your final report.",
                         "type": "literal"
                     },
                     {
+                        "computed": null,
                         "source": "<h5>5.2 Have you completed and attached (or emailed/posted):<\/h5>",
                         "type": "literal"
                     },
                     {
+                        "computed": null,
                         "source": "<u>For group sponsors and group legal entities:<\/u>",
                         "type": "literal"
                     },
                     {
-                        "source": "groupAuditedDoco",
                         "preLabel": "A financial statement (Departmental template) signed by the Chief Executive Officer and Chief Financial Officer (or equivalent) of the legal entity?",
+                        "computed": null,
+                        "source": "groupAuditedDoco",
                         "type": "selectOne"
                     },
                     {
+                        "computed": null,
                         "source": "<u>For individuals:<\/u>",
                         "type": "literal"
                     },
                     {
+                        "preLabel": "A financial statement (covering all cash contributions to the project), prepared by an Independent Qualified Accountant?; AND",
+                        "computed": null,
                         "source": "individualAuditedDoco",
-                        "preLabel": "A financial statement prepared by an Independent Qualified Accountant?; and",
                         "type": "selectOne"
                     },
                     {
+                        "preLabel": "A Statutory Declaration (Departmental template)?; AND",
+                        "computed": null,
                         "source": "individualStatDec",
-                        "preLabel": "A Statutory Declaration?",
                         "type": "selectOne"
                     },
                     {
-                        "source": "individualFinStatement",
                         "preLabel": "A financial statement (Departmental template) signed by the representative of the legal entity?",
+                        "computed": null,
+                        "source": "individualFinStatement",
                         "type": "selectOne"
                     },
                     {
-                        "source": "acquittalNotes",
+                        "computed": null,
+                        "source": "",
+                        "type": "literal"
+                    },
+                    {
                         "preLabel": "5.3  If you have additional comments on the project's income, expenditure or budget, please provide them here.",
+                        "computed": null,
                         "width": "95%",
+                        "source": "acquittalNotes",
                         "type": "textarea"
                     }
-                ],
-                "type": "col"
+                ]
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

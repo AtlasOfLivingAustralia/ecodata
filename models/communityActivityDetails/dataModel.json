@@ -121,6 +121,13 @@
     ],
     "viewModel": [
         {
+            "items": [{
+                "source": "Note that the target measure for 'No. of events' is calculated as the number of rows in this table. Please enter a separate row for each event.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": "3",
