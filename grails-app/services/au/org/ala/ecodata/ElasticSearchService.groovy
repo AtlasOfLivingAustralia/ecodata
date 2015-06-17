@@ -379,6 +379,50 @@ class ElasticSearchService {
                         "publicationStatus":{
                             "type":"string",
                             "index":"not_analyzed"
+                        },
+                        "custom": {
+                            "properties": {
+                                "details": {
+                                    "properties": {
+                                        "objectives": {
+                                            "properties": {
+                                                "rows1": {
+                                                    "properties": {
+                                                        "assets": {
+                                                            "type":"string",
+                                                            "path":"just_name",
+                                                            "fields": {
+                                                                "meriPlanAssetFacet": {
+                                                                    "type":"string",
+                                                                    "index":"not_analyzed"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "partnership": {
+                                            "properties": {
+                                                "rows": {
+                                                    "properties": {
+                                                        "data3": {
+                                                            "type":"string",
+                                                            "path":"just_name",
+                                                            "fields": {
+                                                                "partnerOrganisationTypeFacet": {
+                                                                    "type":"string",
+                                                                    "index":"not_analyzed"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                     },
