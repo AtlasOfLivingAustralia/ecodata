@@ -68,11 +68,11 @@ class RecordImportService {
                            log.info("[images ${images}] Retrieving from images: " + imageUrl)
                            def imageMetadata = js.parseText(new URL(imageUrl).text)
                            record.multimedia << [
-                                   created   : imageMetadata.dateUploaded,         //image service
-                                   title     : imageMetadata.originalFileName,           //image service
+                                   created   : imageMetadata.dateUploaded,      //image service
+                                   title     : imageMetadata.originalFileName,  //image service
                                    format    : imageMetadata.mimeType,          //image service
                                    creator   : userDetails.displayName,         //CAS
-                                   rightsHolder: userDetails.displayName,    //CAS
+                                   rightsHolder: userDetails.displayName,       //CAS
                                    license   : record.imageLicence ?: "Creative Commons Attribution",
                                    type      : "StillImage",
                                    imageId   : imageId,
@@ -90,11 +90,11 @@ class RecordImportService {
         [count: count, images: images]
     }
 
-    def loadFile(filePath){
-        def columns = [] as List
-        println "Starting import of data....."
-        String[] dateFormats = ["yyyy-MM-dd HH:mm:ss.s", "yyyy-MM-dd HH:mm:ssZ", "dd/MM/yyyy","yyyy-MM-dd", "dd/MM/yy"]
+    def loadFile(filePath, projectId){
 
+        log.info "Starting import of data....."
+
+        def columns = [] as List
         def count = 0
         def imported = 0
         def indexOfOccurrenceID = -1
@@ -107,25 +107,32 @@ class RecordImportService {
                 // header row (column titles)
                 columns = it as List
                 columns.eachWithIndex { obj, i ->
-                    if(obj == "occurrenceID")
-                       indexOfOccurrenceID = i
-                    if(obj == "associatedMedia")
+
+                    if(obj == "occurrenceID"){
+                        indexOfOccurrenceID = i
+                    }
+
+                    if(obj == "associatedMedia"){
                         associatedMediaIdx = i
+                    }
+
                 }
             } else {
 
-                def preloaded = false
                 Record record = null
 
                 //is record already loaded ?
                 if(indexOfOccurrenceID >= 0){
-                    record = Record.findWhere([occurrenceID:it[indexOfOccurrenceID]])
-                    preloaded = (record != null)
+                    def occurrenceID = it[indexOfOccurrenceID]
+                    record = Record.findWhere([occurrenceID: occurrenceID])
                 }
 
                 if(!record){
                     record = new Record()
                 }
+
+                //set project Id for this data....
+                record.projectId = projectId
 
                 def dynamicPropertiesToAdd = [:]
 
@@ -157,7 +164,7 @@ class RecordImportService {
                                 utcf.setTimeZone(TimeZone.getTimeZone("UTC"));
                                 record.eventDate = utcf.format(suppliedDate)
                             } catch (Exception e) {
-                                e.printStackTrace()
+                                log.error("Problem importing record")
                             }
                         } else if(columns[idx] == "decimalLatitude"){
                             if(column && column != "null"){
@@ -207,7 +214,7 @@ class RecordImportService {
                                     record.dateCreated = DateUtils.parseDate(column,["dd-MM-yyyy"].toArray(new String[0]))
                                     record.lastUpdated = DateUtils.parseDate(column,["dd-MM-yyyy"].toArray(new String[0]))
                                 } catch (Exception e) {
-                                    println("Problem parsing modified: " + column)
+                                    log.error("Problem parsing modified dates: " + column)
                                 }
                             }
                         } else if(columns[idx] == "dateCreated"){

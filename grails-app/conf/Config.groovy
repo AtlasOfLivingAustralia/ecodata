@@ -8,9 +8,6 @@ if(!grails.config.locations || !(grails.config.locations instanceof List)) {
     grails.config.locations = []
 }
 
-// add ala skin conf (needed for version >= 0.1.10)
-grails.config.locations.add("classpath:ala-config.groovy")
-
 if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
     println "[${appName}] Including configuration file specified in environment: " + System.getenv(ENV_NAME);
     grails.config.locations.add "file:" + System.getenv(ENV_NAME)
@@ -29,6 +26,8 @@ def layers_config = "/data/${appName}/config/layers-config.groovy"
 if (new File(layers_config).exists()) {
     grails.config.locations.add "file:" + layers_config
 }
+
+
 
 println "[${appName}] (*) grails.config.locations = ${grails.config.locations}"
 
@@ -94,6 +93,10 @@ grails.mongo.default.mapping = {
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/
+
+//the ID of the default project to use for ad-hoc record submissions
+records.default.projectId = "4084c7ea-94f6-42f2-9c65-da18dcabf08"
+
 if(!app.dump.location){
     app.dump.location = "/data/ecodata/dump/"
 }
@@ -279,13 +282,18 @@ environments {
     }
 }
 
-// log4j configuration
-
-//this can be overridden in the external configuration
+// log4j configuration - this can be overridden in the external configuration
 if (!logging.dir) {
     logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
 }
 def loggingDir = logging.dir
+//if logging not available (e.g. Travis) log to /tmp and avoid errors
+if(!new File(loggingDir).exists()){
+    loggingDir = "/tmp"
+}
+
+println "[${appName}] Logging to ${loggingDir}"
+
 log4j = {
     appenders {
         environments{
