@@ -16,6 +16,9 @@ class RecordController {
 
     static defaultAction = "list"
 
+    def index(){
+    }
+
     /**
      * Download service for all records.
      */
@@ -44,8 +47,8 @@ class RecordController {
      * Optional query param "?model=<modelname>" to restrict output to matching records
      */
     def csvProject(){
-        def filename = params.id? "project-" + params.id + ".csv": "projects.csv"
-        response.setHeader("Content-Disposition","attachment; filename=\"" + filename + "\"");
+        def filename = params.id? "project-${params.id}.csv": "projects.csv"
+        response.setHeader("Content-Disposition","attachment; filename=\"${filename}\"");
         response.setContentType("text/csv")
         recordService.exportCSVProject(response.outputStream, params.id, params.model)
     }
@@ -98,7 +101,7 @@ class RecordController {
     }
 
     /**
-     * Retrieve a list of records with paging support.
+     * Retrieve a list of records with uncertain identifications.
      */
     def listUncertainIdentifications(){
         log.debug("list request....")
@@ -124,7 +127,7 @@ class RecordController {
         }
         def totalRecords = Record.count()
         response.setContentType("application/json")
-        def model = [totalRecords: totalRecords, records:records]
+        def model = [total: totalRecords, list:records]
         render model as JSON
     }
 
@@ -145,13 +148,14 @@ class RecordController {
         }
         def totalRecords = Record.countByUserId(params.userId)
         response.setContentType("application/json")
-        def model = [totalRecords: totalRecords, records:records]
+        def model = [total: totalRecords, list:records]
         render model as JSON
     }
 
     /**
      * Delete by occurrence ID
      */
+    @RequireApiKey
     def deleteById(){
         Record record = Record.findByOccurrenceID(params.id)
         if (record){
@@ -168,6 +172,7 @@ class RecordController {
     /**
      * Create method with JSON body...
      */
+    @RequireApiKey
     def create(){
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
@@ -191,6 +196,7 @@ class RecordController {
     /**
      * Update the supplied record.
      */
+    @RequireApiKey
     def updateById(){
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
