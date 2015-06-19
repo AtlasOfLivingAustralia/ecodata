@@ -16,16 +16,18 @@ class MobileController {
     def index() { }
 
     def recordService
-
+    def authService
     def userService
 
+    static def dateFormats = ["yyyy-MM-dd", "yyyy/MM/dd", "dd MMM yyyy", "dd-MM-yyyy", "dd/MM/yyyy", "dd/MM/yy"].toArray(new String[0])
+
     /**
-     * Handle a multipart post with record details
+     * Handles a multipart post with record details and images.
      */
     def submitRecordMultipart(){
-        log.debug("Mobile - submitRecordMultipart POST received...userName:" + params.userName + ", authKey:" + params.authenticationKey)
-        def authenticated = checkAuthenticationKey(params.userName, params.authenticationKey)
-        log.debug("Mobile userName:" + params.userName + ", authKey:" + params.authenticationKey +", authenticated: " + authenticated)
+        log.debug("Mobile - submitRecordMultipart POST received...userName:" + params.userName)
+        def authenticated = checkUsername(params.userName)
+        log.debug("Mobile userName:" + params.userName + ", recognised: " + authenticated)
         if (authenticated){
             try {
                 log.debug("Mobile parsing parameters...")
@@ -73,12 +75,12 @@ class MobileController {
     }
 
     /**
-     * Handles a record post.
+     * Handles a record post with a single image encoded in base64.
      */
     def submitRecord(){
-        log.debug("Mobile - submitRecord POST received...userName:" + params.userName + ", authKey:" + params.authenticationKey)
-        def authenticated = checkAuthenticationKey(params.userName, params.authenticationKey)
-        log.debug("Mobile userName:" + params.userName + ", authKey:" +params.authenticationKey +", authenticated: " + authenticated)
+        log.debug("Mobile - submitRecord POST received...userName:" + params.userName)
+        def authenticated = checkUsername(params.userName)
+        log.debug("Mobile userName:" + params.userName + ", recognised: " + authenticated)
         if (authenticated){
             try {
                 log.debug("Mobile parsing parameters...")
@@ -117,8 +119,8 @@ class MobileController {
         }
     }
 
-    private def boolean checkAuthenticationKey(String userName, String authKey) throws Exception {
-        //do we recognise the userName ?
+    private def boolean checkUsername(String userName) throws Exception {
+        //do we recognise the userName
         if(userName){
             userService.syncUserIdLookup(userName.toLowerCase()) != null
         } else {
@@ -144,7 +146,7 @@ class MobileController {
         def dateToUse = null
         try {
             SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
-            Date date = DateUtils.parseDate(dateString, ["yyyy-MM-dd", "yyyy/MM/dd", "dd MMM yyyy", "dd-MM-yyyy", "dd/MM/yyyy", "dd/MM/yy"].toArray(new String[0]));
+            Date date = DateUtils.parseDate(dateString,dateFormats);
             dateToUse = dateFormatter.format(date)
         } catch (IllegalArgumentException ex) {
             log.debug("no date supplied: " + dateString)
@@ -156,19 +158,13 @@ class MobileController {
 
         //get the user Id....
         log.info("Retrieving...user ID with user name: " + params.userName)
-        def userId = userFielddataService.getUserEmailToIdMap().get(params.userName.toLowerCase())
-        if(!userId){
-            //need to do a synchronous lookup to auth
-            log.info("Retrieving user ID with synchronous auth lookup user name: " + params.userName)
-            userId = userFielddataService.syncUserIdLookup(params.userName.toLowerCase())
-            log.info("Retrieved user ID with synchronous auth lookup: " + userId)
-        }
+        def userDetails = authService.getUserForEmailAddress(params.userName.toLowerCase())
 
-        if(userId){
+        if(userDetails){
             log.debug("Retrieved user ID: " + userId+ ", for user name: " + params.userName)
             //save the files
             def recordParams = [
-                   userId:userId,
+                   userId:userDetails.userId,
                    eventDate:dateToUse,
                    eventTime:time,
                    taxonConceptID:taxonId,
@@ -187,7 +183,7 @@ class MobileController {
                    devicePlatform:params.devicePlatform,
                    deviceId: params.deviceId,
                    occurrenceRemarks:params.notes,
-                   submissionMethod:"mobile"
+                   submissionMethod: "mobile"
             ]
             log.debug((recordParams as JSON).toString(true))
             [error:null, record: recordParams]

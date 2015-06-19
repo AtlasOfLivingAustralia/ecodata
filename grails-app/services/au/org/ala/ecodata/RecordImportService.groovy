@@ -71,8 +71,8 @@ class RecordImportService {
                                    created   : imageMetadata.dateUploaded,      //image service
                                    title     : imageMetadata.originalFileName,  //image service
                                    format    : imageMetadata.mimeType,          //image service
-                                   creator   : userDetails.displayName,         //CAS
-                                   rightsHolder: userDetails.displayName,       //CAS
+                                   creator   : record.userDisplayName,         //CAS
+                                   rightsHolder: record.userDisplayName,       //CAS
                                    license   : record.imageLicence ?: "Creative Commons Attribution",
                                    type      : "StillImage",
                                    imageId   : imageId,

@@ -174,6 +174,28 @@ class RecordService {
     }
 
     /**
+     * Add the supplied image in bytes to the supplied record.
+     *
+     * @param record
+     * @param originalName
+     * @param imageAsBytes
+     */
+    def addImageToRecord(Record record, String originalName, byte[] imageAsBytes){
+
+        //write bytes to temp file
+        def fileToUpload = File.createTempFile("multipart-upload-" + System.currentTimeMillis(),".tmp")
+        fileToUpload.withOutputStream {
+            it.write imageAsBytes
+        }
+
+        //upload
+        uploadImage(record, fileToUpload, [title: originalName])
+
+        //remove temp file
+        fileToUpload.delete()
+    }
+
+    /**
      * Upload the supplied image to the image service.
      *
      * @param record
@@ -183,9 +205,7 @@ class RecordService {
      */
     private def uploadImage (Record record, File fileToUpload, image) {
 
-        def remoteImageRepo = grailsApplication.config.imagesService.baseURL
         //upload an image
-        def httpClient = new DefaultHttpClient()
         def entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
         if (!fileToUpload.exists()) {
             log.error("File to upload does not exist or can not be read. " + fileToUpload.getAbsolutePath())
@@ -197,11 +217,12 @@ class RecordService {
         entity.addPart("image", fileBody)
         entity.addPart("metadata", new StringBody(([
                 "occurrenceId": record.occurrenceID,
+                "projectId": record.projectId,
                 "originalFilename": image.title,
                 "title": image.title,
                 "creator": image.creator,
                 "rights": image.rights,
-                "rightsHolder": image.creator,
+                "rightsHolder": image.rightsHolder ? image.rightsHolder : image.creator,
                 "license": image.license,
                 "dateTaken": image?.created,
                 "systemSupplier": grailsApplication.config.imageSystemSupplier?:"ecodata"
@@ -211,12 +232,14 @@ class RecordService {
             entity.addPart("tags", new StringBody((record.tags as JSON).toString()))
         }
 
-        def httpPost = new HttpPost(remoteImageRepo + "/ws/uploadImage")
+        def httpClient = new DefaultHttpClient()
+        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/uploadImage")
         httpPost.setEntity(entity)
-        httpPost.addHeader("X-ALA-userId","${record.userId}");
+        httpPost.addHeader("X-ALA-userId", "${record.userId}");
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
         def responseBody = response.getEntity().getContent().getText()
+
         log.debug("Image service response code: " + result.getStatusCode())
 
         def jsonSlurper = new JsonSlurper()
@@ -251,7 +274,6 @@ class RecordService {
         mapOfProperties.remove("_id")
         mapOfProperties
     }
-
 
     /**
      * Export project sightings to CSV.
