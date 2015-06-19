@@ -22,33 +22,7 @@ class ProjectService {
     def reportService
     def activityService
     def permissionService
-
-    private def mapAttributesToCollectory(props) {
-        def mapKeyProjectDataToCollectory = [
-                description: 'pubDescription',
-                manager: 'email',
-                name: 'name',
-                dataSharingLicense: '', // ignore this property (mapped to dataResource)
-                organisation: '', // ignore this property
-                projectId: 'uid',
-                urlWeb: 'websiteUrl'
-        ]
-        def collectoryProps = [
-                api_key: grailsApplication.config.api_key
-        ]
-        def hiddenJSON = [:]
-        props.each { k, v ->
-            if (v != null) {
-                def keyCollectory = mapKeyProjectDataToCollectory[k]
-                if (keyCollectory == null) // not mapped to first class collectory property
-                    hiddenJSON[k] = v
-                else if (keyCollectory != '') // not to be ignored
-                    collectoryProps[keyCollectory] = v
-            }
-        }
-        collectoryProps.hiddenJSON = hiddenJSON
-        collectoryProps
-    }
+    def collectoryService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -108,6 +82,7 @@ class ProjectService {
             mapOfProperties.remove("sites")
             mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, [SiteService.FLAT])
             mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
+            mapOfProperties.links = documentService.findAllLinksForProjectId(prj.projectId, levelOfDetail)
 
             if (levelOfDetail == ALL) {
                 mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
@@ -157,7 +132,6 @@ class ProjectService {
 
     def create(props) {
         assert getCommonService()
-        def o
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
@@ -165,12 +139,14 @@ class ProjectService {
                 return [status:'error',error:'Duplicate project id for create ' + props.projectId]
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-            o = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
-            o.save(failOnError: true)
+            def project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
+            project.save(failOnError: true)
 
             props.remove('sites')
             props.remove('id')
-            getCommonService().updateProperties(o, props)
+            props << collectoryService.createDataProviderAndResource(project.projectId, props)
+            getCommonService().updateProperties(project, props)
+            return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Project.withSession { session -> session.clear() }
@@ -178,28 +154,6 @@ class ProjectService {
             log.error error
             return [status:'error',error:error]
         }
-
-        // create a dataProvider in collectory to hold project meta data
-        try {
-            def collectoryProps = mapAttributesToCollectory(props)
-            def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/', collectoryProps)
-            def dataProviderId = webService.extractCollectoryIdFromResult(result)
-            if (dataProviderId) {
-                // create a dataResource in collectory to hold project outputs
-                props.dataProviderId = dataProviderId
-                collectoryProps.remove('hiddenJSON')
-                collectoryProps.dataProvider = [uid: dataProviderId]
-                if (props.collectoryInstitutionId) collectoryProps.institution = [uid: props.collectoryInstitutionId]
-                collectoryProps.licenseType = props.dataSharingLicense
-                result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
-                props.dataResourceId = webService.extractCollectoryIdFromResult(result)
-            }
-        } catch (Exception e) {
-            def error = "Error creating collectory info for project ${o.projectId} - ${e.message}"
-            log.error error
-        }
-
-        return [status:'ok',projectId:o.projectId]
     }
 
     def update(props, id) {
@@ -207,27 +161,15 @@ class ProjectService {
         if (a) {
             try {
                 getCommonService().updateProperties(a, props)
+                if (a.dataProviderId)
+                    collectoryService.updateDataProviderAndResource(Project.findByProjectId(id))
+                return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
                 def error = "Error updating project ${id} - ${e.message}"
                 log.error error
                 return [status: 'error', error: error]
             }
-            if (a.dataProviderId) { // recreate 'hiddenJSON' in collectory every time (minus some attributes)
-                try {
-                    a = Project.findByProjectId(id)
-                    ['id', 'dateCreated', 'documents', 'lastUpdated', 'organisationName', 'projectId', 'sites'].each {
-                        a.remove(it)
-                    }
-                    webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + a.dataProviderId, mapAttributesToCollectory(a))
-                    if (a.dataResourceId)
-                        webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + a.dataResourceId, [licenseType: a.dataSharingLicense])
-                } catch (Exception e ) {
-                    def error = "Error updating collectory info for project ${id} - ${e.message}"
-                    log.error error
-                }
-            }
-            return [status: 'ok']
         } else {
             def error = "Error updating project - no such id ${id}"
             log.error error

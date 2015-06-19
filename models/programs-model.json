@@ -1,111 +1,87 @@
 {"programs": [
     {
-        "projectDatesContracted": false,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
+        "projectDatesContracted": false,
+        "activities": [],
         "name": "Biodiversity Fund",
         "subprograms": [
             {
-                "startDate": "",
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
                 "name": "Round 1",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "startDate": "",
+                ],
+                "endDate": "",
                 "name": "Round 2 - 2013/14",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "startDate": "",
+                ],
+                "endDate": "",
                 "name": "Round 2 - Northern Landscape Strategy",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "startDate": "",
+                ],
+                "endDate": "",
                 "name": "Tasmania's Native Forests 2013/14",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
-                ]
-            },
-            {
-                "startDate": "",
+                ],
+                "endDate": "",
                 "name": "Round 2 - Expression of Interest 2013/14",
-                "endDate": "",
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ]
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Reef Rescue 2013/14",
-                "endDate": "",
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
-                ]
+                ],
+                "endDate": "",
+                "name": "Reef Rescue 2013/14",
+                "startDate": ""
             }
         ],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
+        "projectDatesContracted": true,
+        "activities": [],
         "name": "Caring for Our Country 2",
         "subprograms": [
             {
-                "startDate": "",
-                "name": "Regional Delivery 1318",
-                "endDate": "",
-                "themes": [
-                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
-                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
-                    {"name": "Protecting Ramsar sites and values"},
-                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
-                    {"name": "Building natural resource management community skills, knowledge and engagement"},
-                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"},
-                    {"name": "Increase the adoption of sustainable land management practices"},
-                    {"name": "Increase the adoption of sustainable fishing practices"},
-                    {"name": "Increase trialling of innovative practices for improved NRM"},
-                    {"name": "Increase the knowledge and skills of NRM managers"},
-                    {"name": "Increase the capacity of leaders involved in NRM"},
-                    {"name": "Increase engagement and participation in NRM"},
-                    {"name": "Increase community awareness of natural resources"},
-                    {"name": "Regional Land care Facilitator position"}
-                ]
-            },
-            {
-                "startDate": "",
-                "name": "Target Area Grants - 2013/14",
-                "endDate": "",
                 "themes": [
                     {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
                     {"name": "Restoring and maintaining urban waterways and coastal environments"},
@@ -113,24 +89,37 @@
                     {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
                     {"name": "Building natural resource management community skills, knowledge and engagement"},
                     {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
-                ]
+                ],
+                "endDate": "",
+                "name": "Regional Delivery 1318",
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ],
+                "endDate": "",
+                "name": "Target Area Grants - 2013/14",
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
                 "name": "Community Environment Grants 1314",
-                "endDate": "",
-                "themes": []
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [{"name": "Protecting the Great Barrier Reef"}],
+                "endDate": "",
                 "name": "Reef Rescue 2013/14",
-                "endDate": "",
-                "themes": [{"name": "Protecting the Great Barrier Reef"}]
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Regional Delivery (sustainable agriculture)",
-                "endDate": "",
                 "themes": [
                     {"name": "Increase the adoption of sustainable land management practices"},
                     {"name": "Increase the adoption of sustainable fishing practices"},
@@ -140,200 +129,258 @@
                     {"name": "Increase engagement and participation in NRM"},
                     {"name": "Increase community awareness of natural resources"},
                     {"name": "Regional Land care Facilitator position"}
-                ]
+                ],
+                "endDate": "",
+                "name": "Regional Delivery (sustainable agriculture)",
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [],
+                "endDate": "",
                 "name": "Target Area Grants -  Expression of Interest 2013/14",
-                "endDate": "",
-                "themes": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "0210 1318",
+                "themes": [],
                 "endDate": "",
-                "themes": []
+                "name": "0210 1318",
+                "startDate": ""
             }
         ],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
+        "projectDatesContracted": true,
+        "activities": [],
         "name": "Cumberland Plain",
         "subprograms": [{
-            "startDate": "",
-            "name": "Cumberland Plain Projects",
+            "themes": [],
             "endDate": "",
-            "themes": []
+            "name": "Cumberland Plain Projects",
+            "startDate": ""
         }],
-        "activities": []
+        "isMeritProgramme": true
     },
     {
         "reportingPeriod": "3",
-        "isMeritProgramme": true,
+        "activities": [
+            "Green Army - Monthly project status report",
+            "Green Army - Quarterly project report",
+            "Debris Removal",
+            "Fencing",
+            "Pest Management",
+            "Weed Treatment",
+            "Site Preparation",
+            "Seed Collection",
+            "Revegetation",
+            "Public Access and Infrastructure",
+            "Plant Propagation",
+            "Heritage Conservation",
+            "Fire Management",
+            "Erosion Management",
+            "Water Management",
+            "Works Planning and Risk"
+        ],
         "name": "Green Army",
         "subprograms": [
             {
-                "startDate": "2014-06-30T14:00:00Z",
+                "themes": [
+                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
+                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                    {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
+                ],
+                "endDate": "",
                 "name": "Green Army Round 1",
-                "endDate": "",
-                "themes": [
-                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
-                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
-                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                    {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
-                ]
+                "startDate": "2014-06-30T14:00:00Z"
             },
             {
-                "startDate": "2014-12-31T13:00:00Z",
+                "themes": [],
+                "endDate": "",
                 "name": "Green Army Round 2",
-                "endDate": "",
-                "themes": [
-                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
-                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
-                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                    {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
-                ]
+                "startDate": ""
             }
         ],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "isMeritProgramme": true,
-        "name": "Environmental Stewardship",
-        "subprograms": [
-            {
-                "startDate": "",
-                "name": "Environmental Stewardship 1319",
-                "endDate": "",
-                "themes": []
-            },
-            {
-                "startDate": "",
-                "name": "Environmental Stewardship 1318",
-                "endDate": "",
-                "themes": []
-            }
-        ],
-        "activities": []
-    },
-    {
-        "projectDatesContracted": true,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "name": "Reef Trust",
+        "projectDatesContracted": true,
+        "activities": [],
+        "name": "20 Million Trees (NLP)",
         "subprograms": [{
-            "startDate": "",
-            "name": "Reef Trust Phase 1 Investment",
+            "themes": [],
             "endDate": "",
-            "themes": []
+            "name": "Round One",
+            "startDate": ""
         }],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "isMeritProgramme": true
     },
     {
+        "reportingPeriod": "3",
         "projectDatesContracted": true,
+        "activities": [],
+        "name": "Environmental Stewardship",
+        "subprograms": [{
+            "themes": [],
+            "endDate": "",
+            "name": "Environmental Stewardship 1318",
+            "startDate": ""
+        }],
+        "reportingPeriodAlignedToCalendar": false,
+        "isMeritProgramme": true
+    },
+    {
+        "activities": [
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Vegetation Assessment - BioCondition (QLD)",
+            "Vegetation Assessment - Habitat Hectares v1 (VIC)",
+            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+            "TasVeg - Native Vegetation Assessment - Forest Vegetation",
+            "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
+            "Vegetation Assessment - Bushland Condition Monitoring (SA)"
+        ],
+        "name": "None",
+        "subprograms": []
+    },
+    {
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
+        "projectDatesContracted": true,
+        "activities": [],
         "name": "National Landcare Programme",
         "subprograms": [
             {
-                "startDate": "",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
                 "name": "Regional Delivery",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
-                ]
-            },
-            {
-                "startDate": "",
+                ],
+                "endDate": "",
                 "name": "Local Programmes",
-                "endDate": "",
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
-                ]
+                ],
+                "endDate": "",
+                "name": "25th Anniversary Landcare Grants 2014-15",
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "25th Anniversary Landcare Grants",
-                "endDate": "",
                 "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
-                ]
-            },
-            {
-                "startDate": "",
-                "name": "World Heritage",
+                ],
                 "endDate": "",
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ]
-            },
-            {
-                "startDate": "",
                 "name": "20 Million Trees Grants",
-                "endDate": "",
-                "themes": [
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ]
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Regional Funding",
-                "endDate": "",
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
-                ]
+                ],
+                "endDate": "",
+                "name": "World Heritage",
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Landcare Network Grants 2014-15",
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
                 "endDate": "",
-                "themes": []
+                "name": "Regional Funding",
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Strategic Outcome 1. Maintain and improve ecosystem services through sustainable management of local and regional landscapes."},
+                    {"name": "Strategic Outcome 2. Increase in the number of farmers and fishers adopting practices that improve the quality of the natural resource base, and the area of land over which those practices are applied."},
+                    {"name": "Strategic Outcome 3. Increase engagement and participation of the community, including landcare, farmers and Indigenous people, in sustainable natural resource management."},
+                    {"name": "Strategic Outcome 4. Increase restoration and rehabilitation of the natural environment, including protecting and conserving nationally and internationally significant species, ecosystems, ecological communities, places and values."}
+                ],
+                "endDate": "",
+                "name": "Landcare Network Grants 2014-15",
+                "startDate": ""
             }
         ],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "reportingPeriod": "3",
-        "name": "No program",
-        "subprograms": [],
-        "activities": []
-    },
-    {
-        "projectDatesContracted": true,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "name": "20 Million Trees Service Providers",
+        "projectDatesContracted": true,
+        "activities": [],
+        "name": "Reef Trust",
         "subprograms": [{
-            "startDate": "",
-            "name": "Round One",
+            "themes": [],
             "endDate": "",
-            "themes": []
+            "name": "Reef Trust Phase 1 Investment",
+            "startDate": ""
         }],
-        "activities": []
+        "isMeritProgramme": true
+    },
+    {
+        "activities": [
+            "Weed Mapping & Monitoring",
+            "Weed Treatment"
+        ],
+        "name": "Weedwatcher",
+        "subprograms": []
+    },
+    {
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [],
+        "name": "20 Million Trees Service Providers",
+        "subprograms": [],
+        "isMeritProgramme": true
+    },
+    {
+        "activities": [
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+            "TasVeg - Native Vegetation Assessment - Forest Vegetation"
+        ],
+        "name": "Citizen Science Projects",
+        "subprograms": []
     }
 ]}

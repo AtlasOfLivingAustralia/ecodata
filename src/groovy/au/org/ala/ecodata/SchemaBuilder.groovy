@@ -194,6 +194,9 @@ class SchemaBuilder {
                case 'boolean':
                    typeGenerator = this.&booleanProperty
                    break
+               case 'document':
+                   typeGenerator = this.&documentProperty
+                   break
 
                default:
                    //typeGenerator = this.&error
@@ -279,6 +282,10 @@ class SchemaBuilder {
 
     def booleanProperty(property) {
         return [type:'boolean']
+    }
+
+    def documentProperty(property) {
+        return [type:'object', properties:[filename:[type:'string'], data:[type:'string', format:'base64']]]
     }
 
     def error(property) {

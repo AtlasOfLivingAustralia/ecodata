@@ -8,36 +8,11 @@ import grails.validation.ValidationException
 class OrganisationService {
 
     /** Use to include related projects in the toMap method */
-    public static final String PROJECTS = 'projects' //
+    public static final String PROJECTS = 'projects'
 
     static transactional = 'mongo'
 
-    def grailsApplication, webService, commonService, projectService, permissionService, documentService, collectoryService
-
-    // create ecodata organisations for any institutions in collectory which are not yet in ecodata
-    // return null if sucessful, or errors
-    def collectorySync() {
-        def errors
-        def url = "${grailsApplication.config.collectory.baseURL}ws/institution/"
-        def institutions = webService.getJson(url)
-        if (institutions instanceof List) {
-            def orgs = Organisation.findAllByCollectoryInstitutionIdIsNotNull()
-            def map = orgs.collectEntries {
-               [it.collectoryInstitutionId, it]
-            }
-            institutions.each({it ->
-                if (!map[it.uid]) {
-                    def inst = webService.getJson(url + it.uid)
-                    def result = create([collectoryInstitutionId: inst.uid,
-                                        name: inst.name,
-                                        description: inst.pubDescription?:"",
-                                        url: inst.websiteUrl?:""])
-                    if (result.errors) errors = result.errors
-                }
-            })
-        }
-        errors
-    }
+    def commonService, projectService, userService, permissionService, documentService, collectoryService
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -69,6 +44,9 @@ class OrganisationService {
             props.remove('organisationId')
             props.remove('collectoryInstitutionId')
             commonService.updateProperties(organisation, props)
+
+            // Assign the creating user as an admin.
+            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails().userId, AccessLevel.admin, organisation.organisationId)
 
             [status:'ok',organisationId:organisation.organisationId]
         }
