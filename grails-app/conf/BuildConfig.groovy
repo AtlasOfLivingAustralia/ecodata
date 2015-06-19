@@ -36,14 +36,6 @@ grails.project.dependency.resolution = {
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
-        test "org.gebish:geb-spock:0.9.3"
-        test("org.seleniumhq.selenium:selenium-htmlunit-driver:$seleniumVersion") {
-            exclude "xml-apis"
-        }
-        test("org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion")
-        test("org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion")
-        test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
-
         // ElasticSearch
         compile "org.elasticsearch:elasticsearch:1.5.2"
 
@@ -95,8 +87,6 @@ grails.project.dependency.resolution = {
         build ":release:3.0.1"
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.5"
-
-        test ":geb:0.9.3"
         
     }
 }

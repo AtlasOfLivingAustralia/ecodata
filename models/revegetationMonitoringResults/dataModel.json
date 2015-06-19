@@ -43,7 +43,7 @@
                     "description": "The number of individual plants planted on the site during the revegetation works activity",
                     "primaryResult": "true",
                     "name": "numberPlanted",
-                    "validate": "required, min[1]"
+                    "validate": "required, min[0]"
                 },
                 {
                     "dataType": "number",

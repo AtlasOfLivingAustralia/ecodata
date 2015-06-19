@@ -4,18 +4,28 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
 
     def organisationController = new OrganisationController()
     def organisationService
+    def userService
     def stubbedCollectoryService = Stub(CollectoryService)
+    def stubbedUserService = Stub(UserService)
 
     def setup() {
         organisationService.collectoryService = stubbedCollectoryService
+        organisationService.userService = stubbedUserService
         organisationController.organisationService = organisationService
+    }
+
+    def cleanup() {
+        // The environment persists for all integration tests so we need to restore the service to it's previous condition.
+        organisationService.userService = userService
     }
 
     void "test create organisation"() {
 
         setup:
         def institutionId = "dr1"
+        def userId = '1234'
         stubbedCollectoryService.createInstitution(_) >> institutionId
+        stubbedUserService.getCurrentUserDetails() >> [userId:userId]
         def org = TestDataHelper.buildNewOrganisation([name: 'Test Organisation', description: 'Test description', dynamicProperty: 'dynamicProperty'])
         setupPost(organisationController.request, org)
 
@@ -23,7 +33,6 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         def resp = organisationController.update('') // Empty or null ID triggers a create
 
         then: "ensure we get a response including an organisationId"
-
         def organisationId = resp.organisationId
         organisationController.response.contentType == 'application/json;charset=UTF-8'
         resp.message == 'created'
@@ -40,6 +49,12 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
         savedOrganisation.description == org.description
         savedOrganisation.dynamicProperty == org.dynamicProperty
         savedOrganisation.collectoryInstitutionId == institutionId
+
+        and: "the user who created the organisation is an admin of the new organisation"
+        def orgPermissions = UserPermission.findAllByEntityIdAndEntityType(savedOrganisation.organisationId, Organisation.class.name)
+        orgPermissions.size() == 1
+        orgPermissions[0].userId == userId
+        orgPermissions[0].accessLevel == AccessLevel.admin
 
     }
 
