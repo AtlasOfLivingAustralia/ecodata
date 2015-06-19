@@ -20,7 +20,6 @@ class RecordService {
     def grailsApplication
     def activityService, metadataService, outputService, projectService, siteService
 
-
     def serviceMethod() {}
 
     final def ignores = ["action","controller","associatedMedia"]
@@ -124,20 +123,47 @@ class RecordService {
                 }
             }
 
+            //clear images
+            record.multimedia = []
+
             //persist an images into image service
             if(json.multimedia){
+
                 json.multimedia.eachWithIndex { image, idx ->
+
+                    record.multimedia[idx] = [:]
+                    //reconcile new with old images...
                     // Only upload images that are NOT already in images.ala.org.au
-                    if (!image.identifier.contains(grailsApplication.config.imagesService.baseURL)) {
-                        def address = image.identifier ? image.identifier : image.url
-                        def downloadedFile = download(record.occurrenceID, idx, address)
-                        log.debug "Uploading image - ${address}"
+                    if (!image.imageId) {
+
+                        log.debug "Uploading image - ${image.identifier }"
+                        def downloadedFile = download(record.occurrenceID, idx, image.identifier )
                         def imageId = uploadImage(record, downloadedFile, image)
+
                         record.multimedia[idx].imageId = imageId
                         record.multimedia[idx].identifier = grailsApplication.config.imagesService.baseURL + "/image/proxyImageThumbnailLarge?imageId=" + imageId
+                    } else {
+                        //TODO push metadata refresh to image service...
+                        //just update the metadata (licence etc)
+                        record.multimedia[idx].imageId = image.imageId
+                        record.multimedia[idx].identifier = image.identifier
                     }
+
+                    log.debug "Refreshing metadata - ${image.identifier }"
+                    record.multimedia[idx].license = image.license
+                    record.multimedia[idx].rights = image.rights
+                    record.multimedia[idx].rightsHolder = image.rightsHolder
+                    record.multimedia[idx].title = image.title
+                    record.multimedia[idx].type = image.type
+                    record.multimedia[idx].format = image.format
+                    record.multimedia[idx].creator = image.creator
                 }
             }
+
+            if(!record.projectId){
+                record.projectId = grailsApplication.config.records.default.projectId
+            }
+
             record.save(flush: true)
         } catch(Exception e) {
             log.error(e.getMessage(), e)
@@ -171,10 +197,12 @@ class RecordService {
         entity.addPart("image", fileBody)
         entity.addPart("metadata", new StringBody(([
                 "occurrenceId": record.occurrenceID,
-                "license": image?.license,
-                "copyright": image?.license,
-                "originalFilename": image?.title,
-                "attribution": image?.creator,
+                "originalFilename": image.title,
+                "title": image.title,
+                "creator": image.creator,
+                "rights": image.rights,
+                "rightsHolder": image.creator,
+                "license": image.license,
                 "dateTaken": image?.created,
                 "systemSupplier": grailsApplication.config.imageSystemSupplier?:"ecodata"
         ] as JSON).toString()))
