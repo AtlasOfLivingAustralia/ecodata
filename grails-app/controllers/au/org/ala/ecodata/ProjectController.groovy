@@ -170,7 +170,7 @@ class ProjectController {
         }
         if (result.status == 'ok') {
             setResponseHeadersForProjectId(response, result.projectId)
-            render message as JSON
+            asJson(message)
         } else {
             log.error result.error
             render status:400, text: result.error
