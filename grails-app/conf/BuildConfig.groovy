@@ -42,7 +42,7 @@ grails.project.dependency.resolution = {
         // Schema validation for external web service clients
         compile "com.github.fge:json-schema-validator:2.1.6"
 		compile "com.itextpdf:itextpdf:5.5.1"
-        compile "org.apache.httpcomponents:httpmime:4.1.2"
+        compile "org.apache.httpcomponents:httpmime:4.2.1"
 
         compile "org.geotools.xsd:gt-xsd-kml:${geoToolsVersion}"
         compile "org.geotools:gt-shapefile:${geoToolsVersion}"
@@ -70,7 +70,7 @@ grails.project.dependency.resolution = {
         runtime ":jquery:1.11.1"
         runtime ":resources:1.2.8"
         runtime ":csv:0.3.1"
-        runtime ":ala-auth:1.0"
+        runtime ":ala-auth:1.3.1"
         runtime ":ala-bootstrap2:1.2"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
