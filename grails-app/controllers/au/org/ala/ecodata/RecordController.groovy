@@ -117,7 +117,7 @@ class RecordController {
     def list(){
         log.debug("list request....")
         def records = []
-        def sort = params.sort ?: "dateCreated"
+        def sort = params.sort ?: "lastUpdated"
         def order = params.order ?:  "desc"
         def offset = params.start ?: 0
         def max = params.pageSize ?: 10
