@@ -145,7 +145,11 @@ class RecordService {
 
             //set all supplied properties
             json.each {
-                if(!ignores.contains(it.key) && it.value){
+                if(it.key in ["decimalLatitude", "decimalLongitude"] && value){
+                    record[it.key] = it.value.toString().toDouble()
+                } else if(it.key in ["dateCreated", "lastUpdated"] && value){
+                    //do nothing we these values...
+                } else if(!ignores.contains(it.key) && it.value){
                     record[it.key] = it.value
                 }
             }

@@ -217,13 +217,13 @@ class RecordController {
                     //save the record
                     def (record, errors) = recordService.createRecordWithImages(recordParams, imagesToBeLoaded)
                     if(errors.size() == 0){
-                        log.debug "Added record: " + record.occurrenceID
+                        log.debug "Added record: ${record.occurrenceID}"
                         response.setStatus(200)
                         setResponseHeadersForRecord(response, record)
                         response.setContentType("application/json;charset=UTF-8")
                         [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
                     } else {
-                        log.error "Problem creating record. " + errors
+                        log.error "Problem creating record. ${errors}"
                         record.delete(flush: true)
                         response.addHeader 'errors', (errors as grails.converters.JSON).toString()
                         response.sendError(400, "Unable to create a new record. See errors for more details." )
