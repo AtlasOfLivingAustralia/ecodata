@@ -53,7 +53,7 @@ class RecordImportService {
 
            try {
                def url = grailsApplication.config.biocacheService.baseURL + "/occurrences/search?facet=off&q=occurrence_id:\"" + record.occurrenceID + "\""
-               log.info("[record ${count}] Retrieving from biocache: " + url)
+               log.info("[record ${count}] Retrieving from biocache: ${url}")
                def response = new URL(url).text
                def json = js.parseText(response)
                if (json.totalRecords == 1) {
