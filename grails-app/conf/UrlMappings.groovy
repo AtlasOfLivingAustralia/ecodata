@@ -2,27 +2,23 @@ class UrlMappings {
 
 	static mappings = {
 
-        "/ws/submit/record"(controller: "mobile") { action = [POST: "submitRecord"] }
-        "/ws/submit/recordMultiPart"(controller: "mobile"){ action = [POST:"submitRecordMultipart"] }
-        "/ws/mobile/submitRecord"(controller: "mobile"){ action = [POST:"submitRecord"] }
-        "/ws/mobile/submitRecordMultipart"(controller: "mobile"){ action = [POST:"submitRecordMultipart"] }
+
+        "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
+        "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
+
         "/ws/record/csv"(controller: "record"){ action = [GET:"csv"] }
         "/ws/record/uncertainIdentifications"(controller: "record"){ action = [GET:"listUncertainIdentifications"] }
-        "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
-        "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
         "/ws/record/count"(controller: "record"){ action = [GET:"count"] }
         "/ws/record/user/$userId"(controller: "record", action: "listForUser")
         "/ws/record/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
-        "/ws/record/$id"(controller: "record"){ action = [GET:"getById", PUT:"updateById", DELETE:"deleteById", POST:"updateById"] }
-        "/ws/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
-        "/ws/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
-        "/ws/images/update"(controller: "record"){ action = [POST:"updateImages"] }
-        "/ws/location/fix"(controller: "location"){ action = [GET:"fixupLocations"] }
+
+        "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
+
         "/ws/location"(controller: "location"){ action = [GET:"list", POST:"create"] }
         "/ws/location/"(controller: "location"){ action = [GET:"list", POST:"create"] }
         "/ws/location/user/$userId"(controller: "location"){ action = [GET:"listForUser", DELETE: "deleteAllForUser"] }
-        "/ws/location/$id"(controller: "location"){ action = [GET:"getById", PUT:"updateById", DELETE:"deleteById", POST:"updateById"] }
+        "/ws/location/$id"(controller: "location"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
         "/ws/activitiesForProject/$id" {
             controller = 'activity'

@@ -8,7 +8,6 @@ class ProjectControllerSpec extends IntegrationSpec {
     def projectController = new ProjectController()
 
     def setup() {
-
     }
 
     def cleanup() {
@@ -42,7 +41,6 @@ class ProjectControllerSpec extends IntegrationSpec {
         savedProject.name == project.name
         savedProject.description == project.description
         savedProject.dynamicProperty == project.dynamicProperty
-
     }
 
 }

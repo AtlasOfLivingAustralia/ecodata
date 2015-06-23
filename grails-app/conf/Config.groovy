@@ -96,6 +96,7 @@ grails.mongo.default.mapping = {
 
 //the ID of the default project to use for ad-hoc record submissions
 records.default.projectId = "4084c7ea-94f6-42f2-9c65-da18dcabf08"
+records.default.dataResourceId = "dr364"
 
 if(!app.dump.location){
     app.dump.location = "/data/ecodata/dump/"

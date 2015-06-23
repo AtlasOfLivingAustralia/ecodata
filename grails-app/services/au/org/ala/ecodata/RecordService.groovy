@@ -18,11 +18,11 @@ import org.apache.http.impl.client.DefaultHttpClient
 class RecordService {
 
     def grailsApplication
-    def activityService, metadataService, outputService, projectService, siteService
+    def activityService, metadataService, outputService, projectService, siteService, authService
 
     def serviceMethod() {}
 
-    final def ignores = ["action","controller","associatedMedia"]
+    final def ignores = ["action", "controller", "associatedMedia"]
 
     /**
      * Export records to CSV.
@@ -103,84 +103,150 @@ class RecordService {
      */
     def createRecord(json){
         Record record = new Record().save(true)
-        def errors = updateRecord(record,json)
+        def errors = updateRecord(record, json)
+        [record, errors]
+    }
+
+    /**
+     * Create a record with the supplied map of fileName -> byte[].
+     *
+     * @param json
+     * @param fileMap
+     */
+    def createRecordWithImages(json, fileMap){
+        Record record = new Record().save(true)
+        def errors = updateRecord(record, json, fileMap)
         [record, errors]
     }
 
     /**
      * Update the supplied record including updates to any supplied images.
+     * This method will take imageMetadata references in the json in the multimedia section
+     * or will upload images supplied in the imageMap which has contains
+     * filename -> byte[]
      *
      * @param record
      * @param json
      * @return
      */
-    private def updateRecord(Record record,  json){
+    private def updateRecord(Record record, json, Map imageMap = [:]){
+
         def errors = [:]
+
         try {
+
+            def userDetails = authService.getUserForUserId(json.userId)
+            if(!userDetails){
+                errors['updateError'] = "Unable to lookup user with ID: ${json.userId}. Check authorised systems in auth."
+                return errors
+            }
+            record.userId = userDetails.userId
+            record.userDisplayName = userDetails.displayName
+
+            //set all supplied properties
             json.each {
                 if(!ignores.contains(it.key) && it.value){
                     record[it.key] = it.value
                 }
             }
 
-            //clear images
+            //if no projectId is supplied, use default
+            if(!record.projectId){
+                record.projectId = grailsApplication.config.records.default.projectId
+            }
+
+            //use the data resource UID associated with the project
+            def project = Project.findByProjectId(record.projectId)
+            record.dataResourceUid = project.dataResourceId
+
+            //clear current imageMetadata references on the record
             record.multimedia = []
 
-            //persist an images into image service
+            //persist any supplied images into imageMetadata service
             if(json.multimedia){
 
                 json.multimedia.eachWithIndex { image, idx ->
 
                     record.multimedia[idx] = [:]
-                    //reconcile new with old images...
+                    // reconcile new with old images...
                     // Only upload images that are NOT already in images.ala.org.au
-                    if (!image.imageId) {
+                    if(!image.creator){
+                        image.creator = userDetails.displayName
+                    }
 
-                        log.debug "Uploading image - ${image.identifier }"
-                        def downloadedFile = download(record.occurrenceID, idx, image.identifier )
+                    def alreadyLoaded = false
+                    if (!image.imageId) {
+                        log.debug "Uploading imageMetadata - ${image.identifier}"
+                        def downloadedFile = download(record.occurrenceID, idx, image.identifier)
                         def imageId = uploadImage(record, downloadedFile, image)
 
                         record.multimedia[idx].imageId = imageId
-                        record.multimedia[idx].identifier = grailsApplication.config.imagesService.baseURL + "/image/proxyImageThumbnailLarge?imageId=" + imageId
+                        record.multimedia[idx].identifier = getImageUrl(imageId)
+
                     } else {
-                        //TODO push metadata refresh to image service...
-                        //just update the metadata (licence etc)
+                        alreadyLoaded = true
+                        //re-use the existing imageId rather than upload again
+                        log.debug "Image already uploaded - ${image.imageId}"
                         record.multimedia[idx].imageId = image.imageId
                         record.multimedia[idx].identifier = image.identifier
                     }
 
-                    log.debug "Refreshing metadata - ${image.identifier }"
-                    record.multimedia[idx].license = image.license
-                    record.multimedia[idx].rights = image.rights
-                    record.multimedia[idx].rightsHolder = image.rightsHolder
-                    record.multimedia[idx].title = image.title
-                    record.multimedia[idx].type = image.type
-                    record.multimedia[idx].format = image.format
-                    record.multimedia[idx].creator = image.creator
-                }
-            }
+                    setDCTerms(image, record.multimedia[idx])
 
-            if(!record.projectId){
-                record.projectId = grailsApplication.config.records.default.projectId
+                    if(alreadyLoaded){
+                        log.debug "Refreshing metadata - ${image.identifier}"
+                        //refresh metadata in imageMetadata service
+//                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
+                    }
+                }
+            } else if(imageMap){
+                //upload the images supplied as bytes
+                def idx = 0
+                imageMap.each { imageFileName, imageInBytes ->
+                    def metadata = [
+                            title: imageFileName,
+                            creator: userDetails.displayName
+                    ]
+                    def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
+                    record.multimedia[idx] = [:]
+                    record.multimedia[idx].imageId = imageId
+                    record.multimedia[idx].identifier = getImageUrl(imageId)
+                    //we only support one set of metadata for all images for this method
+                    setDCTerms(json, record.multimedia[idx])
+                    idx++
+                }
             }
 
             record.save(flush: true)
         } catch(Exception e) {
             log.error(e.getMessage(), e)
-            //NC catch an unhandled errors so that we don't insert records that have major issues. ie missing userID
             errors['updateError'] = e.getClass().toString() +" " +e.getMessage()
         }
         errors
     }
 
+    private setDCTerms(image, multimediaElement){
+        multimediaElement.license = image.license
+        multimediaElement.rights = image.rights
+        multimediaElement.rightsHolder = image.rightsHolder
+        multimediaElement.title = image.title
+        multimediaElement.type = image.type
+        multimediaElement.format = image.format
+        multimediaElement.creator = image.creator
+    }
+
+    private def getImageUrl(imageId){
+        grailsApplication.config.imagesService.baseURL + "/image/proxyImageThumbnailLarge?imageId=" + imageId
+    }
+
     /**
-     * Add the supplied image in bytes to the supplied record.
+     * Add the supplied imageMetadata in bytes to the supplied record.
      *
      * @param record
      * @param originalName
      * @param imageAsBytes
      */
-    def addImageToRecord(Record record, String originalName, byte[] imageAsBytes){
+    private def uploadImageInByteArray(Record record, String originalName, byte[] imageAsBytes, Map metadata){
 
         //write bytes to temp file
         def fileToUpload = File.createTempFile("multipart-upload-" + System.currentTimeMillis(),".tmp")
@@ -189,23 +255,77 @@ class RecordService {
         }
 
         //upload
-        uploadImage(record, fileToUpload, [title: originalName])
+        def imageId = uploadImage(record, fileToUpload, metadata)
+
+        if(!record.multimedia){
+            record.multimedia = []
+        }
 
         //remove temp file
         fileToUpload.delete()
+
+        //return imageMetadata Id
+        imageId
     }
 
     /**
-     * Upload the supplied image to the image service.
+     * Update the metadata for an imageMetadata in the imageMetadata service.
+     * This will include updates to tags and licensing.
+     *
+     * @param imageId
+     * @param record
+     * @param metadataProperties
+     * @return
+     */
+    private def updateImageMetadata(String imageId, record, metadataProperties){
+
+        log.info("Updating imageMetadata metadata for imageMetadata: ${imageId} from record ${record.occurrenceID}")
+
+        //upload an image metadata
+        def entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
+        entity.addPart("metadata", new StringBody(([
+                "title": metadataProperties.title,
+                "creator": metadataProperties.creator,
+                "rights": metadataProperties.rights,
+                "rightsHolder": metadataProperties.rightsHolder ? metadataProperties.rightsHolder : metadataProperties.creator,
+                "license": metadataProperties.license
+        ] as JSON).toString()))
+
+        if (record.tags) {
+            entity.addPart("tags", new StringBody((record.tags as JSON).toString()))
+        }
+
+        def httpClient = new DefaultHttpClient()
+        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateImageMetadata/${imageId}")
+        httpPost.setEntity(entity)
+        httpPost.addHeader("X-ALA-userId", "${record.userId}");
+        def response = httpClient.execute(httpPost)
+        def result = response.getStatusLine()
+        def responseBody = response.getEntity().getContent().getText()
+
+        log.debug("Image service response code: " + result.getStatusCode())
+
+        def jsonSlurper = new JsonSlurper()
+
+        def map = jsonSlurper.parseText(responseBody)
+        log.debug("Image ID: " + map["imageId"])
+        if(!map["imageId"]){
+            log.error("Problem uploading images. Response: " + map)
+        }
+        map["imageId"]
+    }
+
+    /**
+     * Upload the supplied imageMetadata to the imageMetadata service.
      *
      * @param record
      * @param fileToUpload
-     * @param image
+     * @param imageMetadata
      * @return
      */
-    private def uploadImage (Record record, File fileToUpload, image) {
+    private def uploadImage (Record record, File fileToUpload, imageMetadata) {
 
-        //upload an image
+        //upload an imageMetadata
         def entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
         if (!fileToUpload.exists()) {
             log.error("File to upload does not exist or can not be read. " + fileToUpload.getAbsolutePath())
@@ -213,18 +333,19 @@ class RecordService {
             log.debug("File to upload: " + fileToUpload.getAbsolutePath() + ", size:" + fileToUpload.length())
         }
         def fileBody = new FileBody(fileToUpload, "image/jpeg")
-        log.debug "image upload: ${image}"
+        log.debug "imageMetadata upload: ${imageMetadata}"
         entity.addPart("image", fileBody)
         entity.addPart("metadata", new StringBody(([
                 "occurrenceId": record.occurrenceID,
                 "projectId": record.projectId,
-                "originalFilename": image.title,
-                "title": image.title,
-                "creator": image.creator,
-                "rights": image.rights,
-                "rightsHolder": image.rightsHolder ? image.rightsHolder : image.creator,
-                "license": image.license,
-                "dateTaken": image?.created,
+                "dataResourceUid": record.dataResourceUid,
+                "originalFilename": imageMetadata.title,
+                "title": imageMetadata.title,
+                "creator": imageMetadata.creator,
+                "rights": imageMetadata.rights,
+                "rightsHolder": imageMetadata.rightsHolder ? imageMetadata.rightsHolder : imageMetadata.creator,
+                "license": imageMetadata.license,
+                "dateTaken": imageMetadata?.created,
                 "systemSupplier": grailsApplication.config.imageSystemSupplier?:"ecodata"
         ] as JSON).toString()))
 
@@ -380,7 +501,7 @@ class RecordService {
         return null
     }
 
-    /*
+    /**
      * DarwinCore export mappings for project sightings (outputs)
      * (in order of increasing overwrite preference)
      *

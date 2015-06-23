@@ -1,12 +1,13 @@
 package au.org.ala.ecodata
-import au.com.bytecode.opencsv.CSVWriter
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.apache.commons.codec.binary.Base64
 import org.apache.http.impl.cookie.DateUtils
-import org.bson.types.ObjectId
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 /**
- * Controller for record CRUD operations.
+ * Controller for record CRUD operations with support for handling images.
  */
 class RecordController {
 
@@ -16,8 +17,7 @@ class RecordController {
 
     static defaultAction = "list"
 
-    def index(){
-    }
+    def index(){}
 
     /**
      * Download service for all records.
@@ -56,7 +56,7 @@ class RecordController {
     /**
      * Get record by ID (UUID)
      */
-    def getById(){
+    def get(){
         Record record = Record.findByOccurrenceID(params.id)
         if(record){
             response.setContentType("application/json")
@@ -79,7 +79,7 @@ class RecordController {
 
         def criteria = Record.createCriteria()
         def results = criteria.list {
-            isNotNull("associatedMedia")
+            isNotNull("multimedia")
             maxResults(max)
             order(sort,orderBy)
             offset(offsetBy)
@@ -135,14 +135,15 @@ class RecordController {
      * Retrieve a list of record for the supplied user ID
      */
     def listForUser(){
-        log.debug("list request for user...." + params.userId)
+
+        log.debug("Retrieving a list for user: ${params.userId}")
+
         def records = []
         def sort = params.sort ?: "dateCreated"
         def order = params.order ?:  "desc"
         def offset = params.start ?: 0
         def max = params.pageSize ?: 10
 
-        log.debug("Retrieving a list for user:"  + params.userId)
         Record.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
             records.add(recordService.toMap(it))
         }
@@ -156,7 +157,7 @@ class RecordController {
      * Delete by occurrence ID
      */
     @RequireApiKey
-    def deleteById(){
+    def delete(){
         Record record = Record.findByOccurrenceID(params.id)
         if (record){
             record.delete(flush: true)
@@ -170,26 +171,93 @@ class RecordController {
     }
 
     /**
-     * Create method with JSON body...
+     * Create method for record. Handles three types of request:
+     *
+     * 1. Multipart request with 0...n images supplied as files, and a "record" part encoded in JSON.
+     * 2. Multipart request with base64 encoded image, and a "record" part encoded in JSON.
+     * 3. JSON body post with image supplied via a URL.
      */
     @RequireApiKey
     def create(){
-        def jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parse(request.getReader())
-        if (json.userId){
-            def (record, errors) = recordService.createRecord(json)
-            if(errors.size() == 0){
-                setResponseHeadersForRecord(response, record)
+
+        log.info("Create request received: " + request.getContentType())
+        if(request instanceof MultipartHttpServletRequest){
+            try {
+                log.info("Multipart POST received ...")
+                def js = new JsonSlurper()
+                def recordParams = js.parseText(params.record)
+
+                if (!recordParams.userId) {
+                    response.setStatus(403)
+                    response.setContentType("application/json")
+                    return [success:false, message:"userId not specified"]
+                }
+
+                if (recordParams){
+
+                    def imagesToBeLoaded = [:]
+
+                    //handle the multipart message.....
+                    if(request instanceof MultipartHttpServletRequest){
+                        Map<String, MultipartFile> fileMap = request.getFileMap()
+                        for(String fileKey: fileMap.keySet()){
+                            MultipartFile multipartFile = fileMap.get(fileKey)
+                            byte[] imageAsBytes = multipartFile.getBytes()
+                            String originalName = multipartFile.getOriginalFilename()
+                            imagesToBeLoaded.put(originalName, imageAsBytes)
+                        }
+                    }
+
+                    //handle image base64 encoded
+                    if(params.imageBase64 && params.imageFileName){
+                        byte[] imageAsBytes = Base64.decodeBase64(params.imageBase64)
+                        imagesToBeLoaded.put(params.imageFileName, imageAsBytes)
+                    }
+
+                    //save the record
+                    def (record, errors) = recordService.createRecordWithImages(recordParams, imagesToBeLoaded)
+                    if(errors.size() == 0){
+                        log.debug "Added record: " + record.occurrenceID
+                        response.setStatus(200)
+                        setResponseHeadersForRecord(response, record)
+                        response.setContentType("application/json;charset=UTF-8")
+                        [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
+                    } else {
+                        log.error "Problem creating record. " + errors
+                        record.delete(flush: true)
+                        response.addHeader 'errors', (errors as grails.converters.JSON).toString()
+                        response.sendError(400, "Unable to create a new record. See errors for more details." )
+                    }
+                } else {
+                    response.setContentType("application/json")
+                    log.error("Unable to create record. " + errors)
+                    response.sendError(400, errors)
+                    [success:false]
+                }
+
+            } catch (Exception e){
+                response.setStatus(500)
                 response.setContentType("application/json")
-                def model = recordService.toMap(record)
-                render model as JSON
-            } else {
-                record.delete(flush: true)
-                response.addHeader 'errors', (errors as grails.converters.JSON).toString()
-                response.sendError(400, "Unable to create a new record. See errors for more details." )
+                [success:false]
             }
         } else {
-            response.sendError(400, 'Missing userId')
+            log.info("JSON POST received ...")
+            //if not multi part request, expect a JSON body
+            def json = request.JSON
+            if (json.userId){
+                def (record, errors) = recordService.createRecord(json)
+                if(errors.size() == 0){
+                    setResponseHeadersForRecord(response, record)
+                    response.setContentType("application/json;charset=UTF-8")
+                    [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
+                } else {
+                    record.delete(flush: true)
+                    response.addHeader 'errors', (errors as grails.converters.JSON).toString()
+                    response.sendError(400, "Unable to create a new record. See errors for more details." )
+                }
+            } else {
+                response.sendError(400, 'Missing userId')
+            }
         }
     }
 
@@ -197,15 +265,15 @@ class RecordController {
      * Update the supplied record.
      */
     @RequireApiKey
-    def updateById(){
-        def jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parse(request.getReader())
-        //json.eventDate = new Date().parse("yyyy-MM-dd", json.eventDate)
-        //TODO add some data validation....
+    def update(){
+        def json = request.JSON
         Record record = Record.findByOccurrenceID(params.id)
-        Map errors = recordService.updateRecord(record,json)
-        log.debug "updateById() - errors = ${errors}"
+        Map errors = recordService.updateRecord(record, json)
+
+        log.debug "Errors = ${errors}"
+
         setResponseHeadersForRecord(response, record)
+
         //add the errors to the header too
         response.addHeader('errors', (errors as grails.converters.JSON).toString())
         if (errors) {

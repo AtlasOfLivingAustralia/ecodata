@@ -57,18 +57,4 @@ class UserService {
             _currentUser.remove()
         }
     }
-
-    /**
-     * Returns null if lookup fails
-     * @param email
-     * @return
-     */
-    def syncUserIdLookup(email){
-        def result = webService.doPost(grailsApplication.config.userDetailsSingleUrl, ["userName": email])
-        if (!result.error){
-            result.resp.userId
-        } else {
-            null
-        }
-    }
 }

@@ -65,6 +65,7 @@ class BootStrap {
             def project = new au.org.ala.ecodata.Project(
                     name: "Individual sightings",
                     projectId: grailsApplication.config.records.default.projectId,
+                    dataResourceId: grailsApplication.config.records.default.dataResourceId,
                     isCitizenScience: true,
                     isDataSharing: true
             )
