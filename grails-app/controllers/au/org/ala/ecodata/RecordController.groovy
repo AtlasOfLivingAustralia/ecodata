@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
-import org.apache.http.impl.cookie.DateUtils
 import org.springframework.web.multipart.MultipartFile
 import org.springframework.web.multipart.MultipartHttpServletRequest
 
@@ -18,29 +17,6 @@ class RecordController {
     static defaultAction = "list"
 
     def index(){}
-
-    /**
-     * Download service for all records.
-     */
-    def csv(){
-        response.setHeader("Content-Disposition","attachment; filename=\"records.csv\"");
-        response.setContentType("text/csv")
-        def cutoff = null
-        if(params.lastUpdated){
-            if(params.lastUpdated.toLowerCase() == "day") {
-                cutoff = new Date().minus(1)
-            } else if(params.lastUpdated.toLowerCase() == "week"){
-                cutoff = new Date().minus(7)
-            } else if(params.lastUpdated.toLowerCase() == "month"){
-                cutoff = new Date().minus(30)
-            } else if(params.lastUpdated.toLowerCase() == "year"){
-                cutoff = new Date().minus(365)
-            } else {
-                cutoff = DateUtils.parseDate(params.lastUpdated, ["yyyy-MM-dd"] as String[])
-            }
-        }
-        recordService.exportCSV(response.outputStream, cutoff)
-    }
 
     /**
      * Download service for project sightings (for given project only if projectId is given).

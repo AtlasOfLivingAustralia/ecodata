@@ -25,74 +25,43 @@ class RecordService {
     final def ignores = ["action", "controller", "associatedMedia"]
 
     /**
-     * Export records to CSV.
+     * Export records to CSV for a project. This implementation is unlikely to scale beyond 50k
+     * records.
      */
-    def exportCSV(OutputStream outputStream, Date cutOffDate = null){
-        def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
-        csvWriter.writeNext(
-                [
-                        "occurrenceID",
-                        "scientificName",
-                        "family",
-                        "kingdom",
-                        "decimalLatitude",
-                        "decimalLongitude",
-                        "eventDate",
-                        "userId",
-                        "recordedBy",
-                        "usingReverseGeocodedLocality",
-                        "individualCount",
-                        "submissionMethod",
-                        "georeferenceProtocol",
-                        "identificationVerificationStatus",
-                        "occurrenceRemarks",
-                        "coordinateUncertaintyInMeters",
-                        "geodeticDatum",
-                        "imageLicence",
-                        "locality",
-                        "associatedMedia",
-                        "modified",
-                ] as String[]
-        )
+    private def exportRecordBasedProject(csvWriter, project){
 
-        def recordList = null
+        def recordList = Record.where { projectId == project.projectId }.findAll()
 
-        if(cutOffDate){
-            recordList = Record.where { lastUpdated >= cutOffDate }
-        } else {
-            recordList =  Record.list()
-        }
+        log.info("Number of records to export: ${recordList.size()}")
 
+        //write out each record
         recordList.each {
             def map = toMap(it)
-            csvWriter.writeNext(
-                    [
-                            map.occurrenceID?:"",
-                            map.scientificName?:"",
-                            map.family?:"",
-                            map.kingdom?:"",
-                            map.decimalLatitude?:"",
-                            map.decimalLongitude?:"",
-                            map.eventDate?:"",
-                            map.userId?:"",
-                            map.recordedBy?:"",
-                            map.usingReverseGeocodedLocality?:"",
-                            map.individualCount?:"",
-                            map.submissionMethod?:"",
-                            map.georeferenceProtocol?:"",
-                            map.identificationVerificationStatus?:"",
-                            map.occurrenceRemarks?:"",
-                            map.coordinateUncertaintyInMeters?:"",
-                            map.geodeticDatum?:"",
-                            map.imageLicence?:"",
-                            map.locality?:"",
-                            map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
-                            it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
-                    ] as String[]
-            )
+            csvWriter.writeNext([
+                    map.occurrenceID?:"",
+                    map.scientificName?:"",
+                    map.family?:"",
+                    map.kingdom?:"",
+                    map.decimalLatitude?:"",
+                    map.decimalLongitude?:"",
+                    map.eventDate?:"",
+                    map.userId?:"",
+                    map.recordedBy?:"",
+                    map.usingReverseGeocodedLocality?:"",
+                    map.individualCount?:"",
+                    map.submissionMethod?:"",
+                    map.georeferenceProtocol?:"",
+                    map.identificationVerificationStatus?:"",
+                    map.occurrenceRemarks?:"",
+                    map.coordinateUncertaintyInMeters?:"",
+                    map.geodeticDatum?:"",
+                    map.imageLicence?:"",
+                    map.locality?:"",
+                    map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
+                    it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
+                ] as String[])
         }
         csvWriter.flush()
-        csvWriter.close()
     }
 
     /**
@@ -202,7 +171,7 @@ class RecordService {
                     if(alreadyLoaded){
                         log.debug "Refreshing metadata - ${image.identifier}"
                         //refresh metadata in imageMetadata service
-//                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
+                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
                     }
                 }
             } else if(imageMap){
@@ -434,24 +403,36 @@ class RecordService {
                 ] as String[]
         )
 
-        def modelsMap = [:] // cache of output models by name
         def projects
         if (projectId)
             projects = [projectService.get(projectId, projectService.FLAT)]
         else
             projects = projectService.search([:], projectService.FLAT)
-        for (def project in projects) {
-            if (project) exportOneProject(csvWriter, project, modelsMap, modelName)
+
+        projects.each { project ->
+            exportActivityBasedProject(csvWriter, project, modelName)
+            exportRecordBasedProject(csvWriter, project)
         }
 
         csvWriter.flush()
         csvWriter.close()
     }
 
-    private def exportOneProject(csvWriter, project, modelsMap, modelName) {
+    /**
+     * Export activities to CSV of darwin core terms.
+     *
+     * @param csvWriter
+     * @param project
+     * @param modelName
+     */
+    private def exportActivityBasedProject(csvWriter, project, modelName) {
+
+        def modelsMap = [:]
         def projectSite = siteService.get(project.projectSiteId)
         def today = (new Date()).format("dd-MM-yyyy")
         def projectDates = mapDates(today, project.plannedStartDate, project.plannedEndDate, project.actualStartDate, project.actualEndDate)
+
+        //export activity based data
         for (def activity in activityService.findAllForProjectId(project.projectId, activityService.FLAT)) {
             def site, activityDWC = [:]
 
