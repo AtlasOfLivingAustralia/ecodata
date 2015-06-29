@@ -8,9 +8,6 @@ class ProjectActivityService {
     static final ACTIVE = "active"
     def commonService
 
-    def getAllByProject(id){
-        ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it) };
-    }
 
     /**
      * Creates an project activity.
@@ -36,7 +33,7 @@ class ProjectActivityService {
     }
 
     /**
-     * Updatee project activity.
+     * Update project activity.
      *
      * @param props the activity properties
      * @id project activity id.
@@ -63,6 +60,15 @@ class ProjectActivityService {
             log.error error
             return [status:'error',error:error]
         }
+    }
+
+    def get(String id, levelOfDetail = []) {
+        def p = ProjectActivity.findByProjectActivityId(id)
+        return p?toMap(p, levelOfDetail):null
+    }
+
+    def getAllByProject(id){
+        ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it) };
     }
 
     /**

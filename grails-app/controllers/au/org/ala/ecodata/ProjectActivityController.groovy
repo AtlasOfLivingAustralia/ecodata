@@ -27,6 +27,22 @@ class ProjectActivityController {
     }
 
     /**
+     * Get projectActivity by id
+     *
+     * @param id - projectActivity id
+     * @return json
+     */
+    def get(String id) {
+        if (id) {
+            asJson(projectActivityService.get(id))
+        } else {
+            response.status = 404
+            render status: 404, text: 'No such id'
+        }
+    }
+
+
+    /**
      * Update a project activity.
      *
      * @param id - identifies the resource
