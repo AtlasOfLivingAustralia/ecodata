@@ -58,6 +58,19 @@ class BootStrap {
 
         JSON.registerObjectMarshaller(JSONNull, {return ""})
 
+        //Add a default project for individual sightings (unless disabled)
+        def individualSightingsProject = au.org.ala.ecodata.Project.findByProjectId(grailsApplication.config.records.default.projectId)
+        if(!individualSightingsProject){
+            log.info "Creating individual sightings project"
+            def project = new au.org.ala.ecodata.Project(
+                    name: "Individual sightings",
+                    projectId: grailsApplication.config.records.default.projectId,
+                    dataResourceId: grailsApplication.config.records.default.dataResourceId,
+                    isCitizenScience: true,
+                    isDataSharing: true
+            )
+            project.save(flush: true)
+        }
     }
 
     def destroy = {

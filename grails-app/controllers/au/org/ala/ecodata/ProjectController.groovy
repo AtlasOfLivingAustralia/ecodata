@@ -150,7 +150,7 @@ class ProjectController {
     }
 
     /**
-     * Update a project.
+     * Create or update a project.
      *
      * @param id - identifies the resource
      * @return
@@ -169,6 +169,7 @@ class ProjectController {
             message = [message: 'created', projectId: result.projectId]
         }
         if (result.status == 'ok') {
+            setResponseHeadersForProjectId(response, result.projectId)
             asJson(message)
         } else {
             log.error result.error
@@ -183,7 +184,7 @@ class ProjectController {
 
         if (!p) {
             render (status: 404, text: 'No such id')
-        }else{
+        } else {
             Set ids = new HashSet()
             ids << params.id;
 
@@ -245,6 +246,11 @@ class ProjectController {
         asJson projects:projectList
     }
 
+    private def setResponseHeadersForProjectId(response, projectId){
+        response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/project/" + projectId)
+        response.addHeader("location", grailsApplication.config.grails.serverURL + "/project/" +  projectId)
+        response.addHeader("entityId", projectId)
+    }
 
 /*
     def loadTestData() {
