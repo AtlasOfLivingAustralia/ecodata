@@ -34,6 +34,7 @@ class IntegrationTestHelper extends IntegrationSpec {
         Output.collection.remove(new BasicDBObject())
         Project.collection.remove(new BasicDBObject())
         Organisation.collection.remove(new BasicDBObject())
+        ProjectActivity.collection.remove(new BasicDBObject())
         if (auditService) {
             auditService.flushMessageQueue() // In case there are pending updates.
         }
