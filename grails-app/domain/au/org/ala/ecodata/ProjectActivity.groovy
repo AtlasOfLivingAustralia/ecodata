@@ -16,9 +16,13 @@ class ProjectActivity {
     Date endDate
     Map alerts
     List sites = [] // list of sites associated to the survey
+    Map visibility
+    boolean restrictRecordToSites
     static constraints = {
         pActivityFormName nullable : true
         alerts nullable:true
         sites nullable:true
+        restrictRecordToSites nullable:true
+        visibility nullable: true
     }
 }
