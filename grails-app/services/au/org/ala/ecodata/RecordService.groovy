@@ -110,7 +110,7 @@ class RecordService {
                 return errors
             }
             record.userId = userDetails.userId
-            record.userDisplayName = userDetails.displayName
+            record.recordedBy = userDetails.displayName
 
             //set all supplied properties
             json.each {
@@ -271,23 +271,11 @@ class RecordService {
         }
 
         def httpClient = new DefaultHttpClient()
-        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateImageMetadata/${imageId}")
+        def httpPost = new HttpPost(grailsApplication.config.imagesService.baseURL + "/ws/updateMetadata/${imageId}")
         httpPost.setEntity(entity)
         httpPost.addHeader("X-ALA-userId", "${record.userId}");
         def response = httpClient.execute(httpPost)
         def result = response.getStatusLine()
-        def responseBody = response.getEntity().getContent().getText()
-
-        log.debug("Image service response code: " + result.getStatusCode())
-
-        def jsonSlurper = new JsonSlurper()
-
-        def map = jsonSlurper.parseText(responseBody)
-        log.debug("Image ID: " + map["imageId"])
-        if(!map["imageId"]){
-            log.error("Problem uploading images. Response: " + map)
-        }
-        map["imageId"]
     }
 
     /**

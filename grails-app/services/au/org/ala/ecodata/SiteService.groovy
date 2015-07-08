@@ -85,22 +85,12 @@ class SiteService {
 
     def create(props) {
         assert getCommonService()
-        def o = new Site(siteId: Identifiers.getNew(true,''))
+        def site = new Site(siteId: Identifiers.getNew(true,''))
         try {
-            o.save(failOnError: true)
-            assignPOIIds(props)
-            props.remove('id')
-            props.remove('siteId')
-            o.save(failOnError: true)
-            //props.activities = props.activities.collect {it.activityId}
-            //props.assessments = props.assessments.collect {it.activityId}
-            // If the site location is being updated, refresh the location metadata.
-            def centroid = props?.extent?.geometry?.centre
-            if (centroid && centroid.size() == 2) {
-                props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
-            }
-            getCommonService().updateProperties(o, props)
-            return [status:'ok',siteId:o.siteId]
+            site.save(failOnError: true)
+            updateSite(site, props, true)
+
+            return [status:'ok',siteId:site.siteId]
         } catch (Exception e) {
             e.printStackTrace()
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -113,20 +103,10 @@ class SiteService {
 
     def update(props, id, boolean enableCentroidRefresh = true) {
         def site = Site.findBySiteId(id)
-        props.remove('siteId')
+
         if (site) {
             try {
-                assignPOIIds(props)
-
-                // If the site location is being updated, refresh the location metadata.
-                def centroid = props.extent?.geometry?.centre
-                if (centroid && centroid.size() == 2 && enableCentroidRefresh) {
-                    props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
-                }
-                else if (props.extent?.geometry && !centroid) { // Sites created from known shapes need a centroid to be calculated.
-                    populateLocationMetadataForSite(props)
-                }
-                getCommonService().updateProperties(site, props)
+                updateSite(site, props, enableCentroidRefresh)
                 return [status:'ok']
             } catch (Exception e) {
                 Site.withSession { session -> session.clear() }
@@ -139,6 +119,23 @@ class SiteService {
             log.error error
             return [status:'error',error:error]
         }
+    }
+
+    private updateSite(site, props, enableCentroidRefresh) {
+        props.remove('id')
+        props.remove('siteId')
+
+        assignPOIIds(props)
+
+        // If the site location is being updated, refresh the location metadata.
+        def centroid = props.extent?.geometry?.centre
+        if (centroid && centroid.size() == 2 && enableCentroidRefresh) {
+            props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
+        }
+        else if (props.extent?.geometry && !centroid) { // Sites created from known shapes need a centroid to be calculated.
+            populateLocationMetadataForSite(props)
+        }
+        getCommonService().updateProperties(site, props)
     }
 
     def deleteSitesFromProject(String projectId){

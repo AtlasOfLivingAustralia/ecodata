@@ -1,18 +1,36 @@
 package au.org.ala.ecodata
 
-import grails.test.mixin.TestFor
+import com.mongodb.BasicDBObject
+import grails.converters.JSON
+import grails.test.mixin.TestMixin
+import grails.test.mixin.mongodb.MongoDbTestMixin
+import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
+import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
 
 /**
  * Specification / tests for the SiteService
  */
-@TestFor(SiteService)
+
+@TestMixin(MongoDbTestMixin)
 class SiteServiceSpec extends Specification {
 
+    def service = new SiteService()
     def webServiceMock = Mock(WebService)
+    def metadataServiceMock = Mock(MetadataService)
     void setup() {
+        mongoDomain([Site])
+        JSON.registerObjectMarshaller(new MapMarshaller())
+        JSON.registerObjectMarshaller(new CollectionMarshaller())
         service.webService = webServiceMock
         service.grailsApplication = grailsApplication
+        service.metadataService = metadataServiceMock
+        grailsApplication.mainContext.registerSingleton('commonService', CommonService)
+        grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
+    }
+
+    void cleanup() {
+        Site.collection.remove(new BasicDBObject())
     }
 
     // We should be storing the extent geometry as geojson already to enable geographic searching using
@@ -36,6 +54,64 @@ class SiteServiceSpec extends Specification {
         1 * webServiceMock.getJson("${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/1234") >> [type:'Polygon', coordinates: []]
         geojson.type == 'Polygon'
         geojson.coordinates == []
+    }
+
+    def "A new site can be created"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1'])
+            session.flush()
+        }
+        then:
+        Site.findBySiteId(result.siteId).name == 'Site 1'
+    }
+
+    def "A new site should not allow the siteId to be supplied"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', siteId:'1234'])
+            session.flush()
+        }
+        then:
+        result.siteId != '1234'
+        Site.findBySiteId(result.siteId).name == 'Site 1'
+    }
+
+    def "Any POIs supplied with a new site should be assigned IDs"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name:'Site 1', poi:[[name:'poi 1', geometry: [decimalLatitude:-35, decimalLongitude:140]]]])
+            session.flush()
+        }
+        then:
+        // Using the mongo API as dynamic properties aren't mapped otherwise.
+        def site = Site.collection.find([siteId:result.siteId]).next()
+
+        // Reference to the DBO is because POI is currently a dynamic property (it shouldn't be)
+        site.poi.size() == 1
+        site.poi[0].poiId != null
+    }
+
+    def "New sites without a centroid should have one assigned"() {
+        when:
+        def result
+        Site.withSession { session ->
+            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', fid: '123', pid: 'cl123']]])
+            session.flush()
+        }
+
+        then:
+        1 * webServiceMock.getJson(_) >> [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
+        1 * metadataServiceMock.getLocationMetadataForPoint('-34.5', '136.5') >> [test:'test']
+
+        def site = Site.collection.find([siteId:result.siteId]).next()
+
+        // Reference to the DBO is because POI is currently a dynamic property (it shouldn't be)
+        site.extent.geometry.centre == ['136.5', '-34.5']
+        site.extent.geometry.test == 'test'
     }
 
 
