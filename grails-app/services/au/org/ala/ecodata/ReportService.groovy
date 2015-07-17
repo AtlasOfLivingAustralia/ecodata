@@ -20,6 +20,7 @@ import java.util.zip.ZipOutputStream
 
 /**
  * The ReportService aggregates and returns output scores.
+ * It is also responsible for managing Reports submitted by users.
  */
 class ReportService {
 
