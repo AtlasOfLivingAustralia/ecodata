@@ -37,7 +37,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
 
         // ElasticSearch
-        compile "org.elasticsearch:elasticsearch:1.5.2"
+        compile "org.elasticsearch:elasticsearch:1.7.0"
 
         // Schema validation for external web service clients
         compile "com.github.fge:json-schema-validator:2.1.6"

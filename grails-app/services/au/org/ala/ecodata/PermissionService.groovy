@@ -162,6 +162,7 @@ class PermissionService {
                 return [status:'error', error: msg]
             }
         }
+        return [status:'ok']
     }
 
     def removeUserAsRoleToProject(String userId, AccessLevel accessLevel, String projectId) {
