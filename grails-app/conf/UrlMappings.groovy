@@ -73,7 +73,7 @@ class UrlMappings {
             controller = 'documentation'
             action = 'index'
         }
-        "/ws/documentation/$version/$action/$id?" {
+        "/ws/documentation/$version/$action/$id?(.$format)?" {
             controller = 'documentation'
         }
 
