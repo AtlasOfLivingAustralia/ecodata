@@ -182,7 +182,7 @@ class PermissionsController {
             }
 
             if (project) {
-                log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
+                log.debug "removeUserAsRoleToProject: ${userId}, ${ac}, ${project}"
                 def ps = permissionService.removeUserAsRoleToProject(userId, ac, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
