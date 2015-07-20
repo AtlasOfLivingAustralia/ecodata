@@ -19,6 +19,7 @@ class ProjectActivity {
     Map visibility
     boolean restrictRecordToSites
     static constraints = {
+        endDate nullable : true
         pActivityFormName nullable : true
         alerts nullable:true
         sites nullable:true
