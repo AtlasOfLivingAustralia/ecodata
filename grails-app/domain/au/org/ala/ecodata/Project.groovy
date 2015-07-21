@@ -63,7 +63,7 @@ class Project {
 	String promoteOnHomepage = 'no'
     List activities
 	
-    boolean isCitizenScience, isDataSharing, isMetadataSharing
+    boolean isCitizenScience, isDataSharing, isMetadataSharing, isMERIT
     boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
     String difficulty, gear, task
     String projectPrivacy, dataSharingLicense
