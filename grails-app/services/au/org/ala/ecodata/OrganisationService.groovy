@@ -17,7 +17,7 @@ class OrganisationService {
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
         if (includeDeleted) {
-            organisation = Organisation.findByOrganisationIdIlike(id)
+            organisation = Organisation.findByOrganisationId(id)
         }
         else {
             organisation = Organisation.findByOrganisationIdAndStatusNotEqual(id, 'deleted')
@@ -123,6 +123,8 @@ class OrganisationService {
         }
         if ('documents' in levelOfDetail) {
             mapOfProperties.documents = documentService.findAllByOwner('organisationId', org.organisationId)
+            mapOfProperties.links = documentService.findAllLinksByOwner('organisationId', org.organisationId)
+
         }
 
         mapOfProperties.findAll {k,v -> v != null}
