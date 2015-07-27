@@ -105,6 +105,7 @@ class Document {
         type nullable: true
         role nullable: true
         projectId nullable: true
+        organisationId nullable: true
         siteId nullable: true
         activityId nullable: true
         outputId nullable: true
