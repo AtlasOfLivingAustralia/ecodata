@@ -18,6 +18,8 @@ class Document {
         siteId index: true
         activityId index: true
         outputId index: true
+        organisationId index: true
+        status index: true
         version false
     }
 
@@ -36,6 +38,7 @@ class Document {
     String siteId
     String activityId
     String outputId
+    String organisationId
     String externalUrl
 
     boolean thirdPartyConsentDeclarationMade = false
