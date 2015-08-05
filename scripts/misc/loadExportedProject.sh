@@ -9,6 +9,7 @@ mongoimport --db $DATABASE_NAME --upsert --collection activity --file activity.j
 mongoimport --db $DATABASE_NAME --upsert --collection output --file output.json
 mongoimport --db $DATABASE_NAME --upsert --collection document --file document.json
 mongoimport --db $DATABASE_NAME --upsert --collection userPermission --file userPermission.json
+mongoimport --db $DATABASE_NAME --upsert --collection projectActivity --file projectActivity.json
 
 cd ..
 rm -r tmp
