@@ -1,13 +1,16 @@
 package au.org.ala.ecodata.metadata
 
-import groovy.util.logging.Log4j
+
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 
 /**
  * Define the set of valid data types for an output & provides a data type based switch to method to help
  * me make sure all valid types are handled when processing output metadata.
  */
-@Log4j
 class OutputModelProcessor {
+
+    static Log log = LogFactory.getLog(OutputModelProcessor.class)
 
     interface ProcessingContext {}
 
@@ -29,6 +32,8 @@ class OutputModelProcessor {
         def stringList(node, T context)
 
         def booleanType(node, T context)
+
+        def document(node, T context)
     }
 
     def processNode(processor, node, context) {
@@ -69,6 +74,9 @@ class OutputModelProcessor {
                 break;
             case 'lookupRange':
                 break; // do nothing
+            case 'document':
+                processor.document(node, context)
+                break
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")
         }
