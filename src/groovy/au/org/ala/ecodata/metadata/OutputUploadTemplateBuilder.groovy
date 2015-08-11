@@ -240,4 +240,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     }
 
+    @Override
+    def document(node, ExcelValidationContext context) {}
+
 }

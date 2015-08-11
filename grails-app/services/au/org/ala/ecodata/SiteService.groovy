@@ -205,7 +205,7 @@ class SiteService {
         if (!geometry) {
             return
         }
-        def result
+        def result = null
         switch (geometry.type) {
             case 'Circle':
                 // We support circles, but they are not valid geojson. The spatial portal does a conversion for us.

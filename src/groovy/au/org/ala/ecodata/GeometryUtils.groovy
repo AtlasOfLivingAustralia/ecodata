@@ -10,6 +10,7 @@ import com.vividsolutions.jts.geom.Point
 import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
+import org.geotools.geojson.geom.GeometryJSON
 import org.geotools.referencing.GeodeticCalculator
 
 import java.awt.geom.Point2D
@@ -25,9 +26,20 @@ class GeometryUtils {
     static GeometryFactory geometryFactory = new GeometryFactory()
 
     static String wktToMultiPolygonWkt(String wkt) {
-        MultiPolygon result
         Geometry geom = new WKTReader().read(wkt)
 
+        MultiPolygon result = convertToMultiPolygon(geom)
+        new WKTWriter().write(result)
+    }
+
+    static MultiPolygon geoGsonToMultiPolygon(String geojson) {
+        Geometry geom = new GeometryJSON().read(geojson)
+        MultiPolygon result = convertToMultiPolygon(geom)
+        return result
+    }
+
+    private static MultiPolygon convertToMultiPolygon(Geometry geom) {
+        MultiPolygon result
         switch (geom.geometryType) {
             case 'Point':
                 result = pointToMultipolygon(geom)
@@ -42,11 +54,12 @@ class GeometryUtils {
                 result = lineStringToMultiPolygon(geom)
                 break
             case 'MultiPolygon':
-                return wkt
+                result = geom
+                break
             default:
-                throw new IllegalArgumentException("Unsupported WKT: "+wkt)
+                throw new IllegalArgumentException("Unsupported Geometry: " + geom.geometryType)
         }
-        new WKTWriter().write(result)
+        result
     }
 
     /**

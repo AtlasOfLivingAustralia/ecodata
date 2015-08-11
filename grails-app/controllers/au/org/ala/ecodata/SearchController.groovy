@@ -8,6 +8,8 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
+import java.text.SimpleDateFormat
+
 class SearchController {
 
     static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
@@ -175,7 +177,7 @@ class SearchController {
             params.max = 5000
             params.offset = 0
         }
-
+        long start = System.currentTimeMillis()
         SearchResponse res = elasticSearchService.search(params.query, params, "homepage")
         Set ids = new HashSet()
 
@@ -184,7 +186,10 @@ class SearchController {
                 ids << hit.source.projectId
             }
         }
+        long end = System.currentTimeMillis()
+        log.info "Query of ${ids.size()} projects took ${end-start} millis"
 
+        start = System.currentTimeMillis()
         withFormat {
             json {
                 List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
@@ -194,11 +199,24 @@ class SearchController {
                 XlsExporter exporter = new XlsExporter("results")
                 exporter.setResponseHeaders(response)
                 ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
+                Project.withSession { session ->
+                    def batchSize = 50
+                    List projects = new ArrayList(batchSize)
+                    for (int i=0; i<ids.size(); i++) {
+                        projects << projectService.get(ids[i],ProjectService.ALL)
+                        if (i % batchSize == batchSize-1 || i == ids.size() -1) {
+                            projectExporter.exportAll(projects)
+                            projects.clear()
+                            session.clear()
+                            end = System.currentTimeMillis()
 
-                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
-                projectExporter.exportAll(projects)
-                exporter.sizeColumns()
-
+                            log.info "Exported ${i+1} of ${ids.size()} projects..."
+                            log.info "Batch took ${end-start} millis"
+                            start = end
+                        }
+                    }
+                }
+                //exporter.sizeColumns()  // This takes a long time for large spreadsheets
                 exporter.save(response.outputStream)
             }
         }
@@ -264,7 +282,8 @@ class SearchController {
         }
     }
 
-    def exportProjectSitesAsShapefile() {
+    @RequireApiKey
+    def downloadShapefile() {
 
         if (!params.max) {
             params.max = 100
@@ -284,12 +303,11 @@ class SearchController {
                 ids << hit.source.projectId
             }
         }
-
-        def zipOut = reportService.exportShapeFile(ids)
-
+        SimpleDateFormat format = new SimpleDateFormat('yyyy-MM-dd')
+        def name = 'meritSites-'+format.format(new Date())
         response.setContentType("application/zip")
-        response.setHeader("Content-disposition", "filename=meritSites.zip")
-        response.outputStream << zipOut.toByteArray()
+        response.setHeader("Content-disposition", "filename=${name}.zip")
+        reportService.exportShapeFile(ids, name, response.outputStream)
         response.outputStream.flush()
     }
 
