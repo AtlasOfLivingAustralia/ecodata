@@ -282,7 +282,7 @@ class SearchController {
         }
     }
 
-    //@RequireApiKey
+    @RequireApiKey
     def downloadShapefile() {
 
         if (!params.max) {
