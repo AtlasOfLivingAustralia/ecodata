@@ -1,25 +1,14 @@
 package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.Score
-import com.vividsolutions.jts.geom.Geometry
-import grails.converters.JSON
-import org.geotools.data.DataUtilities
-import org.geotools.data.FeatureStore
-import org.geotools.data.FeatureWriter
-import org.geotools.data.FileDataStoreFactorySpi
-import org.geotools.data.shapefile.ShapefileDataStore
-import org.geotools.data.shapefile.ShapefileDataStoreFactory
-import org.geotools.geojson.geom.GeometryJSON
-import org.grails.plugins.csv.CSVReaderUtils
-import org.opengis.feature.simple.SimpleFeature
-import org.opengis.feature.simple.SimpleFeatureType
-import org.opengis.feature.type.FeatureType
+import au.org.ala.ecodata.reporting.ShapefileBuilder
 
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
+import org.grails.plugins.csv.CSVReaderUtils
+
 
 /**
  * The ReportService aggregates and returns output scores.
+ * It is also responsible for managing Reports submitted by users.
  */
 class ReportService {
 
@@ -203,95 +192,13 @@ class ReportService {
         userSummary
     }
 
-    def exportShapeFile(projectIds) {
+    def exportShapeFile(projectIds, name, outputStream) {
 
-        FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory();
-
-        File file = File.createTempFile("siteShapeFile", ".shp")
-        String filename = file.getName().substring(0, file.getName().indexOf(".shp"))
-
-        Map map = ["url": file.toURI().toURL() ]
-
-        FeatureWriter<SimpleFeatureType,SimpleFeature>  writer = null
-        try {
-            ShapefileDataStore store = factory.createNewDataStore( map );
-            FeatureType featureType = DataUtilities.createType( filename, "geom:MultiPolygon:srid=4326,name:String,description:String,projectName:String,grantId:String,externalId:String" );
-            store.createSchema( featureType );
-
-            writer = store.getFeatureWriterAppend(((FeatureStore)store.getFeatureSource(filename)).getTransaction())
-
-            GeometryJSON gjson = new GeometryJSON()
-
-
-            projectIds.each { projectId ->
-                def project = projectService.get(projectId)
-
-                if (!project) {
-                    return
-                }
-
-                project.sites?.each { site ->
-
-                    try {
-                        def siteGeom = siteService.geometryAsGeoJson(site)
-                        if (siteGeom) {
-
-
-                            Geometry geom = gjson.read((siteGeom as JSON).toString())
-
-                            SimpleFeature siteFeature = writer.next()
-
-                            siteFeature.setAttributes([geom, site.name, site.description, project.name, project.grantId, project.externalId].toArray())
-
-                            try {
-                                writer.write()
-                            }
-                            catch (Exception e){
-                                writer.remove()
-                                log.error("Unable to get write for site: ${site.siteId}", e)
-
-                            }
-
-                        } else {
-                            log.warn("Unable to get geometry for site: ${site.siteId}")
-                        }
-                    }
-                    catch (Exception e) {
-                        log.error("Error getting geomerty for site: ${site.siteId}", e)
-                    }
-                }
-            }
+        ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+        builder.setName(name)
+        projectIds.each { projectId ->
+            builder.addProject(projectId)
         }
-        finally {
-            if (writer != null) {
-                writer.close()
-            }
-        }
-
-        buildZip(file)
-
+        builder.writeShapefile(outputStream)
     }
-
-    def buildZip(File shapeFile) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream()
-        ZipOutputStream zipFile = new ZipOutputStream(baos)
-
-        String filename = shapeFile.getName().substring(0, shapeFile.getName().indexOf(".shp"))
-        String path = shapeFile.getParent()
-
-        def fileExtensions = ['.shp', '.dbf', '.fix', '.prj', '.shx']
-
-        fileExtensions.each { extension ->
-            File file = new File(path, filename+extension)
-            zipFile.putNextEntry(new ZipEntry("meritSites"+extension))
-            file.withInputStream {
-                zipFile << it
-            }
-            zipFile.closeEntry()
-        }
-        zipFile.finish()
-        baos
-    }
-
-
 }

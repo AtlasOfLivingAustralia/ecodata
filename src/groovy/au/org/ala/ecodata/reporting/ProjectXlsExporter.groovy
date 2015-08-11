@@ -2,16 +2,20 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import org.apache.commons.logging.Log
+import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.getters.Getter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 /**
- * Created by god08d on 11/04/14.
+ * Exports project, site, activity and output data to a Excel spreadsheet.
  */
 class ProjectXlsExporter {
 
-    def projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program']
+    static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    def projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram']
+    def projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
+
+    def projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
 
     def siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     def siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
@@ -230,6 +234,12 @@ class ProjectXlsExporter {
             return val?:""
         }
 
+        @Override
+        def document(Object node, Value outputValue) {
+            def val = outputValue.value
+            return val?:""
+        }
+
         // Implementation of Getter<String>
         @Override
         String getPropertyName() {
@@ -238,16 +248,20 @@ class ProjectXlsExporter {
 
         @Override
         String getFormattedValue(Object output) {
-
+            def result = ''
             def node = outputDataModel
             for (String part : nameParts) {
                 def tmpNode = node.find{it.name == part}
                 // List typed model elements have a cols element containing nested nodes.
                 node = tmpNode.columns?:tmpNode
             }
-
-            processNode(this, node, getValue(output))
-
+            try {
+                result = processNode(this, node, getValue(output))
+            }
+            catch (Exception e) {
+                log.error("Error getting value from output: ${output?.outputId}, property: ${nameParts.join('.')}", e)
+            }
+            result
         }
 
         def getValue(outputModelOrData) {
