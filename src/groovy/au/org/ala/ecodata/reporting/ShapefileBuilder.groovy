@@ -52,6 +52,7 @@ class ShapefileBuilder {
 
     private FeatureWriter<SimpleFeatureType, SimpleFeature> writer
     private File shapefile
+    private int featureCount = 0
 
     public ShapefileBuilder(projectService, siteService) {
         this.projectService = projectService
@@ -90,7 +91,7 @@ class ShapefileBuilder {
             try {
                 // Currently necessary as not all our sites store valid geojson as their geometry.
                 def siteGeom = siteService.geometryAsGeoJson(site)
-                if (siteGeom) {
+                if (siteGeom && !siteGeom.error) {
 
                     // All geometries in a shapefile need to be of the same type, so we convert everything to
                     // multi-polygons
@@ -106,9 +107,11 @@ class ShapefileBuilder {
 
                     try {
                         writer.write()
+                        featureCount++
                     }
                     catch (Exception e) {
                         writer.remove()
+                        featureCount--
                         log.error("Unable to write feature for site: ${site.siteId}", e)
                     }
 
@@ -126,12 +129,17 @@ class ShapefileBuilder {
      * Writes the zipped shape file to the supplied OutputStream.
      */
     public void writeShapefile(OutputStream toWriteTo) {
-        if (writer != null) {
-            writer.close()
-        }
-        buildZip(shapefile, toWriteTo)
+        if (featureCount > 0) {
+            if (writer != null) {
+                writer.close()
+            }
+            buildZip(shapefile, toWriteTo)
 
-        cleanup()
+            cleanup()
+        }
+        else {
+            throw new RuntimeException("No features have been added to the shapefile")
+        }
     }
 
     private void createShapefile() {
