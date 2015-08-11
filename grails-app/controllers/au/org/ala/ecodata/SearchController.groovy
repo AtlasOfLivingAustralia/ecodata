@@ -294,7 +294,7 @@ class SearchController {
             query = '*'
         }
 
-        SearchResponse res = elasticSearchService.search(query, params, "")
+        SearchResponse res = elasticSearchService.search(query, params, "homepage")
 
         Set ids = new HashSet()
 
@@ -303,12 +303,20 @@ class SearchController {
                 ids << hit.source.projectId
             }
         }
-        SimpleDateFormat format = new SimpleDateFormat('yyyy-MM-dd')
-        def name = 'meritSites-'+format.format(new Date())
-        response.setContentType("application/zip")
-        response.setHeader("Content-disposition", "filename=${name}.zip")
-        reportService.exportShapeFile(ids, name, response.outputStream)
-        response.outputStream.flush()
+
+        if (ids.size() > 0) {
+
+            SimpleDateFormat format = new SimpleDateFormat('yyyy-MM-dd')
+            def name = 'meritSites-' + format.format(new Date())
+            response.setContentType("application/zip")
+            response.setHeader("Content-disposition", "filename=${name}.zip")
+            reportService.exportShapeFile(ids, name, response.outputStream)
+            response.outputStream.flush()
+        }
+        else {
+            response.setStatus(400)
+            render "No project sites selected for download"
+        }
     }
 
 }
