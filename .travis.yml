@@ -2,8 +2,9 @@ language: groovy
 jdk:
 - oraclejdk7
 branches:
-  except:
-  - trunk
+  only:
+  - master
+  - dev
 services:
   - mongodb
 before_install:
