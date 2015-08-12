@@ -48,7 +48,8 @@ grails.mime.types = [
     text:          'text/plain',
     xlsx:          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     xls:           'application/vnd.ms-excel',
-    xml:           ['text/xml', 'application/xml']
+    xml:           ['text/xml', 'application/xml'],
+    shp:           'application/zip'
 ]
 
 /******************************************************************************\
