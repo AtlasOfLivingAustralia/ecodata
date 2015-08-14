@@ -789,6 +789,7 @@ class ElasticSearchService {
             project.remove('endDate')
             project.remove('description')
             activity.putAll(project)
+            activity.programSubProgram = project.associatedProgram+' - '+project.associatedSubProgram
 
         }
         if (activity.siteId) {
