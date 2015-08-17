@@ -1,6 +1,6 @@
 var orgs = db.project.distinct('organisationName')
 for (var i=0; i<orgs.length; i++) {
-    print(orgs[i]);
+
     var orgUsers = {};
     var projects = db.project.find({organisationName:orgs[i], status:{$ne:'deleted'}});
     while (projects.hasNext()) {
@@ -14,10 +14,13 @@ for (var i=0; i<orgs.length; i++) {
             }
         }
     }
+    var line = '"'+orgs[i]+'"';
+    var userCount = 0;
     for (var user in orgUsers) {
         if (orgUsers.hasOwnProperty(user)) {
-            print(user);
+            userCount++;
         }
     }
+    print(line+','+projects.count()+','+userCount);
 
 }
