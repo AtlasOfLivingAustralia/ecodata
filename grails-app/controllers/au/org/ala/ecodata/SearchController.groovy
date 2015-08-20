@@ -297,7 +297,7 @@ class SearchController {
     def downloadShapefile() {
 
         if (!params.max) {
-            params.max = 100
+            params.max = 1000
             params.offset = 0
         }
         def query = params.query
