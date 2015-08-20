@@ -1,8 +1,9 @@
 package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.GroupingAggregator
+import au.org.ala.ecodata.reporting.PropertyAccessor
 import au.org.ala.ecodata.reporting.Score
 import au.org.ala.ecodata.reporting.ShapefileBuilder
-
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.grails.plugins.csv.CSVReaderUtils
 
 
@@ -148,6 +149,83 @@ class ReportService {
 
         def results = aggregator.results().results
         return results?results[0].results:[]
+    }
+
+    def outputTargetReport(filters) {
+        def scores = []
+
+        def labels = []
+        metadataService.activitiesModel().outputs?.each{
+            Score.outputScores(it).each { score ->
+                if (score.isOutputTarget) {
+                    scores << [score: score]
+                    labels << score.label
+                }
+            }
+        }
+        // Add all supplementary scores from bulk loads that match output targets
+        metadataService.activitiesModel().outputs?.each {
+            Score.outputScores(it).each { score ->
+                if (!score.isOutputTarget && labels.contains(score.label)) {
+                    scores << [score:score]
+                }
+            }
+        }
+
+        def groupingSpec = [entity:'activity', property:'programSubProgram', type:'discrete']
+
+        aggregate(filters, scores, groupingSpec)
+    }
+
+    def outputTargetsBySubProgram(params) {
+
+        params += [offset:0, max:100]
+        def targetsBySubProgram = [:]
+        def results = elasticSearchService.search("*:*", params, "homepage")
+        def scores = []
+
+
+        metadataService.activitiesModel().outputs?.each{
+            Score.outputScores(it).each { score ->
+                if (score.isOutputTarget) {
+                    scores << [score: score]
+                }
+            }
+        }
+        def propertyAccessor = new PropertyAccessor("target")
+        def total = results.hits.totalHits
+        while (params.offset < total) {
+
+            def hits = results.hits.hits
+            for (def hit : hits) {
+                def project = hit.source
+                project.outputTargets?.each { target ->
+                    def program = project.associatedProgram + ' - ' + project.associatedSubProgram
+                    if (!targetsBySubProgram[program]) {
+                        targetsBySubProgram[program] = [projectCount:0]
+                    }
+                    if (target.scoreLabel && target.target) {
+
+                        def value = propertyAccessor.getPropertyAsNumeric(target)
+                        if (value == null) {
+                            println project.projectId+' '+target.scoreLabel+' '+target.target+':'+value
+                        }
+                        else {
+                            if (!targetsBySubProgram[program][target.scoreLabel]) {
+                                targetsBySubProgram[program][target.scoreLabel] = [count:0, total:0]
+                            }
+                            targetsBySubProgram[program][target.scoreLabel].total += value
+                            targetsBySubProgram[program][target.scoreLabel].count++
+
+                        }
+                    }
+                }
+            }
+            params.offset += params.max
+
+            results  = elasticSearchService.search("*:*", params, "homepage")
+        }
+        targetsBySubProgram
     }
 
     /** Temporary method to assist running the user report.  Needs work */
