@@ -290,7 +290,7 @@ class DocumentService {
 
     }
 
-    def findAllByOwner(ownerType, owner, includeDeleted = true) {
+    def findAllByOwner(ownerType, owner, includeDeleted = false) {
         def query = Document.createCriteria()
 
         def results = query {
@@ -304,12 +304,15 @@ class DocumentService {
         results.collect{toMap(it, 'flat')}
     }
 
-    def findAllLinksByOwner(ownerType, owner) {
+    def findAllLinksByOwner(ownerType, owner, includeDeleted = false) {
         def query = Document.createCriteria()
 
         def results = query {
             eq('type', LINKTYPE)
             eq(ownerType, owner)
+            if (!includeDeleted) {
+                ne('status', 'deleted')
+            }
         }
 
         results.collect{toMap(it, 'flat')}
