@@ -18,7 +18,7 @@ class ProjectActivityController {
     def getAllByProject(String id) {
         if (id) {
             def list = []
-            list.addAll(projectActivityService.getAllByProject(id))
+            list.addAll(projectActivityService.getAllByProject(id, params.view))
             asJson([list: list])
         } else {
             response.status = 404
