@@ -37,6 +37,7 @@ class Document {
     String projectId
     String siteId
     String activityId
+    String projectActivityId
     String outputId
     String organisationId
     String externalUrl
@@ -116,5 +117,6 @@ class Document {
         thirdPartyConsentDeclarationMade nullable: true
         thirdPartyConsentDeclarationText nullable: true
         externalUrl nullable: true
+        projectActivityId nullable: true
     }
 }
