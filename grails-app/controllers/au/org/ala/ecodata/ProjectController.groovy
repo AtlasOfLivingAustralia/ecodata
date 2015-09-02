@@ -61,6 +61,9 @@ class ProjectController {
                     xlsx {
                         asXlsx projectService.toMap(p, 'all')  // Probably should only support one level of detail?
                     }
+                    shp {
+                        asShapefile p // Make sure sites are included
+                    }
                 }
 
 
@@ -79,6 +82,19 @@ class ProjectController {
         exporter.sizeColumns()
 
         exporter.save(response.outputStream)
+    }
+
+    def asShapefile(project) {
+        if (siteService.findAllForProjectId(project.projectId)) {
+            def name = 'projectSites'
+            response.setContentType("application/zip")
+            response.setHeader("Content-disposition", "filename=${name}.zip")
+            reportService.exportShapeFile([project.projectId], name, response.outputStream)
+            response.outputStream.flush()
+        }
+        else {
+            render status: 404, text: 'No sites are configured for this project'
+        }
     }
 
 
@@ -245,7 +261,6 @@ class ProjectController {
         def projectList = projectService.search(searchCriteria, view)
         asJson projects:projectList
     }
-
     private def setResponseHeadersForProjectId(response, projectId){
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/project/" + projectId)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/project/" +  projectId)

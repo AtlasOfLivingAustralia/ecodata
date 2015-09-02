@@ -77,9 +77,6 @@ class ShapefileBuilder {
      */
     public void addProject(String projectId) {
 
-        if (!writer) {
-            createShapefile()
-        }
         def project = projectService.get(projectId)
 
         if (!project) {
@@ -87,42 +84,59 @@ class ShapefileBuilder {
         }
 
         project.sites?.each { site ->
+            addGeometry(site, project)
+        }
+    }
 
-            try {
-                // Currently necessary as not all our sites store valid geojson as their geometry.
-                def siteGeom = siteService.geometryAsGeoJson(site)
-                if (siteGeom && !siteGeom.error) {
+    private void addGeometry(site, project) {
+        if (!writer) {
+            createShapefile()
+        }
+        try {
+            // Currently necessary as not all our sites store valid geojson as their geometry.
+            def siteGeom = siteService.geometryAsGeoJson(site)
+            if (siteGeom && !siteGeom.error) {
 
-                    // All geometries in a shapefile need to be of the same type, so we convert everything to
-                    // multi-polygons
-                    Geometry geom = GeometryUtils.geoGsonToMultiPolygon((siteGeom as JSON).toString())
+                // All geometries in a shapefile need to be of the same type, so we convert everything to
+                // multi-polygons
+                Geometry geom = GeometryUtils.geoGsonToMultiPolygon((siteGeom as JSON).toString())
 
-                    SimpleFeature siteFeature = writer.next()
+                SimpleFeature siteFeature = writer.next()
 
-                    def attributes = [geom]
-                    attributes += getAttributes(site, DEFAULT_SITE_PROPERTIES)
-                    attributes += getAttributes(project, DEFAULT_PROJECT_PROPERTIES)
+                def attributes = [geom]
+                attributes += getAttributes(site, DEFAULT_SITE_PROPERTIES)
+                attributes += getAttributes(project, DEFAULT_PROJECT_PROPERTIES)
 
-                    siteFeature.setAttributes(attributes)
+                siteFeature.setAttributes(attributes)
 
-                    try {
-                        writer.write()
-                        featureCount++
-                    }
-                    catch (Exception e) {
-                        writer.remove()
-                        featureCount--
-                        log.error("Unable to write feature for site: ${site.siteId}", e)
-                    }
-
-                } else {
-                    log.warn("Unable to get geometry for site: ${site.siteId}")
+                try {
+                    writer.write()
+                    featureCount++
                 }
-            }
-            catch (Exception e) {
-                log.error("Error getting geomerty for site: ${site.siteId}", e)
+                catch (Exception e) {
+                    writer.remove()
+                    featureCount--
+                    log.error("Unable to write feature for site: ${site.siteId}", e)
+                }
+
+            } else {
+                log.warn("Unable to get geometry for site: ${site.siteId}")
             }
         }
+        catch (Exception e) {
+            log.error("Error getting geomerty for site: ${site.siteId}", e)
+        }
+    }
+
+    public void addSite(String siteId) {
+        def site = siteService.get(siteId)
+        if (!site) {
+            return
+        }
+        site.projects?.each { project ->
+            addGeometry(site, project)
+        }
+
     }
 
     /**

@@ -162,6 +162,17 @@ class SearchController {
         render results as JSON
     }
 
+    def targetsReport() {
+        def filters = params.getList("fq")
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+        additionalFilters.addAll(filters)
+        def targets = reportService.outputTargetsBySubProgram(params)
+        def scores = reportService.outputTargetReport(additionalFilters)
+
+        def results = [scores:scores, targets:targets]
+        render results as JSON
+    }
+
     def report() {
 
         def filters = params.getList("fq")

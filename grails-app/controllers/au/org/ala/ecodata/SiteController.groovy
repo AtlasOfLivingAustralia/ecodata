@@ -1,10 +1,11 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ShapefileBuilder
 import grails.converters.JSON
 
 class SiteController {
 
-    def siteService, commonService
+    def siteService, commonService, projectService
 
     static final RICH = "rich"
     static final BRIEF = 'brief'
@@ -55,11 +56,31 @@ class SiteController {
         } else {
             def s = siteService.get(id, levelOfDetail)
             if (s) {
-                asJson s
+                withFormat {
+                    json {
+                        asJson s
+                    }
+                    shp {
+                        asShapefile s
+                    }
+                }
+
+
             } else {
                 render (status: 404, text: 'No such id')
             }
         }
+    }
+
+    private def asShapefile(site) {
+        def name = 'projectSites'
+        response.setContentType("application/zip")
+        response.setHeader("Content-disposition", "filename=${name}.zip")
+        ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+        builder.setName(name)
+        builder.addSite(site.siteId)
+        builder.writeShapefile(response.outputStream)
+        response.outputStream.flush()
     }
 
     @RequireApiKey
