@@ -34,7 +34,7 @@ class ProjectActivityController {
      */
     def get(String id) {
         if (id) {
-            asJson(projectActivityService.get(id))
+            asJson(projectActivityService.get(id, params.view))
         } else {
             response.status = 404
             render status: 404, text: 'No such id'
