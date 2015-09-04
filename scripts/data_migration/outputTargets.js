@@ -6,9 +6,14 @@ var duplicateTargets = [
         duplicate:'Area covered (Ha) by pest treatment'
     },
     {
+        scoreLabel:'Area covered (Ha) by pest treatment actions',
+        duplicate:'Area covered by pest treatment (Ha)'
+    },
+    {
         scoreLabel:'Total area prepared (Ha) for follow-up treatment actions',
         duplicate:'Total area prepared for follow-up treatment actions'
     },
+
     {
         scoreLabel:'Area of land (Ha) changed to sustainable practices',
         duplicate:'Area of land changed to sustainable practices'
@@ -60,7 +65,7 @@ while (projects.hasNext()) {
         continue;
     }
 
-
+    var changed = false;
     for (var i=0; i<duplicateTargets.length; i++) {
         var outputTarget = findMatch(project.outputTargets, duplicateTargets[i].duplicate);
 
@@ -72,8 +77,15 @@ while (projects.hasNext()) {
             if (correctTarget) {
                 output += ',' + correctTarget.outputLabel + ',' + correctTarget.scoreLabel + ',' + correctTarget.scoreName + ',' + correctTarget.target;
             }
+            else {
+                outputTarget.scoreLabel = duplicateTargets[i].scoreLabel;
+                changed = true;
+            };
             print(output);
         }
 
+    }
+    if (changed) {
+        db.project.update({projectId:project.projectId}, {$set:{outputTargets:project.outputTargets}});
     }
 }
