@@ -29,6 +29,7 @@ class Activity {
         activityId index: true
         siteId index: true
         projectId index: true
+        projectActivityId index: true
         version false
     }
 
@@ -62,6 +63,8 @@ class Activity {
     Date dateCreated
     Date lastUpdated
 
+    String projectActivityId
+
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
         def completedStates = [FINISHED, DEFERRED, CANCELLED]
@@ -88,6 +91,7 @@ class Activity {
         associatedProgram nullable: true
         associatedSubProgram nullable: true
         projectStage nullable: true
+        projectActivityId nullable: true
     }
 
 }
