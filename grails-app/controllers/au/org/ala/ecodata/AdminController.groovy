@@ -3,6 +3,9 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonBuilder
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 import static groovyx.gpars.actor.Actors.actor
@@ -423,5 +426,125 @@ class AdminController {
     def audit() { }
     def auditMessagesByEntity() { }
     def auditMessagesByProject() { }
+
+    private boolean createStageReportsFromTimeline(project) {
+        def timeline = project.timeline
+
+        if (!timeline) {
+            println "No timeline present for project: ${project.projectId}"
+            return false
+        }
+        if (timeline[0].fromDate >= new DateTime(project.plannedStartDate).toString() || timeline[0].toDate <= new DateTime(project.plannedStartDate).toString() ) {
+            println "WARNING: Timeline start is different to project start for project: ${project.projectId}, timeline start: ${timeline[0].fromDate}, timeline end: ${timeline[0].toDate}, project start: ${project.plannedStartDate}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+        if (timeline[timeline.size()-1].fromDate >= new DateTime(project.plannedEndDate).toString() || timeline[timeline.size()-1].toDate < new DateTime(project.plannedEndDate).toString()) {
+            println "WARNING: Timeline end is different to project end for project: ${project.projectId}, timeline start: ${timeline[0].fromDate}, timeline end: ${timeline[0].toDate}, project end: ${project.plannedEndDate}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+
+        //def program =//
+
+        DateTimeFormatter parser = ISODateTimeFormat.dateTimeParser()
+
+        timeline.each { stage ->
+            Report report = new Report()
+            report.reportId = Identifiers.getNew(true,'')
+            report.projectId = project.projectId
+            report.name = stage.name
+            report.type = 'Activity'
+            report.description = stage.name + " report for " + project.name
+            report.fromDate = parser.parseDateTime(stage.fromDate).toDate()
+            def toDate = parser.parseDateTime(stage.toDate)
+            report.toDate = toDate.toDate()
+
+            report.dueDate = toDate.plusDays(30).toDate()
+
+            report.save(flush:true, failOnError: true)
+        }
+
+        return true
+
+
+    }
+
+    def populateStageReportStatus(project) {
+
+
+        List stuff = AuditMessage.findAllByProjectIdAndEventTypeAndEntityType(project.projectId, 'Update', Activity.name)
+
+        stuff.sort { a1, a2 ->
+            return a1.date.compareTo(a2.date)
+        }
+
+        //println "${project.name}"
+        //println "**************"
+
+        stuff.each {
+            def status = it.entity.publicationStatus ?: ''
+            if (!status) {
+                return
+            }
+            if (it.entity.description == 'Upload of stage 1 and 2 reporting data') {
+                return
+            }
+            def activityEndDate = it.entity.plannedEndDate
+            def stageReport = Report.findAllByProjectId(project.projectId).find {it.fromDate.before(activityEndDate) && (it.toDate.after(activityEndDate) || it.toDate.equals(activityEndDate))}
+
+            if (!stageReport) {
+                throw new Exception("No stage report found for project ${project.projectId} and date ${it.entity.plannedEndDate}")
+            }
+
+
+            if (stageReport.publicationStatus != status) {
+
+                //println "found report: ${stageReport.name} for date ${it.entity.plannedEndDate} status: ${status}"
+                switch (status) {
+                    case 'pendingApproval':
+                        stageReport.submit(it.userId, it.date)
+                        break
+                    case 'published':
+                        stageReport.approve(it.userId, it.date)
+                        break
+                    case 'unpublished':
+                        stageReport.returnForRework(it.userId, it.date)
+                        break
+                }
+
+                stageReport.save()
+            }
+        }
+
+    }
+
+    def createStageReports() {
+
+        def offset = 0, max = 100
+        def count = 0
+        def projects = []
+        Project.withSession { session ->
+            while (count == 0 || projects.size() > 0) {
+                projects = Project.findAllByStatusNotEqual('deleted', [max:max, offset:offset])
+
+                projects.each { project ->
+                    if (project.isMERIT) {
+                        count++
+                        println "****** ${count} - ${project.projectId} ******"
+                        def reports = Report.findAllByProjectId(project.projectId)
+                        if (!reports) {
+                            boolean success = createStageReportsFromTimeline(project)
+                            if (success) {
+                                populateStageReportStatus(project)
+                            }
+                        }
+                    }
+                }
+                offset += projects.size()
+            }
+            session.clear()
+        }
+        def reports = Report.findAll()
+        def reportsByProject = reports.groupBy{it.projectId}
+        render reportsByProject as JSON
+    }
+
 
 }

@@ -203,6 +203,7 @@ class SiteService {
         def geometry = site?.extent?.geometry
 
         if (!geometry) {
+            log.error("Invalid site: ${site.siteId} missing geometry")
             return
         }
         def result = null
@@ -224,7 +225,13 @@ class SiteService {
                 result = [type:'Point', coordinates:coords]
                 break
             case 'Polygon':
-                result = [type:'Polygon', coordinates: geometry.coordinates]
+                if (!geometry.coordinates) {
+                    log.error("Invalid site: ${site.siteId} missing coordinates")
+                    return
+                }
+                // The map drawing tools allow you to draw lines using the "polygon" tool.
+                def type = geometry.coordinates.size() < 4 ? 'LineString' : 'Polygon'
+                result = [type:type, coordinates: geometry.coordinates]
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)

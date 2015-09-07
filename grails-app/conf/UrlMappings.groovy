@@ -86,6 +86,16 @@ class UrlMappings {
             action = 'find'
         }
 
+        "/ws/$entity/$id/reports" {
+            controller = 'report'
+            action = 'find'
+        }
+
+        "/ws/user/$id/reports" {
+            controller = 'report'
+            action = 'findByUserId'
+        }
+
 		"/"(view:"/index")
 		"500"(view:'/error')
 	}

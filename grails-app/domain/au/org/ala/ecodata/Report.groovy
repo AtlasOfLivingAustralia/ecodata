@@ -13,14 +13,22 @@ class Report {
         Date dateChanged
         String changedBy
         String status
+        static constraints = {
+            version false
+        }
+
+
     }
 
     ObjectId id
 
     String reportId
+    String projectId
+    String organisationId
 
     String name
     String description
+    String type // What do we want here...? (Stage, Green Army Monthly, Green Army 3 Monthly)
 
     Date fromDate
     Date toDate
@@ -51,37 +59,60 @@ class Report {
     Date dateCreated
     Date lastUpdated
 
-    public void approve(String userId) {
-        StatusChange change = changeStatus(userId, 'approved')
+    public boolean isCurrent() {
+        def now = new Date()
+        return  publicationStatus != 'pendingApproval' &&
+                publicationStatus != 'published' &&
+                fromDate < now && toDate >= now
+    }
+
+    public boolean isDue() {
+        def now = new Date()
+        return  publicationStatus != 'pendingApproval' &&
+                publicationStatus != 'published' &&
+                toDate < now && dueDate >= now
+    }
+
+    public boolean isOverdue() {
+        def now = new Date()
+        return  publicationStatus != 'pendingApproval' &&
+                publicationStatus != 'published' &&
+                dueDate < now
+    }
+
+
+    public void approve(String userId, Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'approved', changeDate)
 
         publicationStatus = 'published'
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
     }
 
-    public void submit(String userId) {
-        StatusChange change = changeStatus(userId, 'submitted')
+    public void submit(String userId,  Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'submitted', changeDate)
 
         publicationStatus = 'pendingApproval'
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
     }
 
-    public void returnForRework(String userId) {
-        StatusChange change = changeStatus(userId, 'returned')
+    public void returnForRework(String userId, Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'returned', changeDate)
 
-        publicationStatus = 'not published'
+        publicationStatus = 'unpublished'
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
     }
 
-    private StatusChange changeStatus(String userId, String status) {
-        Date now = new Date()
-        StatusChange change = new StatusChange(changedBy:userId, dateChanged: now, status: publicationStatus)
+    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date()) {
+        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status)
         statusChangeHistory << change
 
         return change
     }
+
+    static transients = ['due', 'overdue', 'current']
 
     static constraints = {
         reportId index:true
@@ -93,6 +124,8 @@ class Report {
         approvedBy nullable:true
         dateReturned nullable:true
         returnedBy nullable:true
+        projectId nullable:true
+        organisationId nullable:true
 
     }
 

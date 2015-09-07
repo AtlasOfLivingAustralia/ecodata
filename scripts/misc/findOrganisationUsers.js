@@ -9,7 +9,7 @@ for (var i=0; i<orgs.length; i++) {
         var permissions = db.userPermission.find({entityId:project.projectId});
         while (permissions.hasNext()) {
             var permission = permissions.next();
-            if (permission.accessLevel=='admin') {
+            if (permission.accessLevel=='caseManager') {
                 orgUsers[permission.userId] = true;
             }
         }
