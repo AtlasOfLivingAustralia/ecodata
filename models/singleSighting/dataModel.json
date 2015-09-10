@@ -1,0 +1,18 @@
+{
+  "modelName": "Single Sighting",
+  "dataModel": [
+    {
+      "dataType": "singleSighting"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "singleSighting"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}
