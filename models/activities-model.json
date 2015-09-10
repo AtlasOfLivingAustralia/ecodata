@@ -3380,6 +3380,11 @@
             "template": "gaSiteVisitDetails",
             "scores": [],
             "name": "Site Visit Details"
+        },
+        {
+          "template": "singleSighting",
+          "scores": [],
+          "name": "Single Sighting"
         }
     ],
     "activities": [
@@ -3972,6 +3977,12 @@
             "supportsSites": false,
             "type": "Report",
             "category": "Programme Reporting"
+        },
+        {
+          "name": "Single Sighting",
+          "type": "Activity",
+          "category": "Assessment & monitoring",
+          "outputs": ["Single Sighting"]
         }
     ]
 }
