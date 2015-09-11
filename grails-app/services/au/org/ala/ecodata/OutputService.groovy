@@ -33,15 +33,20 @@ class OutputService {
         Output.findAllByActivityIdAndNameAndStatus(id, name, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def delete(String id, destroy) {
-        def a = Output.findByOutputId(id)
-        if (a) {
+    def delete(String id, boolean destroy) {
+        def output = Output.findByOutputId(id)
+        if (output) {
             if (destroy) {
-                a.delete()
+                output.delete()
             } else {
-                a.status = 'deleted'
-                a.save(flush: true)
+                output.status = 'deleted'
+                output.save(flush: true)
             }
+
+            Record.findAllByOutputId(id)?.each {
+                it.delete()
+            }
+
             return [status:'ok']
         } else {
             return [status:'error', error:'No such id']
@@ -144,7 +149,7 @@ class OutputService {
             try {
                 getCommonService().updateProperties(output, props)
 
-                List<Record> records = Record.findByOutputId(outputId)
+                List<Record> records = Record.findAllByOutputId(outputId)
 
                 if (records) {
                     records.each {

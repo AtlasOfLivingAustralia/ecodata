@@ -2,6 +2,7 @@
   "modelName": "Single Sighting",
   "dataModel": [
     {
+      "name": "singleSighting",
       "dataType": "singleSighting",
       "record": "true"
     }
