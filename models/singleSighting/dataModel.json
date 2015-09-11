@@ -2,7 +2,8 @@
   "modelName": "Single Sighting",
   "dataModel": [
     {
-      "dataType": "singleSighting"
+      "dataType": "singleSighting",
+      "record": "true"
     }
   ],
   "viewModel": [

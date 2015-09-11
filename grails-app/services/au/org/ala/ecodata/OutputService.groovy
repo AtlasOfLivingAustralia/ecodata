@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.RecordConverter
+import au.org.ala.ecodata.converter.RecordConverterFactory
+
 class OutputService {
 
     static transactional = false
@@ -89,21 +92,24 @@ class OutputService {
         }
     }
 
-    def create(props) {
+    def create(Map props) {
         assert getCommonService()
-        def activity = Activity.findByActivityId(props.activityId)
+        Activity activity = Activity.findByActivityId(props.activityId)
         if (activity) {
-            def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
+            Output output = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
             try {
-                o.save(failOnError: true) // Getting dynamic properties not saving without this.
+                output.save(failOnError: true) // Getting dynamic properties not saving without this.
 
-                getCommonService().updateProperties(o, props)
-                return [status:'ok',outputId:o.outputId]
+                getCommonService().updateProperties(output, props)
+
+                createRecordsForOutput(output, activity, props)
+
+                return [status:'ok',outputId:output.outputId]
             } catch (Exception e) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Output.withSession { session -> session.clear() }
                 def error = "Error creating output for activity ${props.activityId} - ${e.message}"
-                log.error error
+                log.error error, e
                 return [status:'error',error:error]
             }
         } else {
@@ -113,20 +119,50 @@ class OutputService {
         }
     }
 
-    def update(props, id) {
-        def a = Output.findByOutputId(id)
-        if (a) {
+    private createRecordsForOutput(Output output, Activity activity, Map props) {
+        Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
+        outputMetadata?.dataModel?.each { dataModel ->
+            if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
+                RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
+                List<Record> records = converter.convert(props, dataModel)
+
+                records.each { record ->
+                    record.outputId = output.outputId
+                    record.projectId = activity.projectId
+                    record.projectActivityId = activity.projectActivityId
+
+                    record.save(failOnError: true)
+                }
+            }
+        }
+    }
+
+    def update(Map props, String outputId) {
+        Output output = Output.findByOutputId(outputId)
+        if (output) {
+            Activity activity = Activity.findByActivityId(output.activityId)
             try {
-                getCommonService().updateProperties(a, props)
+                getCommonService().updateProperties(output, props)
+
+                List<Record> records = Record.findByOutputId(outputId)
+
+                if (records) {
+                    records.each {
+                        it.delete()
+                    }
+                }
+
+                createRecordsForOutput(output, activity, props)
+
                 return [status:'ok']
             } catch (Exception e) {
                 Output.withSession { session -> session.clear() }
-                def error = "Error updating output ${id} - ${e.message}"
-                log.error error
+                String error = "Error updating output ${outputId} - ${e.message}"
+                log.error error, e
                 return [status:'error',error:error]
             }
         } else {
-            def error = "Error updating output - no such id ${id}"
+            String error = "Error updating output - no such id ${outputId}"
             log.error error
             return [status:'error',error:error]
         }
