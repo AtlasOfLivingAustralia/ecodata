@@ -9,12 +9,14 @@
   ],
   "viewModel": [
     {
-      "items": [
-        {
-          "type": "singleSighting"
-        }
-      ],
-      "type": "row"
+      "type": "template",
+      "source": "/submitSighting/submitSightingResources",
+      "plugin": "biocollectSightings"
+    },
+    {
+      "type": "template",
+      "source": "/submitSighting/submitSighting",
+      "plugin": "biocollectSightings"
     }
   ]
 }
