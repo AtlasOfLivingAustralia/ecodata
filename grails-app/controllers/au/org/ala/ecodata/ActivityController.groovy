@@ -146,6 +146,17 @@ class ActivityController {
         }
     }
 
+    def activitiesForUser(String id){
+        if (id) {
+            def list = []
+            list.addAll activityService.findAllForUserId(id)
+            asJson([list: list])
+        } else {
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+    }
+
     /**
      * Request body should be JSON formatted of the form:
      * {
