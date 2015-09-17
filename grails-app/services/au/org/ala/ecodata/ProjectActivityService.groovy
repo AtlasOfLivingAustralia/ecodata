@@ -7,9 +7,10 @@ class ProjectActivityService {
 
     static final ACTIVE = "active"
     static final DOCS = 'docs'
+    static final ALL = 'all' // docs and sites
     static final BRIEF = 'brief'
 
-    def commonService, documentService
+    def commonService, documentService, siteService
 
 
     /**
@@ -86,6 +87,14 @@ class ProjectActivityService {
         def mapOfProperties = dbo.toMap()
         if (levelOfDetail == DOCS) {
             mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)
+        }else if (levelOfDetail == ALL){
+            mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)
+            def siteIds = mapOfProperties.sites
+            def sites = []
+            siteIds?.each{
+                sites << siteService.get(it, 'brief')
+            }
+            mapOfProperties["sites"] = sites
         }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id

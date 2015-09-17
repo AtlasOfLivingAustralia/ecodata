@@ -62,6 +62,10 @@ class ActivityService {
         activities
     }
 
+    def findAllForUserId(userId, levelOfDetail = []){
+        Activity.findAllByUserIdAndStatus(userId, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -109,6 +113,7 @@ class ActivityService {
             o.save(failOnError: true)
 
             props.remove('id')
+            props.remove('activityId')
             def outputs = props.remove('outputs')
             commonService.updateProperties(o, props)
             // If outputs were supplied, update those separately.

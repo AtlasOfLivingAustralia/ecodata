@@ -64,6 +64,7 @@ class Activity {
     Date lastUpdated
 
     String projectActivityId
+    String userId
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -92,6 +93,7 @@ class Activity {
         associatedSubProgram nullable: true
         projectStage nullable: true
         projectActivityId nullable: true
+        userId nullable:true
     }
 
 }
