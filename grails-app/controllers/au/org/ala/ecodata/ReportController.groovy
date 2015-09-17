@@ -1,12 +1,23 @@
 package au.org.ala.ecodata
 
+import grails.rest.RestfulController
+
 class ReportController {
 
     static responseFormats = ['json', 'xml']
     def reportingService
 
     def get(String id) {
-        respond reportingService.get(id)
+        reportingService.get(id, false)
+    }
+
+    def update(String id) {
+        if (!id) {
+            respond reportingService.create(request.JSON)
+        }
+        else {
+            respond reportingService.update(id, request.JSON)
+        }
     }
 
     def find(String entity, String id) {
@@ -35,4 +46,5 @@ class ReportController {
     def returnForRework(String id) {
         reportingService.returnForRework(id)
     }
+
 }

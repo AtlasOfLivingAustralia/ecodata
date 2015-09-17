@@ -56,6 +56,13 @@ class ReportingService {
         return report
     }
 
+    Report update(String id, Map properties) {
+        Report report = get(id)
+        report.properties = properties
+        report.save(flush:true)
+        return report
+    }
+
     def submit(String id) {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)

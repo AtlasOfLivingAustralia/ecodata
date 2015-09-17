@@ -53,6 +53,7 @@ class ReportSpec extends Specification {
     void "when a report is approved, history should be recorded"() {
         when:
         Report report = new Report(reportId:'blah', name:'My report', type:'Activity', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        report.submit('1234')
         report.approve('1234')
         report.save(flush:true, failOnError:true)
 
@@ -61,7 +62,7 @@ class ReportSpec extends Specification {
         savedReport.approvedBy == '1234'
         savedReport.publicationStatus == 'published'
         savedReport.dateApproved != null
-        savedReport.statusChangeHistory.size() == 1
+        savedReport.statusChangeHistory.size() == 2
     }
 
     void "when a report is returned to a user, history should be recorded"() {

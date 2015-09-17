@@ -154,6 +154,10 @@ class ElasticSearchService {
                 docId = doc.siteId; break
             case "au.org.ala.ecodata.Activity":
                 docId = doc.activityId; break
+            case "au.org.ala.ecodata.Organisation":
+                docId = doc.organisationId; break
+            case "au.org.ala.ecodata.Report":
+                docId = doc.reportId; break
             default:
                 docId = doc.id; break
         }
