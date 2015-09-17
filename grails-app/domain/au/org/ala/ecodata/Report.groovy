@@ -88,7 +88,9 @@ class Report {
 
 
     public void approve(String userId, Date changeDate = new Date()) {
-
+        if (publicationStatus != 'pendingApproval') {
+            throw new IllegalArgumentException("Only submitted reports can be approved.")
+        }
         if (!approvalDeltaInWeekdays) {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
@@ -100,6 +102,9 @@ class Report {
     }
 
     public void submit(String userId,  Date changeDate = new Date()) {
+        if (publicationStatus == 'published' || publicationStatus == 'pendingApproval') {
+            throw new IllegalArgumentException("An approved or submitted report cannot be resubmitted")
+        }
         StatusChange change = changeStatus(userId, 'submitted', changeDate)
 
         if (!submissionDeltaInWeekdays) {
@@ -146,7 +151,6 @@ class Report {
 
     static embedded = ['statusChangeHistory']
     static mapping = {
-        id generator:'assigned',name:'reportId'
         version false
     }
 
