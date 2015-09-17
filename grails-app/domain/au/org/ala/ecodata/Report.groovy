@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import org.bson.types.ObjectId
+import org.joda.time.DateTime
+import org.joda.time.DateTimeConstants
 
 /**
  * A Report is a container for a set of Activities that must be "Finished" and submitted for approval.
@@ -49,6 +51,10 @@ class Report {
     Date dateReturned
     /** The user ID of the grant manager who returned this Report */
     String returnedBy
+    /** Number of days before (-ve) or after the due date the report was submitted.  Calculated at submit time to make reporting easier. */
+    Integer submissionDeltaInWeekdays
+    /** Number of days after a report is submitted that it's approved.  Calculated at approval time to make reporting easier. */
+    Integer approvalDeltaInWeekdays
 
     /** Not Approved, Submitted, Approved */
     String publicationStatus = 'not approved'
@@ -82,6 +88,10 @@ class Report {
 
 
     public void approve(String userId, Date changeDate = new Date()) {
+
+        if (!approvalDeltaInWeekdays) {
+            approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
+        }
         StatusChange change = changeStatus(userId, 'approved', changeDate)
 
         publicationStatus = 'published'
@@ -92,6 +102,9 @@ class Report {
     public void submit(String userId,  Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, 'submitted', changeDate)
 
+        if (!submissionDeltaInWeekdays) {
+            submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
+        }
         publicationStatus = 'pendingApproval'
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
@@ -126,10 +139,42 @@ class Report {
         returnedBy nullable:true
         projectId nullable:true
         organisationId nullable:true
+        approvalDeltaInWeekdays nullable: true
+        submissionDeltaInWeekdays nullable: true
 
     }
 
     static embedded = ['statusChangeHistory']
+    static mapping = {
+        id generator:'assigned',name:'reportId'
+        version false
+    }
 
+
+    static int weekDaysBetween(Date date1, Date date2) {
+        DateTime d1
+        DateTime d2
+
+        def direction
+        if (date1.before(date2)) {
+            d1 = new DateTime(date1)
+            d2 = new DateTime(date2)
+            direction = 1
+        }
+        else {
+            d1 = new DateTime(date2)
+            d2 = new DateTime(date1)
+            direction = -1
+        }
+        def daysDifference = 0
+        while (d1.isBefore(d2)) {
+            d1 = d1.plusDays(1)
+            if (d1.getDayOfWeek() != DateTimeConstants.SATURDAY && d1.getDayOfWeek() != DateTimeConstants.SUNDAY) {
+                daysDifference++
+            }
+        }
+
+        return daysDifference*direction
+    }
 
 }
