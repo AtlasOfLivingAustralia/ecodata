@@ -458,9 +458,17 @@ class AdminController {
                 //println "found report: ${stageReport.name} for date ${it.entity.plannedEndDate} status: ${status}"
                 switch (status) {
                     case 'pendingApproval':
+                        if (stageReport.publicationStatus == 'published') {
+                            log.warn("Adding implicit rejection step to the report ${stageReport.name} for project: ${project.projectId}")
+                            stageReport.returnForRework("-1", it.date)
+                        }
                         stageReport.submit(it.userId, it.date)
                         break
                     case 'published':
+                        if (stageReport.publicationStatus != 'pendingApproval') {
+                            log.warn("Adding implicit submit step to the report ${stageReport.name} for project: ${project.projectId}")
+                            stageReport.submit("-1", it.date)
+                        }
                         stageReport.approve(it.userId, it.date)
                         break
                     case 'unpublished':
