@@ -39,6 +39,7 @@ class Activity {
     Boolean assessment = false
     String siteId
     String projectId
+    String projectActivityId
     String description
     String type
     Date startDate
@@ -73,6 +74,7 @@ class Activity {
     static constraints = {
         siteId nullable: true
         projectId nullable: true
+        projectActivityId nullable: true
         description nullable: true
         startDate nullable: true
         endDate nullable: true
