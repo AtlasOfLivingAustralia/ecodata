@@ -3385,6 +3385,11 @@
           "template": "singleSighting",
           "scores": [],
           "name": "Single Sighting"
+        },
+        {
+          "template": "multipleSightings",
+          "scores": [],
+          "name": "Multiple Sightings"
         }
     ],
     "activities": [
@@ -3983,6 +3988,12 @@
           "type": "Activity",
           "category": "Assessment & monitoring",
           "outputs": ["Single Sighting"]
+        },
+        {
+          "name": "Multiple Sightings",
+          "type": "Activity",
+          "category": "Assessment & monitoring",
+          "outputs": ["Multiple Sightings"]
         }
     ]
 }

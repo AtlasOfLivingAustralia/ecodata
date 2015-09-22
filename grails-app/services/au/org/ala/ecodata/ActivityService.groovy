@@ -173,7 +173,7 @@ class ActivityService {
         if (activity) {
             // do updates for each attached output
             props.outputs?.each { output ->
-                if (output.outputId) {
+                if (output.outputId && output.outputId != "null") {
                     // update
                     log.debug "Updating output ${output.name}"
                     def result = outputService.update(output, output.outputId)
