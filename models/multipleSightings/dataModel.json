@@ -10,7 +10,7 @@
         "name": "sightings",
         "columns": [
           {
-            "title": "Name",
+            "title": "Scientific Name",
             "source": "scientificName",
             "width": "35%"
           },
@@ -46,7 +46,7 @@
         "type": "table",
         "columns": [
           {
-            "title": "Name",
+            "title": "Scientific Name",
             "type": "readonlyText",
             "source": "scientificName",
             "width": "35%"
