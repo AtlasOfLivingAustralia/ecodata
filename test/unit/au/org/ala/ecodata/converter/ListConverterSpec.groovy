@@ -1,6 +1,5 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Record
 import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
@@ -32,7 +31,7 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Record> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
 
         then:
         result.size() == 2
@@ -78,7 +77,7 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Record> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
 
         then:
         result.size() == 2

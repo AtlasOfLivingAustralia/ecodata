@@ -1,6 +1,5 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Record
 import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
@@ -32,7 +31,7 @@ class MasterDetailConverterSpec extends Specification {
         Map metadata = [name: "multipleSightings", master: [:], detail: [dataType: "singleSighting"]]
 
         when:
-        List<Record> result = new MasterDetailConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new MasterDetailConverter().convert(new JsonSlurper().parseText(data), metadata)
 
         then:
         result.size() == 2

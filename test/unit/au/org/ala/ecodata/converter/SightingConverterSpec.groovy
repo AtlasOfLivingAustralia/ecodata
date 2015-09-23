@@ -1,6 +1,5 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Record
 import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
@@ -19,7 +18,7 @@ class SightingConverterSpec extends Specification {
         }"""
 
         when:
-        List<Record> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
+        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
 
         then:
         result.size() == 1

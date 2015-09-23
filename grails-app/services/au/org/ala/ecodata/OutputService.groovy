@@ -7,7 +7,9 @@ class OutputService {
 
     static transactional = false
 
-    def grailsApplication, metadataService
+    def grailsApplication
+    MetadataService metadataService
+    RecordService recordService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -129,14 +131,20 @@ class OutputService {
         outputMetadata?.dataModel?.each { dataModel ->
             if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
                 RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-                List<Record> records = converter.convert(props, dataModel)
+                List<Map> records = converter.convert(props, dataModel)
 
                 records.each { record ->
                     record.outputId = output.outputId
                     record.projectId = activity.projectId
                     record.projectActivityId = activity.projectActivityId
 
-                    record.save(failOnError: true)
+                    // createRecord returns a 2-element list:
+                    // [0] = Record (always there even if the save failed);
+                    // [1] = Error object if the save failed, empty map if the save succeeded.
+                    List result = recordService.createRecord(record)
+                    if (result[1]) {
+                        throw new IllegalArgumentException("Failed to create record: ${record}")
+                    }
                 }
             }
         }

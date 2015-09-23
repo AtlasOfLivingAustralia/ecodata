@@ -1,13 +1,12 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Record
 import net.sf.json.JSON
 
 class ListConverter implements RecordConverter {
 
     @Override
-    List<Record> convert(Map data, Map outputMetadata = [:]) {
-        List<Record> records = []
+    List<Map> convert(Map data, Map outputMetadata = [:]) {
+        List<Map> records = []
 
         Map dwcMappings = [:]
         outputMetadata.columns.each {
@@ -17,7 +16,8 @@ class ListConverter implements RecordConverter {
         }
 
         data.data[outputMetadata.name].eachWithIndex { it, index ->
-            Record record = new Record(json: (it as JSON).toString())
+            Map record = [:]
+            record.json = (it as JSON).toString()
 
             if (dwcMappings.containsKey("individualCount")) {
                 record.individualCount = Integer.parseInt(it[dwcMappings["individualCount"]])

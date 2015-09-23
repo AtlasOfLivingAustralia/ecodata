@@ -1,7 +1,5 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Record
-
 /**
  * Converts an Output's data model into one or more Records.
  *
@@ -14,7 +12,7 @@ import au.org.ala.ecodata.Record
 interface RecordConverter {
     String DWC_ATTRIBUTE_NAME = "dwcAttribute"
 
-    List<Record> convert(Map data)
+    List<Map> convert(Map data)
 
-    List<Record> convert(Map data, Map outputMetadata)
+    List<Map> convert(Map data, Map outputMetadata)
 }

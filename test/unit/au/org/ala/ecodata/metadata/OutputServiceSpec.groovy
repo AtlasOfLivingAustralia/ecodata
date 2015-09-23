@@ -6,6 +6,7 @@ import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Output
 import au.org.ala.ecodata.OutputService
 import au.org.ala.ecodata.Record
+import au.org.ala.ecodata.RecordService
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import net.sf.json.groovy.JsonSlurper
@@ -17,11 +18,14 @@ class OutputServiceSpec extends Specification {
 
     OutputService service
     MetadataService mockMetadataService
+    RecordService mockRecordService
 
     def setup() {
         service = new OutputService()
         mockMetadataService = Mock(MetadataService)
+        mockRecordService = Mock(RecordService)
         service.metadataService = mockMetadataService
+        service.recordService = mockRecordService
         service.grailsApplication = [mainContext: [commonService: Mock(CommonService)]]
     }
 
@@ -32,6 +36,7 @@ class OutputServiceSpec extends Specification {
         activity.save(flush: true, failOnError: true)
         mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
                                                             dataModel: [[record: "true", dataType: "singleSighting"]]]
+        mockRecordService.createRecord(_) >> {new Record().save(flush:true)}
 
         when:
         def request = """{
@@ -70,6 +75,7 @@ class OutputServiceSpec extends Specification {
                                                                                     name: "col1"
                                                                             ]
                                                                     ]]]]
+        mockRecordService.createRecord(_) >> {new Record().save(flush:true)}
 
         when:
         def request = """{
