@@ -63,8 +63,6 @@ class Activity {
     String notes
     Date dateCreated
     Date lastUpdated
-
-    String projectActivityId
     String userId
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
