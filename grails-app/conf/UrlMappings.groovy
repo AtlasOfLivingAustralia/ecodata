@@ -24,6 +24,10 @@ class UrlMappings {
             controller = 'activity'
             action = 'activitiesForProject'
         }
+        "/ws/activitiesForUser/$id" {
+            controller = 'activity'
+            action = 'activitiesForUser'
+        }
 
 		"/ws/project/promoted" {
 			controller = 'project'
@@ -84,6 +88,16 @@ class UrlMappings {
         "/ws/$entity/$id/documents" {
             controller = 'document'
             action = 'find'
+        }
+
+        "/ws/$entity/$id/reports" {
+            controller = 'report'
+            action = 'find'
+        }
+
+        "/ws/user/$id/reports" {
+            controller = 'report'
+            action = 'findByUserId'
         }
 
 		"/"(view:"/index")

@@ -24,7 +24,7 @@ class ReportSpec extends Specification {
 
     void "a new report can be saved if mandatory fields are supplied"() {
         when:
-        Report report = new Report(reportId:'report1', name:'My report', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        Report report = new Report(reportId:'report1', name:'My report', type:'Activity', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
         report.save(flush:true, failOnError:true)
 
         then:
@@ -38,7 +38,7 @@ class ReportSpec extends Specification {
 
     void "when a report is submitted, history should be recorded"() {
         when:
-        Report report = new Report(reportId:'blah', name:'My report', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        Report report = new Report(reportId:'blah', name:'My report', type:'Activity', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
         report.submit('1234')
         report.save(flush:true, failOnError:true)
 
@@ -52,7 +52,8 @@ class ReportSpec extends Specification {
 
     void "when a report is approved, history should be recorded"() {
         when:
-        Report report = new Report(reportId:'blah', name:'My report', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        Report report = new Report(reportId:'blah', name:'My report', type:'Activity', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        report.submit('1234')
         report.approve('1234')
         report.save(flush:true, failOnError:true)
 
@@ -61,19 +62,19 @@ class ReportSpec extends Specification {
         savedReport.approvedBy == '1234'
         savedReport.publicationStatus == 'published'
         savedReport.dateApproved != null
-        savedReport.statusChangeHistory.size() == 1
+        savedReport.statusChangeHistory.size() == 2
     }
 
     void "when a report is returned to a user, history should be recorded"() {
         when:
-        Report report = new Report(reportId:'blah', name:'My report', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
+        Report report = new Report(reportId:'blah', name:'My report', type:'Activity', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
         report.returnForRework('1234')
         report.save(flush:true, failOnError:true)
 
         then:
         def savedReport = Report.findByReportId('blah')
         savedReport.returnedBy == '1234'
-        savedReport.publicationStatus == 'not published'
+        savedReport.publicationStatus == 'unpublished'
         savedReport.dateReturned != null
         savedReport.statusChangeHistory.size() == 1
     }

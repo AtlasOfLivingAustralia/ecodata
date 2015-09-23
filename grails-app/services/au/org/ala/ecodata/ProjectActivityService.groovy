@@ -6,7 +6,11 @@ import grails.transaction.Transactional
 class ProjectActivityService {
 
     static final ACTIVE = "active"
-    def commonService
+    static final DOCS = 'docs'
+    static final ALL = 'all' // docs and sites
+    static final BRIEF = 'brief'
+
+    def commonService, documentService, siteService
 
 
     /**
@@ -67,8 +71,8 @@ class ProjectActivityService {
         return p?toMap(p, levelOfDetail):null
     }
 
-    def getAllByProject(id){
-        ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it) };
+    def getAllByProject(id, levelOfDetail = []){
+        ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it, levelOfDetail) };
     }
 
     /**
@@ -81,6 +85,17 @@ class ProjectActivityService {
     def toMap(site, levelOfDetail = []) {
         def dbo = site.getProperty("dbo")
         def mapOfProperties = dbo.toMap()
+        if (levelOfDetail == DOCS) {
+            mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)
+        }else if (levelOfDetail == ALL){
+            mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)
+            def siteIds = mapOfProperties.sites
+            def sites = []
+            siteIds?.each{
+                sites << siteService.get(it, 'brief')
+            }
+            mapOfProperties["sites"] = sites
+        }
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
