@@ -36,7 +36,6 @@ class OutputServiceSpec extends Specification {
         activity.save(flush: true, failOnError: true)
         mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
                                                             dataModel: [[record: "true", dataType: "singleSighting"]]]
-        mockRecordService.createRecord(_) >> {new Record().save(flush:true)}
 
         when:
         def request = """{
@@ -53,10 +52,65 @@ class OutputServiceSpec extends Specification {
         Map response = service.create(new JsonSlurper().parseText(request))
 
         then:
-        println response
         response.status != "error"
+        1 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
         Output.count() == 1
-        Record.count() == 1
+    }
+
+    def "create output should create a record if the output data model has record = false"() {
+        setup:
+        String activityId = 'activity1'
+        Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
+        activity.save(flush: true, failOnError: true)
+        mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
+                                                            dataModel: [[record: "false", dataType: "singleSighting"]]]
+
+        when:
+        def request = """{
+            "activityId": "activity1",
+            "name": "Single Sighting",
+            "data": {
+                    "userId"          : "10598",
+                    "individualCount" : "3",
+                    "decimalLatitude" : "-31.203404950917385",
+                    "decimalLongitude": "146.95312499999997"
+            }
+        }"""
+
+        Map response = service.create(new JsonSlurper().parseText(request))
+
+        then:
+        response.status != "error"
+        0 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        Output.count() == 1
+    }
+
+    def "create output should NOT create a record if the output data model does not have the 'record' attribute"() {
+        setup:
+        String activityId = 'activity1'
+        Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
+        activity.save(flush: true, failOnError: true)
+        mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
+                                                            dataModel: [[dataType: "singleSighting"]]]
+
+        when:
+        def request = """{
+            "activityId": "activity1",
+            "name": "Single Sighting",
+            "data": {
+                    "userId"          : "10598",
+                    "individualCount" : "3",
+                    "decimalLatitude" : "-31.203404950917385",
+                    "decimalLongitude": "146.95312499999997"
+            }
+        }"""
+
+        Map response = service.create(new JsonSlurper().parseText(request))
+
+        then:
+        response.status != "error"
+        0 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        Output.count() == 1
     }
 
     def "create output should create records for each list item if the output data model has record = true and data type = list"() {
@@ -75,7 +129,6 @@ class OutputServiceSpec extends Specification {
                                                                                     name: "col1"
                                                                             ]
                                                                     ]]]]
-        mockRecordService.createRecord(_) >> {new Record().save(flush:true)}
 
         when:
         def request = """{
@@ -92,9 +145,8 @@ class OutputServiceSpec extends Specification {
         Map response = service.create(new JsonSlurper().parseText(request))
 
         then:
-        println response
         response.status != "error"
+        2 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
         Output.count() == 1
-        Record.count() == 2
     }
 }
