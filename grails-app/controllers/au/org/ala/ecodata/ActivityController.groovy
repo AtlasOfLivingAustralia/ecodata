@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 
 class ActivityController {
 
-    def activityService, siteService, commonService
+    def activityService, siteService, commonService, projectActivityService
     static final SCORES = 'scores'
     static final BRIEF = 'brief'
 
@@ -148,9 +148,11 @@ class ActivityController {
 
     def activitiesForUser(String id){
         if (id) {
-            def list = []
-            list.addAll activityService.findAllForUserId(id)
-            asJson([list: list])
+            def q = request.JSON
+            int rp = q.rp && q.rp.isInteger() ? Integer.parseInt(q.rp) : 1
+            def activities = activityService.findAllForUserId(id, [max: q.max ?: Pagination.DEFAULT_PER_PAGE, rp:rp-1])
+            def pagination = new Pagination(rp, activities?.count, Pagination.DEFAULT_PER_PAGE).getPagination()
+            asJson([activities: activities, pagination: pagination])
         } else {
             response.status = 404
             render status:404, text: 'No such id'
