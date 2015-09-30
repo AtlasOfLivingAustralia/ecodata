@@ -112,18 +112,17 @@ class RecordController {
      */
     def listForUser(){
 
-        log.debug("Retrieving a list for user: ${params.userId}")
+        log.debug("Retrieving a list for user: ${params.id}")
 
         def records = []
-        def sort = params.sort ?: "dateCreated"
+        def sort = params.sort ?: "lastUpdated"
         def order = params.order ?:  "desc"
-        def offset = params.start ?: 0
+        def offset = params.offset ?: 0
         def max = params.pageSize ?: 10
-
-        Record.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
+        Record.findAllWhere([userId:params.id], [sort:sort,order:order,offset:offset,max:max]).each {
             records.add(recordService.toMap(it))
         }
-        def totalRecords = Record.countByUserId(params.userId)
+        def totalRecords = Record.countByUserId(params.id)
         response.setContentType("application/json")
         def model = [total: totalRecords, list:records]
         render model as JSON

@@ -3,6 +3,7 @@
     "dataModel": [
         {
             "dataType": "list",
+            "record": "true",
             "name": "surveyResults",
             "columns": [
                 {

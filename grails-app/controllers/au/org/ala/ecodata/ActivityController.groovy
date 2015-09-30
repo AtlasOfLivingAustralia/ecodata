@@ -146,16 +146,20 @@ class ActivityController {
         }
     }
 
-    def activitiesForUser(String id){
-        if (id) {
-            def q = request.JSON
-            int rp = q.rp && q.rp.isInteger() ? Integer.parseInt(q.rp) : 1
-            def activities = activityService.findAllForUserId(id, [max: q.max ?: Pagination.DEFAULT_PER_PAGE, rp:rp-1])
-            def pagination = new Pagination(rp, activities?.count, Pagination.DEFAULT_PER_PAGE).getPagination()
-            asJson([activities: activities, pagination: pagination])
-        } else {
+    def listForUser(String id){
+
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+
+        if(!id){
             response.status = 404
             render status:404, text: 'No such id'
+        }
+        else{
+            def list = activityService.findAllForUserId(id, [max: max,offset:offset,order:order,sort:sort])
+            asJson([activities: list?.list, total: list?.total])
         }
     }
 
