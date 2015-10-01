@@ -13,6 +13,8 @@ class SingleSightingConverter implements RecordConverter {
         record.individualCount = Integer.parseInt(data.data.individualCount)
         record.userId = data.data.userId
         record.multimedia = data.data.multimedia
+        record.name = data.data.scientificName
+        record.guid = data.data.guid
 
         record.json = (data as JSON).toString()
 
