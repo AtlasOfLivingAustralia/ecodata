@@ -376,6 +376,36 @@ class PermissionsController {
     }
 
     /**
+     * Get a list of {@link Project projects} with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def getAllProjectsForUserId() {
+        def userId = params.id
+        if (userId) {
+            Map projectRetrieved = [:]
+            def up = UserPermission.findAllByUserIdAndEntityType(userId, Project.class.name, params)
+            List out  = []
+            up.each {
+                Map t
+                log.debug "it.projectId = ${it.entityId}"
+                if(!projectRetrieved[it.entityId]){
+                    t = projectService.get(it.entityId, ProjectService.FLAT)
+                    if(it.accessLevel == AccessLevel.starred){
+                        t.starred = true
+                    }
+
+                    if (t) out.add t
+                    projectRetrieved[it.entityId] = true
+                }
+            }
+            render out as JSON
+        } else {
+            render status:400, text: "Required params not provided: userId"
+        }
+    }
+    /**
      * Lightweight version of getOrganisationsForUserId() to return just the organisation ids
      *
      * @return

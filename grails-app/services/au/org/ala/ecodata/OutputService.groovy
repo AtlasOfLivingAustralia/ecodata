@@ -137,6 +137,8 @@ class OutputService {
                     record.outputId = output.outputId
                     record.projectId = activity.projectId
                     record.projectActivityId = activity.projectActivityId
+                    record.activityId = activity.activityId
+                    record.userId = activity.userId
 
                     // createRecord returns a 2-element list:
                     // [0] = Record (always there even if the save failed);

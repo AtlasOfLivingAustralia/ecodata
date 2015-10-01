@@ -66,8 +66,8 @@ class ActivityService {
         activities
     }
 
-    def findAllForUserId(userId, q=[max:Pagination.DEFAULT_PER_PAGE, offset:0], levelOfDetail = []){
-         def list = Activity.createCriteria().list(max: q.max, offset:q.rp) {
+    def findAllForUserId(userId, query, levelOfDetail = []){
+         def list = Activity.createCriteria().list(query) {
             and{
                 eq ("userId", userId)
                 eq ("status", ACTIVE)
@@ -75,7 +75,7 @@ class ActivityService {
            order('lastUpdated','desc')
         }
 
-        [count: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
     /**
