@@ -17,6 +17,7 @@ class Record {
     Double decimalLongitude
     Integer coordinateUncertaintyInMeters
     Integer individualCount
+    Integer numberOfOrganisms
     Date dateCreated
     Date lastUpdated
     String outputId
@@ -40,6 +41,7 @@ class Record {
         userId nullable: true
         coordinateUncertaintyInMeters nullable: true
         individualCount nullable: true
+        numberOfOrganisms nullable: true
         outputId nullable: true
         json nullable: true
         outputItemId nullable: true

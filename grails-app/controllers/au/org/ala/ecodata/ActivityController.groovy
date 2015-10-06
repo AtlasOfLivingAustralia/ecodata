@@ -163,6 +163,22 @@ class ActivityController {
         }
     }
 
+    def listByProject(String id){
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort])
+            asJson([activities: list?.list, total: list?.total])
+        }
+    }
+
     /**
      * Request body should be JSON formatted of the form:
      * {

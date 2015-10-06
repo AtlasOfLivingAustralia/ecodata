@@ -78,6 +78,19 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
+    def listByProjectId(projectId, query, levelOfDetail = []){
+        def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("projectId", projectId)
+                eq ("status", ACTIVE)
+            }
+            order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.

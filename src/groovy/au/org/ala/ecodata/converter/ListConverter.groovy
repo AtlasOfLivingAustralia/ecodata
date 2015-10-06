@@ -22,7 +22,9 @@ class ListConverter implements RecordConverter {
             if (dwcMappings.containsKey("individualCount")) {
                 record.individualCount = Integer.parseInt(it[dwcMappings["individualCount"]])
             }
-
+            if (dwcMappings.containsKey("numberOfOrganisms")) {
+                record.numberOfOrganisms = Integer.parseInt(it[dwcMappings["numberOfOrganisms"]])
+            }
             if (dwcMappings.containsKey("decimalLatitude")) {
                 record.decimalLatitude = Double.parseDouble(it[dwcMappings["decimalLatitude"]])
             }
@@ -32,6 +34,10 @@ class ListConverter implements RecordConverter {
 
             if (dwcMappings.containsKey("creator")) {
                 record.userId = it[dwcMappings["creator"]]
+            }
+            if(dwcMappings.containsKey("species")){
+                record.name = it[dwcMappings["species"]].name
+                record.guid = it[dwcMappings["species"]].guid
             }
 
             record.outputItemId = index
