@@ -129,6 +129,26 @@ class RecordController {
     }
 
     /**
+     * Retrieve a list of record for the supplied projectId
+     */
+    def listForProject(){
+
+        log.debug("Retrieving a list for user: ${params.id}")
+        def records = []
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+        Record.findAllWhere([projectId:params.id], [sort:sort,order:order,offset:offset,max:max]).each {
+            records.add(recordService.toMap(it))
+        }
+        def totalRecords = Record.countByProjectId(params.id)
+        response.setContentType("application/json")
+        def model = [total: totalRecords, list:records]
+        render model as JSON
+    }
+
+    /**
      * Delete by occurrence ID
      */
     @RequireApiKey

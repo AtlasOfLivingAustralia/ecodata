@@ -20,7 +20,8 @@
                     "dataType": "species",
                     "description": "All species recorded at the sample site",
                     "name": "species",
-                    "validate": "required"
+                    "validate": "required",
+                    "dwcAttribute": "species"
                 },
                 {
                     "dataType": "number",
