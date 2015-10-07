@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.bson.BSONObject
+
 class OutputService {
 
     static transactional = false
@@ -149,4 +151,11 @@ class OutputService {
         return list*.toString()
     }
 
+    Map getPropertiesOfDomainObject(Comment it) {
+        BSONObject dbo = it.getProperty("dbo")
+        Map mapOfProperties = dbo.toMap()
+        mapOfProperties['id'] = mapOfProperties['_id']
+        mapOfProperties.remove("_id")
+        mapOfProperties
+    }
 }
