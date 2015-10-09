@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.com.bytecode.opencsv.CSVWriter
+import au.org.ala.web.AuthService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
@@ -18,7 +19,12 @@ import org.apache.http.impl.client.DefaultHttpClient
 class RecordService {
 
     def grailsApplication
-    def activityService, metadataService, outputService, projectService, siteService, authService
+    ActivityService activityService
+    MetadataService metadataService
+    OutputService outputService
+    ProjectService projectService
+    SiteService siteService
+    AuthService authService
 
     def serviceMethod() {}
 
@@ -94,18 +100,19 @@ class RecordService {
      * or will upload images supplied in the imageMap which has contains
      * filename -> byte[]
      *
-     * @param record
-     * @param json
-     * @return
+     * @param record The Record to be updated
+     * @param json A map or JSONObject containing the record data. This data must contain a userId.
+     * @param imageMap a map of image resources to be associated with the record
+     *
+     * @return Map of errors, or an empty map if there were no errors.
      */
-    private def updateRecord(Record record, json, Map imageMap = [:]){
-
-        def errors = [:]
+    private Map updateRecord(Record record, json, Map imageMap = [:]) {
+        Map errors = [:]
 
         try {
 
             def userDetails = authService.getUserForUserId(json.userId)
-            if(!userDetails){
+            if (!userDetails) {
                 errors['updateError'] = "Unable to lookup user with ID: ${json.userId}. Check authorised systems in auth."
                 return errors
             }
@@ -114,19 +121,19 @@ class RecordService {
 
             //set all supplied properties
             json.each {
-                if(it.key in ["decimalLatitude", "decimalLongitude"] && it.value){
+                if (it.key in ["decimalLatitude", "decimalLongitude"] && it.value) {
                     record[it.key] = it.value.toString().toDouble()
-                } else if(it.key in ["coordinateUncertaintyInMeters", "individualCount"] && it.value){
+                } else if (it.key in ["coordinateUncertaintyInMeters", "individualCount"] && it.value) {
                     record[it.key] = it.value.toString().toInteger()
-                } else if(it.key in ["dateCreated", "lastUpdated"] && it.value){
+                } else if (it.key in ["dateCreated", "lastUpdated"] && it.value) {
                     //do nothing we these values...
-                } else if(!ignores.contains(it.key) && it.value){
+                } else if (!ignores.contains(it.key) && it.value) {
                     record[it.key] = it.value
                 }
             }
 
             //if no projectId is supplied, use default
-            if(!record.projectId){
+            if (!record.projectId) {
                 record.projectId = grailsApplication.config.records.default.projectId
             }
 
@@ -138,14 +145,14 @@ class RecordService {
             record.multimedia = []
 
             //persist any supplied images into imageMetadata service
-            if(json.multimedia){
+            if (json.multimedia) {
 
                 json.multimedia.eachWithIndex { image, idx ->
 
                     record.multimedia[idx] = [:]
                     // reconcile new with old images...
                     // Only upload images that are NOT already in images.ala.org.au
-                    if(!image.creator){
+                    if (!image.creator) {
                         image.creator = userDetails.displayName
                     }
 
@@ -168,18 +175,18 @@ class RecordService {
 
                     setDCTerms(image, record.multimedia[idx])
 
-                    if(alreadyLoaded){
+                    if (alreadyLoaded) {
                         log.debug "Refreshing metadata - ${image.identifier}"
                         //refresh metadata in imageMetadata service
                         updateImageMetadata(image.imageId, record, record.multimedia[idx])
                     }
                 }
-            } else if(imageMap){
+            } else if (imageMap) {
                 //upload the images supplied as bytes
                 def idx = 0
                 imageMap.each { imageFileName, imageInBytes ->
                     def metadata = [
-                            title: imageFileName,
+                            title  : imageFileName,
                             creator: userDetails.displayName
                     ]
                     def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
@@ -193,10 +200,11 @@ class RecordService {
             }
 
             record.save(flush: true)
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error(e.getMessage(), e)
-            errors['updateError'] = e.getClass().toString() +" " +e.getMessage()
+            errors['updateError'] = e.getClass().toString() + " " + e.getMessage()
         }
+
         errors
     }
 

@@ -10,7 +10,11 @@ class ActivityService {
     static final FLAT = 'flat'
     static final SITE = 'site'
 
-    def grailsApplication, outputService, commonService, documentService, siteService
+    def grailsApplication
+    OutputService outputService
+    CommonService commonService
+    DocumentService documentService
+    SiteService siteService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -62,6 +66,31 @@ class ActivityService {
         activities
     }
 
+    def findAllForUserId(userId, query, levelOfDetail = []){
+         def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("userId", userId)
+                eq ("status", ACTIVE)
+            }
+           order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
+    def listByProjectId(projectId, query, levelOfDetail = []){
+        def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("projectId", projectId)
+                eq ("status", ACTIVE)
+            }
+            order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -103,25 +132,28 @@ class ActivityService {
      * @param props the activity properties
      * @return json status
      */
-    def create(props) {
-        def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
+    def create(Map props) {
+        Activity activity = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true, ''))
         try {
-            o.save(failOnError: true)
+            activity.save(failOnError: true)
 
             props.remove('id')
+            props.remove('activityId')
             def outputs = props.remove('outputs')
-            commonService.updateProperties(o, props)
+            commonService.updateProperties(activity, props)
             // If outputs were supplied, update those separately.
             if (outputs) {
-                update(outputs:outputs, o.activityId)
+                update(outputs: outputs, activity.activityId)
             }
-            return [status:'ok',activityId:o.activityId]
+            
+            return [status: 'ok', activityId: activity.activityId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Activity.withSession { session -> session.clear() }
             def error = "Error creating activity for site ${props.siteId} - ${e.message}"
-            log.error error
-            return [status:'error',error:error]
+            log.error error, e
+            
+            return [status: 'error', error: error]
         }
     }
 
@@ -161,12 +193,12 @@ class ActivityService {
      */
     def update(props, id) {
         //log.debug "props = ${props}"
-        def a = Activity.findByActivityId(id)
+        def activity = Activity.findByActivityId(id)
         def errors = []
-        if (a) {
+        if (activity) {
             // do updates for each attached output
             props.outputs?.each { output ->
-                if (output.outputId) {
+                if (output.outputId && output.outputId != "null") {
                     // update
                     log.debug "Updating output ${output.name}"
                     def result = outputService.update(output, output.outputId)
@@ -188,7 +220,7 @@ class ActivityService {
             if (props.activityId) {
                 try {
                     props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
-                    commonService.updateProperties(a, props)
+                    commonService.updateProperties(activity, props)
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"

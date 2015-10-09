@@ -91,6 +91,8 @@ grails.mongo.default.mapping = {
     version false
 }
 
+cors.url.pattern = ['/document/download']
+
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/

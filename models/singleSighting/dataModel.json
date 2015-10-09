@@ -1,0 +1,22 @@
+{
+  "modelName": "Single Sighting",
+  "dataModel": [
+    {
+      "name": "singleSighting",
+      "dataType": "singleSighting",
+      "record": "true"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "template",
+      "source": "/submitSighting/submitSightingResources",
+      "plugin": "biocollectSightings"
+    },
+    {
+      "type": "template",
+      "source": "/submitSighting/submitSighting",
+      "plugin": "biocollectSightings"
+    }
+  ]
+}

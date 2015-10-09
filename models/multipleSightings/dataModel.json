@@ -1,0 +1,88 @@
+{
+  "modelName": "Multiple Sightings",
+  "dataModel": [
+    {
+      "dataType": "masterDetail",
+      "name": "multipleSightings",
+      "record": "true",
+      "master": {
+        "dataType": "list",
+        "name": "sightings",
+        "columns": [
+          {
+            "title": "Scientific Name",
+            "source": "scientificName",
+            "width": "35%"
+          },
+          {
+            "title": "Locality",
+            "source": "locality",
+            "width": "35%"
+          },
+          {
+            "title": "Latitude",
+            "source": "decimalLatitude",
+            "width": "10%"
+          },
+          {
+            "title": "Longitude",
+            "source": "decimalLongitude",
+            "width": "10%"
+          }
+        ]
+      },
+      "detail": {
+        "dataType": "singleSighting",
+        "description": "Record a sighting",
+        "name": "sighting"
+      }
+    }
+  ],
+  "viewModel": [
+    {
+      "source": "multipleSightings",
+      "type": "masterDetail",
+      "master": {
+        "type": "table",
+        "columns": [
+          {
+            "title": "Scientific Name",
+            "type": "readonlyText",
+            "source": "scientificName",
+            "width": "35%"
+          },
+          {
+            "title": "Locality",
+            "type": "readonlyText",
+            "source": "locality",
+            "width": "35%"
+          },
+          {
+            "title": "Latitude",
+            "type": "readonlyText",
+            "source": "decimalLatitude",
+            "width": "10%"
+          },
+          {
+            "title": "Longitude",
+            "type": "readonlyText",
+            "source": "decimalLongitude",
+            "width": "10%"
+          }
+        ]
+      },
+      "detail": [
+        {
+          "type": "template",
+          "source": "/submitSighting/submitSightingResources",
+          "plugin": "biocollectSightings"
+        },
+        {
+          "type": "template",
+          "source": "/submitSighting/submitSighting",
+          "plugin": "biocollectSightings"
+        }
+      ]
+    }
+  ]
+}
