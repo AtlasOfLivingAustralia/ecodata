@@ -3,158 +3,133 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 
-class CommentController {
-    def outputService
+import static org.apache.http.HttpStatus.*;
 
-    def ignores = ["action","controller"]
+class CommentController {
+    CommentService commentService
 
     def list() {
         List comments = []
-        def sort = params.sort ? params.sort : "dateCreated"
-        def order = params.order ? params.order :  "desc"
-        def offset = params.start ? params.start : 0
-        def max = params.pageSize ? params.pageSize : 10
-        Boolean sortOrder = order == 'asc'? true : false;
-        String  entityId = params.entityId
+        String sort = params.sort ?: "dateCreated"
+        String order = params.order ?: "desc"
+        Integer offset = (params.start ?: "0") as Integer
+        Integer max = (params.pageSize ?: "10") as Integer
+        Boolean sortOrder = order == 'asc';
+        String entityId = params.entityId
         String entityType = params.entityType
-        Integer total = 0;
-
-        if( !entityId || !entityType){
-            response.sendError(400, 'Insufficient parameters provided. Missing either entityId or entityType')
+        Integer total;
+        if (!entityId || !entityType) {
+            response.sendError(SC_BAD_REQUEST, 'Insufficient parameters provided. Missing either entityId or entityType')
         } else {
-//           todo: is there a better way to do count. is the below method potentially slow?
-            total = Comment.findAllWhere([ 'entityId':entityId, 'entityType':entityType, parent: null]).size();
-            Comment.findAllWhere(['entityId':entityId, 'entityType':entityType, parent: null], [sort:sort,order:order,offset:offset,max:max]).each {
-                Map mapOfProperties = outputService.getCommentProperties(it)
-                comments.add(mapOfProperties)
-            }
-
-            comments.each { comment ->
-                if(comment.children?.size()){
-                    outputService.sortCommentChildren(comment.children, sortOrder);
+            total = Comment.countByEntityIdAndEntityTypeAndParentIsNull(entityId, entityType);
+            Comment.findAllWhere(['entityId': entityId, 'entityType': entityType, parent: null], [sort: sort, order: order, offset: offset, max: max]).each {
+                Map comment = commentService.getCommentProperties(it)
+                if (comment.children?.size()) {
+                    commentService.sortCommentChildren(comment.children, sortOrder);
                 }
+                comments.add(comment)
             }
 
-            render text:  [total: total, items: comments] as JSON, contentType: 'application/json'
+            render text: [total: total, items: comments] as JSON, contentType: 'application/json'
         }
     }
 
 
     @RequireApiKey
-    def create(){
+    def create() {
         def jsonSlurper = new JsonSlurper()
-        def json = jsonSlurper.parse(request.getReader())
-        if (!json.userId){
-            response.sendError(400, 'Missing userId')
-        } else if (!json.entityId || !json.entityType){
-            response.sendError(400, 'Missing entityId and/or entityType')
-        } else if ( !json.text ){
-            response.sendError(400, 'Missing text');
+        Object json = jsonSlurper.parse(request.getReader())
+        if (!json.userId) {
+            response.sendError(SC_BAD_REQUEST, 'Missing userId')
+        } else if (!json.entityId || !json.entityType) {
+            response.sendError(SC_BAD_REQUEST, 'Missing entityId and/or entityType')
+        } else if (!json.text) {
+            response.sendError(SC_BAD_REQUEST, 'Missing text');
         } else {
-            Comment l = new Comment(json)
-            Comment parent;
-            if(l.dateCreated == null){
-                l.dateCreated = new Date();
+            Comment comment = commentService.create(json);
+            if(!comment.hasErrors()){
+                Map model = commentService.getCommentProperties(comment)
+
+                response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
+                response.addHeader("location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
+                response.addHeader("entityId", comment.getId().toString())
+                response.setContentType("application/json")
+                render model as JSON
+            } else {
+                response.sendError(SC_INTERNAL_SERVER_ERROR, 'Failed saving data to database');
             }
-
-            Comment comment = l.save(true)
-
-            if(json.parent != null){
-                parent = Comment.get(json.parent);
-                if(parent){
-                    comment.parent = parent;
-                    parent.children.add(comment);
-                    parent.save(true);
-                    comment.save(true);
-                }
-            }
-
-
-
-            response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
-            response.addHeader("location", grailsApplication.config.grails.serverURL + "/comment/" + comment.getId().toString())
-            response.addHeader("entityId", comment.getId().toString())
-            response.setContentType("application/json")
-            def model = outputService.getCommentProperties(comment)
-            render model as JSON
         }
 
     }
 
     @RequireApiKey
-    def update(){
+    def update() {
         def jsonSlurper = new JsonSlurper()
         def json = jsonSlurper.parse(request.getReader())
-        if(!json.id){
-            response.sendError(400, "Missing id");
-        } else if ( !json.text ){
-            response.sendError(400, 'Missing text');
+        if (!json.id) {
+            response.sendError(SC_BAD_REQUEST, "Missing id");
+        } else if (!json.text) {
+            response.sendError(SC_BAD_REQUEST, 'Missing text');
         } else {
             Map result
-            Comment c = Comment.get(json.id);
-            if(c){
-                if(c['userId'] == json['userId']){
-                    c['text'] = json['text'];
-                    //update time
-                    c['dateCreated'] = new Date();
-                    c.save(flush: true)
-                    result = outputService.getCommentProperties(c);
-                    if(c.hasErrors()){
-                        result['success'] = false;
-                        response.status = 500;
-                        result['message'] = c.getErrors();
+            Comment comment = commentService.update(json);
+            if(comment){
+                if (comment.userId == json.userId) {
+                    result = commentService.getCommentProperties(comment);
+                    if (comment.hasErrors()) {
+                        result.success = false;
+                        response.status = SC_INTERNAL_SERVER_ERROR;
+                        result.message = comment.getErrors();
                     } else {
-                        result['success'] = true;
+                        result.success = true;
                     }
 
                     render(text: result as JSON, contentType: 'application/json');
                 } else {
-                    response.sendError(401, 'Only comment owner can update this comment.');
+                    response.sendError(SC_UNAUTHORIZED, 'Only comment owner can update this comment.');
                 }
             } else {
-                response.sendError(404, 'Comment not found');
+                response.sendError(SC_NOT_FOUND, 'Comment not found');
             }
         }
     }
 
     @RequireApiKey
-    def delete(){
-        if(!params.id){
-            response.sendError(400, "Missing id");
+    def delete() {
+        if (!params.id) {
+            response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
-            Comment c = Comment.get(params.id);
-            if(c){
-                if(c['userId'] == params['userId']){
-                    c.delete( flush: true);
+            Comment comment = commentService.delete(params);
+            if (comment) {
+                if (comment.userId == params.userId) {
                     Map msg = [:];
-                    if(c.hasErrors()){
-                        msg['success'] = false
-                        response.status = 500;
-                        msg['message'] = c.getErrors();
+                    if (comment.hasErrors()) {
+                        msg.success = false
+                        response.status = SC_INTERNAL_SERVER_ERROR;
+                        msg.message = comment.getErrors();
                     } else {
-                        msg['success'] = true
+                        msg.success = true
                     }
-                    render( text: msg as JSON, contentType: 'application/json');
+                    render(text: msg as JSON, contentType: 'application/json');
                 } else {
-                    response.sendError(401, 'Only comment owner can delete this comment.');
+                    response.sendError(SC_UNAUTHORIZED, 'Only comment owner can delete this comment.');
                 }
             } else {
-                response.sendError(404, 'Comment not found');
+                response.sendError(SC_NOT_FOUND, 'Comment not found');
             }
-
         }
     }
 
-    def get(){
-        if(!params.id){
-            response.sendError(400, "Missing id");
+    def get() {
+        if (!params.id) {
+            response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
             Comment c = Comment.get(params.id);
-            if(c){
-                Map mapOfProperties = outputService.getCommentProperties(c)
-                render text:  mapOfProperties as JSON, contentType: 'application/json'
+            if (c) {
+                Map mapOfProperties = commentService.getCommentProperties(c)
+                render text: mapOfProperties as JSON, contentType: 'application/json'
             } else {
-                response.sendError(404, "Comment not found");
+                response.sendError(SC_NOT_FOUND, "Comment not found");
             }
         }
     }

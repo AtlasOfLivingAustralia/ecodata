@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
-
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.ecodata.converter.RecordConverterFactory
-import org.bson.BSONObject
 
 class OutputService {
 
@@ -200,42 +198,5 @@ class OutputService {
             }
         }
         return list*.toString()
-    }
-
-    Map getPropertiesOfDomainObject(Comment it) {
-        BSONObject dbo = it.getProperty("dbo")
-        Map mapOfProperties = dbo.toMap()
-        mapOfProperties['id'] = mapOfProperties['_id']
-        mapOfProperties.remove("_id")
-        mapOfProperties
-    }
-
-    Map getCommentProperties (Comment c){
-        Map comment;
-        comment = getPropertiesOfDomainObject(c)
-        comment['displayName'] = userService.lookupUserDetails(c.userId)?.displayName;
-        if(c.children?.size() > 0){
-            comment['children'] = []
-            c.children.each{
-                comment['children'].add(getCommentProperties(it))
-            }
-        }
-        comment
-    }
-
-    List sortCommentChildren(List comments, Boolean order){
-        comments.sort(true, {it.dateCreated})
-        // reverse list if sorting has to be done in reverse order
-        if(!order){
-            comments.reverse(true)
-        }
-
-        comments.each { comment ->
-            if(comment.children?.size()){
-                sortCommentChildren(comment.children, order);
-            }
-        }
-
-        comments
     }
 }
