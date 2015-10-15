@@ -1,88 +1,84 @@
 {
-  "modelName": "Multiple Sightings",
-  "dataModel": [
-    {
-      "dataType": "masterDetail",
-      "name": "multipleSightings",
-      "record": "true",
-      "master": {
-        "dataType": "list",
-        "name": "sightings",
-        "columns": [
-          {
-            "title": "Scientific Name",
-            "source": "scientificName",
-            "width": "35%"
-          },
-          {
-            "title": "Locality",
-            "source": "locality",
-            "width": "35%"
-          },
-          {
-            "title": "Latitude",
-            "source": "decimalLatitude",
-            "width": "10%"
-          },
-          {
-            "title": "Longitude",
-            "source": "decimalLongitude",
-            "width": "10%"
-          }
-        ]
-      },
-      "detail": {
-        "dataType": "singleSighting",
-        "description": "Record a sighting",
-        "name": "sighting"
-      }
-    }
-  ],
-  "viewModel": [
-    {
-      "source": "multipleSightings",
-      "type": "masterDetail",
-      "master": {
-        "type": "table",
-        "columns": [
-          {
-            "title": "Scientific Name",
-            "type": "readonlyText",
-            "source": "scientificName",
-            "width": "35%"
-          },
-          {
-            "title": "Locality",
-            "type": "readonlyText",
-            "source": "locality",
-            "width": "35%"
-          },
-          {
-            "title": "Latitude",
-            "type": "readonlyText",
-            "source": "decimalLatitude",
-            "width": "10%"
-          },
-          {
-            "title": "Longitude",
-            "type": "readonlyText",
-            "source": "decimalLongitude",
-            "width": "10%"
-          }
-        ]
-      },
-      "detail": [
-        {
-          "type": "template",
-          "source": "/submitSighting/submitSightingResources",
-          "plugin": "biocollectSightings"
+    "modelName": "Multiple Sightings",
+    "dataModel": [{
+        "dataType": "masterDetail",
+        "record": "true",
+        "name": "multipleSightings",
+        "detail": {
+            "dataType": "singleSighting",
+            "name": "sighting",
+            "description": "Record a sighting"
         },
-        {
-          "type": "template",
-          "source": "/submitSighting/submitSighting",
-          "plugin": "biocollectSightings"
+        "master": {
+            "columns": [
+                {
+                    "width": "35%",
+                    "source": "scientificName",
+                    "title": "Scientific Name"
+                },
+                {
+                    "width": "35%",
+                    "source": "locality",
+                    "title": "Locality"
+                },
+                {
+                    "width": "10%",
+                    "source": "decimalLatitude",
+                    "title": "Latitude"
+                },
+                {
+                    "width": "10%",
+                    "source": "decimalLongitude",
+                    "title": "Longitude"
+                }
+            ],
+            "dataType": "list",
+            "name": "sightings"
         }
-      ]
-    }
-  ]
+    }],
+    "viewModel": [{
+        "source": "multipleSightings",
+        "detail": [
+            {
+                "plugin": "biocollectSightings",
+                "source": "/submitSighting/submitSightingResources",
+                "type": "template"
+            },
+            {
+                "plugin": "biocollectSightings",
+                "source": "/submitSighting/submitSighting",
+                "type": "template"
+            }
+        ],
+        "type": "masterDetail",
+        "master": {
+            "columns": [
+                {
+                    "width": "35%",
+                    "source": "scientificName",
+                    "title": "Scientific Name",
+                    "type": "readonlyText"
+                },
+                {
+                    "width": "35%",
+                    "source": "locality",
+                    "title": "Locality",
+                    "type": "readonlyText"
+                },
+                {
+                    "width": "10%",
+                    "source": "decimalLatitude",
+                    "title": "Latitude",
+                    "type": "readonlyText"
+                },
+                {
+                    "width": "10%",
+                    "source": "decimalLongitude",
+                    "title": "Longitude",
+                    "type": "readonlyText"
+                }
+            ],
+            "type": "table"
+        }
+    }]
 }
