@@ -45,6 +45,10 @@ var duplicateTargets = [
     {
         scoreLabel:'Total No. of community participation and engagement events run',
         duplicate:'Number of Community Participation and Engagement events'
+    },
+    {
+        scoreLabel:'Kilograms of seed sown',
+        duplicate:'Kgs of seed sown'
     }
 
 ];
