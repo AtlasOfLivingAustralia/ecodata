@@ -1,7 +1,8 @@
 //var program = 'Biodiversity Fund';
 
 var program = 'Caring for Our Country 2';
-var projects = db.project.distinct('projectId', {associatedProgram:program, status:{$ne:'deleted'}});
+var subprogram = 'Regional Delivery 1318';
+var projects = db.project.distinct('projectId', {associatedProgram:program, associatedSubProgram:subprogram, status:{$ne:'deleted'}});
 var allEvents = [];
 for (var i=0; i<projects.length; i++) {
     var projectId = projects[i]; 
