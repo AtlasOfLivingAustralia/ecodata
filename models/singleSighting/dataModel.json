@@ -5,6 +5,18 @@
       "name": "singleSighting",
       "dataType": "singleSighting",
       "record": "true"
+    },
+    {
+      "name": "location",
+      "dataType": "geoMap",
+      "columns": [
+        {
+          "source": "locationLatitude"
+        },
+        {
+          "source": "locationLongitude"
+        }
+      ]
     }
   ],
   "viewModel": [
@@ -16,7 +28,19 @@
     {
       "type": "template",
       "source": "/submitSighting/submitSighting",
-      "plugin": "biocollectSightings"
+      "plugin": "biocollectSightings",
+      "config": {
+        "includeMap": false
+      }
+    },
+    {
+      "items": [
+        {
+          "type": "geoMap",
+          "source": "location"
+        }
+      ],
+      "type": "section"
     }
   ]
 }
