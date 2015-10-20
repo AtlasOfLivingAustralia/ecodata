@@ -1,9 +1,15 @@
 package au.org.ala.ecodata
+
+import au.org.ala.web.AuthService
 import grails.transaction.Transactional
 import org.bson.BSONObject
 
 class CommentService {
     UserService userService
+    PermissionService permissionService
+    ActivityService activityService
+    AuthService authService
+    def grailsApplication
 
     /**
      * get domain object properties. This is useful when converting object to json. mainly used to exclude
@@ -94,9 +100,16 @@ class CommentService {
      */
     @Transactional
     Comment update(Object json){
+        Boolean update = false
         Comment comment = Comment.get(json.id);
         if (comment) {
             if (comment.userId == json.userId) {
+                update = true;
+            }  else if(doesUserHavePrivilege(json.userId, json.entityId, json.entityType) || json.isALAAdmin){
+                update = true;
+            }
+
+            if(update){
                 comment.text = json.text;
                 //update time
                 comment.dateCreated = new Date();
@@ -113,8 +126,40 @@ class CommentService {
         if (comment) {
             if (comment.userId == params.userId) {
                 comment.delete(flush: true);
+            } else if(doesUserHavePrivilege(params.userId, params.entityId, params.entityType) || params.isALAAdmin){
+                comment.delete(flush: true);
             }
         }
+
         comment
+    }
+
+    /**
+     * checks if a user is admin in project or ala admin.
+     * This is necessary since admin can delete / modify other's comment(s).
+     * @param userId
+     * @param entityId
+     * @return
+     */
+    Boolean doesUserHavePrivilege(String userId, String entityId, String entityType){
+
+        Boolean admin = false;
+        switch (entityType){
+            case 'au.org.ala.ecodata.Activity':
+                admin = permissionService.isUserAdminForProject(userId, getProjectIdFromActivityId(entityId));
+                break;
+        }
+
+        admin
+    }
+
+    /**
+     * get project id from activity record
+     * @param id
+     * @return
+     */
+    String getProjectIdFromActivityId(String id){
+        Map activity = activityService.get(id)
+        activity?.projectId
     }
 }

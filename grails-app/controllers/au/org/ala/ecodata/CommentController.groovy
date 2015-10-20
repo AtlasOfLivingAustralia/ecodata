@@ -8,6 +8,14 @@ import static org.apache.http.HttpStatus.*;
 class CommentController {
     CommentService commentService
 
+    // JSON response is returned as the unconverted model with the appropriate
+    // content-type. The JSON conversion is handled in the filter. This allows
+    // for universal JSONP support.
+    def asJson = { model ->
+        response.setContentType("application/json;charset=UTF-8")
+        model
+    }
+
     def list() {
         List comments = []
         String sort = params.sort ?: "dateCreated"
@@ -72,9 +80,10 @@ class CommentController {
             response.sendError(SC_BAD_REQUEST, 'Missing text');
         } else {
             Map result
+            json.isALAAdmin = (json.isALAAdmin?:false) as Boolean;
             Comment comment = commentService.update(json);
             if(comment){
-                if (comment.userId == json.userId) {
+                if ((comment.userId == json.userId) || json.isALAAdmin) {
                     result = commentService.getCommentProperties(comment);
                     if (comment.hasErrors()) {
                         result.success = false;
@@ -99,9 +108,10 @@ class CommentController {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
+            params.isALAAdmin = (params.isALAAdmin?:false) as Boolean;
             Comment comment = commentService.delete(params);
             if (comment) {
-                if (comment.userId == params.userId) {
+                if ((comment.userId == params.userId) || params.isALAAdmin) {
                     Map msg = [:];
                     if (comment.hasErrors()) {
                         msg.success = false
@@ -131,6 +141,17 @@ class CommentController {
             } else {
                 response.sendError(SC_NOT_FOUND, "Comment not found");
             }
+        }
+    }
+
+    @RequireApiKey
+    def doesUserHavePrivilege(){
+        if(!params.userId || !params.entityId || !params.entityType){
+            response.sendError(SC_BAD_REQUEST, "Missing userId, entityId or entityType")
+        } else {
+            Map result = [:];
+            result.isAdmin = commentService.doesUserHavePrivilege(params.userId, params.entityId, params.entityType)
+            asJson(result);
         }
     }
 }
