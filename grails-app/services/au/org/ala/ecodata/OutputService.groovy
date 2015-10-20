@@ -1,5 +1,4 @@
 package au.org.ala.ecodata
-
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.ecodata.converter.RecordConverterFactory
 
@@ -10,6 +9,7 @@ class OutputService {
     def grailsApplication
     MetadataService metadataService
     RecordService recordService
+    UserService userService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -199,5 +199,4 @@ class OutputService {
         }
         return list*.toString()
     }
-
 }
