@@ -9,6 +9,7 @@ class Record {
     ObjectId id
     String projectId //ID of the project within ecodata
     String projectActivityId
+    String activityId
     String occurrenceID
     String userId
     String eventDate //should be a date in "yyyy-MM-dd" or "2014-11-24T04:55:48+11:00" format
@@ -16,6 +17,7 @@ class Record {
     Double decimalLongitude
     Integer coordinateUncertaintyInMeters
     Integer individualCount
+    Integer numberOfOrganisms
     Date dateCreated
     Date lastUpdated
     String outputId
@@ -32,12 +34,14 @@ class Record {
     static constraints = {
         projectId nullable: true
         projectActivityId nullable: true
+        activityId nullable: true
         eventDate nullable: true
         decimalLatitude nullable: true
         decimalLongitude nullable: true
         userId nullable: true
         coordinateUncertaintyInMeters nullable: true
         individualCount nullable: true
+        numberOfOrganisms nullable: true
         outputId nullable: true
         json nullable: true
         outputItemId nullable: true

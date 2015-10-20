@@ -66,9 +66,30 @@ class ActivityService {
         activities
     }
 
-    def findAllForUserId(userId, levelOfDetail = []){
-        Activity.findAllByUserIdAndStatus(userId, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForUserId(userId, query, levelOfDetail = []){
+         def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("userId", userId)
+                eq ("status", ACTIVE)
+            }
+           order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
+
+    def listByProjectId(projectId, query, levelOfDetail = []){
+        def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("projectId", projectId)
+                eq ("status", ACTIVE)
+            }
+            order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
 
     /**
      * Converts the domain object into a map of properties, including

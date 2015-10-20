@@ -1,20 +1,46 @@
 {
-    "modelName": "Single Sighting",
-    "dataModel": [{
-        "dataType": "singleSighting",
-        "record": "true",
-        "name": "singleSighting"
-    }],
-    "viewModel": [
+  "modelName": "Single Sighting",
+  "dataModel": [
+    {
+      "name": "singleSighting",
+      "dataType": "singleSighting",
+      "record": "true"
+    },
+    {
+      "name": "location",
+      "dataType": "geoMap",
+      "columns": [
         {
-            "plugin": "biocollectSightings",
-            "source": "/submitSighting/submitSightingResources",
-            "type": "template"
+          "source": "locationLatitude"
         },
         {
-            "plugin": "biocollectSightings",
-            "source": "/submitSighting/submitSighting",
-            "type": "template"
+          "source": "locationLongitude"
         }
-    ]
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "template",
+      "source": "/submitSighting/submitSightingResources",
+      "plugin": "biocollectSightings"
+    },
+    {
+      "type": "template",
+      "source": "/submitSighting/submitSighting",
+      "plugin": "biocollectSightings",
+      "config": {
+        "includeMap": false
+      }
+    },
+    {
+      "items": [
+        {
+          "type": "geoMap",
+          "source": "location"
+        }
+      ],
+      "type": "section"
+    }
+  ]
 }

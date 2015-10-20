@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 
 class ActivityController {
 
-    def activityService, siteService, commonService
+    def activityService, siteService, commonService, projectActivityService
     static final SCORES = 'scores'
     static final BRIEF = 'brief'
 
@@ -146,14 +146,36 @@ class ActivityController {
         }
     }
 
-    def activitiesForUser(String id){
-        if (id) {
-            def list = []
-            list.addAll activityService.findAllForUserId(id)
-            asJson([list: list])
-        } else {
+    def listForUser(String id){
+
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+
+        if(!id){
             response.status = 404
             render status:404, text: 'No such id'
+        }
+        else{
+            def list = activityService.findAllForUserId(id, [max: max,offset:offset,order:order,sort:sort])
+            asJson([activities: list?.list, total: list?.total])
+        }
+    }
+
+    def listByProject(String id){
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort])
+            asJson([activities: list?.list, total: list?.total])
         }
     }
 
