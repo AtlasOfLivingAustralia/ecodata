@@ -72,6 +72,7 @@ grails.project.dependency.resolution = {
         runtime ":csv:0.3.1"
         runtime ":ala-auth:1.3.1"
         runtime ":ala-bootstrap2:1.2"
+        runtime ":cors:1.1.8"
 
         // Uncomment these (or add new ones) to enable additional resources capabilities
         //runtime ":zipped-resources:1.0"

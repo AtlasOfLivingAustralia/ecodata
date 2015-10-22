@@ -242,7 +242,10 @@ class ProjectService {
             // Add project output target information where it exists.
 
             project.outputTargets?.each { target ->
-
+                // Outcome targets are text only and not mapped to a score.
+                if (target.outcomeTarget) {
+                    return
+                }
                 def score = outputSummary.find{it.score.isOutputTarget && it.score.outputName == target.outputLabel && it.score.label == target.scoreLabel}
                 if (score) {
                     score['target'] = target.target

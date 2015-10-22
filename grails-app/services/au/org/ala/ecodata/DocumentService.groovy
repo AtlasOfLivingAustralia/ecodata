@@ -85,6 +85,10 @@ class DocumentService {
     def findAllForOutputId(id, levelOfDetail = []) {
         Document.findAllByOutputIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
+    def findAllForProjectActivityId(id, levelOfDetail = []) {
+        Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
 
     /**
      * Creates a new Document object associated with the supplied file.

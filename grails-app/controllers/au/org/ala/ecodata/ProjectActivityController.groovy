@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class ProjectActivityController {
 
     def projectActivityService
@@ -18,7 +20,7 @@ class ProjectActivityController {
     def getAllByProject(String id) {
         if (id) {
             def list = []
-            list.addAll(projectActivityService.getAllByProject(id))
+            list.addAll(projectActivityService.getAllByProject(id, params.view))
             asJson([list: list])
         } else {
             response.status = 404
@@ -34,7 +36,7 @@ class ProjectActivityController {
      */
     def get(String id) {
         if (id) {
-            asJson(projectActivityService.get(id))
+            asJson(projectActivityService.get(id, params.view))
         } else {
             response.status = 404
             render status: 404, text: 'No such id'
@@ -66,6 +68,31 @@ class ProjectActivityController {
         } else {
             log.error result.error
             render status:400, text: result.error
+        }
+    }
+
+    /**
+     * Soft delete project activity (no cascading - to prevent bulk activity and records update)
+     * @param id - project activity id
+     *
+     * @return
+     */
+    @RequireApiKey
+    def delete(String id) {
+        def pActivity = ProjectActivity.findByProjectActivityId(id)
+        if (pActivity) {
+            def result = projectActivityService.delete(id)
+            if (!result.error) {
+                response.setStatus(200)
+                response.setContentType("application/json")
+                render(status: 200, text: 'deleted')
+            } else {
+                response.status = 400
+                render(status: 400, text: result.error)
+            }
+        } else {
+            response.status = 400
+            render(status: 404, text: 'No such id')
         }
     }
 
