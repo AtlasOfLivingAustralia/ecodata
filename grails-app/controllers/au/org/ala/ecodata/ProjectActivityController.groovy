@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class ProjectActivityController {
 
     def projectActivityService
@@ -66,6 +68,25 @@ class ProjectActivityController {
         } else {
             log.error result.error
             render status:400, text: result.error
+        }
+    }
+
+    @RequireApiKey
+    def delete(String id) {
+        def pActivity = ProjectActivity.findByProjectActivityId(id)
+        if (pActivity) {
+            def result = projectActivityService.delete(id)
+            if (!result.error) {
+                response.setStatus(200)
+                response.setContentType("application/json")
+                render(status: 200, text: 'deleted')
+            } else {
+                response.status = 400
+                render(status: 400, text: result.error)
+            }
+        } else {
+            response.status = 400
+            render(status: 404, text: 'No such id')
         }
     }
 

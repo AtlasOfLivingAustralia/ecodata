@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 
@@ -75,6 +76,17 @@ class ProjectActivityService {
         ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it, levelOfDetail) };
     }
 
+    def delete(String id){
+        def pActivity = ProjectActivity.findByProjectActivityId(id)
+        if (pActivity) {
+            pActivity.status = 'deleted'
+            pActivity.save(flush: true)
+            return [status: 'ok']
+        } else {
+            return [status: 'error', error: 'No such id']
+        }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -101,6 +113,4 @@ class ProjectActivityService {
         mapOfProperties.remove("_id")
         mapOfProperties.findAll {k,v -> v != null}
     }
-
-
 }
