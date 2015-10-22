@@ -18,7 +18,7 @@ class CommentController {
 
     def list() {
         List comments = []
-        String sort = params.sort ?: "dateCreated"
+        String sort = params.sort ?: "lastUpdated"
         String order = params.order ?: "desc"
         Integer offset = (params.start ?: "0") as Integer
         Integer max = (params.pageSize ?: "10") as Integer
@@ -145,12 +145,12 @@ class CommentController {
     }
 
     @RequireApiKey
-    def doesUserHavePrivilege(){
+    def canUserEditOrDeleteComment(){
         if(!params.userId || !params.entityId || !params.entityType){
             response.sendError(SC_BAD_REQUEST, "Missing userId, entityId or entityType")
         } else {
             Map result = [:];
-            result.isAdmin = commentService.doesUserHavePrivilege(params.userId, params.entityId, params.entityType)
+            result.isAdmin = commentService.canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType)
             asJson(result);
         }
     }

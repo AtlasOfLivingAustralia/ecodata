@@ -105,7 +105,7 @@ class CommentService {
         if (comment) {
             if (comment.userId == json.userId) {
                 update = true;
-            }  else if(doesUserHavePrivilege(json.userId, json.entityId, json.entityType) || json.isALAAdmin){
+            }  else if(canUserEditOrDeleteComment(json.userId, json.entityId, json.entityType) || json.isALAAdmin){
                 update = true;
             }
 
@@ -126,7 +126,7 @@ class CommentService {
         if (comment) {
             if (comment.userId == params.userId) {
                 comment.delete(flush: true);
-            } else if(doesUserHavePrivilege(params.userId, params.entityId, params.entityType) || params.isALAAdmin){
+            } else if(canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType) || params.isALAAdmin){
                 comment.delete(flush: true);
             }
         }
@@ -139,9 +139,10 @@ class CommentService {
      * This is necessary since admin can delete / modify other's comment(s).
      * @param userId
      * @param entityId
+     * @param entityType
      * @return
      */
-    Boolean doesUserHavePrivilege(String userId, String entityId, String entityType){
+    Boolean canUserEditOrDeleteComment(String userId, String entityId, String entityType){
 
         Boolean admin = false;
         switch (entityType){

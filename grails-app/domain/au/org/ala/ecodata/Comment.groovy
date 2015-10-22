@@ -11,6 +11,7 @@ class Comment {
     String userId
     Comment parent
     Date dateCreated
+    Date lastUpdated
 
     static hasMany = [children: Comment]
 
