@@ -324,9 +324,13 @@ class DocumentService {
     void archiveFile(Document document) {
         File fileToArchive = new File(fullPath(document.filepath, document.filename))
 
-        File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
+        if (fileToArchive.exists()) {
+            File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
 
-        FileUtils.moveFileToDirectory(fileToArchive, archiveDir, true)
+            FileUtils.moveFileToDirectory(fileToArchive, archiveDir, true)
+        } else {
+            log.warn("Unable to move file for document ${document.documentId}: the file ${fileToArchive.absolutePath} does not exist.")
+        }
     }
 
     def findAllByOwner(ownerType, owner, includeDeleted = false) {
