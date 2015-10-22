@@ -71,6 +71,12 @@ class ProjectActivityController {
         }
     }
 
+    /**
+     * Soft delete project activity (no cascading - to prevent bulk activity and records update)
+     * @param id - project activity id
+     *
+     * @return
+     */
     @RequireApiKey
     def delete(String id) {
         def pActivity = ProjectActivity.findByProjectActivityId(id)
