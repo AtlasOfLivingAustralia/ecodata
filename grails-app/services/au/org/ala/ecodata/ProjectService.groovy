@@ -206,6 +206,8 @@ class ProjectService {
      * the permissions will be deleted and site associations removed, even in the soft delete case.
      */
     Map delete(String id, boolean destroy) {
+        Map result
+
         Project project = Project.findByProjectId(id)
 
         if (project) {
@@ -230,10 +232,13 @@ class ProjectService {
                 project.status = DELETED
                 project.save(flush: true)
             }
-            return [status: 'ok']
+
+            result = [status: 'ok']
         } else {
-            return [status: 'error', error: 'No such id']
+            result = [status: 'error', error: 'No such id']
         }
+
+        result
     }
 
 

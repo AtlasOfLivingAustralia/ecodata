@@ -164,7 +164,7 @@ class ActivityService {
      * @param destroy if true will really delete the object
      * @return
      */
-    Map delete(String activityId, destroy) {
+    Map delete(String activityId, boolean destroy = false) {
         Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
         if (activity) {
             // Delete the outputs associated with this activity.

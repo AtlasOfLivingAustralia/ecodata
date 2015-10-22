@@ -73,7 +73,8 @@ class ProjectActivityService {
         result
     }
 
-    void delete(String projectActivityId, boolean destroy = false) {
+    Map delete(String projectActivityId, boolean destroy = false) {
+        Map result
         ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(projectActivityId)
 
         if (projectActivity) {
@@ -91,7 +92,13 @@ class ProjectActivityService {
                 projectActivity.status = DELETED
                 projectActivity.save(flush: true)
             }
+
+            result = [status: 'ok']
+        } else {
+            result = [status: 'error', error: 'No such id']
         }
+
+        result
     }
 
     Map get(String id, levelOfDetail = []) {
