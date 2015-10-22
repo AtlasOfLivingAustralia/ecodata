@@ -15,6 +15,7 @@ class ActivityService {
     CommonService commonService
     DocumentService documentService
     SiteService siteService
+    CommentService commentService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -165,6 +166,8 @@ class ActivityService {
      * @return
      */
     Map delete(String activityId, boolean destroy = false) {
+        Map result
+
         Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
         if (activity) {
             // Delete the outputs associated with this activity.
@@ -174,15 +177,24 @@ class ActivityService {
                 documentService.deleteDocument(it.documentId, destroy)
             }
 
+            commentService.deleteAllForEntity(Activity.class.name, activityId, destroy)
+
             if (destroy) {
                 activity.delete(flush: true)
             } else {
                 commonService.updateProperties(activity, [status: 'deleted'])
             }
-            [status: 'ok']
+
+            if (activity.hasErrors()) {
+                result = [status: 'error', error: activity.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
-            [status: 'not found']
+            result = [status: 'not found']
         }
+
+        result
     }
 
     /**

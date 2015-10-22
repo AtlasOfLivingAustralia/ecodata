@@ -14,6 +14,7 @@ class OutputService {
     RecordService recordService
     UserService userService
     DocumentService documentService
+    CommentService commentService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -41,7 +42,11 @@ class OutputService {
 
     Map delete(String id, boolean destroy = false) {
         Output output = Output.findByOutputId(id)
+
         if (output) {
+
+            commentService.deleteAllForEntity(Output.class.name, id, destroy)
+
             if (destroy) {
                 Record.findAllByOutputId(id)?.each {
                     it.delete()

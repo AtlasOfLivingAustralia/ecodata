@@ -233,7 +233,11 @@ class ProjectService {
                 project.save(flush: true)
             }
 
-            result = [status: 'ok']
+            if (project.hasErrors()) {
+                result = [status: 'error', error: project.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
             result = [status: 'error', error: 'No such id']
         }

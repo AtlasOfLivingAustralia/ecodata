@@ -99,17 +99,13 @@ class CommentController {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
-            Comment comment = commentService.delete(params);
+            boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+
+            Comment comment = Comment.get(params.id)
             if (comment) {
                 if (comment.userId == params.userId) {
-                    Map msg = [:];
-                    if (comment.hasErrors()) {
-                        msg.success = false
-                        response.status = SC_INTERNAL_SERVER_ERROR;
-                        msg.message = comment.getErrors();
-                    } else {
-                        msg.success = true
-                    }
+                    Map msg = commentService.delete(params.id, destroy)
+
                     render(text: msg as JSON, contentType: 'application/json');
                 } else {
                     response.sendError(SC_UNAUTHORIZED, 'Only comment owner can delete this comment.');

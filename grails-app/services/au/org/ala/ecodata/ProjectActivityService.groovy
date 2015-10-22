@@ -11,6 +11,7 @@ class ProjectActivityService {
     DocumentService documentService
     SiteService siteService
     ActivityService activityService
+    CommentService commentService
 
     /**
      * Creates an project activity.
@@ -86,6 +87,8 @@ class ProjectActivityService {
                 documentService.deleteDocument(it.documentId, destroy)
             }
 
+            commentService.deleteAllForEntity(ProjectActivity.class.name, projectActivityId, destroy)
+
             if (destroy) {
                 projectActivity.delete()
             } else {
@@ -93,7 +96,11 @@ class ProjectActivityService {
                 projectActivity.save(flush: true)
             }
 
-            result = [status: 'ok']
+            if (projectActivity.hasErrors()) {
+                result = [status: 'error', error: projectActivity.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
             result = [status: 'error', error: 'No such id']
         }
