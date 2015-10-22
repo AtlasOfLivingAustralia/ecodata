@@ -55,8 +55,8 @@ class ActivityService {
         Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
-        def activities
+    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+        List activities
         if (includeDeleted) {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
@@ -164,17 +164,20 @@ class ActivityService {
      * @param destroy if true will really delete the object
      * @return
      */
-    def delete(String id, destroy) {
-        def a = Activity.findByActivityIdAndStatus(id, ACTIVE)
-        if (a) {
-
+    Map delete(String activityId, destroy) {
+        Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
+        if (activity) {
             // Delete the outputs associated with this activity.
-            outputService.getAllOutputIdsForActivity(id).each{outputService.delete(it, destroy)}
+            outputService.getAllOutputIdsForActivity(activityId).each { outputService.delete(it, destroy) }
+
+            documentService.findAllForActivityId(activityId).each {
+                documentService.deleteDocument(it.documentId, destroy)
+            }
 
             if (destroy) {
-                a.delete()
+                activity.delete(flush: true)
             } else {
-                commonService.updateProperties(a, [status: 'deleted'])
+                commonService.updateProperties(activity, [status: 'deleted'])
             }
             [status: 'ok']
         } else {

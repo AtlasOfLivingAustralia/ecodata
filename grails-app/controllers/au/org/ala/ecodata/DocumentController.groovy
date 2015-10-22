@@ -54,16 +54,14 @@ class DocumentController {
 
     @RequireApiKey
     def delete(String id) {
-        def a = Document.findByDocumentId(id)
-        if (a) {
-            if (a.type == documentService.LINKTYPE) {
-                a.delete()
-            } else if (params.destroy) {
-                documentService.deleteFile(a)
-                a.delete()
+        Document document = Document.findByDocumentId(id)
+        if (document) {
+            if (document.type == documentService.LINKTYPE) {
+                document.delete()
             } else {
-                a.status = 'deleted'
-                a.save(flush: true)
+                boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+
+                documentService.deleteDocument(id, destroy)
             }
             render (status: 200, text: 'deleted')
         } else {
