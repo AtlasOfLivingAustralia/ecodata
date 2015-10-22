@@ -76,6 +76,11 @@ class ProjectActivityService {
         ProjectActivity.findAllByProjectId(id).findAll({it.status == ACTIVE}).collect { toMap(it, levelOfDetail) };
     }
 
+    /**
+     * Soft delete project activity (no cascading - to prevent bulk activity and records updates)
+     * @param id project activity id
+     * @return map of properties
+     */
     def delete(String id){
         def pActivity = ProjectActivity.findByProjectActivityId(id)
         if (pActivity) {

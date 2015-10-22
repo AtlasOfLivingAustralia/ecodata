@@ -179,6 +179,11 @@ class ActivityController {
         }
     }
 
+    /**
+     * Count activity by project activity
+     * @param id Project Activity identifier
+     * @return activity count.
+     */
     def countByProjectActivity(String id){
         if(!id){
             response.status = 404
