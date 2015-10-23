@@ -651,6 +651,7 @@ class ElasticSearchService {
     def indexHomePage(doc, docType) {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
+            def docId = getEntityId(doc)
             if (checkForDelete(doc, docId)) {
                 return null
             }
