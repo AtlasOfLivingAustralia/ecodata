@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.DELETED
+
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 
@@ -11,18 +13,28 @@ class CommentController {
     def list() {
         List comments = []
         String sort = params.sort ?: "dateCreated"
-        String order = params.order ?: "desc"
-        Integer offset = (params.start ?: "0") as Integer
+        String orderBy = params.order ?: "desc"
+        Integer startFrom = (params.start ?: "0") as Integer
         Integer max = (params.pageSize ?: "10") as Integer
-        Boolean sortOrder = order == 'asc';
+        Boolean sortOrder = orderBy == 'asc';
         String entityId = params.entityId
         String entityType = params.entityType
         Integer total;
         if (!entityId || !entityType) {
             response.sendError(SC_BAD_REQUEST, 'Insufficient parameters provided. Missing either entityId or entityType')
         } else {
-            total = Comment.countByEntityIdAndEntityTypeAndParentIsNull(entityId, entityType);
-            Comment.findAllWhere(['entityId': entityId, 'entityType': entityType, parent: null], [sort: sort, order: order, offset: offset, max: max]).each {
+            total = Comment.countByEntityIdAndEntityTypeAndParentIsNullAndStatusNotEqual(entityId, entityType, DELETED);
+
+            Comment.withCriteria {
+                eq "entityId", entityId
+                eq "entityType", entityType
+                isNull "parent"
+                ne "status", DELETED
+
+                maxResults max
+                order sort, orderBy
+                offset startFrom
+            }.each {
                 Map comment = commentService.getCommentProperties(it)
                 if (comment.children?.size()) {
                     commentService.sortCommentChildren(comment.children, sortOrder);

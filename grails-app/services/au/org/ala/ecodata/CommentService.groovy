@@ -5,8 +5,6 @@ import static au.org.ala.ecodata.Status.DELETED
 import grails.transaction.Transactional
 import org.bson.BSONObject
 
-import static org.apache.http.HttpStatus.SC_INTERNAL_SERVER_ERROR
-
 class CommentService {
     UserService userService
 
@@ -144,4 +142,5 @@ class CommentService {
 
         result
     }
+
 }
