@@ -1,14 +1,10 @@
 package au.org.ala.ecodata
-
+import com.itextpdf.text.PageSize
+import com.itextpdf.text.html.simpleparser.HTMLWorker
+import com.itextpdf.text.pdf.PdfWriter
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
-import com.itextpdf.text.DocumentException
-import com.itextpdf.text.Element
-import com.itextpdf.text.html.simpleparser.HTMLWorker
-import com.itextpdf.text.html.simpleparser.StyleSheet
-import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.PageSize
 import org.imgscalr.Scalr
 
 import javax.imageio.ImageIO
@@ -20,9 +16,14 @@ class DocumentService {
 
     static final ACTIVE = "active"
     static final LINKTYPE = "link"
+    static final LOGO = 'logo'
     static final FILE_LOCK = new Object()
 
     static final DIRECTORY_PARTITION_FORMAT = 'yyyy-MM'
+    static  final MOBILE_APP_ROLE = [ "android",
+                                     "blackberry",
+                                     "iTunes",
+                                     "windowsPhone"]
 
     def commonService, grailsApplication
     
@@ -87,6 +88,18 @@ class DocumentService {
     }
     def findAllForProjectActivityId(id, levelOfDetail = []) {
         Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    def findImageUrlForProjectId(id, levelOfDetail = []){
+        Document primaryImageDoc;
+        Document logoDoc = Document.findByProjectIdAndType(id,LOGO)
+        String urlImage;
+        urlImage = logoDoc?.url
+        if(!urlImage){
+            primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
+            urlImage = primaryImageDoc?.url;
+        }
+        urlImage
     }
 
 
@@ -320,5 +333,14 @@ class DocumentService {
         }
 
         results.collect{toMap(it, 'flat')}
+    }
+
+    Boolean isMobileAppForProject(Map project){
+        List links = project.links
+        Boolean isMobileApp = false;
+        links?.each { link ->
+            isMobileApp = link.role in MOBILE_APP_ROLE;
+        }
+        isMobileApp;
     }
 }
