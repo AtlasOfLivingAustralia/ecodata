@@ -58,11 +58,14 @@ class ProjectActivityService {
                 props.remove("projectActivityId");
 
                 commonService.updateProperties(projectActivity, props)
+
+                updateEmbargoedRecords(projectActivity)
+
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
             } catch (Exception e) {
                 ProjectActivity.withSession { session -> session.clear() }
                 def error = "Error updating project activity ${id} - ${e.message}"
-                log.error error
+                log.error error, e
                 result = [status: 'error', error: error]
             }
         } else {
@@ -143,5 +146,15 @@ class ProjectActivityService {
         mapOfProperties.findAll { k, v -> v != null }
     }
 
+    void updateEmbargoedRecords(ProjectActivity projectActivity) {
+        List<Record> records = Record.findAllByProjectActivityId(projectActivity.projectActivityId)
+
+        Date embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(projectActivity)
+
+        records.each {
+            it.embargoUntil = embargoUntil
+            it.save(flush: true)
+        }
+    }
 
 }

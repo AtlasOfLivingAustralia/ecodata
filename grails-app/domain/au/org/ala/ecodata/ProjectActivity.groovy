@@ -19,6 +19,9 @@ class ProjectActivity {
     Map visibility
     boolean restrictRecordToSites
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
+    EmbargoOption embargoOption = EmbargoOption.NONE
+    Integer embargoForDays
+    Date embargoUntil
 
     static constraints = {
         endDate nullable: true
@@ -28,5 +31,8 @@ class ProjectActivity {
         restrictRecordToSites nullable: true
         visibility nullable: true
         publicAccess nullable: true
+        embargoForDays nullable: true
+        embargoOption nullable: true
+        embargoUntil nullable: true
     }
 }
