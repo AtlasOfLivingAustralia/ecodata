@@ -67,7 +67,7 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
         cal.set(Calendar.SECOND, 0)
         cal.set(Calendar.MILLISECOND, 0)
 
-        projectActivityService.update([embargoOption: EmbargoOption.DATE, embargoUntil: cal.getTime()], activity.projectActivityId)
+        projectActivityService.update([visibility: [embargoOption: EmbargoOption.DATE, embargoUntil: cal.getTime()]], activity.projectActivityId)
 
         then:
         int count = 0
@@ -92,7 +92,7 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
         }
 
         when:
-        projectActivityService.update([embargoOption: EmbargoOption.NONE], activity.projectActivityId)
+        projectActivityService.update([visibility: [embargoOption: EmbargoOption.NONE]], activity.projectActivityId)
 
         then:
         int count = 0

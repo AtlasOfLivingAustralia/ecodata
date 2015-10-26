@@ -16,12 +16,11 @@ class ProjectActivity {
     Date endDate
     Map alerts
     List sites = [] // list of sites associated to the survey
-    Map visibility
     boolean restrictRecordToSites
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
-    EmbargoOption embargoOption = EmbargoOption.NONE
-    Integer embargoForDays
-    Date embargoUntil
+    VisibilityConstraint visibility = new VisibilityConstraint(embargoOption: EmbargoOption.NONE)
+
+    static embedded = ['visibility']
 
     static constraints = {
         endDate nullable: true
@@ -29,10 +28,7 @@ class ProjectActivity {
         alerts nullable: true
         sites nullable: true
         restrictRecordToSites nullable: true
-        visibility nullable: true
         publicAccess nullable: true
-        embargoForDays nullable: true
-        embargoOption nullable: true
-        embargoUntil nullable: true
+        visibility nullable: true
     }
 }

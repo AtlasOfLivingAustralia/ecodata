@@ -79,8 +79,7 @@ class OutputServiceSpec extends IntegrationSpec {
         setup:
         new ProjectActivity(projectActivityId: "projAct1",
                 description: "d", name: "n", projectId: "p", startDate: new Date(), status: "ACTIVE",
-                embargoOption: EmbargoOption.DAYS,
-                embargoForDays: 20).save(failOnError: true, flush: true)
+                visibility: new VisibilityConstraint(embargoOption: EmbargoOption.DAYS, embargoForDays: 20)).save(failOnError: true, flush: true)
 
         metadataService.getOutputDataModelByName(_) >> [dataModel: [[record: true, dataType: "doesNotMatter"], [record: true, dataType: "doesNotMatter"]]]
 

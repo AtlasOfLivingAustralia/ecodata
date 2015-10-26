@@ -9,14 +9,14 @@ class EmbargoUtil {
     static Date calculateEmbargoUntilDate(ProjectActivity projectActivity) {
         Date embargoUntil = null
 
-        if (projectActivity) {
+        if (projectActivity && projectActivity.visibility) {
             use(TimeCategory) {
-                switch (projectActivity.embargoOption) {
+                switch (projectActivity.visibility.embargoOption) {
                     case EmbargoOption.DAYS:
-                        embargoUntil = removeTime(new Date() + projectActivity.embargoForDays.days)
+                        embargoUntil = removeTime(new Date() + projectActivity.visibility.embargoForDays.days)
                         break
                     case EmbargoOption.DATE:
-                        embargoUntil = removeTime(projectActivity.embargoUntil)
+                        embargoUntil = removeTime(projectActivity.visibility.embargoUntil)
                         break
                 }
 
