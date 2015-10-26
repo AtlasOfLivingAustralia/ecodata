@@ -1,13 +1,13 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.*
+
 import au.org.ala.ecodata.reporting.Score
 
 class ProjectService {
 
     static transactional = false
-    static final ACTIVE = "active"
-	static final COMPLETED = "completed"
-    static final DELETED = "deleted"
+
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
@@ -16,13 +16,15 @@ class ProjectService {
     static final ENHANCED = 'enhanced'
 
     def grailsApplication
-    def siteService
-    def documentService
-    def metadataService
-    def reportService
-    def activityService
-    def permissionService
-    def collectoryService
+    SiteService siteService
+    DocumentService documentService
+    MetadataService metadataService
+    ReportService reportService
+    ActivityService activityService
+    ProjectActivityService projectActivityService
+    PermissionService permissionService
+    CollectoryService collectoryService
+    WebService webService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -62,47 +64,65 @@ class ProjectService {
      * @param prj a Project instance
      * @return map of properties
      */
-    def toMap(prj, levelOfDetail = [], includeDeletedActivites = false) {
+    Map toMap(Project project, levelOfDetail = [], includeDeletedActivities = false) {
+        Map result
 
-        def dbo = prj.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        Map mapOfProperties = project.getProperty("dbo").toMap()
+
         if (levelOfDetail == BRIEF) {
-            return [projectId: prj.projectId, name: prj.name, grantId:prj.grantId, externalId:prj.externalId, funding:prj.funding, description:prj.description, status:prj.status, plannedStartDate:prj.plannedStartDate, plannedEndDate:prj.plannedEndDate, associatedProgram:prj.associatedProgram, associatedSubProgram:prj.associatedSubProgram]
+            result = [
+                    projectId           : project.projectId,
+                    name                : project.name,
+                    grantId             : project.grantId,
+                    externalId          : project.externalId,
+                    funding             : project.funding,
+                    description         : project.description,
+                    status              : project.status,
+                    plannedStartDate    : project.plannedStartDate,
+                    plannedEndDate      : project.plannedEndDate,
+                    associatedProgram   : project.associatedProgram,
+                    associatedSubProgram: project.associatedSubProgram
+            ]
+        } else if (levelOfDetail == PROMO) {
+            result = [
+                    projectId       : project.projectId,
+                    name            : project.name,
+                    organisationName: project.organisationName,
+                    description     : project.description?.take(200),
+                    documents       : documentService.findAllForProjectIdAndIsPrimaryProjectImage(project.projectId, ALL)
+            ]
+        } else {
+            String id = mapOfProperties["_id"].toString()
+            mapOfProperties["id"] = id
+            mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
+            mapOfProperties.remove("_id")
+
+            if (levelOfDetail != FLAT) {
+                mapOfProperties.remove("sites")
+                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT])
+                mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail)
+                mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail)
+
+                if (levelOfDetail == ALL) {
+                    mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
+                } else if (levelOfDetail == OUTPUT_SUMMARY) {
+                    mapOfProperties.outputSummary = projectMetrics(project.projectId, false, true)
+                }
+                if (levelOfDetail == ENHANCED) {
+                    project.activities = activityService.findAllForProjectId(project.projectId, ActivityService.FLAT, includeDeletedActivities)
+
+                    mapOfProperties.actualStartDate = project.actualStartDate ?: ''
+                    mapOfProperties.actualEndDate = project.actualEndDate ?: ''
+                    mapOfProperties.plannedDurationInWeeks = project.plannedDurationInWeeks
+                    mapOfProperties.actualDurationInWeeks = project.actualDurationInWeeks
+                    mapOfProperties.contractDurationInWeeks = project.contractDurationInWeeks
+                }
+            }
+
+            result = mapOfProperties.findAll { k, v -> v != null }
         }
-		if (levelOfDetail == PROMO) {
-			return [projectId: prj.projectId, name: prj.name, organisationName: prj.organisationName, description: prj.description?.take(200), 
-					documents:documentService.findAllForProjectIdAndIsPrimaryProjectImage(prj.projectId, ALL)]
-		}
-        def id = mapOfProperties["_id"].toString()
-        mapOfProperties["id"] = id
-		mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
-        mapOfProperties.remove("_id")
-        if (levelOfDetail != FLAT) {
 
-            mapOfProperties.remove("sites")
-            mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, [SiteService.FLAT])
-            mapOfProperties.documents = documentService.findAllForProjectId(prj.projectId, levelOfDetail)
-            mapOfProperties.links = documentService.findAllLinksForProjectId(prj.projectId, levelOfDetail)
-
-            if (levelOfDetail == ALL) {
-                mapOfProperties.activities = activityService.findAllForProjectId(prj.projectId, levelOfDetail, includeDeletedActivites)
-            }
-            else if (levelOfDetail == OUTPUT_SUMMARY) {
-                mapOfProperties.outputSummary = projectMetrics(prj.projectId, false, true)
-            }
-            if (levelOfDetail == ENHANCED) {
-                def activities = activityService.findAllForProjectId(prj.projectId, ActivityService.FLAT, includeDeletedActivites)
-                prj.activities = activities
-
-                mapOfProperties.actualStartDate = prj.actualStartDate?:''
-                mapOfProperties.actualEndDate = prj.actualEndDate?:''
-                mapOfProperties.plannedDurationInWeeks = prj.plannedDurationInWeeks
-                mapOfProperties.actualDurationInWeeks = prj.actualDurationInWeeks
-                mapOfProperties.contractDurationInWeeks = prj.contractDurationInWeeks
-            }
-        }
-	
-        mapOfProperties.findAll {k,v -> v != null}
+        result
     }
 
     /**
@@ -185,32 +205,44 @@ class ProjectService {
      * @param destroy if false, all deletes will be status updates (a soft delete).  Note that
      * the permissions will be deleted and site associations removed, even in the soft delete case.
      */
-    def delete(String id, destroy) {
+    Map delete(String id, boolean destroy) {
+        Map result
 
-        def p = Project.findByProjectId(id)
-        if (p) {
+        Project project = Project.findByProjectId(id)
 
-            // Delete activities associated with the project.
-            def activityIds = getActivityIdsForProject(id)
-            activityIds.each {activityService.delete(it, destroy)}
+        if (project) {
+            getActivityIdsForProject(id).each {
+                activityService.delete(it, destroy)
+            }
 
-            // Delete any user associations or permissions associated with the project
-            permissionService.deleteAllForProject(id)
+            projectActivityService.getAllByProject(id).each {
+                projectActivityService.delete(it.projectActivityId, destroy)
+            }
 
-            // Remove any site associations - maybe orphaned sites should be deleted too?
+            permissionService.deleteAllForProject(id, destroy)
+
+            documentService.deleteAllForProject(id, destroy)
+
             siteService.deleteSitesFromProject(id)
 
             if (destroy) {
-                p.delete()
+                project.delete()
                 webService.doDelete(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + id)
             } else {
-                p.status = 'deleted'
-                p.save(flush: true)
+                project.status = DELETED
+                project.save(flush: true)
             }
-            return [status: 'ok']
+
+            if (project.hasErrors()) {
+                result = [status: 'error', error: project.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
-            return [status: 'error', error: 'No such id']
+            result = [status: 'error', error: 'No such id']
         }
+
+        result
     }
 
 
@@ -270,19 +302,13 @@ class ProjectService {
         }
     }
 
-    public List<String> getActivityIdsForProject(String projectId) {
-        def c = Activity.createCriteria()
-        def list = c {
+    List<String> getActivityIdsForProject(String projectId) {
+        Activity.withCriteria {
             eq("projectId", projectId)
             projections {
                 property("activityId")
             }
         }
-        List<String> results = new ArrayList<String>()
-        list.each {
-            results << it.toString()
-        }
-        return results
     }
 
     /**

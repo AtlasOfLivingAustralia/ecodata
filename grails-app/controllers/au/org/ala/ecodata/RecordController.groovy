@@ -1,4 +1,7 @@
 package au.org.ala.ecodata
+
+import static au.org.ala.ecodata.Status.*
+
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
@@ -56,6 +59,7 @@ class RecordController {
         def criteria = Record.createCriteria()
         def results = criteria.list {
             isNotNull("multimedia")
+            ne("status", DELETED)
             maxResults(max)
             order(sort,orderBy)
             offset(offsetBy)
@@ -67,12 +71,9 @@ class RecordController {
         render records as JSON
     }
 
-    /**
-     * Retrieve the current record count.
-     */
     def count(){
         response.setContentType("application/json")
-        def model = [count:Record.count()]
+        def model = [count:Record.countByStatusNotEqual(DELETED)]
         render model as JSON
     }
 
@@ -81,7 +82,10 @@ class RecordController {
      */
     def listUncertainIdentifications(){
         log.debug("list request....")
-        def ids = Record.findAllWhere( ["identificationVerificationStatus" : "Uncertain"]).collect { it.occurrenceID }
+        def ids = Record.withCriteria {
+            eq("identificationVerificationStatus", "Uncertain")
+            ne("status", DELETED)
+        }.collect { it.occurrenceID }
         response.setContentType("application/json")
         def model = ids
         render model as JSON
@@ -98,10 +102,12 @@ class RecordController {
         def offset = params.start ?: 0
         def max = params.pageSize ?: 10
         Record.list([sort:sort,order:order,offset:offset,max:max]).each {
-            recordService.toMap(it)
-            records.add(recordService.toMap(it))
+            if (it.status != DELETED) {
+                recordService.toMap(it)
+                records.add(recordService.toMap(it))
+            }
         }
-        def totalRecords = Record.count()
+        def totalRecords = Record.countByStatusNotEqual(DELETED)
         response.setContentType("application/json")
         def model = [total: totalRecords, list:records]
         render model as JSON
@@ -120,9 +126,11 @@ class RecordController {
         def offset = params.offset ?: 0
         def max = params.pageSize ?: 10
         Record.findAllWhere([userId:params.id], [sort:sort,order:order,offset:offset,max:max]).each {
-            records.add(recordService.toMap(it))
+            if (it.status != DELETED) {
+                records.add(recordService.toMap(it))
+            }
         }
-        def totalRecords = Record.countByUserId(params.id)
+        def totalRecords = Record.countByUserIdAndStatusNotEqual(params.id, DELETED)
         response.setContentType("application/json")
         def model = [total: totalRecords, list:records]
         render model as JSON
@@ -140,9 +148,11 @@ class RecordController {
         def offset = params.offset ?: 0
         def max = params.pageSize ?: 10
         Record.findAllWhere([projectId:params.id], [sort:sort,order:order,offset:offset,max:max]).each {
-            records.add(recordService.toMap(it))
+            if (it.status != DELETED) {
+                records.add(recordService.toMap(it))
+            }
         }
-        def totalRecords = Record.countByProjectId(params.id)
+        def totalRecords = Record.countByProjectIdAndStatusNotEqual(params.id, DELETED)
         response.setContentType("application/json")
         def model = [total: totalRecords, list:records]
         render model as JSON

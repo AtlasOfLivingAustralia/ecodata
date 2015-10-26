@@ -1,4 +1,7 @@
 package au.org.ala.ecodata
+
+import static au.org.ala.ecodata.Status.DELETED
+
 import grails.transaction.Transactional
 import org.bson.BSONObject
 
@@ -7,7 +10,7 @@ class CommentService {
 
     /**
      * get domain object properties. This is useful when converting object to json. mainly used to exclude
-     * inheritted properties of domain objects when convert object to json.
+     * inherited properties of domain objects when convert object to json.
      * @param it
      * @return
      */
@@ -107,14 +110,37 @@ class CommentService {
         comment
     }
 
-    @Transactional
-    Comment delete(Map params) {
-        Comment comment = Comment.get(params.id);
-        if (comment) {
-            if (comment.userId == params.userId) {
-                comment.delete(flush: true);
-            }
+    void deleteAllForEntity(String entity, String id, boolean destroy = false) {
+        Comment.findAllByEntityTypeAndEntityId(entity, id)?.each {
+            deleteComment(it, destroy)
         }
-        comment
     }
+
+    Map delete(String id, boolean destroy = false) {
+        deleteComment(Comment.get(id), destroy)
+    }
+
+    private static Map deleteComment(Comment comment, boolean destroy = false) {
+        Map result
+
+        if (comment) {
+            if (destroy) {
+                comment.delete(flush: true)
+            } else {
+                comment.status = DELETED
+                comment.save(flush: true)
+            }
+
+            if (comment.hasErrors()) {
+                result = [status: 'error', error: comment.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
+        } else {
+            result = [status: 'error', error: 'No such id']
+        }
+
+        result
+    }
+
 }
