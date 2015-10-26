@@ -297,7 +297,8 @@ class ElasticSearchService {
                             "type" : "string",
                             "path" : "just_name",
                             "fields" : {
-                                "organisationFacet" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
+                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
+                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
                             }
                         },
                         "serviceProviderName": {
@@ -305,7 +306,8 @@ class ElasticSearchService {
                             "path" : "just_name",
                             "fields" : {
                                 "organisationName" : {"type" : "string", "index" : "analyzed"},
-                                "organisationFacet" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
+                                "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
+                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
                             }
                         },
                         "type": {
@@ -810,7 +812,9 @@ class ElasticSearchService {
         }
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
-            activity.sites = [site]
+            if (site) {
+                activity.sites = [site]
+            }
         }
         activity
     }
