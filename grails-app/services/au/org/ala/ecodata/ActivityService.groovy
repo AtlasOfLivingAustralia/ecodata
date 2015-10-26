@@ -15,6 +15,7 @@ class ActivityService {
     CommonService commonService
     DocumentService documentService
     SiteService siteService
+    CommentService commentService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -55,8 +56,8 @@ class ActivityService {
         Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
-        def activities
+    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+        List activities
         if (includeDeleted) {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
@@ -90,6 +91,14 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
+    /**
+     * Count activity by project activity
+     * @param pActivityId Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivityId(pActivityId){
+        Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
 
     /**
      * Converts the domain object into a map of properties, including
@@ -164,22 +173,36 @@ class ActivityService {
      * @param destroy if true will really delete the object
      * @return
      */
-    def delete(String id, destroy) {
-        def a = Activity.findByActivityIdAndStatus(id, ACTIVE)
-        if (a) {
+    Map delete(String activityId, boolean destroy = false) {
+        Map result
 
+        Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
+        if (activity) {
             // Delete the outputs associated with this activity.
-            outputService.getAllOutputIdsForActivity(id).each{outputService.delete(it, destroy)}
+            outputService.getAllOutputIdsForActivity(activityId).each { outputService.delete(it, destroy) }
+
+            documentService.findAllForActivityId(activityId).each {
+                documentService.deleteDocument(it.documentId, destroy)
+            }
+
+            commentService.deleteAllForEntity(Activity.class.name, activityId, destroy)
 
             if (destroy) {
-                a.delete()
+                activity.delete(flush: true)
             } else {
-                commonService.updateProperties(a, [status: 'deleted'])
+                commonService.updateProperties(activity, [status: 'deleted'])
             }
-            [status: 'ok']
+
+            if (activity.hasErrors()) {
+                result = [status: 'error', error: activity.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
-            [status: 'not found']
+            result = [status: 'not found']
         }
+
+        result
     }
 
     /**

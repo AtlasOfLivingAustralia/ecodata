@@ -42,7 +42,8 @@ class ActivityController {
 
     @RequireApiKey
     def delete(String id) {
-        if (activityService.delete(id, params.destroy).status == 'ok') {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        if (activityService.delete(id, destroy).status == 'ok') {
             render (status: 200, text: 'deleted')
         } else {
             response.status = 404
@@ -176,6 +177,22 @@ class ActivityController {
         else{
             def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort])
             asJson([activities: list?.list, total: list?.total])
+        }
+    }
+
+    /**
+     * Count activity by project activity
+     * @param id Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivity(String id){
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def total = activityService.countByProjectActivityId(id)
+            asJson([total: total])
         }
     }
 

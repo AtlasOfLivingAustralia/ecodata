@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.ACTIVE
+
 import org.bson.types.ObjectId
 
 class Record {
@@ -23,6 +25,7 @@ class Record {
     String outputId
     String json
     Integer outputItemId
+    String status = ACTIVE
 
     def beforeValidate() {
         if (occurrenceID == null) {
@@ -45,5 +48,6 @@ class Record {
         outputId nullable: true
         json nullable: true
         outputItemId nullable: true
+        status nullable: true
     }
 }

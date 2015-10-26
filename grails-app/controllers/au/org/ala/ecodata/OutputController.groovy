@@ -42,9 +42,10 @@ class OutputController {
 
     @RequireApiKey
     def delete(String id) {
-        def a = Output.findByOutputId(id)
-        if (a) {
-            def result = outputService.delete(id, params.destroy)
+        Output output = Output.findByOutputId(id)
+        if (output) {
+            boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+            Map result = outputService.delete(id, destroy)
             if (!result.error) {
                 render(status: 200, text: 'deleted')
             }

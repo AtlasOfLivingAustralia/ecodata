@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class ProjectActivityController {
 
     def projectActivityService
@@ -40,6 +42,34 @@ class ProjectActivityController {
             render status: 404, text: 'No such id'
         }
     }
+
+    /**
+     * Delete project activity and all child records
+     * @param id - project activity id
+     * @param destroy = true to permanently delete the records, false to soft delete
+     *
+     * @return json map of
+     */
+    @RequireApiKey
+    def delete(String id) {
+        ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(id)
+        if (pActivity) {
+            boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+            Map result = projectActivityService.delete(id, destroy)
+            if (!result.error) {
+                response.setStatus(200)
+                response.setContentType("application/json")
+                render(status: 200, text: 'deleted')
+            } else {
+                response.status = 400
+                render(status: 400, text: result.error)
+            }
+        } else {
+            response.status = 400
+            render(status: 404, text: 'No such id')
+        }
+    }
+
 
 
     /**
