@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.DELETED
+
 import au.com.bytecode.opencsv.CSVWriter
 import au.org.ala.web.AuthService
 import grails.converters.JSON
@@ -26,8 +28,6 @@ class RecordService {
     SiteService siteService
     AuthService authService
 
-    def serviceMethod() {}
-
     final def ignores = ["action", "controller", "associatedMedia"]
 
     /**
@@ -36,13 +36,13 @@ class RecordService {
      */
     private def exportRecordBasedProject(csvWriter, project){
 
-        def recordList = Record.where { projectId == project.projectId }.findAll()
+        List<Record> recordList = Record.findAllByProjectIdAndStatusNotEqual(project.projectId, DELETED)
 
         log.info("Number of records to export: ${recordList.size()}")
 
         //write out each record
         recordList.each {
-            def map = toMap(it)
+            Map map = toMap(it)
             csvWriter.writeNext([
                     map.occurrenceID?:"",
                     map.scientificName?:"",

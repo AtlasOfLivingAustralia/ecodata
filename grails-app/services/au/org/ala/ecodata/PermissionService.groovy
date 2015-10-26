@@ -174,10 +174,20 @@ class PermissionService {
     }
     /**
      * Deletes all permissions associated with the supplied project.  Used as a part of a project delete operation.
-     * UserPermissions don't support soft deletes, even if the project itself is soft-deleted.
-     * @param projectId
+     *
+     * Permissions can be soft deleted (by setting status = deleted), or hard deleted (if the 'destroy' parameter is true)
+     *
+     * @param projectId The id of the project whose permissions are being deleted. Mandatory.
+     * @param destroy True to physically delete the permissions, false to soft delete. Optional - defaults to false.
      */
-    def deleteAllForProject(String projectId) {
-        UserPermission.findAllByEntityId(projectId).each{it.delete()}
+    void deleteAllForProject(String projectId, boolean destroy = false) {
+        UserPermission.findAllByEntityId(projectId).each {
+            if (destroy) {
+                it.delete()
+            } else {
+                it.status = 'deleted'
+                it.save(flush: true)
+            }
+        }
     }
 }

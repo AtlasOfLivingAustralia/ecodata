@@ -633,6 +633,11 @@ class ElasticSearchService {
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
                 indexDoc(doc, DEFAULT_INDEX)
+                // update linked project -- index for homepage
+                def pDoc = Project.findByProjectId(doc.projectId)
+                if (pDoc) {
+                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                }
                 break;
         }
     }
@@ -646,6 +651,11 @@ class ElasticSearchService {
     def indexHomePage(doc, docType) {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
+            def docId = getEntityId(doc)
+            if (checkForDelete(doc, docId)) {
+                return null
+            }
+
             def projectMapDeep = prepareProjectForHomePageIndex(doc)
             projectMapDeep["className"] = docType
             indexDoc(projectMapDeep, HOMEPAGE_INDEX)

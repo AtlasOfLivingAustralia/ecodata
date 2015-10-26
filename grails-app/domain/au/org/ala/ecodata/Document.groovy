@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.ACTIVE
+
 import org.bson.types.ObjectId
 
 /**
@@ -33,7 +35,7 @@ class Document {
     String type // image, document, sound, etc
     String role // eg primary, carousel, photoPoint
 
-    String status = 'active'
+    String status = ACTIVE
     String projectId
     String siteId
     String activityId
