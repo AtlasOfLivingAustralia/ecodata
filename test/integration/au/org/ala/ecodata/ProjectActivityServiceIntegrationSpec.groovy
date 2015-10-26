@@ -75,6 +75,8 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
             if (it.projectActivityId == activity.projectActivityId) {
                 assert it.embargoUntil == cal.getTime()
                 count++
+            } else {
+                assert it.embargoUntil == null
             }
         }
         assert count == 2
@@ -98,6 +100,8 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
             if (it.projectActivityId == activity.projectActivityId) {
                 assert it.embargoUntil == null
                 count++
+            } else {
+                assert it.embargoUntil != null
             }
         }
         assert count == 2
