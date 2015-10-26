@@ -181,6 +181,22 @@ class ActivityController {
     }
 
     /**
+     * Count activity by project activity
+     * @param id Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivity(String id){
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def total = activityService.countByProjectActivityId(id)
+            asJson([total: total])
+        }
+    }
+
+    /**
      * Request body should be JSON formatted of the form:
      * {
      *     "property1":value1,
