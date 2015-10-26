@@ -42,7 +42,8 @@ class ActivityController {
 
     @RequireApiKey
     def delete(String id) {
-        if (activityService.delete(id, params.destroy).status == 'ok') {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        if (activityService.delete(id, destroy).status == 'ok') {
             render (status: 200, text: 'deleted')
         } else {
             response.status = 404

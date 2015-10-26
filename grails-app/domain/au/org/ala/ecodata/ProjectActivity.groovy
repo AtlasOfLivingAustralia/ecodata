@@ -19,7 +19,6 @@ class ProjectActivity {
     Map visibility
     boolean restrictRecordToSites
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
-    boolean allowPublicViewOfData // allow public users to view data even if the survey is restricted
 
     static constraints = {
         endDate nullable: true
@@ -29,6 +28,5 @@ class ProjectActivity {
         restrictRecordToSites nullable: true
         visibility nullable: true
         publicAccess nullable: true
-        allowPublicViewOfData nullable: true
     }
 }

@@ -1,12 +1,11 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.*
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
-import com.itextpdf.text.DocumentException
-import com.itextpdf.text.Element
 import com.itextpdf.text.html.simpleparser.HTMLWorker
-import com.itextpdf.text.html.simpleparser.StyleSheet
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.PageSize
 import org.imgscalr.Scalr
@@ -18,7 +17,6 @@ import java.text.SimpleDateFormat
 
 class DocumentService {
 
-    static final ACTIVE = "active"
     static final LINKTYPE = "link"
     static final FILE_LOCK = new Object()
 
@@ -274,12 +272,37 @@ class DocumentService {
         return newFilename;
     }
 
-    String fullPath(filepath, filename) {
-        def path = filepath ?: ''
+    String fullPath(String filepath, String filename) {
+        String path = filepath ?: ''
         if (path) {
             path = path+File.separator
         }
         return grailsApplication.config.app.file.upload.path + '/' + path  + filename
+    }
+
+    void deleteAllForProject(String projectId, boolean destroy = false) {
+        List<String> documentIds = Document.withCriteria {
+            eq "projectId", projectId
+            projections {
+                property("documentId")
+            }
+        }
+
+        documentIds?.each { deleteDocument(it, destroy) }
+    }
+
+    void deleteDocument(String documentId, boolean destroy = false) {
+        Document document = Document.findByDocumentId(documentId)
+        if (document) {
+            if (destroy) {
+                document.delete()
+                deleteFile(document)
+            } else {
+                document.status = DELETED
+                archiveFile(document)
+                document.save(flush: true)
+            }
+        }
     }
 
     /**
@@ -287,11 +310,27 @@ class DocumentService {
      * @param document identifies the file to delete.
      * @return true if the delete operation was successful.
      */
-    def deleteFile(document) {
+    boolean deleteFile(Document document) {
+        File fileToDelete = new File(fullPath(document.filepath, document.filename))
+        fileToDelete.delete();
+    }
 
-        File f = fullPath(document.filepath, document.filename)
-        return f.delete();
+    /**
+     * Move the document's file to the 'archive' directory. This is used when the Document is being soft deleted.
+     * The file should only be deleted if the Document has been 'hard' deleted.
+     * @param document the Document entity representing the file to be moved
+     * @return the new absolute location of the file
+     */
+    void archiveFile(Document document) {
+        File fileToArchive = new File(fullPath(document.filepath, document.filename))
 
+        if (fileToArchive.exists()) {
+            File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
+
+            FileUtils.moveFileToDirectory(fileToArchive, archiveDir, true)
+        } else {
+            log.warn("Unable to move file for document ${document.documentId}: the file ${fileToArchive.absolutePath} does not exist.")
+        }
     }
 
     def findAllByOwner(ownerType, owner, includeDeleted = false) {
@@ -301,7 +340,7 @@ class DocumentService {
            ne('type', LINKTYPE)
            eq(ownerType, owner)
            if (!includeDeleted) {
-               ne('status', 'deleted')
+               ne('status', DELETED)
            }
         }
 
@@ -315,7 +354,7 @@ class DocumentService {
             eq('type', LINKTYPE)
             eq(ownerType, owner)
             if (!includeDeleted) {
-                ne('status', 'deleted')
+                ne('status', DELETED)
             }
         }
 
