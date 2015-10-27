@@ -51,16 +51,23 @@ class CommentService {
      * @return
      */
     List sortCommentChildren(List comments, Boolean order){
-        comments.sort(true, {it.dateCreated})
-        // reverse list if sorting has to be done in reverse order
-        if(!order){
-            comments.reverse(true)
-        }
+        List removeComments = []
 
         comments.each { comment ->
+            if(comment.status == DELETED){
+                removeComments.push(comment);
+            }
+
             if(comment.children?.size()){
                 sortCommentChildren(comment.children, order);
             }
+        }
+        // remove soft deleted comments from showing
+        comments.removeAll(removeComments)
+        comments.sort(true, {it.lastUpdated})
+        // reverse list if sorting has to be done in reverse order
+        if(!order){
+            comments.reverse(true)
         }
 
         comments
@@ -75,9 +82,6 @@ class CommentService {
     Comment create(Object json){
         Comment newComment = new Comment(json)
         Comment parent;
-        if (newComment.dateCreated == null) {
-            newComment.dateCreated = new Date();
-        }
 
         Comment comment = newComment.save(true)
 
