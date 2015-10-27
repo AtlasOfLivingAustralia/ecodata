@@ -92,7 +92,7 @@ class DocumentService {
 
     def findImageUrlForProjectId(id, levelOfDetail = []){
         Document primaryImageDoc;
-        Document logoDoc = Document.findByProjectIdAndType(id,LOGO)
+        Document logoDoc = Document.findByProjectIdAndRole(id,LOGO)
         String urlImage;
         urlImage = logoDoc?.url
         if(!urlImage){
