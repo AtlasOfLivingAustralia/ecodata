@@ -27,6 +27,7 @@ class RecordService {
     ProjectService projectService
     SiteService siteService
     AuthService authService
+    PermissionService permissionService
 
     final def ignores = ["action", "controller", "associatedMedia"]
 
@@ -34,9 +35,21 @@ class RecordService {
      * Export records to CSV for a project. This implementation is unlikely to scale beyond 50k
      * records.
      */
-    private def exportRecordBasedProject(csvWriter, project){
+    private exportRecordBasedProject(CSVWriter csvWriter, Map project, String userId) {
 
-        List<Record> recordList = Record.findAllByProjectIdAndStatusNotEqual(project.projectId, DELETED)
+        boolean userIsMemberOfProject = permissionService.isUserMemberOfProject(userId, project.projectId)
+
+        List<Record> recordList = Record.withCriteria {
+            eq "projectId", projectId
+            ne "status", DELETED
+
+            if (!userIsMemberOfProject) {
+                or {
+                    isNull "embargoUntil"
+                    lt "embargoUntil", new Date()
+                }
+            }
+        }
 
         log.info("Number of records to export: ${recordList.size()}")
 
@@ -370,8 +383,8 @@ class RecordService {
     /**
      * Export project sightings to CSV.
      */
-    def exportCSVProject(OutputStream outputStream, projectId, modelName){
-        def csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
+    def exportCSVProject(OutputStream outputStream, String projectId, String modelName, String userId){
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
         csvWriter.writeNext(
                 [
                         "occurrenceID",
@@ -399,15 +412,16 @@ class RecordService {
                 ] as String[]
         )
 
-        def projects
-        if (projectId)
+        List<Map> projects
+        if (projectId) {
             projects = [projectService.get(projectId, projectService.FLAT)]
-        else
+        } else {
             projects = projectService.search([:], projectService.FLAT)
+        }
 
-        projects.each { project ->
+        projects.each { Map project ->
             exportActivityBasedProject(csvWriter, project, modelName)
-            exportRecordBasedProject(csvWriter, project)
+            exportRecordBasedProject(csvWriter, project, userId)
         }
 
         csvWriter.flush()

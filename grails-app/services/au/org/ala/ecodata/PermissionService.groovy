@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.DELETED
 /**
  * Service to set and get permissions on projects for each user
  */
@@ -77,6 +78,22 @@ class PermissionService {
     def getUsersForProject(String projectId) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevel(projectId, Project.class.name, AccessLevel.editor)
         up.collect { it.userId } // return just a list of userIds
+    }
+
+    boolean isUserMemberOfProject(String userId, String projectId) {
+        !UserPermission.findAllByEntityIdAndEntityTypeAndUserIdAndStatusNotEqual(projectId, Project.class.name, userId, DELETED)?.isEmpty()
+    }
+
+    List<String> getProjectsForUser(String userId) {
+        UserPermission.withCriteria {
+            eq "userId", userId
+            eq "entityType", Project.class.name
+            ne "status", DELETED
+
+            projections {
+                property("entityId")
+            }
+        }
     }
 
     def getMembersForProject(String projectId) {
