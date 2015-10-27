@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.DELETED
+
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 
@@ -19,18 +21,28 @@ class CommentController {
     def list() {
         List comments = []
         String sort = params.sort ?: "lastUpdated"
-        String order = params.order ?: "desc"
-        Integer offset = (params.start ?: "0") as Integer
+        String orderBy = params.order ?: "desc"
+        Integer startFrom = (params.start ?: "0") as Integer
         Integer max = (params.pageSize ?: "10") as Integer
-        Boolean sortOrder = order == 'asc';
+        Boolean sortOrder = orderBy == 'asc';
         String entityId = params.entityId
         String entityType = params.entityType
         Integer total;
         if (!entityId || !entityType) {
             response.sendError(SC_BAD_REQUEST, 'Insufficient parameters provided. Missing either entityId or entityType')
         } else {
-            total = Comment.countByEntityIdAndEntityTypeAndParentIsNull(entityId, entityType);
-            Comment.findAllWhere(['entityId': entityId, 'entityType': entityType, parent: null], [sort: sort, order: order, offset: offset, max: max]).each {
+            total = Comment.countByEntityIdAndEntityTypeAndParentIsNullAndStatusNotEqual(entityId, entityType, DELETED);
+
+            Comment.withCriteria {
+                eq "entityId", entityId
+                eq "entityType", entityType
+                isNull "parent"
+                ne "status", DELETED
+
+                maxResults max
+                order sort, orderBy
+                offset startFrom
+            }.each {
                 Map comment = commentService.getCommentProperties(it)
                 if (comment.children?.size()) {
                     commentService.sortCommentChildren(comment.children, sortOrder);
@@ -109,17 +121,14 @@ class CommentController {
             response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
             params.isALAAdmin = (params.isALAAdmin?:false) as Boolean;
-            Comment comment = commentService.delete(params);
+
+            boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+
+            Comment comment = Comment.get(params.id)
             if (comment) {
-                if ((comment.userId == params.userId) || params.isALAAdmin) {
-                    Map msg = [:];
-                    if (comment.hasErrors()) {
-                        msg.success = false
-                        response.status = SC_INTERNAL_SERVER_ERROR;
-                        msg.message = comment.getErrors();
-                    } else {
-                        msg.success = true
-                    }
+                if ((comment.userId == params.userId) || params.isALAAdmin || commentService.canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType) ) {
+                    Map msg = commentService.delete(params.id, destroy)
+
                     render(text: msg as JSON, contentType: 'application/json');
                 } else {
                     response.sendError(SC_UNAUTHORIZED, 'Only comment owner can delete this comment.');

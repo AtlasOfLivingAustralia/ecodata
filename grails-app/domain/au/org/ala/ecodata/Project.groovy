@@ -1,18 +1,15 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.COMPLETED
+
 import org.bson.types.ObjectId
 import org.joda.time.DateTime
 import org.joda.time.Days
-import org.joda.time.Duration
 import org.joda.time.Interval
-import org.joda.time.Period
-import org.joda.time.Weeks
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.format.ISODateTimeFormat
+
 
 class Project {
 
-    static final COMPLETED = "completed"
     static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
 
     /*

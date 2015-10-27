@@ -119,6 +119,9 @@ if(!app.http.header.userId){
 if(!app.file.upload.path){
     app.file.upload.path = "/data/ecodata/uploads"
 }
+if(!app.file.archive.path){
+    app.file.archive.path = "/data/ecodata/archive"
+}
 if(!app.external.api.version){
     app.external.api.version = 'draft'
 }
@@ -279,6 +282,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
+        app.file.upload.path = "./target/archive"
     }
     production {
         grails.logging.jul.usebridge = false

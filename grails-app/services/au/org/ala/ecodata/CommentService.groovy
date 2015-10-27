@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
-import au.org.ala.web.AuthService
+
+import static au.org.ala.ecodata.Status.DELETED
 import grails.transaction.Transactional
 import org.bson.BSONObject
 
@@ -8,12 +9,11 @@ class CommentService {
     UserService userService
     PermissionService permissionService
     ActivityService activityService
-    AuthService authService
     def grailsApplication
 
     /**
      * get domain object properties. This is useful when converting object to json. mainly used to exclude
-     * inheritted properties of domain objects when convert object to json.
+     * inherited properties of domain objects when convert object to json.
      * @param it
      * @return
      */
@@ -111,8 +111,6 @@ class CommentService {
 
             if(update){
                 comment.text = json.text;
-                //update time
-                comment.dateCreated = new Date();
                 comment.save(flush: true)
             }
         }
@@ -120,18 +118,37 @@ class CommentService {
         comment
     }
 
-    @Transactional
-    Comment delete(Map params) {
-        Comment comment = Comment.get(params.id);
+    void deleteAllForEntity(String entity, String id, boolean destroy = false) {
+        Comment.findAllByEntityTypeAndEntityId(entity, id)?.each {
+            deleteComment(it, destroy)
+        }
+    }
+
+    Map delete(String id, boolean destroy = false) {
+        deleteComment(Comment.get(id), destroy)
+    }
+
+    private static Map deleteComment(Comment comment, boolean destroy = false) {
+        Map result
+
         if (comment) {
-            if (comment.userId == params.userId) {
-                comment.delete(flush: true);
-            } else if(canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType) || params.isALAAdmin){
-                comment.delete(flush: true);
+            if (destroy) {
+                comment.delete(flush: true)
+            } else {
+                comment.status = DELETED
+                comment.save(flush: true)
             }
+
+            if (comment.hasErrors()) {
+                result = [status: 'error', error: comment.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
+        } else {
+            result = [status: 'error', error: 'No such id']
         }
 
-        comment
+        result
     }
 
     /**
