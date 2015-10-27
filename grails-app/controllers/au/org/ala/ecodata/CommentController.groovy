@@ -10,9 +10,17 @@ import static org.apache.http.HttpStatus.*;
 class CommentController {
     CommentService commentService
 
+    // JSON response is returned as the unconverted model with the appropriate
+    // content-type. The JSON conversion is handled in the filter. This allows
+    // for universal JSONP support.
+    def asJson = { model ->
+        response.setContentType("application/json;charset=UTF-8")
+        model
+    }
+
     def list() {
         List comments = []
-        String sort = params.sort ?: "dateCreated"
+        String sort = params.sort ?: "lastUpdated"
         String orderBy = params.order ?: "desc"
         Integer startFrom = (params.start ?: "0") as Integer
         Integer max = (params.pageSize ?: "10") as Integer
@@ -84,9 +92,10 @@ class CommentController {
             response.sendError(SC_BAD_REQUEST, 'Missing text');
         } else {
             Map result
+            json.isALAAdmin = (json.isALAAdmin?:false) as Boolean;
             Comment comment = commentService.update(json);
             if(comment){
-                if (comment.userId == json.userId) {
+                if ((comment.userId == json.userId) || json.isALAAdmin) {
                     result = commentService.getCommentProperties(comment);
                     if (comment.hasErrors()) {
                         result.success = false;
@@ -111,11 +120,13 @@ class CommentController {
         if (!params.id) {
             response.sendError(SC_BAD_REQUEST, "Missing id");
         } else {
+            params.isALAAdmin = (params.isALAAdmin?:false) as Boolean;
+
             boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
 
             Comment comment = Comment.get(params.id)
             if (comment) {
-                if (comment.userId == params.userId) {
+                if ((comment.userId == params.userId) || params.isALAAdmin || commentService.canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType) ) {
                     Map msg = commentService.delete(params.id, destroy)
 
                     render(text: msg as JSON, contentType: 'application/json');
@@ -139,6 +150,17 @@ class CommentController {
             } else {
                 response.sendError(SC_NOT_FOUND, "Comment not found");
             }
+        }
+    }
+
+    @RequireApiKey
+    def canUserEditOrDeleteComment(){
+        if(!params.userId || !params.entityId || !params.entityType){
+            response.sendError(SC_BAD_REQUEST, "Missing userId, entityId or entityType")
+        } else {
+            Map result = [:];
+            result.isAdmin = commentService.canUserEditOrDeleteComment(params.userId, params.entityId, params.entityType)
+            asJson(result);
         }
     }
 }

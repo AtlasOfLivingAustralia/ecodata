@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
+import static au.org.ala.ecodata.Status.*
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -52,6 +53,8 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 class ElasticSearchService {
     static transactional = false
     def grailsApplication, projectService, siteService, activityService, metadataService
+    PermissionService permissionService
+    DocumentService documentService
 
     Node node;
     Client client;
@@ -189,7 +192,7 @@ class ElasticSearchService {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status == "deleted") {
+        if (resp && doc.status == DELETED) {
             try {
                 deleteDocById(docId)
                 isDeleted = true
@@ -295,7 +298,8 @@ class ElasticSearchService {
                             "type" : "string",
                             "path" : "just_name",
                             "fields" : {
-                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
+                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
                             }
                         },
                         "serviceProviderName": {
@@ -303,7 +307,8 @@ class ElasticSearchService {
                             "path" : "just_name",
                             "fields" : {
                                 "organisationName" : {"type" : "string", "index" : "analyzed"},
-                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"}
+                                "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
+                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
                             }
                         },
                         "type": {
@@ -332,7 +337,7 @@ class ElasticSearchService {
                         "name": {
                             "type" : "string",
                             "fields" : {
-                                "nameSort" : {"type" : "string", "index" : "not_analyzed"}
+                                "nameSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
                             }
                         },
                         "extent":{
@@ -471,6 +476,10 @@ class ElasticSearchService {
                            ],
                            "type":"custom",
                            "tokenizer":"keyword"
+                        },
+                        "case_insensitive_sort": {
+                            "tokenizer": "keyword",
+                            "filter":  [ "lowercase" ]
                         }
                     }
                 }
@@ -744,7 +753,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         Project.withNewSession {
             def batchParams = [offset:0, max:50]
-            def projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
+            def projects = Project.findAllByStatusInList([ACTIVE,COMPLETED], batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -754,7 +763,7 @@ class ElasticSearchService {
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
+                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
             }
         }
         log.debug "Indexing all sites"
@@ -784,6 +793,12 @@ class ElasticSearchService {
         projectMap["className"] = new Project().getClass().name
         projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
         projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+        projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
+        projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
+        projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect{
+            it.userId
+        };
         projectMap
     }
 
@@ -808,7 +823,9 @@ class ElasticSearchService {
         }
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
-            activity.sites = [site]
+            if (site) {
+                activity.sites = [site]
+            }
         }
         activity
     }
