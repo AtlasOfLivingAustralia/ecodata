@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
+import static au.org.ala.ecodata.Status.*
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -189,7 +190,7 @@ class ElasticSearchService {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status == "deleted") {
+        if (resp && doc.status == DELETED) {
             try {
                 deleteDocById(docId)
                 isDeleted = true
@@ -744,7 +745,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         Project.withNewSession {
             def batchParams = [offset:0, max:50]
-            def projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
+            def projects = Project.findAllByStatusInList([ACTIVE,COMPLETED], batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -754,7 +755,7 @@ class ElasticSearchService {
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
-                projects = Project.findAllByStatusInList([ProjectService.ACTIVE,ProjectService.COMPLETED], batchParams)
+                projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
             }
         }
         log.debug "Indexing all sites"
