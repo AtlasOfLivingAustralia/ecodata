@@ -2,13 +2,14 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
-import java.text.SimpleDateFormat
-
 class ActivityController {
 
-    def activityService, siteService, commonService, projectActivityService
+    ActivityService activityService
+    SiteService siteService
+    CommonService commonService
+    UserService userService
+
     static final SCORES = 'scores'
-    static final BRIEF = 'brief'
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows

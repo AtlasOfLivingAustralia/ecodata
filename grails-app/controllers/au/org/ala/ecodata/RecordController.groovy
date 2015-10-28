@@ -18,6 +18,7 @@ class RecordController {
 
     RecordService recordService
     PermissionService permissionService
+    UserService userService
 
     static defaultAction = "list"
 
@@ -40,8 +41,9 @@ class RecordController {
     def get() {
         Record record = Record.findByOccurrenceID(params.id)
         if (record) {
-            boolean userIsMemberOfProject = params.userId && permissionService.isUserMemberOfProject(params.userId, record.projectId)
-            boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
+            String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+            boolean userIsMemberOfProject = userId && permissionService.isUserMemberOfProject(userId, record.projectId)
+            boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
             if (record.embargoUntil != null && record.embargoUntil.after(new Date()) && !userIsMemberOfProject && !userIsAlaAdmin) {
                 response.sendError(SC_UNAUTHORIZED, "You are not authorised to view this record")
@@ -63,9 +65,9 @@ class RecordController {
         def orderBy = params.order ?: "desc"
         def offsetBy = params.start ?: 0
         def max = params.pageSize ?: 10
-        String userId = params.userId
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
 
         def criteria = Record.createCriteria()
@@ -107,9 +109,9 @@ class RecordController {
     def listUncertainIdentifications() {
         log.debug("list request....")
 
-        String userId = params.userId
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
 
         def ids = Record.withCriteria {
@@ -142,10 +144,10 @@ class RecordController {
         String orderBy = params.order ?: "desc"
         String offset = params.start ?: 0
         String max = params.pageSize ?: 10
-        String userId = params.userId
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
         def query = Record.createCriteria().list(max: max, offset: offset) {
             ne "status", DELETED
@@ -205,10 +207,10 @@ class RecordController {
         String orderBy = params.order ?: "desc"
         def startFrom = params.offset ?: 0
         def max = params.pageSize ?: 10
-        String userId = params.userId
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
         boolean projectMember = userId && permissionService.isUserMemberOfProject(userId, projectId)
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
         def query = Record.createCriteria().list(max: max, offset: startFrom) {
             eq "projectId", projectId

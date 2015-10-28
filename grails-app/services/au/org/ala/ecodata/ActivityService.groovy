@@ -1,4 +1,6 @@
 package au.org.ala.ecodata
+
+import static au.org.ala.ecodata.Status.*
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
@@ -6,7 +8,6 @@ import com.mongodb.DBObject
 class ActivityService {
 
     static transactional = false
-    static final ACTIVE = "active"
     static final FLAT = 'flat'
     static final SITE = 'site'
 
@@ -16,6 +17,8 @@ class ActivityService {
     DocumentService documentService
     SiteService siteService
     CommentService commentService
+    UserService userService
+    PermissionService permissionService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -49,22 +52,76 @@ class ActivityService {
     }
 
     def getAll(List listOfIds, levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+
+        Activity.withCriteria {
+            'in' "activityId", listOfIds
+            eq "status", ACTIVE
+
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
+                }
+            }
+        }.collect {
+            toMap(it, levelOfDetail)
+        }
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
     def findAllForSiteId(id, levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+
+        Activity.withCriteria {
+            eq "siteId", id
+            eq "status", ACTIVE
+
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
+                }
+            }
+        }.collect {
+            toMap(it, levelOfDetail)
+        }
+
         Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
     List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
-        List activities
-        if (includeDeleted) {
-            activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
+        String userId = userService.getCurrentUserDetails()?.userId
+        boolean userIsMemberOfProject = permissionService.isUserMemberOfProject(userId, id)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+
+        Activity.withCriteria {
+            eq "projectId", id
+            if (!includeDeleted) {
+                eq "status", ACTIVE
+            }
+
+            if (!userIsMemberOfProject && !userIsAlaAdmin) {
+                or {
+                    isNull "embargoUntil"
+                    lt "embargoUntil", new Date()
+                }
+            }
+        }.collect {
+            toMap(it, levelOfDetail)
         }
-        else {
-            activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
-        }
-        activities
     }
 
     def findAllForUserId(userId, query, levelOfDetail = []){
@@ -79,12 +136,22 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
-    def listByProjectId(projectId, query, levelOfDetail = []){
+    Map listByProjectId(String projectId, Map query, levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+        boolean userIsMemberOfProject = permissionService.isUserMemberOfProject(userId, projectId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+
         def list = Activity.createCriteria().list(query) {
-            and{
-                eq ("projectId", projectId)
-                eq ("status", ACTIVE)
+            eq ("projectId", projectId)
+            eq ("status", ACTIVE)
+
+            if (!userIsMemberOfProject && !userIsAlaAdmin) {
+                or {
+                    isNull "embargoUntil"
+                    lt "embargoUntil", new Date()
+                }
             }
+
             order('lastUpdated','desc')
         }
 
@@ -322,12 +389,15 @@ class ActivityService {
      * @return a listbuilof the activities that match the supplied criteria
      */
     public search(Map searchCriteria, Date startDate, Date endDate, String dateProperty, levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
         def criteria = Activity.createCriteria()
         def activities = criteria.list {
-            ne("status", "deleted")
-            searchCriteria.each { prop,value ->
+            ne("status", DELETED)
 
+            searchCriteria.each { prop,value ->
                 if (value instanceof List) {
                     inList(prop, value)
                 }
@@ -343,6 +413,16 @@ class ActivityService {
                 lt(dateProperty, endDate)
             }
 
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
+                }
+            }
 
         }
         activities.collect{toMap(it, levelOfDetail)}

@@ -9,12 +9,16 @@ class RecordControllerSpec extends IntegrationSpec {
 
     RecordController recordController = new RecordController()
     PermissionService permissionService
+    UserService userService
 
     def grailsApplication
 
     def setup() {
         permissionService = Mock(PermissionService)
         recordController.permissionService = permissionService
+        userService = Mock(UserService)
+        recordController.userService = userService
+        userService.getCurrentUserDetails() >> [:]
 
         grailsApplication.domainClasses.each {
             it.clazz.collection.drop()

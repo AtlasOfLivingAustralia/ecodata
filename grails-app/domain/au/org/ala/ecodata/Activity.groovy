@@ -64,6 +64,7 @@ class Activity {
     Date dateCreated
     Date lastUpdated
     String userId
+    Date embargoUntil // this is the date the embargo is released, NOT the last day of the embargo (i.e. the activity will become visible ON this day)
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -94,6 +95,7 @@ class Activity {
         projectStage nullable: true
         projectActivityId nullable: true
         userId nullable:true
+        embargoUntil nullable: true
     }
 
 }

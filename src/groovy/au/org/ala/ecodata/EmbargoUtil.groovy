@@ -6,7 +6,13 @@ class EmbargoUtil {
 
     public static final int MAXIMUM_EMBARGO_PERIOD_MONTHS = 12
 
-    static Date calculateEmbargoUntilDate(ProjectActivity projectActivity) {
+    /**
+     * Calculate the date when the embargo period ends
+     *
+     * @param projectActivity Either the ProjectActivity entity, or the Map of its properties
+     * @return Null if EmbargoOption.NONE is used, otherwise either the user-entered date when EmbargoOption.DATE is used OR the calculated date when EmbargoOption.DAYS is used
+     */
+    static Date calculateEmbargoUntilDate(projectActivity) {
         Date embargoUntil = null
 
         if (projectActivity && projectActivity.visibility) {

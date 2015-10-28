@@ -57,9 +57,16 @@ class ProjectActivityService {
                 props.remove("projectId");
                 props.remove("projectActivityId");
 
+                VisibilityConstraint visibilityConstraintBefore = projectActivity.visibility
+
                 commonService.updateProperties(projectActivity, props)
 
-                updateEmbargoedRecords(projectActivity)
+                VisibilityConstraint visibilityConstraintAfter = ProjectActivity.findByProjectActivityId(id).visibility
+
+                if (visibilityConstraintAfter != visibilityConstraintBefore) {
+                    updateEmbargoedRecords(projectActivity)
+                    updateEmbargoedActivities(projectActivity)
+                }
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
             } catch (Exception e) {
@@ -157,4 +164,14 @@ class ProjectActivityService {
         }
     }
 
+    void updateEmbargoedActivities(ProjectActivity projectActivity) {
+        List<Activity> activities = Activity.findAllByProjectActivityId(projectActivity.projectActivityId)
+
+        Date embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(projectActivity)
+
+        activities.each {
+            it.embargoUntil = embargoUntil
+            it.save(flush: true)
+        }
+    }
 }
