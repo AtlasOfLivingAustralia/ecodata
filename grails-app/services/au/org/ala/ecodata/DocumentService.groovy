@@ -109,7 +109,7 @@ class DocumentService {
      *
      * @return a list of the documents that match the supplied criteria
      */
-    public search(Map searchCriteria) {
+    public List search(Map searchCriteria) {
 
         def criteria = Document.createCriteria()
         def documents = criteria.list {
