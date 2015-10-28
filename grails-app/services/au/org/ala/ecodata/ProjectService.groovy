@@ -226,7 +226,7 @@ class ProjectService {
             siteService.deleteSitesFromProject(id)
 
             if (destroy) {
-                project.delete()
+                project.delete(flush: true)
                 webService.doDelete(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + id)
             } else {
                 project.status = DELETED
