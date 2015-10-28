@@ -2,6 +2,10 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.util.CellReference
+import org.springframework.web.multipart.MultipartFile
 
 class MetadataController {
 
@@ -130,6 +134,52 @@ class MetadataController {
         builder.setResponseHeaders(response)
 
         builder.save(response.outputStream)
+
+    }
+
+    /**
+     * Accepts an Excel workbook formatted as per the return value from the excelOutputTemplate method above
+     * and json formatted data as it would be stored in the Output entity.
+     *
+     * Note that no type conversion or validation is performed.
+     *
+     * @param data (required) the workbook as a multipart file.
+     * @param type (required) the name of the output definition that describes the data in the workbook.
+     * @param listName (optional) the name of a list typed attribute in the output model.  If specified, the
+     * data in the workbook will be expected to contain the contents of that list.
+     *
+     * @return the output data contained in the workbook formatted as JSON
+     */
+    def extractOutputDataFromExcelOutputTemplate() {
+
+        MultipartFile file = null
+        if (request.respondsTo('getFile')) {
+            file = request.getFile('data')
+        }
+        String outputName = params.type
+        String listName = params.listName
+
+        if (file && outputName) {
+
+            def data = metadataService.excelWorkbookToMap(file.inputStream, outputName, listName)
+
+            def result
+            if (!data) {
+                response.status = 400
+                result = [status:400, error:'No data was found that matched the output description identified by the type parameter, please check the template you used to upload the data. ']
+            }
+            else {
+                result = [status: 200, data:data]
+            }
+            render result as JSON
+
+        }
+        else {
+            response.status = 400
+            def result = [status: 400, error:'Missing mandatory parameter(s).  Please ensure you supply the "type" and "data" parameters']
+
+            render result as JSON
+        }
 
     }
 
