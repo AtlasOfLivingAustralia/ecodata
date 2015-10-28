@@ -17,7 +17,8 @@ class EmbargoUtil {
 
         if (projectActivity && projectActivity.visibility) {
             use(TimeCategory) {
-                switch (projectActivity.visibility.embargoOption) {
+                EmbargoOption option = projectActivity.visibility.embargoOption as EmbargoOption
+                switch (option) {
                     case EmbargoOption.DAYS:
                         embargoUntil = removeTime(new Date() + projectActivity.visibility.embargoForDays.days)
                         break

@@ -58,7 +58,9 @@ class ProjectActivityService {
                 props.remove("projectId");
                 props.remove("projectActivityId");
 
-                switch (props.visibility?.embargoOption) {
+                EmbargoOption option = projectActivity.visibility?.embargoOption as EmbargoOption
+
+                switch (option) {
                     case EmbargoOption.NONE:
                         props.visibility.embargoUntil = null
                         props.visibility.embargoForDays = null
