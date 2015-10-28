@@ -101,6 +101,14 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
+    /**
+     * Count activity by project activity
+     * @param pActivityId Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivityId(pActivityId){
+        Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
 
     /**
      * Converts the domain object into a map of properties, including
