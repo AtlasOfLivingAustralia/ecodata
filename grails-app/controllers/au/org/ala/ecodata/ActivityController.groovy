@@ -194,6 +194,7 @@ class ActivityController {
             if (isOwner) {
                 render([userIsOwner: isOwner] as JSON)
             } else {
+                response.status = 404
                 render status: 404, text: "Activity not found for activityId: ${activityId}"
             }
         } else {

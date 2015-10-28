@@ -55,15 +55,8 @@ class ActivityService {
      * @param activityId activity identifier.
      * @return
      */
-    def isUserOwner(userId, activityId) {
-        def list = Activity.createCriteria().list() {
-            and {
-                eq("userId", userId)
-                eq("activityId", activityId)
-            }
-        }
-
-        list?.size() > 0
+    boolean isUserOwner(userId, activityId) {
+        Activity.countByUserIdAndActivityId(userId, activityId) > 0
     }
 
     def getAll(List listOfIds, levelOfDetail = []) {
