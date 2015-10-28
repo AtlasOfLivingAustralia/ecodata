@@ -38,12 +38,13 @@ class RecordService {
     private exportRecordBasedProject(CSVWriter csvWriter, Map project, String userId) {
 
         boolean userIsMemberOfProject = permissionService.isUserMemberOfProject(userId, project.projectId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
         List<Record> recordList = Record.withCriteria {
             eq "projectId", projectId
             ne "status", DELETED
 
-            if (!userIsMemberOfProject) {
+            if (!userIsMemberOfProject && !userIsAlaAdmin) {
                 or {
                     isNull "embargoUntil"
                     lt "embargoUntil", new Date()

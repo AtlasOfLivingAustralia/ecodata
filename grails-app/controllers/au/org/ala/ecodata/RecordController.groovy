@@ -41,8 +41,9 @@ class RecordController {
         Record record = Record.findByOccurrenceID(params.id)
         if (record) {
             boolean userIsMemberOfProject = params.userId && permissionService.isUserMemberOfProject(params.userId, record.projectId)
+            boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
 
-            if (record.embargoUntil != null && record.embargoUntil.after(new Date()) && !userIsMemberOfProject) {
+            if (record.embargoUntil != null && record.embargoUntil.after(new Date()) && !userIsMemberOfProject && !userIsAlaAdmin) {
                 response.sendError(SC_UNAUTHORIZED, "You are not authorised to view this record")
             } else {
                 response.setContentType("application/json")
@@ -64,6 +65,7 @@ class RecordController {
         def max = params.pageSize ?: 10
         String userId = params.userId
 
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
 
         def criteria = Record.createCriteria()
@@ -71,12 +73,14 @@ class RecordController {
             isNotNull("multimedia")
             ne("status", DELETED)
 
-            if (userId) {
-                'in' "projectId", projectIdsForUser
-            } else {
-                or {
-                    isNull "embargoUntil"
-                    lt "embargoUntil", new Date()
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
                 }
             }
 
@@ -105,18 +109,21 @@ class RecordController {
 
         String userId = params.userId
 
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
 
         def ids = Record.withCriteria {
             eq("identificationVerificationStatus", "Uncertain")
             ne("status", DELETED)
 
-            if (userId) {
-                'in' "projectId", projectIdsForUser
-            } else {
-                or {
-                    isNull "embargoUntil"
-                    lt "embargoUntil", new Date()
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
                 }
             }
         }.collect { it.occurrenceID }
@@ -138,16 +145,19 @@ class RecordController {
         String userId = params.userId
 
         List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
 
         def query = Record.createCriteria().list(max: max, offset: offset) {
             ne "status", DELETED
 
-            if (userId) {
-                'in' "projectId", projectIdsForUser
-            } else {
-                or {
-                    isNull "embargoUntil"
-                    lt "embargoUntil", new Date()
+            if (!userIsAlaAdmin) {
+                if (userId) {
+                    'in' "projectId", projectIdsForUser
+                } else {
+                    or {
+                        isNull "embargoUntil"
+                        lt "embargoUntil", new Date()
+                    }
                 }
             }
             order(sort, orderBy)
@@ -193,17 +203,18 @@ class RecordController {
 
         String sort = params.sort ?: "lastUpdated"
         String orderBy = params.order ?: "desc"
-        int startFrom = params.offset ?: 0
-        int max = params.pageSize ?: 10
+        def startFrom = params.offset ?: 0
+        def max = params.pageSize ?: 10
         String userId = params.userId
 
         boolean projectMember = userId && permissionService.isUserMemberOfProject(userId, projectId)
+        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(params.userId)
 
         def query = Record.createCriteria().list(max: max, offset: startFrom) {
             eq "projectId", projectId
             ne "status", DELETED
 
-            if (!projectMember) {
+            if (!projectMember && !userIsAlaAdmin) {
                 or {
                     isNull "embargoUntil"
                     lt "embargoUntil", new Date()

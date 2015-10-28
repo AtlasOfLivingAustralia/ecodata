@@ -1,5 +1,8 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
+import au.org.ala.web.CASRoles
+
 import static au.org.ala.ecodata.Status.DELETED
 /**
  * Service to set and get permissions on projects for each user
@@ -7,7 +10,12 @@ import static au.org.ala.ecodata.Status.DELETED
 class PermissionService {
 
     static transactional = false
-    def authService, userService // found in ala-auth-plugin
+    AuthService authService
+    UserService userService // found in ala-auth-plugin
+
+    boolean isUserAlaAdmin(String userId) {
+        userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
+    }
 
     public boolean isUserAdminForProject(String userId, String projectId) {
         def isAdmin = false
