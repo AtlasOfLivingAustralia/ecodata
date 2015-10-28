@@ -17,8 +17,8 @@ class RecordController {
     def grailsApplication
 
     RecordService recordService
-    PermissionService permissionService
     UserService userService
+    ProjectActivityService projectActivityService
 
     static defaultAction = "list"
 
@@ -32,7 +32,11 @@ class RecordController {
         def filename = params.id ? "project-${params.id}.csv" : "projects.csv"
         response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
         response.setContentType("text/csv")
-        recordService.exportCSVProject(response.outputStream, params.id, params.model)
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, params.id)
+
+        recordService.exportCSVProject(response.outputStream, params.id, params.model, restrictedProjectActivities)
     }
 
     /**
@@ -42,10 +46,8 @@ class RecordController {
         Record record = Record.findByOccurrenceID(params.id)
         if (record) {
             String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
-            boolean userIsMemberOfProject = userId && permissionService.isUserMemberOfProject(userId, record.projectId)
-            boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
 
-            if (record.embargoUntil != null && record.embargoUntil.after(new Date()) && !userIsMemberOfProject && !userIsAlaAdmin) {
+            if (record.userId != userId && projectActivityService.listRestrictedProjectActivityIds(userId, record.projectId).contains(record.projectActivityId)) {
                 response.sendError(SC_UNAUTHORIZED, "You are not authorised to view this record")
             } else {
                 response.setContentType("application/json")
@@ -67,23 +69,16 @@ class RecordController {
         def max = params.pageSize ?: 10
         String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
-        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
 
         def criteria = Record.createCriteria()
         def results = criteria.list {
             isNotNull("multimedia")
             ne("status", DELETED)
 
-            if (!userIsAlaAdmin) {
-                if (userId) {
-                    'in' "projectId", projectIdsForUser
-                } else {
-                    or {
-                        isNull "embargoUntil"
-                        lt "embargoUntil", new Date()
-                    }
-                }
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
             }
 
             maxResults(max)
@@ -111,22 +106,15 @@ class RecordController {
 
         String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
-        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
 
         def ids = Record.withCriteria {
             eq("identificationVerificationStatus", "Uncertain")
             ne("status", DELETED)
 
-            if (!userIsAlaAdmin) {
-                if (userId) {
-                    'in' "projectId", projectIdsForUser
-                } else {
-                    or {
-                        isNull "embargoUntil"
-                        lt "embargoUntil", new Date()
-                    }
-                }
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
             }
         }.collect { it.occurrenceID }
         response.setContentType("application/json")
@@ -146,21 +134,14 @@ class RecordController {
         String max = params.pageSize ?: 10
         String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        List<String> projectIdsForUser = userId ? permissionService.getProjectsForUser(userId) : []
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
 
         def query = Record.createCriteria().list(max: max, offset: offset) {
             ne "status", DELETED
 
-            if (!userIsAlaAdmin) {
-                if (userId) {
-                    'in' "projectId", projectIdsForUser
-                } else {
-                    or {
-                        isNull "embargoUntil"
-                        lt "embargoUntil", new Date()
-                    }
-                }
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
             }
             order(sort, orderBy)
         }
@@ -209,18 +190,15 @@ class RecordController {
         def max = params.pageSize ?: 10
         String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
-        boolean projectMember = userId && permissionService.isUserMemberOfProject(userId, projectId)
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, projectId)
 
         def query = Record.createCriteria().list(max: max, offset: startFrom) {
             eq "projectId", projectId
             ne "status", DELETED
 
-            if (!projectMember && !userIsAlaAdmin) {
-                or {
-                    isNull "embargoUntil"
-                    lt "embargoUntil", new Date()
-                }
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
             }
 
             order(sort, orderBy)

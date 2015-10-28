@@ -14,7 +14,7 @@ class PermissionService {
     UserService userService // found in ala-auth-plugin
 
     boolean isUserAlaAdmin(String userId) {
-        userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
+        userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
     }
 
     public boolean isUserAdminForProject(String userId, String projectId) {
@@ -88,15 +88,15 @@ class PermissionService {
         up.collect { it.userId } // return just a list of userIds
     }
 
-    boolean isUserMemberOfProject(String userId, String projectId) {
-        !UserPermission.findAllByEntityIdAndEntityTypeAndUserIdAndStatusNotEqual(projectId, Project.class.name, userId, DELETED)?.isEmpty()
-    }
-
-    List<String> getProjectsForUser(String userId) {
+    List<String> getProjectsForUser(String userId, AccessLevel... accessLevels) {
         UserPermission.withCriteria {
             eq "userId", userId
             eq "entityType", Project.class.name
             ne "status", DELETED
+
+            if (accessLevels) {
+                'in' "accessLevel", accessLevels
+            }
 
             projections {
                 property("entityId")

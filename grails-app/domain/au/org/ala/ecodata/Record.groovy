@@ -26,7 +26,6 @@ class Record {
     String json
     Integer outputItemId
     String status = ACTIVE
-    Date embargoUntil // this is the date the embargo is released, NOT the last day of the embargo (i.e. the record will become visible ON this day)
 
     def beforeValidate() {
         if (occurrenceID == null) {
@@ -50,6 +49,5 @@ class Record {
         json nullable: true
         outputItemId nullable: true
         status nullable: true
-        embargoUntil nullable: true
     }
 }

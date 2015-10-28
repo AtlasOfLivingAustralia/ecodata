@@ -27,7 +27,6 @@ class RecordService {
     ProjectService projectService
     SiteService siteService
     AuthService authService
-    PermissionService permissionService
 
     final def ignores = ["action", "controller", "associatedMedia"]
 
@@ -35,20 +34,14 @@ class RecordService {
      * Export records to CSV for a project. This implementation is unlikely to scale beyond 50k
      * records.
      */
-    private exportRecordBasedProject(CSVWriter csvWriter, Map project, String userId) {
-
-        boolean userIsMemberOfProject = permissionService.isUserMemberOfProject(userId, project.projectId)
-        boolean userIsAlaAdmin = permissionService.isUserAlaAdmin(userId)
-
+    private exportRecordBasedProject(CSVWriter csvWriter, String userId, List<String> restrictedProjectActivities) {
         List<Record> recordList = Record.withCriteria {
             eq "projectId", projectId
             ne "status", DELETED
 
-            if (!userIsMemberOfProject && !userIsAlaAdmin) {
-                or {
-                    isNull "embargoUntil"
-                    lt "embargoUntil", new Date()
-                }
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
             }
         }
 
@@ -384,7 +377,7 @@ class RecordService {
     /**
      * Export project sightings to CSV.
      */
-    def exportCSVProject(OutputStream outputStream, String projectId, String modelName, String userId){
+    def exportCSVProject(OutputStream outputStream, String projectId, String modelName, String userId, List<String> restrictedProjectActivities){
         CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
         csvWriter.writeNext(
                 [
@@ -422,7 +415,7 @@ class RecordService {
 
         projects.each { Map project ->
             exportActivityBasedProject(csvWriter, project, modelName)
-            exportRecordBasedProject(csvWriter, project, userId)
+            exportRecordBasedProject(csvWriter, userId, restrictedProjectActivities)
         }
 
         csvWriter.flush()

@@ -12,6 +12,7 @@ class ProjectActivityService {
     SiteService siteService
     ActivityService activityService
     CommentService commentService
+    PermissionService permissionService
 
     /**
      * Creates an project activity.
@@ -57,16 +58,11 @@ class ProjectActivityService {
                 props.remove("projectId");
                 props.remove("projectActivityId");
 
-                VisibilityConstraint visibilityConstraintBefore = projectActivity.visibility
+                if (props.visibility && props.visibility.embargoOption == EmbargoOption.DAYS) {
+                    props.visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(props)
+                }
 
                 commonService.updateProperties(projectActivity, props)
-
-                VisibilityConstraint visibilityConstraintAfter = ProjectActivity.findByProjectActivityId(id).visibility
-
-                if (visibilityConstraintAfter != visibilityConstraintBefore) {
-                    updateEmbargoedRecords(projectActivity)
-                    updateEmbargoedActivities(projectActivity)
-                }
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
             } catch (Exception e) {
@@ -153,25 +149,64 @@ class ProjectActivityService {
         mapOfProperties.findAll { k, v -> v != null }
     }
 
-    void updateEmbargoedRecords(ProjectActivity projectActivity) {
-        List<Record> records = Record.findAllByProjectActivityId(projectActivity.projectActivityId)
+    List<String> listRestrictedProjectActivityIds(String userId = null, String projectId = null) {
 
-        Date embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(projectActivity)
+        // We need to find the ProjectActivities that ARE restricted (i.e. they are embargoed).
+        // We may or may not have a userId.
+        // We may or may not have a projectId.
+        // If we have a projectId, we only want to find the restricted ProjectActivities that belong to that project.
+        // If we do NOT have a projectId, then we want to find ALL restricted ProjectActivities.
+        // A ProjectActivity is restricted if:
+        // 1. There is no user AND the ProjectActivity is Embargoed
+        // 2. There is a user, AND the user is NOT an Admin or Editor for the Project, AND the ProjectActivity is Embargoed
 
-        records.each {
-            it.embargoUntil = embargoUntil
-            it.save(flush: true)
+        List<String> restrictedProjectActivityIds = []
+
+        // ALA Admins can do everything, so there are no restricted ProjectActivities for them
+        if (!permissionService.isUserAlaAdmin(userId)) {
+
+            // If we know both the user and the project, then check if the user is an admin or editor for the project:
+            //  -> if they are, then there are no restricted ProjectActivities for them
+            //  -> if they are not an admin or an editor, then return all ProjectActivities for the project where the embargoUntil date is in the future
+            if (userId && projectId) {
+                boolean userIsProjectMember = permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)
+
+                if (!userIsProjectMember) {
+                    restrictedProjectActivityIds = ProjectActivity.withCriteria {
+                        eq "projectId", projectId
+                        isNotNull "visibility"
+                        isNotNull "visibility.embargoUntil"
+                        gt "visibility.embargoUntil", new Date()
+
+                        projections {
+                            property("projectActivityId")
+                        }
+                    }
+                }
+            } else {
+                List<String> projectsTheUserIsAMemberOf = userId ? permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor) : null
+
+                restrictedProjectActivityIds = ProjectActivity.withCriteria {
+                    if (projectId) {
+                        // if we know the project id, then only look at ProjectActivities for that project
+                        eq "projectId", projectId
+                    } else if (projectsTheUserIsAMemberOf) {
+                        // if we do not know the project id, then we need to return ProjectActivities for all projects where the user is NOT a member
+                        not { 'in' "projectId", projectsTheUserIsAMemberOf }
+                    }
+
+                    // and we only want restricted ProjectActivities, so select only those with a future embargoUntil date
+                    isNotNull "visibility"
+                    isNotNull "visibility.embargoUntil"
+                    ge "visibility.embargoUntil", new Date()
+
+                    projections {
+                        property("projectActivityId")
+                    }
+                }
+            }
         }
-    }
 
-    void updateEmbargoedActivities(ProjectActivity projectActivity) {
-        List<Activity> activities = Activity.findAllByProjectActivityId(projectActivity.projectActivityId)
-
-        Date embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(projectActivity)
-
-        activities.each {
-            it.embargoUntil = embargoUntil
-            it.save(flush: true)
-        }
+        restrictedProjectActivityIds
     }
 }

@@ -53,60 +53,6 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
         Record.count() == 0
     }
 
-    def "update should recalculate the embargoUntil date for all related Records"() {
-        setup:
-        ProjectActivity activity = createHierarchy()
-        new Record(outputId: "UnrelatedId").save(failOnError: true, flush: true)
-
-
-        when:
-        Calendar cal = Calendar.getInstance()
-        cal.add(Calendar.MONTH, 2)
-        cal.set(Calendar.HOUR_OF_DAY, 0)
-        cal.set(Calendar.MINUTE, 0)
-        cal.set(Calendar.SECOND, 0)
-        cal.set(Calendar.MILLISECOND, 0)
-
-        projectActivityService.update([visibility: [embargoOption: EmbargoOption.DATE, embargoUntil: cal.getTime()]], activity.projectActivityId)
-
-        then:
-        int count = 0
-        Record.all.each {
-            if (it.projectActivityId == activity.projectActivityId) {
-                assert it.embargoUntil == cal.getTime()
-                count++
-            } else {
-                assert it.embargoUntil == null
-            }
-        }
-        assert count == 2
-    }
-
-    def "update should clear the existing embargoUntil date for all related Records when the embargoOption is NONE"() {
-        setup:
-        ProjectActivity activity = createHierarchy()
-        new Record(outputId: "UnrelatedId").save(failOnError: true, flush: true)
-        Record.all.each {
-            it.embargoUntil = new Date()
-            it.save(flush: true, failOnError: true)
-        }
-
-        when:
-        projectActivityService.update([visibility: [embargoOption: EmbargoOption.NONE]], activity.projectActivityId)
-
-        then:
-        int count = 0
-        Record.all.each {
-            if (it.projectActivityId == activity.projectActivityId) {
-                assert it.embargoUntil == null
-                count++
-            } else {
-                assert it.embargoUntil != null
-            }
-        }
-        assert count == 2
-    }
-
     private static createHierarchy() {
         Project project = new Project(projectId: "project1", name: "project1").save(failOnError: true, flush: true)
 
