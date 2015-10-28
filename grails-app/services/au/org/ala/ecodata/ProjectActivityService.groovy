@@ -58,8 +58,17 @@ class ProjectActivityService {
                 props.remove("projectId");
                 props.remove("projectActivityId");
 
-                if (props.visibility && props.visibility.embargoOption == EmbargoOption.DAYS) {
-                    props.visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(props)
+                switch (props.visibility?.embargoOption) {
+                    case EmbargoOption.NONE:
+                        props.visibility.embargoUntil = null
+                        props.visibility.embargoForDays = null
+                        break
+                    case EmbargoOption.DAYS:
+                        props.visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(props)
+                        break
+                    case EmbargoOption.DATE:
+                        props.visibility.embargoForDays = null
+                        break
                 }
 
                 commonService.updateProperties(projectActivity, props)
