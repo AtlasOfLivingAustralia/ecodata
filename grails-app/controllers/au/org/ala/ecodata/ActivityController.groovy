@@ -181,6 +181,27 @@ class ActivityController {
     }
 
     /**
+     * Is user {@link UserDetails#userId userId} owner of an  {@link Activity#userId userId}
+     *
+     * @return
+     */
+    def isUserOwnerForActivity() {
+        String userId = params.userId
+        String activityId = params.activityId
+
+        if (userId && activityId) {
+            boolean isOwner = activityService.isUserOwner(userId, activityId)
+            if (isOwner) {
+                render([userIsOwner: isOwner] as JSON)
+            } else {
+                render status: 404, text: "Activity not found for activityId: ${activityId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, activityId'
+        }
+    }
+
+    /**
      * Count activity by project activity
      * @param id Project Activity identifier
      * @return activity count.
