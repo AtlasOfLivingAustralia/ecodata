@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class ProjectActivityController {
 
     def projectActivityService

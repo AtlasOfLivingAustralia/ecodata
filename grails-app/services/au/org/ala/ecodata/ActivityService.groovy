@@ -48,6 +48,24 @@ class ActivityService {
         }
     }
 
+    /**
+     * Check user is an owner of an activity.
+     *
+     * @param userId user identifier.
+     * @param activityId activity identifier.
+     * @return
+     */
+    def isUserOwner(userId, activityId) {
+        def list = Activity.createCriteria().list() {
+            and {
+                eq("userId", userId)
+                eq("activityId", activityId)
+            }
+        }
+
+        list?.size() > 0
+    }
+
     def getAll(List listOfIds, levelOfDetail = []) {
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
@@ -91,6 +109,14 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
+    /**
+     * Count activity by project activity
+     * @param pActivityId Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivityId(pActivityId){
+        Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
 
     /**
      * Converts the domain object into a map of properties, including

@@ -117,6 +117,7 @@ class ProjectActivityService {
         ProjectActivity.findAllByProjectId(id).findAll({ it.status == ACTIVE }).collect { toMap(it, levelOfDetail) };
     }
 
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -142,6 +143,4 @@ class ProjectActivityService {
 
         mapOfProperties.findAll { k, v -> v != null }
     }
-
-
 }

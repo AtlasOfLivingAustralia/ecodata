@@ -1,12 +1,15 @@
 package au.org.ala.ecodata
 
-import static au.org.ala.ecodata.Status.DELETED
 
+import static au.org.ala.ecodata.Status.DELETED
 import grails.transaction.Transactional
 import org.bson.BSONObject
 
 class CommentService {
     UserService userService
+    PermissionService permissionService
+    ActivityService activityService
+    def grailsApplication
 
     /**
      * get domain object properties. This is useful when converting object to json. mainly used to exclude
@@ -48,16 +51,23 @@ class CommentService {
      * @return
      */
     List sortCommentChildren(List comments, Boolean order){
-        comments.sort(true, {it.dateCreated})
-        // reverse list if sorting has to be done in reverse order
-        if(!order){
-            comments.reverse(true)
-        }
+        List removeComments = []
 
         comments.each { comment ->
+            if(comment.status == DELETED){
+                removeComments.push(comment);
+            }
+
             if(comment.children?.size()){
                 sortCommentChildren(comment.children, order);
             }
+        }
+        // remove soft deleted comments from showing
+        comments.removeAll(removeComments)
+        comments.sort(true, {it.lastUpdated})
+        // reverse list if sorting has to be done in reverse order
+        if(!order){
+            comments.reverse(true)
         }
 
         comments
@@ -72,9 +82,6 @@ class CommentService {
     Comment create(Object json){
         Comment newComment = new Comment(json)
         Comment parent;
-        if (newComment.dateCreated == null) {
-            newComment.dateCreated = new Date();
-        }
 
         Comment comment = newComment.save(true)
 
@@ -97,12 +104,17 @@ class CommentService {
      */
     @Transactional
     Comment update(Object json){
+        Boolean update = false
         Comment comment = Comment.get(json.id);
         if (comment) {
             if (comment.userId == json.userId) {
+                update = true;
+            }  else if(canUserEditOrDeleteComment(json.userId, json.entityId, json.entityType) || json.isALAAdmin){
+                update = true;
+            }
+
+            if(update){
                 comment.text = json.text;
-                //update time
-                comment.dateCreated = new Date();
                 comment.save(flush: true)
             }
         }
@@ -143,4 +155,33 @@ class CommentService {
         result
     }
 
+    /**
+     * checks if a user is admin in project or ala admin.
+     * This is necessary since admin can delete / modify other's comment(s).
+     * @param userId
+     * @param entityId
+     * @param entityType
+     * @return
+     */
+    Boolean canUserEditOrDeleteComment(String userId, String entityId, String entityType){
+
+        Boolean admin = false;
+        switch (entityType){
+            case 'au.org.ala.ecodata.Activity':
+                admin = permissionService.isUserAdminForProject(userId, getProjectIdFromActivityId(entityId));
+                break;
+        }
+
+        admin
+    }
+
+    /**
+     * get project id from activity record
+     * @param id
+     * @return
+     */
+    String getProjectIdFromActivityId(String id){
+        Map activity = activityService.get(id)
+        activity?.projectId
+    }
 }
