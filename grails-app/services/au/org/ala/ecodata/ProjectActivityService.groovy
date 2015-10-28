@@ -129,7 +129,7 @@ class ProjectActivityService {
     }
 
     List getAllByProject(id, levelOfDetail = []) {
-        ProjectActivity.findAllByProjectId(id).findAll({ it.status == ACTIVE })
+        ProjectActivity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
     /**
