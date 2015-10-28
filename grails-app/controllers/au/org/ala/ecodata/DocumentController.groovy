@@ -6,7 +6,7 @@ class DocumentController {
 
     def documentService
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST"]
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -50,6 +50,29 @@ class DocumentController {
             def result = documentService.findAllByOwner(entity+'Id', id)
             asJson([documents:result])
         }
+    }
+
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a list of the projects that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+
+        def documentList = documentService.search(searchCriteria)
+        asJson documents:documentList
     }
 
     @RequireApiKey
