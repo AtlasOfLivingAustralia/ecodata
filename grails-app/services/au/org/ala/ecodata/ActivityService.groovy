@@ -8,7 +8,6 @@ import static au.org.ala.ecodata.Status.ACTIVE
 class ActivityService {
 
     static transactional = false
-    static final ACTIVE = "active"
     static final FLAT = 'flat'
     static final SITE = 'site'
 
@@ -18,6 +17,7 @@ class ActivityService {
     DocumentService documentService
     SiteService siteService
     CommentService commentService
+    UserService userService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
