@@ -191,12 +191,7 @@ class ActivityController {
 
         if (userId && activityId) {
             boolean isOwner = activityService.isUserOwner(userId, activityId)
-            if (isOwner) {
-                render([userIsOwner: isOwner] as JSON)
-            } else {
-                response.status = 404
-                render status: 404, text: "Activity not found for activityId: ${activityId}"
-            }
+            render([userIsOwner: isOwner] as JSON)
         } else {
             render status: 400, text: 'Required params not provided: userId, activityId'
         }
