@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.grails.datastore.mapping.query.api.BuildableCriteria
+
 import static au.org.ala.ecodata.Status.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
@@ -109,10 +111,10 @@ class DocumentService {
      *
      * @return a list of the documents that match the supplied criteria
      */
-    public List search(Map searchCriteria) {
+    public List search(Map searchCriteria, Integer max = 100, Integer offset = 0) {
 
-        def criteria = Document.createCriteria()
-        def documents = criteria.list {
+        BuildableCriteria criteria = Document.createCriteria()
+        List documents = criteria.list(max:max, offset:offset) {
             ne("status", DELETED)
             searchCriteria.each { prop,value ->
 
