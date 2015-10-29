@@ -162,6 +162,30 @@ class SearchController {
         render results as JSON
     }
 
+    def scoresByLabel() {
+        def scores = params.getList("scores")
+
+        def filters = params.getList("fq")
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+        additionalFilters.addAll(filters)
+        def results = reportService.aggregate(additionalFilters, reportService.findScoresByLabel(scores))
+        render results as JSON
+    }
+
+    def targetsReportByScoreLabel() {
+        def scoreLabels = params.getList("scores")
+        def scores = reportService.findScoresByLabel(scoreLabels)
+        def filters = params.getList("fq")
+        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
+
+        additionalFilters.addAll(filters)
+        def targets = reportService.outputTargetsBySubProgram(params, scores)
+        def scoresReport = reportService.outputTargetReport(additionalFilters, scores)
+
+        def results = [scores:scoresReport, targets:targets]
+        render results as JSON
+    }
+
     def targetsReport() {
         def filters = params.getList("fq")
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
