@@ -2,11 +2,10 @@ package au.org.ala.ecodata
 
 import groovy.time.TimeCategory
 
-import java.text.SimpleDateFormat
 
 class EmbargoUtil {
 
-    public static final int MAXIMUM_EMBARGO_PERIOD_MONTHS = 12
+    public static final String ISO_8601_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
 
     /**
      * Calculate the date when the embargo period ends
@@ -26,19 +25,10 @@ class EmbargoUtil {
                         break
                     case EmbargoOption.DATE:
                         if (projectActivity.visibility.embargoUntil instanceof String) {
-                            projectActivity.visibility.embargoUntil = new SimpleDateFormat("yyyy-MM-dd").parse(projectActivity.visibility.embargoUntil)
+                            projectActivity.visibility.embargoUntil = Date.parse(ISO_8601_DATE_FORMAT, projectActivity.visibility.embargoUntil)
                         }
                         embargoUntil = removeTime(projectActivity.visibility.embargoUntil)
                         break
-                }
-
-                Date maxAllowed = removeTime(new Date() + MAXIMUM_EMBARGO_PERIOD_MONTHS.months)
-
-                // The requested embargo period should be validated well before this point, but check here to ensure that the basic rules are enforced
-                if (embargoUntil > maxAllowed) {
-                    throw new IllegalArgumentException("The embargo period cannot be longer than ${MAXIMUM_EMBARGO_PERIOD_MONTHS} months")
-                } else if (embargoUntil != null && embargoUntil <= removeTime(new Date())) {
-                    throw new IllegalArgumentException("The embargo period must end in the future")
                 }
             }
         }
