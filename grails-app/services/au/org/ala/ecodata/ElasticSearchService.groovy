@@ -76,8 +76,6 @@ class ElasticSearchService {
         log.info "Setting-up elasticsearch node and client"
         ImmutableSettings.Builder settings = ImmutableSettings.settingsBuilder();
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
-        //settings.put("number_of_shards",1);
-        //settings.put("number_of_replicas",0);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
@@ -424,6 +422,18 @@ class ElasticSearchService {
                                                                     "index":"not_analyzed"
                                                                 }
                                                             }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "budget": {
+                                            "properties": {
+                                                "rows": {
+                                                    "properties": {
+                                                        "shortLabel": {
+                                                           "type":"string",
+                                                           "index":"not_analyzed"
                                                         }
                                                     }
                                                 }
@@ -839,15 +849,6 @@ class ElasticSearchService {
      */
     def search(String query, GrailsParameterMap params, index) {
         log.debug "search params: ${params}"
-
-//        SearchRequestBuilder builder = client
-//                .prepareSearch(DEFAULT_INDEX)
-//                .setTypes(DEFAULT_TYPE)
-//                .setQuery(queryString(query))
-//                .setFrom(0)
-//                .setSize(10)
-//                .addHighlightedField("description")
-//        SearchResponse sr = builder.execute().actionGet();
 
         index = index?:DEFAULT_INDEX
         def request = buildSearchRequest(query, params, index)
