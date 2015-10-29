@@ -61,6 +61,10 @@ class DocumentController {
      * }
      * where valueN may be a primitive type or array.
      * The criteria are ANDed together.
+     *
+     * the properties "max" and "offset", if they are supplied, will be used as pagination parameters.  Otherwise
+     * the defaults max=100 and offset=0 will be used.
+     *
      * If a property is supplied that isn't a property of the project, it will not cause
      * an error, but no results will be returned.  (this is an effect of mongo allowing
      * a dynamic schema)
@@ -70,8 +74,10 @@ class DocumentController {
     @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
+        def max = searchCriteria.remove('max')
+        def offset = searchCriteria.remove('offset')
 
-        def documentList = documentService.search(searchCriteria)
+        def documentList = documentService.search(searchCriteria, max, offset)
         asJson documents:documentList
     }
 
