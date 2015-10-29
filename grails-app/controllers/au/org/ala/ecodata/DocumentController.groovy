@@ -69,7 +69,7 @@ class DocumentController {
      * an error, but no results will be returned.  (this is an effect of mongo allowing
      * a dynamic schema)
      *
-     * @return a list of the projects that match the supplied criteria
+     * @return a JSON object with attributes: "count": the total number of documents that matched the criteria, "documents": the list of documents that match the supplied criteria
      */
     @RequireApiKey
     def search() {
@@ -77,8 +77,8 @@ class DocumentController {
         def max = searchCriteria.remove('max')
         def offset = searchCriteria.remove('offset')
 
-        def documentList = documentService.search(searchCriteria, max, offset)
-        asJson documents:documentList
+        def searchResults = documentService.search(searchCriteria, max, offset)
+        asJson searchResults
     }
 
     @RequireApiKey
