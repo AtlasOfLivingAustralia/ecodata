@@ -90,7 +90,7 @@ class DocumentService {
         Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findImageUrlForProjectId(id, levelOfDetail = []){
+    String findImageUrlForProjectId(id, levelOfDetail = []){
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
@@ -379,8 +379,8 @@ class DocumentService {
     Boolean isMobileAppForProject(Map project){
         List links = project.links
         Boolean isMobileApp = false;
-        links?.each { link ->
-            isMobileApp = link.role in MOBILE_APP_ROLE;
+        isMobileApp = links?.any {
+            it.role in MOBILE_APP_ROLE;
         }
         isMobileApp;
     }

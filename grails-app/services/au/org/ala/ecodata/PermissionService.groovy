@@ -191,11 +191,11 @@ class PermissionService {
         }
     }
 
-    def getAllUserPermissionForEntity(String id, String type, String accessLevel){
+    List getAllUserPermissionForEntity(String id, String type, String accessLevel){
         UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevel(id, type, accessLevel);
     }
 
-    def getAllAdminsForProject(String id){
+    List getAllAdminsForProject(String id){
         getAllUserPermissionForEntity(id, 'au.org.ala.ecodata.Project', 'admin')
     }
 }
