@@ -3,7 +3,6 @@ import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.PropertyAccessor
 import au.org.ala.ecodata.reporting.Score
 import au.org.ala.ecodata.reporting.ShapefileBuilder
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.grails.plugins.csv.CSVReaderUtils
 
 
@@ -171,6 +170,10 @@ class ReportService {
                 }
             }
         }
+        outputTargetReport(filters, scores)
+    }
+
+    def outputTargetReport(filters, scores) {
 
         def groupingSpec = [entity:'activity', property:'programSubProgram', type:'discrete']
 
@@ -178,20 +181,15 @@ class ReportService {
     }
 
     def outputTargetsBySubProgram(params) {
+        outputTargetsBySubProgram(params, null)
+    }
+
+    def outputTargetsBySubProgram(params, scores) {
 
         params += [offset:0, max:100]
         def targetsBySubProgram = [:]
         def results = elasticSearchService.search("*:*", params, "homepage")
-        def scores = []
 
-
-        metadataService.activitiesModel().outputs?.each{
-            Score.outputScores(it).each { score ->
-                if (score.isOutputTarget) {
-                    scores << [score: score]
-                }
-            }
-        }
         def propertyAccessor = new PropertyAccessor("target")
         def total = results.hits.totalHits
         while (params.offset < total) {
@@ -205,18 +203,18 @@ class ReportService {
                         targetsBySubProgram[program] = [projectCount:0]
                     }
                     if (target.scoreLabel && target.target) {
+                        if (!scores || scores.find {it.score.label == target.scoreLabel}) {
+                            def value = propertyAccessor.getPropertyAsNumeric(target)
+                            if (value == null) {
+                                log.warn project.projectId + ' ' + target.scoreLabel + ' ' + target.target + ':' + value
+                            } else {
+                                if (!targetsBySubProgram[program][target.scoreLabel]) {
+                                    targetsBySubProgram[program][target.scoreLabel] = [count: 0, total: 0]
+                                }
+                                targetsBySubProgram[program][target.scoreLabel].total += value
+                                targetsBySubProgram[program][target.scoreLabel].count++
 
-                        def value = propertyAccessor.getPropertyAsNumeric(target)
-                        if (value == null) {
-                            println project.projectId+' '+target.scoreLabel+' '+target.target+':'+value
-                        }
-                        else {
-                            if (!targetsBySubProgram[program][target.scoreLabel]) {
-                                targetsBySubProgram[program][target.scoreLabel] = [count:0, total:0]
                             }
-                            targetsBySubProgram[program][target.scoreLabel].total += value
-                            targetsBySubProgram[program][target.scoreLabel].count++
-
                         }
                     }
                 }
