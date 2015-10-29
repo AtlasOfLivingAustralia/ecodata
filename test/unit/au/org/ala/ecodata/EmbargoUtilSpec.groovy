@@ -50,26 +50,4 @@ class EmbargoUtilSpec extends Specification {
         output.set(Calendar.MILLISECOND, 0)
         embargoUntil == output.getTime()
     }
-
-    def "The calculated embargoUntil date cannot be more than 12 months in the future"() {
-        setup:
-        ProjectActivity activity = new ProjectActivity(visibility: new VisibilityConstraint(embargoOption: EmbargoOption.DATE, embargoUntil: new Date(2020, 10, 9)))
-
-        when:
-        EmbargoUtil.calculateEmbargoUntilDate(activity)
-
-        then:
-        thrown IllegalArgumentException
-    }
-
-    def "The calculated embargoUntil date cannot be in the past"() {
-        setup:
-        ProjectActivity activity = new ProjectActivity(visibility: new VisibilityConstraint(embargoOption: EmbargoOption.DATE, embargoUntil: new Date(2010, 10, 9)))
-
-        when:
-        EmbargoUtil.calculateEmbargoUntilDate(activity)
-
-        then:
-        thrown IllegalArgumentException
-    }
 }
