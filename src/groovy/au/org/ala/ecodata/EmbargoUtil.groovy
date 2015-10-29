@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import groovy.time.TimeCategory
 
+import java.text.SimpleDateFormat
+
 class EmbargoUtil {
 
     public static final int MAXIMUM_EMBARGO_PERIOD_MONTHS = 12
@@ -23,6 +25,9 @@ class EmbargoUtil {
                         embargoUntil = removeTime(new Date() + projectActivity.visibility.embargoForDays.days)
                         break
                     case EmbargoOption.DATE:
+                        if (projectActivity.visibility.embargoUntil instanceof String) {
+                            projectActivity.visibility.embargoUntil = new SimpleDateFormat("yyyy-MM-dd").parse(projectActivity.visibility.embargoUntil)
+                        }
                         embargoUntil = removeTime(projectActivity.visibility.embargoUntil)
                         break
                 }
