@@ -104,6 +104,32 @@ class DocumentService {
 
 
     /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the documents that match the supplied criteria
+     */
+    public List search(Map searchCriteria) {
+
+        def criteria = Document.createCriteria()
+        def documents = criteria.list {
+            ne("status", DELETED)
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+
+        }
+        documents.collect{toMap(it)}
+    }
+
+
+    /**
      * Creates a new Document object associated with the supplied file.
      * @param props the desired properties of the Document.
      * @param fileIn an InputStream attached to the file to save.  This will be saved to the uploads directory.

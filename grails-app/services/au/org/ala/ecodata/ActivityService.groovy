@@ -48,6 +48,17 @@ class ActivityService {
         }
     }
 
+    /**
+     * Check user is an owner of an activity.
+     *
+     * @param userId user identifier.
+     * @param activityId activity identifier.
+     * @return
+     */
+    boolean isUserOwner(userId, activityId) {
+        Activity.countByUserIdAndActivityId(userId, activityId) > 0
+    }
+
     def getAll(List listOfIds, levelOfDetail = []) {
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }

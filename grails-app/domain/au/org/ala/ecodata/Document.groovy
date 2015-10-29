@@ -34,6 +34,7 @@ class Document {
     String filepath
     String type // image, document, sound, etc
     String role // eg primary, carousel, photoPoint
+    List<String> labels = [] // allow for searching on custom attributes
 
     String status = ACTIVE
     String projectId
@@ -120,5 +121,6 @@ class Document {
         thirdPartyConsentDeclarationText nullable: true
         externalUrl nullable: true
         projectActivityId nullable: true
+        labels nullable: true
     }
 }
