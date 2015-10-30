@@ -73,6 +73,10 @@ class Project {
     String userCreated, userLastModified
     boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
 
+    List<AssociatedOrg> associatedOrganisations
+
+    static embedded = ['associatedOrganisations']
+
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
     Date getActualStartDate() {
