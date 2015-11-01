@@ -51,6 +51,23 @@ class ActivityController {
         }
     }
 
+    /**
+     * Deletes all activities associated with project activityId.
+     *
+     * @param id project activity id
+     */
+    @RequireApiKey
+    def deleteByProjectActivity(String id) {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        if (activityService.deleteByProjectActivity(id, destroy).status == 'ok') {
+            render (status: 200, text: 'deleted')
+        } else {
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+    }
+
+
     @RequireApiKey
     def update(String id) {
         def props = request.JSON
