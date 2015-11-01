@@ -28,6 +28,10 @@ class UrlMappings {
             controller = 'activity'
             action = 'activitiesForProject'
         }
+        "/ws/deleteByProjectActivity/$id" {
+            controller = 'activity'
+            action = 'deleteByProjectActivity'
+        }
         "/ws/listForUser/$id?" {
             controller = 'activity'
             action = 'listForUser'

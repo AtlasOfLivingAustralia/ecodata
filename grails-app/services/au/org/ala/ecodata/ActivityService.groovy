@@ -178,6 +178,32 @@ class ActivityService {
     }
 
     /**
+     * Deletes all activities associated with project activityId.
+     *
+     * @param pActivityId project activity id
+     * @param destroy if true will really delete the object
+     * @return
+     */
+    Map deleteByProjectActivity(String pActivityId, boolean destroy = false) {
+        Map result
+
+        ProjectActivity pActivity = ProjectActivity.findByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+        if (pActivity) {
+            getAllActivityIdsForProjectActivity(pActivityId).each { delete(it, destroy) }
+            boolean exists = Activity.countByProjectActivityIdAndStatus(pActivity.projectActivityId, ACTIVE) > 0
+            if (exists) {
+                result = [status: 'error', error: "Error deleting activities"]
+            } else {
+                result = [status: 'ok']
+            }
+        } else {
+            result = [status: 'not found']
+        }
+
+        result
+    }
+
+    /**
      * Deletes an activity by marking it as not 'active'.
      *
      * @param id
@@ -365,6 +391,18 @@ class ActivityService {
 
         }
         activities.collect{toMap(it, levelOfDetail)}
+    }
+
+    def getAllActivityIdsForProjectActivity(String pActivityId) {
+        def criteria = Activity.createCriteria()
+        def list = criteria {
+            eq("projectActivityId", pActivityId)
+            eq("status", ACTIVE)
+            projections {
+                property("activityId")
+            }
+        }
+        return list*.toString()
     }
 
 }
