@@ -151,8 +151,6 @@ class OutputService {
     void createRecordsForOutput(Output output, Activity activity, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
 
-        Date embargoUntilDate = EmbargoUtil.calculateEmbargoUntilDate(ProjectActivity.findByProjectActivityId(activity.projectActivityId))
-
         outputMetadata?.dataModel?.each { dataModel ->
             if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
                 RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
@@ -164,7 +162,6 @@ class OutputService {
                     record.projectActivityId = activity.projectActivityId
                     record.activityId = activity.activityId
                     record.userId = activity.userId
-                    record.embargoUntil = embargoUntilDate
 
                     // createRecord returns a 2-element list:
                     // [0] = Record (always there even if the save failed);
