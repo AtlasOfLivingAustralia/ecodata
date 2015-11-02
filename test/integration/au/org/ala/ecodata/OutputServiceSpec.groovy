@@ -75,28 +75,6 @@ class OutputServiceSpec extends IntegrationSpec {
         }
     }
 
-    def "createRecordsForOutput should populate the embargoUntil date for each record"() {
-        setup:
-        new ProjectActivity(projectActivityId: "projAct1",
-                description: "d", name: "n", projectId: "p", startDate: new Date(), status: "ACTIVE",
-                visibility: new VisibilityConstraint(embargoOption: EmbargoOption.DAYS, embargoForDays: 20)).save(failOnError: true, flush: true)
-
-        metadataService.getOutputDataModelByName(_) >> [dataModel: [[record: true, dataType: "doesNotMatter"], [record: true, dataType: "doesNotMatter"]]]
-
-        Output output = new Output(outputId: "output1")
-        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
-        Map properties = [data: [userId: "666"]]
-
-        when:
-        outputService.createRecordsForOutput(output, activity, properties)
-
-        then:
-        2 * outputService.recordService.createRecord(_) >> { argument ->
-            assert argument.embargoUntil[0] != null
-            [null, null]
-        }
-    }
-
     def "deleteProject should soft delete the project and all related records when destroy = false"() {
         setup:
         Output output = createHierarchy()
