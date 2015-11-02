@@ -406,7 +406,7 @@ class ActivityService {
 
     def getAllActivityIdsForProjectActivity(String pActivityId) {
         Activity.withCriteria {
-            eq "projectActivityId", projectActivityId
+            eq "projectActivityId", pActivityId
             projections {
                 property("activityId")
             }
