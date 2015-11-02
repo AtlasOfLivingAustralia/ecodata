@@ -3,10 +3,11 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 
+import static au.org.ala.ecodata.Status.ACTIVE
+
 class ActivityService {
 
     static transactional = false
-    static final ACTIVE = "active"
     static final FLAT = 'flat'
     static final SITE = 'site'
 
@@ -16,6 +17,7 @@ class ActivityService {
     DocumentService documentService
     SiteService siteService
     CommentService commentService
+    UserService userService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -90,12 +92,20 @@ class ActivityService {
         [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
     }
 
-    def listByProjectId(projectId, query, levelOfDetail = []){
+    Map listByProjectId(String projectId, Map query, List<String> restrictedProjectActivityIds,levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+
         def list = Activity.createCriteria().list(query) {
-            and{
-                eq ("projectId", projectId)
-                eq ("status", ACTIVE)
+            eq ("projectId", projectId)
+            eq ("status", ACTIVE)
+
+            if (restrictedProjectActivityIds) {
+                or {
+                    eq "userId", userId
+                    not { 'in' "projectActivityId", restrictedProjectActivityIds }
+                }
             }
+
             order('lastUpdated','desc')
         }
 

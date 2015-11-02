@@ -1,12 +1,21 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AuthService
+import au.org.ala.web.CASRoles
+
+import static au.org.ala.ecodata.Status.DELETED
 /**
  * Service to set and get permissions on projects for each user
  */
 class PermissionService {
 
     static transactional = false
-    def authService, userService // found in ala-auth-plugin
+    AuthService authService
+    UserService userService // found in ala-auth-plugin
+
+    boolean isUserAlaAdmin(String userId) {
+        userId && userService.getRolesForUser(userId)?.contains(CASRoles.ROLE_ADMIN)
+    }
 
     public boolean isUserAdminForProject(String userId, String projectId) {
         def isAdmin = false
@@ -77,6 +86,22 @@ class PermissionService {
     def getUsersForProject(String projectId) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevel(projectId, Project.class.name, AccessLevel.editor)
         up.collect { it.userId } // return just a list of userIds
+    }
+
+    List<String> getProjectsForUser(String userId, AccessLevel... accessLevels) {
+        UserPermission.withCriteria {
+            eq "userId", userId
+            eq "entityType", Project.class.name
+            ne "status", DELETED
+
+            if (accessLevels) {
+                'in' "accessLevel", accessLevels
+            }
+
+            projections {
+                property("entityId")
+            }
+        }
     }
 
     def getMembersForProject(String projectId) {

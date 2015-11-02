@@ -12,6 +12,7 @@ class ProjectActivityService {
     SiteService siteService
     ActivityService activityService
     CommentService commentService
+    PermissionService permissionService
 
     /**
      * Creates an project activity.
@@ -57,12 +58,15 @@ class ProjectActivityService {
                 props.remove("projectId");
                 props.remove("projectActivityId");
 
+                updateEmbargoDetails(projectActivity, props)
+
                 commonService.updateProperties(projectActivity, props)
+
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
             } catch (Exception e) {
                 ProjectActivity.withSession { session -> session.clear() }
                 def error = "Error updating project activity ${id} - ${e.message}"
-                log.error error
+                log.error error, e
                 result = [status: 'error', error: error]
             }
         } else {
@@ -72,6 +76,32 @@ class ProjectActivityService {
         }
 
         result
+    }
+
+    private static updateEmbargoDetails(ProjectActivity projectActivity, Map incomingProperties) {
+        EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
+
+        VisibilityConstraint visibility = new VisibilityConstraint()
+        switch (option) {
+            case EmbargoOption.NONE:
+                visibility.embargoOption = EmbargoOption.NONE
+                visibility.embargoUntil = null
+                visibility.embargoForDays = null
+                break
+            case EmbargoOption.DAYS:
+                visibility.embargoOption = EmbargoOption.DAYS
+                visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
+                break
+            case EmbargoOption.DATE:
+                visibility.embargoOption = EmbargoOption.DATE
+                visibility.embargoForDays = null
+                visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
+                break
+        }
+
+        incomingProperties.remove("visibility")
+        projectActivity.visibility = visibility
+
     }
 
     Map delete(String projectActivityId, boolean destroy = false) {
@@ -114,9 +144,8 @@ class ProjectActivityService {
     }
 
     List getAllByProject(id, levelOfDetail = []) {
-        ProjectActivity.findAllByProjectId(id).findAll({ it.status == ACTIVE }).collect { toMap(it, levelOfDetail) };
+        ProjectActivity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
-
 
     /**
      * Converts the domain object into a map of properties, including
@@ -142,5 +171,66 @@ class ProjectActivityService {
         mapOfProperties.remove("_id")
 
         mapOfProperties.findAll { k, v -> v != null }
+    }
+
+    List<String> listRestrictedProjectActivityIds(String userId = null, String projectId = null) {
+
+        // We need to find the ProjectActivities that ARE restricted (i.e. they are embargoed).
+        // We may or may not have a userId.
+        // We may or may not have a projectId.
+        // If we have a projectId, we only want to find the restricted ProjectActivities that belong to that project.
+        // If we do NOT have a projectId, then we want to find ALL restricted ProjectActivities.
+        // A ProjectActivity is restricted if:
+        // 1. There is no user AND the ProjectActivity is Embargoed
+        // 2. There is a user, AND the user is NOT an Admin or Editor for the Project, AND the ProjectActivity is Embargoed
+
+        List<String> restrictedProjectActivityIds = []
+
+        // ALA Admins can do everything, so there are no restricted ProjectActivities for them
+        if (!permissionService.isUserAlaAdmin(userId)) {
+
+            // If we know both the user and the project, then check if the user is an admin or editor for the project:
+            //  -> if they are, then there are no restricted ProjectActivities for them
+            //  -> if they are not an admin or an editor, then return all ProjectActivities for the project where the embargoUntil date is in the future
+            if (userId && projectId) {
+                boolean userIsProjectMember = permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)
+
+                if (!userIsProjectMember) {
+                    restrictedProjectActivityIds = ProjectActivity.withCriteria {
+                        eq "projectId", projectId
+                        isNotNull "visibility"
+                        isNotNull "visibility.embargoUntil"
+                        gt "visibility.embargoUntil", new Date()
+
+                        projections {
+                            property("projectActivityId")
+                        }
+                    }
+                }
+            } else {
+                List<String> projectsTheUserIsAMemberOf = userId ? permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor) : null
+
+                restrictedProjectActivityIds = ProjectActivity.withCriteria {
+                    if (projectId) {
+                        // if we know the project id, then only look at ProjectActivities for that project
+                        eq "projectId", projectId
+                    } else if (projectsTheUserIsAMemberOf) {
+                        // if we do not know the project id, then we need to return ProjectActivities for all projects where the user is NOT a member
+                        not { 'in' "projectId", projectsTheUserIsAMemberOf }
+                    }
+
+                    // and we only want restricted ProjectActivities, so select only those with a future embargoUntil date
+                    isNotNull "visibility"
+                    isNotNull "visibility.embargoUntil"
+                    ge "visibility.embargoUntil", new Date()
+
+                    projections {
+                        property("projectActivityId")
+                    }
+                }
+            }
+        }
+
+        restrictedProjectActivityIds
     }
 }

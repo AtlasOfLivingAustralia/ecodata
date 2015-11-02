@@ -7,42 +7,72 @@ import static au.org.ala.ecodata.Status.DELETED
 class OutputServiceSpec extends IntegrationSpec {
 
     OutputService outputService
+    MetadataService metadataService
+    RecordService recordService
     def grailsApplication
 
     def setup() {
         grailsApplication.domainClasses.each {
             it.clazz.collection.drop()
         }
+
+        metadataService = Mock(MetadataService)
+        recordService = Mock(RecordService)
+        outputService.metadataService = metadataService
+        outputService.recordService = recordService
     }
 
     void "test create output with no parent activity"() {
         when:
-            def response = outputService.create(data:[prop2:'prop2'])
+        def response = outputService.create(data: [prop2: 'prop2'])
         then:
-            response.error != null
-            response.status == 'error'
+        response.error != null
+        response.status == 'error'
     }
 
     void "test create output"() {
         setup:
-            def activityId = 'a test activity id'
-            Activity activity = new Activity(activityId:activityId, type: 'Revegetation', description: 'A test activity')
-            activity.save(flush:true, failOnError: true)
+        def activityId = 'a test activity id'
+        Activity activity = new Activity(activityId: activityId, type: 'Revegetation', description: 'A test activity')
+        activity.save(flush: true, failOnError: true)
 
         when:
-            def response = outputService.create(activityId:activityId, data:[prop2:'prop2'])
-            def outputId = response.outputId
+        def response = outputService.create(activityId: activityId, data: [prop2: 'prop2'])
+        def outputId = response.outputId
         then:
-            outputId != null
-            response.status == 'ok'
+        outputId != null
+        response.status == 'ok'
 
         when: "retrieving the saved output"
-            Output savedOutput = Output.findByOutputId(outputId)
+        Output savedOutput = Output.findByOutputId(outputId)
 
         then:
-            savedOutput.outputId == outputId
-            savedOutput.activityId == activityId
-            savedOutput['data']['prop2'] == 'prop2'
+        savedOutput.outputId == outputId
+        savedOutput.activityId == activityId
+        savedOutput['data']['prop2'] == 'prop2'
+    }
+
+    def "createRecordsForOutput should create associated Record objects"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [dataModel: [[record: true, dataType: "doesNotMatter"], [record: true, dataType: "doesNotMatter"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+        Map properties = [data: [userId: "666"]]
+
+        when:
+        outputService.createRecordsForOutput(output, activity, properties)
+
+        then:
+        2 * outputService.recordService.createRecord(_) >> { argument ->
+            assert argument.activityId[0] == "activity1"
+            assert argument.outputId[0] == "output1"
+            assert argument.projectActivityId[0] == "projAct1"
+            assert argument.projectId[0] == "project1"
+            assert argument.userId[0] == "user1"
+
+            [null, null]
+        }
     }
 
     def "deleteProject should soft delete the project and all related records when destroy = false"() {

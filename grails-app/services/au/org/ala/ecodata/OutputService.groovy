@@ -148,8 +148,9 @@ class OutputService {
         }
     }
 
-    private createRecordsForOutput(Output output, Activity activity, Map props) {
+    void createRecordsForOutput(Output output, Activity activity, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
+
         outputMetadata?.dataModel?.each { dataModel ->
             if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
                 RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)

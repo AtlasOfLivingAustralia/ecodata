@@ -1,11 +1,15 @@
 package au.org.ala.ecodata
 
-import org.codehaus.groovy.grails.web.servlet.GrailsRequestContext
+import au.org.ala.web.AuthService
+import net.sf.json.JSON
+import net.sf.json.groovy.JsonSlurper
 
 class UserService {
 
     static transactional = false
-    def authService, grailsApplication, webService
+    AuthService authService
+    WebService webService
+    def grailsApplication
 
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
@@ -27,6 +31,25 @@ class UserService {
         }
 
         userDetails
+    }
+
+    /**
+     * Gets the CAS roles for the specified user. If no id is provided, then the currently authenticated user will be used
+     *
+     * @param userId The ID of the user whose roles you want to retrieve. Optional - if not provided, will return the roles for the currently authenticated user (if there is one)
+     * @return List of {@link au.org.ala.web.CASRoles} names
+     */
+    List<String> getRolesForUser(String userId = null) {
+        userId = userId ?: getCurrentUserDetails().userId
+
+        List<String> roles = []
+        if (userId) {
+            Map userDetails = webService.doPost("${grailsApplication.config.userDetails.url}${grailsApplication.config.userDetailsById.path}?userName=${URLEncoder.encode(userId, 'UTF-8')}&includeProps=false", [:])?.resp
+
+            roles.addAll(userDetails?.roles ?: [])
+        }
+
+        roles
     }
 
     synchronized def getUserForUserId(String userId) {

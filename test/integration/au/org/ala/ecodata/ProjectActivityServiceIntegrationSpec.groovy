@@ -65,8 +65,8 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
         new Document(documentId: "doc2", activityId: activity2.activityId).save(failOnError: true, flush: true)
         Output output1 = new Output(outputId: "out1", activityId: activity1.activityId).save(failOnError: true, flush: true)
         Output output2 = new Output(outputId: "out2", activityId: activity2.activityId).save(failOnError: true, flush: true)
-        new Record(outputId: output1.outputId).save(failOnError: true, flush: true)
-        new Record(outputId: output2.outputId).save(failOnError: true, flush: true)
+        new Record(outputId: output1.outputId, projectActivityId: projectActivity1.projectActivityId).save(failOnError: true, flush: true)
+        new Record(outputId: output2.outputId, projectActivityId: projectActivity1.projectActivityId).save(failOnError: true, flush: true)
 
         projectActivity1
     }

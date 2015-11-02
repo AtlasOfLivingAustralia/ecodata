@@ -46,7 +46,7 @@ class OrganisationService {
             commonService.updateProperties(organisation, props)
 
             // Assign the creating user as an admin.
-            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails().userId, AccessLevel.admin, organisation.organisationId)
+            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails()?.userId, AccessLevel.admin, organisation.organisationId)
 
             [status:'ok',organisationId:organisation.organisationId]
         }

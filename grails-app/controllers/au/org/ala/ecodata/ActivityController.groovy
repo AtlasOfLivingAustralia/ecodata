@@ -2,13 +2,15 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
-import java.text.SimpleDateFormat
-
 class ActivityController {
 
-    def activityService, siteService, commonService, projectActivityService
+    ActivityService activityService
+    SiteService siteService
+    CommonService commonService
+    UserService userService
+    ProjectActivityService projectActivityService
+
     static final SCORES = 'scores'
-    static final BRIEF = 'brief'
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -26,6 +28,7 @@ class ActivityController {
     def get(String id) {
         def detail = params.view == SCORES ? [SCORES] : []
         if (!id) {
+
             def list = activityService.getAll(params.includeDeleted as boolean, params.view)
             list.sort {it.name}
             //log.debug list
@@ -150,13 +153,9 @@ class ActivityController {
     def activitiesForProject(String id) {
         if (id) {
             def activityList = []
-            // activities directly linked to project
+
             activityList.addAll activityService.findAllForProjectId(id, [SCORES])
-            // activities via sites
-            /*siteService.findAllForProjectId(id, BRIEF).each {
-                activityList.addAll activityService.findAllForSiteId(it.siteId, [SCORES])
-            }*/
-            //log.debug activityList
+
             asJson([list: activityList])
         } else {
             response.status = 404
@@ -186,13 +185,16 @@ class ActivityController {
         def order = params.order ?:  "desc"
         def offset = params.offset ?: 0
         def max = params.pageSize ?: 10
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
 
         if(!id){
             response.status = 404
             render status:404, text: 'No such id'
         }
         else{
-            def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort])
+            List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
+
+            def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort], restrictedProjectActivities)
             asJson([activities: list?.list, total: list?.total])
         }
     }

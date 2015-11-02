@@ -226,7 +226,7 @@ class ProjectService {
             siteService.deleteSitesFromProject(id)
 
             if (destroy) {
-                project.delete()
+                project.delete(flush: true)
                 webService.doDelete(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + id)
             } else {
                 project.status = DELETED
@@ -317,11 +317,11 @@ class ProjectService {
      *
      * @return a list of the projects that match the supplied criteria
      */
-    public search(Map searchCriteria, levelOfDetail = []) {
+    List<Map> search(Map searchCriteria, levelOfDetail = []) {
 
         def criteria = Project.createCriteria()
         def projects = criteria.list {
-            ne("status", "deleted")
+            ne("status", DELETED)
             searchCriteria.each { prop,value ->
 
                 if (value instanceof List) {
