@@ -62,8 +62,12 @@ class ActivityController {
     @RequireApiKey
     def deleteByProjectActivity(String id) {
         boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
-        if (activityService.deleteByProjectActivity(id, destroy).status == 'ok') {
+        Map result = activityService.deleteByProjectActivity(id, destroy)
+        if (result.status == 'ok') {
             render (status: 200, text: 'deleted')
+        } else if(result.status == 'error') {
+            response.status = 500
+            render (status: 500, text: result.status.error)
         } else {
             response.status = 404
             render status:404, text: 'No such id'

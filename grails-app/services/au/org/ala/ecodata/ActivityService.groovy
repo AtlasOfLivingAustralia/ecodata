@@ -4,6 +4,7 @@ import com.mongodb.DBCursor
 import com.mongodb.DBObject
 
 import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class ActivityService {
 
@@ -197,10 +198,10 @@ class ActivityService {
     Map deleteByProjectActivity(String pActivityId, boolean destroy = false) {
         Map result
 
-        ProjectActivity pActivity = ProjectActivity.findByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+        ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(pActivityId)
         if (pActivity) {
             getAllActivityIdsForProjectActivity(pActivityId).each { delete(it, destroy) }
-            boolean exists = Activity.countByProjectActivityIdAndStatus(pActivity.projectActivityId, ACTIVE) > 0
+            boolean exists = Activity.countByProjectActivityIdAndStatusNotEqual(pActivity.projectActivityId, DELETED) > 0
             if (exists) {
                 result = [status: 'error', error: "Error deleting activities"]
             } else {
@@ -404,15 +405,12 @@ class ActivityService {
     }
 
     def getAllActivityIdsForProjectActivity(String pActivityId) {
-        def criteria = Activity.createCriteria()
-        def list = criteria {
-            eq("projectActivityId", pActivityId)
-            eq("status", ACTIVE)
+        Activity.withCriteria {
+            eq "projectActivityId", projectActivityId
             projections {
                 property("activityId")
             }
         }
-        return list*.toString()
     }
 
 }
