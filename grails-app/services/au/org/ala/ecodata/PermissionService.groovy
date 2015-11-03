@@ -221,6 +221,6 @@ class PermissionService {
     }
 
     List getAllAdminsForProject(String id){
-        getAllUserPermissionForEntity(id, 'au.org.ala.ecodata.Project', 'admin')
+        getAllUserPermissionForEntity(id, Project.class.name, 'admin')
     }
 }

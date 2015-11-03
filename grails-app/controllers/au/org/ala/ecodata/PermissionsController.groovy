@@ -177,15 +177,22 @@ class PermissionsController {
             Project project = Project.findByProjectId(projectId)
 
             try {
-                AccessLevel ac = AccessLevel.valueOf(role)
+                AccessLevel accessLevel = AccessLevel.valueOf(role)
 
                 if (project) {
-                    log.debug "removeUserAsRoleToProject: ${userId}, ${ac}, ${project}"
-                    Map ps = permissionService.removeUserAsRoleToProject(userId, ac, projectId)
-                    if (ps.status == "ok") {
-                        render "success: ${ps.id}"
+                    log.debug "removeUserAsRoleToProject: ${userId}, ${accessLevel}, ${project}"
+
+                    // Make sure the last admin for a project cannot be removed
+                    // Note: the UI should not allow this: this check is just a precaution
+                    if (accessLevel == AccessLevel.admin && permissionService.getAllAdminsForProject(projectId)?.size() == 1) {
+                        render status: 400, text: "Cannot remove the last admin for a project"
                     } else {
-                        render status: 500, text: "Error removing user/role: ${ps}"
+                        Map ps = permissionService.removeUserAsRoleToProject(userId, accessLevel, projectId)
+                        if (ps.status == "ok") {
+                            render "success: ${ps.id}"
+                        } else {
+                            render status: 500, text: "Error removing user/role: ${ps}"
+                        }
                     }
                 } else {
                     render status: 404, text: "Project not found for projectId: ${projectId}"
