@@ -291,6 +291,10 @@ class ActivityService {
             if (props.activityId) {
                 try {
                     props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
+                    props.remove('userId')
+                    props.remove('activityId')
+                    props.remove('projectId')
+                    props.remove('projectActivityId')
                     commonService.updateProperties(activity, props)
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
