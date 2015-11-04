@@ -154,7 +154,7 @@ class OutputService {
         outputMetadata?.dataModel?.each { dataModel ->
             if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
                 RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-                List<Map> records = converter.convert(props, dataModel)
+                List<Map> records = converter.convert(activity, props, dataModel)
 
                 records.each { record ->
                     record.outputId = output.outputId

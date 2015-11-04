@@ -1,14 +1,14 @@
 package au.org.ala.ecodata.converter
 
+import au.org.ala.ecodata.Activity
 import net.sf.json.JSON
 
 class SingleSightingConverter implements RecordConverter {
     @Override
-    List<Map> convert(Map data, Map outputMetadata = [:]) {
-        Map record = [:]
+    List<Map> convert(Activity activity, Map data, Map outputMetadata = [:]) {
+        Map record = extractActivityDetails(activity)
 
         record.decimalLatitude = getLatitude(data)
-
         record.decimalLongitude = getLongitude(data)
         
         record.eventDate = data.data.eventDate
@@ -23,7 +23,7 @@ class SingleSightingConverter implements RecordConverter {
         [record]
     }
 
-    private static Double getLatitude(Map data) {
+    private Double getLatitude(Map data) {
         Double lat = null
 
         if (data.data.decimalLatitude) {
@@ -35,7 +35,7 @@ class SingleSightingConverter implements RecordConverter {
         lat
     }
 
-    private static Double getLongitude(Map data) {
+    private Double getLongitude(Map data) {
         Double lng = null
 
         if (data.data.decimalLongitude) {
@@ -45,13 +45,5 @@ class SingleSightingConverter implements RecordConverter {
         }
 
         lng
-    }
-
-    private static Double toDouble(val) {
-        if (!val) {
-            null
-        } else {
-            val instanceof Number ? val : Double.parseDouble(val.toString())
-        }
     }
 }

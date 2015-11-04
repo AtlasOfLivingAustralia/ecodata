@@ -1,11 +1,12 @@
 package au.org.ala.ecodata.converter
 
+import au.org.ala.ecodata.Activity
 import net.sf.json.JSON
 
 class ListConverter implements RecordConverter {
 
     @Override
-    List<Map> convert(Map data, Map outputMetadata = [:]) {
+    List<Map> convert(Activity activity, Map data, Map outputMetadata = [:]) {
         List<Map> records = []
 
         Map dwcMappings = [:]
@@ -16,25 +17,13 @@ class ListConverter implements RecordConverter {
         }
 
         data.data[outputMetadata.name].eachWithIndex { it, index ->
-            Map record = [:]
+            Map record = extractActivityDetails(activity)
             record.json = (it as JSON).toString()
 
-            if (dwcMappings.containsKey("individualCount")) {
-                record.individualCount = Integer.parseInt(it[dwcMappings["individualCount"]])
-            }
-            if (dwcMappings.containsKey("numberOfOrganisms")) {
-                record.numberOfOrganisms = Integer.parseInt(it[dwcMappings["numberOfOrganisms"]])
-            }
-            if (dwcMappings.containsKey("decimalLatitude")) {
-                record.decimalLatitude = Double.parseDouble(it[dwcMappings["decimalLatitude"]])
-            }
-            if (dwcMappings.containsKey("decimalLongitude")) {
-                record.decimalLongitude = Double.parseDouble(it[dwcMappings["decimalLongitude"]])
+            dwcMappings.each { dwcAttribute, fieldName ->
+                record[dwcAttribute] = it[fieldName]
             }
 
-            if (dwcMappings.containsKey("creator")) {
-                record.userId = it[dwcMappings["creator"]]
-            }
             if(dwcMappings.containsKey("species")){
                 record.name = it[dwcMappings["species"]].name
                 record.guid = it[dwcMappings["species"]].guid
