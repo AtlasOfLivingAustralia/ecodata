@@ -677,12 +677,15 @@ class PermissionsController {
     }
 
     /**
-     * Return a list of the {@link AccessLevel} enum values for editor and higher
+     * Return a list of the {@link AccessLevel} enum values for the given baseLevel and higher
+     * if baseLevel is not set or invalid then returns accesslevel above editor
      * See the custom JSON serializer in Bootstrap.groovy
      *
      * @return JSON representation of AccessLevel values
      */
     def getAllAccessLevels() {
-        render AccessLevel.values().findAll { it.code >= AccessLevel.editor.code } as JSON
+        AccessLevel accessLevel = AccessLevel.find { it.name() == params.baseLevel } ?: AccessLevel.editor
+        render AccessLevel.values().findAll { it.code >= accessLevel.code } as JSON
     }
+
 }
