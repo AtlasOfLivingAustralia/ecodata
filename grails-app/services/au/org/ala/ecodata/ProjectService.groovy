@@ -25,6 +25,7 @@ class ProjectService {
     PermissionService permissionService
     CollectoryService collectoryService
     WebService webService
+    OrganisationService organisationService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -120,6 +121,16 @@ class ProjectService {
             }
 
             result = mapOfProperties.findAll { k, v -> v != null }
+
+            // look up current associated organisation details
+            result.associatedOrgs.each {
+                if (it.organisationId) {
+                    Organisation org = Organisation.findByOrganisationId(it.organisationId)
+                    it.name = org.name
+                    it.url = org.url
+                    it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
+                }
+            }
         }
 
         result
