@@ -205,18 +205,21 @@ class ActivityController {
 
     /**
      * Is user {@link UserDetails#userId userId} owner of an  {@link Activity#userId userId}
-     *
+     * @param id activity identifier
      * @return
      */
-    def isUserOwnerForActivity() {
+    def isUserOwnerForActivity(String id) {
         String userId = params.userId
-        String activityId = params.activityId
 
-        if (userId && activityId) {
-            boolean isOwner = activityService.isUserOwner(userId, activityId)
-            render([userIsOwner: isOwner] as JSON)
+        if (!id) {
+            response.status = 404
+            render status: 404, text: 'No such id'
+        } else if (!userId) {
+            response.status = 404
+            render status: 400, text: 'Invalid userId'
         } else {
-            render status: 400, text: 'Required params not provided: userId, activityId'
+            boolean isOwner = activityService.isUserOwner(userId, id)
+            asJson([userIsOwner: isOwner])
         }
     }
 
