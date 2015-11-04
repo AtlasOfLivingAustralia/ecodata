@@ -123,7 +123,7 @@ class ProjectService {
             result = mapOfProperties.findAll { k, v -> v != null }
 
             // look up current associated organisation details
-            result.associatedOrgs.each {
+            result.associatedOrgs?.each {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
                     it.name = org.name
