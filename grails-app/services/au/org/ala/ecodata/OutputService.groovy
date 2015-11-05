@@ -1,12 +1,8 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.converter.GenericConverter
-import net.sf.json.JSON
-
 import static au.org.ala.ecodata.Status.*
 
 import au.org.ala.ecodata.converter.RecordConverter
-import au.org.ala.ecodata.converter.RecordConverterFactory
 
 class OutputService {
 
@@ -157,44 +153,9 @@ class OutputService {
         boolean createRecord = outputMetadata["record"]?.toBoolean()
 
         if (createRecord) {
-            int numberOfRecords = 1
-            props.data.each {
-                if (it instanceof List) {
-                    numberOfRecords = it.size() > numberOfRecords ? it.size() : numberOfRecords
-                }
-            }
-
-            List singleItems
-            List multiItems
-
-            (singleItems, multiItems) = outputMetadata?.dataModel?.split { it.dataType != "list" && it.dataType != "masterDetail" }
-
-            Map baseRecord = [:]
-            singleItems.each { Map dataModel ->
-                RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-                List<Map> recordFieldSets = converter.convert(activity, props.data, dataModel)
-                baseRecord << recordFieldSets[0]
-            }
-
-            List<Map> records = []
-            multiItems?.each { Map dataModel ->
-                RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-                List<Map> recordFieldSets = converter.convert(activity, props.data, dataModel)
-
-                recordFieldSets.each {
-                    it << baseRecord
-                }
-
-                records.addAll(recordFieldSets)
-            }
+            List<Map> records = RecordConverter.convertRecords(activity, output, props.data, outputMetadata)
 
             records.each { record ->
-                record.outputId = output.outputId
-                record.projectId = activity.projectId
-                record.projectActivityId = activity.projectActivityId
-                record.activityId = activity.activityId
-                record.userId = activity.userId
-
                 // createRecord returns a 2-element list:
                 // [0] = Record (always there even if the save failed);
                 // [1] = Error object if the save failed, empty map if the save succeeded.
@@ -203,31 +164,7 @@ class OutputService {
                     throw new IllegalArgumentException("Failed to create record: ${record}")
                 }
             }
-
         }
-
-//        outputMetadata?.dataModel?.each { dataModel ->
-//            if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
-//                RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-//                List<Map> records = converter.convert(activity, props, dataModel)
-//
-//                records.each { record ->
-//                    record.outputId = output.outputId
-//                    record.projectId = activity.projectId
-//                    record.projectActivityId = activity.projectActivityId
-//                    record.activityId = activity.activityId
-//                    record.userId = activity.userId
-//
-//                    // createRecord returns a 2-element list:
-//                    // [0] = Record (always there even if the save failed);
-//                    // [1] = Error object if the save failed, empty map if the save succeeded.
-//                    List result = recordService.createRecord(record)
-//                    if (result[1]) {
-//                        throw new IllegalArgumentException("Failed to create record: ${record}")
-//                    }
-//                }
-//            }
-//        }
     }
 
     def update(Map props, String outputId) {

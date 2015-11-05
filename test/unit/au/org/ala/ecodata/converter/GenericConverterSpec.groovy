@@ -11,7 +11,7 @@ class GenericConverterSpec extends Specification {
         Map data = [data: [field1: "val1", field2: "val2", userId: "user1"]]
 
         when:
-        List<Map> result = new GenericConverter().convert(new Activity(userId: "user1"), data)
+        List<Map> result = new GenericFieldConverter().convert(new Activity(userId: "user1"), data)
 
         then:
         result.size() == 1

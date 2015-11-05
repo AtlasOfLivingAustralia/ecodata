@@ -1,12 +1,11 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Activity
 import net.sf.json.JSON
 
-class SingleSightingConverter implements RecordConverter {
+class SingleSightingConverter implements RecordFieldConverter {
     @Override
-    List<Map> convert(Activity activity, Map data, Map outputMetadata = [:]) {
-        Map record = extractActivityDetails(activity)
+    List<Map> convert( Map data, Map outputMetadata = [:]) {
+        Map record = [:]
 
         record.decimalLatitude = getLatitude(data)
         record.decimalLongitude = getLongitude(data)

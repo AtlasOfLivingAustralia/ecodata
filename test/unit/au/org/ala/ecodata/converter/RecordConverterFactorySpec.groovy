@@ -6,7 +6,7 @@ class RecordConverterFactorySpec extends Specification {
 
     def "factory should return a SingleSightingConverter if given a data type of 'singleSighting'"() {
         when:
-        RecordConverter converter = RecordConverterFactory.getConverter("singleSighting")
+        RecordFieldConverter converter = RecordConverter.getConverter("singleSighting")
 
         then:
         converter instanceof SingleSightingConverter
@@ -14,7 +14,7 @@ class RecordConverterFactorySpec extends Specification {
 
     def "factory should return a ListConverter if given a data type of 'list'"() {
         when:
-        RecordConverter converter = RecordConverterFactory.getConverter("list")
+        RecordFieldConverter converter = RecordConverter.getConverter("list")
 
         then:
         converter instanceof ListConverter
@@ -22,9 +22,9 @@ class RecordConverterFactorySpec extends Specification {
 
     def "factory should return a GenericConverter if given an unrecognised data type"() {
         when:
-        RecordConverter converter = RecordConverterFactory.getConverter("something")
+        RecordFieldConverter converter = RecordConverter.getConverter("something")
 
         then:
-        converter instanceof GenericConverter
+        converter instanceof GenericFieldConverter
     }
 }
