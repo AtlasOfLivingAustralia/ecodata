@@ -36,7 +36,8 @@ class OutputServiceSpec extends Specification {
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
         activity.save(flush: true, failOnError: true)
         mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
-                                                            dataModel: [[record: "true", dataType: "singleSighting"]]]
+                                                            record   : "true",
+                                                            dataModel: [[dataType: "singleSighting"]]]
 
         when:
         def request = """{
@@ -54,7 +55,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        1 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        1 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
         Output.count() == 1
     }
 
@@ -64,7 +65,8 @@ class OutputServiceSpec extends Specification {
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
         activity.save(flush: true, failOnError: true)
         mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Single Sighting",
-                                                            dataModel: [[record: "false", dataType: "singleSighting"]]]
+                                                            record   : "false",
+                                                            dataModel: [[dataType: "singleSighting"]]]
 
         when:
         def request = """{
@@ -82,7 +84,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        0 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        0 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
         Output.count() == 1
     }
 
@@ -110,7 +112,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        0 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        0 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
         Output.count() == 1
     }
 
@@ -120,16 +122,17 @@ class OutputServiceSpec extends Specification {
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
         activity.save(flush: true, failOnError: true)
         mockMetadataService.getOutputDataModelByName(_) >> [modelName: "Model 1",
+                                                            record   : "true",
                                                             dataModel: [
                                                                     [
-                                                                            record: "true",
-                                                                            name: "actions",
+                                                                            name    : "actions",
                                                                             dataType: "list",
-                                                                    columns: [
-                                                                            [
-                                                                                    name: "col1"
-                                                                            ]
-                                                                    ]]]]
+                                                                            columns : [
+                                                                                    [
+                                                                                            name: "col1",
+                                                                                            dataType: "text"
+                                                                                    ]
+                                                                            ]]]]
 
         when:
         def request = """{
@@ -147,7 +150,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        2 * mockRecordService.createRecord(_) >> [new Record().save(flush:true), [:]]
+        2 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
         Output.count() == 1
     }
 }

@@ -5,8 +5,48 @@ import au.org.ala.ecodata.Output
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 
+/**
+ * Utility for converting the data submitted for an Output into one or more Records with the correct Darwin Core fields
+ * so that it can be exported to the Biocache.
+ * <p/>
+ * In order for an Output to be converted successfully into one or more Records, the following rules MUST be met:
+ * <ol>
+ *     <li>The Output metadata (i.e. the dataModel.json file) must have '"record": true' at the top level
+ *     <li>Each dataModel item must have a dataType defined (this includes columns within a list model)
+ *     <li>Each dataModel that needs to be mapped to a Darwin Core field must have '"dwcAttribute": "[attribute name]"' defined
+ * </ol>
+ *
+ * The following is a simple example of how an Output metadata model should look in order for Record creation to work:
+ *<pre>
+ * {
+ *   "modelName": "Sample",
+ *   "record": "true",
+ *   "dataModel": [
+ *     {
+ *       "dataType": "text",
+ *       "name": "fieldName1",
+ *       "dwcAttribute": "darwinCoreTerm1",
+ *     },
+ *     {
+ *       "dataType": "list",
+ *       "name": "mylist",
+ *       "columns": [
+ *         {
+ *           "name": "col1",
+ *           "dataType": "text",
+ *           "dwcAttribute": "darwinCoreTerm2"
+ *         },
+ *         ...
+ *       }
+ *   ]
+ *   ...
+ * }
+ * </pre>
+ */
 @Log4j
 class RecordConverter {
+
+    static final List MULTI_ITEM_DATA_TYPES = ["list", "masterDetail"]
 
     static List<Map> convertRecords(Activity activity, Output output, Map data, Map outputMetadata) {
         // Outputs are made up of multiple 'dataModels', where each dataModel could map to one or more Record fields
@@ -32,7 +72,7 @@ class RecordConverter {
         List singleItemModels
         List multiItemModels
         (singleItemModels, multiItemModels) = outputMetadata?.dataModel?.split {
-            it.dataType != "list" && it.dataType != "masterDetail"
+            !MULTI_ITEM_DATA_TYPES.contains(it.dataType.toLowerCase())
         }
 
         // For each singleItemModel, get the appropriate field converter for the data type, generate the individual

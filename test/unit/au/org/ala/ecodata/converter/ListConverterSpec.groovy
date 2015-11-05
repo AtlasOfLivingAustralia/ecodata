@@ -1,6 +1,5 @@
 package au.org.ala.ecodata.converter
 
-import au.org.ala.ecodata.Activity
 import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
@@ -13,7 +12,8 @@ class ListConverterSpec extends Specification {
                 dataType: "list",
                 columns : [
                         [
-                                name: "col1"
+                                name    : "col1",
+                                dataType: "text"
                         ]
                 ]
         ]
@@ -32,7 +32,7 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new ListConverter().convert(new Activity(), new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data).data, metadata)
 
         then:
         result.size() == 2
@@ -51,19 +51,23 @@ class ListConverterSpec extends Specification {
                 columns : [
                         [
                                 name        : "col1",
-                                dwcAttribute: "individualCount"
+                                dwcAttribute: "individualCount",
+                                dataType    : "text"
                         ],
                         [
                                 name        : "col2",
-                                dwcAttribute: "decimalLatitude"
+                                dwcAttribute: "decimalLatitude",
+                                dataType    : "text"
                         ],
                         [
                                 name        : "col3",
-                                dwcAttribute: "decimalLongitude"
+                                dwcAttribute: "decimalLongitude",
+                                dataType    : "text"
                         ],
                         [
                                 name        : "col4",
-                                dwcAttribute: "somethingElse"
+                                dwcAttribute: "somethingElse",
+                                dataType    : "text"
                         ]
                 ]
         ]
@@ -82,7 +86,7 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new ListConverter().convert(new Activity(), new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data).data, metadata)
 
         then:
         result.size() == 2

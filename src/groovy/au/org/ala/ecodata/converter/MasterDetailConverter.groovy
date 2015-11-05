@@ -10,7 +10,7 @@ class MasterDetailConverter implements RecordFieldConverter {
         List<Map> records = []
 
         data[outputMetadata.name].each {
-            records.addAll converter.convert(activity, [data: it], outputMetadata.detail as Map)
+            records.addAll converter.convert(it, outputMetadata.detail as Map)
         }
 
         records
