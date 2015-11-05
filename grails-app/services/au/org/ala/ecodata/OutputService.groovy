@@ -150,7 +150,7 @@ class OutputService {
     void createRecordsForOutput(Output output, Activity activity, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
 
-        boolean createRecord = outputMetadata["record"]?.toBoolean()
+        boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
 
         if (createRecord) {
             List<Map> records = RecordConverter.convertRecords(activity, output, props.data, outputMetadata)

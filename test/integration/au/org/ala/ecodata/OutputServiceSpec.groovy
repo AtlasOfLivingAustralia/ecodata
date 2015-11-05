@@ -54,7 +54,7 @@ class OutputServiceSpec extends IntegrationSpec {
 
     def "createRecordsForOutput should create associated Record objects"() {
         setup:
-        metadataService.getOutputDataModelByName(_) >> [dataModel: [[record: true, dataType: "doesNotMatter"], [record: true, dataType: "doesNotMatter"]]]
+        metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[ dataType: "doesNotMatter"], [dataType: "doesNotMatter"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
@@ -64,7 +64,7 @@ class OutputServiceSpec extends IntegrationSpec {
         outputService.createRecordsForOutput(output, activity, properties)
 
         then:
-        2 * outputService.recordService.createRecord(_) >> { argument ->
+        1 * outputService.recordService.createRecord(_) >> { argument ->
             assert argument.activityId[0] == "activity1"
             assert argument.outputId[0] == "output1"
             assert argument.projectActivityId[0] == "projAct1"
