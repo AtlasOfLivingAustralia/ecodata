@@ -15,7 +15,7 @@ class GenericConverterSpec extends Specification {
 
         then:
         result.size() == 1
-        result[0].json == (data.data as JSON).toString()
+        result[0].json == (data as JSON).toString()
         result[0].userId == "user1"
     }
 }

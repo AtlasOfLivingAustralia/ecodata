@@ -33,4 +33,29 @@ trait RecordConverter {
         }
         result
     }
+
+    Map extractDwcMapping(Map dataModel) {
+        Map dwcMappings = [:]
+
+        if (dataModel?.containsKey(DWC_ATTRIBUTE_NAME)) {
+            dwcMappings[dataModel.dwcAttribute] = dataModel.name
+        }
+
+        dwcMappings
+    }
+
+    Map getDwcAttributes(Map dataModel, Map dwcMappings) {
+        Map fields = [:]
+        dwcMappings.each { dwcAttribute, fieldName ->
+            fields[dwcAttribute] = dataModel[fieldName]
+        }
+
+        if (dwcMappings.containsKey("species")){
+            fields.name = dataModel[dwcMappings["species"]].name
+            fields.scientificName = dataModel[dwcMappings["species"]].name
+            fields.guid = dataModel[dwcMappings["species"]].guid
+        }
+
+        fields
+    }
 }

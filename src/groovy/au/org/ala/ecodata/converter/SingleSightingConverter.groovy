@@ -11,12 +11,12 @@ class SingleSightingConverter implements RecordConverter {
         record.decimalLatitude = getLatitude(data)
         record.decimalLongitude = getLongitude(data)
         
-        record.eventDate = data.data.eventDate
-        record.individualCount = Integer.parseInt(data.data.individualCount)
-        record.userId = data.data.userId
-        record.multimedia = data.data.multimedia
-        record.name = data.data.scientificName
-        record.guid = data.data.guid
+        record.eventDate = data.eventDate
+        record.individualCount = Integer.parseInt(data.individualCount)
+        record.userId = data.userId
+        record.multimedia = data.multimedia
+        record.name = data.scientificName
+        record.guid = data.guid
 
         record.json = (data as JSON).toString()
 
@@ -26,10 +26,10 @@ class SingleSightingConverter implements RecordConverter {
     private Double getLatitude(Map data) {
         Double lat = null
 
-        if (data.data.decimalLatitude) {
-            lat = toDouble(data.data.decimalLatitude)
-        } else if (data.data.locationLatitude) {
-            lat = toDouble(data.data.locationLatitude)
+        if (data.decimalLatitude) {
+            lat = toDouble(data.decimalLatitude)
+        } else if (data.locationLatitude) {
+            lat = toDouble(data.locationLatitude)
         }
 
         lat
@@ -38,10 +38,10 @@ class SingleSightingConverter implements RecordConverter {
     private Double getLongitude(Map data) {
         Double lng = null
 
-        if (data.data.decimalLongitude) {
-            lng = toDouble(data.data.decimalLongitude)
-        } else if (data.data.locationLongitude) {
-            lng = toDouble(data.data.locationLongitude)
+        if (data.decimalLongitude) {
+            lng = toDouble(data.decimalLongitude)
+        } else if (data.locationLongitude) {
+            lng = toDouble(data.locationLongitude)
         }
 
         lng

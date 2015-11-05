@@ -11,7 +11,7 @@ class MasterDetailConverter implements RecordConverter {
 
         List<Map> records = []
 
-        data.data[outputMetadata.name].each {
+        data[outputMetadata.name].each {
             records.addAll converter.convert(activity, [data: it], outputMetadata.detail as Map)
         }
 

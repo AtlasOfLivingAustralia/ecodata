@@ -7,28 +7,40 @@ class ListConverter implements RecordConverter {
 
     @Override
     List<Map> convert(Activity activity, Map data, Map outputMetadata = [:]) {
+//        List<Map> records = []
+//
+//        Map dwcMappings = [:]
+//        outputMetadata.columns.each {
+//            dwcMappings << extractDwcMapping(it)
+//        }
+//
+//        data.data[outputMetadata.name].eachWithIndex { it, index ->
+//            Map record = extractActivityDetails(activity)
+//
+//            record << getDwcAttributes(it, dwcMappings)
+//
+//            record.json = (it as JSON).toString()
+//
+//            record.outputItemId = index
+//
+//            records << record
+//        }
+
+
+        // delegate the conversion of each column to a specific converter for the column type
+
         List<Map> records = []
 
-        Map dwcMappings = [:]
-        outputMetadata.columns.each {
-            if (it.containsKey(DWC_ATTRIBUTE_NAME)) {
-                dwcMappings[it.dwcAttribute] = it.name
-            }
-        }
-
-        data.data[outputMetadata.name].eachWithIndex { it, index ->
-            Map record = extractActivityDetails(activity)
-            record.json = (it as JSON).toString()
-
-            dwcMappings.each { dwcAttribute, fieldName ->
-                record[dwcAttribute] = it[fieldName]
+        data[outputMetadata.name].eachWithIndex { row, index ->
+            Map record = [:]
+            row.each { col ->
+                Map columnMetadata = outputMetadata.columns.find { colDef -> colDef.name == col.key }
+                RecordConverter converter = RecordConverterFactory.getConverter(columnMetadata.dataType)
+                List<Map> fields = converter.convert(activity, [data: col], columnMetadata as Map)
+                fields?.each { record << col }
             }
 
-            if(dwcMappings.containsKey("species")){
-                record.name = it[dwcMappings["species"]].name
-                record.guid = it[dwcMappings["species"]].guid
-            }
-
+            record.json = (row as JSON).toString()
             record.outputItemId = index
 
             records << record
