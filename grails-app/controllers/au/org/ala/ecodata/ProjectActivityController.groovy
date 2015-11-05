@@ -33,12 +33,17 @@ class ProjectActivityController {
      * @return json
      */
     def get(String id) {
-        if (id) {
-            asJson(projectActivityService.get(id, params.view))
+        Map result = [:]
+        if (!id) {
+            result = [status: 404, text: 'No such id'];
         } else {
-            response.status = 404
-            render status: 404, text: 'No such id'
+            result = projectActivityService.get(id, params.view)
+            if (!result) {
+                result = [status: 404, text: 'Invalid id'];
+            }
         }
+
+        asJson(result)
     }
 
     /**
@@ -68,8 +73,6 @@ class ProjectActivityController {
         }
     }
 
-
-
     /**
      * Update a project activity.
      *
@@ -83,7 +86,7 @@ class ProjectActivityController {
         def result
         def message
         if (id) {
-            result = projectActivityService.update(props,id)
+            result = projectActivityService.update(props, id)
             message = [message: 'updated']
         } else {
             result = projectActivityService.create(props)
@@ -93,7 +96,7 @@ class ProjectActivityController {
             asJson(message)
         } else {
             log.error result.error
-            render status:400, text: result.error
+            render status: 400, text: result.error
         }
     }
 
