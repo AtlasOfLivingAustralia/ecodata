@@ -140,7 +140,7 @@ class ProjectActivityService {
 
     Map get(String id, levelOfDetail = []) {
         ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(id)
-        projectActivity ? toMap(projectActivity, levelOfDetail) : null
+        projectActivity ? toMap(projectActivity, levelOfDetail) : [:]
     }
 
     List getAllByProject(id, levelOfDetail = []) {
