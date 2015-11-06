@@ -5,16 +5,18 @@ import au.org.ala.ecodata.CommonService
 import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Output
 import au.org.ala.ecodata.OutputService
+import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.ProjectActivity
 import au.org.ala.ecodata.Record
 import au.org.ala.ecodata.RecordService
+import au.org.ala.ecodata.Site
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
 @TestFor(OutputService)
-@Mock([Activity, Output, Record, ProjectActivity])
+@Mock([Project, Site, Activity, Output, Record, ProjectActivity])
 class OutputServiceSpec extends Specification {
 
     OutputService service
@@ -51,7 +53,7 @@ class OutputServiceSpec extends Specification {
             }
         }"""
 
-        Map response = service.create(new JsonSlurper().parseText(request))
+        Map response = service.create(new JsonSlurper().parseText(request) as Map)
 
         then:
         response.status != "error"
@@ -80,7 +82,7 @@ class OutputServiceSpec extends Specification {
             }
         }"""
 
-        Map response = service.create(new JsonSlurper().parseText(request))
+        Map response = service.create(new JsonSlurper().parseText(request) as Map)
 
         then:
         response.status != "error"
@@ -108,7 +110,7 @@ class OutputServiceSpec extends Specification {
             }
         }"""
 
-        Map response = service.create(new JsonSlurper().parseText(request))
+        Map response = service.create(new JsonSlurper().parseText(request) as Map)
 
         then:
         response.status != "error"
@@ -146,7 +148,7 @@ class OutputServiceSpec extends Specification {
             }
         }"""
 
-        Map response = service.create(new JsonSlurper().parseText(request))
+        Map response = service.create(new JsonSlurper().parseText(request) as Map)
 
         then:
         response.status != "error"

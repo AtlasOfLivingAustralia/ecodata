@@ -130,13 +130,14 @@ class OutputService {
 
                 getCommonService().updateProperties(output, props)
 
-                createRecordsForOutput(output, activity, props)
+                createRecordsForOutput(activity, output, props)
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Output.withSession { session -> session.clear() }
                 def error = "Error creating output for activity ${props.activityId} - ${e.message}"
+                e.printStackTrace()
                 log.error error, e
                 return [status: 'error', error: error]
             }
@@ -147,13 +148,17 @@ class OutputService {
         }
     }
 
-    void createRecordsForOutput(Output output, Activity activity, Map props) {
+    void createRecordsForOutput(Activity activity, Output output, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
 
         if (createRecord) {
-            List<Map> records = RecordConverter.convertRecords(activity, output, props.data, outputMetadata)
+            Project project = Project.findByProjectId(activity.projectId)
+            Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
+            ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
+
+            List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
                 // createRecord returns a 2-element list:
