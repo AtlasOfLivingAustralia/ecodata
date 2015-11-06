@@ -188,7 +188,8 @@ class ReportService {
 
         params += [offset:0, max:100]
         def targetsBySubProgram = [:]
-        def results = elasticSearchService.search("*:*", params, "homepage")
+        def queryString = params.q ?: "*:*"
+        def results = elasticSearchService.search(queryString, params, "homepage")
 
         def propertyAccessor = new PropertyAccessor("target")
         def total = results.hits.totalHits
