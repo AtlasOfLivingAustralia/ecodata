@@ -88,8 +88,8 @@ class RecordConverterSpec extends Specification {
                             }
                             """
 
-        Map outputMetadata = json.parseText(metadataJson)
-        Map submittedData = json.parseText(submittedDataJson)
+        Map outputMetadata = json.parseText(metadataJson) as Map
+        Map submittedData = json.parseText(submittedDataJson) as Map
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(activity, output, submittedData, outputMetadata)
@@ -157,8 +157,8 @@ class RecordConverterSpec extends Specification {
                             }
                             """
 
-        Map outputMetadata = json.parseText(metadataJson)
-        Map submittedData = json.parseText(submittedDataJson)
+        Map outputMetadata = json.parseText(metadataJson) as Map
+        Map submittedData = json.parseText(submittedDataJson) as Map
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(activity, output, submittedData, outputMetadata)
@@ -192,5 +192,55 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].projectId == "projectId"
         fieldsets[0].userId == "user1"
         fieldsets[0].outputId == "outputId"
+    }
+
+    def "convert should concatenate fields which appear in multiple components"() {
+        setup:
+        Activity activity = new Activity()
+        Output output = new Output()
+
+        String metadataJson = """
+                            {
+                              "record": "true",
+                              "dataModel": [
+                                {
+                                  "dataType": "list",
+                                  "name": "mylist",
+                                  "columns": [
+                                    {
+                                      "dataType": "text",
+                                      "name": "field1",
+                                      "dwcAttribute": "dwc"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "dataType": "text",
+                                  "name": "field2",
+                                  "dwcAttribute": "dwc"
+                                }
+                              ]
+                            }
+                            """
+        String submittedDataJson = """
+                            {
+                              "mylist": [
+                                {
+                                  "field1": "firstValue"
+                                }
+                              ],
+                              "field2": "secondValue"
+                            }
+                            """
+
+        Map outputMetadata = json.parseText(metadataJson) as Map
+        Map submittedData = json.parseText(submittedDataJson) as Map
+
+        when: "two different fields are mapped to the same DwC attribute"
+        List<Map> fieldsets = RecordConverter.convertRecords(activity, output, submittedData, outputMetadata)
+
+        then: "the two values should be concatenated together in the resulting record field set"
+        fieldsets.size() == 1
+        fieldsets[0].dwc == "firstValue;secondValue"
     }
 }
