@@ -61,7 +61,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Map properties = [data: [userId: "666"]]
 
         when:
-        outputService.createRecordsForOutput(output, activity, properties)
+        outputService.createRecordsForOutput(activity, output, properties)
 
         then:
         1 * outputService.recordService.createRecord(_) >> { argument ->

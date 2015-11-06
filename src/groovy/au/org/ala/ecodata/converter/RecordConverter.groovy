@@ -145,7 +145,7 @@ class RecordConverter {
         if (project) {
             dwcFields.rights = project.dataSharingLicense
             dwcFields.rightsHolder = project.organisationName
-            dwcFields.insitutionID = project.organisationName
+            dwcFields.institutionID = project.organisationName
             dwcFields.accessRights = project.projectPrivacy
             dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
         }
@@ -161,6 +161,16 @@ class RecordConverter {
             dwcFields.locationID = site.siteId
             dwcFields.locationName = site.name
             dwcFields.locationRemarks = "${site.description}${site.description && site.notes ? ';' : ''}${site.notes}"
+            try {
+                if (site.extent?.geometry) {
+                    dwcFields.locality = site.extent.geometry.locality
+                    dwcFields.verbatimCoordinates = site.extent.geometry.centre
+                }
+            } catch (MissingPropertyException e) {
+                // Do nothing if the site does not have an extent property.
+                // Have to catch MissingPropertyException since there appears to be no other way to determine if a class
+                // has a dynamic property.
+            }
         }
 
         // Activity fields

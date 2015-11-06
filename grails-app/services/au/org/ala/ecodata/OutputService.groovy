@@ -149,7 +149,7 @@ class OutputService {
     }
 
     void createRecordsForOutput(Activity activity, Output output, Map props) {
-        Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
+        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
 
@@ -157,6 +157,10 @@ class OutputService {
             Project project = Project.findByProjectId(activity.projectId)
             Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
             ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
+
+            if (site) {
+                site = metadataService.getLocationMetadataForSites([site], true)[0]
+            }
 
             List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
 
