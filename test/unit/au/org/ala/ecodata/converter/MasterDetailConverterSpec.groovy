@@ -31,7 +31,7 @@ class MasterDetailConverterSpec extends Specification {
         Map metadata = [name: "multipleSightings", master: [:], detail: [dataType: "singleSighting"]]
 
         when:
-        List<Map> result = new MasterDetailConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new MasterDetailConverter().convert(new JsonSlurper().parseText(data).data, metadata)
 
         then:
         result.size() == 2

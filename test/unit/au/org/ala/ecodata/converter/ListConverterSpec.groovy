@@ -12,7 +12,8 @@ class ListConverterSpec extends Specification {
                 dataType: "list",
                 columns : [
                         [
-                                name: "col1"
+                                name    : "col1",
+                                dataType: "text"
                         ]
                 ]
         ]
@@ -31,7 +32,7 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data).data, metadata)
 
         then:
         result.size() == 2
@@ -50,21 +51,29 @@ class ListConverterSpec extends Specification {
                 columns : [
                         [
                                 name        : "col1",
-                                dwcAttribute: "individualCount"
+                                dwcAttribute: "individualCount",
+                                dataType    : "text"
                         ],
                         [
                                 name        : "col2",
-                                dwcAttribute: "decimalLatitude"
+                                dwcAttribute: "decimalLatitude",
+                                dataType    : "text"
                         ],
                         [
                                 name        : "col3",
-                                dwcAttribute: "decimalLongitude"
+                                dwcAttribute: "decimalLongitude",
+                                dataType    : "text"
+                        ],
+                        [
+                                name        : "col4",
+                                dwcAttribute: "somethingElse",
+                                dataType    : "text"
                         ]
                 ]
         ]
 
-        String col1 = """{"col1": "1", "col2": "1.1", "col3": "1.11"}"""
-        String col2 = """{"col1": "2", "col2": "2.1", "col3": "2.11"}"""
+        String col1 = """{"col1": "1", "col2": "1.1", "col3": "1.11", "col4": "foo"}"""
+        String col2 = """{"col1": "2", "col2": "2.1", "col3": "2.11", "col4": "bar"}"""
         String data = """{
             "activityId": "activity1",
             "name": "a",
@@ -77,19 +86,21 @@ class ListConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data), metadata)
+        List<Map> result = new ListConverter().convert(new JsonSlurper().parseText(data).data, metadata)
 
         then:
         result.size() == 2
         result[0].json.replaceAll("\\s", "") == col1.replaceAll("\\s", "")
         result[0].outputItemId == 0
-        result[0].individualCount == 1
-        result[0].decimalLatitude == 1.1
-        result[0].decimalLongitude == 1.11
+        result[0].individualCount == "1"
+        result[0].decimalLatitude == "1.1"
+        result[0].decimalLongitude == "1.11"
+        result[0].somethingElse == "foo"
         result[1].json.replaceAll("\\s", "") == col2.replaceAll("\\s", "")
         result[1].outputItemId == 1
-        result[1].individualCount == 2
-        result[1].decimalLatitude == 2.1
-        result[1].decimalLongitude == 2.11
+        result[1].individualCount == "2"
+        result[1].decimalLatitude == "2.1"
+        result[1].decimalLongitude == "2.11"
+        result[1].somethingElse == "bar"
     }
 }

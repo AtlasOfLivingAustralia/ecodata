@@ -18,11 +18,11 @@ class SightingConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
+        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data).data)
 
         then:
         result.size() == 1
-        result[0].json.replaceAll("\\s", "") == data.replaceAll("\\s", "")
+        result[0].json != null
         result[0].individualCount == 1
         result[0].decimalLatitude == 2.1
         result[0].decimalLongitude == 3.1
@@ -43,11 +43,11 @@ class SightingConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
+        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data).data)
 
         then:
         result.size() == 1
-        result[0].json.replaceAll("\\s", "") == data.replaceAll("\\s", "")
+        result[0].json != null
         result[0].individualCount == 1
         result[0].decimalLatitude == 2.1
         result[0].decimalLongitude == 3.1
@@ -68,11 +68,11 @@ class SightingConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
+        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data).data)
 
         then:
         result.size() == 1
-        result[0].json.replaceAll("\\s", "") == data.replaceAll("\\s", "")
+        result[0].json != null
         result[0].individualCount == 1
         result[0].decimalLatitude == 2.1
         result[0].decimalLongitude == 3.1
@@ -93,11 +93,11 @@ class SightingConverterSpec extends Specification {
         }"""
 
         when:
-        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data))
+        List<Map> result = new SingleSightingConverter().convert(new JsonSlurper().parseText(data).data)
 
         then:
         result.size() == 1
-        result[0].json.replaceAll("\\s", "") == data.replaceAll("\\s", "")
+        result[0].json != null
         result[0].individualCount == 1
         result[0].decimalLatitude == 2.0
         result[0].decimalLongitude == 3.0

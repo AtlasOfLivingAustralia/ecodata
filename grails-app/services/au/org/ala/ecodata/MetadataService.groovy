@@ -457,7 +457,7 @@ class MetadataService {
      * @param list of available sites.
      * @return sites with the updated extent values.
      */
-    def getLocationMetadataForSites(allSites, boolean includeLocality = true) {
+    def getLocationMetadataForSites(List allSites, boolean includeLocality = true) {
 
         def sites = getValidSites(allSites)
 

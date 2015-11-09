@@ -3,7 +3,6 @@ package au.org.ala.ecodata
 import static au.org.ala.ecodata.Status.*
 
 import au.org.ala.ecodata.converter.RecordConverter
-import au.org.ala.ecodata.converter.RecordConverterFactory
 
 class OutputService {
 
@@ -131,13 +130,14 @@ class OutputService {
 
                 getCommonService().updateProperties(output, props)
 
-                createRecordsForOutput(output, activity, props)
+                createRecordsForOutput(activity, output, props)
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Output.withSession { session -> session.clear() }
                 def error = "Error creating output for activity ${props.activityId} - ${e.message}"
+                e.printStackTrace()
                 log.error error, e
                 return [status: 'error', error: error]
             }
@@ -148,28 +148,29 @@ class OutputService {
         }
     }
 
-    void createRecordsForOutput(Output output, Activity activity, Map props) {
-        Map outputMetadata = metadataService.getOutputDataModelByName(props.name)
+    void createRecordsForOutput(Activity activity, Output output, Map props) {
+        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
-        outputMetadata?.dataModel?.each { dataModel ->
-            if (dataModel.containsKey("record") && dataModel.record.toBoolean()) {
-                RecordConverter converter = RecordConverterFactory.getConverter(dataModel.dataType)
-                List<Map> records = converter.convert(props, dataModel)
+        boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
 
-                records.each { record ->
-                    record.outputId = output.outputId
-                    record.projectId = activity.projectId
-                    record.projectActivityId = activity.projectActivityId
-                    record.activityId = activity.activityId
-                    record.userId = activity.userId
+        if (createRecord) {
+            Project project = Project.findByProjectId(activity.projectId)
+            Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
+            ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
 
-                    // createRecord returns a 2-element list:
-                    // [0] = Record (always there even if the save failed);
-                    // [1] = Error object if the save failed, empty map if the save succeeded.
-                    List result = recordService.createRecord(record)
-                    if (result[1]) {
-                        throw new IllegalArgumentException("Failed to create record: ${record}")
-                    }
+            if (site) {
+                site = metadataService.getLocationMetadataForSites([site], true)[0]
+            }
+
+            List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
+
+            records.each { record ->
+                // createRecord returns a 2-element list:
+                // [0] = Record (always there even if the save failed);
+                // [1] = Error object if the save failed, empty map if the save succeeded.
+                List result = recordService.createRecord(record)
+                if (result[1]) {
+                    throw new IllegalArgumentException("Failed to create record: ${record}")
                 }
             }
         }

@@ -2,44 +2,23 @@ package au.org.ala.ecodata.converter
 
 import net.sf.json.JSON
 
-class ListConverter implements RecordConverter {
+class ListConverter implements RecordFieldConverter {
 
     @Override
     List<Map> convert(Map data, Map outputMetadata = [:]) {
         List<Map> records = []
 
-        Map dwcMappings = [:]
-        outputMetadata.columns.each {
-            if (it.containsKey(DWC_ATTRIBUTE_NAME)) {
-                dwcMappings[it.dwcAttribute] = it.name
-            }
-        }
-
-        data.data[outputMetadata.name].eachWithIndex { it, index ->
+        // delegate the conversion of each column in each row to a specific converter for the column type
+        data[outputMetadata.name].eachWithIndex { row, index ->
             Map record = [:]
-            record.json = (it as JSON).toString()
-
-            if (dwcMappings.containsKey("individualCount")) {
-                record.individualCount = Integer.parseInt(it[dwcMappings["individualCount"]])
-            }
-            if (dwcMappings.containsKey("numberOfOrganisms")) {
-                record.numberOfOrganisms = Integer.parseInt(it[dwcMappings["numberOfOrganisms"]])
-            }
-            if (dwcMappings.containsKey("decimalLatitude")) {
-                record.decimalLatitude = Double.parseDouble(it[dwcMappings["decimalLatitude"]])
-            }
-            if (dwcMappings.containsKey("decimalLongitude")) {
-                record.decimalLongitude = Double.parseDouble(it[dwcMappings["decimalLongitude"]])
+            row.each { col ->
+                Map columnMetadata = outputMetadata.columns.find { colDef -> colDef.name == col.key }
+                RecordFieldConverter converter = RecordConverter.getFieldConverter(columnMetadata.dataType)
+                List<Map> fields = converter.convert([(col.key): col.value], columnMetadata as Map)
+                fields?.each { record << it }
             }
 
-            if (dwcMappings.containsKey("creator")) {
-                record.userId = it[dwcMappings["creator"]]
-            }
-            if(dwcMappings.containsKey("species")){
-                record.name = it[dwcMappings["species"]].name
-                record.guid = it[dwcMappings["species"]].guid
-            }
-
+            record.json = (row as JSON).toString()
             record.outputItemId = index
 
             records << record
