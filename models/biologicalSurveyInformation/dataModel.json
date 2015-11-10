@@ -3,136 +3,136 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "An identifier or reference number that may be applicable to the survey event.",
-            "name": "surveyId"
+            "name": "surveyId",
+            "description": "An identifier or reference number that may be applicable to the survey event."
         },
         {
             "dataType": "text",
-            "description": "Short descriptive title of the survey. This provides context for the survey event and enables you to search for it easily.",
-            "name": "surveyTitle"
+            "name": "surveyTitle",
+            "description": "Short descriptive title of the survey. This provides context for the survey event and enables you to search for it easily."
         },
         {
             "dataType": "text",
-            "description": "Description of the objectives of the survey event",
-            "name": "surveyObjectives"
+            "name": "surveyObjectives",
+            "description": "Description of the objectives of the survey event"
         },
         {
             "dataType": "text",
-            "description": "The name of the person leading the survey event",
-            "name": "surveyLeader"
+            "name": "surveyLeader",
+            "description": "The name of the person leading the survey event"
         },
         {
             "dataType": "text",
-            "description": "List of people people participating in the survey event.",
-            "name": "surveyParticipants"
+            "name": "surveyParticipants",
+            "description": "List of people people participating in the survey event."
         },
         {
             "dataType": "number",
-            "description": "The area in hectares over which the survey is being conducted",
-            "name": "surveyArea"
+            "name": "surveyArea",
+            "description": "The area in hectares over which the survey is being conducted"
         },
         {
             "dataType": "text",
-            "description": "The name of the methodology used. Note this should be the short-form name by which a standard methodology is commonly referred to (eg. 2 Ha 20 min Bird Survey). If it is not a common or standard methodology, please create a short-form name for it.",
             "name": "surveyMethodologyName",
+            "description": "The name of the methodology used. Note this should be the short-form name by which a standard methodology is commonly referred to (eg. 2 Ha 20 min Bird Survey). If it is not a common or standard methodology, please create a short-form name for it.",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Long description of the methodology used for the survey event",
-            "name": "surveyMethodologyDescription"
+            "name": "surveyMethodologyDescription",
+            "description": "Long description of the methodology used for the survey event"
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [{
-                "source": "This is a generalised form for recording biological survey data and should cover the basic structured data gathering requirements of most surveys. If additional structured data is required, please contact <a href='mailto: MERIT@environment.gov.au'>MERIT@environment.gov.au<\/a>.",
                 "computed": null,
+                "source": "This is a generalised form for recording biological survey data and should cover the basic structured data gathering requirements of most surveys.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "surveyId",
-                            "computed": null,
                             "preLabel": "Survey Id / Reference No.:",
+                            "computed": null,
+                            "source": "surveyId",
                             "type": "text"
                         },
                         {
-                            "source": "surveyTitle",
-                            "computed": null,
                             "preLabel": "Survey title:",
+                            "computed": null,
+                            "source": "surveyTitle",
                             "type": "text"
                         },
                         {
-                            "source": "surveyObjectives",
-                            "computed": null,
                             "preLabel": "Survey objectives:",
+                            "computed": null,
+                            "source": "surveyObjectives",
                             "type": "textarea"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "surveyLeader",
-                            "computed": null,
                             "preLabel": "Survey leader:",
+                            "computed": null,
+                            "source": "surveyLeader",
                             "type": "text"
                         },
                         {
-                            "source": "surveyParticipants",
-                            "computed": null,
                             "preLabel": "Survey participants:",
+                            "computed": null,
+                            "source": "surveyParticipants",
                             "type": "textarea"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "surveyArea",
-                            "computed": null,
                             "preLabel": "Survey area (Ha):",
+                            "computed": null,
+                            "source": "surveyArea",
                             "type": "number"
                         },
                         {
-                            "source": "surveyMethodologyName",
-                            "computed": null,
                             "preLabel": "Survey methodology used:",
+                            "computed": null,
+                            "source": "surveyMethodologyName",
                             "type": "text"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "surveyMethodologyDescription",
-                        "computed": null,
-                        "preLabel": "Description of survey methodology:",
-                        "type": "textarea"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Description of survey methodology:",
+                        "computed": null,
+                        "source": "surveyMethodologyDescription",
+                        "type": "textarea"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

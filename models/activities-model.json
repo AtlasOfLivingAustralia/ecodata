@@ -1085,6 +1085,7 @@
                 {
                     "aggregationType": "SUM",
                     "displayType": "",
+                    "gmsId": "APC",
                     "name": "accessAreaProtected",
                     "description": "Area in hectares that is being protected as a direct result of installing access control structures.",
                     "label": "Area protected by access control installations (Ha)",
@@ -2421,6 +2422,7 @@
                 {
                     "aggregationType": "SUM",
                     "displayType": "",
+                    "gmsId": "APF",
                     "name": "fenceAreaProtected",
                     "description": "The area in hectares enclosed within a protective fence",
                     "label": "Area protected by fencing (Ha)",
@@ -3421,18 +3423,14 @@
     ],
     "selectedActivity": {
         "outputs": [
-            "Final Report Details",
-            "Output Details",
-            "Project Acquittal",
-            "Attachments"
+            "Fence Details",
+            "Participant Information"
         ],
-        "supportsPhotoPoints": true,
-        "gmsId": "RVN25ALG RVA25ALG SDC25ALG RVSS25ALG PPRP25ALG ERA25ALG EML25ALG STP25ALG FMA25ALG DRV25ALG PMA25ALG PMQ25ALG WDT25ALG FNC25ALG CPEE25ALG CPEEP25ALG CPEEG25ALG CPEEV25ALG MPCFE25ALG MPCFEE25ALG MPCA25ALG IPP25ALG IPE25ALG ILSP25ALG IKTA25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG STA25ALG WQSA25ALG HC25ALG IKTN25ALG CGM25ALG PDN25ALG VAC25ALG",
-        "name": "25th Anniversary Landcare Grants - Final Report",
+        "gmsId": "FNC APF",
+        "name": "Fencing",
         "supportsSites": true,
         "type": "Activity",
-        "category": "Small Grants",
-        "status": "active"
+        "category": "Implementation actions"
     },
     "activities": [
         {
@@ -3505,7 +3503,7 @@
                 "Fence Details",
                 "Participant Information"
             ],
-            "gmsId": "FNC",
+            "gmsId": "FNC APF",
             "name": "Fencing",
             "supportsSites": true,
             "type": "Activity",
@@ -3684,7 +3682,7 @@
                 "Infrastructure Details",
                 "Participant Information"
             ],
-            "gmsId": "PAM PAI",
+            "gmsId": "PAM PAI APC",
             "name": "Public Access and Infrastructure",
             "supportsSites": true,
             "type": "Activity",

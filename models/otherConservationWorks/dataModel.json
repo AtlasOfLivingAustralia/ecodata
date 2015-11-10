@@ -3,13 +3,13 @@
     "dataModel": [
         {
             "dataType": "species",
-            "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)",
-            "name": "targetSpecies"
+            "name": "targetSpecies",
+            "description": "Species targeted for these conservation works / measures (start typing a  scientific or common name for a species)"
         },
         {
             "dataType": "text",
-            "description": "Threatened Ecological Community targeted for these conservation works / measures",
             "name": "targetTEC",
+            "description": "Threatened Ecological Community targeted for these conservation works / measures",
             "constraints": [
                 "ACT - Alpine Sphagnum Bogs and Associated Fens",
                 "ACT - Natural Temperate Grassland of the Southern Tablelands of NSW and the Australian Capital Territory",
@@ -123,24 +123,22 @@
         },
         {
             "dataType": "number",
-            "description": "The number of individual animals in a captive or ex-situ breeding program or plants in a propagation program.",
             "name": "animalBreedingNos",
+            "description": "The number of individual animals in a captive or ex-situ breeding program or plants in a propagation program.",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of individual animals / plants released back into the wild",
             "name": "animalReleaseNumber",
+            "description": "The number of individual animals / plants released back into the wild",
             "validate": "min[0]"
         },
         {
-            "dataType": "list",
-            "name": "conservationWorks",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "The type of conservation works implemented",
                     "name": "conservationActionType",
+                    "description": "The type of conservation works implemented",
                     "constraints": [
                         "Ecological thinning",
                         "Installation of nest boxes or other breeding/refuge structures",
@@ -152,20 +150,20 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "Area in hectares impacted by the conservation works",
                     "name": "areaImpactedByWorks",
+                    "description": "Area in hectares impacted by the conservation works",
                     "validate": "min[0]"
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "conservationWorks"
         },
         {
-            "dataType": "list",
-            "name": "protectionMechanisms",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "The type of agreement mechanism implemented to protect threatened species",
                     "name": "protectionMechanism",
+                    "description": "The type of agreement mechanism implemented to protect threatened species",
                     "constraints": [
                         "On title in perpetuity (eg Covenant Agreement)",
                         "Binding agreement not on title in perpetuity (eg Property Vegetation Plan)",
@@ -178,17 +176,19 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "The number of agreement mechanisms implemented as a result of the project",
                     "name": "numberOfProtectionMechanisms",
+                    "description": "The number of agreement mechanisms implemented as a result of the project",
                     "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",
-                    "description": "Area covered by conservation agreement (Ha):",
                     "name": "areaUnderAgreement",
+                    "description": "Area covered by conservation agreement (Ha):",
                     "validate": "required,min[0]"
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "protectionMechanisms"
         },
         {
             "dataType": "text",
@@ -197,101 +197,101 @@
     ],
     "viewModel": [
         {
+            "computed": null,
+            "type": "row",
             "items": [
                 {
-                    "source": "targetSpecies",
-                    "computed": null,
                     "preLabel": "Species:",
+                    "computed": null,
+                    "source": "targetSpecies",
                     "type": "autocomplete"
                 },
                 {
-                    "source": "targetTEC",
                     "preLabel": "Threatened Ecological Community:",
+                    "source": "targetTEC",
                     "type": "selectOne"
                 },
                 {
-                    "source": "animalBreedingNos",
-                    "computed": null,
                     "preLabel": "No. of animals in captive breeding programs or plants propagated:",
-                    "type": "number"
-                },
-                {
-                    "source": "animalReleaseNumber",
                     "computed": null,
+                    "source": "animalBreedingNos",
+                    "type": "number"
+                },
+                {
                     "preLabel": "No. of animals / plants released back into the wild:",
+                    "computed": null,
+                    "source": "animalReleaseNumber",
                     "type": "number"
                 }
             ],
-            "computed": null,
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
-            "source": "conservationWorks",
             "computed": null,
             "columns": [
                 {
-                    "title": "Conservation Action:",
-                    "source": "conservationActionType",
                     "width": "80%",
+                    "source": "conservationActionType",
+                    "title": "Conservation Action:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Area impacted by works (Ha):",
-                    "source": "areaImpactedByWorks",
                     "width": "18%",
+                    "source": "areaImpactedByWorks",
+                    "title": "Area impacted by works (Ha):",
                     "type": "number"
                 }
             ],
             "userAddedRows": "true",
-            "class": "output-section",
-            "type": "table"
+            "source": "conservationWorks",
+            "type": "table",
+            "class": "output-section"
         },
         {
-            "source": "protectionMechanisms",
             "computed": null,
             "columns": [
                 {
-                    "title": "Type of Agreement mechanism:",
-                    "source": "protectionMechanism",
                     "width": "65%",
+                    "source": "protectionMechanism",
+                    "title": "Type of Agreement mechanism:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "No. of Agreement mechanisms:",
-                    "source": "numberOfProtectionMechanisms",
                     "width": "18%",
+                    "source": "numberOfProtectionMechanisms",
+                    "title": "No. of Agreement mechanisms:",
                     "type": "number"
                 },
                 {
-                    "title": "Area under Agreement (Ha):",
-                    "source": "areaUnderAgreement",
                     "width": "18%",
+                    "source": "areaUnderAgreement",
+                    "title": "Area under Agreement (Ha):",
                     "type": "number"
                 }
             ],
             "userAddedRows": "true",
-            "class": "output-section",
-            "type": "table"
+            "source": "protectionMechanisms",
+            "type": "table",
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "notes",
-                "computed": null,
                 "preLabel": "Comments / Notes:",
+                "computed": null,
+                "source": "notes",
                 "type": "textarea"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
                 "computed": null,
+                "source": "<h4>Please attach applicable Plan documents via Admin tab<\/h4>",
                 "type": "literal"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }
