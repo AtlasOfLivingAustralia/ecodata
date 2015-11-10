@@ -932,6 +932,10 @@ class ElasticSearchService {
             source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
         }
 
+        if (params.omitSource) {
+            source.noFields()
+        }
+
         request.source(source)
 
         return request
