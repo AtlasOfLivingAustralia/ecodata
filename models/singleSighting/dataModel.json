@@ -1,5 +1,6 @@
 {
     "modelName": "Single Sighting",
+    "record": "true",
     "dataModel": [
         {
             "name": "singleSighting",
