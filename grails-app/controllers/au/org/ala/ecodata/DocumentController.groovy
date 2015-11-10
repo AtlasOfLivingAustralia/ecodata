@@ -74,10 +74,12 @@ class DocumentController {
     @RequireApiKey
     def search() {
         def searchCriteria = request.JSON
-        def max = searchCriteria.remove('max')
-        def offset = searchCriteria.remove('offset')
+        def max = searchCriteria.remove('max') as Integer
+        def offset = searchCriteria.remove('offset') as Integer
+        String sort = searchCriteria.remove('sort')
+        String order = searchCriteria.remove('order')
 
-        def searchResults = documentService.search(searchCriteria, max, offset)
+        def searchResults = documentService.search(searchCriteria, max, offset, sort, order)
         asJson searchResults
     }
 

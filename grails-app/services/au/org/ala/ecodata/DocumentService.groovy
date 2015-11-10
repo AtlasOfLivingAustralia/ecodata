@@ -111,7 +111,7 @@ class DocumentService {
      *
      * @return a map with two keys: "count": the total number of results, "documents": a list of the documents that match the supplied criteria
      */
-    public Map search(Map searchCriteria, Integer max = 100, Integer offset = 0) {
+    public Map search(Map searchCriteria, Integer max = 100, Integer offset = 0, String sort = null, String orderBy = null) {
 
         BuildableCriteria criteria = Document.createCriteria()
         List documents = criteria.list(max:max, offset:offset) {
@@ -124,6 +124,9 @@ class DocumentService {
                 else {
                     eq(prop, value)
                 }
+            }
+            if (sort) {
+                order(sort, orderBy?:'asc')
             }
 
         }
