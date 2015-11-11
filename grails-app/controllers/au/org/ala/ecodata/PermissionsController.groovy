@@ -466,7 +466,7 @@ class PermissionsController {
 
         if (userId) {
             List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
-            render permissions.collect { Project.findByProjectId(it.entityId) } as JSON
+            render permissions.collect { Project.findByProjectId(it.entityId) }?.minus(null) as JSON
         } else {
             render status: 400, text: "Required params not provided: id"
         }
