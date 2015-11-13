@@ -26,6 +26,7 @@ import org.elasticsearch.index.query.BoolFilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.FilteredQueryBuilder
 import org.elasticsearch.index.query.MatchAllQueryBuilder
+import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -872,12 +873,13 @@ class ElasticSearchService {
     }
 
 
-    def searchActivities(activityFilters, Map paginationParams, String index = DEFAULT_INDEX) {
+    def searchActivities(activityFilters, Map paginationParams, String searchTerm = null, String index = DEFAULT_INDEX) {
         SearchRequest request = new SearchRequest()
         request.indices(index)
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
-        def queryBuilder = new MatchAllQueryBuilder()
+        def queryBuilder = searchTerm ? QueryBuilders.queryStringQuery(searchTerm) : QueryBuilders.matchAllQuery()
+
         if (activityFilters) {
             def filters = buildFilters(activityFilters)
             queryBuilder = new FilteredQueryBuilder(queryBuilder, filters)

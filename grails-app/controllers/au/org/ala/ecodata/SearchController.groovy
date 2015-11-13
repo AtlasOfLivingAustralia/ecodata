@@ -166,9 +166,10 @@ class SearchController {
         def scores = params.getList("scores")
 
         def filters = params.getList("fq")
+        def searchTerm = params.query
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
         additionalFilters.addAll(filters)
-        def results = reportService.aggregate(additionalFilters, reportService.findScoresByLabel(scores))
+        def results = reportService.aggregate(additionalFilters, searchTerm, reportService.findScoresByLabel(scores))
         render results as JSON
     }
 
@@ -176,11 +177,12 @@ class SearchController {
         def scoreLabels = params.getList("scores")
         def scores = reportService.findScoresByLabel(scoreLabels)
         def filters = params.getList("fq")
+        def searchTerm = params.query
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
 
         additionalFilters.addAll(filters)
         def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.outputTargetReport(additionalFilters, scores)
+        def scoresReport = reportService.outputTargetReport(additionalFilters, searchTerm, scores)
 
         def results = [scores:scoresReport, targets:targets]
         render results as JSON
