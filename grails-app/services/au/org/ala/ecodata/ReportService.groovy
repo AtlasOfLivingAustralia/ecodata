@@ -62,17 +62,17 @@ class ReportService {
         def report = [:]
         report.groupingSpec = [entity:'activity', property:'plannedEndDate', type:'date', format:'MMM yyyy', buckets:params.getList("dates")]
         report.scores = findScoresByCategory("Green Army")
-        aggregate(filters, report.scores, report.groupingSpec)
+        aggregate(filters, null, report.scores, report.groupingSpec)
     }
 
-    def queryPaginated(List filters, GroupingAggregator aggregator, Closure action) {
+    def queryPaginated(List filters, String searchTerm, GroupingAggregator aggregator, Closure action) {
 
         // Only dealing with approved activities.
 
 
         Map params = [offset:0, max:100]
 
-        def results = elasticSearchService.searchActivities(filters, params)
+        def results = elasticSearchService.searchActivities(filters, params, searchTerm)
 
         def total = results.hits.totalHits
         while (params.offset < total) {
@@ -83,19 +83,19 @@ class ReportService {
             }
             params.offset += params.max
 
-            results  = elasticSearchService.searchActivities(filters, params)
+            results  = elasticSearchService.searchActivities(filters, params, searchTerm)
         }
     }
 
     def aggregate(List filters) {
-        aggregate(filters, buildReportSpec())
+        aggregate(filters, null, buildReportSpec())
     }
 
-    def aggregate(List filters, toAggregate, topLevelGrouping = null) {
+    def aggregate(List filters, String searchTerm, toAggregate, topLevelGrouping = null) {
 
         GroupingAggregator aggregator = new GroupingAggregator(topLevelGrouping, toAggregate)
 
-        queryPaginated(filters, aggregator, this.&aggregateActivity)
+        queryPaginated(filters, searchTerm, aggregator, this.&aggregateActivity)
 
         def allResults = aggregator.results()
         def metadata = allResults.metadata
@@ -150,7 +150,7 @@ class ReportService {
         return results?results[0].results:[]
     }
 
-    def outputTargetReport(filters) {
+    def outputTargetReport(List filters, String searchTerm = null) {
         def scores = []
 
         def labels = []
@@ -170,14 +170,14 @@ class ReportService {
                 }
             }
         }
-        outputTargetReport(filters, scores)
+        outputTargetReport(filters, searchTerm, scores)
     }
 
-    def outputTargetReport(filters, scores) {
+    def outputTargetReport(List filters, String searchTerm, scores) {
 
         def groupingSpec = [entity:'activity', property:'programSubProgram', type:'discrete']
 
-        aggregate(filters, scores, groupingSpec)
+        aggregate(filters, searchTerm, scores, groupingSpec)
     }
 
     def outputTargetsBySubProgram(params) {
@@ -188,7 +188,7 @@ class ReportService {
 
         params += [offset:0, max:100]
         def targetsBySubProgram = [:]
-        def queryString = params.q ?: "*:*"
+        def queryString = params.query ?: "*:*"
         def results = elasticSearchService.search(queryString, params, "homepage")
 
         def propertyAccessor = new PropertyAccessor("target")
