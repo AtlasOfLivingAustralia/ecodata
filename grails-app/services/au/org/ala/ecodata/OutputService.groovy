@@ -184,14 +184,11 @@ class OutputService {
                 getCommonService().updateProperties(output, props)
 
                 List<Record> records = Record.findAllByOutputId(outputId)
-
                 if (records) {
-                    records.each {
-                        it.delete()
-                    }
+                    Record.deleteAll(records)
                 }
 
-                createRecordsForOutput(output, activity, props)
+                createRecordsForOutput(activity, output, props)
 
                 return [status: 'ok']
             } catch (Exception e) {
