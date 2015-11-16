@@ -1016,10 +1016,10 @@ class ElasticSearchService {
                 if (fqs.size() > 1) {
 					
 					if(repeatFacets.find{it == fqs[0]}){
-						fb.should(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+						fb.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
 					}
 					else{
-						fb.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+						fb.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
 					}
                 }
                 else {
@@ -1051,13 +1051,13 @@ class ElasticSearchService {
             // support SOLR style filters (-) for exclude
             if (fqs.size() > 1) {
                 if (fqs[0].getAt(0) == "-") {
-                    boolFilter.mustNot(FilterBuilders.prefixFilter(fqs[0][1..-1], fqs[1]))
+                    boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
                 }
 				else if(repeatFacets.find{it == fqs[0]}){
-					boolFilter.should(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+					boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
 				}
 				else{
-					boolFilter.must(FilterBuilders.prefixFilter(fqs[0], fqs[1]))
+					boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
 				}
             }
             else {
