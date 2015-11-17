@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import static au.org.ala.ecodata.Status.*
 
 /**
  * Controller for getting and setting user <-> project
@@ -370,7 +371,7 @@ class PermissionsController {
     def getProjectsForUserId() {
         String userId = params.id
         if (userId) {
-            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred, params)
+            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
             List out = []
             up.each {
                 Map t = [:]
@@ -395,7 +396,7 @@ class PermissionsController {
         def userId = params.id
         if (userId) {
             Map projectRetrieved = [:]
-            def up = UserPermission.findAllByUserIdAndEntityType(userId, Project.class.name, params)
+            def up = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, DELETED, params)
             List out  = []
             up.each {
                 Map t
@@ -423,7 +424,7 @@ class PermissionsController {
     def getOrganisationIdsForUserId() {
         String userId = params.id
         if (userId) {
-            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Organisation.class.name, AccessLevel.starred, DELETED, params)
             List out = permissions.collect { it.entityId }
             render out as JSON
         } else {
@@ -440,7 +441,7 @@ class PermissionsController {
     def getOrganisationsForUserId() {
         String userId = params.id
         if (userId) {
-            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Organisation.class.name, AccessLevel.starred, DELETED, params)
             List out = []
             permissions.each {
                 Map t = [:]
@@ -465,7 +466,7 @@ class PermissionsController {
         String userId = params.id
 
         if (userId) {
-            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
             render permissions.collect { Project.findByProjectId(it.entityId) }?.minus(null) as JSON
         } else {
             render status: 400, text: "Required params not provided: id"
