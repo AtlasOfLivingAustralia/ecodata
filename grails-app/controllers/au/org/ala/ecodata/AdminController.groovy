@@ -2,18 +2,16 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.util.Environment
-import groovy.json.JsonBuilder
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
 import static groovyx.gpars.actor.Actors.actor
-import static groovyx.gpars.actor.Actors.actor
-import static groovyx.gpars.actor.Actors.actor
-import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
+
+    private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
 
     def outputService, activityService, siteService, projectService, authService,
         collectoryService,
@@ -354,6 +352,7 @@ class AdminController {
     private boolean createStageReportsFromTimeline(project) {
         def timeline = project.timeline
 
+        def dueDateDays = metadataService.programModel(project.associatedProgram).weekDaysToCompleteReport ?: DEFAULT_REPORT_DAYS_TO_COMPLETE
         def lastActivityEndDate = null
         if (!timeline) {
             log.info "No timeline present for project: ${project.projectId}"
@@ -406,10 +405,10 @@ class AdminController {
 
             // Make sure the report can be submitted after the project ends, regardless of when the stage ends.
             if (new DateTime(project.plannedEndDate).toString() < stage.toDate) {
-                report.dueDate = new DateTime(project.plannedEndDate).plusDays(30).toDate()
+                report.dueDate = new DateTime(project.plannedEndDate).plusDays(dueDateDays).toDate()
             }
             else {
-                report.dueDate = toDate.plusDays(30).toDate()
+                report.dueDate = toDate.plusDays(dueDateDays).toDate()
             }
 
             report.save(flush:true, failOnError: true)
