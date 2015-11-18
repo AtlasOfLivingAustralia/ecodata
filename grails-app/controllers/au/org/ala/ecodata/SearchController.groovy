@@ -7,7 +7,7 @@ import grails.converters.JSON
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-
+import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
 
 class SearchController {
@@ -27,13 +27,23 @@ class SearchController {
     }
 
     def elastic() {
-        def res = elasticSearchService.search(params.query, params, "")
+        def res = elasticSearchService.search(params.query, params, DEFAULT_INDEX)
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
     }
 
     def elasticHome() {
-        def res = elasticSearchService.search(params.query, params, "homepage")
+        def res = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+        response.setContentType("application/json; charset=\"UTF-8\"")
+        render res
+    }
+
+    /*
+    * Searches the given query in project activity context.
+    * */
+    @RequireApiKey
+    def elasticProjectActivity(){
+        def res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
     }
