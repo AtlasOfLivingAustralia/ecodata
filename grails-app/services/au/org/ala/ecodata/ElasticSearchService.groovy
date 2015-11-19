@@ -850,11 +850,11 @@ class ElasticSearchService {
             projectActivity.projectActivityId = pActivity.projectActivityId
             projectActivity.embargoed = pActivity?.visibility?.embargoUntil && Date.parse("yyyy-MM-dd", pActivity.visibility.embargoUntil).after(new Date())
             projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
-            projectActivity.projectName = project.name
-            projectActivity.projectId = project.projectId
+            projectActivity.projectName = project?.name
+            projectActivity.projectId = project?.projectId
 
             def allRecords = recordService.getAllByActivity(activity.activityId)
-            allRecords.each {
+            allRecords?.each {
                 Map values = [:]
                 values.name = it.name
                 values.guid = it.guid
