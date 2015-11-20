@@ -4,6 +4,7 @@ import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -33,7 +34,11 @@ class SearchController {
     }
 
     def elasticHome() {
-        def res = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+        Map geoSearch = null
+        if (params.geoSearchJSON) {
+            geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
+        }
+        def res = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX, geoSearch)
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
     }
