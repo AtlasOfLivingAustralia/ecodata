@@ -1022,7 +1022,7 @@ class ElasticSearchService {
             case "Circle":
                 shape = ShapeBuilder.newCircleBuilder()
                         .radius(geographicSearchCriteria.radius?.toString())
-                        .center(geographicSearchCriteria.coordinates[0], geographicSearchCriteria.coordinates[1])
+                        .center(geographicSearchCriteria.coordinates[0] as double, geographicSearchCriteria.coordinates[1] as double)
                 break
         }
 
