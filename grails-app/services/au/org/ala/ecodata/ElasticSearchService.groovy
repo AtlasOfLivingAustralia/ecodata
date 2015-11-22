@@ -974,7 +974,6 @@ class ElasticSearchService {
     *       // c. unauthenticated user >> show only embargoed records across the projects.
     *
     */
-
     void buildProjectActivityQuery(GrailsParameterMap params) {
 
         String query = params.searchTerm ?: ''
@@ -1010,8 +1009,12 @@ class ElasticSearchService {
                         List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(params.userId, AccessLevel.admin, AccessLevel.editor)
 
                         projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
-                            if (index == 0) forcedQuery = forcedQuery + ' AND (('
-                            else if (index != 0) forcedQuery = forcedQuery + ' OR '
+                            if (index == 0) {
+                                forcedQuery = forcedQuery + ' AND (('
+                            } else if (index != 0) {
+                                forcedQuery = forcedQuery + ' OR '
+                            }
+
                             forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
                         }
                         if (projectsTheUserIsAMemberOf) {
@@ -1027,6 +1030,10 @@ class ElasticSearchService {
             default:
                 forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                 break
+        }
+
+        if (!forcedQuery) {
+            forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
         params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
