@@ -71,7 +71,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project', 'au.org.ala.ecodata.Site', 'au.org.ala.ecodata.Activity']
+    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project', 'au.org.ala.ecodata.Site', 'au.org.ala.ecodata.Activity', 'au.org.ala.ecodata.Record']
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
@@ -101,7 +101,7 @@ class ElasticSearchService {
         def docJson = doc as JSON
         index = index ?: DEFAULT_INDEX
 
-        if (checkForDelete(doc, docId)) {
+        if (checkForDelete(doc, docId, index)) {
             return null
         }
 
@@ -138,6 +138,8 @@ class ElasticSearchService {
                 docId = doc.organisationId; break
             case "au.org.ala.ecodata.Report":
                 docId = doc.reportId; break
+            case "au.org.ala.ecodata.Record":
+                docId = doc.occurrenceID; break
             default:
                 docId = doc.id; break
         }
@@ -158,23 +160,14 @@ class ElasticSearchService {
      * @param docId
      * @return isDeleted (Boolean)
      */
-    def checkForDelete(doc, docId) {
+    def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
         def resp
-        def index = DEFAULT_INDEX
+
         try {
             resp = client.prepareGet(index, DEFAULT_TYPE, docId).execute().actionGet();
         } catch (Exception e) {
             log.error "ES prepareGet error: ${e}", e
-        }
-
-        if (!resp) {
-            index = PROJECT_ACTIVITY_INDEX
-            try {
-                resp = client.prepareGet(index, DEFAULT_TYPE, docId).execute().actionGet();
-            } catch (Exception e) {
-                log.error "ES prepareGet error: ${e}", e
-            }
         }
 
         if (resp && doc.status == DELETED) {
@@ -354,12 +347,16 @@ class ElasticSearchService {
                         },
                         "projectActivity":{
                              "properties":{
+                                "embargoUntil":{
+                                   "type":"string"
+                                },
                                 "name":{
                                     "type":"string",
                                     "fields": {
                                     "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
                                     }
                                 },
+
                                 "projectName":{
                                     "type":"string",
                                     "fields": {
@@ -368,6 +365,10 @@ class ElasticSearchService {
                                 },
                                 "projectId":{
                                     "type":"string",
+                                    "index":"not_analyzed"
+                                },
+                                "embargoed":{
+                                    "type":"boolean",
                                     "index":"not_analyzed"
                                 },
                                 "activityOwnerName":{
@@ -663,6 +664,17 @@ class ElasticSearchService {
                     }
                 }
                 break;
+
+            case "au.org.ala.ecodata.Record":
+                Record record = Record.findByOccurrenceID(docId)
+                if(record) {
+                    Activity activity = Activity.findByActivityId(record.activityId)
+                    def doc = activityService.toMap(activity, ActivityService.FLAT)
+                    doc = prepareActivityForIndexing(doc)
+                    indexDoc(doc, doc?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                }
+                break
+
             case "au.org.ala.ecodata.Activity":
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
@@ -847,8 +859,10 @@ class ElasticSearchService {
             List records = []
 
             projectActivity.name = pActivity.name
+            projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
-            projectActivity.embargoed = pActivity?.visibility?.embargoUntil && Date.parse("yyyy-MM-dd", pActivity.visibility.embargoUntil).after(new Date())
+            projectActivity.embargoed = pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date())
+            projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: ''
             projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
             projectActivity.projectName = project?.name
             projectActivity.projectId = project?.projectId
@@ -862,8 +876,8 @@ class ElasticSearchService {
                 records << values
             }
             projectActivity.records = records
-            projectActivity.lastUpdatedYear = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
-            projectActivity.lastUpdatedMonth = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+            projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
 
             activity.projectActivity = projectActivity
         } else if (project) {
@@ -915,10 +929,6 @@ class ElasticSearchService {
      */
     def doSearch(SearchRequest request) {
         def response = client.search(request).actionGet()
-        //def searchHits = response.hits()
-        //def result = [:]
-        //result.total = searchHits.totalHits()
-        //log.debug "Search returned ${result.total ?: 0} result(s)."
         return response
     }
 
@@ -936,12 +946,77 @@ class ElasticSearchService {
         }
 
         SearchSourceBuilder source = pagenateQuery(paginationParams).query(queryBuilder)
-
         request.source(source)
 
-
         client.search(request).actionGet()
+    }
 
+    /*
+    *  Builds a customized project activity query for home page index based on userId and projectId
+    *  1. My records page >> show all records associated to the user.
+    *  2. Project data page >>
+    *       // a. if ala admin / project member  >> show all records associated to the project
+    *       // b. if logged in user >> show non embargoed records + records created by user.
+    *       // c. if unauthenticated user >> show non embargoed records.
+    *   3. All records page and no projectId's
+    *       // a. logged in users and ala admin >> show all records across the projects
+    *       // b. logged in users and not ala admin >> show embargoed records that user own or been member of the projects
+    *       // c. unauthenticated user >> show only embargoed records across the projects.
+    *
+    */
+
+    void buildProjectActivityQuery(GrailsParameterMap params) {
+
+        String query = params.searchTerm ?: ''
+        String userId = params.userId
+        String projectId = params.projectId
+        String forcedQuery = ''
+
+        switch (params.caller) {
+
+            case 'myrecords':
+                if (params.userId) {
+                    forcedQuery = '(docType:activity AND userId:' + userId + ')'
+                }
+                break
+
+            case 'project':
+                if (params.projectId) {
+                    if (params.userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
+                    } else if (params.userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + params.userId + '))'
+                    } else if (!params.userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    }
+                }
+                break
+            case 'allrecords':
+                if (!params.projectId) {
+                    if (params.userId && permissionService.isUserAlaAdmin(params.userId)) {
+                        forcedQuery = '(docType:activity)'
+                    } else if (params.userId) {
+                        forcedQuery = '((docType:activity)'
+                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(params.userId, AccessLevel.admin, AccessLevel.editor)
+
+                        projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
+                            if (index == 0) forcedQuery = forcedQuery + ' AND (('
+                            else if (index != 0) forcedQuery = forcedQuery + ' OR '
+                            forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
+                        }
+                        if (projectsTheUserIsAMemberOf) {
+                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + params.userId + ')))'
+                        } else {
+                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + params.userId + '))'
+                        }
+                    } else if (!params.userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                    }
+                }
+        }
+
+        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
+        params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
     /**

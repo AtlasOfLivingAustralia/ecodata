@@ -4,6 +4,7 @@ import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import org.apache.ivy.osgi.updatesite.xml.Require
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
@@ -14,11 +15,12 @@ class SearchController {
 
     static final String PUBLISHED_ACTIVITIES_FILTER = 'publicationStatus:published'
 
-    def searchService
-    def elasticSearchService
-    def reportService
-    def projectService
-    def metadataService
+    SearchService searchService
+    ElasticSearchService elasticSearchService
+    ReportService reportService
+    ProjectService projectService
+    MetadataService metadataService
+    ProjectActivityService projectActivityService
 
 
     def index(String query) {
@@ -40,9 +42,11 @@ class SearchController {
 
     /*
     * Searches the given query in project activity context.
-    * */
+    * Requires API key to prevent unauthorized access to embargoed records.
+    */
     @RequireApiKey
     def elasticProjectActivity(){
+        elasticSearchService.buildProjectActivityQuery(params)
         def res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
