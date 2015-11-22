@@ -14,6 +14,8 @@
  */
 
 package au.org.ala.ecodata
+
+import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
@@ -21,11 +23,14 @@ import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
+import org.elasticsearch.common.geo.ShapeRelation
+import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
+import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.FilteredQueryBuilder
-import org.elasticsearch.index.query.MatchAllQueryBuilder
+import org.elasticsearch.index.query.GeoShapeFilterBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -41,7 +46,9 @@ import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString
+import static org.elasticsearch.index.query.FilterBuilders.*
+import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 import static au.org.ala.ecodata.Status.*
 import static au.org.ala.ecodata.ElasticIndex.*
@@ -339,7 +346,10 @@ class ElasticSearchService {
                                         }
                                     }
                                 },
-                                "externalId":{"type":"string"}
+                                "externalId":{"type":"string"},
+                                "geoIndex": {
+                                    "type": "geo_shape"
+                                }
                             }
                         },
                         "externalId": {
@@ -912,11 +922,11 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params, index) {
+    def search(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
-        def request = buildSearchRequest(query, params, index)
+        def request = buildSearchRequest(query, params, index, geoSearchCriteria)
         client.search(request).actionGet()
     }
 
@@ -972,7 +982,7 @@ class ElasticSearchService {
         String projectId = params.projectId
         String forcedQuery = ''
 
-        switch (params.caller) {
+        switch (params.view) {
 
             case 'myrecords':
                 if (params.userId) {
@@ -1013,6 +1023,10 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
                 }
+
+            default:
+                forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                break
         }
 
         params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
@@ -1026,7 +1040,7 @@ class ElasticSearchService {
      * @param params
      * @return SearchRequest
      */
-    def buildSearchRequest(query, GrailsParameterMap params, index) {
+    def buildSearchRequest(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -1042,7 +1056,12 @@ class ElasticSearchService {
         SearchSourceBuilder source = pagenateQuery(params)
 
         // add query
-        source.query(queryString(query))
+        if (geoSearchCriteria) {
+            // geo shape filters are not supported by the queryString syntax, so we need to create a filteredQuery
+            source.query(filteredQuery(queryStringQuery(query), buildGeoFilter(geoSearchCriteria)))
+        } else {
+            source.query(queryStringQuery(query))
+        }
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
@@ -1066,6 +1085,31 @@ class ElasticSearchService {
         request.source(source)
 
         return request
+    }
+
+    private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria) {
+        GeoShapeFilterBuilder filter = null
+
+        ShapeBuilder shape = null
+        switch (geographicSearchCriteria.type) {
+            case "Polygon":
+                shape = ShapeBuilder.newPolygon()
+                shape.points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
+                    new Coordinate(coordinate[0] as double, coordinate[1] as double)
+                } as Coordinate[])
+                break;
+            case "Circle":
+                shape = ShapeBuilder.newCircleBuilder()
+                        .radius(geographicSearchCriteria.radius?.toString())
+                        .center(geographicSearchCriteria.coordinates[0] as double, geographicSearchCriteria.coordinates[1] as double)
+                break
+        }
+
+        if (shape) {
+            filter = geoShapeFilter("geoIndex", shape, ShapeRelation.INTERSECTS)
+        }
+
+        filter
     }
 
     private SearchSourceBuilder pagenateQuery(Map params) {
