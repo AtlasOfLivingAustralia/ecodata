@@ -3323,14 +3323,16 @@
             "Infrastructure Details",
             "Participant Information"
         ],
-        "outputConfig": {
-            "Access Control Details": {
+        "outputConfig": [
+            {
+                "outputName": "Access Control Details",
                 "optional":true
             },
-            "Infrastructure Details": {
+            {
+                "outputName":"Infrastructure Details",
                 "optional":true
             }
-        },
+        ],
         "gmsId": "PAM PAI APC",
         "name": "Public Access and Infrastructure",
         "supportsSites": true,
@@ -3472,14 +3474,16 @@
                 "Indigenous Employment",
                 "Indigenous Businesses"
             ],
-            "outputConfig": {
-                "Indigenous Employment": {
+            "outputConfig": [
+                {
+                    "outputName":"Indigenous Employment",
                     "optional":true
                 },
-                "Indigenous Businesses": {
+                {
+                    "outputName":"Indigenous Businesses",
                     "optional":true
                 }
-            },
+            ],
             "gmsId": "IPE",
             "name": "Indigenous Employment and Businesses",
             "type": "Activity",
@@ -3557,11 +3561,12 @@
                 "Participant Information",
                 "Photo Points"
             ],
-            "outputConfig": {
-                "Fence Details": {
+            "outputConfig": [
+                {
+                    "outputName":"Fence Details",
                     "optional":true
                 }
-            },
+            ],
             "supportsPhotoPoints": true,
             "gmsId": "PMA PMQ",
             "name": "Pest Management",
@@ -3607,14 +3612,16 @@
                 "Infrastructure Details",
                 "Participant Information"
             ],
-            "outputConfig": {
-                "Access Control Details": {
+            "outputConfig": [
+                {
+                    "outputName":"Access Control Details",
                     "optional":true
                 },
-                "Infrastructure Details": {
+                {
+                    "outputName":"Infrastructure Details",
                     "optional":true
                 }
-            },
+            ],
             "gmsId": "PAM PAI APC",
             "name": "Public Access and Infrastructure",
             "supportsSites": true,
@@ -3671,14 +3678,16 @@
                 "Participant Information",
                 "Photo Points"
             ],
-            "outputConfig": {
-                "Weed Treatment Details": {
+            "outputConfig": [
+                {
+                    "outputName":"Weed Treatment Details",
                     "optional":true
                 },
-                "Site Preparation Actions": {
+                {
+                    "outputName":"Site Preparation Actions",
                     "optional":true
                 }
-            },
+            ],
             "supportsPhotoPoints": true,
             "gmsId": "STP",
             "name": "Site Preparation",
@@ -3692,14 +3701,16 @@
                 "Skills Development",
                 "Participant Information"
             ],
-            "outputConfig": {
-                "Training Details": {
+            "outputConfig": [
+                {
+                    "outputName":"Training Details",
                     "optional":true
                 },
-                "Skills Development": {
+                {
+                    "outputName":"Skills Development",
                     "optional":true
                 }
-            },
+            ],
             "gmsId": "TSD",
             "name": "Training and Skills Development",
             "type": "Activity",
@@ -3760,14 +3771,16 @@
                 "Threatening Processes and Site Condition Risks",
                 "Participant Information"
             ],
-            "outputConfig": {
-                "Site Planning Details": {
+            "outputConfig": [
+                {
+                    "outputName":"Site Planning Details",
                     "optional":true
                 },
-                "Threatening Processes and Site Condition Risks": {
+                {
+                    "outputName":"Threatening Processes and Site Condition Risks",
                     "optional":true
                 }
-            },
+            ],
             "supportsPhotoPoints": true,
             "gmsId": "STA",
             "name": "Works Planning and Risk",
