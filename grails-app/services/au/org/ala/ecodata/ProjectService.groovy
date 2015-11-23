@@ -53,6 +53,17 @@ class ProjectService {
             list = Project.findAllByIsCitizenScienceAndStatus(true, ACTIVE)
         list?.collect { toMap(it, levelOfDetail) }
     }
+
+    def listMeritProjects (levelOfDetail = [], includeDeleted = false){
+        def list = []
+
+        if (includeDeleted) {
+            list = Project.findAllByIsMERIT(true)
+        } else {
+            list = Project.findAllByIsMERITAndStatus(true, ACTIVE)
+        }
+        list.collect { toMap(it, levelOfDetail) }
+    }
 	
 	def promoted(){
 		def list = Project.findAllByPromoteOnHomepage("yes")

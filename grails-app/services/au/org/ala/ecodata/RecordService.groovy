@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
 import au.com.bytecode.opencsv.CSVWriter
@@ -87,6 +88,10 @@ class RecordService {
         Record record = new Record().save(true)
         def errors = updateRecord(record, json)
         [record, errors]
+    }
+
+    def getAllByActivity(String activityId) {
+        Record.findAllByActivityIdAndStatus(activityId, ACTIVE).collect { toMap(it) }
     }
 
     /**

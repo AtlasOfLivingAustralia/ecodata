@@ -14,6 +14,8 @@
  */
 
 package au.org.ala.ecodata
+
+import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
@@ -21,11 +23,14 @@ import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
 import org.elasticsearch.client.Client
+import org.elasticsearch.common.geo.ShapeRelation
+import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.BoolFilterBuilder
+import org.elasticsearch.index.query.FilterBuilder
 import org.elasticsearch.index.query.FilterBuilders
 import org.elasticsearch.index.query.FilteredQueryBuilder
-import org.elasticsearch.index.query.MatchAllQueryBuilder
+import org.elasticsearch.index.query.GeoShapeFilterBuilder
 import org.elasticsearch.index.query.QueryBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
@@ -38,13 +43,23 @@ import org.grails.datastore.mapping.engine.event.EventType
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
+import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import static org.elasticsearch.index.query.QueryBuilders.queryString
+import static org.elasticsearch.index.query.FilterBuilders.*
+import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
+import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.ElasticIndex.*
+
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
+ *
+ * Note:
+ * DEFAULT_INDEX used by MERIT
+ * HOMEPAGE_INDEX shared by both Biocollect and MERIT (MERIT embeds activities to the project. Bicollect doesn't include embedded activities)
+ * PROJECT_ACTIVITY_INDEX used by Biocollect and its applicable to survey based projects (ie; non NRM one's)
  *
  * Code gist taken from
  *   https://github.com/mstein/elasticsearch-grails-plugin/blob/master/grails-app/services/org/grails/plugins/elasticsearch/ElasticSearchService.groovy
@@ -53,22 +68,26 @@ import static au.org.ala.ecodata.Status.*
  */
 class ElasticSearchService {
     static transactional = false
-    def grailsApplication, projectService, siteService, activityService, metadataService
+    def grailsApplication
+
+    ProjectService projectService
+    ActivityService activityService
+    SiteService siteService
     PermissionService permissionService
+    UserService userService
     DocumentService documentService
+    ProjectActivityService projectActivityService
+    RecordService recordService
+    MetadataService metadataService
 
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project','au.org.ala.ecodata.Site','au.org.ala.ecodata.Activity']
-    def DEFAULT_INDEX = "search"
-    def HOMEPAGE_INDEX = "homepage"
+    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project', 'au.org.ala.ecodata.Site', 'au.org.ala.ecodata.Activity', 'au.org.ala.ecodata.Record']
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [ AuditMessage.class, UserPermission, Setting ]
-
-
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, UserPermission, Setting]
     /**
      * Init method to be called on service creation
      */
@@ -80,35 +99,6 @@ class ElasticSearchService {
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
-
-    }
-
-    /**
-     * Create a new index with custom mappings
-     *
-     * TODO add code to check if index exists and only add/update mappings if required
-     */
-    def reInitialiseIndex(index) {
-        log.debug "reInitialiseIndex"
-        try {
-//            CreateIndexResponse createResponse = client.admin().indices().prepareCreate(DEFAULT_INDEX).execute().actionGet();
-//            if (createResponse.acknowledged) {
-//                log.debug "created index ${DEFAULT_INDEX}"
-//            } else {
-//                log.debug "failed to create index ${DEFAULT_INDEX}"
-//            }
-
-//            if (client.admin().indices().prepareExists(DEFAULT_INDEX).execute().actionGet().exists()) {
-//                // update index
-//            } else {
-//                // create index
-//                client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mapping).setSettings(settings).execute().actionGet();
-//            }
-
-            addMappings(index)
-        } catch (Exception e) {
-            log.error "Error creating index: ${e}", e
-        }
     }
 
     /**
@@ -121,9 +111,9 @@ class ElasticSearchService {
     def indexDoc(doc, index) {
         def docId = getEntityId(doc)
         def docJson = doc as JSON
-        index = index?:DEFAULT_INDEX
+        index = index ?: DEFAULT_INDEX
 
-        if (checkForDelete(doc, docId)) {
+        if (checkForDelete(doc, docId, index)) {
             return null
         }
 
@@ -142,14 +132,14 @@ class ElasticSearchService {
      * Note this can be called for both the Domain object itself or the
      * "toMap" representation it. TODO might be better way to do this
      *
-     * @param  doc
+     * @param doc
      * @return docId (String)
      */
     def getEntityId(doc) {
         def docId
         def className = (doc.className) ? doc.className : doc.class.name;
 
-        switch ( className ) {
+        switch (className) {
             case "au.org.ala.ecodata.Project":
                 docId = doc.projectId; break
             case "au.org.ala.ecodata.Site":
@@ -160,6 +150,8 @@ class ElasticSearchService {
                 docId = doc.organisationId; break
             case "au.org.ala.ecodata.Report":
                 docId = doc.reportId; break
+            case "au.org.ala.ecodata.Record":
+                docId = doc.occurrenceID; break
             default:
                 docId = doc.id; break
         }
@@ -167,7 +159,7 @@ class ElasticSearchService {
     }
 
     def getDocType(doc) {
-        def className = doc.className?:"au.org.ala.ecodata.doc"
+        def className = doc.className ?: "au.org.ala.ecodata.doc"
         className.tokenize(".")[-1].toLowerCase()
     }
 
@@ -180,20 +172,19 @@ class ElasticSearchService {
      * @param docId
      * @return isDeleted (Boolean)
      */
-    def checkForDelete(doc, docId) {
+    def checkForDelete(doc, docId, String index = DEFAULT_INDEX) {
         def isDeleted = false
         def resp
+
         try {
-            resp = client.prepareGet(DEFAULT_INDEX, DEFAULT_TYPE, docId)
-                    .execute()
-                    .actionGet();
+            resp = client.prepareGet(index, DEFAULT_TYPE, docId).execute().actionGet();
         } catch (Exception e) {
             log.error "ES prepareGet error: ${e}", e
         }
 
         if (resp && doc.status == DELETED) {
             try {
-                deleteDocById(docId)
+                deleteDocById(docId, index)
                 isDeleted = true
             } catch (Exception e) {
                 log.error "Error deleting doc with ID ${docId}: ${e.message}"
@@ -360,11 +351,70 @@ class ElasticSearchService {
                                         }
                                     }
                                 },
-                                "externalId":{"type":"string"}
+                                "externalId":{"type":"string"},
+                                "geoIndex": {
+                                    "type": "geo_shape"
+                                }
                             }
                         },
                         "externalId": {
                             "type":"string"
+                        },
+                        "projectActivity":{
+                             "properties":{
+                                "embargoUntil":{
+                                   "type":"string"
+                                },
+                                "name":{
+                                    "type":"string",
+                                    "fields": {
+                                    "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                },
+
+                                "projectName":{
+                                    "type":"string",
+                                    "fields": {
+                                        "projectNameFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                },
+                                "projectId":{
+                                    "type":"string",
+                                    "index":"not_analyzed"
+                                },
+                                "embargoed":{
+                                    "type":"boolean",
+                                    "index":"not_analyzed"
+                                },
+                                "activityOwnerName":{
+                                    "type":"string",
+                                    "fields": {
+                                        "activityOwnerNameFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                },
+                                "lastUpdatedYear":{
+                                    "type":"string",
+                                    "fields": {
+                                        "activityLastUpdatedYearFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                },
+                                "lastUpdatedMonth":{
+                                    "type":"string",
+                                    "fields": {
+                                        "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
+                                    }
+                                },
+                                "records":{
+                                     "properties":{
+                                        "name":{
+                                            "type":"string",
+                                            "fields": {
+                                                "recordNameFacet":{"type":"string", "index":"not_analyzed"}
+                                            }
+                                        }
+                                     }
+                                }
+                             }
                         },
                         "activities":{
                             "properties":{
@@ -465,7 +515,6 @@ class ElasticSearchService {
                                 }
                             }
                         },
-
                         {
                             "custom_event_date_template": {
                                 "path_match":"custom.details.events.scheduledDate",
@@ -507,11 +556,11 @@ class ElasticSearchService {
 
         def mappingsDoc = (parsedJson as JSON).toString()
 
-        def indexes = (index) ? [ index ] : [DEFAULT_INDEX, HOMEPAGE_INDEX]
+        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
         indexes.each {
             client.admin().indices().prepareCreate(it).setSource(mappingsDoc).execute().actionGet()
         }
-        //client.admin().indices().prepareCreate(DEFAULT_INDEX).addMapping(DEFAULT_TYPE, mappingJson).execute().actionGet()
+
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
     }
 
@@ -521,16 +570,15 @@ class ElasticSearchService {
         // These groupings of facets determine the way the layers are used with a site, but can be treated the
         // same for the purposes of indexing the results.
         ['contextual', 'grouped', 'special'].each {
-            facetList.addAll(facetConfig[it].collect {k, v -> k})
+            facetList.addAll(facetConfig[it].collect { k, v -> k })
         }
 
         def properties = [:]
         facetList.each { facetName ->
-            properties << [(facetName):[type:'multi_field', path:'just_name', fields:[(facetName):[type:"string", index:"analyzed"], (facetName+"Facet"):[type:"string", index:"not_analyzed"]]]]
+            properties << [(facetName): [type: 'multi_field', path: 'just_name', fields: [(facetName): [type: "string", index: "analyzed"], (facetName + "Facet"): [type: "string", index: "not_analyzed"]]]]
         }
         properties
     }
-
 
     /**
      * Log GORM event to msg queue
@@ -546,23 +594,6 @@ class ElasticSearchService {
         if (!ALLOWED_DOC_TYPES.contains(docType)) {
             return
         }
-
-        //log.debug "GORM event: ${event.eventType} - doc has class: ${docType} with id: ${docId}"
-
-// CG - nested sessions appear to result in a database connection leak which takes down the system.
-//        if (event.eventType == EventType.PreUpdate && docType == "au.org.ala.ecodata.Site") {
-//
-//            Site.withNewSession { session ->
-//                def site = Site.findBySiteId(docId)
-//                //log.debug "site = ${site?:"none"} and has projects: ${site?.projects}"
-//                site.projects.each {
-//                    if (it.size() > 1) {
-//                        //log.debug "it = ${it}"
-//                        projectIdsToUpdate.add(it)
-//                    }
-//                }
-//            }
-//        }
 
         try {
             def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)
@@ -587,7 +618,7 @@ class ElasticSearchService {
             while (messageCount < maxMessagesToFlush && (message = _messageQueue.poll()) != null) {
                 log.debug "Processing IndexDocMsg: ${message}"
 
-                switch(message.indexType) {
+                switch (message.indexType) {
                     case EventType.PostUpdate:
                     case EventType.PostInsert:
                         indexDocType(message.docId, message.docType)
@@ -617,6 +648,7 @@ class ElasticSearchService {
      * @param doc (domain object)
      */
     def indexDocType(docId, docType) {
+
         // skip indexing
         if (indexingTempInactive
                 || !grailsApplication.config.app.elasticsearch.indexOnGormEvents
@@ -624,13 +656,12 @@ class ElasticSearchService {
             return null
         }
 
-        switch(docType) {
+        switch (docType) {
             case "au.org.ala.ecodata.Project":
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["className"] = docType
-                indexDoc(projectMap, DEFAULT_INDEX)
-                // update homepage search index (map, etc)
+                doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
                 break;
             case "au.org.ala.ecodata.Site":
@@ -648,11 +679,22 @@ class ElasticSearchService {
                     }
                 }
                 break;
+
+            case "au.org.ala.ecodata.Record":
+                Record record = Record.findByOccurrenceID(docId)
+                if(record) {
+                    Activity activity = Activity.findByActivityId(record.activityId)
+                    def doc = activityService.toMap(activity, ActivityService.FLAT)
+                    doc = prepareActivityForIndexing(doc)
+                    indexDoc(doc, doc?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                }
+                break
+
             case "au.org.ala.ecodata.Activity":
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
-                indexDoc(doc, DEFAULT_INDEX)
+                indexDoc(doc, doc?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
@@ -681,7 +723,7 @@ class ElasticSearchService {
             indexDoc(projectMapDeep, HOMEPAGE_INDEX)
         } catch (StackOverflowError e) {
             log.error "SO error - indexDocType for ${doc.projectId}: ${e.message}", e
-        } catch (Exception e)  {
+        } catch (Exception e) {
             log.error "Exception - indexDocType for ${doc?.projectId}: ${e.message}", e
         }
     }
@@ -714,7 +756,7 @@ class ElasticSearchService {
     def deleteDocByIdAndType(docId, docType) {
         def doc
 
-        switch(docType) {
+        switch (docType) {
             case "au.org.ala.ecodata.Project":
                 doc = Project.findByProjectId(docId);
                 break
@@ -755,16 +797,19 @@ class ElasticSearchService {
     def indexAll() {
         log.debug "Clearing index first"
         deleteIndex()
-        log.debug "Indexing all projects"
-        def list = projectService.list("flat", false)
+
+        log.debug "Indexing all MERIT based projects in MERIT SEARCH index."
+        def list = projectService.listMeritProjects("flat", false)
         list.each {
             it["className"] = new Project().getClass().name
             indexDoc(it, DEFAULT_INDEX)
         }
+
         // homepage index (doing some manual batching due to memory constraints)
+        log.debug "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
-            def batchParams = [offset:0, max:50]
-            def projects = Project.findAllByStatusInList([ACTIVE,COMPLETED], batchParams)
+            def batchParams = [offset: 0, max: 50]
+            def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
 
             while (projects) {
                 projects.each { project ->
@@ -777,6 +822,7 @@ class ElasticSearchService {
                 projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
             }
         }
+
         log.debug "Indexing all sites"
         def sites = Site.findAll()
         sites.each {
@@ -784,13 +830,12 @@ class ElasticSearchService {
             siteMap["className"] = new Site().getClass().name
             indexDoc(siteMap, DEFAULT_INDEX)
         }
-        log.debug "Indexing all activities"
 
+        log.debug "Indexing all activities"
         activityService.doWithAllActivities { activity ->
             prepareActivityForIndexing(activity)
-            indexDoc(activity, DEFAULT_INDEX)
+            indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
         }
-
     }
 
     /**
@@ -803,23 +848,56 @@ class ElasticSearchService {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
         projectMap["className"] = new Project().getClass().name
         projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
-        projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
-        projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect{
+        projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };
+        // Include only for MERIT type projects.
+        if (project.isMERIT) {
+            projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+        }
+
         projectMap
     }
 
     private Map prepareActivityForIndexing(Map activity) {
         activity["className"] = Activity.class.getName()
-        // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
-        // faceting for reporting.
-        
+
         def project = projectService.get(activity.projectId, ProjectService.FLAT)
-        if (project) {
+
+        // Include project activity only for survey based projects.
+        def pActivity = projectActivityService.get(activity.projectActivityId)
+        if (pActivity) {
+            Map projectActivity = [:]
+            List records = []
+
+            projectActivity.name = pActivity.name
+            projectActivity.endDate = pActivity.endDate
+            projectActivity.projectActivityId = pActivity.projectActivityId
+            projectActivity.embargoed = pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date())
+            projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: ''
+            projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
+            projectActivity.projectName = project?.name
+            projectActivity.projectId = project?.projectId
+
+            def allRecords = recordService.getAllByActivity(activity.activityId)
+            allRecords?.each {
+                Map values = [:]
+                values.name = it.name
+                values.guid = it.guid
+                values.occurrenceID = it.occurrenceID
+                records << values
+            }
+            projectActivity.records = records
+            projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+            projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+
+            activity.projectActivity = projectActivity
+        } else if (project) {
+            // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
+            // faceting for reporting.
             project.remove('custom')
             project.remove('timeline')
             project.remove('outputTargets')
@@ -829,15 +907,16 @@ class ElasticSearchService {
             project.remove('endDate')
             project.remove('description')
             activity.putAll(project)
-            activity.programSubProgram = project.associatedProgram+' - '+project.associatedSubProgram
-
+            activity.programSubProgram = project.associatedProgram + ' - ' + project.associatedSubProgram
         }
+
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT)
             if (site) {
                 activity.sites = [site]
             }
         }
+
         activity
     }
 
@@ -848,11 +927,11 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params, index) {
+    def search(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
-        index = index?:DEFAULT_INDEX
-        def request = buildSearchRequest(query, params, index)
+        index = index ?: DEFAULT_INDEX
+        def request = buildSearchRequest(query, params, index, geoSearchCriteria)
         client.search(request).actionGet()
     }
 
@@ -865,10 +944,6 @@ class ElasticSearchService {
      */
     def doSearch(SearchRequest request) {
         def response = client.search(request).actionGet()
-        //def searchHits = response.hits()
-        //def result = [:]
-        //result.total = searchHits.totalHits()
-        //log.debug "Search returned ${result.total ?: 0} result(s)."
         return response
     }
 
@@ -885,13 +960,90 @@ class ElasticSearchService {
             queryBuilder = new FilteredQueryBuilder(queryBuilder, filters)
         }
 
-        SearchSourceBuilder source =  pagenateQuery(paginationParams).query(queryBuilder)
-
+        SearchSourceBuilder source = pagenateQuery(paginationParams).query(queryBuilder)
         request.source(source)
 
-
         client.search(request).actionGet()
+    }
 
+    /*
+    *  Builds a customized project activity query for home page index based on userId and projectId
+    *  1. My records page >> show all records associated to the user.
+    *  2. Project data page >>
+    *       // a. if ala admin / project member  >> show all records associated to the project
+    *       // b. if logged in user >> show non embargoed records + records created by user.
+    *       // c. if unauthenticated user >> show non embargoed records.
+    *   3. All records page and no projectId's
+    *       // a. logged in users and ala admin >> show all records across the projects
+    *       // b. logged in users and not ala admin >> show embargoed records that user own or been member of the projects
+    *       // c. unauthenticated user >> show only embargoed records across the projects.
+    *
+    */
+    void buildProjectActivityQuery(GrailsParameterMap params) {
+
+        String query = params.searchTerm ?: ''
+        String userId = params.userId
+        String projectId = params.projectId
+        String forcedQuery = ''
+
+        switch (params.view) {
+
+            case 'myrecords':
+                if (userId) {
+                    forcedQuery = '(docType:activity AND userId:' + userId + ')'
+                }
+                break
+
+            case 'project':
+                if (projectId) {
+                    if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
+                    } else if (userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                    } else if (!userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    }
+                }
+                break
+
+            case 'allrecords':
+                if (!projectId) {
+                    if (userId && permissionService.isUserAlaAdmin(userId)) {
+                        forcedQuery = '(docType:activity)'
+                    } else if (userId) {
+                        forcedQuery = '((docType:activity)'
+                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
+
+                        projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
+                            if (index == 0) {
+                                forcedQuery = forcedQuery + ' AND (('
+                            } else if (index != 0) {
+                                forcedQuery = forcedQuery + ' OR '
+                            }
+
+                            forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
+                        }
+                        if (projectsTheUserIsAMemberOf) {
+                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + userId + ')))'
+                        } else {
+                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                        }
+                    } else if (!userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                    }
+                }
+
+            default:
+                forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                break
+        }
+
+        if (!forcedQuery) {
+            forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+        }
+
+        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
+        params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
     /**
@@ -901,7 +1053,7 @@ class ElasticSearchService {
      * @param params
      * @return SearchRequest
      */
-    def buildSearchRequest(query, GrailsParameterMap params, index) {
+    def buildSearchRequest(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -917,7 +1069,12 @@ class ElasticSearchService {
         SearchSourceBuilder source = pagenateQuery(params)
 
         // add query
-        source.query(queryString(query))
+        if (geoSearchCriteria) {
+            // geo shape filters are not supported by the queryString syntax, so we need to create a filteredQuery
+            source.query(filteredQuery(queryStringQuery(query), buildGeoFilter(geoSearchCriteria)))
+        } else {
+            source.query(queryStringQuery(query))
+        }
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
@@ -941,6 +1098,31 @@ class ElasticSearchService {
         request.source(source)
 
         return request
+    }
+
+    private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria) {
+        GeoShapeFilterBuilder filter = null
+
+        ShapeBuilder shape = null
+        switch (geographicSearchCriteria.type) {
+            case "Polygon":
+                shape = ShapeBuilder.newPolygon()
+                shape.points(geographicSearchCriteria.coordinates[0].collect { coordinate ->
+                    new Coordinate(coordinate[0] as double, coordinate[1] as double)
+                } as Coordinate[])
+                break;
+            case "Circle":
+                shape = ShapeBuilder.newCircleBuilder()
+                        .radius(geographicSearchCriteria.radius?.toString())
+                        .center(geographicSearchCriteria.coordinates[0] as double, geographicSearchCriteria.coordinates[1] as double)
+                break
+        }
+
+        if (shape) {
+            filter = geoShapeFilter("geoIndex", shape, ShapeRelation.INTERSECTS)
+        }
+
+        filter
     }
 
     private SearchSourceBuilder pagenateQuery(Map params) {
@@ -1005,7 +1187,7 @@ class ElasticSearchService {
      */
     def addFacetFilter(filterList) {
         def fb
-		List repeatFacets = getRepeatFacetList(filterList)
+        List repeatFacets = getRepeatFacetList(filterList)
 
         filterList.each {
             if (it) {
@@ -1014,15 +1196,13 @@ class ElasticSearchService {
                 }
                 def fqs = it.tokenize(":")
                 if (fqs.size() > 1) {
-					
-					if(repeatFacets.find{it == fqs[0]}){
-						fb.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-					}
-					else{
-						fb.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-					}
-                }
-                else {
+
+                    if (repeatFacets.find { it == fqs[0] }) {
+                        fb.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                    } else {
+                        fb.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                    }
+                } else {
                     fb.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
                 }
             }
@@ -1042,8 +1222,8 @@ class ElasticSearchService {
         //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
         List filterList = getFilterList(filters) // allow for multiple fq params
-		
-		List repeatFacets = getRepeatFacetList(filterList)
+
+        List repeatFacets = getRepeatFacetList(filterList)
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
         filterList.each { fq ->
@@ -1052,15 +1232,12 @@ class ElasticSearchService {
             if (fqs.size() > 1) {
                 if (fqs[0].getAt(0) == "-") {
                     boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
+                } else if (repeatFacets.find { it == fqs[0] }) {
+                    boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                } else {
+                    boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
                 }
-				else if(repeatFacets.find{it == fqs[0]}){
-					boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-				}
-				else{
-					boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-				}
-            }
-            else {
+            } else {
                 boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
             }
         }
@@ -1082,57 +1259,43 @@ class ElasticSearchService {
             filterList = filters as List
         } else if (filters instanceof List) {
             filterList.addAll(filters)
-        }
-        else {
+        } else {
             filterList.add(filters)
         }
 
         filterList
     }
-	
-	private getRepeatFacetList (filters) {
-		def allFilters = getFilterList(filters)
-		def facetNames = []
-		def repeatFacets = []
-		Set uniqueFacets
 
-		if(allFilters.size() <= 1){
+    private getRepeatFacetList(filters) {
+        def allFilters = getFilterList(filters)
+        def facetNames = []
+        def repeatFacets = []
+        Set uniqueFacets
+
+        if (allFilters.size() <= 1) {
             return repeatFacets
         }
-		allFilters.collect{
-			def fqs = it.tokenize(":")
-			facetNames.add(fqs[0])
-		}
-		uniqueFacets = facetNames as Set
-		int repeatCount = 0;
+        allFilters.collect {
+            def fqs = it.tokenize(":")
+            facetNames.add(fqs[0])
+        }
+        uniqueFacets = facetNames as Set
+        int repeatCount = 0;
 
-		uniqueFacets.each { facet->
-			allFilters.each {filter->
-				def fqs = filter.tokenize(":")
-				if(facet.equals(fqs[0])){
-					repeatCount++;
-				}
-			}
-			if(repeatCount >= 2){
-				repeatFacets.add(facet)
-			}
-			repeatCount = 0
-		}
+        uniqueFacets.each { facet ->
+            allFilters.each { filter ->
+                def fqs = filter.tokenize(":")
+                if (facet.equals(fqs[0])) {
+                    repeatCount++;
+                }
+            }
+            if (repeatCount >= 2) {
+                repeatFacets.add(facet)
+            }
+            repeatCount = 0
+        }
 
-		repeatFacets
-	}
-
-    /**
-     * Delete a doc given the toMap version of it
-     *
-     * @param obj
-     * @return
-     */
-    def deleteDoc(obj) {
-        // see http://www.elasticsearch.org/guide/reference/java-api/delete/
-        def id = obj[getEntityId(obj)]
-        log.debug "deleting doc with id: ${id}"
-        deleteDocById(id)
+        repeatFacets
     }
 
     /**
@@ -1141,10 +1304,8 @@ class ElasticSearchService {
      * @param id
      * @return
      */
-    def deleteDocById(id) {
-        client.prepareDelete(DEFAULT_INDEX, DEFAULT_TYPE, id)
-                .execute()
-                .actionGet();
+    def deleteDocById(id, String index = DEFAULT_INDEX) {
+        client.prepareDelete(index, DEFAULT_TYPE, id).execute().actionGet();
     }
 
     /**
@@ -1153,7 +1314,7 @@ class ElasticSearchService {
      * @return
      */
     public deleteIndex(index) {
-        def indexes = (index) ? [ index ] : [DEFAULT_INDEX, HOMEPAGE_INDEX]
+        def indexes = (index) ? [index] : [DEFAULT_INDEX, HOMEPAGE_INDEX, PROJECT_ACTIVITY_INDEX]
 
         indexes.each {
             log.info "trying to delete $it"
@@ -1169,9 +1330,20 @@ class ElasticSearchService {
             }
         }
 
-        // recreate the index and mappings
-        reInitialiseIndex(index)
+        createIndexAndMapping(index)
         return "index cleared"
+    }
+
+    /**
+     * Create a new index add configure custom mappings
+     */
+    def createIndexAndMapping(index) {
+        log.debug "Creating new index and configuring elastic search custom mapping"
+        try {
+            addMappings(index)
+        } catch (Exception e) {
+            log.error "Error creating index: ${e}", e
+        }
     }
 
     /**
@@ -1181,5 +1353,6 @@ class ElasticSearchService {
     def destroy() {
         node.close();
     }
+
 
 }
