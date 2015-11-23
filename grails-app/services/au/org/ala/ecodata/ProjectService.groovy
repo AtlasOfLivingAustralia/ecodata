@@ -186,7 +186,7 @@ class ProjectService {
 
             props.remove('sites')
             props.remove('id')
-//            props << collectoryService.createDataProviderAndResource(project.projectId, props)
+            props << collectoryService.createDataProviderAndResource(project.projectId, props)
             getCommonService().updateProperties(project, props)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
