@@ -3439,7 +3439,8 @@
             "name": "Fire Management",
             "supportsSites": true,
             "type": "Activity",
-            "category": "Implementation actions"
+            "category": "Implementation actions",
+            "status": "deleted"
         },
         {
             "outputs": [
