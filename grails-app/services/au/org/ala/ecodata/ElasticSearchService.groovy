@@ -56,6 +56,11 @@ import static au.org.ala.ecodata.ElasticIndex.*
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
+ * Note:
+ * DEFAULT_INDEX used by MERIT
+ * HOMEPAGE_INDEX shared by both Biocollect and MERIT (MERIT embeds activities to the project. Bicollect doesn't include embedded activities)
+ * PROJECT_ACTIVITY_INDEX used by Biocollect and its applicable to survey based projects (ie; non NRM one's)
+ *
  * Code gist taken from
  *   https://github.com/mstein/elasticsearch-grails-plugin/blob/master/grails-app/services/org/grails/plugins/elasticsearch/ElasticSearchService.groovy
  *
@@ -984,14 +989,14 @@ class ElasticSearchService {
         switch (params.view) {
 
             case 'myrecords':
-                if (params.userId) {
+                if (userId) {
                     forcedQuery = '(docType:activity AND userId:' + userId + ')'
                 }
                 break
 
             case 'project':
-                if (params.projectId) {
-                    if (params.userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                if (projectId) {
+                    if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
                     } else if (params.userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + params.userId + '))'
@@ -1000,13 +1005,14 @@ class ElasticSearchService {
                     }
                 }
                 break
+
             case 'allrecords':
-                if (!params.projectId) {
-                    if (params.userId && permissionService.isUserAlaAdmin(params.userId)) {
+                if (!projectId) {
+                    if (userId && permissionService.isUserAlaAdmin(userId)) {
                         forcedQuery = '(docType:activity)'
                     } else if (params.userId) {
                         forcedQuery = '((docType:activity)'
-                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(params.userId, AccessLevel.admin, AccessLevel.editor)
+                        List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
 
                         projectsTheUserIsAMemberOf?.eachWithIndex { item, index ->
                             if (index == 0) {
@@ -1018,11 +1024,11 @@ class ElasticSearchService {
                             forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
                         }
                         if (projectsTheUserIsAMemberOf) {
-                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + params.userId + ')))'
+                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + userId + ')))'
                         } else {
-                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + params.userId + '))'
+                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
                         }
-                    } else if (!params.userId) {
+                    } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
                 }
