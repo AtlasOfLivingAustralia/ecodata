@@ -1705,8 +1705,8 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "totalNewEnterprises",
-                    "description": "Count of the number of unique (new) Indigenous enterprises established as a result of project implementation",
-                    "label": "No. of new enterprises established",
+                    "description": "Count of the number of unique (new) Indigenous businesses established as a result of project implementation",
+                    "label": "No. of new businesses established",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
                 },
@@ -1714,8 +1714,8 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "totalIndigenousEnterprisesEngaged",
-                    "description": "Count of the number of unique engagements of Indigenous enterprises which have been formalised in contracts/agreements.",
-                    "label": "No. of formal (contractual) engagements with Indigenous enterprises",
+                    "description": "Count of the number of unique engagements of Indigenous businesses which have been formalised in contracts/agreements.",
+                    "label": "No. of formal (contractual) engagements with Indigenous businesses",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
                 }
@@ -3323,6 +3323,16 @@
             "Infrastructure Details",
             "Participant Information"
         ],
+        "outputConfig": [
+            {
+                "outputName": "Access Control Details",
+                "optional":true
+            },
+            {
+                "outputName":"Infrastructure Details",
+                "optional":true
+            }
+        ],
         "gmsId": "PAM PAI APC",
         "name": "Public Access and Infrastructure",
         "supportsSites": true,
@@ -3422,6 +3432,18 @@
         },
         {
             "outputs": [
+                "Asset Protection Details",
+                "Ecological Burn Details",
+                "Participant Information"
+            ],
+            "supportsPhotoPoints": true,
+            "name": "Ecological Fire Management",
+            "supportsSites": true,
+            "type": "Activity",
+            "category": "Implementation actions"
+        },
+        {
+            "outputs": [
                 "Fire Management Details",
                 "Participant Information",
                 "Photo Points"
@@ -3431,7 +3453,8 @@
             "name": "Fire Management",
             "supportsSites": true,
             "type": "Activity",
-            "category": "Implementation actions"
+            "category": "Implementation actions",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -3462,6 +3485,16 @@
             "outputs": [
                 "Indigenous Employment",
                 "Indigenous Businesses"
+            ],
+            "outputConfig": [
+                {
+                    "outputName":"Indigenous Employment",
+                    "optional":true
+                },
+                {
+                    "outputName":"Indigenous Businesses",
+                    "optional":true
+                }
             ],
             "gmsId": "IPE",
             "name": "Indigenous Employment and Businesses",
@@ -3540,6 +3573,12 @@
                 "Participant Information",
                 "Photo Points"
             ],
+            "outputConfig": [
+                {
+                    "outputName":"Fence Details",
+                    "optional":true
+                }
+            ],
             "supportsPhotoPoints": true,
             "gmsId": "PMA PMQ",
             "name": "Pest Management",
@@ -3584,6 +3623,16 @@
                 "Access Control Details",
                 "Infrastructure Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName":"Access Control Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Infrastructure Details",
+                    "optional":true
+                }
             ],
             "gmsId": "PAM PAI APC",
             "name": "Public Access and Infrastructure",
@@ -3641,6 +3690,16 @@
                 "Participant Information",
                 "Photo Points"
             ],
+            "outputConfig": [
+                {
+                    "outputName":"Weed Treatment Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Site Preparation Actions",
+                    "optional":true
+                }
+            ],
             "supportsPhotoPoints": true,
             "gmsId": "STP",
             "name": "Site Preparation",
@@ -3653,6 +3712,16 @@
                 "Training Details",
                 "Skills Development",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName":"Training Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Skills Development",
+                    "optional":true
+                }
             ],
             "gmsId": "TSD",
             "name": "Training and Skills Development",
@@ -3713,6 +3782,16 @@
                 "Site Planning Details",
                 "Threatening Processes and Site Condition Risks",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName":"Site Planning Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Threatening Processes and Site Condition Risks",
+                    "optional":true
+                }
             ],
             "supportsPhotoPoints": true,
             "gmsId": "STA",
@@ -3958,18 +4037,6 @@
             "name": "Multiple Sightings",
             "type": "Activity",
             "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [
-                "Asset Protection Details",
-                "Ecological Burn Details",
-                "Participant Information"
-            ],
-            "supportsPhotoPoints": true,
-            "name": "Ecological Fire Management",
-            "supportsSites": true,
-            "type": "Activity",
-            "category": "Implementation actions"
         }
     ]
 }
