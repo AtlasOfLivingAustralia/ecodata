@@ -3432,6 +3432,18 @@
         },
         {
             "outputs": [
+                "Asset Protection Details",
+                "Ecological Burn Details",
+                "Participant Information"
+            ],
+            "supportsPhotoPoints": true,
+            "name": "Ecological Fire Management",
+            "supportsSites": true,
+            "type": "Activity",
+            "category": "Implementation actions"
+        },
+        {
+            "outputs": [
                 "Fire Management Details",
                 "Participant Information",
                 "Photo Points"
@@ -4025,18 +4037,6 @@
             "name": "Multiple Sightings",
             "type": "Activity",
             "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [
-                "Asset Protection Details",
-                "Ecological Burn Details",
-                "Participant Information"
-            ],
-            "supportsPhotoPoints": true,
-            "name": "Ecological Fire Management",
-            "supportsSites": true,
-            "type": "Activity",
-            "category": "Implementation actions"
         }
     ]
 }
