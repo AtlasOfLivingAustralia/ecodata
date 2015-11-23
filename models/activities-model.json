@@ -1749,13 +1749,11 @@
                     "displayType": "",
                     "gmsId": "PMA",
                     "name": "totalAreaTreatedHa",
-                    "description": "The total area over which pest treatment activities have been undertaken. Note that re-treatments of the same area may be double-counted.",
+                    "description": "The total area over which pest treatment activities have been undertaken.",
                     "label": "Area covered (Ha) by pest treatment actions",
                     "units": "Ha",
-                    "groupBy": "treatmentType",
                     "listName": "",
                     "category": "Invasive Species Management - Pests & Diseases",
-                    "filterBy": "Initial treatment",
                     "isOutputTarget": true
                 },
                 {
