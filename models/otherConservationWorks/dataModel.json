@@ -242,6 +242,19 @@
                     "type": "number"
                 }
             ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan":2,
+                                "type":"literal",
+                                "source":"<i>If this table is not relevant to the activities you completed, please delete the table row using the <i class='fa fa-cross'></i> icon in the rightmost column</i>"
+                            }
+                        ]
+                    }
+                ]
+            },
             "userAddedRows": "true",
             "source": "conservationWorks",
             "type": "table",
@@ -269,6 +282,19 @@
                     "type": "number"
                 }
             ],
+            "footer": {
+                "rows": [
+                    {
+                        "columns": [
+                            {
+                                "colspan":3,
+                                "type":"literal",
+                                "source":"<i>If this table is not relevant to the activities you completed, please delete the table row using the <i class='fa fa-cross'></i> icon in the rightmost column</i>"
+                            }
+                        ]
+                    }
+                ]
+            },
             "userAddedRows": "true",
             "source": "protectionMechanisms",
             "type": "table",
