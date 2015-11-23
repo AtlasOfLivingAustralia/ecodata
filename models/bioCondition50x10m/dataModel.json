@@ -1,48 +1,47 @@
 {
     "modelName": "50 x 10m area",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "number",
             "name": "nonNativePlantCover"
         },
         {
-            "columns": [{
-                "dataType": "species",
-                "dwcAttribute": "scientificName",
-                "name": "shrubSpeciesName"
-            }],
+            "defaultRows": [],
             "dataType": "list",
+            "description": "BioCondition shrub species table",
             "name": "shrubSpeciesRichness",
-            "defaultRows": []
+            "columns": [{
+                "dataType": "text",
+                "name": "speciesName"
+            }]
         },
         {
             "dataType": "number",
             "name": "numUnknownShrubSpecies"
         },
         {
-            "columns": [{
-                "dataType": "species",
-                "dwcAttribute": "scientificName",
-                "name": "grassSpeciesName"
-            }],
+            "defaultRows": [],
             "dataType": "list",
+            "description": "BioCondition grass species table",
             "name": "grassSpeciesRichness",
-            "defaultRows": []
+            "columns": [{
+                "dataType": "text",
+                "name": "speciesName"
+            }]
         },
         {
             "dataType": "number",
             "name": "numUnknownGrassSpecies"
         },
         {
-            "columns": [{
-                "dataType": "species",
-                "dwcAttribute": "scientificName",
-                "name": "forbSpeciesName"
-            }],
+            "defaultRows": [],
             "dataType": "list",
+            "description": "BioCondition forb species table",
             "name": "forbsAndOthersNonGrassGroundSpeciesRichness",
-            "defaultRows": []
+            "columns": [{
+                "dataType": "text",
+                "name": "speciesName"
+            }]
         },
         {
             "dataType": "number",
@@ -51,104 +50,104 @@
     ],
     "viewModel": [
         {
-            "type": "row",
             "items": [{
                 "source": "<h3>50 x 10m area<\/h3>",
                 "type": "literal"
-            }]
+            }],
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [{
-                "preLabel": "Non-native plant cover (%):",
                 "source": "nonNativePlantCover",
+                "preLabel": "Non-native plant cover (%):",
                 "type": "number",
                 "validate": "required,min[0],max[100]"
-            }]
+            }],
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [{
-                "type": "col",
                 "items": [
                     {
                         "source": "<h4>Shrub (defined as sungle stemmed below 2m or multi-stemmed from base or below 20cm) species richness:<\/h4>",
                         "type": "literal"
                     },
                     {
+                        "source": "shrubSpeciesRichness",
                         "columns": [{
-                            "source": "shrubSpeciesName",
                             "title": "Species name",
+                            "source": "speciesName",
                             "type": "text"
                         }],
                         "userAddedRows": "true",
-                        "source": "shrubSpeciesRichness",
                         "type": "table"
                     },
                     {
-                        "preLabel": "Number of unknown shrub species",
                         "source": "numUnknownShrubSpecies",
+                        "preLabel": "Number of unknown shrub species",
                         "type": "number",
                         "validate": "min[0]"
                     }
-                ]
-            }]
+                ],
+                "type": "col"
+            }],
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [{
-                "type": "col",
                 "items": [
                     {
                         "source": "<h4>Grass species richness<\/h4>",
                         "type": "literal"
                     },
                     {
+                        "source": "grassSpeciesRichness",
                         "columns": [{
-                            "source": "grassSpeciesName",
                             "title": "Species name",
+                            "source": "speciesName",
                             "type": "text"
                         }],
                         "userAddedRows": "true",
-                        "source": "grassSpeciesRichness",
                         "type": "table"
                     },
                     {
-                        "preLabel": "Number of unknown grass species",
                         "source": "numUnknownGrassSpecies",
+                        "preLabel": "Number of unknown grass species",
                         "type": "number",
                         "validate": "min[0]"
                     }
-                ]
-            }]
+                ],
+                "type": "col"
+            }],
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [{
-                "type": "col",
                 "items": [
                     {
                         "source": "<h4>Forbs and others (non grass ground) species richness:<\/h4>",
                         "type": "literal"
                     },
                     {
+                        "source": "forbsAndOthersNonGrassGroundSpeciesRichness",
                         "columns": [{
-                            "source": "forbSpeciesName",
                             "title": "Species name",
+                            "source": "speciesName",
                             "type": "text"
                         }],
                         "userAddedRows": "true",
-                        "source": "forbsAndOthersNonGrassGroundSpeciesRichness",
                         "type": "table"
                     },
                     {
-                        "preLabel": "Number of unknown forb species",
                         "source": "numUnknownForbSpecies",
+                        "preLabel": "Number of unknown forb species",
                         "type": "number",
                         "validate": "min[0]"
                     }
-                ]
-            }]
+                ],
+                "type": "col"
+            }],
+            "type": "row"
         }
     ]
 }

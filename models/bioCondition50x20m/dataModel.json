@@ -1,40 +1,63 @@
 {
-    "modelName":"50 x 20m area - Coarse Woody Debris",
-    "dataModel":[
-        {"name":"cwdLengths", "dataType":"list","columns":[
-            {"name":"cwdLength","dataType":"number"}
-        ],"defaultRows":[]},
-
-        {"name":"totalCwdLength","dataType":"number","primaryResult":"true",
-            "computed":{
-                "dependents":{
-                    "fromList":"cwdLengths",
-                    "source":"cwdLength"
-                },"operation":"sum"
+    "modelName": "50 x 20m area - Coarse Woody Debris",
+    "dataModel": [
+        {
+            "defaultRows": [],
+            "dataType": "list",
+            "description": "BioCondition debris table",
+            "name": "cwdLengths",
+            "columns": [{
+                "dataType": "number",
+                "name": "cwdLength"
+            }]
+        },
+        {
+            "dataType": "number",
+            "primaryResult": "true",
+            "name": "totalCwdLength",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "cwdLength",
+                    "fromList": "cwdLengths"
+                }
             }
         }
     ],
-    "viewModel":[
-        {   "type": "row", "items": [{"type": "literal", "source":"<h2>50 x 20m area - Coarse Woody Debris (all logs &gt; 10cm, &gt; 0.5m within 50 x 20m area measured to the plot boundary)</h2>"}]},
-        {   "type": "row", "items": [
-            {"type": "col", "items": [
-                {   "type": "table", "source":"cwdLengths",
-                    "userAddedRows":"true",
-                    "columns": [
-                        {"title":"CWD Length:","source":"cwdLength", "type":"number"}
-                    ],
-                    "footer": {
-                        "rows": [
-                            {"columns":[
-                                {"type":"literal","source":"Total:", "colspan":"2"},
-                                {"type":"text","source":"totalCwdLength"}
-
-                            ]}
-                        ]
-                    }
-                }
-            ]
-            }
-        ]}
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h2>50 x 20m area - Coarse Woody Debris (all logs > 10cm, > 0.5m within 50 x 20m area measured to the plot boundary)<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [{
+                    "footer": {"rows": [{"columns": [
+                        {
+                            "colspan": "2",
+                            "source": "Total:",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "totalCwdLength",
+                            "type": "text"
+                        }
+                    ]}]},
+                    "source": "cwdLengths",
+                    "columns": [{
+                        "title": "CWD Length:",
+                        "source": "cwdLength",
+                        "type": "number"
+                    }],
+                    "userAddedRows": "true",
+                    "type": "table"
+                }],
+                "type": "col"
+            }],
+            "type": "row"
+        }
     ]
 }
