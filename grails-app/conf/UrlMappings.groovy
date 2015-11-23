@@ -24,6 +24,8 @@ class UrlMappings {
         "/ws/comment/$id"(controller: "comment"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
         "/ws/comment/canUserEditOrDeleteComment"(controller: "comment", action: "canUserEditOrDeleteComment")
 
+        "/ws/audit/getAuditMessagesForProjectPerPage/$id"(controller: "audit", action: "getAuditMessagesForProjectPerPage")
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'

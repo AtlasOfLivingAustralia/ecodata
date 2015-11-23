@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.mongo.MongoSession
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -12,6 +13,7 @@ class AuditService {
     def projectService
     def outputService
     def siteService
+    CommonService commonService
 
     static transactional = false
 
@@ -204,4 +206,117 @@ class AuditService {
         return userMap
     }
 
+    /**
+     * Get audit messages for a project. This function is similar to getAllMessagesForProject but supports pagination, sorting and filtering.
+     * Filtering can be done for certain fields - entity.name, eventType, entityType
+     */
+    Map getAuditMessagesForProjectPerPage(String projectId, Integer start, Integer size, String sort, String orderBy, String q){
+        List entityIds = []
+        List results, messages = []
+        Map userNames, message
+        Integer count;
+
+        // Outputs are linked by activity id - get a distinct list of activity id's for this project
+        List outputIds = []
+        List activityIds = projectService.getActivityIdsForProject(projectId)
+        activityIds.each { activityId ->
+            entityIds.addAll(outputService.getAllOutputIdsForActivity(activityId))
+        }
+
+        // Sites have a collection of projects to which they belong
+        List sites = siteService.findAllForProjectId(projectId)
+
+        // Documents are funny. They have multiple foreign key ids (siteId, outputId, projectId and activityId), although usually only one
+        // will be populated at any time.
+        // Project documents will already in the list as a direct association. We already have lists of associated sites, outputs and activities,
+        // so we can use those to query for associated documents
+        List siteIds = sites*.siteId
+        entityIds.addAll(siteIds)
+
+        BuildableCriteria c = Document.createCriteria()
+        List documentIds = c {
+            or {
+                inList("activityId", activityIds)
+                inList("outputId", outputIds)
+                inList("siteId", siteIds)
+            }
+            projections {
+                property("documentId")
+            }
+        }
+
+        entityIds.addAll(documentIds);
+        Closure getById = {
+            or {
+                eq "projectId", projectId
+                inList('entityId', entityIds)
+            }
+        }
+        Closure getByLike = {
+            or {
+                ilike 'entityType', "%${q}%"
+                ilike 'eventType', "%${q}%"
+                ilike 'entity.name', "%${q}%"
+            }
+        }
+        if(q){
+            count = AuditMessage.createCriteria().count {
+                getById.delegate = delegate
+                getByLike.delegate = delegate
+                and {
+                    getById()
+                    getByLike()
+                }
+            }
+            results = AuditMessage.withCriteria{
+                getById.delegate = delegate
+                getByLike.delegate = delegate
+                and {
+                    getById()
+                    getByLike()
+                }
+
+                maxResults size
+                offset start
+                order sort, orderBy
+            }
+        } else {
+            count = AuditMessage.createCriteria().count {
+                getById.delegate = delegate
+                getById()
+            }
+            results = AuditMessage.withCriteria{
+                getById.delegate = delegate
+                getById()
+                maxResults size
+                offset start
+                order sort, orderBy
+            }
+        }
+        userNames = getUserDisplayNamesForMessages(results);
+        results.each {msg ->
+            message = commonService.toBareMap(msg);
+            // resolve username
+            message['userName'] = userNames[message['userId']]
+
+            messages.add(message);
+        }
+        [
+                count: count,
+                data: messages
+        ]
+    }
+
+    def getAutoCompareAuditMessage(String auditId){
+        AuditMessage audit = AuditMessage.findById(auditId);
+        String entityId = audit.entityId;
+        List revisions = AuditMessage.withCriteria {
+            eq 'entityId', entityId
+            lt 'date', audit.date
+            order 'date', 'desc'
+        }
+        if(revisions.size()){
+            return revisions[0]
+        }
+    }
 }
