@@ -62,7 +62,7 @@
         },
         {
             "dataType": "number",
-            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month.",
+            "description": "Record the total number of Participants who fulfilled the requirements of their Training Plan and therefore completed (passed) their required training under the Project in the current month. Includes both accredited and non-accredited training.",
             "name": "trainingNoCompleted",
             "validate": "required,min[0],max[9]"
         }

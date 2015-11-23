@@ -133,7 +133,7 @@
         {
             "dataType": "number",
             "name": "areaTreatedHa",
-            "description": "The area in hectares of the patch of the target species being treated",
+            "description": "Area managed for invasive weeds",
             "validate": "required"
         },
         {

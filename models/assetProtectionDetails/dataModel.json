@@ -1,0 +1,74 @@
+{
+  "modelName": "Asset Protection Details",
+  "dataModel": [
+    {
+      "dataType": "stringList",
+      "description": "",
+      "name": "firePreventionWorks",
+      "constraints": [
+        "Backburning",
+        "Fire trail construction",
+        "Fire break construction",
+        "Woody vegetation removal",
+        "Grass slashing",
+        "Water point construction",
+        "Other (specify in notes)"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "number",
+      "description": "The area in hectares being protected by fire prevention works.",
+      "name": "assetAreaProtectedHa",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "description":"Notes or comments about the fire prevention works, or a description of the type of works if you selected Other above",
+      "name": "notes"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "class":"output-section",
+      "items": [
+        {
+          "items": [{
+            "source": "firePreventionWorks",
+            "computed": null,
+            "preLabel": "Fire prevention works:",
+            "type": "selectMany"
+          }],
+          "width": "50%",
+          "computed": null,
+          "type": "col"
+        },
+        {
+          "items": [
+            {
+              "source": "assetAreaProtectedHa",
+              "preLabel": "Area protected (Ha):",
+              "computed": null,
+              "type": "number"
+            }
+          ],
+          "width": "50%",
+          "computed": null,
+          "type": "col"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "class":"output-section",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Comments / notes"
+        }
+      ]
+    }
+  ]
+}

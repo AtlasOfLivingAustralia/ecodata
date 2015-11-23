@@ -36,7 +36,8 @@
         {
             "dataType": "number",
             "description": "Number of formal partnerships (eg. MOUs, joint delivery, etc.) involved in design, delivery and/or monitoring to guide implementation",
-            "name": "formalPartnerships"
+            "name": "formalPartnerships",
+            "validate": "required"
         },
         {
             "dataType": "number",

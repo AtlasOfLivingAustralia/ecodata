@@ -140,6 +140,11 @@
                     "noOfIndigenousRangersPt"
                 ]}
             }
+        },
+        {
+            "dataType": "text",
+            "description":"Notes or comments about the indigenous employment information",
+            "name": "notes"
         }
     ],
     "viewModel": [
@@ -312,7 +317,17 @@
             ],
             "class": "output-section",
             "type": "row"
+        },
+        {
+            "type": "row",
+            "class":"output-section",
+            "items": [
+                {
+                    "type": "textarea",
+                    "source": "notes",
+                    "preLabel": "Comments / notes"
+                }
+            ]
         }
-    ],
-    "type": "row"
+    ]
 }

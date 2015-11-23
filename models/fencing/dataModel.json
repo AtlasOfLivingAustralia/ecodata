@@ -31,7 +31,8 @@
         {
             "dataType": "number",
             "description": "Area in hectares protected by the erected fence",
-            "name": "fenceAreaProtected"
+            "name": "fenceAreaProtected",
+            "validate": "required"
         },
         {
             "dataType": "stringList",
