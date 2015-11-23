@@ -2288,31 +2288,6 @@
             "name": "Floristic Composition"
         },
         {
-            "template": "bioCondition100x50m",
-            "scores": [],
-            "name": "100 x 50m area - Ecologically Dominant Layer"
-        },
-        {
-            "template": "bioCondition50x10m",
-            "scores": [],
-            "name": "50 x 10m area"
-        },
-        {
-            "template": "bioCondition50x20m",
-            "scores": [],
-            "name": "50 x 20m area - Coarse Woody Debris"
-        },
-        {
-            "template": "bioCondition1x1m",
-            "scores": [],
-            "name": "Five 1 x 1m plots"
-        },
-        {
-            "template": "bioCondition100mTransect",
-            "scores": [],
-            "name": "100m Transect"
-        },
-        {
             "template": "heritageConservationInformation",
             "scores": [
                 {
