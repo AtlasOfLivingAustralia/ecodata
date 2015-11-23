@@ -1705,8 +1705,8 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "totalNewEnterprises",
-                    "description": "Count of the number of unique (new) Indigenous enterprises established as a result of project implementation",
-                    "label": "No. of new enterprises established",
+                    "description": "Count of the number of unique (new) Indigenous businesses established as a result of project implementation",
+                    "label": "No. of new businesses established",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
                 },
@@ -1714,8 +1714,8 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "totalIndigenousEnterprisesEngaged",
-                    "description": "Count of the number of unique engagements of Indigenous enterprises which have been formalised in contracts/agreements.",
-                    "label": "No. of formal (contractual) engagements with Indigenous enterprises",
+                    "description": "Count of the number of unique engagements of Indigenous businesses which have been formalised in contracts/agreements.",
+                    "label": "No. of formal (contractual) engagements with Indigenous businesses",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
                 }
