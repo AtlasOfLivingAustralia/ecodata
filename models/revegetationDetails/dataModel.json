@@ -112,7 +112,7 @@
         {
             "dataType": "number",
             "name": "lengthReveg",
-            "description": "The length in metres of the revegetation works area. This field should only be used for linear sites"
+            "description": "The length in kilometres of the revegetation works area. This field should only be used for linear sites"
         },
         {
             "dataType": "number",
