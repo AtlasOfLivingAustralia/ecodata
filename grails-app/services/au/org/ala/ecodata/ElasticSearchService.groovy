@@ -998,9 +998,9 @@ class ElasticSearchService {
                 if (projectId) {
                     if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
-                    } else if (params.userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + params.userId + '))'
-                    } else if (!params.userId) {
+                    } else if (userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                    } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
                     }
                 }
@@ -1010,7 +1010,7 @@ class ElasticSearchService {
                 if (!projectId) {
                     if (userId && permissionService.isUserAlaAdmin(userId)) {
                         forcedQuery = '(docType:activity)'
-                    } else if (params.userId) {
+                    } else if (userId) {
                         forcedQuery = '((docType:activity)'
                         List<String> projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
 
