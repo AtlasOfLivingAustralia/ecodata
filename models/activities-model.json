@@ -3436,6 +3436,16 @@
                 "Ecological Burn Details",
                 "Participant Information"
             ],
+            "outputConfig": [
+                {
+                    "outputName":"Asset Protection Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Ecological Burn Details",
+                    "optional":true
+                }
+            ],
             "supportsPhotoPoints": true,
             "name": "Ecological Fire Management",
             "supportsSites": true,
