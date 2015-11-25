@@ -83,7 +83,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = ['au.org.ala.ecodata.Project', 'au.org.ala.ecodata.Site', 'au.org.ala.ecodata.Activity', 'au.org.ala.ecodata.Record']
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
@@ -140,17 +140,17 @@ class ElasticSearchService {
         def className = (doc.className) ? doc.className : doc.class.name;
 
         switch (className) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 docId = doc.projectId; break
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 docId = doc.siteId; break
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 docId = doc.activityId; break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 docId = doc.organisationId; break
-            case "au.org.ala.ecodata.Report":
+            case Report.class.name:
                 docId = doc.reportId; break
-            case "au.org.ala.ecodata.Record":
+            case Record.class.name:
                 docId = doc.occurrenceID; break
             default:
                 docId = doc.id; break
@@ -1032,6 +1032,7 @@ class ElasticSearchService {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
                 }
+                break
 
             default:
                 forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
