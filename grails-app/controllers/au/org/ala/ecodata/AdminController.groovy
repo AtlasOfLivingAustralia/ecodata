@@ -352,7 +352,7 @@ class AdminController {
     private boolean createStageReportsFromTimeline(project) {
         def timeline = project.timeline
 
-        def dueDateDays = metadataService.programModel(project.associatedProgram).weekDaysToCompleteReport ?: DEFAULT_REPORT_DAYS_TO_COMPLETE
+        def dueDateDays = metadataService.programModel(project.associatedProgram).weekDaysToCompleteReport
         def lastActivityEndDate = null
         if (!timeline) {
             log.info "No timeline present for project: ${project.projectId}"
@@ -404,11 +404,13 @@ class AdminController {
             report.toDate = toDate.toDate()
 
             // Make sure the report can be submitted after the project ends, regardless of when the stage ends.
-            if (new DateTime(project.plannedEndDate).toString() < stage.toDate) {
-                report.dueDate = new DateTime(project.plannedEndDate).plusDays(dueDateDays).toDate()
-            }
-            else {
-                report.dueDate = toDate.plusDays(dueDateDays).toDate()
+            if (dueDateDays) {
+                if (new DateTime(project.plannedEndDate).toString() < stage.toDate) {
+                    report.dueDate = new DateTime(project.plannedEndDate).plusDays(dueDateDays).toDate()
+                }
+                else {
+                    report.dueDate = toDate.plusDays(dueDateDays).toDate()
+                }
             }
 
             report.save(flush:true, failOnError: true)

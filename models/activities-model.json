@@ -3033,246 +3033,12 @@
         {
             "template": "gaMonthlyReportData",
             "scores": [
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "trainingCommencedAccredited",
-                    "label": "No. participants starting accredited training",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "trainingNoExited",
-                    "label": "No. of Participants who exited training",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "trainingNoCompleted",
-                    "label": "No. of Participants who completed training",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "totalParticipantsCommenced",
-                    "label": "No. of Participants who commenced projects",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "totalParticipantsNotCompleted",
-                    "label": "No. of Participants who did not complete projects",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "totalParticipantsCompleted",
-                    "label": "No. of Participants who completed projects",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "totalIndigenousParticipantsCommenced",
-                    "label": "No. of Indigenous Participants who commenced projects",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "reportingTimeTaken",
-                    "label": "Time taken to fulfill reporting requirements",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "HISTOGRAM",
-                    "displayType": "piechart",
-                    "name": "projectStatus",
-                    "description": "Projects by status",
-                    "label": "Count of projects by project status",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                }
             ],
             "name": "Monthly Status Report Data"
         },
         {
             "template": "gaQuarterlyProjectReport",
             "scores": [
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "incidentCount",
-                    "description": "Total number of incidents",
-                    "label": "Total number of incidents recorded",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "complaintCount",
-                    "description": "Total number of complaints",
-                    "label": "Total number of complaints recorded",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "trainingActivityCount",
-                    "description": "Total number of training activities",
-                    "label": "Total number of training activities",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "participantWithdrawals",
-                    "description": "Total number of participant withdrawals",
-                    "label": "Total number of participant withdrawals",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "participantExits",
-                    "description": "Total number of participant exits",
-                    "label": "Total number of participant exits",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "participantTrainingNumber",
-                    "description": "Total number of participants starting training",
-                    "label": "Total number of participants starting training",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "participantTrainingNcNumber",
-                    "description": "Total number of participants exiting training",
-                    "label": "Total number of participants exiting training",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no17Years",
-                    "description": "Total number of participants 17 years old",
-                    "label": "Total number of participants 17 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no18Years",
-                    "description": "Total number of participants 18 years old",
-                    "label": "Total number of participants 18 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no19Years",
-                    "description": "Total number of participants 19 years old",
-                    "label": "Total number of participants 19 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no20Years",
-                    "description": "Total number of participants 20 years old",
-                    "label": "Total number of participants 20 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no21Years",
-                    "description": "Total number of participants 21 years old",
-                    "label": "Total number of participants 21 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no22Years",
-                    "description": "Total number of participants 22 years old",
-                    "label": "Total number of participants 22 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no23Years",
-                    "description": "Total number of participants 23 years old",
-                    "label": "Total number of participants 23 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "no24Years",
-                    "description": "Total number of participants 24 years old",
-                    "label": "Total number of participants 24 years old",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "totalParticipants",
-                    "description": "Total number of participants",
-                    "label": "Total number of participants",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Green Army"
-                }
             ],
             "name": "Three Monthly Report"
         },
@@ -3435,6 +3201,16 @@
                 "Asset Protection Details",
                 "Ecological Burn Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName":"Asset Protection Details",
+                    "optional":true
+                },
+                {
+                    "outputName":"Ecological Burn Details",
+                    "optional":true
+                }
             ],
             "supportsPhotoPoints": true,
             "name": "Ecological Fire Management",
@@ -3974,7 +3750,8 @@
             "name": "Green Army - Monthly project status report",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -3984,7 +3761,8 @@
             "name": "Green Army - Quarterly project report",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -3994,7 +3772,8 @@
             "name": "Green Army - End of Project Report",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -4004,7 +3783,8 @@
             "name": "Green Army - Desktop Audit Checklist",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -4014,7 +3794,8 @@
             "name": "Green Army - Change or Absence of Team Supervisor",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -4024,7 +3805,8 @@
             "name": "Green Army - Site Visit Checklist",
             "supportsSites": false,
             "type": "Report",
-            "category": "Programme Reporting"
+            "category": "Programme Reporting",
+            "status": "deleted"
         },
         {
             "outputs": ["Single Sighting"],
