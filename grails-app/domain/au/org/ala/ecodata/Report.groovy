@@ -78,18 +78,18 @@ class Report {
     public boolean isDue() {
         def now = new Date()
         return  !isSubmittedOrApproved() &&
-                toDate < now && dueDate >= now
+                toDate < now && (dueDate == null || dueDate >= now)
     }
 
     public boolean isOverdue() {
         def now = new Date()
         return  !isSubmittedOrApproved() &&
-                dueDate < now
+                dueDate && dueDate < now
     }
 
     public boolean isSubmittedOrApproved() {
-        return  publicationStatus != REPORT_SUBMITTED &&
-                publicationStatus != REPORT_APPROVED
+        return  publicationStatus == REPORT_SUBMITTED ||
+                publicationStatus == REPORT_APPROVED
     }
 
 
@@ -113,10 +113,10 @@ class Report {
         }
         StatusChange change = changeStatus(userId, 'submitted', changeDate)
 
-        if (!submissionDeltaInWeekdays) {
+        if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
         }
-        publicationStatus = REPORT_NOT_APPROVED
+        publicationStatus = REPORT_SUBMITTED
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
     }
