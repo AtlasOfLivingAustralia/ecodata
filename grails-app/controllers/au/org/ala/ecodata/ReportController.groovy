@@ -37,17 +37,17 @@ class ReportController {
 
     @RequireApiKey
     def submit(String id) {
-        reportingService.submit(id)
+        respond reportingService.submit(id)
     }
 
     @RequireApiKey
     def approve(String id) {
-        reportingService.approve(id)
+        respond reportingService.approve(id)
     }
 
     @RequireApiKey
     def returnForRework(String id) {
-        reportingService.returnForRework(id)
+        respond reportingService.returnForRework(id)
     }
 
 }

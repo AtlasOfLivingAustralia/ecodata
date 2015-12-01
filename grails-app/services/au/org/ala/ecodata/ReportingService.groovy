@@ -68,6 +68,7 @@ class ReportingService {
         Report r = get(id)
         r.submit(user.userId)
         r.save()
+        return r
     }
 
     def approve(String id) {
@@ -75,6 +76,7 @@ class ReportingService {
         Report r = get(id)
         r.approve(user.userId)
         r.save()
+        return r
     }
 
     def returnForRework(String id) {
@@ -82,6 +84,7 @@ class ReportingService {
         Report r = get(id)
         r.returnForRework(user.userId)
         r.save()
+        return r
     }
 
     /**
