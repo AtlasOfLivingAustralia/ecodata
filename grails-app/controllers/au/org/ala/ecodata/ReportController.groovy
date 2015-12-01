@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import grails.rest.RestfulController
 
 class ReportController {
 
@@ -11,6 +10,7 @@ class ReportController {
         reportingService.get(id, false)
     }
 
+    @RequireApiKey
     def update(String id) {
         if (!id) {
             respond reportingService.create(request.JSON)
@@ -35,14 +35,17 @@ class ReportController {
         respond reportList
     }
 
+    @RequireApiKey
     def submit(String id) {
         reportingService.submit(id)
     }
 
+    @RequireApiKey
     def approve(String id) {
         reportingService.approve(id)
     }
 
+    @RequireApiKey
     def returnForRework(String id) {
         reportingService.returnForRework(id)
     }
