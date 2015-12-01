@@ -45,7 +45,7 @@ class ReportSpec extends Specification {
         then:
         def savedReport = Report.findByReportId('blah')
         savedReport.submittedBy == '1234'
-        savedReport.publicationStatus == 'pendingApproval'
+        savedReport.publicationStatus == Report.REPORT_SUBMITTED
         savedReport.dateSubmitted != null
         savedReport.statusChangeHistory.size() == 1
     }
@@ -60,7 +60,7 @@ class ReportSpec extends Specification {
         then:
         def savedReport = Report.findByReportId('blah')
         savedReport.approvedBy == '1234'
-        savedReport.publicationStatus == 'published'
+        savedReport.publicationStatus == Report.REPORT_APPROVED
         savedReport.dateApproved != null
         savedReport.statusChangeHistory.size() == 2
     }
@@ -74,7 +74,7 @@ class ReportSpec extends Specification {
         then:
         def savedReport = Report.findByReportId('blah')
         savedReport.returnedBy == '1234'
-        savedReport.publicationStatus == 'unpublished'
+        savedReport.publicationStatus == Report.REPORT_NOT_APPROVED
         savedReport.dateReturned != null
         savedReport.statusChangeHistory.size() == 1
     }

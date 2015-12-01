@@ -11,6 +11,10 @@ import org.joda.time.DateTimeConstants
  */
 class Report {
 
+    public static final String REPORT_APPROVED = 'published'
+    public static final String REPORT_SUBMITTED = 'pendingApproval'
+    public static final String REPORT_NOT_APPROVED = 'unpublished'
+
     public static class StatusChange {
         Date dateChanged
         String changedBy
@@ -56,8 +60,8 @@ class Report {
     /** Number of days after a report is submitted that it's approved.  Calculated at approval time to make reporting easier. */
     Integer approvalDeltaInWeekdays
 
-    /** Not Approved, Submitted, Approved */
-    String publicationStatus = 'not approved'
+    /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
+    String publicationStatus = REPORT_NOT_APPROVED
 
     /** active, deleted */
     String status = 'active'
@@ -67,28 +71,30 @@ class Report {
 
     public boolean isCurrent() {
         def now = new Date()
-        return  publicationStatus != 'pendingApproval' &&
-                publicationStatus != 'published' &&
+        return  !isSubmittedOrApproved() &&
                 fromDate < now && toDate >= now
     }
 
     public boolean isDue() {
         def now = new Date()
-        return  publicationStatus != 'pendingApproval' &&
-                publicationStatus != 'published' &&
-                toDate < now && dueDate >= now
+        return  !isSubmittedOrApproved() &&
+                toDate < now && (dueDate == null || dueDate >= now)
     }
 
     public boolean isOverdue() {
         def now = new Date()
-        return  publicationStatus != 'pendingApproval' &&
-                publicationStatus != 'published' &&
-                dueDate < now
+        return  !isSubmittedOrApproved() &&
+                dueDate && dueDate < now
+    }
+
+    public boolean isSubmittedOrApproved() {
+        return  publicationStatus == REPORT_SUBMITTED ||
+                publicationStatus == REPORT_APPROVED
     }
 
 
     public void approve(String userId, Date changeDate = new Date()) {
-        if (publicationStatus != 'pendingApproval') {
+        if (publicationStatus != REPORT_SUBMITTED) {
             throw new IllegalArgumentException("Only submitted reports can be approved.")
         }
         if (!approvalDeltaInWeekdays) {
@@ -96,21 +102,21 @@ class Report {
         }
         StatusChange change = changeStatus(userId, 'approved', changeDate)
 
-        publicationStatus = 'published'
+        publicationStatus = REPORT_APPROVED
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
     }
 
     public void submit(String userId,  Date changeDate = new Date()) {
-        if (publicationStatus == 'published' || publicationStatus == 'pendingApproval') {
+        if (isSubmittedOrApproved()) {
             throw new IllegalArgumentException("An approved or submitted report cannot be resubmitted")
         }
         StatusChange change = changeStatus(userId, 'submitted', changeDate)
 
-        if (!submissionDeltaInWeekdays) {
+        if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
         }
-        publicationStatus = 'pendingApproval'
+        publicationStatus = REPORT_SUBMITTED
         submittedBy = change.changedBy
         dateSubmitted = change.dateChanged
     }
@@ -118,7 +124,7 @@ class Report {
     public void returnForRework(String userId, Date changeDate = new Date()) {
         StatusChange change = changeStatus(userId, 'returned', changeDate)
 
-        publicationStatus = 'unpublished'
+        publicationStatus = REPORT_NOT_APPROVED
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
     }
@@ -143,6 +149,7 @@ class Report {
         dateReturned nullable:true
         returnedBy nullable:true
         projectId nullable:true
+        dueDate nullable:true
         organisationId nullable:true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
