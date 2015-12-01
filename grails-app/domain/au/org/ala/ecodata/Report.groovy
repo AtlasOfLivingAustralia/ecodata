@@ -149,6 +149,7 @@ class Report {
         dateReturned nullable:true
         returnedBy nullable:true
         projectId nullable:true
+        dueDate nullable:true
         organisationId nullable:true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
