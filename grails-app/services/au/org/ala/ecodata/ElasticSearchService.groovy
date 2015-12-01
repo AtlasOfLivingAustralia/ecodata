@@ -836,6 +836,7 @@ class ElasticSearchService {
             prepareActivityForIndexing(activity)
             indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
         }
+        log.debug "Indexing complete"
     }
 
     /**
@@ -888,6 +889,7 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
+                values.coordinates = it.verbatimCoordinates
                 records << values
             }
             projectActivity.records = records
