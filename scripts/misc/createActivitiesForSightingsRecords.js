@@ -47,14 +47,13 @@ while (records.hasNext()) {
             multimedia:record.multimedia,
             recordedBy:record.recordedBy,
             coordinateUncertaintyInMeters:record.coordinateUncertaintyInMeters,
-            locationLatitude:record.decimalLatitude,
-            locationLongitude:record.decimalLongitude,
+            verbatimCoordinates:[record.decimalLongitude, record.decimalLatitude],
             geodeticDatum:record.geodeticDatum,
             georeferenceProtocol:record.georeferenceProtocol,
             identificationVerificationStatus:record.identificationVerificationStatus,
             individualCount:record.individualCount,
             locality:record.locality,
-            scientificName:record.scientificName,
+            name:record.scientificName,
             submissionMethod:record.submissionMethod,
             imageLicence:record.imageLicence,
             occurrenceRemarks:record.occurrenceRemarks,
@@ -70,6 +69,8 @@ while (records.hasNext()) {
     record.activityId = activity.activityId;
     record.projectActivityId = sightingsSurvey.projectActivityId;
     record.projectId = sightingsProject.projectId;
+    record.verbatimCoordinates = [record.decimalLongitude, record.decimalLatitude]
+    record.name = record.scientificName
 
     db.record.save(record);
 
