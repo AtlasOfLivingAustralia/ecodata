@@ -28,6 +28,7 @@ class RecordService {
     ProjectService projectService
     SiteService siteService
     AuthService authService
+    UserService userService
 
     final def ignores = ["action", "controller", "associatedMedia"]
 
@@ -122,8 +123,11 @@ class RecordService {
         Map errors = [:]
 
         try {
+            def userDetails = userService.getCurrentUserDetails()
+            if (!userDetails && json.userId) {
+                userDetails = authService.getUserForUserId(json.userId)
+            }
 
-            def userDetails = authService.getUserForUserId(json.userId)
             if (!userDetails) {
                 errors['updateError'] = "Unable to lookup user with ID: ${json.userId}. Check authorised systems in auth."
                 return errors
