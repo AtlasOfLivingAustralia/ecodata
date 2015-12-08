@@ -159,7 +159,11 @@ class OutputService {
             ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
 
             if (site) {
-                site = metadataService.getLocationMetadataForSites([site], true)[0]
+                try {
+                    site = metadataService.getLocationMetadataForSites([site], true)[0]
+                } catch (Exception e) {
+                    log.warn("Failed to retrieve location information for site ${site.name}", e)
+                }
             }
 
             List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
