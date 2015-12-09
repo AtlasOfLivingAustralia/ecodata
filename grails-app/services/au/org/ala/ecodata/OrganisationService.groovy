@@ -29,13 +29,15 @@ class OrganisationService {
         return Organisation.findAllByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
     }
 
-    def create(props) {
+    def create(props, boolean createCollectoryInstitution = true) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
 
-        def institutionId = collectoryService.createInstitution(props)
-        if (institutionId) {
-            organisation.collectoryInstitutionId = institutionId
+        if (createCollectoryInstitution) {
+            def institutionId = collectoryService.createInstitution(props)
+            if (institutionId) {
+                organisation.collectoryInstitutionId = institutionId
+            }
         }
         try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)

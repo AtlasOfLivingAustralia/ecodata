@@ -1,10 +1,13 @@
 package au.org.ala.ecodata
 
+import org.codehaus.groovy.grails.commons.GrailsApplication
+
 
 /** Provides an interface to the ALA Collectory web services */
 class CollectoryService {
 
-    def webService, grailsApplication
+    WebService webService
+    GrailsApplication grailsApplication
 
     /**
      * Creates a new Intitution in the collectory using the supplied properties as input.
@@ -30,7 +33,7 @@ class CollectoryService {
                 orgType: 'institutionType',
                 description: 'pubDescription',
                 name: 'name',
-                organisationId: 'uid',
+                collectoryInstitutionId: 'uid',
                 url: 'websiteUrl'
         ]
         def collectoryProps = [
@@ -47,8 +50,8 @@ class CollectoryService {
 
     // create ecodata organisations for any institutions in collectory which are not yet in ecodata
     // return null if sucessful, or errors
-    def syncOrganisations() {
-        def errors
+    def syncOrganisations(OrganisationService organisationService) {
+        def errors = []
         def url = "${grailsApplication.config.collectory.baseURL}ws/institution/"
         def institutions = webService.getJson(url)
         if (institutions instanceof List) {
@@ -59,11 +62,15 @@ class CollectoryService {
             institutions.each({it ->
                 if (!map[it.uid]) {
                     def inst = webService.getJson(url + it.uid)
-                    def result = create([collectoryInstitutionId: inst.uid,
-                                         name: inst.name,
-                                         description: inst.pubDescription?:"",
-                                         url: inst.websiteUrl?:""])
-                    if (result.errors) errors = result.errors
+                    def result = organisationService.create([
+                            collectoryInstitutionId: inst.uid,
+                            name: inst.name,
+                            description: inst.pubDescription?:"",
+                            url: inst.websiteUrl?:"",
+                            sourceSystem: 'collectory'], false)
+                    if (!result) {
+                        errors << "Unable to create organisation for institution: ${inst.name}"
+                    }
                 }
             })
         }
@@ -78,7 +85,7 @@ class CollectoryService {
      * @param props the properties for the new data provider and resource.
      * @return a map containing the created data provider id and data resource id, or null.
      */
-    Map createDataProviderAndResource(id, props) {
+    Map createDataProviderAndResource(String id, Map props) {
 
         Map ids = [:]
 
@@ -110,13 +117,11 @@ class CollectoryService {
      * @param project the UPDATED project in ecodata.
      * @return void.
      */
-    def updateDataProviderAndResource(project) {
+    def updateDataProviderAndResource(Map project) {
 
         def projectId = project.projectId
         try {
-            project = ['id', 'dateCreated', 'documents', 'lastUpdated', 'organisationName', 'projectId', 'sites'].each {
-                    project.remove(it)
-                }
+
             webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + project.dataProviderId,
                     mapProjectAttributesToCollectory(project))
             if (project.dataResourceId)
