@@ -445,7 +445,6 @@ class PermissionsController {
             List out = []
             permissions.each {
                 Map t = [:]
-                log.debug "it.organisationId = ${it.entityId}"
                 t.organisation = organisationService.get(it.entityId)
                 t.accessLevel = it.accessLevel
                 if (t.organisation) out.add t

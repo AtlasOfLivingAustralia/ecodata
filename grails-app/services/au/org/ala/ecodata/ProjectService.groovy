@@ -204,7 +204,7 @@ class ProjectService {
             try {
                 getCommonService().updateProperties(a, props)
                 if (a.dataProviderId)
-                    collectoryService.updateDataProviderAndResource(Project.findByProjectId(id))
+                    collectoryService.updateDataProviderAndResource(get(id, FLAT))
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }

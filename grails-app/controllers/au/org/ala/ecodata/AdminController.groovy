@@ -14,7 +14,7 @@ class AdminController {
     private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
 
     def outputService, activityService, siteService, projectService, authService,
-        collectoryService,
+        collectoryService, organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
@@ -43,7 +43,7 @@ class AdminController {
 
     @RequireApiKey
     def syncCollectoryOrgs() {
-        def errors = collectoryService.syncOrganisations()
+        def errors = collectoryService.syncOrganisations(organisationService)
         if (errors)
             render (status: 503, text: errors)
         else
