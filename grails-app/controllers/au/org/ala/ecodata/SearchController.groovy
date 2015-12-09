@@ -60,8 +60,10 @@ class SearchController {
     private def populateGeoInfo(markBy, hit, selectedFacetTerms){
 
         def geo = hit.source.geo
-        if(!markBy)
+        if(!markBy) {
+            geo[0].geometry = hit.source.sites[0].extent.geometry
             return geo
+        }
 
         def legendName, index
         def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
