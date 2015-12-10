@@ -37,6 +37,7 @@ while (records.hasNext()) {
 
     activity.projectId=sightingsProject.projectId;
     activity.projectActivityId=sightingsSurvey.projectActivityId;
+    activity.coordinates = [record.decimalLongitude, record.decimalLatitude];
     db.activity.save(activity);
 
     var output = db.output.find({'activityId':record.activityId}).next();
