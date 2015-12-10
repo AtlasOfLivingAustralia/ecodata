@@ -160,7 +160,7 @@ class RecordConverter {
         if (site) {
             dwcFields.locationID = site.siteId
             dwcFields.locationName = site.name
-            dwcFields.locationRemarks = "${site.description}${site.description && site.notes ? ';' : ''}${site.notes}"
+            dwcFields.locationRemarks = "${site.description}${site.description && site.notes ? ';' : ''}${site.notes}".toString()
             try {
                 if (site.extent?.geometry) {
                     dwcFields.locality = site.extent.geometry.locality
