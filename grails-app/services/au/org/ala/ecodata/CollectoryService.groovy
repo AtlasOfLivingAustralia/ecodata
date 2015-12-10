@@ -32,6 +32,7 @@ class CollectoryService {
         def mapKeyOrganisationDataToCollectory = [
                 orgType: 'institutionType',
                 description: 'pubDescription',
+                acronym: 'acronym',
                 name: 'name',
                 collectoryInstitutionId: 'uid',
                 url: 'websiteUrl'
@@ -67,6 +68,7 @@ class CollectoryService {
                             name: inst.name,
                             description: inst.pubDescription?:"",
                             url: inst.websiteUrl?:"",
+                            acronym: inst.acronym?:"",
                             sourceSystem: 'collectory'], false)
                     if (!result) {
                         errors << "Unable to create organisation for institution: ${inst.name}"

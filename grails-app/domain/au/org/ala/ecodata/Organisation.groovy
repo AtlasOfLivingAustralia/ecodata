@@ -11,10 +11,10 @@ class Organisation {
 
     ObjectId id
     String organisationId
-
+    String acronym
     String name
     String description
-    String announcements // or news and events?  (Announcables...)
+    String announcements
 
     String status = 'active'
 
@@ -30,6 +30,7 @@ class Organisation {
     }
 
     static constraints = {
+        acronym nullable: true
         announcements nullable: true
         description nullable: true
         collectoryInstitutionId nullable: true

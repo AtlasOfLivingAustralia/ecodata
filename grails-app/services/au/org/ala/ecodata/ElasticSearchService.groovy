@@ -79,11 +79,12 @@ class ElasticSearchService {
     ProjectActivityService projectActivityService
     RecordService recordService
     MetadataService metadataService
+    OrganisationService organisationService
 
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
@@ -700,7 +701,12 @@ class ElasticSearchService {
                 if (pDoc) {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
-                break;
+                break
+            case "au.org.ala.ecodata.Organisation":
+                Map organisation = organisationService.get(docId)
+                organisation["className"] = docType
+                indexDoc(organisation, DEFAULT_INDEX)
+                break
         }
     }
 
@@ -765,6 +771,9 @@ class ElasticSearchService {
                 break
             case "au.org.ala.ecodata.Activity":
                 doc = Activity.findByActivityId(docId)
+                break
+            case "au.org.ala.ecodata.Organisation":
+                doc = Organisation.findByOrganisationId(docId)
                 break
         }
 
@@ -836,6 +845,14 @@ class ElasticSearchService {
             prepareActivityForIndexing(activity)
             indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
         }
+
+        log.debug "Indexing all organisations"
+        List<Map> organisations = organisationService.list()
+        for (Map org : organisations) {
+            org["className"] = Organisation.class.name
+            indexDoc(org, DEFAULT_INDEX)
+        }
+
         log.debug "Indexing complete"
     }
 
