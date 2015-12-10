@@ -704,7 +704,7 @@ class ElasticSearchService {
                 break
             case "au.org.ala.ecodata.Organisation":
                 Map organisation = organisationService.get(docId)
-                organisation["className"] = docType
+                prepareOrganisationForIndexing(organisation)
                 indexDoc(organisation, DEFAULT_INDEX)
                 break
         }
@@ -849,11 +849,23 @@ class ElasticSearchService {
         log.debug "Indexing all organisations"
         List<Map> organisations = organisationService.list()
         for (Map org : organisations) {
-            org["className"] = Organisation.class.name
+            prepareOrganisationForIndexing(org)
             indexDoc(org, DEFAULT_INDEX)
         }
 
         log.debug "Indexing complete"
+    }
+
+    /**
+     * Adds information useful for searching to the organisation
+     * @param organisation the existing organisation details
+     */
+    private void prepareOrganisationForIndexing(Map organisation) {
+        organisation["className"] = Organisation.class.name
+        Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
+        if (results && results.documents) {
+            organisation.logoUrl = results.documents[0].url
+        }
     }
 
     /**
