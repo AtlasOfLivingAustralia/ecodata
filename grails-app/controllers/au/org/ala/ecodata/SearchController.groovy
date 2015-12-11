@@ -1,14 +1,21 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.CSProjectXlsExporter
+import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
+import au.org.ala.ecodata.reporting.ShapefileBuilder
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
-import org.apache.ivy.osgi.updatesite.xml.Require
+import groovyx.net.http.ContentType
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
+
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
+
 import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
 
@@ -22,7 +29,7 @@ class SearchController {
     ProjectService projectService
     MetadataService metadataService
     ProjectActivityService projectActivityService
-
+    SiteService siteService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -230,13 +237,120 @@ class SearchController {
 
     @RequireApiKey
     def downloadAllData() {
+        if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
+            downloadProjectData(params)
+        } else {
+            downloadMeritData(params)
+        }
+    }
 
+    private downloadMeritData(GrailsParameterMap params) {
+        defaultDownloadQueryParams(params)
+
+        Set ids = getProjectIdsForDownload(params, HOMEPAGE_INDEX)
+
+        withFormat {
+            json {
+                List projects = ids.collect { projectService.get(it, ProjectService.ALL) }
+                render projects as JSON
+            }
+            xlsx {
+                XlsExporter exporter = exportProjectsToXls(ids, true)
+                exporter.setResponseHeaders(response)
+
+                exporter.save(response.outputStream)
+            }
+        }
+    }
+
+    private static defaultDownloadQueryParams(params) {
         if (!params.max) {
             params.max = 5000
             params.offset = 0
         }
+    }
+
+    private downloadProjectData(GrailsParameterMap params) {
+        elasticSearchService.buildProjectActivityQuery(params)
+
+        response.setContentType(ContentType.BINARY.toString())
+        response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
+
+        defaultDownloadQueryParams(params)
+
+        Set<String> projectIds = getProjectIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
+
+        XlsExporter xlsExporter = exportProjectsToXls(projectIds, false, "data")
+
+        new ZipOutputStream(response.outputStream).withStream { zip ->
+
+            zip.putNextEntry(new ZipEntry("data.xls"))
+            ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
+            xlsExporter.save(xslFile)
+            xslFile.flush()
+            zip << xslFile.toByteArray()
+            xslFile.flush()
+            xslFile.close()
+
+            zip.putNextEntry(new ZipEntry("shapefiles/"))
+
+            projectIds.each { projectId ->
+                Map project = projectService.get(projectId, ProjectService.ALL)
+                if (project.sites) {
+                    project.sites.each { site ->
+                        zip.putNextEntry(new ZipEntry("shapefiles/${site.siteId}.zip"))
+                        ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+                        builder.setName(site.siteId)
+                        builder.addSite(site.siteId)
+                        builder.writeShapefile(zip)
+                    }
+                }
+            }
+
+            zip.putNextEntry(new ZipEntry("images/"))
+
+
+            zip.finish()
+        }
+
+    }
+
+    private XlsExporter exportProjectsToXls(Set<String> projectIds, boolean merit, String fileName = "results") {
         long start = System.currentTimeMillis()
-        SearchResponse res = elasticSearchService.search(params.query, params, "homepage")
+
+        XlsExporter xlsExporter = new XlsExporter(fileName)
+
+        ProjectExporter projectExporter
+        if (merit) {
+            projectExporter = new ProjectXlsExporter(xlsExporter)
+        } else {
+            projectExporter = new CSProjectXlsExporter(xlsExporter)
+        }
+
+        Project.withSession { session ->
+            int batchSize = 50
+            List projects = new ArrayList(batchSize)
+            for (int i = 0; i < projectIds.size(); i++) {
+                projects << projectService.get(projectIds[i], ProjectService.ALL)
+
+                if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
+                    projectExporter.exportAll(projects)
+                    projects.clear()
+                    session.clear()
+
+                    log.info "Exported ${i + 1} of ${projectIds.size()} projects..."
+                }
+            }
+        }
+        log.info "Export of ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
+
+        xlsExporter
+    }
+
+    private Set<String> getProjectIdsForDownload(Map params, String searchIndexName) {
+        long start = System.currentTimeMillis()
+
+        SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
@@ -244,40 +358,10 @@ class SearchController {
                 ids << hit.source.projectId
             }
         }
-        long end = System.currentTimeMillis()
-        log.info "Query of ${ids.size()} projects took ${end-start} millis"
 
-        start = System.currentTimeMillis()
-        withFormat {
-            json {
-                List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
-                render projects as JSON
-            }
-            xlsx {
-                XlsExporter exporter = new XlsExporter("results")
-                exporter.setResponseHeaders(response)
-                ProjectXlsExporter projectExporter = new ProjectXlsExporter(exporter, metadataService)
-                Project.withSession { session ->
-                    def batchSize = 50
-                    List projects = new ArrayList(batchSize)
-                    for (int i=0; i<ids.size(); i++) {
-                        projects << projectService.get(ids[i],ProjectService.ALL)
-                        if (i % batchSize == batchSize-1 || i == ids.size() -1) {
-                            projectExporter.exportAll(projects)
-                            projects.clear()
-                            session.clear()
-                            end = System.currentTimeMillis()
+        log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
 
-                            log.info "Exported ${i+1} of ${ids.size()} projects..."
-                            log.info "Batch took ${end-start} millis"
-                            start = end
-                        }
-                    }
-                }
-                //exporter.sizeColumns()  // This takes a long time for large spreadsheets
-                exporter.save(response.outputStream)
-            }
-        }
+        ids
     }
 
     @RequireApiKey

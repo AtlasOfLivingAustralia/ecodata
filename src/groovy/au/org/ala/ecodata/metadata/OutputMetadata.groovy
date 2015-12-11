@@ -82,7 +82,7 @@ class OutputMetadata {
     }
 
     def isNestedDataModelType(node) {
-        return (node.columns != null)
+        return (node.columns != null && node.dataType != "geoMap")
     }
     def isNestedViewModelType(node) {
         return (node.items != null || node.columns != null)
