@@ -30,6 +30,7 @@ class Organisation {
     }
 
     static constraints = {
+        name unique: true
         acronym nullable: true
         announcements nullable: true
         description nullable: true
