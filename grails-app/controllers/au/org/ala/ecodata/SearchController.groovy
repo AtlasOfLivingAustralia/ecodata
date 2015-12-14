@@ -28,7 +28,8 @@ class SearchController {
     ReportService reportService
     ProjectService projectService
     MetadataService metadataService
-    ProjectActivityService projectActivityService
+    DocumentService documentService
+    ActivityService activityService
     SiteService siteService
 
     def index(String query) {
@@ -270,6 +271,24 @@ class SearchController {
         }
     }
 
+    /**
+     * Constructs a zip file with the following structure:
+     * |- data.xls --> spreadsheet as per {@link CSProjectXlsExporter}
+     * |- images
+     * |--- <projectId> --> one directory for each projectId
+     * |--- |- <documentId> --> one file for each project-level image
+     * |--- |--- <activityId> --> one directory for each activityId
+     * |--- |--- |- <documentId> --> one file for each activity-level image
+     * |--- |--- |- <outputId> --> one directory for each outputId
+     * |--- |--- |--- |- <documentId> --> one file for each output-level image
+     * |- shapes
+     * |--- <projectId> --> one directory for each projectId
+     * |--- |- extent.zip --> shapefile for the project extent
+     * |--- |- sites.zip  --> shapefile containing all sites for the project
+     *
+     * @param params
+     * @return
+     */
     private downloadProjectData(GrailsParameterMap params) {
         elasticSearchService.buildProjectActivityQuery(params)
 
@@ -283,7 +302,6 @@ class SearchController {
         XlsExporter xlsExporter = exportProjectsToXls(projectIds, false, "data")
 
         new ZipOutputStream(response.outputStream).withStream { zip ->
-
             zip.putNextEntry(new ZipEntry("data.xls"))
             ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
             xlsExporter.save(xslFile)
@@ -292,27 +310,93 @@ class SearchController {
             xslFile.flush()
             xslFile.close()
 
-            zip.putNextEntry(new ZipEntry("shapefiles/"))
+            addShapeFilesToZip(zip, projectIds);
 
-            projectIds.each { projectId ->
-                Map project = projectService.get(projectId, ProjectService.ALL)
-                if (project.sites) {
-                    project.sites.each { site ->
-                        zip.putNextEntry(new ZipEntry("shapefiles/${site.siteId}.zip"))
-                        ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
-                        builder.setName(site.siteId)
-                        builder.addSite(site.siteId)
-                        builder.writeShapefile(zip)
-                    }
-                }
-            }
-
-            zip.putNextEntry(new ZipEntry("images/"))
-
+            addImagesToZip(zip, projectIds)
 
             zip.finish()
         }
+    }
 
+    private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
+        zip.putNextEntry(new ZipEntry("shapefiles/"))
+
+        projectIds.each { projectId ->
+            Map project = projectService.get(projectId, ProjectService.ALL)
+            if (project.sites) {
+                project.sites.each { site ->
+                    zip.putNextEntry(new ZipEntry("shapefiles/${site.siteId}.zip"))
+                    ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+                    builder.setName(site.siteId)
+                    builder.addSite(site.siteId)
+                    builder.writeShapefile(zip)
+                }
+            }
+        }
+    }
+
+    private addImagesToZip(ZipOutputStream zip, Set<String> projectIds) {
+        zip.putNextEntry(new ZipEntry("images/"))
+
+        projectIds.each { projectId ->
+            zip.putNextEntry(new ZipEntry("images/${projectId}/"))
+
+            groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
+                if (activityId) {
+                    zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
+
+                    documentsMap.each { outputId, documentList ->
+                        if (outputId) {
+                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${outputId}/"))
+
+                            documentList.each { Map doc ->
+                                if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                                    addFileToZip(zip, "images/${projectId}/${activityId}/${outputId}/", doc)
+                                }
+                            }
+                        } else {
+                            documentList.each { Map doc ->
+                                if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                                    addFileToZip(zip, "images/${projectId}/${activityId}/", doc)
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    documentsMap[null].each { Map doc ->
+                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                            addFileToZip(zip, "images/${projectId}/", doc)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private addFileToZip(ZipOutputStream zip, String zipPath, Map doc) {
+        zip.putNextEntry(new ZipEntry("${zipPath}/${doc.filename}"))
+
+        String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
+
+        File file = new File(path)
+
+        if (file.exists()) {
+            file.withInputStream { i -> zip << i }
+        } else {
+            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
+        }
+    }
+
+    private Map<String, Map<String, List<Map>>> groupDocumentsByActivityAndOutput(String projectId) {
+        Map<String, Map<String, List<Map>>> documents = [:].withDefault { [:].withDefault { [] } }
+
+        activityService.findAllForProjectId(projectId).each { activity ->
+            documentService.findAllForActivityId(activity.activityId)?.each {
+                documents[it.activityId ?: null][it.outputId ?: null] << it
+            }
+        }
+
+        documents
     }
 
     private XlsExporter exportProjectsToXls(Set<String> projectIds, boolean merit, String fileName = "results") {

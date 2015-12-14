@@ -98,70 +98,76 @@ class CSProjectXlsExporter extends ProjectExporter {
     }
 
     private AdditionalSheet createSurveySheet(Map projectActivity) {
-        List<String> headers = []
-        headers.addAll(surveyHeaders)
-
-        AdditionalSheet sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
+        AdditionalSheet sheet = null
 
         List<Map> activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
 
-        OutputModelProcessor processor = new OutputModelProcessor()
+        if (activities) {
+            List<String> headers = []
+            headers.addAll(surveyHeaders)
 
-        Set<String> uniqueOutputs = [] as HashSet<String>
-        activities.each { activity ->
-            List rows = [[:]]
+            sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
 
-            List properties = [
-                    new ConstantGetter("projectId", projectActivity.projectId),
-                    new ConstantGetter("projectActivityId", projectActivity.projectActivityId),
-                    new ConstantGetter("activityId", activity.activityId),
-                    new ConstantGetter("sites", projectActivity.sites.collect { it.siteId }.join(", ")),
-                    new ConstantGetter("startDate", projectActivity.startDate),
-                    new ConstantGetter("endDate", projectActivity.endDate),
-                    new ConstantGetter("description", projectActivity.description),
-                    new ConstantGetter("status", projectActivity.status)
-            ]
 
-            activity?.outputs?.each { output ->
-                Map outputConfig = outputProperties(output.name)
-                if (!uniqueOutputs.contains(output.name)) {
-                    headers.addAll(outputConfig.headers)
-                    uniqueOutputs << output.name
-                }
+            OutputModelProcessor processor = new OutputModelProcessor()
 
-                properties.addAll(outputConfig.propertyGetters)
+            Set<String> uniqueOutputs = [] as HashSet<String>
+            activities.each { activity ->
+                List rows = [[:]]
 
-                OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
+                List properties = [
+                        new ConstantGetter("projectId", projectActivity.projectId),
+                        new ConstantGetter("projectActivityId", projectActivity.projectActivityId),
+                        new ConstantGetter("activityId", activity.activityId),
+                        new ConstantGetter("sites", projectActivity.sites.collect { it.siteId }.join(", ")),
+                        new ConstantGetter("startDate", projectActivity.startDate),
+                        new ConstantGetter("endDate", projectActivity.endDate),
+                        new ConstantGetter("description", projectActivity.description),
+                        new ConstantGetter("status", projectActivity.status)
+                ]
 
-                List rowSets = processor.flatten(output, outputModel)
+                activity?.outputs?.each { output ->
+                    Map outputConfig = outputProperties(output.name)
+                    if (!uniqueOutputs.contains(output.name)) {
+                        headers.addAll(outputConfig.headers)
+                        uniqueOutputs << output.name
+                    }
 
-                // some outputs (e.g. with list datatypes) result in multiple rows in the spreadsheet, so make sure that the existing rows are duplicated
-                while (rows.size() < rowSets.size()) {
-                    rows << rows[0].clone() // shallow clone is ok here, we just need to ensure we have a different map instance
-                }
+                    properties.addAll(outputConfig.propertyGetters)
 
-                if (rowSets.size() == 1 && rows.size() > 1) {
-                    rows.each {
-                        if (rowSets[0] instanceof BasicDBObject) {
-                            it.putAll(rowSets[0].toMap())
+                    OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
+
+                    List rowSets = processor.flatten(output, outputModel)
+
+                    // some outputs (e.g. with list datatypes) result in multiple rows in the spreadsheet, so make sure that the existing rows are duplicated
+                    while (rows.size() < rowSets.size()) {
+                        rows << rows[0].clone()
+                        // shallow clone is ok here, we just need to ensure we have a different map instance
+                    }
+
+                    if (rowSets.size() == 1 && rows.size() > 1) {
+                        rows.each {
+                            if (rowSets[0] instanceof BasicDBObject) {
+                                it.putAll(rowSets[0].toMap())
+                            }
+                        }
+                    } else {
+                        rowSets.eachWithIndex { outputFields, index ->
+                            if (outputFields instanceof BasicDBObject) {
+                                rows[index].putAll(outputFields.toMap())
+                            }
                         }
                     }
-                } else {
-                    rowSets.eachWithIndex { outputFields, index ->
-                        if (outputFields instanceof BasicDBObject) {
-                            rows[index].putAll(outputFields.toMap())
-                        }
-                    }
+                }
+
+                if (!rows[0].isEmpty()) {
+                    sheet.add(rows, properties, sheet.sheet.lastRowNum + 1)
                 }
             }
 
-            if (!rows[0].isEmpty()) {
-                sheet.add(rows, properties, sheet.sheet.lastRowNum + 1)
-            }
+            sheet.fillHeader(headers)
+            exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
         }
-
-        sheet.fillHeader(headers)
-        exporter.styleRow(sheet, 0, exporter.headerStyle(exporter.getWorkbook()))
 
         sheet
     }
