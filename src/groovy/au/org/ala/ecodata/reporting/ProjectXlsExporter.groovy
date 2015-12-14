@@ -1,15 +1,15 @@
 package au.org.ala.ecodata.reporting
-import au.org.ala.ecodata.MetadataService
+import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import pl.touk.excel.export.getters.Getter
 import pl.touk.excel.export.multisheet.AdditionalSheet
+
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
-class ProjectXlsExporter {
+class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
@@ -22,7 +22,6 @@ class ProjectXlsExporter {
     def activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
     def activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
-    def metadataService
     def XlsExporter exporter
 
     AdditionalSheet projectSheet
@@ -31,12 +30,11 @@ class ProjectXlsExporter {
 
     Map<String, List<AdditionalSheet>> outputSheets = [:]
 
-    public ProjectXlsExporter(XlsExporter exporter, MetadataService metadataService) {
+    public ProjectXlsExporter(XlsExporter exporter) {
         this.exporter = exporter
-        this.metadataService = metadataService
     }
 
-    public void export(project) {
+    public void export(Map project) {
 
         OutputModelProcessor processor = new OutputModelProcessor()
         projectSheet()
@@ -68,7 +66,6 @@ class ProjectXlsExporter {
                 }
             }
 
-
             outputsByType.each { outputName, data ->
                 def config = outputProperties(outputName)
                 if (config.headers) {
@@ -85,10 +82,6 @@ class ProjectXlsExporter {
                 }
             }
         }
-    }
-
-    public void exportAll(List projects) {
-        projects.each { export(it) }
     }
 
     AdditionalSheet projectSheet() {
@@ -111,163 +104,4 @@ class ProjectXlsExporter {
         }
         activitiesSheet
     }
-
-
-    def outputProperties(name) {
-        def model = metadataService.annotatedOutputDataModel(name)
-
-        def headers = []
-        def properties = []
-        model.each {
-            if (it.dataType == 'list') {
-                it.columns.each { col ->
-                    properties << it.name+'.'+col.name
-                    headers << col.label
-                }
-            }
-            else if (it.dataType in ['photoPoints', 'matrix']) {
-                // not supported, do nothing.
-            }
-            else {
-                properties << it.name
-                headers << it.description
-            }
-        }
-        def propertyGetters = properties.collect{new OutputDataPropertiesBuilder(it, model)}
-        [headers:headers, propertyGetters:propertyGetters]
-    }
-
-    class ConstantGetter implements Getter<String> {
-
-        def name, value
-
-        public ConstantGetter(name, value) {
-            this.name = name
-            this.value = value
-        }
-        @Override
-        String getPropertyName() {
-            return name
-        }
-
-        @Override
-        String getFormattedValue(Object object) {
-            return value
-        }
-    }
-
-    class Value implements OutputModelProcessor.ProcessingContext {
-        public Value(value) {
-            this.value = value
-        }
-        def value
-    }
-
-
-    class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
-
-        private String[] nameParts
-        private List outputDataModel
-
-        public OutputDataPropertiesBuilder(String name, outputDataModel) {
-            this.nameParts = name.tokenize('.');
-            this.outputDataModel = outputDataModel;
-        }
-
-
-        // Implementation of OutputModelProcessor.Processor
-        @Override
-        def number(Object node, Value outputValue) {
-            def val = outputValue.value
-            return val?val as String:""
-        }
-
-        @Override
-        def integer(Object node, Value outputValue) {
-            def val = outputValue.value
-            return val?val as String:""
-        }
-
-        @Override
-        def text(Object node, Value outputValue) {
-            def val = outputValue.value
-            return val?val as String:""
-        }
-
-        @Override
-        def date(Object node, Value outputValue) {
-            return new Value(outputValue?:"") // dates are UTC formatted strings already
-        }
-
-        @Override
-        def image(Object node, Value outputValue) {
-            return ""
-        }
-
-        @Override
-        def embeddedImages(Object node, Value outputValue) {
-            return ""
-        }
-
-        @Override
-        def species(Object node, Value outputValue) {
-            def val = outputValue.value
-
-            return val?val.name:""
-        }
-
-        @Override
-        def stringList(Object node, Value outputValue) {
-            def val = outputValue.value
-            if (val instanceof List) {
-                val = val.join(',')
-            }
-            return val?:""
-        }
-
-        @Override
-        def booleanType(Object node, Value outputValue) {
-            def val = outputValue.value
-            if (val instanceof Boolean) {
-                val = Boolean.parseBoolean("${val}")
-            }
-            return val?:""
-        }
-
-        @Override
-        def document(Object node, Value outputValue) {
-            def val = outputValue.value
-            return val?:""
-        }
-
-        // Implementation of Getter<String>
-        @Override
-        String getPropertyName() {
-            return nameParts.join('.');
-        }
-
-        @Override
-        String getFormattedValue(Object output) {
-            def result = ''
-            def node = outputDataModel
-            for (String part : nameParts) {
-                def tmpNode = node.find{it.name == part}
-                // List typed model elements have a cols element containing nested nodes.
-                node = tmpNode.columns?:tmpNode
-            }
-            try {
-                result = processNode(this, node, getValue(output))
-            }
-            catch (Exception e) {
-                log.error("Error getting value from output: ${output?.outputId}, property: ${nameParts.join('.')}", e)
-            }
-            result
-        }
-
-        def getValue(outputModelOrData) {
-            def value = outputModelOrData[nameParts[nameParts.size()-1]]
-            new Value(value)
-        }
-    }
-
 }
