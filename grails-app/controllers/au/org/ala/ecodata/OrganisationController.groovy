@@ -51,7 +51,7 @@ class OrganisationController {
         if (result.status == 'ok') {
             asJson(message)
         } else {
-            log.error result.error
+            log.error result.errors
             render status:400, text: result.errors
         }
     }

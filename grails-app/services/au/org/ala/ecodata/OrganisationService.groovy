@@ -12,7 +12,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def commonService, projectService, userService, permissionService, documentService, collectoryService
+    def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -76,13 +76,15 @@ class OrganisationService {
                 Organisation.withSession { session -> session.clear() }
                 def error = "Error updating organisation ${id} - ${e.message}"
                 log.error error
-                def errors = (e instanceof ValidationException)?e.errors:[error]
-                return [status:'error',errors:errors]
+                if (e instanceof ValidationException) {
+                    error = messageSource.getMessage(e.errors.fieldError, Locale.getDefault())
+                }
+                return [status:'error',errors:error]
             }
         } else {
             def error = "Error updating organisation - no such id ${id}"
             log.error error
-            return [status:'error',errors:[error]]
+            return [status:'error',errors:error]
         }
     }
 

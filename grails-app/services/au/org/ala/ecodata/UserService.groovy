@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
-import net.sf.json.JSON
-import net.sf.json.groovy.JsonSlurper
 
 class UserService {
 
@@ -14,7 +12,7 @@ class UserService {
     private static ThreadLocal<UserDetails> _currentUser = new ThreadLocal<UserDetails>()
 
     def getCurrentUserDisplayName() {
-        UserDetails currentUser = _currentUser.get()
+        def currentUser = _currentUser.get()
         return currentUser ? currentUser.displayName : ""
     }
 
