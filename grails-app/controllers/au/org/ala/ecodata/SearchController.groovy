@@ -322,15 +322,22 @@ class SearchController {
         zip.putNextEntry(new ZipEntry("shapefiles/"))
 
         projectIds.each { projectId ->
+            zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/"))
+
             Map project = projectService.get(projectId, ProjectService.ALL)
+
+            if (project.projectSiteId) {
+                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/projectExtent.zip"))
+                ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+                builder.addSite(project.projectSiteId)
+                builder.writeShapefile(zip)
+            }
+
             if (project.sites) {
-                project.sites.each { site ->
-                    zip.putNextEntry(new ZipEntry("shapefiles/${site.siteId}.zip"))
-                    ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
-                    builder.setName(site.siteId)
-                    builder.addSite(site.siteId)
-                    builder.writeShapefile(zip)
-                }
+                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/sites.zip"))
+                ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
+                builder.addProject(projectId)
+                builder.writeShapefile(zip)
             }
         }
     }
