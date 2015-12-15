@@ -1,6 +1,8 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.GeometryUtils
+import au.org.ala.ecodata.ProjectService
+import au.org.ala.ecodata.SiteService
 import com.vividsolutions.jts.geom.Geometry
 import com.vividsolutions.jts.geom.MultiPolygon
 import grails.converters.JSON
@@ -44,8 +46,8 @@ class ShapefileBuilder {
     /** The file extensions for the files created as a part of the shape file */
     static def fileExtensions = ['.shp', '.dbf', '.fix', '.prj', '.shx']
 
-    def projectService
-    def siteService
+    ProjectService projectService
+    SiteService siteService
 
     /** Used as the file name for each of the files in the shapefile as well as the schema name in the shapefile */
     def name = DEFAULT_NAME

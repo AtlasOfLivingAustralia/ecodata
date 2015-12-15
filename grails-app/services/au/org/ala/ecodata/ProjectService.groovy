@@ -32,8 +32,12 @@ class ProjectService {
     }
 
     def getBrief(listOfIds) {
-        Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
-            [projectId: it.projectId, name: it.name]
+        if (listOfIds) {
+            Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
+                [projectId: it.projectId, name: it.name]
+            }
+        } else {
+            []
         }
     }
 
