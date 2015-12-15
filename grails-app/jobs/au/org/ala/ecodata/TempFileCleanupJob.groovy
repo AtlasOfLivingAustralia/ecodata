@@ -12,8 +12,9 @@ class TempFileCleanupJob {
         int daysToKeep = grailsApplication.config.temp.file.cleanup.days as int
         File tempDirectory = new File("${grailsApplication.config.temp.dir}")
         if (tempDirectory.exists()) {
+            log.info("Removing all files from ${tempDirectory.getAbsolutePath()} that are more than ${daysToKeep} day(s) old...")
             int count = 0
-            tempDirectory.list().each { File file ->
+            tempDirectory.listFiles().each { File file ->
                 if (file.lastModified() < new Date().minus(daysToKeep).time) {
                     file.isDirectory() ? file.deleteDir() : file.delete()
                     count++

@@ -3,13 +3,13 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.ActivityService
 import au.org.ala.ecodata.ProjectActivityService
 import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.Record
 import au.org.ala.ecodata.RecordService
 import au.org.ala.ecodata.SiteService
-import au.org.ala.ecodata.Status
+import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import au.org.ala.web.AuthService
 import com.mongodb.BasicDBObject
 import grails.util.Holders
 import org.apache.commons.logging.Log
@@ -49,6 +49,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     SiteService siteService = Holders.grailsApplication.mainContext.getBean("siteService")
     ActivityService activityService = Holders.grailsApplication.mainContext.getBean("activityService")
     RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
+    UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
 
     XlsExporter exporter
 
@@ -97,11 +98,15 @@ class CSProjectXlsExporter extends ProjectExporter {
     private void addProjectActivities(Map project) {
         List<Map> projectActivities = projectActivityService.getAllByProject(project.projectId, ProjectActivityService.ALL)
 
+        List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
+
         projectActivities.each { survey ->
-            AdditionalSheet sheet = surveySheets[survey.name]
-            if (!sheet) {
-                sheet = createSurveySheet(survey)
-                surveySheets.put(survey.name, sheet)
+            if (!restrictedSurveys.contains(survey.projectActivityId)) {
+                AdditionalSheet sheet = surveySheets[survey.name]
+                if (!sheet) {
+                    sheet = createSurveySheet(survey)
+                    surveySheets.put(survey.name, sheet)
+                }
             }
         }
     }
@@ -116,7 +121,6 @@ class CSProjectXlsExporter extends ProjectExporter {
             headers.addAll(surveyHeaders)
 
             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
-
 
             OutputModelProcessor processor = new OutputModelProcessor()
 
@@ -187,17 +191,24 @@ class CSProjectXlsExporter extends ProjectExporter {
         properties << null
         properties << null
 
-        recordService.getAllByProject(project.projectId).each {
-            println it
-            if (it.verbatimCoordinates) {
-                properties[-2] = new ConstantGetter("Verbatim Latitude", it.verbatimCoordinates[1])
-                properties[-1] = new ConstantGetter("Verbatim Longitude", it.verbatimCoordinates[0])
-            } else if (it.decimalLatitude || it.decimalLongitude) {
-                properties[-2] = new ConstantGetter("Verbatim Latitude", it.decimalLatitude)
-                properties[-1] = new ConstantGetter("Verbatim Longitude", it.decimalLongitude)
-            }
+        List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
 
-            recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+        recordService.getAllByProject(project.projectId).each {
+            println "restricted: " + restrictedSurveys
+            println "pa id : " + it.projectActivityId
+            println "remove : " + restrictedSurveys.contains(it.projectActivityId)
+            if (!restrictedSurveys.contains(it.projectActivityId)) {
+                println "adding "
+                if (it.verbatimCoordinates) {
+                    properties[-2] = new ConstantGetter("Verbatim Latitude", it.verbatimCoordinates[1])
+                    properties[-1] = new ConstantGetter("Verbatim Longitude", it.verbatimCoordinates[0])
+                } else if (it.decimalLatitude || it.decimalLongitude) {
+                    properties[-2] = new ConstantGetter("Verbatim Latitude", it.decimalLatitude)
+                    properties[-1] = new ConstantGetter("Verbatim Longitude", it.decimalLongitude)
+                }
+
+                recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+            }
         }
     }
 
