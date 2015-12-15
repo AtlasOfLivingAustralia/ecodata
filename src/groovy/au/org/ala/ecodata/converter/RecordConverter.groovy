@@ -164,7 +164,8 @@ class RecordConverter {
             try {
                 if (site.extent?.geometry) {
                     dwcFields.locality = site.extent.geometry.locality
-                    dwcFields.verbatimCoordinates = site.extent.geometry.centre
+                    dwcFields.decimalLatitude = site.extent.geometry.centre[1]
+                    dwcFields.decimalLongitude = site.extent.geometry.centre[0]
                 }
             } catch (MissingPropertyException e) {
                 // Do nothing if the site does not have an extent property.

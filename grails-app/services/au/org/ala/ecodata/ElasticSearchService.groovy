@@ -889,7 +889,7 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
-                values.coordinates = it.verbatimCoordinates
+                values.coordinates = [it.decimalLatitude, it.decimalLongitude]
                 records << values
             }
             projectActivity.records = records

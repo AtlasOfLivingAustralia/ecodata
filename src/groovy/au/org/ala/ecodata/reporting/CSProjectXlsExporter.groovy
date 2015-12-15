@@ -199,12 +199,9 @@ class CSProjectXlsExporter extends ProjectExporter {
             println "remove : " + restrictedSurveys.contains(it.projectActivityId)
             if (!restrictedSurveys.contains(it.projectActivityId)) {
                 println "adding "
-                if (it.verbatimCoordinates) {
-                    properties[-2] = new ConstantGetter("Verbatim Latitude", it.verbatimCoordinates[1])
-                    properties[-1] = new ConstantGetter("Verbatim Longitude", it.verbatimCoordinates[0])
-                } else if (it.decimalLatitude || it.decimalLongitude) {
-                    properties[-2] = new ConstantGetter("Verbatim Latitude", it.decimalLatitude)
-                    properties[-1] = new ConstantGetter("Verbatim Longitude", it.decimalLongitude)
+                if (it.decimalLatitude || it.decimalLongitude) {
+                    properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude)
+                    properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude)
                 }
 
                 recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
