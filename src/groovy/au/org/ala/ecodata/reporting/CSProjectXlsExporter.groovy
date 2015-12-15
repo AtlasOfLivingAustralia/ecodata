@@ -3,7 +3,10 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.ActivityService
 import au.org.ala.ecodata.ProjectActivityService
 import au.org.ala.ecodata.ProjectService
+import au.org.ala.ecodata.Record
+import au.org.ala.ecodata.RecordService
 import au.org.ala.ecodata.SiteService
+import au.org.ala.ecodata.Status
 import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
@@ -32,25 +35,28 @@ class CSProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
-
     List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status']
 
+    List<String> recordHeaders = ["GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Location ID", "Location Name", "Locality", "Latitude", "Longitude"]
+    List<String> recordProperties = ["guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "locationID", "locationName", "locality"]
+
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
     SiteService siteService = Holders.grailsApplication.mainContext.getBean("siteService")
     ActivityService activityService = Holders.grailsApplication.mainContext.getBean("activityService")
+    RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
 
     XlsExporter exporter
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
+    AdditionalSheet recordSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
-
 
     public CSProjectXlsExporter(XlsExporter exporter) {
         this.exporter = exporter
@@ -60,10 +66,13 @@ class CSProjectXlsExporter extends ProjectExporter {
     void export(Map project) {
         projectSheet()
         sitesSheet()
+        recordSheet()
 
         addSites(project)
 
         addProjectActivities(project)
+
+        addRecords(project)
 
         int row = projectSheet.getSheet().lastRowNum
         projectSheet.add([project], projectProperties, row + 1)
@@ -172,6 +181,25 @@ class CSProjectXlsExporter extends ProjectExporter {
         sheet
     }
 
+    private addRecords(Map project) {
+        List properties = []
+        properties.addAll(recordProperties)
+        properties << null
+        properties << null
+
+        recordService.getAllByProject(project.projectId).each {
+            println it
+            if (it.verbatimCoordinates) {
+                properties[-2] = new ConstantGetter("Verbatim Latitude", it.verbatimCoordinates[1])
+                properties[-1] = new ConstantGetter("Verbatim Longitude", it.verbatimCoordinates[0])
+            } else if (it.decimalLatitude || it.decimalLongitude) {
+                properties[-2] = new ConstantGetter("Verbatim Latitude", it.decimalLatitude)
+                properties[-1] = new ConstantGetter("Verbatim Longitude", it.decimalLongitude)
+            }
+
+            recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+        }
+    }
 
     private AdditionalSheet projectSheet() {
         if (!projectSheet) {
@@ -185,6 +213,13 @@ class CSProjectXlsExporter extends ProjectExporter {
             sitesSheet = exporter.addSheet('Sites', siteHeaders)
         }
         sitesSheet
+    }
+
+    private AdditionalSheet recordSheet() {
+        if (!recordSheet) {
+            recordSheet = exporter.addSheet('DwC Records', recordHeaders)
+        }
+        recordSheet
     }
 
 }
