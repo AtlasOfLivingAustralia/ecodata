@@ -1,10 +1,19 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.*
+
+import au.org.ala.ecodata.converter.RecordConverter
+
 class OutputService {
 
     static transactional = false
 
-    def grailsApplication, metadataService
+    def grailsApplication
+    MetadataService metadataService
+    RecordService recordService
+    UserService userService
+    DocumentService documentService
+    CommentService commentService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -30,18 +39,40 @@ class OutputService {
         Output.findAllByActivityIdAndNameAndStatus(id, name, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def delete(String id, destroy) {
-        def a = Output.findByOutputId(id)
-        if (a) {
+    Map delete(String id, boolean destroy = false) {
+        Output output = Output.findByOutputId(id)
+
+        if (output) {
+
+            commentService.deleteAllForEntity(Output.class.name, id, destroy)
+
             if (destroy) {
-                a.delete()
+                Record.findAllByOutputId(id)?.each {
+                    it.delete()
+                }
+
+                Document.findAllByOutputId(id)?.each {
+                    it.delete(flush: true)
+                }
+
+                output.delete(flush: true)
             } else {
-                a.status = 'deleted'
-                a.save(flush: true)
+                output.status = DELETED
+                output.save(flush: true)
+
+                Document.findAllByOutputId(id)?.each {
+                    documentService.deleteDocument(it.documentId, destroy)
+                }
+
+                Record.findAllByOutputId(id)?.each {
+                    it.status = DELETED
+                    it.save(flush: true)
+                }
             }
-            return [status:'ok']
+
+            [status: 'ok']
         } else {
-            return [status:'error', error:'No such id']
+            [status: 'error', error: 'No such id']
         }
     }
 
@@ -63,7 +94,7 @@ class OutputService {
             mapOfProperties.scores = scores
             mapOfProperties.remove 'data'
         }
-        mapOfProperties.findAll {k,v -> v != null}
+        mapOfProperties.findAll { k, v -> v != null }
     }
 
     /**
@@ -78,7 +109,7 @@ class OutputService {
         //log.debug "model is " + model
         def scoreDefinitions = model?.scores ?: []
         //log.debug "scoreNames = ${scoreNames}"
-        def scores = scoreDefinitions.collectEntries { [(it.name):map[it.name]] }
+        def scores = scoreDefinitions.collectEntries { [(it.name): map[it.name]] }
         //log.debug "scores = ${scores}"
         return scores
     }
@@ -89,53 +120,84 @@ class OutputService {
         }
     }
 
-    def create(props) {
+    def create(Map props) {
         assert getCommonService()
-        def activity = Activity.findByActivityId(props.activityId)
+        Activity activity = Activity.findByActivityId(props.activityId)
         if (activity) {
-            def o = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true,''))
+            Output output = new Output(activityId: activity.activityId, outputId: Identifiers.getNew(true, ''))
             try {
-                o.save(failOnError: true) // Getting dynamic properties not saving without this.
+                output.save(failOnError: true) // Getting dynamic properties not saving without this.
 
-                getCommonService().updateProperties(o, props)
-                return [status:'ok',outputId:o.outputId]
+                getCommonService().updateProperties(output, props)
+
+                createRecordsForOutput(activity, output, props)
+
+                return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Output.withSession { session -> session.clear() }
                 def error = "Error creating output for activity ${props.activityId} - ${e.message}"
-                log.error error
-                return [status:'error',error:error]
+                e.printStackTrace()
+                log.error error, e
+                return [status: 'error', error: error]
             }
         } else {
             def error = "Error creating output - no activity with id = ${props.activityId}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
     }
 
-    def update(props, id) {
-        def a = Output.findByOutputId(id)
-        if (a) {
+    void createRecordsForOutput(Activity activity, Output output, Map props) {
+        Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
+
+        boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
+
+        if (createRecord) {
+            Project project = Project.findByProjectId(activity.projectId)
+            Site site = activity.siteId ? Site.findBySiteId(activity.siteId) : null
+            ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(activity.projectActivityId)
+
+            List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
+
+            records.each { record ->
+                // createRecord returns a 2-element list:
+                // [0] = Record (always there even if the save failed);
+                // [1] = Error object if the save failed, empty map if the save succeeded.
+                List result = recordService.createRecord(record)
+                if (result[1]) {
+                    throw new IllegalArgumentException("Failed to create record: ${record}")
+                }
+            }
+        }
+    }
+
+    def update(Map props, String outputId) {
+        Output output = Output.findByOutputId(outputId)
+        if (output) {
+            Activity activity = Activity.findByActivityId(output.activityId)
             try {
-                getCommonService().updateProperties(a, props)
-                return [status:'ok']
+                getCommonService().updateProperties(output, props)
+
+                List<Record> records = Record.findAllByOutputId(outputId)
+                if (records) {
+                    Record.deleteAll(records)
+                }
+
+                createRecordsForOutput(activity, output, props)
+
+                return [status: 'ok']
             } catch (Exception e) {
                 Output.withSession { session -> session.clear() }
-                def error = "Error updating output ${id} - ${e.message}"
-                log.error error
-                return [status:'error',error:error]
+                String error = "Error updating output ${outputId} - ${e.message}"
+                log.error error, e
+                return [status: 'error', error: error]
             }
         } else {
-            def error = "Error updating output - no such id ${id}"
+            String error = "Error updating output - no such id ${outputId}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
-    }
-
-    def testGrailsApplication() {
-        assert grailsApplication
-        assert grailsApplication.mainContext.commonService
-        return "ok"
     }
 
     def getAllOutputIdsForActivity(String activityId) {
@@ -148,5 +210,4 @@ class OutputService {
         }
         return list*.toString()
     }
-
 }

@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import static au.org.ala.ecodata.Status.*
 
 /**
  * Controller for getting and setting user <-> project
@@ -9,11 +10,12 @@ import grails.converters.JSON
  * @see au.org.ala.ecodata.UserPermission
  */
 class PermissionsController {
-    def permissionService, projectService, organisationService
+    PermissionService permissionService
+    ProjectService projectService
+    OrganisationService organisationService
 
     def index() {
-        def msg = [message: "Hello"]
-        render msg as JSON
+        render([message: "Hello"] as JSON)
     }
 
     /**
@@ -21,24 +23,24 @@ class PermissionsController {
      * @return
      */
     def addEditorToProject() {
-        def adminId = params.adminId
-        def userId = params.userId
-        def projectId = params.projectId
+        String adminId = params.adminId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (adminId && userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.addUserAsEditorToProject(adminId, userId, projectId)
+                Map ps = permissionService.addUserAsEditorToProject(adminId, userId, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 500, text: "Error adding editor: ${ps}"
                 }
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:404, text: 'Required params not provided: adminId, userId, projectId'
+            render status: 404, text: 'Required params not provided: adminId, userId, projectId'
         }
 
     }
@@ -48,44 +50,44 @@ class PermissionsController {
      * @return
      */
     def addUserAsAdminToProject() {
-        def userId = params.userId
-        def projectId = params.projectId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.addUserAsAdminToProject(userId, projectId)
+                Map ps = permissionService.addUserAsAdminToProject(userId, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 500, text: "Error adding editor: ${ps}"
                 }
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:404, text: 'Required params not provided: adminId, userId, projectId'
+            render status: 404, text: 'Required params not provided: adminId, userId, projectId'
         }
     }
 
     def addAdminToOrganisation() {
-        def userId = params.userId
-        def organisationId = params.projectId
+        String userId = params.userId
+        String organisationId = params.projectId
 
         if (userId && organisationId) {
-            def organisation = Organisation.findByOrganisationId(organisationId)
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
-                def ps = permissionService.addUserAsAdminToProject(userId, organisationId)
+                Map ps = permissionService.addUserAsAdminToProject(userId, organisationId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 500, text: "Error adding editor: ${ps}"
                 }
             } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
             }
         } else {
-            render status:404, text: 'Required params not provided: adminId, userId, organisationId'
+            render status: 404, text: 'Required params not provided: adminId, userId, organisationId'
         }
     }
 
@@ -101,27 +103,27 @@ class PermissionsController {
         String role = params.role
 
         if (userId && projectId && role) {
-            def project = Project.findByProjectId(projectId)
-            AccessLevel ac
-            try {
-                ac = AccessLevel.valueOf(role)
-            } catch (Exception e) {
-                render status:500, text: "Error determining role: ${e.message}"
-            }
+            Project project = Project.findByProjectId(projectId)
 
-            if (project) {
-                log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
-                def ps = permissionService.addUserAsRoleToProject(userId, ac, projectId)
-                if (ps.status == "ok") {
-                    render "success: ${ps.id}"
+            try {
+                AccessLevel ac = AccessLevel.valueOf(role)
+
+                if (project) {
+                    log.debug "addUserAsRoleToProject: ${userId}, ${ac}, ${project}"
+                    Map ps = permissionService.addUserAsRoleToProject(userId, ac, projectId)
+                    if (ps.status == "ok") {
+                        render "success: ${ps.id}"
+                    } else {
+                        render status: 500, text: "Error adding editor: ${ps}"
+                    }
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 404, text: "Project not found for projectId: ${projectId}"
                 }
-            } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+            } catch (Exception e) {
+                render status: 500, text: "Error determining role: ${e.message}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, role, projectId'
+            render status: 400, text: 'Required params not provided: userId, role, projectId'
         }
     }
 
@@ -137,27 +139,27 @@ class PermissionsController {
         String role = params.role
 
         if (userId && organisationId && role) {
-            def organisation = Organisation.findByOrganisationId(organisationId)
-            AccessLevel ac
-            try {
-                ac = AccessLevel.valueOf(role)
-            } catch (Exception e) {
-                render status:500, text: "Error determining role: ${e.message}"
-            }
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
 
-            if (organisation) {
-                log.debug "addUserAsRoleToOrganisation: ${userId}, ${ac}, ${organisationId}"
-                def ps = permissionService.addUserAsRoleToOrganisation(userId, ac, organisationId)
-                if (ps.status == "ok") {
-                    render "success: ${ps.id}"
+            try {
+                AccessLevel ac = AccessLevel.valueOf(role)
+
+                if (organisation) {
+                    log.debug "addUserAsRoleToOrganisation: ${userId}, ${ac}, ${organisationId}"
+                    Map ps = permissionService.addUserAsRoleToOrganisation(userId, ac, organisationId)
+                    if (ps.status == "ok") {
+                        render "success: ${ps.id}"
+                    } else {
+                        render status: 500, text: "Error adding editor: ${ps}"
+                    }
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
                 }
-            } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            } catch (Exception e) {
+                render status: 500, text: "Error determining role: ${e.message}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, role, organisationId'
+            render status: 400, text: 'Required params not provided: userId, role, organisationId'
         }
     }
 
@@ -173,27 +175,34 @@ class PermissionsController {
         String role = params.role
 
         if (userId && projectId && role) {
-            def project = Project.findByProjectId(projectId)
-            AccessLevel ac
-            try {
-                ac = AccessLevel.valueOf(role)
-            } catch (Exception e) {
-                render status:500, text: "Error determining role: ${e.message}"
-            }
+            Project project = Project.findByProjectId(projectId)
 
-            if (project) {
-                log.debug "removeUserAsRoleToProject: ${userId}, ${ac}, ${project}"
-                def ps = permissionService.removeUserAsRoleToProject(userId, ac, projectId)
-                if (ps.status == "ok") {
-                    render "success: ${ps.id}"
+            try {
+                AccessLevel accessLevel = AccessLevel.valueOf(role)
+
+                if (project) {
+                    log.debug "removeUserAsRoleToProject: ${userId}, ${accessLevel}, ${project}"
+
+                    // Make sure the last admin for a project cannot be removed
+                    // Note: the UI should not allow this: this check is just a precaution
+                    if (accessLevel == AccessLevel.admin && permissionService.getAllAdminsForProject(projectId)?.size() == 1) {
+                        render status: 400, text: "Cannot remove the last admin for a project"
+                    } else {
+                        Map ps = permissionService.removeUserAsRoleToProject(userId, accessLevel, projectId)
+                        if (ps.status == "ok") {
+                            render "success: ${ps.id}"
+                        } else {
+                            render status: 500, text: "Error removing user/role: ${ps}"
+                        }
+                    }
                 } else {
-                    render status:500, text: "Error removing user/role: ${ps}"
+                    render status: 404, text: "Project not found for projectId: ${projectId}"
                 }
-            } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+            } catch (Exception e) {
+                render status: 500, text: "Error determining role: ${e.message}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, role, projectId'
+            render status: 400, text: 'Required params not provided: userId, role, projectId'
         }
     }
 
@@ -209,27 +218,27 @@ class PermissionsController {
         String role = params.role
 
         if (userId && organisationId && role) {
-            def project = Organisation.findByOrganisationId(organisationId)
-            AccessLevel ac
-            try {
-                ac = AccessLevel.valueOf(role)
-            } catch (Exception e) {
-                render status:500, text: "Error determining role: ${e.message}"
-            }
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
 
-            if (project) {
-                log.debug "removeUserWithRoleFromOrganisation: ${userId}, ${ac}, ${project}"
-                def ps = permissionService.removeUserAsRoleFromOrganisation(userId, ac, organisationId)
-                if (ps.status == "ok") {
-                    render "success: ${ps.id}"
+            try {
+                AccessLevel ac = AccessLevel.valueOf(role)
+
+                if (organisation) {
+                    log.debug "removeUserWithRoleFromOrganisation: ${userId}, ${ac}, ${organisation}"
+                    def ps = permissionService.removeUserAsRoleFromOrganisation(userId, ac, organisationId)
+                    if (ps.status == "ok") {
+                        render "success: ${ps.id}"
+                    } else {
+                        render status: 500, text: "Organisation removing user/role: ${ps}"
+                    }
                 } else {
-                    render status:500, text: "Organisation removing user/role: ${ps}"
+                    render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
                 }
-            } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+            } catch (Exception e) {
+                render status: 500, text: "Error determining role: ${e.message}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, role, organisationId'
+            render status: 400, text: 'Required params not provided: userId, role, organisationId'
         }
     }
 
@@ -239,24 +248,25 @@ class PermissionsController {
      * @return
      */
     def addStarProjectForUser() {
-        def projectId = params.projectId
-        def userId = params.userId
+        String projectId = params.projectId
+        String userId = params.userId
         AccessLevel role = AccessLevel.starred
+
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
                 log.debug "addUserAsRoleToProject: ${userId}, ${role}, ${project}"
-                def ps = permissionService.addUserAsRoleToProject(userId, role, projectId)
+                Map ps = permissionService.addUserAsRoleToProject(userId, role, projectId)
                 if (ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else {
-                    render status:500, text: "Error adding editor: ${ps}"
+                    render status: 500, text: "Error adding editor: ${ps}"
                 }
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, projectId.'
+            render status: 400, text: 'Required params not provided: userId, projectId.'
         }
     }
 
@@ -266,25 +276,26 @@ class PermissionsController {
      * @return
      */
     def removeStarProjectForUser() {
-        def projectId = params.projectId
-        def userId = params.userId
+        String projectId = params.projectId
+        String userId = params.userId
         AccessLevel role = AccessLevel.starred
+
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def ps = permissionService.removeUserAsRoleToProject(userId, role, projectId)
+                Map ps = permissionService.removeUserAsRoleToProject(userId, role, projectId)
                 if (ps && ps.status == "ok") {
                     render "success: ${ps.id}"
                 } else if (ps) {
-                    render status:500, text: "Error removing star: ${ps}"
+                    render status: 500, text: "Error removing star: ${ps}"
                 } else {
-                    render status:404, text: "Project: ${projectId} not starred for userId: ${userId}"
+                    render status: 404, text: "Project: ${projectId} not starred for userId: ${userId}"
                 }
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, projectId.'
+            render status: 400, text: 'Required params not provided: userId, projectId.'
         }
     }
 
@@ -294,18 +305,18 @@ class PermissionsController {
      * @return
      */
     def getEditorsForProject() {
-        def projectId = params.id
+        String projectId = params.id
         log.debug "projectId = ${projectId}"
         if (projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def userList = permissionService.getUsersForProject(projectId)
+                List userList = permissionService.getUsersForProject(projectId)
                 render userList as JSON
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required path not provided: projectId.'
+            render status: 400, text: 'Required path not provided: projectId.'
         }
     }
 
@@ -316,18 +327,18 @@ class PermissionsController {
      * @return
      */
     def getMembersForProject() {
-        def projectId = params.id
+        String projectId = params.id
 
         if (projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def members = permissionService.getMembersForProject(projectId)
+                List members = permissionService.getMembersForProject(projectId)
                 render members as JSON
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required path not provided: projectId.'
+            render status: 400, text: 'Required path not provided: projectId.'
         }
     }
 
@@ -336,18 +347,18 @@ class PermissionsController {
      * for a given {@link Organisation organisation} (via {@link Organisation#organisationId organisationId})
      */
     def getMembersForOrganisation() {
-        def organisationId = params.id
+        String organisationId = params.id
 
         if (organisationId) {
-            def organisation = Organisation.findByOrganisationId(organisationId)
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
-                def members = permissionService.getMembersForOrganisation(organisationId)
+                List members = permissionService.getMembersForOrganisation(organisationId)
                 render members as JSON
             } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
             }
         } else {
-            render status:400, text: 'Required parameters not provided: organisationId.'
+            render status: 400, text: 'Required parameters not provided: organisationId.'
         }
     }
 
@@ -358,12 +369,12 @@ class PermissionsController {
      * @return
      */
     def getProjectsForUserId() {
-        def userId = params.id
+        String userId = params.id
         if (userId) {
-            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred, params)
-            def out  = []
+            List<UserPermission> up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED, params)
+            List out = []
             up.each {
-                def t = [:]
+                Map t = [:]
                 log.debug "it.projectId = ${it.entityId}"
                 t.project = projectService.get(it.entityId, ProjectService.FLAT)
                 t.accessLevel = it.accessLevel
@@ -371,24 +382,53 @@ class PermissionsController {
             }
             render out as JSON
         } else {
-            render status:400, text: "Required params not provided: userId"
+            render status: 400, text: "Required params not provided: userId"
         }
     }
 
+    /**
+     * Get a list of {@link Project projects} with {@link AccessLevel#editor editor} level access or higher
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def getAllProjectsForUserId() {
+        def userId = params.id
+        if (userId) {
+            Map projectRetrieved = [:]
+            def up = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Project.class.name, DELETED, params)
+            List out  = []
+            up.each {
+                Map t
+                log.debug "it.projectId = ${it.entityId}"
+                if(!projectRetrieved[it.entityId]){
+                    t = projectService.get(it.entityId, ProjectService.FLAT)
+                    if(it.accessLevel == AccessLevel.starred){
+                        t.starred = true
+                    }
+
+                    if (t) out.add t
+                    projectRetrieved[it.entityId] = true
+                }
+            }
+            render out as JSON
+        } else {
+            render status:400, text: "Required params not provided: userId"
+        }
+    }
     /**
      * Lightweight version of getOrganisationsForUserId() to return just the organisation ids
      *
      * @return
      */
     def getOrganisationIdsForUserId() {
-        def userId = params.id
+        String userId = params.id
         if (userId) {
-            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
-            def out = []
-            up.each { out.push(it.entityId) }
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Organisation.class.name, AccessLevel.starred, DELETED, params)
+            List out = permissions.collect { it.entityId }
             render out as JSON
         } else {
-            render status:400, text: "Required params not provided: userId"
+            render status: 400, text: "Required params not provided: userId"
         }
     }
 
@@ -399,20 +439,19 @@ class PermissionsController {
      * @return
      */
     def getOrganisationsForUserId() {
-        def userId = params.id
+        String userId = params.id
         if (userId) {
-            def up = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Organisation.class.name, AccessLevel.starred, params)
-            def out  = []
-            up.each {
-                def t = [:]
-                log.debug "it.organisationId = ${it.entityId}"
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Organisation.class.name, AccessLevel.starred, DELETED, params)
+            List out = []
+            permissions.each {
+                Map t = [:]
                 t.organisation = organisationService.get(it.entityId)
                 t.accessLevel = it.accessLevel
                 if (t.organisation) out.add t
             }
             render out as JSON
         } else {
-            render status:400, text: "Required params not provided: userId"
+            render status: 400, text: "Required params not provided: userId"
         }
     }
 
@@ -426,10 +465,10 @@ class PermissionsController {
         String userId = params.id
 
         if (userId) {
-            def up = UserPermission.findAllByUserIdAndAccessLevel(userId, AccessLevel.starred)
-            render up.collect { Project.findByProjectId(it.entityId) } as JSON
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
+            render permissions.collect { Project.findByProjectId(it.entityId) }?.minus(null) as JSON
         } else {
-            render status:400, text: "Required params not provided: id"
+            render status: 400, text: "Required params not provided: id"
         }
     }
 
@@ -440,21 +479,21 @@ class PermissionsController {
      * @return
      */
     def isProjectStarredByUser() {
-        def userId = params.userId
-        def projectId = params.projectId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def up = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, projectId, Project.class.name, AccessLevel.starred)
-                def outMap = [ isProjectStarredByUser: !up.isEmpty()]
+                List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, projectId, Project.class.name, AccessLevel.starred)
+                Map outMap = [isProjectStarredByUser: !permissions.isEmpty()]
                 render outMap as JSON
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
 
         } else {
-            render status:400, text: "Required params not provided: id"
+            render status: 400, text: "Required params not provided: id"
         }
     }
 
@@ -465,19 +504,19 @@ class PermissionsController {
      * @return JSON object with a single property representing a boolean value
      */
     def canUserEditProject() {
-        def userId = params.userId
-        def projectId = params.projectId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def out = [userIsEditor: permissionService.isUserEditorForProject(userId, projectId)]
+                Map out = [userIsEditor: permissionService.isUserEditorForProject(userId, projectId)]
                 render out as JSON
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+            render status: 400, text: 'Required params not provided: adminId, userId, projectId'
         }
     }
 
@@ -488,20 +527,47 @@ class PermissionsController {
      * @return JSON object with a single property representing a boolean value
      */
     def isUserCaseManagerForProject() {
-        def userId = params.userId
-        def projectId = params.projectId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def cm = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
-                def out = [userIsCaseManager: (cm) ? true : false]
-                render out as JSON
+                UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
+                render([userIsCaseManager: permission != null] as JSON)
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: adminId, userId, projectId'
+            render status: 400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    /**
+     * Does the request {@link UserDetails#userId userId} have specified level access for a given {@link Project project}
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserInRoleForProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+
+        try {
+            AccessLevel accessLevel = params.role
+
+            if (userId && projectId && accessLevel) {
+                Project project = Project.findByProjectId(projectId)
+                if (project) {
+                    UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, accessLevel)
+                    render([inRole: permission != null] as JSON)
+                } else {
+                    render status: 404, text: "Project not found for projectId: ${projectId}"
+                }
+            } else {
+                render status: 400, text: 'Required params not provided: userId, projectId, role'
+            }
+        } catch (IllegalArgumentException e) {
+            render status: 500, text: "Error determining role: ${e.message}"
         }
     }
 
@@ -512,57 +578,52 @@ class PermissionsController {
      * @return
      */
     def isUserAdminForProject() {
-        def userId = params.userId
-        def projectId = params.projectId
+        String userId = params.userId
+        String projectId = params.projectId
 
         if (userId && projectId) {
-            def project = Project.findByProjectId(projectId)
+            Project project = Project.findByProjectId(projectId)
             if (project) {
-                def out = [userIsAdmin: permissionService.isUserAdminForProject(userId, projectId)]
-                render out as JSON
+                render([userIsAdmin: permissionService.isUserAdminForProject(userId, projectId)] as JSON)
             } else {
-                render status:404, text: "Project not found for projectId: ${projectId}"
+                render status: 404, text: "Project not found for projectId: ${projectId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, projectId'
+            render status: 400, text: 'Required params not provided: userId, projectId'
         }
     }
 
     def isUserAdminForOrganisation() {
-        def userId = params.userId
-        def organisationId = params.organisationId
+        String userId = params.userId
+        String organisationId = params.organisationId
 
         if (userId && organisationId) {
-            def organisation = Organisation.findByOrganisationId(organisationId)
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
-                def out = [userIsAdmin: permissionService.isUserAdminForOrganisation(userId, organisationId)]
-                render out as JSON
+                render([userIsAdmin: permissionService.isUserAdminForOrganisation(userId, organisationId)] as JSON)
             } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, organisationId'
+            render status: 400, text: 'Required params not provided: userId, organisationId'
         }
     }
 
     def isUserGrantManagerForOrganisation() {
-        def userId = params.userId
-        def organisationId = params.organisationId
+        String userId = params.userId
+        String organisationId = params.organisationId
 
         if (userId && organisationId) {
-            def organisation = Organisation.findByOrganisationId(organisationId)
+            Organisation organisation = Organisation.findByOrganisationId(organisationId)
             if (organisation) {
-                def out = [userIsGrantManager: permissionService.isUserGrantManagerForOrganisation(userId, organisationId)]
-                render out as JSON
+                render ([userIsGrantManager: permissionService.isUserGrantManagerForOrganisation(userId, organisationId)] as JSON)
             } else {
-                render status:404, text: "Organisation not found for organisationId: ${organisationId}"
+                render status: 404, text: "Organisation not found for organisationId: ${organisationId}"
             }
         } else {
-            render status:400, text: 'Required params not provided: userId, organisationId'
+            render status: 400, text: 'Required params not provided: userId, organisationId'
         }
     }
-
-
 
     /**
      * Admin function to clear all UserPermissions entries for the
@@ -571,23 +632,23 @@ class PermissionsController {
      * @return
      */
     def clearAllPermissionsForUserId() {
-        def userId = params.id // REST style URL (no params)
-        def up = UserPermission.findAllByUserId(userId)
-        if (up.size() > 0) {
-            up.each {
+        String userId = params.id // REST style URL (no params)
+        List<UserPermission> permissions = UserPermission.findAllByUserId(userId)
+        if (permissions.size() > 0) {
+            permissions.each {
                 log.debug "it = ${it}"
                 try {
                     it.delete(flush: true)
                     //return [status:'ok', id: it.id]
                 } catch (Exception e) {
-                    def msg = "Failed to delete UserPermission: ${e.message}"
+                    String msg = "Failed to delete UserPermission: ${e.message}"
                     log.error msg, e
                     render status: 500, text: msg
                 }
             }
             render text: "OK"
         } else {
-            render status:400, text: "No UserPermissions found for userId: ${userId}"
+            render status: 400, text: "No UserPermissions found for userId: ${userId}"
         }
     }
 
@@ -598,30 +659,33 @@ class PermissionsController {
      * @return
      */
     def clearAllPermissionsForAllUsers() {
-        def up = UserPermission.list()
-        if (up.size() > 0) {
-            up.each {
+        List<UserPermission> permissions = UserPermission.list()
+        if (permissions.size() > 0) {
+            permissions.each {
                 try {
                     it.delete(flush: true)
                 } catch (Exception e) {
-                    def msg = "Failed to delete UserPermission: ${e.message}"
+                    String msg = "Failed to delete UserPermission: ${e.message}"
                     log.error msg, e
                     render status: 500, text: msg
                 }
             }
             render text: "OK"
         } else {
-            render status:400, text: "No UserPermissions found"
+            render status: 400, text: "No UserPermissions found"
         }
     }
 
     /**
-     * Return a list of the {@link AccessLevel} enum values for editor and higher
+     * Return a list of the {@link AccessLevel} enum values for the given baseLevel and higher
+     * if baseLevel is not set or invalid then returns accesslevel above editor
      * See the custom JSON serializer in Bootstrap.groovy
      *
      * @return JSON representation of AccessLevel values
      */
     def getAllAccessLevels() {
-        render AccessLevel.values().findAll { it.code >= AccessLevel.editor.code } as JSON
+        AccessLevel accessLevel = AccessLevel.find { it.name() == params.baseLevel } ?: AccessLevel.editor
+        render AccessLevel.values().findAll { it.code >= accessLevel.code } as JSON
     }
+
 }

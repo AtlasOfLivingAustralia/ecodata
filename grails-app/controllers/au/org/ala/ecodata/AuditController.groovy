@@ -2,10 +2,13 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+import static org.apache.http.HttpStatus.SC_BAD_REQUEST
+
 class AuditController {
 
     def userService
-    def auditService
+    AuditService auditService
+    CommonService commonService
 
     def entityAuditMessageTableFragment() {
         def entityId = params.entityId
@@ -126,4 +129,34 @@ class AuditController {
         render(results as JSON)
     }
 
+    /**
+     * this fucntion is used by datatables to load audit message for each page.
+     * @return
+     */
+    def getAuditMessagesForProjectPerPage(){
+        String projectId = params.id;
+        Integer start = params.getInt('start')?:0;
+        Integer size = params.getInt('size')?:10;
+        String sort = params.sort?:'date';
+        String order = params.orderBy?:'desc';
+        String q = params.q?:null;
+
+        if (!projectId) {
+            response.sendError(SC_BAD_REQUEST, 'Project id is required')
+        } else {
+            Map results = auditService.getAuditMessagesForProjectPerPage(projectId,start,size,sort,order,q);
+
+            render(contentType: 'application/json', text: [ data: results.data, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+        }
+    }
+
+    /**
+     * Get the previous edited version of the current entity. This is done for comparing two objects.
+     */
+    def getAutoCompareAuditMessage(){
+        String auditId = params.auditId
+        AuditMessage compareAudit = auditService.getAutoCompareAuditMessage(auditId)
+        Map compare = compareAudit?commonService.toBareMap(compareAudit):[:]
+        render(contentType: 'application/json', text: ['message':compare] as JSON)
+    }
 }

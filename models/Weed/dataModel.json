@@ -2,19 +2,20 @@
     "modelName": "Weed Treatment Details",
     "dataModel": [
         {
-            "dataType": "list",
-            "name": "weedsTreated",
             "columns": [
                 {
+                    "record": "true",
                     "dataType": "species",
-                    "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species)",
+                    "dwcAttribute": "scientificName",
                     "name": "targetSpecies",
+                    "description": "The plant species being targeted for treatment (start typing a  scientific or common name for a species)",
                     "validate": "required"
                 },
                 {
                     "dataType": "text",
-                    "description": "The reproductive status of the target species being treated",
+                    "dwcAttribute": "reproductiveCondition",
                     "name": "reproductiveStatus",
+                    "description": "The reproductive status of the target species being treated",
                     "constraints": [
                         "Flowering (FLWG)",
                         "Seeding (SEDG)",
@@ -25,8 +26,8 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The general health of the patch of the target species being treated",
                     "name": "plantHealth",
+                    "description": "The general health of the patch of the target species being treated",
                     "constraints": [
                         "Healthy",
                         "Stressed",
@@ -35,8 +36,9 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The control status of the patch of the target species being treated",
+                    "dwcAttribute": "occurrenceStatus",
                     "name": "controlStatus",
+                    "description": "The control status of the patch of the target species being treated",
                     "constraints": [
                         "New Infestation",
                         "Active Infestation",
@@ -48,8 +50,9 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The primary method used to treat the patch of the target species",
+                    "dwcAttribute": "treatmentMethod",
                     "name": "treatmentMethod",
+                    "description": "The primary method used to treat the patch of the target species",
                     "constraints": [
                         "Environmental management - Fire",
                         "Environmental management - moisture & nutrient control",
@@ -74,12 +77,14 @@
                     ],
                     "validate": "required"
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "weedsTreated"
         },
         {
             "dataType": "text",
-            "description": "The main objective that you are aiming to achieve with this activity.",
             "name": "treatmentObjective",
+            "description": "The main objective that you are aiming to achieve with this activity.",
             "constraints": [
                 "Local / regional eradication",
                 "Manage threats to priority environmental assets",
@@ -89,13 +94,13 @@
         },
         {
             "dataType": "text",
-            "description": "Describe the partner contributions, including lead, and contributions to cover any private benefits. How will gains be maintained after the project period.",
-            "name": "treatmentObjectiveBenefits"
+            "name": "treatmentObjectiveBenefits",
+            "description": "Describe the partner contributions, including lead, and contributions to cover any private benefits. How will gains be maintained after the project period."
         },
         {
             "dataType": "text",
-            "description": "The main type of partner that you are working with to deliver this activity.",
             "name": "partnerType",
+            "description": "The main type of partner that you are working with to deliver this activity.",
             "constraints": [
                 "Local government authority",
                 "Local Landcare, 'Friends of', community, or farmer group",
@@ -109,8 +114,10 @@
         },
         {
             "dataType": "text",
-            "description": "The stage of treatment for the patch of weeds being treated",
+            "record": "true",
+            "dwcAttribute": "treatmentType",
             "name": "treatmentEventType",
+            "description": "The stage of treatment for the patch of weeds being treated",
             "constraints": [
                 "Initial treatment",
                 "Follow-up treatment"
@@ -119,166 +126,168 @@
         },
         {
             "dataType": "text",
-            "description": "Brief description of the general locality in which the treatment works were undertaken",
-            "name": "locality"
+            "name": "locality",
+            "dwcAttribute": "locality",
+            "description": "Brief description of the general locality in which the treatment works were undertaken"
         },
         {
             "dataType": "number",
-            "description": "The area in hectares of the patch of the target species being treated",
             "name": "areaTreatedHa",
+            "description": "Area managed for invasive weeds",
             "validate": "required"
         },
         {
             "dataType": "number",
-            "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area - as applicable",
-            "name": "linearAreaTreated"
+            "name": "linearAreaTreated",
+            "description": "The length in kilometres of the longest axis (eg. riparian, road, beach, etc.) of the treated area - as applicable"
         },
         {
             "dataType": "text",
-            "description": "Details of chemical treatment including chemical agent and rate of application - as applicable",
-            "name": "chemicalDetails"
+            "name": "chemicalDetails",
+            "description": "Details of chemical treatment including chemical agent and rate of application - as applicable"
         },
         {
             "dataType": "number",
-            "description": "The approximate cost per hectare of the treatment",
-            "name": "treatmentCostPerHa"
+            "name": "treatmentCostPerHa",
+            "description": "The approximate cost per hectare of the treatment"
         },
         {
             "dataType": "text",
-            "name": "notes"
+            "name": "notes",
+            "dwcAttribute": "eventRemarks"
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "treatmentObjective",
-                            "computed": null,
                             "preLabel": "Treatment objective:",
+                            "computed": null,
+                            "source": "treatmentObjective",
                             "type": "selectOne"
                         },
                         {
-                            "source": "treatmentObjectiveBenefits",
-                            "computed": null,
                             "preLabel": "Describe the assets or production values to be protected and the expected public benefits:",
+                            "computed": null,
+                            "source": "treatmentObjectiveBenefits",
                             "type": "textarea"
                         },
                         {
-                            "source": "areaTreatedHa",
-                            "computed": null,
                             "preLabel": "Treatment area (Ha):",
+                            "computed": null,
+                            "source": "areaTreatedHa",
                             "type": "number"
                         },
                         {
-                            "source": "linearAreaTreated",
-                            "computed": null,
                             "preLabel": "Length of riparian or roadside area treated (Km):",
+                            "computed": null,
+                            "source": "linearAreaTreated",
                             "type": "number"
                         },
                         {
-                            "source": "treatmentCostPerHa",
-                            "computed": null,
                             "preLabel": "Approximate treatment cost ($/Ha):",
+                            "computed": null,
+                            "source": "treatmentCostPerHa",
                             "type": "number"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "treatmentEventType",
                             "preLabel": "Type of treatment event:",
                             "computed": null,
+                            "source": "treatmentEventType",
                             "type": "selectOne"
                         },
                         {
-                            "source": "partnerType",
-                            "computed": null,
                             "preLabel": "Main activity partner:",
+                            "computed": null,
                             "width": "60%",
+                            "source": "partnerType",
                             "type": "selectOne"
                         },
                         {
-                            "source": "locality",
-                            "computed": null,
                             "preLabel": "Locality of the treatment area:",
+                            "computed": null,
                             "width": "60%",
+                            "source": "locality",
                             "type": "textarea"
                         },
                         {
-                            "source": "chemicalDetails",
-                            "computed": null,
                             "preLabel": "If chemical treatment, please provide details (chemical & application rate):",
+                            "computed": null,
                             "width": "60%",
+                            "source": "chemicalDetails",
                             "type": "textarea"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
-            "source": "weedsTreated",
-            "computed": null,
             "allowHeaderWrap": "true",
+            "computed": null,
             "columns": [
                 {
-                    "title": "Target species:",
-                    "source": "targetSpecies",
                     "computed": null,
                     "width": "25%",
+                    "source": "targetSpecies",
+                    "title": "Target species:",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "Reproductive status at the time of treatment:",
+                    "computed": null,
+                    "width": "15%",
                     "source": "reproductiveStatus",
-                    "computed": null,
-                    "width": "15%",
+                    "title": "Reproductive status at the time of treatment:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Plant health at the time of treatment:",
+                    "computed": null,
+                    "width": "15%",
                     "source": "plantHealth",
-                    "computed": null,
-                    "width": "15%",
+                    "title": "Plant health at the time of treatment:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Control status:",
+                    "computed": null,
+                    "width": "15%",
                     "source": "controlStatus",
-                    "computed": null,
-                    "width": "15%",
+                    "title": "Control status:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Treatment method:",
-                    "source": "treatmentMethod",
                     "computed": null,
                     "width": "30%",
+                    "source": "treatmentMethod",
+                    "title": "Treatment method:",
                     "type": "selectOne",
                     "validate": "required"
                 }
             ],
             "userAddedRows": true,
+            "source": "weedsTreated",
             "type": "table"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "notes",
-                "computed": null,
                 "preLabel": "Comments / Notes",
+                "computed": null,
                 "width": "90%",
+                "source": "notes",
                 "type": "textarea"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

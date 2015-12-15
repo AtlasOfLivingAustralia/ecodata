@@ -26,6 +26,7 @@ public enum AccessLevel {
     admin(100),
     caseManager(60),
     editor(40),
+    projectParticipant(30),
     starred(20)
 
     private int code

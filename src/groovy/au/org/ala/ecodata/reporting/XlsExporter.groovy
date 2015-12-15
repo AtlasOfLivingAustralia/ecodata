@@ -1,4 +1,5 @@
 package au.org.ala.ecodata.reporting
+
 import org.apache.poi.hssf.util.HSSFColor
 import org.apache.poi.ss.usermodel.CellStyle
 import org.apache.poi.ss.usermodel.Font
@@ -9,6 +10,7 @@ import pl.touk.excel.export.WebXlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import javax.servlet.http.HttpServletResponse
+
 /**
  * Does basic header styling for an Xls spreadsheet.
  */
@@ -21,16 +23,15 @@ class XlsExporter extends WebXlsxExporter {
         this.fileName = fileName
     }
 
-
-    public static String sheetName(name) {
-        def end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH)-1
+    public static String sheetName(String name) {
+        int end = Math.min(name.length(), MAX_SHEET_NAME_LENGTH) - 1
         def shortName = name[0..end]
         shortName = shortName.replaceAll('[^a-zA-z0-9 ]', '')
 
         shortName
     }
-    public AdditionalSheet addSheet(name, headers) {
 
+    public AdditionalSheet addSheet(name, headers) {
         AdditionalSheet sheet = sheet(sheetName(name))
         sheet.fillHeader(headers)
         styleRow(sheet, 0, headerStyle(getWorkbook()))
@@ -44,7 +45,7 @@ class XlsExporter extends WebXlsxExporter {
         }
     }
 
-    private CellStyle headerStyle(Workbook workbook) {
+    CellStyle headerStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
         headerStyle.setFillBackgroundColor(IndexedColors.BLACK.getIndex());
         headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
@@ -55,17 +56,17 @@ class XlsExporter extends WebXlsxExporter {
         return headerStyle
     }
 
-    def getStyle(){
+    def getStyle() {
         headerStyle(getWorkbook())
     }
 
     WebXlsxExporter setResponseHeaders(HttpServletResponse response) {
-        super.setResponseHeaders(response, fileName+filenameSuffix)
+        super.setResponseHeaders(response, fileName + filenameSuffix)
         this
     }
 
     def sizeColumns() {
-        for (Sheet sheet:workbook) {
+        for (Sheet sheet : workbook) {
             // For table upload templates, the validation sheet may have no rows if nothing needs validation.
             def row = sheet.getRow(0)
             if (row) {

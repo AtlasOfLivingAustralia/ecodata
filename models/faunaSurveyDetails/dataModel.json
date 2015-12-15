@@ -1,35 +1,37 @@
 {
     "modelName": "Biological Survey - Fauna",
+    "record": "true",
     "dataModel": [
         {
-            "dataType": "list",
-            "name": "surveyResults",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "The identifier of the transect or plot in which sampling is being done.",
-                    "name": "plotId"
+                    "name": "plotId",
+                    "description": "The identifier of the transect or plot in which sampling is being done."
                 },
                 {
                     "dataType": "text",
-                    "description": "The identifier of the point at which the observational record was made",
-                    "name": "sampleSiteId"
+                    "name": "sampleSiteId",
+                    "description": "The identifier of the point at which the observational record was made"
                 },
                 {
                     "dataType": "species",
-                    "description": "All species recorded at the sample site",
+                    "dwcAttribute": "scientificName",
                     "name": "species",
+                    "description": "All species recorded at the sample site",
                     "validate": "required"
                 },
                 {
                     "dataType": "number",
-                    "description": "The number of organisms in the survey at the sample site which share the same set of record attributes.",
-                    "name": "numberOfOrganisms"
+                    "dwcAttribute": "individualCount",
+                    "name": "numberOfOrganisms",
+                    "description": "The number of organisms in the survey at the sample site which share the same set of record attributes."
                 },
                 {
                     "dataType": "text",
-                    "description": "Nature of the evidence for the basis of the record",
+                    "dwcAttribute": "occurrenceEvidence",
                     "name": "evidence",
+                    "description": "Nature of the evidence for the basis of the record",
                     "constraints": [
                         "Living organism",
                         "Dead organism",
@@ -43,8 +45,9 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The sex of the organism recorded",
+                    "dwcAttribute": "sex",
                     "name": "sex",
+                    "description": "The sex of the organism recorded",
                     "constraints": [
                         "Male",
                         "Female",
@@ -55,8 +58,9 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Life stage of the organism recorded",
+                    "dwcAttribute": "lifeStage",
                     "name": "lifeStage",
+                    "description": "Life stage of the organism recorded",
                     "constraints": [
                         "Juvenile",
                         "Adolescent",
@@ -72,13 +76,14 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "The health or condition of the organism recorded",
-                    "name": "health"
+                    "name": "health",
+                    "description": "The health or condition of the organism recorded"
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
+                    "dwcAttribute": "associatedOccurrences",
                     "name": "biologicalMaterialTaken",
+                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
                     "constraints": [
                         "Yes",
                         "No"
@@ -86,146 +91,150 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
-                    "name": "speciesNotes"
+                    "dwcAttribute": "occurrenceRemarks",
+                    "name": "speciesNotes",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.)."
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "surveyResults"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Aggregate total of the individual organisms recorded in the survey event",
-            "name": "totalNumberOfOrganisms",
             "computed": {
-                "operation": "sum",
                 "dependents": {
-                    "source": "numberOfOrganisms",
-                    "fromList": "surveyResults"
-                }
-            }
+                    "fromList": "surveyResults",
+                    "source": "numberOfOrganisms"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalNumberOfOrganisms",
+            "description": "Aggregate total of the individual organisms recorded in the survey event"
         },
         {
             "dataType": "text",
+            "dwcAttribute": "eventRemarks",
             "name": "notes"
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [{
-                "source": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
                 "computed": null,
+                "source": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "allowHeaderWrap": "true",
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": 3,
-                    "source": "Total No. of individual organisms recorded in this survey event:",
                     "computed": null,
+                    "source": "Total No. of individual organisms recorded in this survey event:",
                     "type": "literal"
                 },
                 {
-                    "source": "totalNumberOfOrganisms",
                     "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberOfOrganisms\",\"fromList\":\"surveyResults\"}}",
+                    "source": "totalNumberOfOrganisms",
                     "type": "number"
                 },
                 {
                     "colspan": 6,
-                    "source": "",
                     "computed": null,
+                    "source": "",
                     "type": "literal"
                 }
             ]}]},
-            "source": "surveyResults",
-            "allowHeaderWrap": "true",
             "columns": [
                 {
-                    "title": "Transect / plot Id:",
-                    "source": "plotId",
                     "computed": null,
                     "width": "7%",
+                    "source": "plotId",
+                    "title": "Transect / plot Id:",
                     "type": "text"
                 },
                 {
-                    "title": "Trap / Sample Site Id:",
-                    "source": "sampleSiteId",
                     "computed": null,
                     "width": "8%",
+                    "source": "sampleSiteId",
+                    "title": "Trap / Sample Site Id:",
                     "type": "text"
                 },
                 {
-                    "title": "Species:",
-                    "source": "species",
                     "computed": null,
                     "width": "12%",
+                    "source": "species",
+                    "title": "Species:",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "No. of individuals:",
-                    "source": "numberOfOrganisms",
                     "computed": null,
                     "width": "8%",
+                    "source": "numberOfOrganisms",
+                    "title": "No. of individuals:",
                     "type": "number"
                 },
                 {
-                    "title": "Nature of evidence:",
+                    "computed": null,
+                    "width": "10%",
                     "source": "evidence",
-                    "computed": null,
-                    "width": "10%",
+                    "title": "Nature of evidence:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Sex:",
+                    "computed": null,
+                    "width": "10%",
                     "source": "sex",
-                    "computed": null,
-                    "width": "10%",
+                    "title": "Sex:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Life stage:",
+                    "computed": null,
+                    "width": "10%",
                     "source": "lifeStage",
-                    "computed": null,
-                    "width": "10%",
+                    "title": "Life stage:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Organism health:",
-                    "source": "health",
                     "computed": null,
                     "width": "10%",
+                    "source": "health",
+                    "title": "Organism health:",
                     "type": "text"
                 },
                 {
-                    "title": "Biological material taken:",
-                    "source": "biologicalMaterialTaken",
                     "computed": null,
                     "width": "7%",
+                    "source": "biologicalMaterialTaken",
+                    "title": "Biological material taken:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Notes:",
-                    "source": "speciesNotes",
                     "computed": null,
                     "width": "15%",
+                    "source": "speciesNotes",
+                    "title": "Notes:",
                     "type": "textarea"
                 }
             ],
-            "class": "output-section",
             "userAddedRows": true,
-            "type": "table"
+            "source": "surveyResults",
+            "type": "table",
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "notes",
-                "computed": null,
                 "preLabel": "Comments / Notes",
+                "computed": null,
                 "width": "90%",
+                "source": "notes",
                 "type": "textarea"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

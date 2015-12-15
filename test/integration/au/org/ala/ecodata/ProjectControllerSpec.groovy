@@ -1,13 +1,20 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import grails.test.mixin.Mock
 import grails.test.spock.IntegrationSpec
 
 class ProjectControllerSpec extends IntegrationSpec {
 
+    def commonService
+    def projectService
     def projectController = new ProjectController()
 
     def setup() {
+        projectController.projectService = projectService
+        projectController.projectService.collectoryService = Mock(CollectoryService)
+        projectController.projectService.webService = Mock(WebService)
+        projectController.projectService.grailsApplication = [mainContext: [commonService: commonService],config: [collectory: [baseURL: "test"]]]
     }
 
     def cleanup() {
@@ -16,6 +23,7 @@ class ProjectControllerSpec extends IntegrationSpec {
     void "test create project"() {
 
         setup:
+        projectController.projectService.collectoryService.createDataProviderAndResource(_, _) >> [:]
         def project = [name: 'Test Project', description: 'Test description', dynamicProperty: 'dynamicProperty']
         projectController.request.contentType = 'application/json;charset=UTF-8'
         projectController.request.content = (project as JSON).toString().getBytes('UTF-8')

@@ -20,9 +20,23 @@ class UrlMappings {
         "/ws/location/user/$userId"(controller: "location"){ action = [GET:"listForUser", DELETE: "deleteAllForUser"] }
         "/ws/location/$id"(controller: "location"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
+        "/ws/comment"(controller: "comment"){ action = [GET: 'list', POST: 'create'] }
+        "/ws/comment/$id"(controller: "comment"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
+        "/ws/comment/canUserEditOrDeleteComment"(controller: "comment", action: "canUserEditOrDeleteComment")
+
+        "/ws/audit/getAuditMessagesForProjectPerPage/$id"(controller: "audit", action: "getAuditMessagesForProjectPerPage")
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'
+        }
+        "/ws/deleteByProjectActivity/$id" {
+            controller = 'activity'
+            action = 'deleteByProjectActivity'
+        }
+        "/ws/listForUser/$id?" {
+            controller = 'activity'
+            action = 'listForUser'
         }
 
 		"/ws/project/promoted" {
@@ -84,6 +98,16 @@ class UrlMappings {
         "/ws/$entity/$id/documents" {
             controller = 'document'
             action = 'find'
+        }
+
+        "/ws/$entity/$id/reports" {
+            controller = 'report'
+            action = 'find'
+        }
+
+        "/ws/user/$id/reports" {
+            controller = 'report'
+            action = 'findByUserId'
         }
 
 		"/"(view:"/index")

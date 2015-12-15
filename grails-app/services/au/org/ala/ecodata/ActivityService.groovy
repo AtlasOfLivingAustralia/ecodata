@@ -3,14 +3,22 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
+
 class ActivityService {
 
     static transactional = false
-    static final ACTIVE = "active"
     static final FLAT = 'flat'
     static final SITE = 'site'
 
-    def grailsApplication, outputService, commonService, documentService, siteService
+    def grailsApplication
+    OutputService outputService
+    CommonService commonService
+    DocumentService documentService
+    SiteService siteService
+    CommentService commentService
+    UserService userService
 
     def get(id, levelOfDetail = []) {
         def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
@@ -43,6 +51,17 @@ class ActivityService {
         }
     }
 
+    /**
+     * Check user is an owner of an activity.
+     *
+     * @param userId user identifier.
+     * @param activityId activity identifier.
+     * @return
+     */
+    boolean isUserOwner(userId, activityId) {
+        Activity.countByUserIdAndActivityId(userId, activityId) > 0
+    }
+
     def getAll(List listOfIds, levelOfDetail = []) {
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
@@ -51,8 +70,8 @@ class ActivityService {
         Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
-        def activities
+    List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
+        List activities
         if (includeDeleted) {
             activities = Activity.findAllByProjectId(id).collect {toMap(it, levelOfDetail)}
         }
@@ -60,6 +79,51 @@ class ActivityService {
             activities = Activity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
         }
         activities
+    }
+
+    List<Map> findAllForProjectActivityId(String projectActivityId, levelOfDetail = []) {
+        Activity.findAllByProjectActivityIdAndStatus(projectActivityId, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    def findAllForUserId(userId, query, levelOfDetail = []){
+         def list = Activity.createCriteria().list(query) {
+            and{
+                eq ("userId", userId)
+                eq ("status", ACTIVE)
+            }
+           order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
+    Map listByProjectId(String projectId, Map query, List<String> restrictedProjectActivityIds,levelOfDetail = []) {
+        String userId = userService.getCurrentUserDetails()?.userId
+
+        def list = Activity.createCriteria().list(query) {
+            eq ("projectId", projectId)
+            eq ("status", ACTIVE)
+
+            if (restrictedProjectActivityIds) {
+                or {
+                    eq "userId", userId
+                    not { 'in' "projectActivityId", restrictedProjectActivityIds }
+                }
+            }
+
+            order('lastUpdated','desc')
+        }
+
+        [total: list.totalCount, list:list.collect{ toMap(it, levelOfDetail) }]
+    }
+
+    /**
+     * Count activity by project activity
+     * @param pActivityId Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivityId(pActivityId){
+        Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
     }
 
     /**
@@ -103,26 +167,55 @@ class ActivityService {
      * @param props the activity properties
      * @return json status
      */
-    def create(props) {
-        def o = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true,''))
+    def create(Map props) {
+        Activity activity = new Activity(siteId: props.siteId, activityId: Identifiers.getNew(true, ''))
         try {
-            o.save(failOnError: true)
+            activity.save(failOnError: true)
 
             props.remove('id')
+            props.remove('activityId')
             def outputs = props.remove('outputs')
-            commonService.updateProperties(o, props)
+            commonService.updateProperties(activity, props)
             // If outputs were supplied, update those separately.
             if (outputs) {
-                update(outputs:outputs, o.activityId)
+                update(outputs: outputs, activity.activityId)
             }
-            return [status:'ok',activityId:o.activityId]
+            
+            return [status: 'ok', activityId: activity.activityId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Activity.withSession { session -> session.clear() }
             def error = "Error creating activity for site ${props.siteId} - ${e.message}"
-            log.error error
-            return [status:'error',error:error]
+            log.error error, e
+            
+            return [status: 'error', error: error]
         }
+    }
+
+    /**
+     * Deletes all activities associated with project activityId.
+     *
+     * @param pActivityId project activity id
+     * @param destroy if true will really delete the object
+     * @return
+     */
+    Map deleteByProjectActivity(String pActivityId, boolean destroy = false) {
+        Map result
+
+        ProjectActivity pActivity = ProjectActivity.findByProjectActivityId(pActivityId)
+        if (pActivity) {
+            getAllActivityIdsForProjectActivity(pActivityId).each { delete(it, destroy) }
+            boolean exists = Activity.countByProjectActivityIdAndStatusNotEqual(pActivity.projectActivityId, DELETED) > 0
+            if (exists) {
+                result = [status: 'error', error: "Error deleting activities"]
+            } else {
+                result = [status: 'ok']
+            }
+        } else {
+            result = [status: 'not found']
+        }
+
+        result
     }
 
     /**
@@ -132,22 +225,36 @@ class ActivityService {
      * @param destroy if true will really delete the object
      * @return
      */
-    def delete(String id, destroy) {
-        def a = Activity.findByActivityIdAndStatus(id, ACTIVE)
-        if (a) {
+    Map delete(String activityId, boolean destroy = false) {
+        Map result
 
+        Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
+        if (activity) {
             // Delete the outputs associated with this activity.
-            outputService.getAllOutputIdsForActivity(id).each{outputService.delete(it, destroy)}
+            outputService.getAllOutputIdsForActivity(activityId).each { outputService.delete(it, destroy) }
+
+            documentService.findAllForActivityId(activityId).each {
+                documentService.deleteDocument(it.documentId, destroy)
+            }
+
+            commentService.deleteAllForEntity(Activity.class.name, activityId, destroy)
 
             if (destroy) {
-                a.delete()
+                activity.delete(flush: true)
             } else {
-                commonService.updateProperties(a, [status: 'deleted'])
+                commonService.updateProperties(activity, [status: 'deleted'])
             }
-            [status: 'ok']
+
+            if (activity.hasErrors()) {
+                result = [status: 'error', error: activity.getErrors()]
+            } else {
+                result = [status: 'ok']
+            }
         } else {
-            [status: 'not found']
+            result = [status: 'not found']
         }
+
+        result
     }
 
     /**
@@ -161,12 +268,12 @@ class ActivityService {
      */
     def update(props, id) {
         //log.debug "props = ${props}"
-        def a = Activity.findByActivityId(id)
+        def activity = Activity.findByActivityId(id)
         def errors = []
-        if (a) {
+        if (activity) {
             // do updates for each attached output
             props.outputs?.each { output ->
-                if (output.outputId) {
+                if (output.outputId && output.outputId != "null") {
                     // update
                     log.debug "Updating output ${output.name}"
                     def result = outputService.update(output, output.outputId)
@@ -188,7 +295,11 @@ class ActivityService {
             if (props.activityId) {
                 try {
                     props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
-                    commonService.updateProperties(a, props)
+                    props.remove('userId')
+                    props.remove('activityId')
+                    props.remove('projectId')
+                    props.remove('projectActivityId')
+                    commonService.updateProperties(activity, props)
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"
@@ -299,6 +410,15 @@ class ActivityService {
 
         }
         activities.collect{toMap(it, levelOfDetail)}
+    }
+
+    def getAllActivityIdsForProjectActivity(String pActivityId) {
+        Activity.withCriteria {
+            eq "projectActivityId", pActivityId
+            projections {
+                property("activityId")
+            }
+        }
     }
 
 }

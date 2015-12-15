@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import static au.org.ala.ecodata.Status.ACTIVE
+
 import org.bson.types.ObjectId
 
 /**
@@ -32,11 +34,13 @@ class Document {
     String filepath
     String type // image, document, sound, etc
     String role // eg primary, carousel, photoPoint
+    List<String> labels = [] // allow for searching on custom attributes
 
-    String status = 'active'
+    String status = ACTIVE
     String projectId
     String siteId
     String activityId
+    String projectActivityId
     String outputId
     String organisationId
     String externalUrl
@@ -116,5 +120,7 @@ class Document {
         thirdPartyConsentDeclarationMade nullable: true
         thirdPartyConsentDeclarationText nullable: true
         externalUrl nullable: true
+        projectActivityId nullable: true
+        labels nullable: true
     }
 }

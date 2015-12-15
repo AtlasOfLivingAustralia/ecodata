@@ -2,13 +2,15 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
-import java.text.SimpleDateFormat
-
 class ActivityController {
 
-    def activityService, siteService, commonService
+    ActivityService activityService
+    SiteService siteService
+    CommonService commonService
+    UserService userService
+    ProjectActivityService projectActivityService
+
     static final SCORES = 'scores'
-    static final BRIEF = 'brief'
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -26,6 +28,7 @@ class ActivityController {
     def get(String id) {
         def detail = params.view == SCORES ? [SCORES] : []
         if (!id) {
+
             def list = activityService.getAll(params.includeDeleted as boolean, params.view)
             list.sort {it.name}
             //log.debug list
@@ -42,13 +45,35 @@ class ActivityController {
 
     @RequireApiKey
     def delete(String id) {
-        if (activityService.delete(id, params.destroy).status == 'ok') {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        if (activityService.delete(id, destroy).status == 'ok') {
             render (status: 200, text: 'deleted')
         } else {
             response.status = 404
             render status:404, text: 'No such id'
         }
     }
+
+    /**
+     * Deletes all activities associated with project activityId.
+     *
+     * @param id project activity id
+     */
+    @RequireApiKey
+    def deleteByProjectActivity(String id) {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        Map result = activityService.deleteByProjectActivity(id, destroy)
+        if (result.status == 'ok') {
+            render (status: 200, text: 'deleted')
+        } else if(result.status == 'error') {
+            response.status = 500
+            render (status: 500, text: result.status.error)
+        } else {
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+    }
+
 
     @RequireApiKey
     def update(String id) {
@@ -132,17 +157,85 @@ class ActivityController {
     def activitiesForProject(String id) {
         if (id) {
             def activityList = []
-            // activities directly linked to project
+
             activityList.addAll activityService.findAllForProjectId(id, [SCORES])
-            // activities via sites
-            /*siteService.findAllForProjectId(id, BRIEF).each {
-                activityList.addAll activityService.findAllForSiteId(it.siteId, [SCORES])
-            }*/
-            //log.debug activityList
+
             asJson([list: activityList])
         } else {
             response.status = 404
             render status:404, text: 'No such id'
+        }
+    }
+
+    def listForUser(String id){
+
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def list = activityService.findAllForUserId(id, [max: max,offset:offset,order:order,sort:sort])
+            asJson([activities: list?.list, total: list?.total])
+        }
+    }
+
+    def listByProject(String id){
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?:  "desc"
+        def offset = params.offset ?: 0
+        def max = params.pageSize ?: 10
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
+
+            def list = activityService.listByProjectId(id, [max: max,offset:offset,order:order,sort:sort], restrictedProjectActivities)
+            asJson([activities: list?.list, total: list?.total])
+        }
+    }
+
+    /**
+     * Is user {@link UserDetails#userId userId} owner of an  {@link Activity#userId userId}
+     * @param id activity identifier
+     * @return
+     */
+    def isUserOwnerForActivity(String id) {
+        String userId = params.userId
+
+        if (!id) {
+            response.status = 404
+            render status: 404, text: 'No such id'
+        } else if (!userId) {
+            response.status = 404
+            render status: 400, text: 'Invalid userId'
+        } else {
+            boolean isOwner = activityService.isUserOwner(userId, id)
+            asJson([userIsOwner: isOwner])
+        }
+    }
+
+    /**
+     * Count activity by project activity
+     * @param id Project Activity identifier
+     * @return activity count.
+     */
+    def countByProjectActivity(String id){
+        if(!id){
+            response.status = 404
+            render status:404, text: 'No such id'
+        }
+        else{
+            def total = activityService.countByProjectActivityId(id)
+            asJson([total: total])
         }
     }
 

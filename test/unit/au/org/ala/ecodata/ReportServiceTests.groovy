@@ -9,7 +9,7 @@ import org.junit.Before
 @TestMixin(ControllerUnitTestMixin) // Used to register JSON converters.
 class ReportServiceTests extends TestCase {
 
-    def service
+    ReportService service
 
     @Before
     public void setUp() {
@@ -28,7 +28,7 @@ class ReportServiceTests extends TestCase {
 
         def activityDocs = activities.collect{[source:it]}
         def elasticSearchServiceMock = mockFor(ElasticSearchService, true)
-        elasticSearchServiceMock.demand.searchActivities(2) {filters, pagination ->
+        elasticSearchServiceMock.demand.searchActivities(2) {filters, searchTerm, pagination ->
             [hits:[totalHits:activityDocs.size(), hits:activityDocs]]
         }
         service.elasticSearchService = elasticSearchServiceMock.createMock()
@@ -258,7 +258,7 @@ class ReportServiceTests extends TestCase {
 
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
-        def results = service.aggregate([], [[score:new Score(score)]], [entity:'activity', property:'mainTheme'])
+        def results = service.aggregate([], null, [[score:new Score(score)]], [entity:'activity', property:'mainTheme'])
         assertEquals 2, results.outputData.size()
         assertEquals 'theme1', results.outputData[0].group
 
@@ -297,7 +297,7 @@ class ReportServiceTests extends TestCase {
 
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
-        def results = service.aggregate([], [[score:new Score(score)]], [entity:'activity', property:'plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
+        def results = service.aggregate([], null, [[score:new Score(score)]], [entity:'activity', property:'plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
         assertEquals 'Before Jan 2014', results.outputData[0].group
         def group1Results = results.outputData[0].results[0].results
         def groupResults = [group1:1, group2:2]

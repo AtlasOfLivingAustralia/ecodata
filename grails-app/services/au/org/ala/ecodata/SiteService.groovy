@@ -67,7 +67,10 @@ class SiteService {
 
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
             mapOfProperties.documents = documentService.findAllForSiteId(site.siteId)
-            if (levelOfDetail != LevelOfDetail.NO_ACTIVITIES.name()) {
+            if (levelOfDetail.contains(LevelOfDetail.PROJECTS.name())) {
+                def projects = projectService.getBrief(mapOfProperties.projects)
+                mapOfProperties.projects = projects
+            } else if (!levelOfDetail.contains(LevelOfDetail.NO_ACTIVITIES.name())) {
                 def projects = projectService.getBrief(mapOfProperties.projects)
                 mapOfProperties.projects = projects
                 mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)

@@ -1,26 +1,27 @@
 {
     "modelName": "Seed Collection Details",
+    "record": "true",
     "dataModel": [
         {
-            "dataType": "list",
-            "name": "seedsList",
             "columns": [
                 {
                     "dataType": "species",
-                    "description": "The species providing source seedstock  (start typing a  scientific or common name for a species)",
+                    "dwcAttribute": "scientificName",
                     "name": "seedSourceSpecies",
+                    "description": "The species providing source seedstock  (start typing a  scientific or common name for a species)",
                     "validate": "required"
                 },
                 {
                     "dataType": "number",
-                    "description": "The weight of seed collected in kilograms",
                     "name": "seedCollectedKg",
+                    "description": "The weight of seed collected in kilograms",
                     "validate": "required"
                 },
                 {
                     "dataType": "text",
-                    "description": "The health of the plant(s) providing source seedstock",
+                    "dwcAttribute": "reproductiveCondition",
                     "name": "sourcePlantHealth",
+                    "description": "The health of the plant(s) providing source seedstock",
                     "constraints": [
                         "Healthy young plant",
                         "Healthy mature plant",
@@ -31,110 +32,114 @@
                         "Felled tree / shrub"
                     ]
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "seedsList"
         },
         {
             "dataType": "text",
-            "description": "Location from which the source seedstock was collected",
+            "dwcAttribute": "locality",
             "name": "seedSourceProvenance",
+            "description": "Location from which the source seedstock was collected",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "The name of the seedbank repository in which collected seedstock is stored",
-            "name": "seedBankRepository"
+            "name": "seedBankRepository",
+            "description": "The name of the seedbank repository in which collected seedstock is stored"
         },
         {
             "dataType": "text",
-            "description": "General comments and notes about the seed collection activity and related observations",
-            "name": "notes"
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General comments and notes about the seed collection activity and related observations"
         },
         {
-            "dataType": "number",
-            "description": "Aggregate total of seed sown",
-            "primaryResult": "true",
             "computed": {
-                "operation": "sum",
                 "dependents": {
-                    "source": "seedCollectedKg",
-                    "fromList": "seedsList"
-                }
+                    "fromList": "seedsList",
+                    "source": "seedCollectedKg"
+                },
+                "operation": "sum"
             },
-            "name": "totalSeedCollectedKg"
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalSeedCollectedKg",
+            "description": "Aggregate total of seed sown"
         }
     ],
     "viewModel": [
         {
+            "computed": null,
+            "type": "row",
             "items": [
                 {
-                    "source": "seedSourceProvenance",
-                    "computed": null,
                     "preLabel": "Provenance (locality) of source plant(s):",
+                    "computed": null,
+                    "source": "seedSourceProvenance",
                     "type": "text"
                 },
                 {
-                    "source": "seedBankRepository",
-                    "computed": null,
                     "preLabel": "Name of seedbank storing the seed:",
+                    "computed": null,
+                    "source": "seedBankRepository",
                     "type": "text"
                 }
             ],
-            "computed": null,
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "computed": null,
             "footer": {"rows": [{"columns": [
                 {
-                    "source": "Total seed collected (kg)",
                     "computed": null,
+                    "source": "Total seed collected (kg)",
                     "type": "literal"
                 },
                 {
-                    "source": "totalSeedCollectedKg",
                     "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
+                    "source": "totalSeedCollectedKg",
                     "type": "number"
                 },
                 {
                     "colspan": 1,
-                    "source": "",
                     "computed": null,
+                    "source": "",
                     "type": "literal"
                 }
             ]}]},
-            "source": "seedsList",
-            "computed": null,
             "columns": [
                 {
-                    "title": "Species:",
                     "source": "seedSourceSpecies",
+                    "title": "Species:",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "Seed collected (Kg):",
                     "source": "seedCollectedKg",
+                    "title": "Seed collected (Kg):",
                     "type": "number"
                 },
                 {
-                    "title": "Health of source plant(s):",
                     "source": "sourcePlantHealth",
+                    "title": "Health of source plant(s):",
                     "type": "selectOne"
                 }
             ],
             "userAddedRows": "true",
-            "class": "output-section",
-            "type": "table"
+            "source": "seedsList",
+            "type": "table",
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "notes",
-                "computed": null,
                 "preLabel": "Comments / Notes:",
+                "computed": null,
                 "width": "60%",
+                "source": "notes",
                 "type": "textarea"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

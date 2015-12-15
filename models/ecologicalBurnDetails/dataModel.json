@@ -1,0 +1,138 @@
+{
+  "modelName": "Ecological Burn Details",
+  "dataModel": [
+    {
+      "dataType": "stringList",
+      "description": "",
+      "name": "fireReason",
+      "constraints": [
+        "Weed management",
+        "Pest animal management",
+        "Ecological management",
+        "Indigenous cultural burn",
+        "Other (specify in notes)"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "number",
+      "description": "The area in hectares planned to be burnt",
+      "name": "areaOfFireHa"
+    },
+    {
+      "dataType": "text",
+      "name": "fireIgnitionSource",
+      "description": "The source of fire ignition",
+      "constraints": [
+        "Lightning",
+        "Drip torch",
+        "Aerial incendiary",
+        "Accidental human",
+        "Arson",
+        "Other (specify in notes)",
+        "Not applicable",
+        "Unknown"
+      ]
+    },
+    {
+      "dataType": "number",
+      "description": "The area in hectares of the fire ground actually burnt",
+      "name": "areaBurntHa",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "fireBurnTemp",
+      "description": "Generalised indicator of the intensity of the fire event",
+      "constraints": [
+        "Cool",
+        "Moderately hot",
+        "Very hot",
+        "Extreme"
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "fireTimeSinceLastBurn",
+      "description": "Approximate time period since the last known fire occurred on the subject fire ground",
+      "constraints": [
+        "1-3 years",
+        "4-6 years",
+        "7-10 years",
+        "> 10 years"
+      ]
+    },
+
+    {
+      "dataType": "text",
+      "description":"Notes or comments about the fire prevention works, or a description of the type of works if you selected Other above",
+      "name": "notes"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "class":"output-section",
+      "items": [
+        {
+          "items": [
+            {
+              "preLabel": "Reason(s) for burn:",
+              "source": "fireReason",
+              "type": "selectMany"
+            },
+            {
+              "preLabel": "Proposed / planned area of burn (Ha):",
+              "source": "areaOfFireHa",
+              "type": "number"
+            },
+            {
+              "preLabel": "Actual burnt area (Ha)",
+              "source": "areaBurntHa",
+              "type": "number"
+            }
+          ],
+          "width": "50%",
+          "computed": null,
+          "type": "col"
+        },
+        {
+          "items": [
+            {
+              "preLabel": "Ignition source:",
+              "computed": null,
+              "source": "fireIgnitionSource",
+              "type": "selectOne"
+            },
+            {
+              "preLabel": "Time since last burn:",
+              "computed": null,
+              "source": "fireTimeSinceLastBurn",
+              "type": "selectOne"
+            },
+            {
+              "preLabel": "Temperature of burn:",
+              "computed": null,
+              "source": "fireBurnTemp",
+              "type": "selectOne"
+            }
+          ],
+          "width": "50%",
+          "computed": null,
+          "type": "col"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "class":"output-section",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Comments / notes"
+        }
+      ]
+    }
+  ]
+}

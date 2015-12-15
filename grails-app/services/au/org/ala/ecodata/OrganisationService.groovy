@@ -12,7 +12,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def commonService, projectService, userService, permissionService, documentService, collectoryService
+    def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -29,13 +29,15 @@ class OrganisationService {
         return Organisation.findAllByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
     }
 
-    def create(props) {
+    def create(props, boolean createCollectoryInstitution = true) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
 
-        def institutionId = collectoryService.createInstitution(props)
-        if (institutionId) {
-            organisation.collectoryInstitutionId = institutionId
+        if (createCollectoryInstitution) {
+            def institutionId = collectoryService.createInstitution(props)
+            if (institutionId) {
+                organisation.collectoryInstitutionId = institutionId
+            }
         }
         try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
@@ -46,7 +48,7 @@ class OrganisationService {
             commonService.updateProperties(organisation, props)
 
             // Assign the creating user as an admin.
-            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails().userId, AccessLevel.admin, organisation.organisationId)
+            permissionService.addUserAsRoleToOrganisation(userService.getCurrentUserDetails()?.userId, AccessLevel.admin, organisation.organisationId)
 
             [status:'ok',organisationId:organisation.organisationId]
         }
@@ -74,13 +76,15 @@ class OrganisationService {
                 Organisation.withSession { session -> session.clear() }
                 def error = "Error updating organisation ${id} - ${e.message}"
                 log.error error
-                def errors = (e instanceof ValidationException)?e.errors:[error]
-                return [status:'error',errors:errors]
+                if (e instanceof ValidationException) {
+                    error = messageSource.getMessage(e.errors.fieldError, Locale.getDefault())
+                }
+                return [status:'error',errors:error]
             }
         } else {
             def error = "Error updating organisation - no such id ${id}"
             log.error error
-            return [status:'error',errors:[error]]
+            return [status:'error',errors:error]
         }
     }
 

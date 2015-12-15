@@ -99,9 +99,10 @@ class ProjectController {
 
 
     def delete(String id) {
-        def p = Project.findByProjectId(id)
-        if (p) {
-            def result = projectService.delete(id, params.destroy)
+        Project project = Project.findByProjectId(id)
+        if (project) {
+            boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+            Map result = projectService.delete(id, destroy)
             if (!result.error) {
                 render (status: 200, text: 'deleted')
             }

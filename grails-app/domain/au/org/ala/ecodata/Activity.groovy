@@ -29,6 +29,7 @@ class Activity {
         activityId index: true
         siteId index: true
         projectId index: true
+        projectActivityId index: true
         version false
     }
 
@@ -39,6 +40,7 @@ class Activity {
     Boolean assessment = false
     String siteId
     String projectId
+    String projectActivityId
     String description
     String type
     Date startDate
@@ -61,6 +63,7 @@ class Activity {
     String notes
     Date dateCreated
     Date lastUpdated
+    String userId
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -73,6 +76,7 @@ class Activity {
     static constraints = {
         siteId nullable: true
         projectId nullable: true
+        projectActivityId nullable: true
         description nullable: true
         startDate nullable: true
         endDate nullable: true
@@ -88,6 +92,8 @@ class Activity {
         associatedProgram nullable: true
         associatedSubProgram nullable: true
         projectStage nullable: true
+        projectActivityId nullable: true
+        userId nullable:true
     }
 
 }

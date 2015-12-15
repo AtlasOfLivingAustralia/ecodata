@@ -1,12 +1,13 @@
 {"programs": [
     {
-        "projectDatesContracted": false,
+        "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "Biodiversity Fund",
         "optionalProjectContent": [
-            "Risks and Threats",
-            "MERI Plan"
+            "MERI Plan",
+            "Risks and Threats"
         ],
         "subprograms": [
             {
@@ -83,6 +84,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "Caring for Our Country 2",
         "optionalProjectContent": [
             "MERI Plan",
@@ -162,6 +164,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "Cumberland Plain",
         "optionalProjectContent": [
             "MERI Plan",
@@ -178,6 +181,7 @@
     {
         "reportingPeriod": "3",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": 20,
         "name": "Green Army",
         "optionalProjectContent": [],
         "subprograms": [
@@ -186,15 +190,32 @@
                 "name": "Green Army Round 1",
                 "endDate": "",
                 "themes": [
-                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia’s native vegetation"},
+                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia's native vegetation"},
                     {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
                     {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                    {"name": "Protect and conserve Australia’s natural, historic and Indigenous heritage"}
+                    {"name": "Protect and conserve Australia's natural, historic and Indigenous heritage"}
                 ]
             },
             {
                 "startDate": "",
                 "name": "Green Army Round 2",
+                "endDate": "",
+                "themes": []
+            },
+            {
+                "startDate": "",
+                "name": "Green Army Round 3",
+                "endDate": "",
+                "themes": [
+                    {"name": "Increase the area , linkages between (Connectivity) and condition of Australia's native vegetation"},
+                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                    {"name": "Protect and conserve Australia 's natural, historic and Indigenous heritage"}
+                ]
+            },
+            {
+                "startDate": "",
+                "name": "Green Army Natural Disaster Recovery Round",
                 "endDate": "",
                 "themes": []
             }
@@ -223,6 +244,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "20 Million Trees (NLP)",
         "optionalProjectContent": [
             "MERI Plan",
@@ -241,6 +263,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "3",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "Environmental Stewardship",
         "optionalProjectContent": [
             "MERI Plan",
@@ -256,6 +279,7 @@
         "reportingPeriodAlignedToCalendar": false
     },
     {
+        "weekDaysToCompleteReport": null,
         "name": "None",
         "optionalProjectContent": [],
         "subprograms": [],
@@ -280,6 +304,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "National Landcare Programme",
         "optionalProjectContent": [
             "MERI Plan",
@@ -309,9 +334,9 @@
                 ]
             },
             {
-                "startDate": "",
+                "startDate": "2015-01-31T13:00:00Z",
                 "name": "25th Anniversary Landcare Grants 2014-15",
-                "endDate": "",
+                "endDate": "2016-06-29T14:00:00Z",
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
@@ -369,17 +394,35 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "Reef Trust",
-        "optionalProjectContent": [],
-        "subprograms": [{
-            "startDate": "",
-            "name": "Reef Trust Phase 1 Investment",
-            "endDate": "",
-            "themes": []
-        }],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "subprograms": [
+            {
+                "startDate": "",
+                "name": "Reef Trust Phase 1 Investment",
+                "endDate": "",
+                "themes": [
+                    {"name": "Outcome 1: Improve the quality of water entering the Great Barrier Reef from broad-scale land use to increase the health and resilience of the Great Barrier Reef."},
+                    {"name": "Outcome 2: Improve the health and resilience of coastal habitats."},
+                    {"name": "Outcome 3: Improve and protect marine biodiversity, including the reduction of crown-of-thorns starfish and protection of listed threatened and migratory species, such as dugongs and turtles."},
+                    {"name": "Outcome 4: Any new development maintains or improves the condition of matters of national and state environmental significance through the strategic delivery of offsets through the Reef Trust."}
+                ]
+            },
+            {
+                "startDate": "",
+                "name": "Reef Trust Phase 2 Investment",
+                "endDate": "",
+                "themes": []
+            }
+        ],
         "activities": []
     },
     {
+        "weekDaysToCompleteReport": null,
         "name": "Weedwatcher",
         "optionalProjectContent": [],
         "subprograms": [],
@@ -392,6 +435,7 @@
         "projectDatesContracted": true,
         "reportingPeriod": "6",
         "isMeritProgramme": true,
+        "weekDaysToCompleteReport": null,
         "name": "20 Million Trees Service Providers",
         "optionalProjectContent": [
             "MERI Plan",
@@ -401,6 +445,7 @@
         "activities": []
     },
     {
+        "weekDaysToCompleteReport": null,
         "name": "Citizen Science Projects",
         "optionalProjectContent": [],
         "subprograms": [],
@@ -415,5 +460,12 @@
             "Vegetation Assessment - Habitat Hectares v2 (VIC)",
             "TasVeg - Native Vegetation Assessment - Forest Vegetation"
         ]
+    },
+    {
+        "weekDaysToCompleteReport": null,
+        "name": "Basin Champions",
+        "optionalProjectContent": [],
+        "subprograms": [],
+        "activities": ["Water Quality Survey"]
     }
 ]}

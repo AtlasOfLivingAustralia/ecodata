@@ -15,6 +15,8 @@ class OutputModelProcessor {
     interface ProcessingContext {}
 
     interface Processor<T extends ProcessingContext> {
+        def singleSighting(Object node, T outputValue)
+
         def number(node, T context)
 
         def integer(node, T context)
@@ -44,6 +46,9 @@ class OutputModelProcessor {
             return;
         }
         switch(type) {
+            case 'singleSighting':
+                processor.singleSighting(node, context);
+                break;
             case 'number':
                 processor.number(node, context);
                 break;
@@ -77,6 +82,8 @@ class OutputModelProcessor {
             case 'document':
                 processor.document(node, context)
                 break
+            case 'masterDetail':
+                break // do nothing, not supported yet
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")
         }

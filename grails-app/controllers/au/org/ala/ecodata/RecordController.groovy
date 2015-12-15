@@ -1,4 +1,8 @@
 package au.org.ala.ecodata
+
+import static au.org.ala.ecodata.Status.*
+import static org.apache.http.HttpStatus.*
+
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.codec.binary.Base64
@@ -12,52 +16,73 @@ class RecordController {
 
     def grailsApplication
 
-    def recordService
+    RecordService recordService
+    UserService userService
+    ProjectActivityService projectActivityService
 
     static defaultAction = "list"
 
-    def index(){}
+    def index() {}
 
     /**
      * Download service for project sightings (for given project only if projectId is given).
      * Optional query param "?model=<modelname>" to restrict output to matching records
      */
-    def csvProject(){
-        def filename = params.id? "project-${params.id}.csv": "projects.csv"
-        response.setHeader("Content-Disposition","attachment; filename=\"${filename}\"");
+    def csvProject() {
+        def filename = params.id ? "project-${params.id}.csv" : "projects.csv"
+        response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
         response.setContentType("text/csv")
-        recordService.exportCSVProject(response.outputStream, params.id, params.model)
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, params.id)
+
+        recordService.exportCSVProject(response.outputStream, params.id, params.model, restrictedProjectActivities)
     }
 
     /**
      * Get record by ID (UUID)
      */
-    def get(){
+    def get() {
         Record record = Record.findByOccurrenceID(params.id)
-        if(record){
-            response.setContentType("application/json")
-            def model = recordService.toMap(record)
-            render model as JSON
+        if (record) {
+            String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+            if (record.userId != userId && projectActivityService.listRestrictedProjectActivityIds(userId, record.projectId).contains(record.projectActivityId)) {
+                response.sendError(SC_UNAUTHORIZED, "You are not authorised to view this record")
+            } else {
+                response.setContentType("application/json")
+                render recordService.toMap(record) as JSON
+            }
         } else {
-            response.sendError(404, 'Unrecognised Record ID. This record may have been removed.')
+            response.sendError(SC_NOT_FOUND, 'Unrecognised Record ID. This record may have been removed.')
         }
     }
 
     /**
      * Retrieve list of records with images.
      */
-    def listRecordWithImages(){
+    def listRecordWithImages() {
         def records = []
         def sort = params.sort ?: "dateCreated"
-        def orderBy = params.order ?:  "desc"
+        def orderBy = params.order ?: "desc"
         def offsetBy = params.start ?: 0
         def max = params.pageSize ?: 10
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
 
         def criteria = Record.createCriteria()
         def results = criteria.list {
             isNotNull("multimedia")
+            ne("status", DELETED)
+
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+
             maxResults(max)
-            order(sort,orderBy)
+            order(sort, orderBy)
             offset(offsetBy)
         }
         results.each {
@@ -67,21 +92,31 @@ class RecordController {
         render records as JSON
     }
 
-    /**
-     * Retrieve the current record count.
-     */
-    def count(){
+    def count() {
         response.setContentType("application/json")
-        def model = [count:Record.count()]
+        def model = [count: Record.countByStatusNotEqual(DELETED)]
         render model as JSON
     }
 
     /**
      * Retrieve a list of records with uncertain identifications.
      */
-    def listUncertainIdentifications(){
+    def listUncertainIdentifications() {
         log.debug("list request....")
-        def ids = Record.findAllWhere( ["identificationVerificationStatus" : "Uncertain"]).collect { it.occurrenceID }
+
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
+
+        def ids = Record.withCriteria {
+            eq("identificationVerificationStatus", "Uncertain")
+            ne("status", DELETED)
+
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+        }.collect { it.occurrenceID }
         response.setContentType("application/json")
         def model = ids
         render model as JSON
@@ -90,42 +125,89 @@ class RecordController {
     /**
      * Retrieve a list of records with paging support.
      */
-    def list(){
+    def list() {
         log.debug("list request....")
-        def records = []
-        def sort = params.sort ?: "lastUpdated"
-        def order = params.order ?:  "desc"
-        def offset = params.start ?: 0
-        def max = params.pageSize ?: 10
-        Record.list([sort:sort,order:order,offset:offset,max:max]).each {
-            recordService.toMap(it)
-            records.add(recordService.toMap(it))
+
+        String sort = params.sort ?: "lastUpdated"
+        String orderBy = params.order ?: "desc"
+        String offset = params.start ?: 0
+        String max = params.pageSize ?: 10
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId)
+
+        def query = Record.createCriteria().list(max: max, offset: offset) {
+            ne "status", DELETED
+
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+            order(sort, orderBy)
         }
-        def totalRecords = Record.count()
+
+        List records = query.collect { recordService.toMap(it) }
+
         response.setContentType("application/json")
-        def model = [total: totalRecords, list:records]
+        Map model = [total: query.totalCount, list: records]
         render model as JSON
     }
 
     /**
      * Retrieve a list of record for the supplied user ID
      */
-    def listForUser(){
+    def listForUser() {
 
-        log.debug("Retrieving a list for user: ${params.userId}")
+        log.debug("Retrieving a list for user: ${params.id}")
 
         def records = []
-        def sort = params.sort ?: "dateCreated"
-        def order = params.order ?:  "desc"
-        def offset = params.start ?: 0
+        def sort = params.sort ?: "lastUpdated"
+        def order = params.order ?: "desc"
+        def offset = params.offset ?: 0
         def max = params.pageSize ?: 10
-
-        Record.findAllWhere([userId:params.userId], [sort:sort,order:order,offset:offset,max:max]).each {
-            records.add(recordService.toMap(it))
+        Record.findAllWhere([userId: params.id], [sort: sort, order: order, offset: offset, max: max]).each {
+            if (it.status != DELETED) {
+                records.add(recordService.toMap(it))
+            }
         }
-        def totalRecords = Record.countByUserId(params.userId)
+        def totalRecords = Record.countByUserIdAndStatusNotEqual(params.id, DELETED)
         response.setContentType("application/json")
-        def model = [total: totalRecords, list:records]
+        def model = [total: totalRecords, list: records]
+        render model as JSON
+    }
+
+    /**
+     * Retrieve a list of record for the supplied projectId
+     */
+    def listForProject() {
+
+        String projectId = params.id
+        log.debug("Retrieving a list for project: ${projectId}")
+
+        String sort = params.sort ?: "lastUpdated"
+        String orderBy = params.order ?: "desc"
+        def startFrom = params.offset ?: 0
+        def max = params.pageSize ?: 10
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, projectId)
+
+        def query = Record.createCriteria().list(max: max, offset: startFrom) {
+            eq "projectId", projectId
+            ne "status", DELETED
+
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+
+            order(sort, orderBy)
+        }
+
+        List records = query.collect { recordService.toMap(it) }
+
+        response.setContentType("application/json")
+        Map model = [total: query.totalCount, list: records]
         render model as JSON
     }
 
@@ -133,16 +215,16 @@ class RecordController {
      * Delete by occurrence ID
      */
     @RequireApiKey
-    def delete(){
+    def delete() {
         Record record = Record.findByOccurrenceID(params.id)
-        if (record){
+        if (record) {
             record.delete(flush: true)
-            response.setStatus(200)
+            response.setStatus(SC_OK)
             response.setContentType("application/json")
-            def model = [success:true]
+            def model = [success: true]
             render model as JSON
         } else {
-            response.sendError(400)
+            response.sendError(SC_BAD_REQUEST)
         }
     }
 
@@ -154,29 +236,29 @@ class RecordController {
      * 3. JSON body post with image supplied via a URL.
      */
     @RequireApiKey
-    def create(){
+    def create() {
 
         log.info("Create request received: " + request.getContentType())
-        if(request instanceof MultipartHttpServletRequest){
+        if (request instanceof MultipartHttpServletRequest) {
             try {
                 log.info("Multipart POST received ...")
                 def js = new JsonSlurper()
                 def recordParams = js.parseText(params.record)
 
                 if (!recordParams.userId) {
-                    response.setStatus(403)
+                    response.setStatus(SC_UNAUTHORIZED)
                     response.setContentType("application/json")
-                    return [success:false, message:"userId not specified"]
+                    return [success: false, message: "userId not specified"]
                 }
 
-                if (recordParams){
+                if (recordParams) {
 
                     def imagesToBeLoaded = [:]
 
                     //handle the multipart message.....
-                    if(request instanceof MultipartHttpServletRequest){
+                    if (request instanceof MultipartHttpServletRequest) {
                         Map<String, MultipartFile> fileMap = request.getFileMap()
-                        for(String fileKey: fileMap.keySet()){
+                        for (String fileKey : fileMap.keySet()) {
                             MultipartFile multipartFile = fileMap.get(fileKey)
                             byte[] imageAsBytes = multipartFile.getBytes()
                             String originalName = multipartFile.getOriginalFilename()
@@ -185,16 +267,16 @@ class RecordController {
                     }
 
                     //handle image base64 encoded
-                    if(params.imageBase64 && params.imageFileName){
+                    if (params.imageBase64 && params.imageFileName) {
                         byte[] imageAsBytes = Base64.decodeBase64(params.imageBase64)
                         imagesToBeLoaded.put(params.imageFileName, imageAsBytes)
                     }
 
                     //save the record
                     def (record, errors) = recordService.createRecordWithImages(recordParams, imagesToBeLoaded)
-                    if(errors.size() == 0){
+                    if (errors.size() == 0) {
                         log.debug "Added record: ${record.occurrenceID}"
-                        response.setStatus(200)
+                        response.setStatus(SC_OK)
                         setResponseHeadersForRecord(response, record)
                         response.setContentType("application/json;charset=UTF-8")
                         [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
@@ -202,37 +284,37 @@ class RecordController {
                         log.error "Problem creating record. ${errors}"
                         record.delete(flush: true)
                         response.addHeader 'errors', (errors as grails.converters.JSON).toString()
-                        response.sendError(400, "Unable to create a new record. See errors for more details." )
+                        response.sendError(SC_BAD_REQUEST, "Unable to create a new record. See errors for more details.")
                     }
                 } else {
                     response.setContentType("application/json")
                     log.error("Unable to create record. " + errors)
-                    response.sendError(400, errors)
-                    [success:false]
+                    response.sendError(SC_BAD_REQUEST, errors)
+                    [success: false]
                 }
 
-            } catch (Exception e){
-                response.setStatus(500)
+            } catch (Exception e) {
+                response.setStatus(SC_INTERNAL_SERVER_ERROR)
                 response.setContentType("application/json")
-                [success:false]
+                [success: false]
             }
         } else {
             log.info("JSON POST received ...")
             //if not multi part request, expect a JSON body
             def json = request.JSON
-            if (json.userId){
+            if (json.userId) {
                 def (record, errors) = recordService.createRecord(json)
-                if(errors.size() == 0){
+                if (errors.size() == 0) {
                     setResponseHeadersForRecord(response, record)
                     response.setContentType("application/json;charset=UTF-8")
                     [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
                 } else {
                     record.delete(flush: true)
                     response.addHeader 'errors', (errors as grails.converters.JSON).toString()
-                    response.sendError(400, "Unable to create a new record. See errors for more details." )
+                    response.sendError(SC_BAD_REQUEST, "Unable to create a new record. See errors for more details.")
                 }
             } else {
-                response.sendError(400, 'Missing userId')
+                response.sendError(SC_BAD_REQUEST, 'Missing userId')
             }
         }
     }
@@ -241,7 +323,7 @@ class RecordController {
      * Update the supplied record.
      */
     @RequireApiKey
-    def update(){
+    def update() {
         def json = request.JSON
         Record record = Record.findByOccurrenceID(params.id)
         Map errors = recordService.updateRecord(record, json)
@@ -253,13 +335,13 @@ class RecordController {
         //add the errors to the header too
         response.addHeader('errors', (errors as grails.converters.JSON).toString())
         if (errors) {
-            response.sendError(400, (errors as JSON).toString())
+            response.sendError(SC_BAD_REQUEST, (errors as JSON).toString())
         } else {
             render record as JSON
         }
     }
 
-    private def setResponseHeadersForRecord(response, record){
+    private def setResponseHeadersForRecord(response, record) {
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("entityId", record.id.toString())

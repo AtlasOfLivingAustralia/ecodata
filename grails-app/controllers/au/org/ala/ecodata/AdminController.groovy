@@ -2,18 +2,19 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.util.Environment
-import groovy.json.JsonBuilder
+import org.joda.time.DateTime
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
-import static groovyx.gpars.actor.Actors.actor
-import static groovyx.gpars.actor.Actors.actor
-import static groovyx.gpars.actor.Actors.actor
 import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
 
+    private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
+
     def outputService, activityService, siteService, projectService, authService,
-        collectoryService,
+        collectoryService, organisationService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
@@ -42,7 +43,7 @@ class AdminController {
 
     @RequireApiKey
     def syncCollectoryOrgs() {
-        def errors = collectoryService.syncOrganisations()
+        def errors = collectoryService.syncOrganisations(organisationService)
         if (errors)
             render (status: 503, text: errors)
         else
@@ -141,39 +142,6 @@ class AdminController {
         render cacheService.cache
     }
 
-    def test() {
-        render metadataService.getOutputModel('Feral Animal Abundance Score')
-    }
-
-    /**
-     * Writes all data to files as JSON.
-     */
-    def dump() {
-        ['project','site','activity','output'].each { collection ->
-            def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
-            f.createNewFile()
-            def instances = []
-            switch (collection) {
-                case 'output':
-                    Output.list().each { instances << commonService.toBareMap(it) }
-                    break
-                case 'activity':
-                    Activity.list().each { instances << commonService.toBareMap(it) }
-                    break
-                case 'site':
-                    Site.list().each { instances << commonService.toBareMap(it) }
-                    break
-                case 'project':
-                    Project.list().each { instances << commonService.toBareMap(it) }
-                    break
-            }
-            def pj = new JsonBuilder( instances ).toPrettyString()
-            f.withWriter( 'UTF-8' ) { it << pj }
-        }
-        flash.message = "Database dumped to ${grailsApplication.config.app.dump.location}."
-        render 'done'
-    }
-
     /**
      * Re-index all docs with ElasticSearch
      */
@@ -190,37 +158,6 @@ class AdminController {
         render 'done'
     }
 
-    /**
-     * Imports all data from files in the format written by dump().
-     */
-    def load() {
-        if (params.drop) {
-            dropDB()
-        }
-        def errorMsg
-        ['project','site','activity','output'].each { collection ->
-            try {
-                elasticSearchService.indexingTempInactive = true // turn off search indexing
-                def f = new File(grailsApplication.config.app.dump.location + "${collection}s.json")
-                switch (collection) {
-                    case 'output': outputService.loadAll(JSON.parse(f.text)); break
-                    case 'activity': activityService.loadAll(JSON.parse(f.text)); break
-                    case 'site': siteService.loadAll(JSON.parse(f.text)); break
-                    case 'project': projectService.loadAll(JSON.parse(f.text)); break
-                }
-            } catch (Exception e) {
-                errorMsg = "Load error: ${e}"
-                log.error errorMsg, e
-            } finally {
-                log.debug "Turning elasticSearch indexing ON"
-                elasticSearchService.indexingTempInactive = false // turn on search indexing
-            }
-        }
-        elasticSearchService.indexAll()
-        flash.message = errorMsg?:"DB reloaded "
-        forward action: 'count'
-    }
-
     def count() {
         def res = [
             projects: Project.collection.count(),
@@ -232,24 +169,12 @@ class AdminController {
         render res
     }
 
-    def drop() {
-        dropDB()
-        forward action: 'count'
-    }
-
     def updateDocumentThumbnails() {
 
         def results = Document.findAllByStatusAndType('active', 'image')
         results.each { document ->
             documentService.makeThumbnail(document.filepath, document.filename, false)
         }
-    }
-
-    def dropDB() {
-        Output.collection.drop()
-        Activity.collection.drop()
-        Site.collection.drop()
-        Project.collection.drop()
     }
 
     /**
@@ -423,5 +348,171 @@ class AdminController {
     def audit() { }
     def auditMessagesByEntity() { }
     def auditMessagesByProject() { }
+
+    private boolean createStageReportsFromTimeline(project) {
+        def timeline = project.timeline
+
+        def dueDateDays = metadataService.programModel(project.associatedProgram).weekDaysToCompleteReport
+        def lastActivityEndDate = null
+        if (!timeline) {
+            log.info "No timeline present for project: ${project.projectId}"
+            return false
+        }
+        if (timeline[0].fromDate >= new DateTime(project.plannedStartDate).plusDays(1).toString()) {
+            log.info "WARNING: Project starts before first timeline period for project: ${project.projectId}, timeline start: ${timeline[0].fromDate}, timeline end: ${timeline[0].toDate}, project start: ${new DateTime(project.plannedStartDate).toDateTimeISO()}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+        if (timeline[0].toDate <= new DateTime(project.plannedStartDate).toString() ) {
+            log.info "WARNING: Extra timeline period(s) before project start for project: ${project.projectId}, timeline start: ${timeline[0].fromDate}, timeline end: ${timeline[0].toDate}, project start: ${new DateTime(project.plannedStartDate).toDateTimeISO()}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+        if (timeline[timeline.size()-1].fromDate >= new DateTime(project.plannedEndDate).minusDays(1).toString()) {
+
+            def lastActivity = Activity.findAllByProjectId(project.projectId).max{it.plannedEndDate}
+
+            if (lastActivity && lastActivity.plannedEndDate.after(project.plannedEndDate)) {
+                log.info("WARNING: activity ends after project end date: ${project.projectId}, project end: ${project.plannedEndDate}, activity end: ${lastActivity.plannedEndDate}")
+            }
+            log.info "WARNING: Extra timeline period(s) after project end for project: ${project.projectId}, timeline start: ${timeline[timeline.size()-1].fromDate}, timeline end: ${timeline[timeline.size()-1].toDate}, project end: ${new DateTime(project.plannedEndDate).toDateTimeISO()}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+        if (timeline[timeline.size()-1].toDate < new DateTime(project.plannedEndDate).minusDays(1).toString()) {
+            log.info "WARNING: Project ends after last timeline period for project: ${project.projectId}, timeline start: ${timeline[timeline.size()-1].fromDate}, timeline end: ${timeline[timeline.size()-1].toDate}, project end: ${new DateTime(project.plannedEndDate).toDateTimeISO()}, programme:${project.associatedProgram}, subprogramme:${project.associatedSubProgram}"
+        }
+
+        //def program =//
+
+        DateTimeFormatter parser = ISODateTimeFormat.dateTimeParser()
+
+        timeline.each { stage ->
+
+            // Don't create extra reports after the end of the project.
+            if (stage.fromDate >= new DateTime(project.plannedEndDate).minusDays(1).toString()  && lastActivityEndDate && stage.fromDate >= new DateTime(lastActivityEndDate).minusDays(1).toString()) {
+                return
+            }
+            if (stage.toDate <= new DateTime(project.plannedStartDate).toString()) {
+                // Really need to check what is happening here because we may not be able to not migrate this
+                // stage.
+                println 'debug me'
+            }
+            Report report = new Report()
+            report.reportId = Identifiers.getNew(true,'')
+            report.projectId = project.projectId
+            report.name = stage.name
+            report.type = 'Activity'
+            report.description = stage.name + " report for " + project.name
+            report.fromDate = parser.parseDateTime(stage.fromDate).toDate()
+
+            def toDate = parser.parseDateTime(stage.toDate)
+            report.toDate = toDate.toDate()
+
+            // Make sure the report can be submitted after the project ends, regardless of when the stage ends.
+            if (dueDateDays) {
+                if (new DateTime(project.plannedEndDate).toString() < stage.toDate) {
+                    report.dueDate = new DateTime(project.plannedEndDate).plusDays(dueDateDays).toDate()
+                }
+                else {
+                    report.dueDate = toDate.plusDays(dueDateDays).toDate()
+                }
+            }
+
+            report.save(flush:true, failOnError: true)
+        }
+
+        return true
+
+
+    }
+
+    def populateStageReportStatus(project) {
+
+
+        List stuff = AuditMessage.findAllByProjectIdAndEventTypeAndEntityType(project.projectId, 'Update', Activity.name)
+
+        stuff.sort { a1, a2 ->
+            return a1.date.compareTo(a2.date)
+        }
+
+        //println "${project.name}"
+        //println "**************"
+
+        def reports = Report.findAllByProjectId(project.projectId)
+
+        stuff.each {
+            def status = it.entity.publicationStatus ?: ''
+            if (!status) {
+                return
+            }
+            if (it.entity.description == 'Upload of stage 1 and 2 reporting data') {
+                return
+            }
+            def activityEndDate = new DateTime(it.entity.plannedEndDate).minusDays(1).toDate()
+
+            def stageReport = reports.find {
+                it.fromDate.before(activityEndDate) &&
+                (it.toDate.after(activityEndDate) || it.toDate.equals(activityEndDate))}
+
+            if (!stageReport) {
+                throw new Exception("No stage report found for project ${project.projectId} and date ${it.entity.plannedEndDate}")
+            }
+
+
+            if (stageReport.publicationStatus != status) {
+
+                //println "found report: ${stageReport.name} for date ${it.entity.plannedEndDate} status: ${status}"
+                switch (status) {
+                    case 'pendingApproval':
+                        if (stageReport.publicationStatus == 'published') {
+                            log.warn("Adding implicit rejection step to the report ${stageReport.name} for project: ${project.projectId}")
+                            stageReport.returnForRework("-1", it.date)
+                        }
+                        stageReport.submit(it.userId, it.date)
+                        break
+                    case 'published':
+                        if (stageReport.publicationStatus != 'pendingApproval') {
+                            log.warn("Adding implicit submit step to the report ${stageReport.name} for project: ${project.projectId}")
+                            stageReport.submit("-1", it.date)
+                        }
+                        stageReport.approve(it.userId, it.date)
+                        break
+                    case 'unpublished':
+                        stageReport.returnForRework(it.userId, it.date)
+                        break
+                }
+
+                stageReport.save()
+            }
+        }
+
+    }
+
+    def createStageReports() {
+
+        def offset = 0, max = 100
+        def count = 0
+        def projects = []
+        Project.withSession { session ->
+            while (count == 0 || projects.size() > 0) {
+                projects = Project.findAllByStatusNotEqual('deleted', [max:max, offset:offset])
+
+                projects.each { project ->
+                    if (project.isMERIT) {
+                        count++
+                        println "****** ${count} - ${project.projectId} ******"
+                        def reports = Report.findAllByProjectId(project.projectId)
+                        if (!reports) {
+                            boolean success = createStageReportsFromTimeline(project)
+                            if (success) {
+                                populateStageReportStatus(project)
+                            }
+                        }
+                    }
+                }
+                offset += projects.size()
+            }
+            session.clear()
+        }
+        def reports = Report.findAll()
+        def reportsByProject = reports.groupBy{it.projectId}
+        render reportsByProject as JSON
+    }
+
 
 }

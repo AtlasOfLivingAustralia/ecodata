@@ -1,16 +1,15 @@
 package au.org.ala.ecodata
 
+import org.grails.datastore.mapping.query.api.BuildableCriteria
+
+import static au.org.ala.ecodata.Status.*
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
-import com.itextpdf.text.DocumentException
-import com.itextpdf.text.Element
 import com.itextpdf.text.html.simpleparser.HTMLWorker
-import com.itextpdf.text.html.simpleparser.StyleSheet
 import com.itextpdf.text.pdf.PdfWriter
 import com.itextpdf.text.PageSize
 import org.imgscalr.Scalr
-
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.text.DateFormat
@@ -18,11 +17,15 @@ import java.text.SimpleDateFormat
 
 class DocumentService {
 
-    static final ACTIVE = "active"
     static final LINKTYPE = "link"
+    static final LOGO = 'logo'
     static final FILE_LOCK = new Object()
 
     static final DIRECTORY_PARTITION_FORMAT = 'yyyy-MM'
+    static  final MOBILE_APP_ROLE = [ "android",
+                                     "blackberry",
+                                     "iTunes",
+                                     "windowsPhone"]
 
     def commonService, grailsApplication
     
@@ -85,6 +88,51 @@ class DocumentService {
     def findAllForOutputId(id, levelOfDetail = []) {
         Document.findAllByOutputIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
+    def findAllForProjectActivityId(id, levelOfDetail = []) {
+        Document.findAllByProjectActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
+    String findImageUrlForProjectId(id, levelOfDetail = []){
+        Document primaryImageDoc;
+        Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
+        String urlImage;
+        urlImage = logoDoc?.url
+        if(!urlImage){
+            primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
+            urlImage = primaryImageDoc?.url;
+        }
+        urlImage
+    }
+
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a map with two keys: "count": the total number of results, "documents": a list of the documents that match the supplied criteria
+     */
+    public Map search(Map searchCriteria, Integer max = 100, Integer offset = 0, String sort = null, String orderBy = null) {
+
+        BuildableCriteria criteria = Document.createCriteria()
+        List documents = criteria.list(max:max, offset:offset) {
+            ne("status", DELETED)
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+            if (sort) {
+                order(sort, orderBy?:'asc')
+            }
+
+        }
+        [documents:documents.collect{toMap(it)}, count:documents.totalCount]
+    }
+
 
     /**
      * Creates a new Document object associated with the supplied file.
@@ -270,12 +318,37 @@ class DocumentService {
         return newFilename;
     }
 
-    String fullPath(filepath, filename) {
-        def path = filepath ?: ''
+    String fullPath(String filepath, String filename) {
+        String path = filepath ?: ''
         if (path) {
             path = path+File.separator
         }
         return grailsApplication.config.app.file.upload.path + '/' + path  + filename
+    }
+
+    void deleteAllForProject(String projectId, boolean destroy = false) {
+        List<String> documentIds = Document.withCriteria {
+            eq "projectId", projectId
+            projections {
+                property("documentId")
+            }
+        }
+
+        documentIds?.each { deleteDocument(it, destroy) }
+    }
+
+    void deleteDocument(String documentId, boolean destroy = false) {
+        Document document = Document.findByDocumentId(documentId)
+        if (document) {
+            if (destroy) {
+                document.delete()
+                deleteFile(document)
+            } else {
+                document.status = DELETED
+                archiveFile(document)
+                document.save(flush: true)
+            }
+        }
     }
 
     /**
@@ -283,11 +356,27 @@ class DocumentService {
      * @param document identifies the file to delete.
      * @return true if the delete operation was successful.
      */
-    def deleteFile(document) {
+    boolean deleteFile(Document document) {
+        File fileToDelete = new File(fullPath(document.filepath, document.filename))
+        fileToDelete.delete();
+    }
 
-        File f = fullPath(document.filepath, document.filename)
-        return f.delete();
+    /**
+     * Move the document's file to the 'archive' directory. This is used when the Document is being soft deleted.
+     * The file should only be deleted if the Document has been 'hard' deleted.
+     * @param document the Document entity representing the file to be moved
+     * @return the new absolute location of the file
+     */
+    void archiveFile(Document document) {
+        File fileToArchive = new File(fullPath(document.filepath, document.filename))
 
+        if (fileToArchive.exists()) {
+            File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
+
+            FileUtils.moveFileToDirectory(fileToArchive, archiveDir, true)
+        } else {
+            log.warn("Unable to move file for document ${document.documentId}: the file ${fileToArchive.absolutePath} does not exist.")
+        }
     }
 
     def findAllByOwner(ownerType, owner, includeDeleted = false) {
@@ -297,7 +386,7 @@ class DocumentService {
            ne('type', LINKTYPE)
            eq(ownerType, owner)
            if (!includeDeleted) {
-               ne('status', 'deleted')
+               ne('status', DELETED)
            }
         }
 
@@ -311,10 +400,19 @@ class DocumentService {
             eq('type', LINKTYPE)
             eq(ownerType, owner)
             if (!includeDeleted) {
-                ne('status', 'deleted')
+                ne('status', DELETED)
             }
         }
 
         results.collect{toMap(it, 'flat')}
+    }
+
+    Boolean isMobileAppForProject(Map project){
+        List links = project.links
+        Boolean isMobileApp = false;
+        isMobileApp = links?.any {
+            it.role in MOBILE_APP_ROLE;
+        }
+        isMobileApp;
     }
 }

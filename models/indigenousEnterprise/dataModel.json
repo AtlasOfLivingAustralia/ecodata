@@ -27,10 +27,15 @@
             "primaryResult": "true",
             "name": "totalIndigenousEnterprisesEngaged",
             "validate": "required,min[0]"
+        },
+        {
+            "dataType": "text",
+            "description":"Notes or comments about the indigenous employment information",
+            "name": "notes"
         }
     ],
-    "viewModel": [{
-        "items": [{
+    "viewModel": [
+        {
             "items": [
                 {
                     "source": "typeOfEnterprise",
@@ -57,8 +62,20 @@
                 }
             ],
             "computed": null,
-            "type": "row"
-        }],
-        "type": "section"
-    }]
+            "type": "row",
+            "class":"output-section"
+        },
+
+        {
+            "type": "row",
+            "class":"output-section",
+            "items": [
+                {
+                    "type": "textarea",
+                    "source": "notes",
+                    "preLabel": "Comments / notes"
+                }
+            ]
+        }
+    ]
 }

@@ -1,23 +1,27 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import org.apache.poi.ss.usermodel.Workbook
+import org.apache.poi.ss.usermodel.WorkbookFactory
+import org.apache.poi.ss.util.CellReference
 import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
-import java.util.zip.ZipFile
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipEntry
 
+import static au.org.ala.ecodata.Status.*
+
 class MetadataService {
 
-    private static final String ACTIVE = 'active'
     // The spatial portal returns n/a when the point does not intersect a layer.
     private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
 
     private static final int BATCH_LIMIT = 200
 
-    def grailsApplication, webService, cacheService, messageSource
+    def grailsApplication, webService, cacheService, messageSource, excelImportService
 
     def activitiesModel() {
         return cacheService.get('activities-model',{
@@ -453,7 +457,7 @@ class MetadataService {
      * @param list of available sites.
      * @return sites with the updated extent values.
      */
-    def getLocationMetadataForSites(allSites, boolean includeLocality = true) {
+    def getLocationMetadataForSites(List allSites, boolean includeLocality = true) {
 
         def sites = getValidSites(allSites)
 
@@ -485,5 +489,39 @@ class MetadataService {
         log.info("Completed batch processing and site extent mapping..")
 
         sites
+    }
+
+    /**
+     * Accepts an Excel workbook containing output data and returns a Map containing output data formatted
+     * as it would be stored in the Output entity.
+     *
+     * Note that no type conversion or validation is performed.
+     *
+     * @param excelWorkbookIn an InputStream containing the contents of the Excel workbook.
+     * @param outputName the name of the output definition that describes the data in the workbook.
+     * @param listName (optional) the name of a list typed attribute in the output model.  If specified, the
+     * data in the workbook will be expected to contain the contents of that list.
+     *
+     * @return the output data contained in the workbook in a Map.
+     */
+    List<Map> excelWorkbookToMap(InputStream excelWorkbookIn, String outputName, String listName = null) {
+        List model = annotatedOutputDataModel(outputName)
+        if (listName) {
+            model = model.find { it.name == listName }?.columns
+        }
+        int index = 0;
+        def columnMap = model.collectEntries {
+            def colString = CellReference.convertNumToColString(index++)
+            [(colString):it.name]
+        }
+        def config = [
+                sheet:XlsExporter.sheetName(outputName),
+                startRow:1,
+                columnMap:columnMap
+        ]
+        Workbook workbook = WorkbookFactory.create(excelWorkbookIn)
+
+        excelImportService.convertColumnMapConfigManyRows(workbook, config)
+
     }
 }

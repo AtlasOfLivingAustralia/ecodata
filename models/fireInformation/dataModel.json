@@ -3,8 +3,8 @@
     "dataModel": [
         {
             "dataType": "text",
-            "name": "fireIgnitionSource",
             "description": "The source of fire ignition",
+            "name": "fireIgnitionSource",
             "constraints": [
                 "Lightning",
                 "Drip torch",
@@ -18,8 +18,8 @@
         },
         {
             "dataType": "text",
-            "name": "fireEventType",
             "description": "Type of fire event",
+            "name": "fireEventType",
             "constraints": [
                 "Managed controlled burn",
                 "Escaped controlled burn",
@@ -30,8 +30,8 @@
         },
         {
             "dataType": "stringList",
-            "name": "fireReason",
             "description": "Purpose of undertaking the fire management activity",
+            "name": "fireReason",
             "constraints": [
                 "Fire fuel reduction",
                 "Asset protection",
@@ -45,17 +45,19 @@
         },
         {
             "dataType": "number",
-            "name": "areaOfFireHa",
             "description": "Area in hectares of the fire ground",
-            "validate": "required,min[0]"
+            "name": "areaOfFireHa",
+            "validate": "required, min[0]"
         },
         {
             "dataType": "number",
-            "name": "areaBurntPercent",
             "description": "Area of the fire ground actually burnt expressed as a percentage of the total fire ground area",
+            "name": "areaBurntPercent",
             "validate": "min[0],max[100]"
         },
         {
+            "dataType": "number",
+            "description": "The area in hectares of the fire ground actually burnt, calculated from the % of the total fire area.",
             "computed": {
                 "expression": "areaOfFireHa*areaBurntPercent/100",
                 "dependents": {"source": [
@@ -63,19 +65,17 @@
                     "areaBurntPercent"
                 ]}
             },
-            "dataType": "number",
-            "name": "areaBurntHa",
-            "description": "The area in hectares of the fire ground actually burnt"
+            "name": "areaBurntHa"
         },
         {
             "dataType": "date",
-            "name": "fireLastBurnDate",
-            "description": "Date at which the last known fire occurred on the subject fire ground"
+            "description": "Date at which the last known fire occurred on the subject fire ground",
+            "name": "fireLastBurnDate"
         },
         {
             "dataType": "text",
-            "name": "fireTimeSinceLastBurn",
             "description": "Approximate time period since the  last known fire occurred on the subject fire ground",
+            "name": "fireTimeSinceLastBurn",
             "constraints": [
                 "1-3 years",
                 "4-6 years",
@@ -85,14 +85,14 @@
         },
         {
             "dataType": "number",
-            "name": "eventDuration",
             "description": "The total time in whole hours over which this activity was conducted.",
+            "name": "eventDuration",
             "validate": "min[0]"
         },
         {
             "dataType": "stringList",
-            "name": "firePreventionAction",
             "description": "Actions implemented to prevent or better manage wildfire events",
+            "name": "firePreventionAction",
             "constraints": [
                 "Fire trail construction",
                 "Fire break construction",
@@ -105,8 +105,8 @@
         },
         {
             "dataType": "text",
-            "name": "fireBurnTemp",
             "description": "Generalised indicator of the intensity of the fire event",
+            "name": "fireBurnTemp",
             "constraints": [
                 "Cool",
                 "Moderately hot",
@@ -116,8 +116,8 @@
         },
         {
             "dataType": "stringList",
-            "name": "fireMachineryUsed",
             "description": "Classes of machinery deployed onto the fire ground to manage the fire event",
+            "name": "fireMachineryUsed",
             "constraints": [
                 "Light tanker",
                 "Heavy tanker",
@@ -129,26 +129,26 @@
         },
         {
             "dataType": "number",
-            "name": "totalMachineHours",
             "description": "Total aggregate number of hours for all machinery deployed onto the fire ground",
+            "name": "totalMachineHours",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "controlLineKmMachine",
             "description": "Length in kilometres of fire breaks and back burn lines implemented by machinery to manage the fire event",
+            "name": "controlLineKmMachine",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "name": "controlLineKmHand",
             "description": "Length in kilometres of fire breaks and back burn lines implemented by hand tools and manual labor to manage the fire event",
+            "name": "controlLineKmHand",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "name": "fireContainment",
             "description": "Indicator as to whether the fire total fire ground was contained within the initial control lines",
+            "name": "fireContainment",
             "constraints": [
                 "Yes",
                 "No",
@@ -157,144 +157,144 @@
         },
         {
             "dataType": "text",
-            "name": "notes",
-            "description": "General comments and notes about this management action, the subject site, etc."
+            "description": "General comments and notes about this management action, the subject site, etc.",
+            "name": "notes"
         }
     ],
     "viewModel": [
         {
-            "type": "row",
             "items": [{
-                "computed": null,
                 "source": "Please enter as much information about this fire activity as possible. If the type of fire event is 'Fire prevention works' and fire was not used as a tool (eg. for fuel reduction), then please ignore any non-relevant questions.",
+                "computed": null,
                 "type": "literal"
-            }]
+            }],
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [
                 {
-                    "computed": null,
-                    "type": "col",
                     "items": [
                         {
-                            "preLabel": "Ignition source:",
-                            "computed": null,
                             "source": "fireIgnitionSource",
+                            "computed": null,
+                            "preLabel": "Ignition source:",
                             "type": "selectOne"
                         },
                         {
-                            "preLabel": "Type of event:",
-                            "computed": null,
                             "source": "fireEventType",
+                            "computed": null,
+                            "preLabel": "Type of event:",
                             "type": "selectOne"
                         },
                         {
-                            "preLabel": "Reason(s) for burn:",
-                            "computed": null,
                             "source": "fireReason",
+                            "computed": null,
+                            "preLabel": "Reason(s) for burn:",
                             "type": "selectMany"
                         },
                         {
-                            "preLabel": "Area of fire ground (Ha):",
-                            "computed": null,
                             "source": "areaOfFireHa",
-                            "type": "number"
-                        },
-                        {
-                            "preLabel": "Actual burnt area (% of fire ground area):",
                             "computed": null,
-                            "source": "areaBurntPercent",
+                            "preLabel": "Area of fire ground (Ha):",
                             "type": "number"
                         },
                         {
+                            "source": "areaBurntPercent",
+                            "computed": null,
+                            "preLabel": "Actual burnt area (% of fire ground area):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaBurntHa",
                             "preLabel": "Actual burnt area (Ha)",
                             "computed": "{\"operation\":\"percent\",\"dependents\":[\"data.areaOfFireHa\",\"self.data.areaBurntPercent()\"]}",
-                            "readonly": "readonly",
-                            "source": "areaBurntHa",
-                            "type": "number"
+                            "type": "number",
+                            "readonly": "readonly"
                         },
                         {
-                            "preLabel": "Previous burn date:",
-                            "computed": null,
                             "source": "fireLastBurnDate",
+                            "computed": null,
+                            "preLabel": "Previous burn date:",
                             "type": "date"
                         },
                         {
-                            "preLabel": "Time since last burn:",
-                            "computed": null,
                             "source": "fireTimeSinceLastBurn",
+                            "computed": null,
+                            "preLabel": "Time since last burn:",
                             "type": "selectOne"
                         },
                         {
-                            "preLabel": "Temperature of burn:",
-                            "computed": null,
                             "source": "fireBurnTemp",
+                            "computed": null,
+                            "preLabel": "Temperature of burn:",
                             "type": "selectOne"
                         },
                         {
-                            "preLabel": "Duration of this activity (Hrs):",
-                            "computed": null,
                             "source": "eventDuration",
+                            "computed": null,
+                            "preLabel": "Duration of this activity (Hrs):",
                             "type": "number"
                         }
-                    ]
+                    ],
+                    "computed": null,
+                    "type": "col"
                 },
                 {
-                    "computed": null,
-                    "type": "col",
                     "items": [
                         {
-                            "preLabel": "Fire prevention works (if applicable):",
-                            "computed": null,
                             "source": "firePreventionAction",
+                            "computed": null,
+                            "preLabel": "Fire prevention works (if applicable):",
                             "type": "selectMany"
                         },
                         {
-                            "preLabel": "Machinery used:",
-                            "computed": null,
                             "source": "fireMachineryUsed",
+                            "computed": null,
+                            "preLabel": "Machinery used:",
                             "type": "selectMany"
                         },
                         {
-                            "preLabel": "Total machinery hours:",
-                            "computed": null,
                             "source": "totalMachineHours",
+                            "computed": null,
+                            "preLabel": "Total machinery hours:",
                             "type": "number"
                         },
                         {
-                            "preLabel": "Length of control line - machinery (km):",
-                            "computed": null,
                             "source": "controlLineKmMachine",
+                            "computed": null,
+                            "preLabel": "Length of control line - machinery (km):",
                             "type": "number"
                         },
                         {
-                            "preLabel": "Length of control line - hand tools (km):",
-                            "computed": null,
                             "source": "controlLineKmHand",
+                            "computed": null,
+                            "preLabel": "Length of control line - hand tools (km):",
                             "type": "number"
                         },
                         {
-                            "preLabel": "Did the fire stay with initial control lines?:",
-                            "computed": null,
                             "source": "fireContainment",
+                            "computed": null,
+                            "preLabel": "Did the fire stay with initial control lines?:",
                             "type": "selectOne"
                         }
-                    ]
+                    ],
+                    "computed": null,
+                    "type": "col"
                 }
             ],
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
-            "type": "row",
             "items": [{
-                "preLabel": "Comments / Notes:",
-                "computed": null,
-                "width": "90%",
                 "source": "notes",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "width": "90%",
                 "type": "textarea"
             }],
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

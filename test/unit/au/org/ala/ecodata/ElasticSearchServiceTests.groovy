@@ -79,20 +79,20 @@ class ElasticSearchServiceTests {
     public void testActivitySearch() {
 
         def activityFilters = ["mainThemeFacet:${THEME1}"]
-        def results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
+        def results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
         assert results.hits.totalHits == 8
 
         activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}"]
-        results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
+        results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
         println results
         assert results.hits.totalHits == 2
 
         activityFilters = ["stateFacet:ACT"]
-        results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
+        results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
         assert results.hits.totalHits == 1
 
         activityFilters = ["mainThemeFacet:${THEME1}", "associatedProgramFacet:${PROGRAM_1}", "stateFacet:ACT"]
-        results = service.searchActivities(activityFilters, [offset:0, max:10], INDEX_NAME)
+        results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
         assert results.hits.totalHits == 1
 
     }

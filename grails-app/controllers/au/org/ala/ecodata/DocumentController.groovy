@@ -6,7 +6,7 @@ class DocumentController {
 
     def documentService
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST"]
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -52,18 +52,47 @@ class DocumentController {
         }
     }
 
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     *
+     * the properties "max" and "offset", if they are supplied, will be used as pagination parameters.  Otherwise
+     * the defaults max=100 and offset=0 will be used.
+     *
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a JSON object with attributes: "count": the total number of documents that matched the criteria, "documents": the list of documents that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+        def max = searchCriteria.remove('max') as Integer
+        def offset = searchCriteria.remove('offset') as Integer
+        String sort = searchCriteria.remove('sort')
+        String order = searchCriteria.remove('order')
+
+        def searchResults = documentService.search(searchCriteria, max, offset, sort, order)
+        asJson searchResults
+    }
+
     @RequireApiKey
     def delete(String id) {
-        def a = Document.findByDocumentId(id)
-        if (a) {
-            if (a.type == documentService.LINKTYPE) {
-                a.delete()
-            } else if (params.destroy) {
-                documentService.deleteFile(a)
-                a.delete()
+        Document document = Document.findByDocumentId(id)
+        if (document) {
+            if (document.type == documentService.LINKTYPE) {
+                document.delete()
             } else {
-                a.status = 'deleted'
-                a.save(flush: true)
+                boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+
+                documentService.deleteDocument(id, destroy)
             }
             render (status: 200, text: 'deleted')
         } else {

@@ -91,6 +91,8 @@ grails.mongo.default.mapping = {
     version false
 }
 
+cors.url.pattern = ['/document/download']
+
 /******************************************************************************\
  *  APPLICATION CONFIG
  \*****************************************************************************/
@@ -116,6 +118,9 @@ if(!app.http.header.userId){
 }
 if(!app.file.upload.path){
     app.file.upload.path = "/data/ecodata/uploads"
+}
+if(!app.file.archive.path){
+    app.file.archive.path = "/data/ecodata/archive"
 }
 if(!app.external.api.version){
     app.external.api.version = 'draft'
@@ -154,7 +159,7 @@ app {
         geographic {
             contextual {
                 state = 'cl927'
-                nrm = 'cl2111'
+                nrm = 'cl2120'
                 lga = 'cl959'
                 ibra = 'cl20'
                 imcra4_pb = 'cl21'
@@ -277,6 +282,7 @@ environments {
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
         app.file.upload.path = "./target/uploads"
+        app.file.upload.path = "./target/archive"
     }
     production {
         grails.logging.jul.usebridge = false

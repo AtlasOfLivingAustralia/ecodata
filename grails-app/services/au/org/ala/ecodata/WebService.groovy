@@ -161,60 +161,19 @@ class WebService {
         return urlConnection.content.getText(charset)
     }
 
-    def doPostWithParams(String url, Map params) {
-        def conn = null
-        def charEncoding = 'utf-8'
-        try {
-            String query = ""
-            boolean first = true
-            for (String name:params.keySet()) {
-                query+=first?"?":"&"
-                first = false
-                query+=name.encodeAsURL()+"="+params.get(name).encodeAsURL()
-            }
-            conn = new URL(url+query).openConnection()
-            conn.setRequestMethod("POST")
-            conn.setDoOutput(true)
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
-
-            def user = getUserService().getUser()
-            if (user) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId) // used by ecodata
-                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding)) // used by specieslist
-            }
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
-
-            wr.flush()
-            def resp = conn.inputStream.text
-            wr.close()
-            return [resp: JSON.parse(resp?:"{}")] // fail over to empty json object if empty response string otherwise JSON.parse fails
-        } catch (SocketTimeoutException e) {
-            def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error(error, e)
-            return error
-        } catch (Exception e) {
-            def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
-                         statusCode: conn?.responseCode?:"",
-                         detail: conn?.errorStream?.text]
-            log.error(error, e)
-            return error
-        }
-    }
-
-    def doPost(String url, Map postBody) {
+    Map doPost(String url, Map postBody) {
         def conn = null
         def charEncoding = 'utf-8'
         try {
             conn = new URL(url).openConnection()
             conn.setDoOutput(true)
             conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}");
-            conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
+            conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
 
-            def user = getUserService().getUser()
+            def user = getUserService().getCurrentUserDetails()
             if (user) {
-                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId) // used by ecodata
-                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding)) // used by specieslist
+                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
             }
             OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
             wr.write((postBody as JSON).toString())
@@ -255,40 +214,6 @@ class WebService {
                 conn?.disconnect()
             }
         }
-    }
-
-    /**
-     * Forwards a HTTP multipart/form-data request to ecodata.
-     * @param url the URL to forward to.
-     * @param params the (string typed) HTTP parameters to be attached.
-     * @param file the Multipart file object to forward.
-     * @return [status:<request status>, content:<The response content from the server, assumed to be JSON>
-     */
-    def postMultipart(url, Map params, MultipartFile file) {
-
-        def result = [:]
-        HTTPBuilder builder = new HTTPBuilder(url)
-        builder.request(Method.POST) { request ->
-            requestContentType : 'multipart/form-data'
-            MultipartEntity content = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
-            content.addPart(file.name, new InputStreamBody(file.inputStream, file.contentType, file.originalFilename))
-            params.each { key, value ->
-                content.addPart(key, new StringBody(value))
-            }
-            headers.'Authorization' = grailsApplication.config.api_key
-            request.setEntity(content)
-
-            response.success = {resp, message ->
-                result.status = resp.status
-                result.content = message
-            }
-
-            response.failure = {resp ->
-                result.status = resp.status
-                result.error = "Error POSTing to ${url}"
-            }
-        }
-        result
     }
 
     def extractCollectoryIdFromResult(result) {

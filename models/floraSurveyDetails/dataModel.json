@@ -1,35 +1,36 @@
 {
     "modelName": "Biological Survey - Flora",
+    "record": "true",
     "dataModel": [
         {
-            "dataType": "list",
-            "name": "surveyResultsFlora",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "The identifier of the transect or plot in which sampling is being done.",
-                    "name": "plotId"
+                    "name": "plotId",
+                    "description": "The identifier of the transect or plot in which sampling is being done."
                 },
                 {
                     "dataType": "text",
-                    "description": "The identifier of the point at which the observational record was made",
-                    "name": "sampleSiteId"
+                    "name": "sampleSiteId",
+                    "description": "The identifier of the point at which the observational record was made"
                 },
                 {
                     "dataType": "species",
-                    "description": "Species recorded at the sample site",
+                    "dwcAttribute": "scientificName",
                     "name": "species",
+                    "description": "Species recorded at the sample site",
                     "validate": "required"
                 },
                 {
                     "dataType": "number",
-                    "description": "The number of plants in the survey at the sample site which share the same set of record attributes.",
-                    "name": "numberOfOrganisms"
+                    "dwcAttribute": "individualCount",
+                    "name": "numberOfOrganisms",
+                    "description": "The number of plants in the survey at the sample site which share the same set of record attributes."
                 },
                 {
                     "dataType": "text",
-                    "description": "The structural layer occupied by the species",
                     "name": "stratum",
+                    "description": "The structural layer occupied by the species",
                     "constraints": [
                         "Canopy",
                         "Sub-canopy",
@@ -40,23 +41,24 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "The average height of the species in the sample area",
-                    "name": "aveHeight"
+                    "name": "aveHeight",
+                    "description": "The average height of the species in the sample area"
                 },
                 {
                     "dataType": "number",
-                    "description": "The diameter in centimetres at breast height (1.2m above ground level) of sampled trees.",
-                    "name": "dbh"
+                    "name": "dbh",
+                    "description": "The diameter in centimetres at breast height (1.2m above ground level) of sampled trees."
                 },
                 {
                     "dataType": "text",
-                    "description": "The health or condition of the Plant(s) recorded",
-                    "name": "health"
+                    "name": "health",
+                    "description": "The health or condition of the Plant(s) recorded"
                 },
                 {
                     "dataType": "text",
-                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
+                    "dwcAttribute": "associatedOccurrences",
                     "name": "biologicalMaterialTaken",
+                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
                     "constraints": [
                         "Yes",
                         "No"
@@ -64,162 +66,166 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
-                    "name": "speciesNotes"
+                    "dwcAttribute": "occurrenceRemarks",
+                    "name": "speciesNotes",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.)."
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "surveyResultsFlora"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Aggregate total of the individual organisms recorded in the survey event",
-            "name": "totalNumberOfOrganisms",
             "computed": {
-                "operation": "sum",
                 "dependents": {
-                    "source": "numberOfOrganisms",
-                    "fromList": "surveyResultsFlora"
-                }
-            }
+                    "fromList": "surveyResultsFlora",
+                    "source": "numberOfOrganisms"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalNumberOfOrganisms",
+            "description": "Aggregate total of the individual organisms recorded in the survey event"
         },
         {
             "dataType": "text",
-            "description": "The identifier of a soil sample collected in association with this survey event",
-            "name": "soilSampleCollected"
+            "name": "soilSampleCollected",
+            "description": "The identifier of a soil sample collected in association with this survey event"
         },
         {
             "dataType": "text",
+            "dwcAttribute": "eventRemarks",
             "name": "notes"
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [{
-                "source": "Please list the details of plants observed or collected in each transect/plot and sampling site during this survey event:",
                 "computed": null,
+                "source": "Please list the details of plants observed or collected in each transect/plot and sampling site during this survey event:",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "allowHeaderWrap": "true",
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": 3,
-                    "source": "Total No. of individual organisms recorded in this survey event:",
                     "computed": null,
+                    "source": "Total No. of individual organisms recorded in this survey event:",
                     "type": "literal"
                 },
                 {
-                    "source": "totalNumberOfOrganisms",
                     "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberOfOrganisms\",\"fromList\":\"surveyResultsFlora\"}}",
+                    "source": "totalNumberOfOrganisms",
                     "type": "number"
                 },
                 {
                     "colspan": 6,
-                    "source": "",
                     "computed": null,
+                    "source": "",
                     "type": "literal"
                 }
             ]}]},
-            "source": "surveyResultsFlora",
-            "allowHeaderWrap": "true",
             "columns": [
                 {
-                    "title": "Transect / plot Id:",
+                    "computed": null,
+                    "width": "7%",
                     "source": "plotId",
-                    "computed": null,
-                    "width": "7%",
+                    "title": "Transect / plot Id:",
                     "type": "text"
                 },
                 {
-                    "title": "Sample Site Id:",
+                    "computed": null,
+                    "width": "7%",
                     "source": "sampleSiteId",
-                    "computed": null,
-                    "width": "7%",
+                    "title": "Sample Site Id:",
                     "type": "text"
                 },
                 {
-                    "title": "Species:",
-                    "source": "species",
                     "computed": null,
                     "width": "15%",
+                    "source": "species",
+                    "title": "Species:",
                     "type": "autocomplete"
                 },
                 {
-                    "title": "No. of individuals:",
-                    "source": "numberOfOrganisms",
                     "computed": null,
                     "width": "8%",
+                    "source": "numberOfOrganisms",
+                    "title": "No. of individuals:",
                     "type": "number"
                 },
                 {
-                    "title": "Structural layer:",
-                    "source": "stratum",
                     "computed": null,
                     "width": "10%",
+                    "source": "stratum",
+                    "title": "Structural layer:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Ave. Height (m):",
+                    "computed": null,
+                    "width": "7%",
                     "source": "aveHeight",
-                    "computed": null,
-                    "width": "7%",
+                    "title": "Ave. Height (m):",
                     "type": "number"
                 },
                 {
-                    "title": "Tree DBH (cm) if applicable:",
+                    "computed": null,
+                    "width": "7%",
                     "source": "dbh",
-                    "computed": null,
-                    "width": "7%",
+                    "title": "Tree DBH (cm) if applicable:",
                     "type": "number"
                 },
                 {
-                    "title": "Plant health:",
-                    "source": "health",
                     "computed": null,
                     "width": "10%",
+                    "source": "health",
+                    "title": "Plant health:",
                     "type": "text"
                 },
                 {
-                    "title": "Biological material taken:",
-                    "source": "biologicalMaterialTaken",
                     "computed": null,
                     "width": "7%",
+                    "source": "biologicalMaterialTaken",
+                    "title": "Biological material taken:",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Notes:",
-                    "source": "speciesNotes",
                     "computed": null,
                     "width": "15%",
+                    "source": "speciesNotes",
+                    "title": "Notes:",
                     "type": "textarea"
                 }
             ],
-            "class": "output-section",
             "userAddedRows": true,
-            "type": "table"
+            "source": "surveyResultsFlora",
+            "type": "table",
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "soilSampleCollected",
+                "preLabel": "If a soil sample was collected as part of this survey event, please indicate the sample Id:",
                 "computed": null,
                 "width": "10%",
-                "preLabel": "If a soil sample was collected as part of this survey event, please indicate the sample Id:",
+                "source": "soilSampleCollected",
                 "type": "text"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "notes",
-                "computed": null,
                 "preLabel": "Comments / Notes",
+                "computed": null,
                 "width": "90%",
+                "source": "notes",
                 "type": "textarea"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }
