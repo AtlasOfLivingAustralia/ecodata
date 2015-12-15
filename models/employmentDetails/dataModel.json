@@ -3,331 +3,329 @@
     "dataModel": [
         {
             "dataType": "number",
-            "description": "Number of indigenous rangers employed full time on the project",
             "name": "noOfIndigenousRangersFt",
+            "description": "Number of indigenous rangers employed full time on the project",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of indigenous rangers employed part time on the project",
             "name": "noOfIndigenousRangersPt",
+            "description": "Number of indigenous rangers employed part time on the project",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of male indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersMale",
+            "description": "Number of male indigenous rangers employed on the project",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of female indigenous rangers employed on the project",
             "name": "noOfIndigenousRangersFemale",
+            "description": "Number of female indigenous rangers employed on the project",
             "validate": "min[0]"
         },
         {
-            "dataType": "number",
             "primaryResult": "true",
-            "description": "Number of indigenous people employed full time on the project who are not rangers",
+            "dataType": "number",
             "name": "noOfIndigenousNonRangersFt",
+            "description": "Number of indigenous people employed full time on the project who are not rangers",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of indigenous people employed part time on the project who are not rangers",
             "name": "noOfIndigenousNonRangersPt",
+            "description": "Number of indigenous people employed part time on the project who are not rangers",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of indigenous males employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersMale",
+            "description": "Number of indigenous males employed on the project who are not rangers",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "Number of indigenous females employed on the project who are not rangers",
             "name": "noOfIndigenousNonRangersFemale",
+            "description": "Number of indigenous females employed on the project who are not rangers",
             "validate": "min[0]"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total number of indigenous people employed full time on the project",
-            "name": "totalFtEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousRangersFt",
                     "noOfIndigenousNonRangersFt"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalFtEmployees",
+            "description": "Total number of indigenous people employed full time on the project"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total number of indigenous people employed part time on the project",
-            "name": "totalPtEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousRangersPt",
                     "noOfIndigenousNonRangersPt"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalPtEmployees",
+            "description": "Total number of indigenous people employed part time on the project"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total number of indigenous males employed on the project",
-            "name": "totalMaleEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousRangersMale",
                     "noOfIndigenousNonRangersMale"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalMaleEmployees",
+            "description": "Total number of indigenous males employed on the project"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total number of indigenous females employed on the project",
-            "name": "totalFemaleEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousRangersFemale",
                     "noOfIndigenousNonRangersFemale"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalFemaleEmployees",
+            "description": "Total number of indigenous females employed on the project"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total number of indigenous people employed on the project",
-            "name": "totalEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "totalFtEmployees",
                     "totalPtEmployees"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalEmployees",
+            "description": "Total number of indigenous people employed on the project"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total No. of project employees who are not rangers",
-            "name": "totalNonRangerEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousNonRangersFt",
                     "noOfIndigenousNonRangersPt"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalNonRangerEmployees",
+            "description": "Total No. of project employees who are not rangers"
         },
         {
-            "dataType": "number",
-            "primaryResult": "true",
-            "description": "Total No. of project employees who are indigenous rangers",
-            "name": "totalRangerEmployees",
             "computed": {
-                "operation": "sum",
                 "dependents": {"source": [
                     "noOfIndigenousRangersFt",
                     "noOfIndigenousRangersPt"
-                ]}
-            }
+                ]},
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalRangerEmployees",
+            "description": "Total No. of project employees who are indigenous rangers"
         },
         {
             "dataType": "text",
-            "description":"Notes or comments about the indigenous employment information",
-            "name": "notes"
+            "name": "notes",
+            "description": "Notes or comments about the indigenous employment information"
         }
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "width": "45%",
+                    "type": "col",
                     "items": [
                         {
                             "source": "<h4>No. of indigenous rangers employed on the project<\/h4>",
                             "type": "literal"
                         },
                         {
-                            "source": "noOfIndigenousRangersFt",
-                            "computed": null,
                             "preLabel": "Full time:",
+                            "computed": null,
+                            "source": "noOfIndigenousRangersFt",
                             "type": "number"
                         },
                         {
-                            "source": "noOfIndigenousRangersPt",
-                            "computed": null,
                             "preLabel": "Part time:",
+                            "computed": null,
+                            "source": "noOfIndigenousRangersPt",
                             "type": "number"
                         },
                         {
-                            "source": "noOfIndigenousRangersMale",
-                            "computed": null,
                             "preLabel": "Males:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "noOfIndigenousRangersFemale",
                             "computed": null,
-                            "preLabel": "Females:",
+                            "source": "noOfIndigenousRangersMale",
                             "type": "number"
                         },
                         {
-                            "source": "totalRangerEmployees",
-                            "computed": {
-                                "operation": "sum",
-                                "dependents": {
-                                    "source": "noOfIndigenousRangersFt",
-                                    "fromList": "noOfIndigenousRangersPt"
-                                }
-                            },
+                            "preLabel": "Females:",
+                            "computed": null,
+                            "source": "noOfIndigenousRangersFemale",
+                            "type": "number"
+                        },
+                        {
                             "preLabel": "Total No. of project employees who are indigenous rangers:",
+                            "computed": {
+                                "dependents": {
+                                    "fromList": "noOfIndigenousRangersPt",
+                                    "source": "noOfIndigenousRangersFt"
+                                },
+                                "operation": "sum"
+                            },
                             "width": "20%",
+                            "source": "totalRangerEmployees",
                             "type": "number"
                         }
                     ],
-                    "computed": null,
-                    "width": "45%",
-                    "class": "output-section",
-                    "type": "col"
+                    "class": "output-section"
                 },
                 {
+                    "computed": null,
+                    "width": "45%",
+                    "type": "col",
                     "items": [
                         {
-                            "source": "<h4>No. of indigenous people employed on the project who are not rangers<\/h4>",
                             "computed": null,
+                            "source": "<h4>No. of indigenous people employed on the project who are not rangers<\/h4>",
                             "type": "literal"
                         },
                         {
-                            "source": "noOfIndigenousNonRangersFt",
-                            "computed": null,
                             "preLabel": "Full time:",
+                            "computed": null,
+                            "source": "noOfIndigenousNonRangersFt",
                             "type": "number"
                         },
                         {
-                            "source": "noOfIndigenousNonRangersPt",
-                            "computed": null,
                             "preLabel": "Part time:",
+                            "computed": null,
+                            "source": "noOfIndigenousNonRangersPt",
                             "type": "number"
                         },
                         {
-                            "source": "noOfIndigenousNonRangersMale",
-                            "computed": null,
                             "preLabel": "Males:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "noOfIndigenousNonRangersFemale",
                             "computed": null,
-                            "preLabel": "Females:",
+                            "source": "noOfIndigenousNonRangersMale",
                             "type": "number"
                         },
                         {
-                            "source": "totalNonRangerEmployees",
-                            "computed": {
-                                "operation": "sum",
-                                "dependents": {
-                                    "source": "noOfIndigenousNonRangersFt",
-                                    "fromList": "noOfIndigenousNonRangersPt"
-                                }
-                            },
+                            "preLabel": "Females:",
+                            "computed": null,
+                            "source": "noOfIndigenousNonRangersFemale",
+                            "type": "number"
+                        },
+                        {
                             "preLabel": "Total No. of project employees who are not rangers:",
+                            "computed": {
+                                "dependents": {
+                                    "fromList": "noOfIndigenousNonRangersPt",
+                                    "source": "noOfIndigenousNonRangersFt"
+                                },
+                                "operation": "sum"
+                            },
+                            "source": "totalNonRangerEmployees",
                             "type": "number"
                         }
                     ],
-                    "computed": null,
-                    "width": "45%",
-                    "class": "output-section",
-                    "type": "col"
+                    "class": "output-section"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "totalFtEmployees",
-                    "computed": {
-                        "operation": "sum",
-                        "dependents": {
-                            "source": "noOfIndigenousRangersFt",
-                            "fromList": "noOfIndigenousNonRangersFt"
-                        }
-                    },
-                    "preLabel": "Total full time employees:",
-                    "type": "number"
-                },
-                {
-                    "source": "totalPtEmployees",
-                    "computed": {
-                        "operation": "sum",
-                        "dependents": {
-                            "source": "noOfIndigenousRangersPt",
-                            "fromList": "noOfIndigenousNonRangersPt"
-                        }
-                    },
-                    "preLabel": "Total part time employees:",
-                    "type": "number"
-                },
-                {
-                    "source": "totalMaleEmployees",
-                    "computed": {
-                        "operation": "sum",
-                        "dependents": {
-                            "source": "noOfIndigenousRangersMale",
-                            "fromList": "noOfIndigenousNonRangersMale"
-                        }
-                    },
-                    "preLabel": "Total male employees:",
-                    "type": "number"
-                },
-                {
-                    "source": "totalFemaleEmployees",
-                    "computed": {
-                        "operation": "sum",
-                        "dependents": {
-                            "source": "noOfIndigenousRangersFemale",
-                            "fromList": "noOfIndigenousNonRangersFemale"
-                        }
-                    },
-                    "preLabel": "Total female employees:",
-                    "type": "number"
-                },
-                {
-                    "source": "totalEmployees",
-                    "computed": {
-                        "operation": "sum",
-                        "dependents": {
-                            "source": "totalRangerEmployees",
-                            "fromList": "totalNonRangerEmployees"
-                        }
-                    },
-                    "preLabel": "Total No. of project employees:",
-                    "type": "number"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
             "type": "row",
-            "class":"output-section",
             "items": [
                 {
-                    "type": "textarea",
-                    "source": "notes",
-                    "preLabel": "Comments / notes"
+                    "preLabel": "Total full time employees:",
+                    "computed": {
+                        "dependents": {
+                            "fromList": "noOfIndigenousNonRangersFt",
+                            "source": "noOfIndigenousRangersFt"
+                        },
+                        "operation": "sum"
+                    },
+                    "source": "totalFtEmployees",
+                    "type": "number"
+                },
+                {
+                    "preLabel": "Total part time employees:",
+                    "computed": {
+                        "dependents": {
+                            "fromList": "noOfIndigenousNonRangersPt",
+                            "source": "noOfIndigenousRangersPt"
+                        },
+                        "operation": "sum"
+                    },
+                    "source": "totalPtEmployees",
+                    "type": "number"
+                },
+                {
+                    "preLabel": "Total male employees:",
+                    "computed": {
+                        "dependents": {
+                            "fromList": "noOfIndigenousNonRangersMale",
+                            "source": "noOfIndigenousRangersMale"
+                        },
+                        "operation": "sum"
+                    },
+                    "source": "totalMaleEmployees",
+                    "type": "number"
+                },
+                {
+                    "preLabel": "Total female employees:",
+                    "computed": {
+                        "dependents": {
+                            "fromList": "noOfIndigenousNonRangersFemale",
+                            "source": "noOfIndigenousRangersFemale"
+                        },
+                        "operation": "sum"
+                    },
+                    "source": "totalFemaleEmployees",
+                    "type": "number"
+                },
+                {
+                    "preLabel": "Total No. of project employees:",
+                    "computed": {
+                        "dependents": {
+                            "fromList": "totalNonRangerEmployees",
+                            "source": "totalRangerEmployees"
+                        },
+                        "operation": "sum"
+                    },
+                    "source": "totalEmployees",
+                    "type": "number"
                 }
-            ]
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [{
+                "preLabel": "Comments / notes",
+                "source": "notes",
+                "type": "textarea"
+            }]
         }
     ]
 }

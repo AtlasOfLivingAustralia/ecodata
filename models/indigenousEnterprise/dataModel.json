@@ -3,79 +3,76 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "Description of the type(s) of enterprises established by indigenous communities as a result of this project",
             "name": "typeOfEnterprise",
+            "description": "Description of the type(s) of enterprises established by indigenous communities as a result of this project",
             "validate": "required"
         },
         {
-            "dataType": "number",
-            "description": "The number of new enterprises established as a result of this project",
             "primaryResult": "true",
+            "dataType": "number",
             "name": "totalNewEnterprises",
+            "description": "The number of new enterprises established as a result of this project",
             "validate": "required,min[0]"
         },
         {
-            "dataType": "number",
-            "description": "The number of indigenous communities in which new enterprises have been established as a result of this project",
             "primaryResult": "true",
+            "dataType": "number",
             "name": "numberOfIndigenousCommunities",
+            "description": "The number of indigenous communities in which new enterprises have been established as a result of this project",
             "validate": "min[0]"
         },
         {
-            "dataType": "number",
-            "description": "Number of contracts established by an Indigenous enterprise resulting from this project",
             "primaryResult": "true",
+            "dataType": "number",
             "name": "totalIndigenousEnterprisesEngaged",
+            "description": "Number of contracts established by an Indigenous enterprise resulting from this project",
             "validate": "required,min[0]"
         },
         {
             "dataType": "text",
-            "description":"Notes or comments about the indigenous employment information",
-            "name": "notes"
+            "name": "notes",
+            "description": "Notes or comments about the indigenous employment information"
         }
     ],
     "viewModel": [
         {
+            "computed": null,
+            "type": "row",
             "items": [
                 {
-                    "source": "typeOfEnterprise",
                     "preLabel": "Type(s) of businesses established by indigenous communities:",
+                    "source": "typeOfEnterprise",
                     "type": "textarea"
                 },
                 {
-                    "source": "totalNewEnterprises",
-                    "computed": null,
                     "preLabel": "No. of new businesses established:",
+                    "computed": null,
+                    "source": "totalNewEnterprises",
                     "type": "number"
                 },
                 {
-                    "source": "numberOfIndigenousCommunities",
-                    "computed": null,
                     "preLabel": "No. of indigenous communities in which new businesses have been established:",
+                    "computed": null,
+                    "source": "numberOfIndigenousCommunities",
                     "type": "number"
                 },
                 {
-                    "source": "totalIndigenousEnterprisesEngaged",
-                    "computed": null,
                     "preLabel": "No of contracts that have been established by Indigenous businesses:",
+                    "computed": null,
+                    "source": "totalIndigenousEnterprisesEngaged",
                     "type": "number"
                 }
             ],
-            "computed": null,
-            "type": "row",
-            "class":"output-section"
+            "class": "output-section"
         },
-
         {
             "type": "row",
-            "class":"output-section",
-            "items": [
-                {
-                    "type": "textarea",
-                    "source": "notes",
-                    "preLabel": "Comments / notes"
-                }
-            ]
+            "class": "output-section",
+            "items": [{
+                "preLabel": "Comments / notes",
+                "source": "notes",
+                "type": "textarea"
+            }]
         }
     ]
 }
