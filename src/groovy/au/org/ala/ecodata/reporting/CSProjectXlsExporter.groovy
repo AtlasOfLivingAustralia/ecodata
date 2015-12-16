@@ -194,13 +194,8 @@ class CSProjectXlsExporter extends ProjectExporter {
 
         recordService.getAllByProject(project.projectId).each {
             if (!restrictedSurveys.contains(it.projectActivityId)) {
-                if (it.decimalLatitude || it.decimalLongitude) {
-                    properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude)
-                    properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude)
-                } else {
-                    properties[-2] = ""
-                    properties[-1] = ""
-                }
+                properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude ?: "")
+                properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude ?: "")
 
                 recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
             }
