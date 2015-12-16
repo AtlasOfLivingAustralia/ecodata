@@ -9,7 +9,6 @@ import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
-import au.org.ala.web.AuthService
 import com.mongodb.BasicDBObject
 import grails.util.Holders
 import org.apache.commons.logging.Log
@@ -188,17 +187,13 @@ class CSProjectXlsExporter extends ProjectExporter {
     private addRecords(Map project) {
         List properties = []
         properties.addAll(recordProperties)
-        properties << null
-        properties << null
+        properties << ""
+        properties << ""
 
         List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
 
         recordService.getAllByProject(project.projectId).each {
-            println "restricted: " + restrictedSurveys
-            println "pa id : " + it.projectActivityId
-            println "remove : " + restrictedSurveys.contains(it.projectActivityId)
             if (!restrictedSurveys.contains(it.projectActivityId)) {
-                println "adding "
                 if (it.decimalLatitude || it.decimalLongitude) {
                     properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude)
                     properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude)
