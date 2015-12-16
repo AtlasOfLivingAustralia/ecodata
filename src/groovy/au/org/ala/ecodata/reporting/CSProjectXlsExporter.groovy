@@ -197,6 +197,9 @@ class CSProjectXlsExporter extends ProjectExporter {
                 if (it.decimalLatitude || it.decimalLongitude) {
                     properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude)
                     properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude)
+                } else {
+                    properties[-2] = ""
+                    properties[-1] = ""
                 }
 
                 recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
