@@ -3,10 +3,13 @@ package au.org.ala.ecodata.reporting
 import au.org.ala.ecodata.ActivityService
 import au.org.ala.ecodata.ProjectActivityService
 import au.org.ala.ecodata.ProjectService
+import au.org.ala.ecodata.RecordService
 import au.org.ala.ecodata.SiteService
+import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
+import au.org.ala.web.AuthService
 import com.mongodb.BasicDBObject
 import grails.util.Holders
 import org.apache.commons.logging.Log
@@ -32,25 +35,29 @@ class CSProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
-
     List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status']
 
+    List<String> recordHeaders = ["GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Location ID", "Location Name", "Locality", "Latitude", "Longitude"]
+    List<String> recordProperties = ["guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "locationID", "locationName", "locality"]
+
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
     SiteService siteService = Holders.grailsApplication.mainContext.getBean("siteService")
     ActivityService activityService = Holders.grailsApplication.mainContext.getBean("activityService")
+    RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
+    UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
 
     XlsExporter exporter
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
+    AdditionalSheet recordSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
-
 
     public CSProjectXlsExporter(XlsExporter exporter) {
         this.exporter = exporter
@@ -60,10 +67,13 @@ class CSProjectXlsExporter extends ProjectExporter {
     void export(Map project) {
         projectSheet()
         sitesSheet()
+        recordSheet()
 
         addSites(project)
 
         addProjectActivities(project)
+
+        addRecords(project)
 
         int row = projectSheet.getSheet().lastRowNum
         projectSheet.add([project], projectProperties, row + 1)
@@ -88,11 +98,15 @@ class CSProjectXlsExporter extends ProjectExporter {
     private void addProjectActivities(Map project) {
         List<Map> projectActivities = projectActivityService.getAllByProject(project.projectId, ProjectActivityService.ALL)
 
+        List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
+
         projectActivities.each { survey ->
-            AdditionalSheet sheet = surveySheets[survey.name]
-            if (!sheet) {
-                sheet = createSurveySheet(survey)
-                surveySheets.put(survey.name, sheet)
+            if (!restrictedSurveys.contains(survey.projectActivityId)) {
+                AdditionalSheet sheet = surveySheets[survey.name]
+                if (!sheet) {
+                    sheet = createSurveySheet(survey)
+                    surveySheets.put(survey.name, sheet)
+                }
             }
         }
     }
@@ -107,7 +121,6 @@ class CSProjectXlsExporter extends ProjectExporter {
             headers.addAll(surveyHeaders)
 
             sheet = exporter.sheet(exporter.sheetName(projectActivity.name))
-
 
             OutputModelProcessor processor = new OutputModelProcessor()
 
@@ -172,6 +185,29 @@ class CSProjectXlsExporter extends ProjectExporter {
         sheet
     }
 
+    private addRecords(Map project) {
+        List properties = []
+        properties.addAll(recordProperties)
+        properties << null
+        properties << null
+
+        List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
+
+        recordService.getAllByProject(project.projectId).each {
+            println "restricted: " + restrictedSurveys
+            println "pa id : " + it.projectActivityId
+            println "remove : " + restrictedSurveys.contains(it.projectActivityId)
+            if (!restrictedSurveys.contains(it.projectActivityId)) {
+                println "adding "
+                if (it.decimalLatitude || it.decimalLongitude) {
+                    properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude)
+                    properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude)
+                }
+
+                recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
+            }
+        }
+    }
 
     private AdditionalSheet projectSheet() {
         if (!projectSheet) {
@@ -185,6 +221,13 @@ class CSProjectXlsExporter extends ProjectExporter {
             sitesSheet = exporter.addSheet('Sites', siteHeaders)
         }
         sitesSheet
+    }
+
+    private AdditionalSheet recordSheet() {
+        if (!recordSheet) {
+            recordSheet = exporter.addSheet('DwC Records', recordHeaders)
+        }
+        recordSheet
     }
 
 }
