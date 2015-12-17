@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
@@ -250,9 +251,10 @@ class SearchController {
 
     @RequireApiKey
     def downloadAllData() {
-        defaultDownloadQueryParams(params)
-
         if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
+            params.max = 10000
+            params.offset = 0
+
             if (params.async?.toBoolean()) {
                 if (!params.email) {
                     response.setStatus(400)
@@ -274,14 +276,12 @@ class SearchController {
         }
     }
 
-    private static defaultDownloadQueryParams(params) {
+    void downloadMeritData(GrailsParameterMap params) {
         if (!params.max) {
             params.max = 5000
             params.offset = 0
         }
-    }
 
-    void downloadMeritData(GrailsParameterMap params) {
         Set ids = downloadService.getProjectIdsForDownload(params, HOMEPAGE_INDEX)
 
         withFormat {
@@ -290,12 +290,39 @@ class SearchController {
                 render projects as JSON
             }
             xlsx {
-                XlsExporter exporter = downloadService.exportProjectsToXls(ids, true)
-                exporter.setResponseHeaders(response)
+                XlsExporter exporter = exportMeritProjectsToXls(ids)
 
+                exporter.setResponseHeaders(response)
                 exporter.save(response.outputStream)
             }
         }
+    }
+
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds) {
+        long start = System.currentTimeMillis()
+
+        XlsExporter xlsExporter = new XlsExporter("results")
+
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter)
+
+        Project.withSession { session ->
+            int batchSize = 50
+            List projects = new ArrayList(batchSize)
+            for (int i = 0; i < projectIds.size(); i++) {
+                projects << projectService.get(projectIds[i], ProjectService.ALL)
+
+                if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
+                    projectExporter.exportAll(projects)
+                    projects.clear()
+                    session.clear()
+
+                    log.info "Exported ${i + 1} of ${projectIds.size()} projects..."
+                }
+            }
+        }
+        log.info "Exporting ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
+
+        xlsExporter
     }
 
     @RequireApiKey

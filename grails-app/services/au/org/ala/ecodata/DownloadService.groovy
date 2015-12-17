@@ -2,7 +2,6 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.CSProjectXlsExporter
 import au.org.ala.ecodata.reporting.ProjectExporter
-import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import au.org.ala.ecodata.reporting.XlsExporter
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
@@ -82,6 +81,8 @@ class DownloadService {
      * |--- |- |- <fileName> --> one file for each activity-level image
      * |--- |- |- <outputId> --> one directory for each outputId
      * |--- |- |--- |- <fileName> --> one file for each output-level image
+     * |--- |- |--- |- |- <recordId> --> one directory for each recordId
+     * |--- |- |--- |- |--- <fileName> --> one file for each record-level image
      * |- shapes
      * |--- <projectId> --> one directory for each projectId
      * |--- |- extent.zip --> shapefile for the project extent
@@ -93,9 +94,9 @@ class DownloadService {
     boolean downloadProjectData(OutputStream outputStream, GrailsParameterMap params) {
         elasticSearchService.buildProjectActivityQuery(params)
 
-        Set<String> projectIds = getProjectIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
+        Map<String, Set<String>> activitiesByProject = getActivityIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
 
-        XlsExporter xlsExporter = exportProjectsToXls(projectIds, false, "data")
+        XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, "data")
 
         new ZipOutputStream(outputStream).withStream { zip ->
             zip.putNextEntry(new ZipEntry("data.xls"))
@@ -108,10 +109,10 @@ class DownloadService {
             zip.closeEntry()
             log.debug("XLS file added")
 
-            addShapeFilesToZip(zip, projectIds)
+            addShapeFilesToZip(zip, activitiesByProject.keySet())
             log.debug("Shape files added")
 
-            addImagesToZip(zip, projectIds)
+            addImagesToZip(zip, activitiesByProject)
             log.debug("Images added")
 
             zip.finish()
@@ -124,6 +125,7 @@ class DownloadService {
     }
 
     private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
+        long start = System.currentTimeMillis()
         zip.putNextEntry(new ZipEntry("shapefiles/"))
 
         projectIds.each { projectId ->
@@ -145,16 +147,18 @@ class DownloadService {
                 builder.writeShapefile(zip)
             }
         }
+        log.info "Creating shapefiles took ${System.currentTimeMillis() - start} millis"
     }
 
-    private addImagesToZip(ZipOutputStream zip, Set<String> projectIds) {
+    private addImagesToZip(ZipOutputStream zip, Map<String, Set<String>> activitiesByProject) {
+        long start = System.currentTimeMillis()
         zip.putNextEntry(new ZipEntry("images/"))
 
-        projectIds.each { projectId ->
+        activitiesByProject.each { projectId, activityIds ->
             zip.putNextEntry(new ZipEntry("images/${projectId}/"))
 
             groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
-                if (activityId) {
+                if (activityId && activityIds?.contains(activityId)) {
                     zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
 
                     documentsMap.each { outputId, documentList ->
@@ -187,6 +191,7 @@ class DownloadService {
 
             zip.closeEntry()
         }
+        log.info "Zipping images took ${System.currentTimeMillis() - start} millis"
     }
 
     private addFileToZip(ZipOutputStream zip, String zipPath, Document doc) {
@@ -217,34 +222,16 @@ class DownloadService {
         documents
     }
 
-    XlsExporter exportProjectsToXls(Set<String> projectIds, boolean merit, String fileName = "results") {
+    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, String fileName = "results") {
         long start = System.currentTimeMillis()
 
         XlsExporter xlsExporter = new XlsExporter(fileName)
 
-        ProjectExporter projectExporter
-        if (merit) {
-            projectExporter = new ProjectXlsExporter(xlsExporter)
-        } else {
-            projectExporter = new CSProjectXlsExporter(xlsExporter)
-        }
+        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter)
 
-        Project.withSession { session ->
-            int batchSize = 50
-            List projects = new ArrayList(batchSize)
-            for (int i = 0; i < projectIds.size(); i++) {
-                projects << projectService.get(projectIds[i], ProjectService.ALL)
+        projectExporter.exportActivities(activityIdsByProject)
 
-                if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
-                    projectExporter.exportAll(projects)
-                    projects.clear()
-                    session.clear()
-
-                    log.info "Exported ${i + 1} of ${projectIds.size()} projects..."
-                }
-            }
-        }
-        log.info "Export of ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
+        log.info "Creating spreadsheet with ${activityIdsByProject.size()} projects took ${System.currentTimeMillis() - start} millis"
 
         xlsExporter
     }
@@ -258,6 +245,23 @@ class DownloadService {
         for (SearchHit hit : res.hits.hits) {
             if (hit.source.projectId) {
                 ids << hit.source.projectId
+            }
+        }
+
+        log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
+
+        ids
+    }
+
+    Map<String, Set<String>> getActivityIdsForDownload(Map params, String searchIndexName) {
+        long start = System.currentTimeMillis()
+
+        SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
+        Map<String, Set<String>> ids = [:].withDefault { new HashSet() }
+
+        for (SearchHit hit : res.hits.hits) {
+            if (hit.source.projectId) {
+                ids[hit.source.projectId] << hit.source.activityId
             }
         }
 
