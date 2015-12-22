@@ -54,6 +54,11 @@ class UrlMappings {
             action = [GET: 'get', PUT:'update', DELETE:'delete', POST:'update']
         }
 
+        "/ws/output" {
+            controller = 'output'
+            action = [GET: 'list']
+        }
+
         "/ws/activities/" {
             controller = 'activity'
             action = [PUT:'bulkUpdate', POST:'bulkUpdate']

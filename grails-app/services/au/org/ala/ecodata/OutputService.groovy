@@ -218,4 +218,15 @@ class OutputService {
         }
         return list*.toString()
     }
+
+    /**
+     * list all output for an activity id
+     * @param activityId
+     * @return
+     */
+    List listAllForActivityId(String activityId){
+       Output.findAllByActivityIdAndStatus(activityId, ACTIVE)?.collect{
+           toMap(it)
+       }
+    }
 }

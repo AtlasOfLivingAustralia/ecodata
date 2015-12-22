@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class OutputController {
 
     def outputService, commonService
@@ -79,6 +81,21 @@ class OutputController {
             //Output.withSession { session -> session.clear() }
             log.error result.error
             render status:400, text: result.error
+        }
+    }
+
+    /**
+     * list all output for an activity id
+     * @param activityId
+     */
+    def list(){
+        String activityId = params.activityId
+        List outputs;
+        if(activityId){
+            outputs = outputService.listAllForActivityId(activityId)
+            render text: outputs as JSON, contentType: 'application/json'
+        } else {
+            render( status: 404, text: 'Not found');
         }
     }
 }
