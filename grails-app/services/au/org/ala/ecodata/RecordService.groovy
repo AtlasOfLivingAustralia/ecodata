@@ -95,6 +95,10 @@ class RecordService {
         Record.findAllByActivityIdAndStatus(activityId, ACTIVE).collect { toMap(it) }
     }
 
+    def getAllByProject(String projectId) {
+        Record.findAllByProjectIdAndStatus(projectId, ACTIVE).collect { toMap(it) }
+    }
+
     /**
      * Create a record with the supplied map of fileName -> byte[].
      *

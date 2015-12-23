@@ -483,35 +483,21 @@ class AdminController {
 
     }
 
-    def createStageReports() {
+    def createStageReports(String projectId) {
 
-        def offset = 0, max = 100
-        def count = 0
-        def projects = []
-        Project.withSession { session ->
-            while (count == 0 || projects.size() > 0) {
-                projects = Project.findAllByStatusNotEqual('deleted', [max:max, offset:offset])
-
-                projects.each { project ->
-                    if (project.isMERIT) {
-                        count++
-                        println "****** ${count} - ${project.projectId} ******"
-                        def reports = Report.findAllByProjectId(project.projectId)
-                        if (!reports) {
-                            boolean success = createStageReportsFromTimeline(project)
-                            if (success) {
-                                populateStageReportStatus(project)
-                            }
-                        }
-                    }
+        def reports = []
+        def project = projectService.get(projectId)
+        if (project.isMERIT) {
+            reports = Report.findAllByProjectId(project.projectId)
+            if (!reports) {
+                boolean success = createStageReportsFromTimeline(project)
+                if (success) {
+                    populateStageReportStatus(project)
                 }
-                offset += projects.size()
             }
-            session.clear()
         }
-        def reports = Report.findAll()
-        def reportsByProject = reports.groupBy{it.projectId}
-        render reportsByProject as JSON
+
+        render reports as JSON
     }
 
 

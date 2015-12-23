@@ -1,20 +1,14 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.CSProjectXlsExporter
-import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
-import au.org.ala.ecodata.reporting.ShapefileBuilder
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
-import groovyx.net.http.ContentType
 import groovy.json.JsonSlurper
+import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
@@ -31,6 +25,7 @@ class SearchController {
     DocumentService documentService
     ActivityService activityService
     SiteService siteService
+    DownloadService downloadService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -236,19 +231,58 @@ class SearchController {
         render results as JSON
     }
 
+    def downloadProjectDataFile() {
+        if (!params.id) {
+            response.setStatus(400)
+            render "A download ID is required"
+        } else {
+            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.zip")
+            if (file) {
+                response.setContentType(ContentType.BINARY.toString())
+                response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
+
+                file.withInputStream { i -> response.outputStream << i }
+            } else {
+                response.setStatus(404)
+                render "No download was found for id ${params.id}"
+            }
+        }
+    }
+
     @RequireApiKey
     def downloadAllData() {
         if (params.containsKey("isMerit") && !params.isMerit.toBoolean()) {
-            downloadProjectData(params)
+            params.max = 10000
+            params.offset = 0
+
+            if (params.async?.toBoolean()) {
+                if (!params.email) {
+                    response.setStatus(400)
+                    render "An email address must be provided for asynchronous downloads"
+                } else {
+                    downloadService.downloadProjectDataAsync(params)
+
+                    response.setStatus(200)
+                    render "OK"
+                }
+            } else {
+                response.setContentType(ContentType.BINARY.toString())
+                response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
+
+                downloadService.downloadProjectData(response.outputStream, params)
+            }
         } else {
             downloadMeritData(params)
         }
     }
 
-    private downloadMeritData(GrailsParameterMap params) {
-        defaultDownloadQueryParams(params)
+    void downloadMeritData(GrailsParameterMap params) {
+        if (!params.max) {
+            params.max = 5000
+            params.offset = 0
+        }
 
-        Set ids = getProjectIdsForDownload(params, HOMEPAGE_INDEX)
+        Set ids = downloadService.getProjectIdsForDownload(params, HOMEPAGE_INDEX)
 
         withFormat {
             json {
@@ -256,167 +290,20 @@ class SearchController {
                 render projects as JSON
             }
             xlsx {
-                XlsExporter exporter = exportProjectsToXls(ids, true)
-                exporter.setResponseHeaders(response)
+                XlsExporter exporter = exportMeritProjectsToXls(ids)
 
+                exporter.setResponseHeaders(response)
                 exporter.save(response.outputStream)
             }
         }
     }
 
-    private static defaultDownloadQueryParams(params) {
-        if (!params.max) {
-            params.max = 5000
-            params.offset = 0
-        }
-    }
-
-    /**
-     * Constructs a zip file with the following structure:
-     * |- data.xls --> spreadsheet as per {@link CSProjectXlsExporter}
-     * |- images
-     * |--- <projectId> --> one directory for each projectId
-     * |--- |- <documentId> --> one file for each project-level image
-     * |--- |--- <activityId> --> one directory for each activityId
-     * |--- |--- |- <documentId> --> one file for each activity-level image
-     * |--- |--- |- <outputId> --> one directory for each outputId
-     * |--- |--- |--- |- <documentId> --> one file for each output-level image
-     * |- shapes
-     * |--- <projectId> --> one directory for each projectId
-     * |--- |- extent.zip --> shapefile for the project extent
-     * |--- |- sites.zip  --> shapefile containing all sites for the project
-     *
-     * @param params
-     * @return
-     */
-    private downloadProjectData(GrailsParameterMap params) {
-        elasticSearchService.buildProjectActivityQuery(params)
-
-        response.setContentType(ContentType.BINARY.toString())
-        response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
-
-        defaultDownloadQueryParams(params)
-
-        Set<String> projectIds = getProjectIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
-
-        XlsExporter xlsExporter = exportProjectsToXls(projectIds, false, "data")
-
-        new ZipOutputStream(response.outputStream).withStream { zip ->
-            zip.putNextEntry(new ZipEntry("data.xls"))
-            ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
-            xlsExporter.save(xslFile)
-            xslFile.flush()
-            zip << xslFile.toByteArray()
-            xslFile.flush()
-            xslFile.close()
-
-            addShapeFilesToZip(zip, projectIds);
-
-            addImagesToZip(zip, projectIds)
-
-            zip.finish()
-        }
-    }
-
-    private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
-        zip.putNextEntry(new ZipEntry("shapefiles/"))
-
-        projectIds.each { projectId ->
-            zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/"))
-
-            Map project = projectService.get(projectId, ProjectService.ALL)
-
-            if (project.projectSiteId) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/projectExtent.zip"))
-                ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
-                builder.addSite(project.projectSiteId)
-                builder.writeShapefile(zip)
-            }
-
-            if (project.sites) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/sites.zip"))
-                ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
-                builder.addProject(projectId)
-                builder.writeShapefile(zip)
-            }
-        }
-    }
-
-    private addImagesToZip(ZipOutputStream zip, Set<String> projectIds) {
-        zip.putNextEntry(new ZipEntry("images/"))
-
-        projectIds.each { projectId ->
-            zip.putNextEntry(new ZipEntry("images/${projectId}/"))
-
-            groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
-                if (activityId) {
-                    zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
-
-                    documentsMap.each { outputId, documentList ->
-                        if (outputId) {
-                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${outputId}/"))
-
-                            documentList.each { Map doc ->
-                                if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/${outputId}/", doc)
-                                }
-                            }
-                        } else {
-                            documentList.each { Map doc ->
-                                if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/", doc)
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    documentsMap[null].each { Map doc ->
-                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            addFileToZip(zip, "images/${projectId}/", doc)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private addFileToZip(ZipOutputStream zip, String zipPath, Map doc) {
-        zip.putNextEntry(new ZipEntry("${zipPath}/${doc.filename}"))
-
-        String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
-
-        File file = new File(path)
-
-        if (file.exists()) {
-            file.withInputStream { i -> zip << i }
-        } else {
-            log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
-        }
-    }
-
-    private Map<String, Map<String, List<Map>>> groupDocumentsByActivityAndOutput(String projectId) {
-        Map<String, Map<String, List<Map>>> documents = [:].withDefault { [:].withDefault { [] } }
-
-        activityService.findAllForProjectId(projectId).each { activity ->
-            documentService.findAllForActivityId(activity.activityId)?.each {
-                documents[it.activityId ?: null][it.outputId ?: null] << it
-            }
-        }
-
-        documents
-    }
-
-    private XlsExporter exportProjectsToXls(Set<String> projectIds, boolean merit, String fileName = "results") {
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter(fileName)
+        XlsExporter xlsExporter = new XlsExporter("results")
 
-        ProjectExporter projectExporter
-        if (merit) {
-            projectExporter = new ProjectXlsExporter(xlsExporter)
-        } else {
-            projectExporter = new CSProjectXlsExporter(xlsExporter)
-        }
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter)
 
         Project.withSession { session ->
             int batchSize = 50
@@ -433,26 +320,9 @@ class SearchController {
                 }
             }
         }
-        log.info "Export of ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
+        log.info "Exporting ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
 
         xlsExporter
-    }
-
-    private Set<String> getProjectIdsForDownload(Map params, String searchIndexName) {
-        long start = System.currentTimeMillis()
-
-        SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
-        Set ids = new HashSet()
-
-        for (SearchHit hit : res.hits.hits) {
-            if (hit.source.projectId) {
-                ids << hit.source.projectId
-            }
-        }
-
-        log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
-
-        ids
     }
 
     @RequireApiKey
