@@ -40,6 +40,9 @@ class Report {
     Date toDate
     Date dueDate
 
+    /** The number of activities associated with this report. */
+    Integer activityCount
+
     /** Should we record history in this object or rely on the Audit trail? */
     List<StatusChange> statusChangeHistory = []
 
@@ -153,6 +156,7 @@ class Report {
         organisationId nullable:true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
+        activityCount nullable: true
 
     }
 
