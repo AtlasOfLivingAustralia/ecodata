@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import grails.transaction.Transactional
+import static au.org.ala.ecodata.Status.*
 
 /**
  * This service works with the Report domain object.  Need to fix this up!.
@@ -8,13 +9,15 @@ import grails.transaction.Transactional
 @Transactional
 class ReportingService {
 
-    def permissionService, userService
+    def permissionService, userService, activityService
 
     def get(String reportId, includeDeleted = false) {
         if (includeDeleted) {
             return Report.findByReportId(reportId)
         }
-        Report.findByReportIdAndStatusNotEqual(reportId, 'deleted')
+        Report report = Report.findByReportIdAndStatusNotEqual(reportId, 'deleted')
+        report.activityCount = getActivityCountForReport(report)
+        report
     }
 
     def findAllForProject(String projectId) {
@@ -26,12 +29,17 @@ class ReportingService {
         List permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred)
 
         def projectReports = Report.findAllByProjectIdInList(permissions.collect{it.entityId})
+        populateActivityCounts(projectReports)
 
         permissions = UserPermission.findAllByUserIdAndEntityType(userId, Organisation.class)
 
         def organisationReports = Report.findAllByOrganisationIdInList(permissions.collect{it.entityId})
 
         [projectReports:projectReports, organisationReports:organisationReports]
+    }
+
+    int getActivityCountForReport(Report report) {
+        Activity.countByProjectIdAndPlannedEndDateGreaterThanAndPlannedEndDateLessThanEqualsAndStatusNotEqual(report.projectId, report.fromDate, report.toDate, DELETED)
     }
 
     def findAllByOwner(ownerType, owner, includeDeleted = false) {
@@ -45,7 +53,19 @@ class ReportingService {
             order("toDate", "asc")
         }
 
-        results
+        populateActivityCounts(results)
+    }
+
+    /**
+     * Populates the activityCount property for each report in the supplied List.
+     * @param reports the reports of interest
+     * @return returns the reports parameter (not a copy)
+     */
+    private List<Report> populateActivityCounts(List<Report> reports) {
+        for (Report report : reports) {
+            report.activityCount = getActivityCountForReport(report)
+        }
+        reports
     }
 
     Report create(Map properties) {
