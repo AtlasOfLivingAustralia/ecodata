@@ -66,8 +66,7 @@ class BootStrap {
                     name: "Individual sightings",
                     projectId: grailsApplication.config.records.default.projectId,
                     dataResourceId: grailsApplication.config.records.default.dataResourceId,
-                    isCitizenScience: true,
-                    isDataSharing: true
+                    isCitizenScience: true
             )
             project.save(flush: true)
         }

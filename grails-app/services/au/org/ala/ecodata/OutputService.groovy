@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.metadata.DataModel
+
 import static au.org.ala.ecodata.Status.*
 
 import au.org.ala.ecodata.converter.RecordConverter
@@ -128,6 +130,9 @@ class OutputService {
             try {
                 output.save(failOnError: true) // Getting dynamic properties not saving without this.
 
+                // save images to ecodata
+                props = saveImages(props, output.outputId, props.activityId);
+
                 getCommonService().updateProperties(output, props)
 
                 createRecordsForOutput(activity, output, props)
@@ -177,6 +182,9 @@ class OutputService {
         if (output) {
             Activity activity = Activity.findByActivityId(output.activityId)
             try {
+                // save image properties to db
+                props = saveImages(props, output.outputId, activity.activityId)
+
                 getCommonService().updateProperties(output, props)
 
                 List<Record> records = Record.findAllByOutputId(outputId)
@@ -220,5 +228,63 @@ class OutputService {
        Output.findAllByActivityIdAndStatus(activityId, ACTIVE)?.collect{
            toMap(it)
        }
+    }
+
+    /**
+     * find images and save or delete it.
+     * @param activityId
+     * @param outputs
+     * @return
+     */
+    Map saveImages(Map output, String outputId, String activityId){
+        List result, activityOutputs;
+        Map document, savedOutput
+        String documentId
+        URL biocollect
+        InputStream stream
+
+        if(activityId && output?.size() > 0){
+            Map outputMetadata = metadataService.getOutputDataModelByName(output.name) as Map
+            DataModel model = new DataModel(outputMetadata);
+            List names = model.getNamesforDataType('image');
+
+            result = []
+            names.each { name ->
+                output?.data[name]?.each {
+                    document = null;
+                    if(!it.documentId){
+                        it.activityId = activityId
+                        it.outputId = outputId
+                        it.remove('staged')
+                        it.role = 'surveyImage'
+                        it.type = 'image'
+
+                        biocollect = new URL(it.url)
+                        stream = biocollect.openStream()
+                        document = documentService.create(it, stream)
+                        documentId = document?.documentId
+                        if(documentId){
+                            document = documentService.toMap(Document.findByDocumentId(documentId))
+                        }
+                    } else {
+                        documentService.update(it, it.documentId);
+                        // if deleted ignore the document
+                        if(it.status != Status.DELETED){
+                            document = documentService.toMap(Document.findByDocumentId(it.documentId))
+                        }
+                    }
+
+                    if(document){
+                        document.remove('url')
+                        document.remove('thumbnailUrl')
+                        result.push(document)
+                    }
+                }
+
+                output.data[name] = result
+            }
+        }
+
+        output
     }
 }
