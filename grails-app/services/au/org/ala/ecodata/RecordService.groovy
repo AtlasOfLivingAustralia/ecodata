@@ -170,10 +170,18 @@ class RecordService {
                 json.multimedia.eachWithIndex { image, idx ->
 
                     record.multimedia[idx] = [:]
+
+                    // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
+                    record.multimedia[idx].documentId = image.documentId
+
                     // reconcile new with old images...
                     // Only upload images that are NOT already in images.ala.org.au
                     if (!image.creator) {
                         image.creator = userDetails.displayName
+                    }
+
+                    if (!image.rightsHolder) {
+                        image.rightsHolder = userDetails.displayName
                     }
 
                     def alreadyLoaded = false

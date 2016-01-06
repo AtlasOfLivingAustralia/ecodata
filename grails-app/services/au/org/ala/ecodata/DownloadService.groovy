@@ -115,6 +115,8 @@ class DownloadService {
             addImagesToZip(zip, activitiesByProject)
             log.debug("Images added")
 
+            addReadmeToZip(zip)
+
             zip.finish()
             zip.flush()
             zip.close()
@@ -122,6 +124,31 @@ class DownloadService {
 
         log.debug("ZIP file created")
         true
+    }
+
+    private static addReadmeToZip(ZipOutputStream zip) {
+        zip.putNextEntry(new ZipEntry("README.txt"))
+        zip << """
+File format is as follows:
+
+|- data.xls -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
+|- README.txt -> this file
+|- shapefiles
+|- - <projectId>
+|- - - projectExtent.zip -> Shape file for the project extent
+|- - - sites.zip -> Shape file containing all Sites associated with the project
+|- images
+|- - <projectId>
+|- - - <image files> -> Images associated with the project itself (e.g. logo)
+|- - - <activityId>
+|- - - - <image files> -> Images associated with the activity itself
+|- - - - <outputId OR occurrenceId>
+|- - - - - <image files> -> images associated with an individual Output or Record entity
+
+
+This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
+"""
+        zip.closeEntry()
     }
 
     private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
@@ -157,17 +184,20 @@ class DownloadService {
         activitiesByProject.each { projectId, activityIds ->
             zip.putNextEntry(new ZipEntry("images/${projectId}/"))
 
-            groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
+            Map docsByActivityAndOutput = groupDocumentsByActivityAndOutput(projectId)
+            Map docsByActivityAndRecord = groupDocumentsByActivityAndRecord(projectId)
+
+            Closure zipDocuments = { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
                     zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
 
-                    documentsMap.each { outputId, documentList ->
-                        if (outputId) {
-                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${outputId}/"))
+                    documentsMap.each { parentId, documentList ->
+                        if (parentId) {
+                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${parentId}/"))
 
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/${outputId}/", doc)
+                                    addFileToZip(zip, "images/${projectId}/${activityId}/${parentId}/", doc)
                                 }
                             }
                         } else {
@@ -188,6 +218,9 @@ class DownloadService {
                     }
                 }
             }
+
+            docsByActivityAndOutput.each zipDocuments
+            docsByActivityAndRecord.each zipDocuments
 
             zip.closeEntry()
         }
@@ -216,6 +249,20 @@ class DownloadService {
         Activity.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { activity ->
             Document.findAllByActivityId(activity.activityId)?.each {
                 documents[it.activityId ?: null][it.outputId ?: null] << it
+            }
+        }
+
+        documents
+    }
+
+    private static Map<String, Map<String, List<Document>>> groupDocumentsByActivityAndRecord(String projectId) {
+        Map<String, Map<String, List<Document>>> documents = [:].withDefault { [:].withDefault { [] } }
+
+        Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
+            record.multimedia?.each { multimedia ->
+                Document.findAllByDocumentId(multimedia.documentId)?.each { doc ->
+                    documents[record.activityId ?: null][record.occurrenceID ?: null] << doc
+                }
             }
         }
 
