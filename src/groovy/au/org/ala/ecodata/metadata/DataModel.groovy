@@ -11,7 +11,7 @@ class DataModel {
 
     public List getNamesforDataType(String type){
         List names = []
-        model.dataModel?.each { data ->
+        model?.dataModel?.each { data ->
             if(data.dataType == type){
                 names.push(data.name);
             }
