@@ -10,8 +10,6 @@ import org.joda.time.Interval
 
 class Project {
 
-    static collectoryLicenseTypes = ["other", "CC BY", "CC BY-NC", "CC BY-SA", "CC BY-NC-SA"]
-
     /*
     Associations:
         projects may have 0..n Sites - these are mapped from the Site side
@@ -60,10 +58,9 @@ class Project {
 	String promoteOnHomepage = 'no'
     List activities
 	
-    boolean isCitizenScience, isDataSharing, isMetadataSharing, isMERIT
+    boolean isCitizenScience, isMetadataSharing, isMERIT
     boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
     String difficulty, gear, task
-    String projectPrivacy, dataSharingLicense
     String projectType    // survey, works
     // TODO urlAndroid and urlITunes need to be phased out; replaced by link-type documente
     String aim, keywords, urlAndroid, urlITunes, urlWeb
@@ -165,11 +162,9 @@ class Project {
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true
         projectSiteId nullable:true // nullable for backward compatibility
-        projectPrivacy nullable:true, inList: ['Open','Closed']
         difficulty nullable:true, inList: ['Easy','Medium','Hard']
         gear nullable:true
         task nullable:true
-        dataSharingLicense nullable:true, inList: collectoryLicenseTypes
         userCreated nullable:true
         userLastModified nullable:true
     }

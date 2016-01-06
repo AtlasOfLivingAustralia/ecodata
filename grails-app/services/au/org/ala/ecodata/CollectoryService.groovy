@@ -100,7 +100,6 @@ class CollectoryService {
                 collectoryProps.remove('hiddenJSON')
                 collectoryProps.dataProvider = [uid: ids.dataProviderId]
                 if (props.collectoryInstitutionId) collectoryProps.institution = [uid: props.collectoryInstitutionId]
-                collectoryProps.licenseType = props.dataSharingLicense
                 result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
                 ids.dataResourceId = webService.extractCollectoryIdFromResult(result)
             }
