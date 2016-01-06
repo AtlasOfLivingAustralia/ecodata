@@ -39,23 +39,6 @@ abstract class ProjectExporter {
                     properties << it.name + '.' + col.name
                     headers << col.label
                 }
-            } else if (it.dataType == "singleSighting") {
-                properties.addAll([
-                        "singleSighting.locationLatitude",
-                        "singleSighting.locationLongitude",
-                        "singleSighting.dateStr",
-                        "singleSighting.userId",
-                        "singleSighting.scientificName",
-                        "singleSighting.guid",
-                        ])
-                headers.addAll([
-                        "Latitude",
-                        "Longitude",
-                        "Date",
-                        "UserId",
-                        "Scientific Name",
-                        "GUID",
-                ])
             } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail', 'geoMap']) {
                 // not supported, do nothing.
             } else {

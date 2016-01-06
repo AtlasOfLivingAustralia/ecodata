@@ -13,12 +13,6 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     }
 
     @Override
-    def singleSighting(Object node, Value outputValue) {
-        def val = outputValue.value
-        return val ? val as String : ""
-    }
-
-    @Override
     def number(Object node, Value outputValue) {
         def val = outputValue.value
         return val ? val as String : ""
@@ -93,10 +87,6 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         def result = ''
         def node = outputDataModel
         for (String part : nameParts) {
-            if (node["dataType"] == "singleSighting") {
-                // single sighting is treated as a complex data type, so we cannot drill any deeper than the output metadata node
-                break
-            }
             def tmpNode = node.find { it.name == part }
             // List typed model elements have a cols element containing nested nodes.
             node = tmpNode.columns ?: tmpNode

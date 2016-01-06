@@ -15,8 +15,6 @@ class OutputModelProcessor {
     interface ProcessingContext {}
 
     interface Processor<T extends ProcessingContext> {
-        def singleSighting(Object node, T outputValue)
-
         def number(node, T context)
 
         def integer(node, T context)
@@ -46,9 +44,6 @@ class OutputModelProcessor {
             return;
         }
         switch(type) {
-            case 'singleSighting':
-                processor.singleSighting(node, context);
-                break;
             case 'number':
                 processor.number(node, context);
                 break;
