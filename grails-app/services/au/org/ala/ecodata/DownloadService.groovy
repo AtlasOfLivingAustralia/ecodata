@@ -24,6 +24,7 @@ class DownloadService {
     EmailService emailService
 
     def grailsApplication
+    def groovyPageRenderer
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
@@ -47,15 +48,7 @@ class DownloadService {
         }.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
             String url = "${grailsApplication.config.async.download.url.prefix}${downloadId}"
-            String body = """
-                        <html><body>
-                        <p>You may download your file from <a href="${url}">this link</a>.</p>
-                        <p>Download files are automatically deleted from the server after ${days > 1 ? days + ' days' : ' 24 hours'}.
-                            If you have not downloaded your file before then, you will need to request a new download.</p>
-                        <p>This is an automated email. Please do not reply.</p>
-                        </body>
-                        </html>
-                        """
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email])
             if (outputStream) {
                 outputStream.flush()
@@ -63,7 +56,8 @@ class DownloadService {
             }
         }.onError { Throwable error ->
             log.error("Failed to generate zip file for download.", error)
-            emailService.sendEmail("Your download has failed", "An unexpected error has occurred while creating your download. Please try again.", [params.email])
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email])
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
