@@ -43,6 +43,13 @@ class OutputMetadata {
             }
             annotatedNodes << annotatedNode
         }
+
+        // Sort the nodes based on the order they appear in the view model for consistency.
+        if (metadata.viewModel) {
+            annotatedNodes.sort { node ->
+                metadata.viewModel.findIndexOf{it.source == node.name}
+            }
+        }
         annotatedNodes
     }
 
