@@ -71,12 +71,16 @@ class DownloadService {
      * |- images
      * |--- <projectId> --> one directory for each projectId
      * |--- |- <fileName> --> one file for each project-level image
-     * |--- |- <activityId> --> one directory for each activityId
-     * |--- |- |- <fileName> --> one file for each activity-level image
-     * |--- |- |- <outputId> --> one directory for each outputId
-     * |--- |- |--- |- <fileName> --> one file for each output-level image
-     * |--- |- |--- |- |- <recordId> --> one directory for each recordId
-     * |--- |- |--- |- |--- <fileName> --> one file for each record-level image
+     * |--- |- activities
+     * |--- |- |- <activityId> --> one directory for each activityId
+     * |--- |- |- |- <fileName> --> one file for each activity-level image
+     * |--- |- |- |- <outputId> --> one directory for each outputId
+     * |--- |- |- |--- |- <fileName> --> one file for each output-level image
+     * |--- |- |- |- <recordId> --> one directory for each recordId
+     * |--- |- |- |--- |- <fileName> --> one file for each record-level image
+     * |--- |- records
+     * |--- |- |- <recordId> --> one directory for each record occurrenceId
+     * |--- |- |- |- <fileName> --> one file for each record-level image
      * |- shapes
      * |--- <projectId> --> one directory for each projectId
      * |--- |- extent.zip --> shapefile for the project extent
@@ -109,6 +113,8 @@ class DownloadService {
             addImagesToZip(zip, activitiesByProject)
             log.debug("Images added")
 
+            addReadmeToZip(zip)
+
             zip.finish()
             zip.flush()
             zip.close()
@@ -116,6 +122,36 @@ class DownloadService {
 
         log.debug("ZIP file created")
         true
+    }
+
+    private static addReadmeToZip(ZipOutputStream zip) {
+        zip.putNextEntry(new ZipEntry("README.txt"))
+        zip << """\
+            File format is as follows:
+
+            |- data.xls -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
+            |- README.txt -> this file
+            |- shapefiles
+            |- - <projectId>
+            |- - - projectExtent.zip -> Shape file for the project extent
+            |- - - sites.zip -> Shape file containing all Sites associated with the project
+            |- images
+            |- - <projectId>
+            |- - - <image files> -> Images associated with the project itself (e.g. logo)
+            |- - - activities -> directory structure containing images for the activities and their outputs
+            |- - - - <activityId>
+            |- - - - - <image files> -> Images associated with the activity itself
+            |- - - - - <outputId>
+            |- - - - - - <image files> -> images associated with an individual Output entity
+            |- - - records -> directory structure containing images for individual records
+            |- - - - <occurrenceId>
+            |- - - - - <image files> -> Images associated with the record
+
+
+            This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
+        """.stripIndent()
+
+        zip.closeEntry()
     }
 
     private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
@@ -149,25 +185,25 @@ class DownloadService {
         zip.putNextEntry(new ZipEntry("images/"))
 
         activitiesByProject.each { projectId, activityIds ->
-            zip.putNextEntry(new ZipEntry("images/${projectId}/"))
+            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/"))
 
             groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
-                    zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
+                    zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/"))
 
                     documentsMap.each { outputId, documentList ->
                         if (outputId) {
-                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${outputId}/"))
+                            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/${outputId}/"))
 
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/${outputId}/", doc)
+                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/${outputId}/", doc)
                                 }
                             }
                         } else {
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/", doc)
+                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/", doc)
                                 }
                             }
                         }
@@ -184,7 +220,28 @@ class DownloadService {
             }
 
             zip.closeEntry()
+
+            // put record images into a separate directory structure
+            zip.putNextEntry(new ZipEntry("images/${projectId}/records/"))
+
+            groupDocumentsByRecord(projectId).each { recordId, documentList ->
+                if (documentList) {
+                    zip.putNextEntry(new ZipEntry("images/${projectId}/records/${recordId}/"))
+
+                    documentList.each { doc ->
+                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                            addFileToZip(zip, "images/${projectId}/records/${recordId}/", doc)
+                        }
+                    }
+
+                    zip.closeEntry()
+                }
+            }
+
+            zip.closeEntry()
         }
+
+
         log.info "Zipping images took ${System.currentTimeMillis() - start} millis"
     }
 
@@ -210,6 +267,20 @@ class DownloadService {
         Activity.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { activity ->
             Document.findAllByActivityId(activity.activityId)?.each {
                 documents[it.activityId ?: null][it.outputId ?: null] << it
+            }
+        }
+
+        documents
+    }
+
+    private static Map<String, List<Document>> groupDocumentsByRecord(String projectId) {
+        Map<String, List<Document>> documents = [:].withDefault { [] }
+
+        Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
+            record.multimedia?.each { multimedia ->
+                Document.findAllByDocumentId(multimedia.documentId)?.each { doc ->
+                    documents[record.occurrenceID ?: null] << doc
+                }
             }
         }
 

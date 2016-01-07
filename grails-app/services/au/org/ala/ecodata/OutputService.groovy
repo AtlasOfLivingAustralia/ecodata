@@ -234,54 +234,40 @@ class OutputService {
      * find images and save or delete it.
      * @param activityId
      * @param outputs
-     * @return
+     * @return the output data, with any image objects updated to include the new document id
      */
-    Map saveImages(Map output, String outputId, String activityId){
-        List result, activityOutputs;
-        Map document, savedOutput
-        String documentId
+    Map saveImages(Map output, String outputId, String activityId) {
         URL biocollect
         InputStream stream
 
-        if(activityId && output?.size() > 0){
+        if (activityId && output?.size() > 0) {
             Map outputMetadata = metadataService.getOutputDataModelByName(output.name) as Map
             DataModel model = new DataModel(outputMetadata);
             List names = model.getNamesforDataType('image');
 
-            result = []
             names.each { name ->
                 output?.data[name]?.each {
-                    document = null;
-                    if(!it.documentId){
+                    if (!it.documentId) {
                         it.activityId = activityId
                         it.outputId = outputId
                         it.remove('staged')
                         it.role = 'surveyImage'
                         it.type = 'image'
+                        // record creation requires images to have an 'identifier' attribute containing the url for the image
+                        it.identifier = it.url
 
                         biocollect = new URL(it.url)
                         stream = biocollect.openStream()
-                        document = documentService.create(it, stream)
-                        documentId = document?.documentId
-                        if(documentId){
-                            document = documentService.toMap(Document.findByDocumentId(documentId))
-                        }
+                        Map document = documentService.create(it, stream)
+                        it.documentId = document.documentId
                     } else {
                         documentService.update(it, it.documentId);
                         // if deleted ignore the document
-                        if(it.status != Status.DELETED){
-                            document = documentService.toMap(Document.findByDocumentId(it.documentId))
+                        if (it.status == DELETED) {
+                            it.documentId = null
                         }
                     }
-
-                    if(document){
-                        document.remove('url')
-                        document.remove('thumbnailUrl')
-                        result.push(document)
-                    }
                 }
-
-                output.data[name] = result
             }
         }
 
