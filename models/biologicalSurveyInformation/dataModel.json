@@ -41,11 +41,6 @@
             "dataType": "text",
             "name": "surveyMethodologyDescription",
             "description": "Long description of the methodology used for the survey event"
-        },
-        {
-            "dataType": "image",
-            "name": "imageList",
-            "description": "Upload one or more images"
         }
     ],
     "viewModel": [
@@ -134,22 +129,6 @@
                         "computed": null,
                         "source": "surveyMethodologyDescription",
                         "type": "textarea"
-                    }]
-                }
-            ],
-            "class": "output-section"
-        },
-        {
-            "type": "row",
-            "items": [
-                {
-                    "computed": null,
-                    "type": "col",
-                    "items": [{
-                        "preLabel": "Upload Images:",
-                        "computed": null,
-                        "source": "imageList",
-                        "type": "image"
                     }]
                 }
             ],
