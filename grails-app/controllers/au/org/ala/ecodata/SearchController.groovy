@@ -312,7 +312,7 @@ class SearchController {
                 projects << projectService.get(projectIds[i], ProjectService.ALL)
 
                 if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
-                    projectExporter.exportAll(projects)
+                    projectExporter.exportAllProjects(projects)
                     projects.clear()
                     session.clear()
 
