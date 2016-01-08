@@ -9,6 +9,7 @@ PROJECT_ID=$1
 DOCUMENT_BASE_PATH=/data/ecodata/uploads
 DB=ecodata
 activityRegex=".*\"activityId\" : \"([a-z0-9-]+).*"
+projectActivityIdRegex=".*\"projectActivityId\" : \"([^\"]+).*"
 documentPathRegex=".*\"filepath\" : \"([0-9-]+).*"
 documentFilenameRegex=".*\"filename\" : \"([^\"]+).*"
 
@@ -33,6 +34,12 @@ while read activity; do
    mongoexport -db $DB --collection output --query "{activityId:'${BASH_REMATCH[1]}'}" >> output.json
 done <activity.json
 
+while read projectActivity; do
+   [[ $projectActivity =~ $projectActivityIdRegex ]]
+   echo ${BASH_REMATCH[1]}
+   mongoexport -db $DB --collection document --query "{projectActivityId:'${BASH_REMATCH[1]}', role:'logo'}" >> document.json
+done <projectActivity.json
+
 mkdir documents
 while read document; do
     FILENAME=
@@ -44,7 +51,6 @@ while read document; do
     if [[ $document =~ $documentPathRegex ]]; then
         SUBPATH=${BASH_REMATCH[1]}
     fi
-    echo $SUBPATH
 
     FULLPATH=$DOCUMENT_BASE_PATH/$SUBPATH/$FILENAME
 
