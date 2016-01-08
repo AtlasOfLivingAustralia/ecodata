@@ -41,7 +41,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status']
 
     List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Location ID", "Location Name", "Locality", "Latitude", "Longitude"]
-    List<String> recordProperties = ["occurrenceId", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "locationID", "locationName", "locality"]
+    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "locationID", "locationName", "locality"]
 
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
