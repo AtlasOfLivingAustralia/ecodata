@@ -95,6 +95,39 @@ class OutputMetadata {
         return (node.items != null || node.columns != null)
     }
 
+    /**
+     * lists all names of type passed to function
+     * @param type
+     * @return
+     * [ ['imageList':true],
+     *   ['multiSightingTable':['imageTable':true]
+     * ]
+     *
+     */
+    Map getNamesForDataType(String type, context){
+        Map names = [:], childrenNames
+
+        if(!context){
+            context = metadata.dataModel;
+        }
+
+        context?.each { data ->
+            if(isNestedDataModelType(data)){
+                // recursive call for nested data model
+                childrenNames = getNamesForDataType(type, getNestedDataModelNodes(data));
+                if(childrenNames?.size()){
+                    names[data.name] = childrenNames
+                }
+            }
+
+            if(data.dataType == type){
+                names[data.name] = true
+            }
+        }
+
+        return names;
+    }
+
     static class ValidationRules {
 
         def validationRules = []

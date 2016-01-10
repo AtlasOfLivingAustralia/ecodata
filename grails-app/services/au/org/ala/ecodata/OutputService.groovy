@@ -1,10 +1,8 @@
 package au.org.ala.ecodata
-
-import au.org.ala.ecodata.metadata.DataModel
-
-import static au.org.ala.ecodata.Status.*
-
 import au.org.ala.ecodata.converter.RecordConverter
+import au.org.ala.ecodata.metadata.OutputMetadata
+
+import static au.org.ala.ecodata.Status.DELETED
 
 class OutputService {
 
@@ -131,7 +129,7 @@ class OutputService {
                 output.save(failOnError: true) // Getting dynamic properties not saving without this.
 
                 // save images to ecodata
-                props = saveImages(props, output.outputId, props.activityId);
+                props.data = saveImages(props.data, props.name, output.outputId, props.activityId);
 
                 getCommonService().updateProperties(output, props)
 
@@ -183,7 +181,7 @@ class OutputService {
             Activity activity = Activity.findByActivityId(output.activityId)
             try {
                 // save image properties to db
-                props = saveImages(props, output.outputId, activity.activityId)
+                props.data = saveImages(props.data, props.name, output.outputId, activity.activityId)
 
                 getCommonService().updateProperties(output, props)
 
@@ -236,35 +234,61 @@ class OutputService {
      * @param outputs
      * @return the output data, with any image objects updated to include the new document id
      */
-    Map saveImages(Map output, String outputId, String activityId) {
-        URL biocollect
+    Map saveImages(Map output, String metadataName, String outputId, String activityId, Map context = null) {
+         URL biocollect
         InputStream stream
+        Map outputMetadata, names
+        OutputMetadata dataModel
+        List remove
+
+        if(!context){
+            outputMetadata = metadataService.getOutputDataModelByName(metadataName) as Map
+            dataModel = new OutputMetadata(outputMetadata);
+            names = dataModel.getNamesForDataType('image', null);
+        } else {
+            names = context
+        }
 
         if (activityId && output?.size() > 0) {
-            Map outputMetadata = metadataService.getOutputDataModelByName(output.name) as Map
-            DataModel model = new DataModel(outputMetadata);
-            List names = model.getNamesforDataType('image');
+            names?.each { name, node ->
+                if(node instanceof Boolean){
+                    remove = []
+                    output[name]?.each {
+                        // save image if document id not found
+                        if (!it.documentId) {
+                            it.activityId = activityId
+                            it.outputId = outputId
+                            it.remove('staged')
+                            it.role = 'surveyImage'
+                            it.type = 'image'
+                            // record creation requires images to have an 'identifier' attribute containing the url for the image
+                            it.identifier = it.url
 
-            names.each { name ->
-                output?.data[name]?.each {
-                    if (!it.documentId) {
-                        it.activityId = activityId
-                        it.outputId = outputId
-                        it.remove('staged')
-                        it.role = 'surveyImage'
-                        it.type = 'image'
-                        // record creation requires images to have an 'identifier' attribute containing the url for the image
-                        it.identifier = it.url
+                            biocollect = new URL(it.url)
+                            stream = biocollect.openStream()
+                            Map document = documentService.create(it, stream)
+                            it.documentId = document.documentId
+                        } else {
+                            documentService.update(it, it.documentId);
+                            // if deleted remove the document
+                            if (it.status == DELETED) {
+                                remove.push(it);
+                            }
+                        }
+                    }
+                    // remove all deleted images
+                    output[name]?.removeAll(remove)
+                }
 
-                        biocollect = new URL(it.url)
-                        stream = biocollect.openStream()
-                        Map document = documentService.create(it, stream)
-                        it.documentId = document.documentId
-                    } else {
-                        documentService.update(it, it.documentId);
-                        // if deleted ignore the document
-                        if (it.status == DELETED) {
-                            it.documentId = null
+                // recursive check for image data
+                if(node instanceof Map){
+                    if(output[name] instanceof Map){
+                        output[name] = saveImages(output[name], metadataName, outputId, activityId, node)
+                    }
+
+                    if(output[name] instanceof  List){
+                        output[name].eachWithIndex{ column, index ->
+                            output[name][index] = saveImages(column, metadataName, outputId, activityId, node)
                         }
                     }
                 }
