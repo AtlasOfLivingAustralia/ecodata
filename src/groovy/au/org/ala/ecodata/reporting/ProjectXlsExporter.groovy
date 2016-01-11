@@ -13,16 +13,16 @@ class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    def projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
+    List<String>  projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
 
-    def projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
+    List<String>  projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
 
-    def siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
-    def siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    def activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
-    def activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
+    List<String>  siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
+    List<String>  siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
+    List<String>  activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
+    List<String> activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
 
-    def XlsExporter exporter
+    XlsExporter exporter
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet

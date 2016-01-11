@@ -3093,14 +3093,22 @@
             "template": "BC-fish",
             "scores": [],
             "name": "Basin Champions - Fish sightings"
+        },
+        {
+            "template": "BC-invertebrates",
+            "scores": [],
+            "name": "Aquatic Macro-invertebrates (SIGNAL2 method)"
+        },
+        {
+            "template": "debrisRemoval_2col",
+            "scores": [],
+            "name": "Debris Removal Survey"
         }
     ],
     "selectedActivity": {
-        "outputs": ["Basin Champions - Water Quality Monitoring"],
-        "supportsPhotoPoints": false,
-        "name": "Basin Champions - Water quality monitoring",
-        "supportsSites": false,
-        "type": "Assessment",
+        "outputs": ["Multiple species sightings"],
+        "name": "Multiple Sightings",
+        "type": "Activity",
         "category": "Assessment & monitoring"
     },
     "activities": [
@@ -3495,9 +3503,7 @@
             "category": "Training"
         },
         {
-            "outputs": [
-                "Water Management Details"
-            ],
+            "outputs": ["Water Management Details"],
             "gmsId": "WMA WMN",
             "name": "Water Management",
             "supportsSites": true,
@@ -3775,16 +3781,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Single Sighting",
-                "Attachments"
-            ],
+            "outputs": ["Single Sighting"],
             "name": "Single Sighting",
             "type": "Activity",
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": ["Multiple Sightings"],
+            "outputs": ["Multiple species sightings"],
             "name": "Multiple Sightings",
             "type": "Activity",
             "category": "Assessment & monitoring"
@@ -3807,21 +3810,21 @@
         {
             "outputs": ["Basin Champions - Fish sightings"],
             "name": "Basin Champions - Fish sightings",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [],
+            "outputs": ["Aquatic Macro-invertebrates (SIGNAL2 method)"],
             "name": "Basin Champions - Aquatic insects",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
             "outputs": ["Basin Champions - Recreation Observations"],
             "name": "Basin Champions - Recreation",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
@@ -3833,9 +3836,9 @@
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": ["Debris Removal Details"],
+            "outputs": ["Debris Removal Survey"],
             "name": "Basin Champions - Debris removal",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },

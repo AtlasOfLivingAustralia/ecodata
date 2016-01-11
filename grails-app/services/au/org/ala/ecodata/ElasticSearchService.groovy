@@ -99,7 +99,7 @@ class ElasticSearchService {
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
     }
 
     /**

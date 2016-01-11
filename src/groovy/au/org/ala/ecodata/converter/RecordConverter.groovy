@@ -143,10 +143,8 @@ class RecordConverter {
 
         // Project fields
         if (project) {
-            dwcFields.rights = project.dataSharingLicense
             dwcFields.rightsHolder = project.organisationName
             dwcFields.institutionID = project.organisationName
-            dwcFields.accessRights = project.projectPrivacy
             dwcFields.basisOfRecord = DEFAULT_BASIS_OF_RECORD
         }
 

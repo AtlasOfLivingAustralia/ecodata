@@ -1,0 +1,114 @@
+{
+    "modelName": "BC_debrisRemoval",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "debrisType",
+            "description": "Type(s) of debris removed during the activity",
+            "constraints": [
+                "Building & industrial waste - Mixed organic & inorganic",
+                "Building & industrial waste - Organic only",
+                "Building & industrial waste - Inorganic only",
+                "Domestic waste - Mixed organic & inorganic",
+                "Domestic waste - Organic only",
+                "Domestic waste - Inorganic only",
+                "Other green waste (eg. plant & tree prunings)",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "debrisWeightTonnes",
+            "description": "Weight in tonnes of debris removed during the activity",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "debrisVolumeM3",
+            "description": "Volume in cubic metres of debris removed during the activity",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "debrisActivityArea",
+            "description": "Area in hectares covered by the debris removal activity.",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "name": "debrisRemovalMethod",
+            "description": "Method(s) used to remove debris during the activity",
+            "constraints": [
+                "Trap and screen",
+                "Trap and skim",
+                "Removal by mobile machinery",
+                "Hand removal",
+                "Other (specify in notes)"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "debrisNotes"
+        }
+    ],
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Type of material removed:",
+                        "computed": null,
+                        "source": "debrisType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Method(s) used to remove debris:",
+                        "computed": null,
+                        "source": "debrisRemovalMethod",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Weight of debris removed (Tonnes):",
+                        "computed": null,
+                        "source": "debrisWeightTonnes",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Volume of debris removed (m3):",
+                        "computed": null,
+                        "source": "debrisVolumeM3",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Area covered by this activity (Ha):",
+                        "computed": null,
+                        "source": "debrisActivityArea",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Comments / Notes:",
+                        "computed": null,
+                        "source": "debrisNotes",
+                        "type": "textarea"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [{
+                    "orientation": "vertical",
+                    "computed": null,
+                    "readonly": false,
+                    "source": "location",
+                    "type": "geoMap"
+                }]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

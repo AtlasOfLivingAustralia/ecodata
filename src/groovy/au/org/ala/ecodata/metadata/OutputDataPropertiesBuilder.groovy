@@ -37,6 +37,12 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     }
 
     @Override
+    def time(Object node, Value outputValue) {
+        def val = outputValue.value
+        return val ? val as String : ""
+    }
+
+    @Override
     def date(Object node, Value outputValue) {
         return new Value(outputValue ?: "") // dates are UTC formatted strings already
     }

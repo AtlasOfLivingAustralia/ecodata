@@ -23,6 +23,8 @@ class OutputModelProcessor {
 
         def text(node, T context)
 
+        def time(node, T context)
+
         def date(node, T context)
 
         def image(node, T context)
@@ -54,6 +56,9 @@ class OutputModelProcessor {
                 break;
             case 'integer':
                 processor.integer(node, context);
+                break;
+            case 'time':
+                processor.time(node, context);
                 break;
             case 'text':
                 processor.text(node, context);
