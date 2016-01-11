@@ -1,0 +1,172 @@
+{
+    "modelName": "MDBA_farming_observations",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the observation was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the observation."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "farmingType",
+            "description": "The type of farming activity observed.",
+            "constraints": [
+                "Cotton",
+                "Rice",
+                "Cereal for grain or seed (eg. wheat, oats, maize, etc.)",
+                "Pastures and crops for grazing/hay",
+                "Cattle for meat",
+                "Cattle for milk (dairy)",
+                "Pigs",
+                "Sheep",
+                "Wool",
+                "Other livestock",
+                "Sugar cane",
+                "Fruit trees",
+                "Nut trees",
+                "Plantation or berry fruits",
+                "Nurseries",
+                "Cut flowers or cultivated turf",
+                "Vegetables",
+                "Grapevines",
+                "Other crops",
+                "Unknown"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedActivity",
+            "description": "General remarks about the farming activity observation, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "waterUse",
+            "description": ".",
+            "constraints": [
+                "Above-ground irrigation (sprinklers, drip or trickle irrigation, etc.)",
+                "Irrigation channels or pipeline",
+                "On-farm dams and lakes",
+                "Rivers, creeks and lakes",
+                "Groundwater (windmills)",
+                "Other",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "farmingImpact",
+            "description": "Indicate ."
+        },
+        {
+            "dataType": "text",
+            "name": "photo",
+            "description": "Upload a photo taken of the farming activity at the time of the record."
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record your observations of farming activities occurring in the Murray-Darling Basin",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Farm Observation Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Date of observation",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Type of farm enterprise",
+                            "computed": null,
+                            "source": "farmingType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Activity observed",
+                            "computed": null,
+                            "source": "observedActivity",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Water use",
+                            "computed": null,
+                            "source": "waterUse",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "How has farming affected the land or waterway",
+                            "computed": null,
+                            "source": "farmingImpact",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Upload photo",
+                            "computed": null,
+                            "source": "photo",
+                            "type": "text"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}

@@ -9,9 +9,9 @@ class SpeciesConverter implements RecordFieldConverter {
 
         record.json = (data.data as JSON).toString()
 
-        record.guid = data.species.guid
-        record.name = data.species.name
-        record.scientificName = data.species.name
+        record.guid = data[metadata.name].guid
+        record.name = data[metadata.name].name
+        record.scientificName = data[metadata.name].name
 
         [record]
     }
