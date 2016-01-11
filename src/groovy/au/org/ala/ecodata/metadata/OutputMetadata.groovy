@@ -107,7 +107,7 @@ class OutputMetadata {
     Map getNamesForDataType(String type, context){
         Map names = [:], childrenNames
 
-        if(!context){
+        if(!context && metadata){
             context = metadata.dataModel;
         }
 
