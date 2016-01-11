@@ -1,0 +1,458 @@
+{
+    "modelName": "BC_WQmonitoring",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "description": "The date on which the activity was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "eventTime",
+            "description": "The time of the day that the activity was undertaken. Enter time as hh:mm"
+        },
+        {
+            "dataType": "number",
+            "name": "activityDuration",
+            "description": "The duration of the sampling event in hours",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "totalParticipants",
+            "description": "The total number of people participating in the sampling event",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "samplerName",
+            "description": "The name of the school group undertaking the sampling event"
+        },
+        {
+            "dataType": "text",
+            "name": "waterbodyName",
+            "description": "The name of the water body being sampled."
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfVolunteerParticipants",
+            "description": "The number of volunteers participating in the sampling event",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "waterType",
+            "description": "Broad class of water body being sampled.",
+            "constraints": [
+                "Estuary",
+                "Freshwater stream / channel",
+                "Freshwater lake / dam",
+                "Saline stream / channel",
+                "Saline lake / dam"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "rainfall7Days",
+            "description": "General character of rainfall received at the sampling site over the 7 days prior to sampling.",
+            "constraints": [
+                "Heavy",
+                "Moderate",
+                "Light",
+                "Nil"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "rainfallInMillimetres",
+            "description": "Rainfall in millimetres received at the sampling site over the 7 days prior to sampling.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "waterLevel",
+            "description": "General level of the water surface at the time of sampling, relative to it's normal level.",
+            "constraints": [
+                "Low",
+                "Medium",
+                "High",
+                "Flood",
+                "No flow",
+                "Dry / Isolated pool"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "waterFlowRate",
+            "description": "Description of the rate of flow of the water at the time of sampling."
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about the site conditions at the time of the water quality monitoring event."
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterPh",
+            "description": "The average pH of the top few centimetres of water at the sampling site",
+            "constraints": [
+                "6.0",
+                "6.5",
+                "7.0",
+                "7.5",
+                "8.0",
+                "8.5",
+                "11"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterEc",
+            "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site"
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterAlkalinity",
+            "description": "Measure of the in milligrams per litre of the water at the sampling site",
+            "constraints": [
+                "0",
+                "40",
+                "80",
+                "120",
+                "180",
+                "240",
+                "720"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterFreeChlorine",
+            "description": "Measure of the amount of free chlorine in parts per million (milligrams per litre) of the water at the sampling site",
+            "constraints": [
+                "0.0",
+                "0.1",
+                "0.2",
+                "0.5",
+                "1.0",
+                "2.5",
+                "5.0"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterTotalChlorine",
+            "description": "Measure of the total amount of chlorine (reactive and unreactive components) dissolved in a water sample in parts per million (milligrams per litre)",
+            "constraints": [
+                "0.0",
+                "0.1",
+                "0.2",
+                "0.5",
+                "1.0",
+                "2.5",
+                "5.0"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterHardness",
+            "description": "Measure of the amount of dissolved calcium carbonate in parts per million (milligrams per litre)",
+            "constraints": [
+                "0 (0)",
+                "50 (3)",
+                "120 (7)",
+                "180 (11)",
+                "250 (15)",
+                "425 (25)"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterIron",
+            "description": "Measure of the concentration of iron (Fe ++) in a 100 millilitre sample of water",
+            "constraints": [
+                "0.0",
+                "0.05",
+                "0.1",
+                "0.3",
+                "1.0"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterCopper",
+            "description": "Measure of the concentration of copper (Cu + / Cu ++) in a 100 millilitre sample of water",
+            "constraints": [
+                "0.0",
+                "0.1",
+                "0.5",
+                "1.0",
+                "2.0"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitrites",
+            "description": "Measure of the amount of nitrite Nitrogen dissolved in a water sample in parts per million (milligrams per litre).",
+            "constraints": [
+                "0",
+                "0.3",
+                "0.5",
+                "1",
+                "3"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "surfaceWaterNitrates",
+            "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
+            "constraints": [
+                "0",
+                "2.0",
+                "10",
+                "20",
+                "50"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "instrumentCalibration",
+            "description": "Indicator as to whether the electrical conductivity meter used had been calibrated prior to sampling",
+            "constraints": [
+                "Yes",
+                "No",
+                "Not applicable"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General comments and notes about this water quality monitoring event."
+        },
+        {
+            "columns": [
+                {"source": "locationLatitude"},
+                {"source": "locationLongitude"}
+            ],
+            "dataType": "geoMap",
+            "name": "location"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Activity Information<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Name of water body:",
+                            "computed": null,
+                            "source": "waterbodyName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Type of water body:",
+                            "computed": null,
+                            "source": "waterType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sampler name:",
+                            "computed": null,
+                            "source": "samplerName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Number in sampler group:",
+                            "computed": null,
+                            "source": "totalParticipants",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "No. of volunteer participants:",
+                            "computed": null,
+                            "source": "numberOfVolunteerParticipants",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Activity date:",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Activity time:",
+                            "computed": null,
+                            "source": "eventTime",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Activity duration (hrs):",
+                            "computed": null,
+                            "source": "activityDuration",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Rainfall in last 7 days:",
+                            "computed": null,
+                            "source": "rainfall7Days",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Rainfall (mm):",
+                            "computed": null,
+                            "source": "rainfallInMillimetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Water level or flow:",
+                            "computed": null,
+                            "source": "waterLevel",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Rate of Flow:",
+                            "computed": null,
+                            "source": "waterFlowRate",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Site observations:",
+                            "computed": null,
+                            "width": "90%",
+                            "source": "notes",
+                            "type": "textarea"
+                        }
+                    ],
+                    "class": "output-section"
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h1>Water Quality Measurements<\/h1>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "pH (pH units):",
+                            "computed": null,
+                            "source": "surfaceWaterPh",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Alkalinity (ppm (mg/L)):",
+                            "computed": null,
+                            "source": "surfaceWaterAlkalinity",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Nitrite Nitrogen (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterNitrites",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Nitrates (mg/L as N):",
+                            "computed": null,
+                            "source": "surfaceWaterNitrates",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Hardness (ppm (gpg)):",
+                            "computed": null,
+                            "source": "surfaceWaterHardness",
+                            "type": "selectOne"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Salinity - Electrical Conductivity (µS/cm):",
+                            "computed": null,
+                            "source": "surfaceWaterEc",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Freel Chlorine (ppm (mg/L)):",
+                            "computed": null,
+                            "source": "surfaceWaterFreeChlorine",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Total Chlorine (ppm (mg/L)):",
+                            "computed": null,
+                            "source": "surfaceWaterTotalChlorine",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Iron ppm (mg/L):",
+                            "computed": null,
+                            "source": "surfaceWaterIron",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Copper (ppm (mg/L)):",
+                            "computed": null,
+                            "source": "surfaceWaterCopper",
+                            "type": "selectOne"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "preLabel": "Water Testing Notes/Issues:",
+                    "computed": null,
+                    "width": "90%",
+                    "source": "notes",
+                    "type": "textarea"
+                },
+                {
+                    "preLabel": "Did you calibrate your EC meter?:",
+                    "computed": null,
+                    "source": "instrumentCalibration",
+                    "type": "selectOne"
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}
