@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import org.apache.poi.ss.usermodel.Workbook
@@ -30,14 +31,21 @@ class MetadataService {
         })
     }
 
-    def activitiesList(programName) {
+    /**
+     * Returns a Map of activity types grouped by category.
+     * @param programName If supplied, restricts the returned activities to those configured for use by the specified program
+     * @param subprogramName If supplied, restricts the returned activities to those configured for use by the specified sub-program
+     * @return a Map, key: String, value: List of name, description for each activity in the category
+     */
+    Map activitiesList(String programName = null, String subprogramName = null) {
 
-        def activities = activitiesModel().activities
+        List activities = activitiesModel().activities
 
         if (programName) {
-            def program = programModel(programName)
-            if (program.activities) {
-                activities = activities.findAll{it.type in program.activities}
+            ProgramsModel model = new ProgramsModel(programsModel())
+            List supportedActivities = model.getSupportedActivityTypes(programName, subprogramName)
+            if (supportedActivities) {
+                activities = activities.findAll{it.name in supportedActivities}
             }
         }
 
