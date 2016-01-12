@@ -192,6 +192,7 @@
                         },
                         {
                             "preLabel": "Type of treatment event:",
+                            "computed": null,
                             "source": "treatmentType",
                             "type": "selectOne"
                         }
