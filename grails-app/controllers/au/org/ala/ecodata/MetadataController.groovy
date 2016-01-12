@@ -16,7 +16,7 @@ class MetadataController {
     }
 
     def activitiesList() {
-        render metadataService.activitiesList(params.program) as JSON
+        render metadataService.activitiesList(params.program, params.subprogram) as JSON
     }
 
     @RequireApiKey
