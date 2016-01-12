@@ -104,6 +104,9 @@ records.default.dataResourceId = "dr364"
 if(!app.dump.location){
     app.dump.location = "/data/ecodata/dump/"
 }
+if(!app.esmapping.location){
+    app.esmapping.location = "/data/ecodata/config/mapping.json"
+}
 if(!app.elasticsearch.location){
     app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 }
