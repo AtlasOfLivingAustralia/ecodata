@@ -184,7 +184,7 @@ class ElasticSearchService {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status == DELETED) {
+        if (resp && doc.status?.toLowerCase() == DELETED) {
             try {
                 deleteDocById(docId, index)
                 isDeleted = true
