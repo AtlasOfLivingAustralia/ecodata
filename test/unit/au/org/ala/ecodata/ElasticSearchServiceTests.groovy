@@ -32,7 +32,6 @@ class ElasticSearchServiceTests {
     public void indexEntities() {
 
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
-        grailsApplication.config.app.esmapping.location = "https://raw.githubusercontent.com/AtlasOfLivingAustralia/ala-install/master/ansible/roles/ecodata/files/mapping.json"
         service.initialize()
         service.deleteIndex("search") // The elastic search service relies on the search index, this actually forces it to be created.
         service.deleteIndex(INDEX_NAME) // this actually deletes and recreates the index.

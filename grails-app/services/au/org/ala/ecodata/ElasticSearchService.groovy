@@ -269,16 +269,7 @@ class ElasticSearchService {
      * Add custom mapping for ES index.
      */
     def addMappings(index) {
-
-        String[] schemes = ["http","https"]
-        def parsedJson
-        UrlValidator urlValidator = new UrlValidator(schemes);
-        if(urlValidator.isValid("${grailsApplication.config.app.esmapping.location}")) {
-            parsedJson = new JsonSlurper().parseText(new URL("${grailsApplication.config.app.esmapping.location}").getText())
-        } else {
-            parsedJson = new JsonSlurper().parse(new File("${grailsApplication.config.app.esmapping.location}"))
-        }
-
+        def parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
         def facetMappings = buildFacetMapping()
         // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
         parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
