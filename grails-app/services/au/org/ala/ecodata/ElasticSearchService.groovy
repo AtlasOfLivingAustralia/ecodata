@@ -82,14 +82,15 @@ class ElasticSearchService {
     MetadataService metadataService
     OrganisationService organisationService
 
+
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, UserPermission, Setting]
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
     /**
      * Init method to be called on service creation
      */
@@ -378,14 +379,14 @@ class ElasticSearchService {
         }
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["className"] = docType
                 doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
                 break;
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
@@ -401,7 +402,7 @@ class ElasticSearchService {
                 }
                 break;
 
-            case "au.org.ala.ecodata.Record":
+            case Record.class.name:
                 Record record = Record.findByOccurrenceID(docId)
                 if(record) {
                     Activity activity = Activity.findByActivityId(record.activityId)
@@ -411,7 +412,7 @@ class ElasticSearchService {
                 }
                 break
 
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
@@ -422,10 +423,20 @@ class ElasticSearchService {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
                 prepareOrganisationForIndexing(organisation)
                 indexDoc(organisation, DEFAULT_INDEX)
+                break
+
+            case UserPermission.class.name:
+                String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
+                if (projectId) {
+                    def doc = Project.findByProjectId(projectId)
+                    def projectMap = projectService.toMap(doc, "flat")
+                    projectMap["className"] = Project.class.name
+                    indexHomePage(doc, Project.class.name)
+                }
                 break
         }
     }
@@ -483,23 +494,23 @@ class ElasticSearchService {
         def doc
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 doc = Project.findByProjectId(docId);
                 break
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 doc = Site.findBySiteId(docId)
                 break
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 doc = Activity.findByActivityId(docId)
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 doc = Organisation.findByOrganisationId(docId)
                 break
         }
 
         if (doc) {
             deleteDocType(doc)
-        } else {
+        } else if(docType != UserPermission.class.name) {
             log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
         }
     }
@@ -515,7 +526,7 @@ class ElasticSearchService {
         // docIds is assumed to be a list of ProjectIds
         docIds.each { id ->
             //log.debug "Updating project id: ${id}"
-            indexDocType(id, "au.org.ala.ecodata.Project")
+            indexDocType(id, Project.class.name)
         }
 
     }
