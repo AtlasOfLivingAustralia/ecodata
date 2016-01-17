@@ -26,6 +26,8 @@ class UrlMappings {
 
         "/ws/audit/getAuditMessagesForProjectPerPage/$id"(controller: "audit", action: "getAuditMessagesForProjectPerPage")
 
+        "/ws/document/listImages"(controller: "document", action: "listImages")
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'

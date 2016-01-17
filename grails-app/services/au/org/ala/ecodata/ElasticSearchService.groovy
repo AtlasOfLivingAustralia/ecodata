@@ -405,6 +405,10 @@ class ElasticSearchService {
                                         "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
                                     }
                                 },
+                                "surveyImage":{
+                                    "type":"boolean",
+                                    "index":"not_analyzed"
+                                },
                                 "records":{
                                      "properties":{
                                         "name":{
@@ -924,6 +928,11 @@ class ElasticSearchService {
             projectActivity.records = records
             projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
             projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            // check if activity has images
+            Map images = documentService.search([type: 'image', role:'surveyImage', activityId: activity.activityId]);
+            if(images.count > 0){
+                 projectActivity.surveyImage = true;
+            }
 
             activity.projectActivity = projectActivity
         } else if (project) {
