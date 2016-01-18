@@ -234,7 +234,7 @@ class ProjectService {
         if (project) {
             try {
                 getCommonService().updateProperties(project, props)
-                if (project.dataProviderId) {
+                if (project.dataProviderId && project.dataProviderId != "null") {
                     collectoryService.updateDataProviderAndResource(get(id, FLAT))
                 } else {
                     establishCollectoryLinkForProject(project, props)
@@ -373,10 +373,17 @@ class ProjectService {
      * @return List of 'brief' projects with the same name (case-insensitive)
      */
     List<Map> findByName(String name) {
-        Project.withCriteria {
-            ne "status", DELETED
-            rlike "name", "(?i)^${name}\$"
-        }.collect { toMap(it, LevelOfDetail.brief) }
+        List<Map> matches = []
+        
+        if (name) {
+            name = name.replaceAll(" +", " ").trim()
+            matches = Project.withCriteria {
+                ne "status", DELETED
+                rlike "name", "(?i)^${name}\$"
+            }.collect { toMap(it, LevelOfDetail.brief) }
+        }
+
+        matches
     }
 
     /**
