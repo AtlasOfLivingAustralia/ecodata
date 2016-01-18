@@ -6,7 +6,8 @@ class UrlMappings {
         "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
         "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
 
-        "/ws/record/csv"(controller: "record"){ action = [GET:"csv"] }
+        "/ws/record/export"(controller: "record"){ action = [GET:"export"] }
+        "/ws/record/csvProject"(controller: "record"){ action = [GET:"csvProject"] }
         "/ws/record/uncertainIdentifications"(controller: "record"){ action = [GET:"listUncertainIdentifications"] }
         "/ws/record/count"(controller: "record"){ action = [GET:"count"] }
         "/ws/record/user/$userId"(controller: "record", action: "listForUser")

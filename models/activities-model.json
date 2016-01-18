@@ -3093,6 +3093,16 @@
             "template": "BC-fish",
             "scores": [],
             "name": "Basin Champions - Fish sightings"
+        },
+        {
+            "template": "communityGrantsAdministration",
+            "scores": [],
+            "name": "1. Community Grants Administration"
+        },
+        {
+            "template": "communityGrantsReporting",
+            "scores": [],
+            "name": "2. Community Grants Reporting"
         }
     ],
     "selectedActivity": {
@@ -4614,6 +4624,43 @@
             "name": "Basin Champions - Indigenous knowledge transfer",
             "type": "Assessment",
             "category": "Assessment & monitoring"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Community Grants Reporting",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "1. Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "2. Community Grants Reporting",
+                    "optional": true,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Community Grants",
+            "name": "Community Grants",
+            "type": "Activity",
+            "outputs": [
+                "1. Community Grants Administration",
+                "2. Community Grants Reporting",
+                "Attachments"
+            ]
         }
     ]
 }
