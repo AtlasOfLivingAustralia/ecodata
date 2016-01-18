@@ -25,8 +25,27 @@ class RecordController {
     def index() {}
 
     /**
+     * Exports all active Records with lat/lng coords into a .csv suitable for use by the Biocache to create occurrence records.
+     *
+     * The csv file will contain any DwC attributes that have been stored against the Record.
+     */
+    def export() {
+        String filename = params.id ? "project-${params.id}.csv" : "projects.csv"
+
+        response.setHeader("Content-Disposition", "attachment; filename=\"${filename}\"");
+        response.setContentType("text/csv")
+        String userId = params.userId ?: userService.getCurrentUserDetails()?.userId
+
+        List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, params.id)
+
+        recordService.exportRecordsToCSV(response.outputStream, params.id as String, userId, restrictedProjectActivities)
+    }
+
+    /**
      * Download service for project sightings (for given project only if projectId is given).
-     * Optional query param "?model=<modelname>" to restrict output to matching records
+     * Optional query param "?model=<modelname>" to restrict output to matching records.
+     *
+     * The .csv file will only contain a fixed subset of possible DwC attributes.
      */
     def csvProject() {
         def filename = params.id ? "project-${params.id}.csv" : "projects.csv"
@@ -36,7 +55,7 @@ class RecordController {
 
         List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(userId, params.id)
 
-        recordService.exportCSVProject(response.outputStream, params.id, params.model, restrictedProjectActivities)
+        recordService.exportCSVProject(response.outputStream, params.id, params.model, userId, restrictedProjectActivities)
     }
 
     /**
