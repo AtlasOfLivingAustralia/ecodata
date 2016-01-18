@@ -219,7 +219,7 @@ class DocumentController {
 
         mongoSearch.activityId = activityIds;
         searchResults = documentService.search(mongoSearch)
-        documentResult = [documents: searchResults?.documents, count: results.hits.totalHits()]
+        documentResult = [documents: searchResults?.documents, total: results.hits.totalHits()]
         documentResult
     }
 
