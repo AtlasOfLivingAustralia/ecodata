@@ -57,7 +57,7 @@ class Project {
     Date lastUpdated
 	String promoteOnHomepage = 'no'
     List activities
-	
+	boolean isContributingDataToAla = false
     boolean isCitizenScience, isMetadataSharing, isMERIT
     boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
     String difficulty, gear, task

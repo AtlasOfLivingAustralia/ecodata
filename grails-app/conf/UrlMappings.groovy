@@ -117,7 +117,9 @@ class UrlMappings {
             action = 'findByUserId'
         }
 
-		"/"(view:"/index")
+        "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
+
+        "/"(view:"/index")
 		"500"(view:'/error')
 	}
 }

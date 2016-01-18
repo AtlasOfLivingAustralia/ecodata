@@ -18,6 +18,7 @@ package au.org.ala.ecodata
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
+import org.apache.commons.validator.routines.UrlValidator
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
@@ -81,14 +82,15 @@ class ElasticSearchService {
     MetadataService metadataService
     OrganisationService organisationService
 
+
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, UserPermission, Setting]
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
     /**
      * Init method to be called on service creation
      */
@@ -183,7 +185,7 @@ class ElasticSearchService {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status == DELETED) {
+        if (resp && doc.status?.toLowerCase() == DELETED) {
             try {
                 deleteDocById(docId, index)
                 isDeleted = true
@@ -268,293 +270,8 @@ class ElasticSearchService {
      * Add custom mapping for ES index.
      */
     def addMappings(index) {
-
-        def mappingJson = '''
-        {
-            "mappings":{
-                "doc": {
-                    "_all": {
-                        "enabled": true,
-                        "store": "yes"
-                    },
-                    "properties": {
-						"status": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "status" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "organisationName": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
-                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "serviceProviderName": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "organisationName" : {"type" : "string", "index" : "analyzed"},
-                                "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
-                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "type": {
-                            "type" : "string",
-                            "fields" : {
-                                "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "className": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
-                        },
-                        "associatedProgram": {
-                            "type" : "string",
-                            "fields" : {
-                                "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "associatedSubProgram": {
-                            "type" : "string",
-                            "fields" : {
-                                "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-
-                        "name": {
-                            "type" : "string",
-                            "fields" : {
-                                "nameSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "extent":{
-                            "properties": {
-                                "geometry": {
-                                    "properties": {
-
-
-                                    }
-                                }
-                            }
-                        },
-                        "sites":{
-                            "properties":{
-                                "extent":{
-                                    "properties": {
-                                        "geometry": {
-                                            "properties": {
-
-                                            }
-                                        }
-                                    }
-                                },
-                                "externalId":{"type":"string"},
-                                "geoIndex": {
-                                    "type": "geo_shape"
-                                }
-                            }
-                        },
-                        "externalId": {
-                            "type":"string"
-                        },
-                        "projectActivity":{
-                             "properties":{
-                                "embargoUntil":{
-                                   "type":"string"
-                                },
-                                "name":{
-                                    "type":"string",
-                                    "fields": {
-                                    "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-
-                                "projectName":{
-                                    "type":"string",
-                                    "fields": {
-                                        "projectNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "projectId":{
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                },
-                                "embargoed":{
-                                    "type":"boolean",
-                                    "index":"not_analyzed"
-                                },
-                                "activityOwnerName":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityOwnerNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "lastUpdatedYear":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityLastUpdatedYearFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "lastUpdatedMonth":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "surveyImage":{
-                                    "type":"boolean",
-                                    "index":"not_analyzed"
-                                },
-                                "records":{
-                                     "properties":{
-                                        "name":{
-                                            "type":"string",
-                                            "fields": {
-                                                "recordNameFacet":{"type":"string", "index":"not_analyzed"}
-                                            }
-                                        }
-                                     }
-                                }
-                             }
-                        },
-                        "activities":{
-                            "properties":{
-                                "mainTheme": {
-                                    "type":"string",
-                                    "path":"just_name",
-                                    "fields": {
-                                        "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                }
-                            }
-                        },
-                        "mainTheme": {
-                            "type":"string",
-                            "path":"just_name",
-                            "fields": {
-                                "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-                            }
-                        },
-                        "publicationStatus":{
-                            "type":"string",
-                            "index":"not_analyzed"
-                        },
-                        "custom": {
-                            "properties": {
-                                "details": {
-                                    "properties": {
-                                        "objectives": {
-                                            "properties": {
-                                                "rows1": {
-                                                    "properties": {
-                                                        "assets": {
-                                                            "type":"string",
-                                                            "path":"just_name",
-                                                            "fields": {
-                                                                "meriPlanAssetFacet": {
-                                                                    "type":"string",
-                                                                    "index":"not_analyzed"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "partnership": {
-                                            "properties": {
-                                                "rows": {
-                                                    "properties": {
-                                                        "data3": {
-                                                            "type":"string",
-                                                            "path":"just_name",
-                                                            "fields": {
-                                                                "partnerOrganisationTypeFacet": {
-                                                                    "type":"string",
-                                                                    "index":"not_analyzed"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "budget": {
-                                            "properties": {
-                                                "rows": {
-                                                    "properties": {
-                                                        "shortLabel": {
-                                                           "type":"string",
-                                                           "index":"not_analyzed"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    },
-                    "dynamic_templates": [
-                        {
-                            "output_template": {
-                                "path_match": "outputTargets.*",
-                                "mapping": {
-                                    "type": "string",
-                                    "index": "analyzed"
-                                }
-                            }
-                        },
-                        {
-                            "custom_dollars_template": {
-                                "path_match":"custom.details.budget.rows.costs.dollar",
-                                "mapping": {
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                }
-                            }
-                        },
-                        {
-                            "custom_event_date_template": {
-                                "path_match":"custom.details.events.scheduledDate",
-                                "mapping": {
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
-            "settings":{
-                "analysis":{
-                    "analyzer":{
-                        "facetKeyword":{
-                           "filter":[
-                              "trim"
-                           ],
-                           "type":"custom",
-                           "tokenizer":"keyword"
-                        },
-                        "case_insensitive_sort": {
-                            "tokenizer": "keyword",
-                            "filter":  [ "lowercase" ]
-                        }
-                    }
-                }
-            }
-        }
-        '''
-
-        def parsedJson = new JsonSlurper().parseText(mappingJson)
+        def parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
         def facetMappings = buildFacetMapping()
-
         // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
         parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
         parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
@@ -662,14 +379,14 @@ class ElasticSearchService {
         }
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["className"] = docType
                 doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
                 break;
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
@@ -685,7 +402,7 @@ class ElasticSearchService {
                 }
                 break;
 
-            case "au.org.ala.ecodata.Record":
+            case Record.class.name:
                 Record record = Record.findByOccurrenceID(docId)
                 if(record) {
                     Activity activity = Activity.findByActivityId(record.activityId)
@@ -695,7 +412,7 @@ class ElasticSearchService {
                 }
                 break
 
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
@@ -706,10 +423,20 @@ class ElasticSearchService {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
                 prepareOrganisationForIndexing(organisation)
                 indexDoc(organisation, DEFAULT_INDEX)
+                break
+
+            case UserPermission.class.name:
+                String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
+                if (projectId) {
+                    def doc = Project.findByProjectId(projectId)
+                    def projectMap = projectService.toMap(doc, "flat")
+                    projectMap["className"] = Project.class.name
+                    indexHomePage(doc, Project.class.name)
+                }
                 break
         }
     }
@@ -724,7 +451,7 @@ class ElasticSearchService {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
             def docId = getEntityId(doc)
-            if (checkForDelete(doc, docId)) {
+            if (checkForDelete(doc, docId, HOMEPAGE_INDEX)) {
                 return null
             }
 
@@ -767,23 +494,23 @@ class ElasticSearchService {
         def doc
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 doc = Project.findByProjectId(docId);
                 break
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 doc = Site.findBySiteId(docId)
                 break
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 doc = Activity.findByActivityId(docId)
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 doc = Organisation.findByOrganisationId(docId)
                 break
         }
 
         if (doc) {
             deleteDocType(doc)
-        } else {
+        } else if(docType != UserPermission.class.name) {
             log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
         }
     }
@@ -799,7 +526,7 @@ class ElasticSearchService {
         // docIds is assumed to be a list of ProjectIds
         docIds.each { id ->
             //log.debug "Updating project id: ${id}"
-            indexDocType(id, "au.org.ala.ecodata.Project")
+            indexDocType(id, Project.class.name)
         }
 
     }

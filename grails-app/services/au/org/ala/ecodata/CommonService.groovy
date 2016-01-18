@@ -44,6 +44,9 @@ class CommonService {
             if (v == "false") {
                 v = false
             }
+            if (v == "null") {
+                v = null
+            }
             o[k] = v
         }
         // always flush the update so that that any exceptions are caught before the service returns
