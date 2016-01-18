@@ -377,6 +377,9 @@ class SearchController {
                         first = false
                     }
                 }
+                else {
+                    writer.println()
+                }
 
 
             }

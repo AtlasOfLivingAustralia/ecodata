@@ -247,24 +247,32 @@ class ReportService {
         }
 
         // TODO need a web service from auth to support this properly.
-        def fcOfficerList = new File('/Users/god08d/Documents/MERIT/users/fc_officer.csv')
-        CSVReaderUtils.eachLine(fcOfficerList, { String[] tokens ->
-            def userIdStr = tokens[0]
-            if (userIdStr.isInteger()) {
-                def userId = userIdStr as Integer
-                def user = userSummary[userId]
-                if (!user) {
-                    user = [:]
-                    userSummary[userId] = user
-                    def userDetails = userService.lookupUserDetails(userIdStr)
-                    user.userId = userDetails.userId
-                    user.name = userDetails.displayName
-                    user.email = userDetails.userName
-                    user.projects = []
+        def fcOfficerList = new File('/Users/god08d/Documents/MERIT/Reports/fc_officer.csv')
+        def fcReadOnlyList = new File('/Users/god08d/Documents/MERIT/Reports/fc_read_only.csv')
+        def fcadminList = new File('/Users/god08d/Documents/MERIT/Reports/fc_admin.csv')
+
+        [fcOfficerList, fcReadOnlyList, fcadminList].each { file ->
+            CSVReaderUtils.eachLine(file, { String[] tokens ->
+                def userIdStr = tokens[0]
+                try {
+                    int userId = Integer.parseInt(userIdStr.replaceAll(',', ''))
+                    userIdStr = Integer.toString(userId)
+
+                    def user = userSummary[userIdStr]
+                    if (!user) {
+                        user = [:]
+                        userSummary[userId] = user
+                        def userDetails = userService.lookupUserDetails(userIdStr)
+                        user.userId = userDetails.userId
+                        user.name = userDetails.displayName
+                        user.email = userDetails.userName
+                        user.projects = []
+                    }
+                    user.role = tokens[2]
                 }
-                user.role = tokens[2]
-            }
-        })
+                catch (NumberFormatException e) {}
+            })
+        }
 
         userSummary
     }
