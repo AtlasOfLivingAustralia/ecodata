@@ -209,17 +209,31 @@ class DocumentController {
      */
     private Map listImagesForView(Map mongoSearch, GrailsParameterMap params) {
         List activityIds
-        Map searchResults
+        Map searchResults, activityMetadata = [:]
         Map documentResult
         elasticSearchService.buildProjectActivityQuery(params)
         SearchResponse results = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX);
         activityIds = results?.hits?.hits?.collect { document ->
             document.source.activityId
         }
+        results?.hits?.hits?.each { document ->
+            activityMetadata[document.source.activityId] = [
+                    activityId: document.source.activityId,
+                    activityName: document.source.name,
+                    projectId: document.source.projectActivity.projectId,
+                    projectName: document.source.projectActivity.projectName
+            ]
+        }
 
         mongoSearch.activityId = activityIds;
         searchResults = documentService.search(mongoSearch)
-        documentResult = [documents: searchResults?.documents, total: results.hits.totalHits()]
+        searchResults?.documents.each { document ->
+            activityMetadata[document.activityId]?.each{ metadata ->
+                document[metadata.key] = metadata.value;
+            }
+        }
+
+        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits()]
         documentResult
     }
 

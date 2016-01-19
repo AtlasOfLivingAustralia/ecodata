@@ -432,8 +432,8 @@ class ElasticSearchService {
             case UserPermission.class.name:
                 String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
                 if (projectId) {
-                    def doc = Project.findByProjectId(projectId)
-                    def projectMap = projectService.toMap(doc, "flat")
+                    Project doc = Project.findByProjectId(projectId)
+                    Map projectMap = projectService.toMap(doc, "flat")
                     projectMap["className"] = Project.class.name
                     indexHomePage(doc, Project.class.name)
                 }
