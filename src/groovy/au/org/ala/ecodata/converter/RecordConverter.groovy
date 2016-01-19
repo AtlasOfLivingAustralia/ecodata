@@ -116,7 +116,7 @@ class RecordConverter {
     private static addOrAppendFields(Map target, Map source) {
         source?.each { key, value ->
             if (target.containsKey(key) && target[key] && target[key] != value) {
-                target[key] = "${target[key]}${DELIMITER}${value}"
+                target[key] = "${target[key]}${DELIMITER}${value}".toString()
             } else {
                 target[key] = value
             }
