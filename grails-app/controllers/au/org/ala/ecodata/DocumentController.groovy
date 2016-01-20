@@ -1,12 +1,16 @@
 package au.org.ala.ecodata
-
 import grails.converters.JSON
+import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
+import org.elasticsearch.action.search.SearchResponse
+
+import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 
 class DocumentController {
 
     def documentService
+    ElasticSearchService elasticSearchService
 
-    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST"]
+    static allowedMethods = [save: "POST", update: "POST", delete: "DELETE", search:"POST", listImages: "POST"]
 
     // JSON response is returned as the unconverted model with the appropriate
     // content-type. The JSON conversion is handled in the filter. This allows
@@ -177,6 +181,60 @@ class DocumentController {
         response.outputStream.flush()
 
         return null
+    }
+
+    /**
+     * get images for associated activities in a paged fashion.
+     * embargoed images will not be shown.
+     * @return
+     */
+    @RequireApiKey
+    def listImages(){
+        Map searchCriteria = request.JSON
+        Map mongoSearch = [:]
+        Map documentResult
+        GrailsParameterMap params
+        mongoSearch.type = searchCriteria.remove('type');
+        mongoSearch.role = searchCriteria.remove('role');
+        params = new GrailsParameterMap(searchCriteria, request)
+        documentResult = listImagesForView(mongoSearch, params)
+        asJson  documentResult
+    }
+
+    /**
+     * queries the activity list first. Then get images for those activities from mongo
+     * @param searchCriteria
+     * @param mongoSearch
+     * @return
+     */
+    private Map listImagesForView(Map mongoSearch, GrailsParameterMap params) {
+        List activityIds
+        Map searchResults, activityMetadata = [:]
+        Map documentResult
+        elasticSearchService.buildProjectActivityQuery(params)
+        SearchResponse results = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX);
+        activityIds = results?.hits?.hits?.collect { document ->
+            document.source.activityId
+        }
+        results?.hits?.hits?.each { document ->
+            activityMetadata[document.source.activityId] = [
+                    activityId: document.source.activityId,
+                    activityName: document.source.name,
+                    projectId: document.source.projectActivity.projectId,
+                    projectName: document.source.projectActivity.projectName
+            ]
+        }
+
+        mongoSearch.activityId = activityIds;
+        searchResults = documentService.search(mongoSearch)
+        searchResults?.documents.each { document ->
+            activityMetadata[document.activityId]?.each{ metadata ->
+                document[metadata.key] = metadata.value;
+            }
+        }
+
+        documentResult = [documents: searchResults?.documents, total: results.hits?.totalHits()]
+        documentResult
     }
 
 }

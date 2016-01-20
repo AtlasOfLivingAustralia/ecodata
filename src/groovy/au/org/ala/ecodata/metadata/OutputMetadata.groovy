@@ -99,8 +99,8 @@ class OutputMetadata {
      * lists all names of type passed to function
      * @param type
      * @return
-     * [ ['imageList':true],
-     *   ['multiSightingTable':['imageTable':true]
+     * [ 'imageList':true,
+     *   'multiSightingTable':['imageTable':true]
      * ]
      *
      */

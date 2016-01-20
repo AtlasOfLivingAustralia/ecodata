@@ -1,19 +1,20 @@
 package au.org.ala.ecodata
-
-import org.grails.datastore.mapping.query.api.BuildableCriteria
-
-import static au.org.ala.ecodata.Status.*
+import com.itextpdf.text.PageSize
+import com.itextpdf.text.html.simpleparser.HTMLWorker
+import com.itextpdf.text.pdf.PdfWriter
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
-import com.itextpdf.text.html.simpleparser.HTMLWorker
-import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.PageSize
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.imgscalr.Scalr
+
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class DocumentService {
 
@@ -415,4 +416,5 @@ class DocumentService {
         }
         isMobileApp;
     }
+
 }

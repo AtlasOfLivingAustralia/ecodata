@@ -231,7 +231,7 @@ class ActivityService {
         Activity activity = Activity.findByActivityIdAndStatus(activityId, ACTIVE)
         if (activity) {
             // Delete the outputs associated with this activity.
-            outputService.getAllOutputIdsForActivity(activityId).each { outputService.delete(it, destroy) }
+            deleteActivityOutputs(activityId, destroy)
 
             documentService.findAllForActivityId(activityId).each {
                 documentService.deleteDocument(it.documentId, destroy)
@@ -255,6 +255,15 @@ class ActivityService {
         }
 
         result
+    }
+
+    /**
+     * Deletes each of the outputs associated with this activity.
+     * @param activityId the ID of the activity to delete.
+     * @param destroy whether to perform a soft delete or hard delete.
+     */
+    void deleteActivityOutputs(String activityId, destroy = false) {
+        outputService.getAllOutputIdsForActivity(activityId).each { outputService.delete(it, destroy) }
     }
 
     /**
@@ -299,6 +308,13 @@ class ActivityService {
                     props.remove('activityId')
                     props.remove('projectId')
                     props.remove('projectActivityId')
+                    // If the activity type has changed, we need to delete any outputs associated with
+                    // the previous type or they will hang around and be counted in dashboards etc.
+                    // A more sophisticated routine may keep output data that is common to both the
+                    // old type and new type.
+                    if (props.type && activity.type != props.type) {
+                        deleteActivityOutputs(id)
+                    }
                     commonService.updateProperties(activity, props)
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }

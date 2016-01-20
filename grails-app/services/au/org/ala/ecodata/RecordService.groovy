@@ -31,12 +31,70 @@ class RecordService {
     UserService userService
 
     final def ignores = ["action", "controller", "associatedMedia"]
+    private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
+
+    def exportRecordsToCSV(OutputStream outputStream, String projectId, String userId, List<String> restrictedProjectActivities) {
+        // Different Records may have different DwC attributes, as these are based on the 'dwcAttribute' mapping in the
+        // Output Metadata, so first we need to determine the full set of unique property names for all records...
+        Set<String> properties = []
+
+        def attributeCollection = Record.collection.mapReduce("function map() {" +
+                "    for (var key in this) { emit(key, null); }" +
+                "  }",
+                "function reduce(key, stuff) { return null; }",
+                "attributeCollection", [:])
+
+        properties.addAll(attributeCollection.results().findAll().collect { it._id })
+        attributeCollection.drop()
+
+        // ...then we can exclude any properties that we do not want in the CSV
+        properties.removeAll(EXCLUDED_RECORD_PROPERTIES)
+
+        CSVWriter csvWriter = new CSVWriter(new OutputStreamWriter(outputStream))
+        csvWriter.writeNext(properties as String[])
+
+        List<Record> recordList = Record.withCriteria {
+            if (projectId) {
+                eq "projectId", projectId
+            }
+            ne "status", DELETED
+
+            // exclude records that do not have lat/lng coords
+            isNotNull "decimalLatitude"
+            isNotNull "decimalLongitude"
+
+            or {
+                eq "userId", userId
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+        }
+
+        log.info("Number of records to export: ${recordList.size()}")
+
+        // write out each record
+        recordList.each {
+            Map map = toMap(it)
+            String[] row = properties.collect {
+                if (it == "multimedia") {
+                    map.multimedia?.collect { it.identifier }?.join(";")
+                } else if (it == "lastUpdated") {
+                    map.lastUpdated?.format("dd-MM-yyyy")
+                } else {
+                    map[it]
+                }
+            }
+            csvWriter.writeNext(row)
+        }
+
+        csvWriter.flush()
+        csvWriter.close()
+    }
 
     /**
      * Export records to CSV for a project. This implementation is unlikely to scale beyond 50k
      * records.
      */
-    private exportRecordBasedProject(CSVWriter csvWriter, String userId, List<String> restrictedProjectActivities) {
+    private exportRecordBasedProject(CSVWriter csvWriter, String projectId, String userId, List<String> restrictedProjectActivities) {
         List<Record> recordList = Record.withCriteria {
             eq "projectId", projectId
             ne "status", DELETED
@@ -74,7 +132,7 @@ class RecordService {
                     map.locality?:"",
                     map.multimedia ? map.multimedia.collect {it.identifier}.join(";") : "",
                     it.lastUpdated ? it.lastUpdated.format("dd-MM-yyyy")  : ""
-                ] as String[])
+            ] as String[])
         }
         csvWriter.flush()
     }
@@ -436,7 +494,7 @@ class RecordService {
 
         projects.each { Map project ->
             exportActivityBasedProject(csvWriter, project, modelName)
-            exportRecordBasedProject(csvWriter, userId, restrictedProjectActivities)
+            exportRecordBasedProject(csvWriter, project.projectId, userId, restrictedProjectActivities)
         }
 
         csvWriter.flush()
