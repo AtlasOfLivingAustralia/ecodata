@@ -131,7 +131,7 @@ class RecordConverter {
         try {
             converter = Class.forName("${packageName}.${className}")?.newInstance()
         } catch (ClassNotFoundException e) {
-            log.warn "No specific converter found for output data type ${outputDataType} with class name ${packageName}.${className}, using generic converter"
+            log.debug "No specific converter found for output data type ${outputDataType} with class name ${packageName}.${className}, using generic converter"
             converter = new GenericFieldConverter()
         }
 

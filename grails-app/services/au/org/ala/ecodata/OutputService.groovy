@@ -130,6 +130,7 @@ class OutputService {
 
                 // save images to ecodata
                 props.data = saveImages(props.data, props.name, output.outputId, props.activityId);
+                props.data = saveAudio(props.data, props.name, output.outputId, props.activityId);
 
                 getCommonService().updateProperties(output, props)
 
@@ -182,6 +183,7 @@ class OutputService {
             try {
                 // save image properties to db
                 props.data = saveImages(props.data, props.name, output.outputId, activity.activityId)
+                props.data = saveAudio(props.data, props.name, output.outputId, activity.activityId)
 
                 getCommonService().updateProperties(output, props)
 
@@ -235,7 +237,21 @@ class OutputService {
      * @return the output data, with any image objects updated to include the new document id
      */
     Map saveImages(Map output, String metadataName, String outputId, String activityId, Map context = null) {
-         URL biocollect
+        saveMultimedia(output, metadataName, outputId, activityId, "image", "surveyImage", "image", context)
+    }
+
+    /**
+     * find images and save or delete it.
+     * @param activityId
+     * @param outputs
+     * @return the output data, with any image objects updated to include the new document id
+     */
+    Map saveAudio(Map output, String metadataName, String outputId, String activityId, Map context = null) {
+        saveMultimedia(output, metadataName, outputId, activityId, "audio", "surveyAudio", "audio", context)
+    }
+
+    Map saveMultimedia(Map output, String metadataName, String outputId, String activityId, String dataTypeName, String role, String type, Map context = null) {
+        URL biocollect
         InputStream stream
         Map outputMetadata, names
         OutputMetadata dataModel
@@ -244,7 +260,7 @@ class OutputService {
         if(!context){
             outputMetadata = metadataService.getOutputDataModelByName(metadataName) as Map
             dataModel = new OutputMetadata(outputMetadata);
-            names = dataModel.getNamesForDataType('image', null);
+            names = dataModel.getNamesForDataType(dataTypeName, null);
         } else {
             names = context
         }
@@ -259,8 +275,8 @@ class OutputService {
                             it.activityId = activityId
                             it.outputId = outputId
                             it.remove('staged')
-                            it.role = 'surveyImage'
-                            it.type = 'image'
+                            it.role = role
+                            it.type = type
                             // record creation requires images to have an 'identifier' attribute containing the url for the image
                             it.identifier = it.url
 
@@ -283,12 +299,12 @@ class OutputService {
                 // recursive check for image data
                 if(node instanceof Map){
                     if(output[name] instanceof Map){
-                        output[name] = saveImages(output[name], metadataName, outputId, activityId, node)
+                        output[name] = saveMultimedia(output[name], metadataName, outputId, activityId, dataTypeName, role, type, node)
                     }
 
                     if(output[name] instanceof  List){
                         output[name].eachWithIndex{ column, index ->
-                            output[name][index] = saveImages(column, metadataName, outputId, activityId, node)
+                            output[name][index] = saveMultimedia(column, metadataName, outputId, activityId, dataTypeName, role, type,  node)
                         }
                     }
                 }
