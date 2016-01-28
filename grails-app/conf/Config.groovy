@@ -240,6 +240,13 @@ if(!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
 }
 
+if(!authGetKeyUrl) {
+    authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
+}
+
+if(!authCheckKeyUrl) {
+    authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
+}
 
 if (!grails.cache.ehcache) {
     grails {

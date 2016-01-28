@@ -78,4 +78,44 @@ class UserService {
             _currentUser.remove()
         }
     }
+
+    /**
+     * Check username against the auth key.
+     *
+     * @param username
+     * @param authKey
+     */
+    String authorize(userName, authKey) {
+        String userId = ""
+
+        if (authKey && userName) {
+            String key = new String(authKey)
+            String username = new String(userName)
+
+            def url = grailsApplication.config.authCheckKeyUrl
+            def params = [userName: username, authKey: key]
+            def result = webService.doPostWithParams(url, params)
+            if (!result?.resp?.statusCode && result.resp?.status == 'success') {
+                params = [userName: username]
+                url = grailsApplication.config.userDetails.url + "getUserDetails"
+                result = webService.doPostWithParams(url, params)
+                if (!result?.resp?.statusCode && result.resp) {
+                    userId = result.resp.userId
+                }
+            }
+        }
+
+        return userId
+    }
+
+    /**
+     * Get auth key for the given username and password
+     *
+     * @param username
+     * @param password
+     */
+    def getUserKey(String username, String password) {
+        String loginUrl = grailsApplication.config.authGetKeyUrl + "?userName=${username}&password=${password}"
+        webService.getJson(loginUrl)
+    }
 }

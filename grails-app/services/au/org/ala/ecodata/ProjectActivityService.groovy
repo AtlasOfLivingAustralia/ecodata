@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import static au.org.ala.ecodata.Status.*
 
 class ProjectActivityService {
-
+    static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
 

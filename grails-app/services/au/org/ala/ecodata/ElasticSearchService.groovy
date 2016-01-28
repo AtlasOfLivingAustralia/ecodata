@@ -694,7 +694,7 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
@@ -746,7 +746,7 @@ class ElasticSearchService {
     *       // c. unauthenticated user >> show only embargoed records across the projects.
     *
     */
-    void buildProjectActivityQuery(GrailsParameterMap params) {
+    void buildProjectActivityQuery(params) {
 
         String query = params.searchTerm ?: ''
         String userId = params.userId
@@ -819,9 +819,11 @@ class ElasticSearchService {
      *
      * @param query
      * @param params
+     * @param index index name
+     * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
