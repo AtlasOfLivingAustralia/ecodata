@@ -120,7 +120,7 @@ class ProjectActivityService {
             commentService.deleteAllForEntity(ProjectActivity.class.name, projectActivityId, destroy)
 
             if (destroy) {
-                projectActivity.delete()
+                projectActivity.delete(flush:true)
             } else {
                 projectActivity.status = DELETED
                 projectActivity.save(flush: true)
