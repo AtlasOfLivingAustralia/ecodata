@@ -116,7 +116,7 @@ class RecordConverter {
     private static addOrAppendFields(Map target, Map source) {
         source?.each { key, value ->
             if (target.containsKey(key) && target[key] && target[key] != value) {
-                target[key] = "${target[key]}${DELIMITER}${value}"
+                target[key] = "${target[key]}${DELIMITER}${value}".toString()
             } else {
                 target[key] = value
             }
@@ -131,7 +131,7 @@ class RecordConverter {
         try {
             converter = Class.forName("${packageName}.${className}")?.newInstance()
         } catch (ClassNotFoundException e) {
-            log.warn "No specific converter found for output data type ${outputDataType} with class name ${packageName}.${className}, using generic converter"
+            log.debug "No specific converter found for output data type ${outputDataType} with class name ${packageName}.${className}, using generic converter"
             converter = new GenericFieldConverter()
         }
 

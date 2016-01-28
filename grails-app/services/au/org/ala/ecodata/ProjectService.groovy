@@ -374,7 +374,7 @@ class ProjectService {
      */
     List<Map> findByName(String name) {
         List<Map> matches = []
-        
+
         if (name) {
             name = name.replaceAll(" +", " ").trim()
             matches = Project.withCriteria {

@@ -19,8 +19,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String>  siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String>  siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String>  activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status']
-    List<String> activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress']
+    List<String>  activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status']
+    List<String> activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus']
 
     XlsExporter exporter
 

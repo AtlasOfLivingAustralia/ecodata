@@ -46,6 +46,40 @@ class DocumentController {
         }
     }
 
+    def getFile() {
+        if (params.id) {
+            Map document = documentService.get(params.id)
+
+            if (!document) {
+                response.status = 404
+                render status:404, text: 'No such id'
+            } else {
+                String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${document.filepath}${File.separator}${document.filename}"
+
+                File file = new File(path)
+
+                if (!file.exists()) {
+                    response.status = 404
+                    return null
+                }
+
+                if (params.forceDownload?.toBoolean()) {
+                    // set the content type to octet-stream to stop the browser from auto playing known types
+                    response.setContentType('application/octet-stream')
+                } else {
+                    response.setContentType(document.contentType ?: 'application/octet-stream')
+                }
+                response.outputStream << new FileInputStream(file)
+                response.outputStream.flush()
+
+                return null
+            }
+        } else {
+            response.status = 400
+            render status:400, text: 'id is a required parameter'
+        }
+    }
+
     def find(String entity, String id) {
         if (params.links as boolean) {
             def result = documentService.findAllLinksByOwner(entity+'Id', id)
