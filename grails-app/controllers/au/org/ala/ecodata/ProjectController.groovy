@@ -3,10 +3,15 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import groovy.json.JsonSlurper
+
+import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, activityService
+    ElasticSearchService elasticSearchService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -270,6 +275,45 @@ class ProjectController {
         } else {
             render projectService.findByName(params.projectName) as JSON
         }
+    }
+
+    @PreAuthorise
+    def eSearch() {
+        String error = ""
+        if (params.max && !params.max.isNumber()) {
+            error = "Invalid max parameter."
+        } else if (params.offset && !params.offset.isNumber()) {
+            error = "Invalid offset parameter."
+        } else if (params.sort) {
+            List options = ['nameSort', '_score', 'organisationSort']
+            String found = options.find { it == params.sort }
+            error = !found ? 'Invalid sort parameter (Accepted values: nameSort, _score, organisationSort ).' : ''
+        } else if(params.order) {
+            List options = ['ASC', 'DESC']
+            String found = options.find { it == params.sort }
+            error = !found ? 'Invalid order parameter (Accepted values: ASC, DESC ).' : ''
+        }
+        if (!error) {
+            Map params = buildParams(params)
+            def result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+
+            response.setContentType('application/json; charset="UTF-8"')
+            render result
+        } else {
+            render status: 400, text: error
+        }
+    }
+
+    private Map buildParams(Map params){
+        Map values = [:]
+        values.sort = params.sort ?: 'nameSort'
+        values.max = params.max ?: 10
+        values.skipDefaultFilters = false
+        values.offset = params?.offset ?: 0
+        values.query = "docType:project AND (isCitizenScience:true)" + (params.query ? (" AND " + params.query) : "")
+        values.order = params.order ?: 'ASC'
+
+        values
     }
 
     private def setResponseHeadersForProjectId(response, projectId){

@@ -687,5 +687,25 @@ class PermissionsController {
         AccessLevel accessLevel = AccessLevel.find { it.name() == params.baseLevel } ?: AccessLevel.editor
         render AccessLevel.values().findAll { it.code >= accessLevel.code } as JSON
     }
+    /**
+     * Get user permissions for the given projectId
+     *
+     * @param id project identifier.
+     */
+    @PreAuthorise(idType="projectId")
+    def getByProject(String id) {
+        response.setContentType('application/json; charset="UTF-8"')
+        render permissionService.getMembersForProject(id) as JSON
+    }
 
+    /**
+     * Get user permissions for the given organisationId
+     *
+     * @param id organisation identifier.
+     */
+    @PreAuthorise(idType="organisationId")
+    def getByOrganisation(String id) {
+        response.setContentType('application/json; charset="UTF-8"')
+        render permissionService.getMembersForOrganisation(id) as JSON
+    }
 }

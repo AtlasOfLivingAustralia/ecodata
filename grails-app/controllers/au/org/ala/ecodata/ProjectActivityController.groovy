@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
+
 class ProjectActivityController {
 
     def projectActivityService
@@ -98,6 +100,17 @@ class ProjectActivityController {
             log.error result.error
             render status: 400, text: result.error
         }
+    }
+
+    /**
+     * List projectActivities for the given projectId
+     *
+     * @param id project identifier.
+     */
+    @PreAuthorise (idType="projectId")
+    def list(String id){
+        response.setContentType('application/json; charset="UTF-8"')
+        render projectActivityService.getAllByProject(id) as JSON
     }
 
 }
