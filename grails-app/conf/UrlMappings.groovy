@@ -29,6 +29,9 @@ class UrlMappings {
 
         "/ws/document/listImages"(controller: "document", action: "listImages")
 
+        "/ws/site/getImages"( controller: 'site', action: 'getImages')
+        "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'

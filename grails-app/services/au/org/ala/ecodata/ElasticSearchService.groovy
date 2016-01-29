@@ -14,11 +14,9 @@
  */
 
 package au.org.ala.ecodata
-
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.apache.commons.validator.routines.UrlValidator
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
@@ -27,12 +25,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.index.query.BoolFilterBuilder
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.FilteredQueryBuilder
-import org.elasticsearch.index.query.GeoShapeFilterBuilder
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.*
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -47,13 +40,12 @@ import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import static org.elasticsearch.index.query.FilterBuilders.*
+import static au.org.ala.ecodata.ElasticIndex.*
+import static au.org.ala.ecodata.Status.*
+import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-import static au.org.ala.ecodata.Status.*
-import static au.org.ala.ecodata.ElasticIndex.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *

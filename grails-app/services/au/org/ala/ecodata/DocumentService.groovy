@@ -417,4 +417,18 @@ class DocumentService {
         isMobileApp;
     }
 
+    /**
+     * Remove necessary properties from a document that is embargoed.
+     * @param doc
+     * @return doc
+     */
+    public Map embargoDocument (Map doc){
+        List blackListProps = ['thumbnailUrl','url','dataTaken','attribution','notes','filename','filepath','documentId']
+        doc.isEmbargoed = true;
+        blackListProps.each { item ->
+            doc.remove(item)
+        }
+        doc
+    }
+
 }

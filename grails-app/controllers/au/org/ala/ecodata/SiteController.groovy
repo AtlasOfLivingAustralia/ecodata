@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
-
 import au.org.ala.ecodata.reporting.ShapefileBuilder
+import com.mongodb.MongoExecutionTimeoutException
 import grails.converters.JSON
+import org.apache.http.HttpStatus
 
 class SiteController {
 
     def siteService, commonService, projectService
+    DocumentService documentService
 
     static final RICH = "rich"
     static final BRIEF = 'brief'
@@ -150,5 +152,82 @@ class SiteController {
     def list2() {
         def sites = Site.list()
         [sites: sites]
+    }
+
+    /**
+     * get images/documents for a list sites.
+     * @required id - comma separated siteIds eg - 142,651,778
+     * @return
+     */
+    @RequireApiKey
+    def getImages(){
+        String id = params.id
+        String role = params.role
+        String sort = params.sort?:'dateTaken';
+        String order = params.order?:'DESC'
+        Integer max = (params.max?:5) as Integer
+        Integer offset = (params.offset?:0) as Integer
+        Long userId = params.long('userId')
+        Set<String> siteIds = []
+        List result = [];
+        Map mongoParams = [:];
+        if(role){
+            mongoParams.role = role;
+        }
+
+        if(id){
+            String [] ids = id.split(',');
+            siteIds.addAll(ids.toList())
+
+            try{
+                result = siteService.getImages(siteIds, mongoParams, userId, sort, order, max, offset)
+            } catch (MongoExecutionTimeoutException mete){
+                render(text: 'Database timeout exception ' + mete.message, status: HttpStatus.SC_REQUEST_TIMEOUT)
+            } catch(Exception e){
+                render(text: 'An exception occurred: ' + e.message, status: HttpStatus.SC_INTERNAL_SERVER_ERROR)
+            }
+
+            render text: result as JSON, contentType: 'application/json'
+        } else {
+            response.sendError(HttpStatus.SC_BAD_REQUEST, 'Site id must be provided')
+        }
+    }
+
+    /**
+     * Get images/documents for a point of interest. This function supports pagination.
+     * @required siteId, poiId
+     * @return
+     */
+    @RequireApiKey
+    def getPoiImages(){
+        String siteId = params.siteId
+        String poiId = params.poiId
+        String role = params.role
+        String sort = params.sort?:'dateTaken';
+        String order = params.order?:'DESC'
+        Integer max = (params.max?:5) as Integer
+        Integer offset = (params.offset?:0) as Integer
+        Long userId = params.long('userId')
+        Map result;
+        Map mongoParams = [:];
+        if(role){
+            mongoParams.role = role
+        }
+
+        if(siteId && poiId){
+            mongoParams.poiId = poiId
+            mongoParams.siteId = siteId
+            try{
+                 result = siteService.getPoiImages(mongoParams, userId, max, offset, sort, order)
+            } catch (MongoExecutionTimeoutException mete){
+                render(text: 'Database timeout exception ' + mete.message, status: HttpStatus.SC_REQUEST_TIMEOUT)
+            } catch(Exception e){
+                render(text: 'An exception occurred: ' + e.message, status: HttpStatus.SC_INTERNAL_SERVER_ERROR)
+            }
+
+            render text: result as JSON, contentType: 'application/json'
+        } else {
+            response.sendError(HttpStatus.SC_BAD_REQUEST, 'Site id and Poi id must be provided')
+        }
     }
 }

@@ -1,8 +1,6 @@
 package au.org.ala.ecodata
-
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
-import org.geotools.geojson.GeoJSON
 import org.geotools.geojson.geom.GeometryJSON
 
 class SiteService {
@@ -14,6 +12,8 @@ class SiteService {
     static final FLAT = 'flat'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService
+    PermissionService permissionService
+    ProjectActivityService projectActivityService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -275,6 +275,102 @@ class SiteService {
             site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
         }
         site
+    }
+
+    /**
+     * get images for a list of sites. The images are associated with the point of interest of each site.
+     * @param ids
+     * @param mongoParams
+     * @param sort
+     * @param order
+     * @param max
+     * @param offset
+     * @return
+     */
+    List getImages (Set<String> ids, Map mongoParams, Long userId, String sort = 'lastUpdated', String order = 'DESC', Integer max = 5, Integer offset = 0) throws Exception {
+        Map documents, rPoi, rSite
+        List result = []
+        Site sites = Site.findBySiteIdInListAndStatus(ids.toList(), Status.ACTIVE)
+        sites.each { site ->
+            if (site) {
+                rSite = [siteId: site.siteId, name: site.name, type: site.type, description: site.description]
+                rSite.poi = []
+                site.poi?.each { poi ->
+                    mongoParams.poiId = poi.poiId
+                    documents = getPoiImages( mongoParams, userId, max, offset, sort, order)
+                    rPoi = [name: poi.name, poiId: poi.poiId, type: poi.type, docs: documents]
+                    rSite.poi.push(rPoi)
+                }
+
+                result.push(rSite)
+            } else {
+                log.debug('Could not find site of siteId: ' + siteId)
+            }
+        }
+
+        result
+    }
+
+    /**
+     * get images for a POI
+     * @param mongoParams
+     * @param userId
+     * @param max
+     * @param offset
+     * @param sort
+     * @param order
+     * @return
+     */
+    public Map getPoiImages(Map mongoParams, Long userId, Integer max, Integer offset, String sort, String order) {
+        Map documents
+        documents = documentService.search(mongoParams, max, offset, sort, order)
+        documents.documents = embargoDocuments(documents.documents, userId);
+        return documents;
+    }
+
+
+    /**
+     * Embargo a list of document.
+     * 1. if user ala admin, then documents are not embargoed
+     * 2. if user admin or editor of a project, then do not embargo document
+     * 3. if user logged in or anonymous, embargo documents
+     * @param documents
+     * @param userId
+     * @return
+     */
+    public List embargoDocuments( List documents, Long userId){
+        Set<String> activityIds = []
+        Map activities = [:]
+        List<String> projectsTheUserIsAMemberOf
+        documents?.each {
+            activityIds.add(it.activityId);
+        }
+
+        Activity.findAllByActivityIdInList(activityIds, ACTIVE).collect {
+            activities[it.activityId] = activityService.toMap(it, [FLAT])
+            activities[it.activityId].projectActivity = projectActivityService.get(activities[it.activityId].projectActivityId,[FLAT])
+        }
+
+        if ( userId && ( permissionService.isUserAlaAdmin(userId?.toString()))) {
+            projectsTheUserIsAMemberOf = null;
+        } else if (userId) {
+            projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId?.toString(), AccessLevel.admin, AccessLevel.editor)
+        } else {
+            projectsTheUserIsAMemberOf = []
+        }
+
+        if(projectsTheUserIsAMemberOf != null){
+            documents.each { Map doc ->
+                Map activity = activities[doc.activityId]
+                if( ! (doc.projectId in projectsTheUserIsAMemberOf) ){
+                    if(activity.projectActivity.visibility && activity.projectActivity.visibility?.embargoUntil.after(new Date())){
+                        documentService.embargoDocument(doc);
+                    }
+                }
+            }
+        }
+
+        documents
     }
 
 }
