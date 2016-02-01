@@ -35,8 +35,20 @@
             "name" : {
               "type" : "string",
               "path" : "just_name",
-              "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
-              "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
+              "fields": {
+                "organisationName": {
+                  "type":"string",
+                  "index":"analyzed"
+                },
+                "organisationFacet": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "organisationSort": {
+                  "type": "string",
+                  "analyzer": "case_insensitive_sort"
+                }
+              }
             }
           }
         },
