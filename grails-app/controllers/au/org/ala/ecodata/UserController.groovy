@@ -10,13 +10,22 @@ class UserController {
      */
     @PreAuthorise(basicAuth = false)
     def getKey() {
-        String username = params.username?.encodeAsURL()
-        String password = params.password?.encodeAsURL()
-        def result = userService.getUserKey(username, password)
-        if (result?.statusCode) {
-            response.setStatus(result.statusCode)
+        Map result = [:]
+        String username = request.getHeader('userName')
+        String password = request.getHeader('password')
+
+        if (username && password) {
+            def ret = userService.getUserKey(username, password)
+            if (ret.error) {
+                result = [status: 'error', statusCode: ret.statusCode, error: ret.error]
+            } else if (ret.resp) {
+                result = ret.resp
+            }
+        } else {
+            result = [status: 'error', statusCode: 400, error: "Missing username or password"]
         }
 
+        result.statusCode ? response.setStatus(result.statusCode) : ''
         render result as JSON
     }
 }

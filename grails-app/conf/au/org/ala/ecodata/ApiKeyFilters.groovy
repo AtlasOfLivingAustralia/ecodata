@@ -29,7 +29,11 @@ class ApiKeyFilters {
                     PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
 
                     if (pa.basicAuth()) {
-                        if ((request.userId = userService.authorize(request.getHeader('userName'), request.getHeader('authKey')))) {
+                        request.userId = userService.authorize(request.getHeader('userName'), request.getHeader('authKey'))
+                        if(permissionService.isUserAlaAdmin(request.userId)) {
+                            /* Don't enforce check for ALA admin.*/
+                        }
+                        else if (request.userId) {
                             String accessLevel = pa.accessLevel()
                             String idType = pa.idType()
                             String entityId = params[pa.id()]
