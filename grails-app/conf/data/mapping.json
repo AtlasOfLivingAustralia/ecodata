@@ -100,7 +100,12 @@
                 "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
               }
             },
-
+            "organisationName":{
+              "type":"string",
+              "fields": {
+                "organisationNameFacet":{"type":"string", "index":"not_analyzed"}
+              }
+            },
             "projectName":{
               "type":"string",
               "fields": {

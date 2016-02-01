@@ -627,7 +627,7 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT)
-
+        def organisation = organisationService.get(project?.organisationId)
         // Include project activity only for survey based projects.
         def pActivity = projectActivityService.get(activity.projectActivityId)
         if (pActivity) {
@@ -660,8 +660,10 @@ class ElasticSearchService {
             if(images.count > 0){
                  projectActivity.surveyImage = true;
             }
+            projectActivity.organisationName = organisation?.name ?: "No organisation"
 
             activity.projectActivity = projectActivity
+
         } else if (project) {
             // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
             // faceting for reporting.
@@ -810,7 +812,7 @@ class ElasticSearchService {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
-        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
+        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
@@ -1123,6 +1125,4 @@ class ElasticSearchService {
     def destroy() {
         node.close();
     }
-
-
 }
