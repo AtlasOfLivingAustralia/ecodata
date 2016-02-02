@@ -660,7 +660,7 @@ class ElasticSearchService {
             if(images.count > 0){
                  projectActivity.surveyImage = true;
             }
-            projectActivity.organisationName = organisation?.name ?: "No organisation"
+            projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
 
