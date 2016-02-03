@@ -595,7 +595,7 @@ class ElasticSearchService {
         organisation["className"] = Organisation.class.name
         Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
         if (results && results.documents) {
-            organisation.logoUrl = results.documents[0].url
+            organisation.logoUrl = results.documents[0].thumbnailUrl
         }
     }
 

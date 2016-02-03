@@ -97,7 +97,7 @@ class DocumentService {
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
-        urlImage = logoDoc?.url
+        urlImage = logoDoc?.url ? logoDoc.getThumbnailUrl() : ''
         if(!urlImage){
             primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
             urlImage = primaryImageDoc?.url;
