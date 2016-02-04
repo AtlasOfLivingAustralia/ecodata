@@ -115,7 +115,6 @@ class UserService {
      * @param password
      */
     def getUserKey(String username, String password) {
-        String loginUrl = grailsApplication.config.authGetKeyUrl + "?userName=${username}&password=${password}"
-        webService.getJson(loginUrl)
+        webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password])
     }
 }

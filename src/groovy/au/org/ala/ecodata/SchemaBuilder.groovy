@@ -199,9 +199,8 @@ class SchemaBuilder {
                    break
 
                default:
-                   //typeGenerator = this.&error
-                   //break
-                   throw new IllegalArgumentException("Unsupported dataType: ${property.dataType} for property: ${property}")
+                   typeGenerator = this.&error
+                   break
            }
 
            return new PropertySchemaGenerator(typeGenerator)
@@ -289,7 +288,7 @@ class SchemaBuilder {
     }
 
     def error(property) {
-        return [type:'unsupported']
+        return [type:'unknown']
     }
 
 }

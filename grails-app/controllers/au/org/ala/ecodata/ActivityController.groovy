@@ -286,7 +286,7 @@ class ActivityController {
     def list(String id){
 
         params.userId = request.userId
-        params.projectId = request.projectId
+        params.projectId = request.projectId ?: projectActivityService.get(id)?.projectId
         elasticSearchService.buildProjectActivityQuery(params)
 
         response.setContentType("application/json; charset=\"UTF-8\"")

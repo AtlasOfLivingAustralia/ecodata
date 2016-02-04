@@ -996,6 +996,7 @@
                 {
                     "aggregationType": "SUM",
                     "displayType": "",
+                    "gmsId": "EMS",
                     "name": "erosionStructuresInstalled",
                     "description": "The total number of structures installed to to control erosion.",
                     "label": "Total No. of erosion control structures installed",
@@ -3231,7 +3232,7 @@
                     "collapsedByDefault": false
                 }
             ],
-            "gmsId": "EMA EML",
+            "gmsId": "EMA EML EMS",
             "name": "Erosion Management",
             "supportsSites": true,
             "type": "Activity",
