@@ -20,6 +20,7 @@ import org.apache.http.impl.client.DefaultHttpClient
  * Services for handling the creation of records with images.
  */
 class RecordService {
+    static transactional = false
 
     def grailsApplication
     ActivityService activityService

@@ -237,7 +237,7 @@ class ProjectService {
                 if (project.dataProviderId && project.dataProviderId != "null") {
                     collectoryService.updateDataProviderAndResource(get(id, FLAT))
                 } else {
-                    establishCollectoryLinkForProject(project, props)
+                    establishCollectoryLinkForProject(project, toMap(project, FLAT))
                 }
                 return [status: 'ok']
             } catch (Exception e) {
@@ -374,7 +374,7 @@ class ProjectService {
      */
     List<Map> findByName(String name) {
         List<Map> matches = []
-        
+
         if (name) {
             name = name.replaceAll(" +", " ").trim()
             matches = Project.withCriteria {

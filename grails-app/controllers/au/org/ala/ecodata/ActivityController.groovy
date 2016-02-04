@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
+
 class ActivityController {
 
     ActivityService activityService
@@ -9,6 +11,7 @@ class ActivityController {
     CommonService commonService
     UserService userService
     ProjectActivityService projectActivityService
+    ElasticSearchService elasticSearchService
 
     static final SCORES = 'scores'
 
@@ -279,4 +282,32 @@ class ActivityController {
         asJson activities:activityList
     }
 
+    @PreAuthorise (idType="projectActivityId")
+    def list(String id){
+
+        params.userId = request.userId
+        params.projectId = request.projectId ?: projectActivityService.get(id)?.projectId
+        elasticSearchService.buildProjectActivityQuery(params)
+
+        response.setContentType("application/json; charset=\"UTF-8\"")
+        render elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+    }
+
+    @PreAuthorise(idType = "activityId")
+    def getActivity(String id) {
+        String error = ''
+        if (params.view) {
+            List options = ['all', 'flat', 'site']
+            String found = options.find { it == params.view }
+            error = !found ? 'Invalid view parameter. (Accepted value: all, flat, site)' : ''
+        }
+
+        if (!error) {
+            def activity = activityService.get(id, params.view ?: 'flat')
+            response.setContentType("application/json; charset=\"UTF-8\"")
+            render activity as JSON
+        } else {
+            render status: 403, text: error
+        }
+    }
 }

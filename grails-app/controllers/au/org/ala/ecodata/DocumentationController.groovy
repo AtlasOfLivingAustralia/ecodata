@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+@PreAuthorise(basicAuth = false)
 class DocumentationController {
 
     def grailsApplication

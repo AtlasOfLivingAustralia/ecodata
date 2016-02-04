@@ -595,7 +595,7 @@ class ElasticSearchService {
         organisation["className"] = Organisation.class.name
         Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
         if (results && results.documents) {
-            organisation.logoUrl = results.documents[0].url
+            organisation.logoUrl = results.documents[0].thumbnailUrl
         }
     }
 
@@ -627,7 +627,7 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT)
-
+        def organisation = organisationService.get(project?.organisationId)
         // Include project activity only for survey based projects.
         def pActivity = projectActivityService.get(activity.projectActivityId)
         if (pActivity) {
@@ -660,8 +660,10 @@ class ElasticSearchService {
             if(images.count > 0){
                  projectActivity.surveyImage = true;
             }
+            projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
+
         } else if (project) {
             // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
             // faceting for reporting.
@@ -694,7 +696,7 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
@@ -746,7 +748,7 @@ class ElasticSearchService {
     *       // c. unauthenticated user >> show only embargoed records across the projects.
     *
     */
-    void buildProjectActivityQuery(GrailsParameterMap params) {
+    void buildProjectActivityQuery(params) {
 
         String query = params.searchTerm ?: ''
         String userId = params.userId
@@ -810,7 +812,7 @@ class ElasticSearchService {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
-        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
+        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
@@ -819,9 +821,11 @@ class ElasticSearchService {
      *
      * @param query
      * @param params
+     * @param index index name
+     * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -1121,6 +1125,4 @@ class ElasticSearchService {
     def destroy() {
         node.close();
     }
-
-
 }

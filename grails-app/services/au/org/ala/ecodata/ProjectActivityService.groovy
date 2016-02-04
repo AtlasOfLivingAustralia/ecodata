@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import static au.org.ala.ecodata.Status.*
 
 class ProjectActivityService {
-
+    static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
 
@@ -120,7 +120,7 @@ class ProjectActivityService {
             commentService.deleteAllForEntity(ProjectActivity.class.name, projectActivityId, destroy)
 
             if (destroy) {
-                projectActivity.delete()
+                projectActivity.delete(flush:true)
             } else {
                 projectActivity.status = DELETED
                 projectActivity.save(flush: true)
