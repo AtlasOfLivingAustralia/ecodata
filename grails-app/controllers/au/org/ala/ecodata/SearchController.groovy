@@ -425,4 +425,9 @@ class SearchController {
         }
     }
 
+    def test(){
+        def map = elasticSearchService.indexDocType('89bfb38a-1a68-4cdd-b890-458d2bbfae74',Site.class.name)
+        render( text: map as JSON, contentType: 'application/json')
+    }
+
 }

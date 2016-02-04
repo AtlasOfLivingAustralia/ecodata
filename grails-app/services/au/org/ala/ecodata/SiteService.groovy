@@ -287,10 +287,10 @@ class SiteService {
      * @param offset
      * @return
      */
-    List getImages (Set<String> ids, Map mongoParams, Long userId, String sort = 'lastUpdated', String order = 'DESC', Integer max = 5, Integer offset = 0) throws Exception {
+    List getImages (Set<String> ids, Map mongoParams, Long userId, String sort = 'lastUpdated', String order = 'desc', Integer max = 5, Integer offset = 0) throws Exception {
         Map documents, rPoi, rSite
         List result = []
-        Site sites = Site.findBySiteIdInListAndStatus(ids.toList(), Status.ACTIVE)
+        List sites = Site.findAllBySiteIdInListAndStatus(ids.toList(), Status.ACTIVE)
         sites.each { site ->
             if (site) {
                 rSite = [siteId: site.siteId, name: site.name, type: site.type, description: site.description]

@@ -44,7 +44,7 @@ class SiteControllerSpec extends Specification {
         Set<String> ids = ['1']
         params.max = 5
         params.offset= 0
-        siteService.getImages(ids,[:],null,'lastUpdated', 'DESC',5,0) >> {throw new MongoExecutionTimeoutException(123,'Cannot execute query!')}
+        siteService.getImages(ids,[:],null,'dateTaken', 'desc',5,0) >> {throw new MongoExecutionTimeoutException(123,'Cannot execute query!')}
         when:
         params.id = '1'
         controller.getImages();
@@ -59,7 +59,7 @@ class SiteControllerSpec extends Specification {
         params.max = 5
         params.offset= 0
         params.userId = 1
-        siteService.getImages(ids,[:],1,'lastUpdated', 'DESC',5,0) >> [["siteId": "1", "name": "Rubicon Sanctuary, Port Sorell, Tasmania",
+        siteService.getImages(ids,[:],1,'dateTaken', 'desc',5,0) >> [["siteId": "1", "name": "Rubicon Sanctuary, Port Sorell, Tasmania",
                                      "poi": [[poiId:'2',docs:[documents:[[role:'photoPoint',type:'image']],count:1]]]
                                     ]]
         when:

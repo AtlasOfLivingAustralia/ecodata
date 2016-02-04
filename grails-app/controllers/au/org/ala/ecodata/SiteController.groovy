@@ -164,7 +164,7 @@ class SiteController {
         String id = params.id
         String role = params.role
         String sort = params.sort?:'dateTaken';
-        String order = params.order?:'DESC'
+        String order = params.order?:'desc'
         Integer max = (params.max?:5) as Integer
         Integer offset = (params.offset?:0) as Integer
         Long userId = params.long('userId')
@@ -204,7 +204,7 @@ class SiteController {
         String poiId = params.poiId
         String role = params.role
         String sort = params.sort?:'dateTaken';
-        String order = params.order?:'DESC'
+        String order = params.order?:'desc'
         Integer max = (params.max?:5) as Integer
         Integer offset = (params.offset?:0) as Integer
         Long userId = params.long('userId')

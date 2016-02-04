@@ -377,21 +377,17 @@ class ElasticSearchService {
                 projectMap["className"] = docType
                 doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
+                if(projectMap.siteId){
+                    indexDocType(projectMap.siteId, Site.class.name)
+                }
+
                 break;
             case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
+                siteMap = prepareSiteForIndexing(siteMap, true)
                 indexDoc(siteMap, DEFAULT_INDEX)
-                // update linked projects -- index for homepage
-                doc.projects.each { // assume list of Strings (ids)
-                    def pDoc = Project.findByProjectId(it)
-                    if (pDoc) {
-                        indexHomePage(pDoc, "au.org.ala.ecodata.Project")
-                    } else {
-                        log.warn "Project not found for id: ${it}"
-                    }
-                }
                 break;
 
             case Record.class.name:
@@ -414,6 +410,10 @@ class ElasticSearchService {
                 if (pDoc) {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
+
+                if(activity.siteId){
+                    indexDocType(activity.siteId, Site.class.name)
+                }
                 break
             case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
@@ -431,6 +431,53 @@ class ElasticSearchService {
                 }
                 break
         }
+    }
+
+    /**
+     * Add additional data to site for indexing purposes. eg. project, photo point, survey name etc.
+     * @param siteMap
+     * @param indexNestedDocuments
+     * @return
+     */
+    private Map prepareSiteForIndexing(Map siteMap, Boolean indexNestedDocuments) {
+        List projects = [], surveys = [], surveysForProject
+        Map project, photoPoints
+        siteMap.projects.each { // assume list of Strings (ids)
+            def pDoc = Project.findByProjectId(it)
+            if (pDoc) {
+                if(indexNestedDocuments){
+                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                }
+
+                project = projectService.toMap(pDoc, LevelOfDetail.flat)
+                projects.push([
+                        projectName: project.name,
+                        projectId  : project.projectId
+                ])
+
+                surveysForProject = projectActivityService.getAllByProject(project.projectId);
+                surveys.addAll(surveysForProject.collect {
+                    [
+                            surveyName       : it.name,
+                            projectActivityId: it.projectActivityId
+                    ]
+                })
+
+            } else {
+                log.warn "Project not found for id: ${it}"
+            }
+        }
+
+        siteMap.projectList = projects;
+        siteMap.surveyList = surveys
+
+        // check for photo points
+        photoPoints = documentService.search([siteId:siteMap.siteId, type:'image', role:'photoPoint'])
+        if(photoPoints?.count > 0){
+            siteMap.photoType = 'photoPoint'
+        }
+
+        siteMap
     }
 
     /**
@@ -560,6 +607,7 @@ class ElasticSearchService {
         sites.each {
             def siteMap = siteService.toMap(it, "flat")
             siteMap["className"] = new Site().getClass().name
+            siteMap = prepareSiteForIndexing(siteMap, false)
             indexDoc(siteMap, DEFAULT_INDEX)
         }
 
