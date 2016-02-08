@@ -24,7 +24,9 @@ class UserService {
 
         def userDetails = getUserForUserId(userId)
         if (!userDetails) {
-            log.warn("Unable to lookup user details for userId: ${userId}")
+            if (log.debugEnabled) {
+                log.debug("Unable to lookup user details for userId: ${userId}")
+            }
             userDetails = new UserDetails(userId: userId, userName: 'unknown', displayName: 'Unknown')
         }
 
