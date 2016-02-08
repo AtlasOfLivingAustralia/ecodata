@@ -17,7 +17,6 @@ package au.org.ala.ecodata
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
@@ -637,6 +636,10 @@ class ElasticSearchService {
         if (results && results.documents) {
             organisation.logoUrl = results.documents[0].thumbnailUrl
         }
+
+        // get list of users of this organisation
+        List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
+        organisation.users = users;
     }
 
     /**
