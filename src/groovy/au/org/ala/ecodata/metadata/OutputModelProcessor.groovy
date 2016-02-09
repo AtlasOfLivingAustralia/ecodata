@@ -101,7 +101,7 @@ class OutputModelProcessor {
      * nested rows.
      * @param output
      */
-    def flatten(output, outputMetadata) {
+    List flatten(output, outputMetadata) {
 
         List rows = []
 
