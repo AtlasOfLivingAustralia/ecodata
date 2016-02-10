@@ -411,10 +411,17 @@ class ProjectService {
         projects.collect{toMap(it, levelOfDetail)}
     }
 
-    def updateOrgName(orgId, orgName) {
-        Project.collection.update(
-            [organisationId: orgId],
-            ['$set': [organisationName: orgName]], false, true)
+    /**
+     * Updates the organisation name for all projects with the organisation id.
+     * (The name is stored alongside the id in the project because not all organisations have entries in the database).
+     * @param orgId identifies the organsation that has changed name
+     * @param orgName the new organisation name
+     */
+    void updateOrganisationName(orgId, orgName) {
+        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
+            project.organisationName = orgName
+            project.save()
+        }
     }
 
 }
