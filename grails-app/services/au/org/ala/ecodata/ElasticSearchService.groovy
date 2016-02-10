@@ -655,6 +655,7 @@ class ElasticSearchService {
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };
