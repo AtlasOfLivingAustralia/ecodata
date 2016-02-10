@@ -26,7 +26,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
     List<String> outputTargetProperties = ['projectId', 'scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
     List<String> outputHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Site ID']
-    List<String> outputProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'siteId']
+    List<String> outputProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId']
 
 
     XlsExporter exporter
