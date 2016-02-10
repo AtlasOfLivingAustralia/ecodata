@@ -424,4 +424,5 @@ class SearchController {
             render "No project sites selected for download"
         }
     }
+
 }
