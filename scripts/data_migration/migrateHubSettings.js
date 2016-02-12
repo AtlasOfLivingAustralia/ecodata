@@ -9,6 +9,8 @@ while (hubs.hasNext()) {
     hubJson.urlPath = hubJson.id;
     delete hubJson.id;
 
+    hubJson.status = 'active';
+
     db.hub.save(hubJson);
 
     db.setting.remove(hub);
