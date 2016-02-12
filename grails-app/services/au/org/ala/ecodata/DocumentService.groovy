@@ -105,6 +105,9 @@ class DocumentService {
         urlImage
     }
 
+    String getLogoAttributionForProjectId(String id){
+        Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE)?.attribution
+    }
 
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
