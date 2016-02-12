@@ -54,6 +54,37 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    /**
+     * Given a userId and a list of projects, check if the user has edit permission on each project.
+     * The function returns a map with projectId as key and boolean for permission. Null if project is not found.
+     * @param userId
+     * @param projectIds []
+     * @return
+     */
+    Map isUserEditorForProjects(String userId, String [] projectIds) {
+        Map permissions =[:]
+        Boolean isEditor = false
+        Project project
+
+        if (userId && projectIds) {
+            projectIds.each { projectId ->
+                project = Project.findByProjectId(projectId)
+                if(project){
+                    permissions[projectId] = isUserAdminForProject(userId, projectId);
+                } else {
+                    permissions[projectId] = null;
+                }
+            }
+        } else if(userId == ''){
+            // for anonymous user
+            projectIds.each {
+                permissions[it] = false;
+            }
+        }
+
+        return permissions
+    }
+
     def isUserGrantManagerForOrganisation(String userId, String organisationId) {
         def isGrantManager = false
         if (userId && organisationId) {

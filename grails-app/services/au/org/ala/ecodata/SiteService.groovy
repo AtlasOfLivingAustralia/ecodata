@@ -362,7 +362,7 @@ class SiteService {
         if(projectsTheUserIsAMemberOf != null){
             documents.each { Map doc ->
                 Map activity = activities[doc.activityId]
-                if( ! (doc.projectId in projectsTheUserIsAMemberOf) ){
+                if( activity && ! (doc.projectId in projectsTheUserIsAMemberOf) ){
                     if(activity.projectActivity.visibility && activity.projectActivity.visibility?.embargoUntil.after(new Date())){
                         documentService.embargoDocument(doc);
                     }
