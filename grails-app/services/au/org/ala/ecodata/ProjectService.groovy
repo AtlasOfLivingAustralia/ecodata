@@ -68,7 +68,7 @@ class ProjectService {
         if (includeDeleted) {
             list = Project.findAllByIsMERIT(true)
         } else {
-            list = Project.findAllByIsMERITAndStatus(true, ACTIVE)
+            list = Project.findAllByIsMERITAndStatusNotEqual(true, DELETED)
         }
         list.collect { toMap(it, levelOfDetail) }
     }
