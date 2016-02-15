@@ -62,7 +62,7 @@ class RecordAlertService {
      *
      * @param pActivity project activity map
      * @param guid species guid.
-     * @return void
+     * @return true if alert is required
      */
     private boolean isAlertRequired(Map pActivity, String guid) {
         pActivity?.alert?.allSpecies?.size() > 0 && pActivity?.alert?.emailAddresses?.size() > 0 && pActivity?.alert?.allSpecies?.find {
