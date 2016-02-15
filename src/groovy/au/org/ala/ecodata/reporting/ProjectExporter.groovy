@@ -28,7 +28,7 @@ abstract class ProjectExporter {
         }
     }
 
-    protected outputProperties(name) {
+    protected Map outputProperties(name) {
         def model = metadataService.annotatedOutputDataModel(name)
 
         def headers = []

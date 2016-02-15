@@ -68,9 +68,11 @@ class OrganisationService {
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
             try {
-                if (organisation.name != props.name)
-                    projectService.updateOrgName(organisation.organisationId, props.name)
+                String oldName = organisation.name
                 getCommonService().updateProperties(organisation, props)
+                if (props.name && (oldName != props.name)) {
+                    projectService.updateOrganisationName(organisation.organisationId, props.name)
+                }
                 return [status:'ok']
             } catch (Exception e) {
                 Organisation.withSession { session -> session.clear() }
