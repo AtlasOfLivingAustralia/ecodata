@@ -30,6 +30,7 @@ class RecordService {
     SiteService siteService
     AuthService authService
     UserService userService
+    RecordAlertService recordAlertService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -290,6 +291,10 @@ class RecordService {
         } catch (Exception e) {
             log.error(e.getMessage(), e)
             errors['updateError'] = e.getClass().toString() + " " + e.getMessage()
+        }
+
+        if(!errors) {
+            recordAlertService.alertSubscribers(record)
         }
 
         errors
