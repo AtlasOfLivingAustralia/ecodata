@@ -67,12 +67,12 @@ class HubService {
                 if (e instanceof ValidationException) {
                     error = messageSource.getMessage(e.errors.fieldError, Locale.getDefault())
                 }
-                return [status:'error',errors:error]
+                return [status:'error',errors:[error]]
             }
         } else {
             def error = "Error updating hub - no such urlPath ${props.urlPath}"
             log.error error
-            return [status:'error',errors:error]
+            return [status:'error',errors:[error]]
         }
     }
 
