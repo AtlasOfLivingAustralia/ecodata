@@ -33,6 +33,8 @@ class UrlMappings {
         "/ws/site/getImages"( controller: 'site', action: 'getImages')
         "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
 
+        "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'

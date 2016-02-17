@@ -134,7 +134,7 @@ class OutputService {
 
                 getCommonService().updateProperties(output, props)
 
-                createRecordsForOutput(activity, output, props)
+                createOrUpdateRecordsForOutput(activity, output, props)
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
@@ -152,7 +152,7 @@ class OutputService {
         }
     }
 
-    void createRecordsForOutput(Activity activity, Output output, Map props) {
+    void createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
@@ -165,12 +165,22 @@ class OutputService {
             List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
-                // createRecord returns a 2-element list:
-                // [0] = Record (always there even if the save failed);
-                // [1] = Error object if the save failed, empty map if the save succeeded.
-                List result = recordService.createRecord(record)
-                if (result[1]) {
-                    throw new IllegalArgumentException("Failed to create record: ${record}")
+                //Create or update record?
+                Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
+                if (existingRecord) {
+                    existingRecord.status = Status.ACTIVE
+                    Map updateResult = recordService.updateRecord(existingRecord, record)
+                    if (updateResult.updateError) {
+                        throw new IllegalArgumentException("Failed to update record: ${record}")
+                    }
+                } else {
+                    // createRecord returns a 2-element list:
+                    // [0] = Record (always there even if the save failed);
+                    // [1] = Error object if the save failed, empty map if the save succeeded.
+                    List result = recordService.createRecord(record)
+                    if (result[1]) {
+                        throw new IllegalArgumentException("Failed to create record: ${record}")
+                    }
                 }
             }
         }
@@ -178,6 +188,7 @@ class OutputService {
 
     def update(Map props, String outputId) {
         Output output = Output.findByOutputId(outputId)
+        Map result
         if (output) {
             Activity activity = Activity.findByActivityId(output.activityId)
             try {
@@ -187,25 +198,27 @@ class OutputService {
 
                 getCommonService().updateProperties(output, props)
 
-                List<Record> records = Record.findAllByOutputId(outputId)
-                if (records) {
-                    Record.deleteAll(records)
+                List statusUpdate = recordService.updateRecordStatusByOutput(outputId, Status.DELETED)
+                if (!statusUpdate) {
+                    createOrUpdateRecordsForOutput(activity, output, props)
+                    result = [status: 'ok']
+                } else {
+                    result = [status: 'error', error: "Error updating the record status"]
                 }
 
-                createRecordsForOutput(activity, output, props)
-
-                return [status: 'ok']
             } catch (Exception e) {
                 Output.withSession { session -> session.clear() }
                 String error = "Error updating output ${outputId} - ${e.message}"
                 log.error error, e
-                return [status: 'error', error: error]
+                result = [status: 'error', error: error]
             }
         } else {
             String error = "Error updating output - no such id ${outputId}"
             log.error error
-            return [status: 'error', error: error]
+            result = [status: 'error', error: error]
         }
+
+        result
     }
 
     def getAllOutputIdsForActivity(String activityId) {

@@ -140,6 +140,33 @@ class RecordService {
     }
 
     /**
+     * Updates record status by output id
+     *
+     * @param id output id
+     * @params status record status
+     * @return list of errors.
+     */
+    List updateRecordStatusByOutput(String id, String status = Status.ACTIVE) {
+        List<Record> records = Record.findAllByOutputId(id)
+        List<String> errors
+
+        records?.each { record ->
+            record.status = status
+            try {
+                record.save(flush: true)
+            }
+            catch (Exception e) {
+                Record.withSession { session -> session.clear() }
+                def error = "Error updating record ${record.occurrenceID} - ${e.message}"
+                log.error error
+                errors << [status: 'error', error: error]
+            }
+        }
+
+        errors
+    }
+
+    /**
      * Create a record based on the supplied JSON
      *
      * @param json
