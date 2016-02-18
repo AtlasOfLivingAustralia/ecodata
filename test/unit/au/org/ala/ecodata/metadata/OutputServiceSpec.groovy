@@ -57,7 +57,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        1 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
+        1 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 
@@ -86,7 +86,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        0 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
+        0 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 
@@ -114,7 +114,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        0 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
+        0 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 
@@ -152,7 +152,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        2 * mockRecordService.createRecord(_) >> [new Record().save(flush: true), [:]]
+        2 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 }

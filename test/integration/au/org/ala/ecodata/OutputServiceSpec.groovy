@@ -52,7 +52,7 @@ class OutputServiceSpec extends IntegrationSpec {
         savedOutput['data']['prop2'] == 'prop2'
     }
 
-    def "createRecordsForOutput should create associated Record objects"() {
+    def "createOrUpdateRecordsForOutput should create associated Record objects"() {
         setup:
         metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[ dataType: "doesNotMatter"], [dataType: "doesNotMatter"]]]
 
@@ -61,7 +61,7 @@ class OutputServiceSpec extends IntegrationSpec {
         Map properties = [data: [userId: "666"]]
 
         when:
-        outputService.createRecordsForOutput(activity, output, properties)
+        outputService.createOrUpdateRecordsForOutput(activity, output, properties)
 
         then:
         1 * outputService.recordService.createRecord(_) >> { argument ->
