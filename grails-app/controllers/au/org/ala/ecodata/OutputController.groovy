@@ -98,4 +98,14 @@ class OutputController {
             render( status: 404, text: 'Not found');
         }
     }
+
+    /**
+     * Get unique id associated with ecodata server seed.
+     *
+     * @return uuid
+     */
+    def getOutputSpeciesUUID(){
+        Map results = [outputSpeciesId: UUID.randomUUID().toString()]
+        render text: results as JSON, contentType: 'application/json'
+    }
 }
