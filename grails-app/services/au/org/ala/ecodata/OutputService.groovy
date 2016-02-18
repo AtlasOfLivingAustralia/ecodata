@@ -170,7 +170,7 @@ class OutputService {
                 if (existingRecord) {
                     existingRecord.status = Status.ACTIVE
                     Map updateResult = recordService.updateRecord(existingRecord, record)
-                    if (updateResult.updateError) {
+                    if (updateResult) {
                         throw new IllegalArgumentException("Failed to update record: ${record}")
                     }
                 } else {
