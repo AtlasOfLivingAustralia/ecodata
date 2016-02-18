@@ -90,6 +90,7 @@ class ProjectActivityService {
                 break
             case EmbargoOption.DAYS:
                 visibility.embargoOption = EmbargoOption.DAYS
+                visibility.embargoForDays = incomingProperties.visibility?.embargoForDays
                 visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
                 break
             case EmbargoOption.DATE:

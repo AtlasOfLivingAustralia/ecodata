@@ -14,7 +14,7 @@ class VisibilityConstraint {
     Date embargoUntil // either the user-entered date when EmbargoOption.DATE is used, OR the calculated date when EmbargoOption.DAYS is used
 
     static constraints = {
-        embargoForDays nullable: true
+        embargoForDays nullable: true, min: 1, max: 180
         embargoOption nullable: true
         embargoUntil nullable: true
     }
