@@ -32,13 +32,15 @@ class ProjectXlsExporter extends ProjectExporter {
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
-    AdditionalSheet activitiesSheet
     AdditionalSheet outputTargetsSheet
+
+    List<String> tabsToExport
 
     Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
-    public ProjectXlsExporter(XlsExporter exporter, String dateFormat = DATE_CELL_FORMAT) {
+    public ProjectXlsExporter(XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
         this.exporter = exporter
+        this.tabsToExport = tabsToExport
         exporter.setDateCellFormat(dateFormat)
     }
 
@@ -46,71 +48,93 @@ class ProjectXlsExporter extends ProjectExporter {
 
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
-        projectSheet()
-        outputTargetsSheet()
-        sitesSheet()
 
-        int row = projectSheet.getSheet().lastRowNum
-        List states = project.sites?.collect{ it?.extent?.geometry?.state }?.unique()
-        List properties = new ArrayList(projectProperties)
-        states.eachWithIndex { String state, int i ->
-            String key = "state" + i
-            project.put(key, state)
-            properties << key
-        }
-        projectSheet.add([project], properties, row+1)
+        exportProject(project)
+        exportOutputTargets(project)
+        exportSites(project)
+        exportActivities(project, activitiesModel, processor)
+    }
 
-        if (project.outputTargets) {
-            List nonZeroTargets = project.outputTargets.findAll{ it.scoreLabel && it.target && it.target != "0" }
-            List targets = nonZeroTargets.collect {[projectId:project.projectId] << it}
-            row = outputTargetsSheet.getSheet().lastRowNum
-            outputTargetsSheet.add(targets, outputTargetProperties, row+1)
-        }
-
-        if (project.sites) {
-            def sites = project.sites.collect {
-                def centre = it.extent?.geometry?.centre
-                Map props = it.extent?.geometry ?: [:]
-                [siteId:it.siteId, name:it.name, description:it.description, lat:centre?centre[1]:"", lon:centre?centre[0]:"", lastUpdated:it.lastUpdated] + props
-            }
-            row = sitesSheet.getSheet().lastRowNum
-            sitesSheet.add(sites, siteProperties, row+1)
-        }
+    private void exportActivities(Map project, activitiesModel, processor) {
         if (project.activities) {
             project.activities.each { activity ->
 
-                Map commonData = project + activity + [stage:getStage(activity, project)]
-                List activityData = []
-                List activityGetters = []
+                if (tabsToExport && tabsToExport.contains(activity.type)) {
+                    Map commonData = project + activity + [stage: getStage(activity, project)]
+                    List activityData = []
+                    List activityGetters = []
 
-                activityGetters += activityProperties
+                    activityGetters += activityProperties
 
-                Map activityModel = activitiesModel.activities.find{it.name == activity.type}
-                if (activityModel) {
-                    activityModel.outputs?.each {output ->
-                        if (output != 'Photo Points') { // This is legacy data which doesn't display in the spreadsheet
-                            Map config = outputProperties(output)
+                    Map activityModel = activitiesModel.activities.find { it.name == activity.type }
+                    if (activityModel) {
+                        activityModel.outputs?.each { output ->
+                            if (output != 'Photo Points') {
+                                // This is legacy data which doesn't display in the spreadsheet
+                                Map config = outputProperties(output)
 
-                            activityGetters += config.propertyGetters
+                                activityGetters += config.propertyGetters
 
-                            OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output))
-                            Map outputData = activity.outputs?.find { it.name == output }
-                            if (outputData) {
-                                List flatData = processor.flatten(outputData, outputModel, false)
-                                flatData = flatData.collect { it + commonData }
-                                activityData += flatData
+                                OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output))
+                                Map outputData = activity.outputs?.find { it.name == output }
+                                if (outputData) {
+                                    List flatData = processor.flatten(outputData, outputModel, false)
+                                    flatData = flatData.collect { it + commonData }
+                                    activityData += flatData
+                                }
                             }
                         }
-                    }
-                    AdditionalSheet activitySheet = getActivitySheet(activityModel)
-                    int activityRow = activitySheet.sheet.lastRowNum
-                    activitySheet.add(activityData, activityGetters, activityRow+1)
+                        AdditionalSheet activitySheet = getActivitySheet(activityModel)
+                        int activityRow = activitySheet.sheet.lastRowNum
+                        activitySheet.add(activityData, activityGetters, activityRow + 1)
 
-                }
-                else {
-                    log.error("Found activity not in model: "+activity.type)
+                    } else {
+                        log.error("Found activity not in model: " + activity.type)
+                    }
                 }
             }
+        }
+    }
+
+    private void exportSites(Map project) {
+        if (tabsToExport && tabsToExport.contains('Sites')) {
+            sitesSheet()
+            if (project.sites) {
+                def sites = project.sites.collect {
+                    def centre = it.extent?.geometry?.centre
+                    Map props = it.extent?.geometry ?: [:]
+                    [siteId: it.siteId, name: it.name, description: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + props
+                }
+                int row = sitesSheet.getSheet().lastRowNum
+                sitesSheet.add(sites, siteProperties, row + 1)
+            }
+        }
+    }
+
+    private void exportOutputTargets(Map project) {
+        if (tabsToExport && tabsToExport.contains('Output Targets')) {
+            outputTargetsSheet()
+            if (project.outputTargets) {
+                List nonZeroTargets = project.outputTargets.findAll { it.scoreLabel && it.target && it.target != "0" }
+                List targets = nonZeroTargets.collect { [projectId: project.projectId] << it }
+                int row = outputTargetsSheet.getSheet().lastRowNum
+                outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
+            }
+        }
+    }
+
+    private void exportProject(Map project) {
+        if (tabsToExport && tabsToExport.contains('Projects')) {
+            projectSheet()
+            int row = projectSheet.getSheet().lastRowNum
+            List states = project.sites?.collect { it?.extent?.geometry?.state }?.unique()
+            List properties = new ArrayList(projectProperties)
+            states.eachWithIndex { String state, int i ->
+                String key = "state" + i
+                project.put(key, state)
+                properties << key
+            }
+            projectSheet.add([project], properties, row + 1)
         }
     }
 
@@ -149,7 +173,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     AdditionalSheet projectSheet() {
         if (!projectSheet) {
-            projectSheet = exporter.addSheet('Project', projectHeaders)
+            projectSheet = exporter.addSheet('Projects', projectHeaders)
         }
         projectSheet
     }
@@ -159,13 +183,6 @@ class ProjectXlsExporter extends ProjectExporter {
             sitesSheet = exporter.addSheet('Sites', siteHeaders)
         }
         sitesSheet
-    }
-
-    AdditionalSheet activitiesSheet() {
-        if (!activitiesSheet) {
-            activitiesSheet = exporter.addSheet('Activities', commonActivityHeaders)
-        }
-        activitiesSheet
     }
 
     AdditionalSheet outputTargetsSheet() {
