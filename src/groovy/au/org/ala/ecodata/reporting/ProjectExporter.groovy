@@ -58,7 +58,20 @@ abstract class ProjectExporter {
                 ])
             } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail', 'geoMap']) {
                 // not supported, do nothing.
-            } else {
+            } else if (it.dataType == 'stringList') {
+                if (it.constraints) {
+                    it.constraints.each { constraint ->
+                        headers << it.description + ' - ' + constraint
+                        properties << it.name + '['+constraint+']'
+                    }
+
+                }
+                else {
+                    properties << it.name
+                    headers << it.description
+                }
+            }
+            else {
                 properties << it.name
                 headers << it.description
             }

@@ -30,6 +30,7 @@ class ProjectService {
     CollectoryService collectoryService
     WebService webService
     EmailService emailService
+    ReportingService reportingService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -125,6 +126,10 @@ class ProjectService {
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
+                    List<Report> reports = reportingService.findAllForProject(project.projectId)
+                    if (reports) {
+                        mapOfProperties.reports = reports
+                    }
                 } else if (levelOfDetail == OUTPUT_SUMMARY) {
                     mapOfProperties.outputSummary = projectMetrics(project.projectId, false, true)
                 }
