@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
-import au.org.ala.ecodata.metadata.ConstantGetter
+
+import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
@@ -21,12 +22,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate', 'Last Modified']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon', 'state', 'nrm', 'elect', 'lastUpdated']
-    List<String> activityHeaders = ['Project ID','Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = ['projectId', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
+    List<String> commonActivityHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
     List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
     List<String> outputTargetProperties = ['projectId', 'scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
-    List<String> outputHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Site ID']
-    List<String> outputProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId']
 
 
     XlsExporter exporter
@@ -36,7 +35,7 @@ class ProjectXlsExporter extends ProjectExporter {
     AdditionalSheet activitiesSheet
     AdditionalSheet outputTargetsSheet
 
-    Map<String, List<AdditionalSheet>> outputSheets = [:]
+    Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
     public ProjectXlsExporter(XlsExporter exporter, String dateFormat = DATE_CELL_FORMAT) {
         this.exporter = exporter
@@ -50,7 +49,6 @@ class ProjectXlsExporter extends ProjectExporter {
         projectSheet()
         outputTargetsSheet()
         sitesSheet()
-        activitiesSheet()
 
         int row = projectSheet.getSheet().lastRowNum
         List states = project.sites?.collect{ it?.extent?.geometry?.state }?.unique()
@@ -79,39 +77,74 @@ class ProjectXlsExporter extends ProjectExporter {
             sitesSheet.add(sites, siteProperties, row+1)
         }
         if (project.activities) {
-
-            def outputsByType = [:].withDefault { [] }
-
-            row = activitiesSheet.getSheet().lastRowNum
-            activitiesSheet.add(project.activities, activityProperties, row+1)
-
             project.activities.each { activity ->
-                activity?.outputs?.each { output ->
-                    def outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
-                    outputsByType[output.name] += processor.flatten(output, outputModel )
+
+                Map commonData = project + activity + [stage:getStage(activity, project)]
+                List activityData = []
+                List activityGetters = []
+
+                activityGetters += activityProperties
+
+                Map activityModel = activitiesModel.activities.find{it.name == activity.type}
+                if (activityModel) {
+                    activityModel.outputs?.each {output ->
+                        if (output != 'Photo Points') { // This is legacy data which doesn't display in the spreadsheet
+                            Map config = outputProperties(output)
+
+                            activityGetters += config.propertyGetters
+
+                            OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output))
+                            Map outputData = activity.outputs?.find { it.name == output }
+                            if (outputData) {
+                                List flatData = processor.flatten(outputData, outputModel, false)
+                                flatData = flatData.collect { it + commonData }
+                                activityData += flatData
+                            }
+                        }
+                    }
+                    AdditionalSheet activitySheet = getActivitySheet(activityModel)
+                    int activityRow = activitySheet.sheet.lastRowNum
+                    activitySheet.add(activityData, activityGetters, activityRow+1)
+
                 }
-            }
-
-            outputsByType.each { outputName, data ->
-                def config = outputProperties(outputName)
-                if (config.headers) {
-                    def expandedHeaders = outputHeaders + config.headers
-                    if (!outputSheets[outputName]) {
-                        outputSheets[outputName] = exporter.addSheet(outputName, expandedHeaders)
-                    }
-                    AdditionalSheet outputSheet = outputSheets[outputName]
-                    row = outputSheet.sheet.lastRowNum
-
-
-                    List getters = outputProperties + config.propertyGetters
-                    List expandedData = data.collect{ Map dataRow ->
-                        Map activity = project.activities.find {it.activityId == dataRow.activityId}
-                        return dataRow + project + [siteId:activity.siteId]
-                    }
-                    outputSheet.add(expandedData, getters, row+1)
+                else {
+                    log.error("Found activity not in model: "+activity.type)
                 }
             }
         }
+    }
+
+    String getStage(Map activity, project) {
+        Date activityEndDate = activity.plannedEndDate
+
+        if (!activityEndDate) {
+            log.error("No end date for activity: ${activity.activityId}, project: ${project.projectId}")
+            return ''
+        }
+
+        Report report = project.reports?.find { it.fromDate.getTime() < activityEndDate.getTime() && it.toDate.getTime() >= activityEndDate.getTime() }
+
+        report ? report.name : ''
+    }
+
+    AdditionalSheet getActivitySheet(Map activityModel) {
+        String activityType = activityModel.name
+        if (!typedActivitySheets[activityType]) {
+            List<String> headers = buildActivityHeaders(activityModel)
+            typedActivitySheets[activityType] = exporter.addSheet(activityType, headers)
+        }
+        typedActivitySheets[activityType]
+    }
+
+    List<String> buildActivityHeaders(Map activityModel) {
+        List<String> activityHeaders = [] + commonActivityHeaders
+
+        activityModel.outputs?.each { output ->
+            Map config = outputProperties(output)
+            activityHeaders += config.headers
+        }
+
+        activityHeaders
     }
 
     AdditionalSheet projectSheet() {
@@ -130,7 +163,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     AdditionalSheet activitiesSheet() {
         if (!activitiesSheet) {
-            activitiesSheet = exporter.addSheet('Activities', activityHeaders)
+            activitiesSheet = exporter.addSheet('Activities', commonActivityHeaders)
         }
         activitiesSheet
     }

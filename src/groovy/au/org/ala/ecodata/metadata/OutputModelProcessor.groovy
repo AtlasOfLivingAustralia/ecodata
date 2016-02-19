@@ -83,6 +83,7 @@ class OutputModelProcessor {
                 processor.booleanType(node, context)
                 break;
             case 'lookupRange':
+            case 'lookupByDiscreteValues': // These types exist in data but are not supported.
                 break; // do nothing
             case 'document':
                 processor.document(node, context)
@@ -99,32 +100,36 @@ class OutputModelProcessor {
      * If the output contains more than one set of nested properties, the number of items returned will
      * be the sum of the nested properties - any particular row will only contain values from one of the
      * nested rows.
-     * @param output
+     * @param output the data to flatten
+     * @param outputMetadata description of the output to flatten
+     * @param duplicationNonNestedValues true if each item in the returned list contains all of the non-nested data in the output
      */
-    List flatten(output, outputMetadata) {
+    List flatten(Map output, OutputMetadata outputMetadata, boolean duplicateNonNestedValues = true) {
 
         List rows = []
 
-        def flat = output.remove('data') + output
-
-        def nested = outputMetadata.getNestedPropertyNames()
-        if (nested) {
-            def nestedValues = [:]
-            nested.each { property ->
-                nestedValues << [(property):flat.remove(property)]
-            }
-
-            nestedValues.each { key, value ->
-                value.each { row ->
-                    rows << (row + flat)
-                }
-            }
-
+        def flat = output.data
+        if (duplicateNonNestedValues) {
+            flat += output
         }
-        else {
+        def nested = outputMetadata.getNestedPropertyNames()
+        if (!nested || !duplicateNonNestedValues) {
             rows << flat
         }
+        if (nested) {
+            nested.each { property ->
+                Collection nestedData = flat.remove(property)
+                nestedData.each { row ->
+                    if (duplicateNonNestedValues) {
+                        rows << (row + flat)
+                    }
+                    else {
+                        rows << row
+                    }
 
+                }
+            }
+        }
         rows
     }
 

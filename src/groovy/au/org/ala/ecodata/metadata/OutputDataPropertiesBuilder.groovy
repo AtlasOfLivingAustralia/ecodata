@@ -5,10 +5,16 @@ import pl.touk.excel.export.getters.Getter
 class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
 
     private String[] nameParts
+    private String constraint
     private List outputDataModel
 
     public OutputDataPropertiesBuilder(String name, outputDataModel) {
+        if (name.endsWith(']')) {
+            constraint = name.substring(name.indexOf('[')+1, name.indexOf(']'))
+            name = name.substring(0, name.indexOf('['))
+        }
         this.nameParts = name.tokenize('.');
+
         this.outputDataModel = outputDataModel;
     }
 
@@ -68,7 +74,12 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     def stringList(Object node, Value outputValue) {
         def val = outputValue.value
         if (val instanceof List) {
-            val = val.join(',')
+            if (constraint) {
+                val = val.contains(constraint) ? constraint : ''
+            }
+            else {
+                val = val.join(',')
+            }
         }
         return val ?: ""
     }

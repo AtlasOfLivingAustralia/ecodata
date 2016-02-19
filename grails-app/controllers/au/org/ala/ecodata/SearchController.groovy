@@ -301,7 +301,8 @@ class SearchController {
     private XlsExporter exportMeritProjectsToXls(Set<String> projectIds) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter("results")
+        File file = File.createTempFile("download", "xlsx")
+        XlsExporter xlsExporter = new XlsExporter(file.name)
 
         ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter)
 

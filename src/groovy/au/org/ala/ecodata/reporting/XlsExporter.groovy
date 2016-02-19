@@ -6,7 +6,7 @@ import org.apache.poi.ss.usermodel.Font
 import org.apache.poi.ss.usermodel.IndexedColors
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
-import pl.touk.excel.export.WebXlsxExporter
+import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 import javax.servlet.http.HttpServletResponse
@@ -14,12 +14,13 @@ import javax.servlet.http.HttpServletResponse
 /**
  * Does basic header styling for an Xls spreadsheet.
  */
-class XlsExporter extends WebXlsxExporter {
+class XlsExporter extends XlsxExporter {
 
     static final int MAX_SHEET_NAME_LENGTH = 31
     def fileName
 
     public XlsExporter(fileName) {
+        super(fileName)
         this.fileName = fileName
     }
 
@@ -60,8 +61,8 @@ class XlsExporter extends WebXlsxExporter {
         headerStyle(getWorkbook())
     }
 
-    WebXlsxExporter setResponseHeaders(HttpServletResponse response) {
-        super.setResponseHeaders(response, fileName + filenameSuffix)
+    XlsExporter setResponseHeaders(HttpServletResponse response) {
+        setHeaders(response, fileName + filenameSuffix)
         this
     }
 
@@ -78,5 +79,11 @@ class XlsExporter extends WebXlsxExporter {
         }
 
 
+    }
+
+    private XlsExporter setHeaders(HttpServletResponse response, def filename) {
+        response.setHeader("Content-disposition", "attachment; filename=$filename;")
+        response.setHeader("Content-Type", "application/vnd.ms-excel")
+        this
     }
 }
