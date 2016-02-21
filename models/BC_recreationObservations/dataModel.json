@@ -62,7 +62,7 @@
             "validate": "min[1]"
         },
         {
-            "dataType": "text",
+            "dataType": "image",
             "name": "photo",
             "description": "Upload a photo taken of the farming activity at the time of the record."
         }
@@ -122,7 +122,7 @@
                             "preLabel": "Upload photo",
                             "computed": null,
                             "source": "photo",
-                            "type": "text"
+                            "type": "image"
                         }
                     ]
                 },

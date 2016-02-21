@@ -1,171 +1,168 @@
 {
-  "modelName": "Community Grants Administration",
-  "dataModel": [
-    {
-      "dataType": "text",
-      "name": "expressionOfInterestReceived",
-      "description": "",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "name": "numberOfExpressionsOfInterestReceived",
-      "description": ""
-    },
-    {
-      "dataType": "list",
-      "name": "grantsAwardedByCategory",
-      "description":"",
-      "columns":[
+    "modelName": "Community Grants Administration",
+    "dataModel": [
         {
-          "dataType":"number",
-          "name":"numberOfGrantsAwarded",
-          "description":""
-        },
-        {
-          "dataType":"text",
-          "name":"granteeCategory",
-          "description":""
-        },
-        {
-          "dataType":"number",
-          "name":"totalFunding",
-          "description":""
-
-        }],
-        "defaultRows":[
-          {
-            "numberOfGrantsAwarded":"0",
-            "granteeCategory":"Community groups funded",
-            "totalFunding":"0"
-          },
-          {
-            "numberOfGrantsAwarded":"0",
-            "granteeCategory":"Farm/Fishing business funded",
-            "totalFunding":"0"
-          },
-          {
-            "numberOfGrantsAwarded": "0",
-            "granteeCategory": "Individual funded",
-            "totalFunding": "0"
-          },
-          {
-            "numberOfGrantsAwarded":"0",
-            "granteeCategory":"Schools funded",
-            "totalFunding":"0"
-          }
-        ]
-    },
-    {
-      "dataType":"number",
-      "name":"numberOfIndigenousGrantees",
-      "description":""
-    },
-    {
-      "dataType":"text",
-      "name":"notes",
-      "description":""
-    }
-
-  ],
-  "viewModel": [
-    {
-      "type": "row",
-      "items": [{
-        "computed": null,
-        "source": "Is this the 1st use of the Community Grants form for this project? If not, ensure data provided has not been provided in earlier reporting periods.",
-        "type": "literal"
-      }]
-    },
-    {
-      "type": "row",
-      "class":"output-section",
-      "items": [{
-        "computed": null,
-        "type": "col",
-        "items": [{
-          "preLabel": "In this reporting period, has there been an expression of interest process for awarding Community Grants? ",
-          "computed": null,
-          "width": "95%",
-          "source": "expressionOfInterestReceived",
-          "type": "selectOne"
-        },
-        {
-          "preLabel": "\t If yes, how many EOI were received",
-          "computed": null,
-          "width": "95%",
-          "source": "numberOfExpressionsOfInterestReceived",
-          "type": "number"
-        }]
-      }]
-
-    },
-    {
-      "type": "row",
-      "class":"output-section",
-      "items": [
-        {
-        "computed": null,
-        "type": "col",
-        "items": [
-          {
-            "type":"literal",
-            "source":"In this reporting period, how many Community Grants were awarded and what was the total value of the grants?"
-          },
-          {
-            "allowHeaderWrap": "true",
-            "computed": null,
-            "columns": [
-              {
-                "title":"Number of grants awarded",
-                "width": "20%",
-                "source": "numberOfGrantsAwarded",
-                "type": "number"
-              },
-              {
-                "width": "60%",
-                "source": "granteeCategory",
-                "title": "",
-                "type": "text",
-                "readOnly":true
-              },
-              {
-                "title":"Funded amount ($)",
-                "width": "20%",
-                "source": "totalFunding",
-                "type": "number"
-              }
+            "dataType": "text",
+            "name": "expressionOfInterestReceived",
+            "description": "",
+            "constraints": [
+                "Yes",
+                "No"
             ],
-            "userAddedRows": false,
-            "source": "grantsAwardedByCategory",
-            "title": "In this reporting period, how many Community Grants were awarded and what was the total value of the grants?",
-            "type": "table"
-          },
-          {
-          "preLabel": "Of these grantees, how many were identified as Indigenous?",
-          "computed": null,
-          "width": "95%",
-          "source": "numberOfIndigenousGrantees",
-          "type": "number"
-        }]
-      }]
-
-    },
-    {
-      "type": "row",
-      "class":"output-section",
-      "items": [{
-          "preLabel": "Notes / Comments",
-          "computed": null,
-          "source": "notes",
-          "type": "textarea"
-        }]
-      }]
-
-    }
-  ]
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfExpressionsOfInterestReceived",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberOfGrantsAwarded",
+                    "description": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "granteeCategory",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "totalFunding",
+                    "description": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "grantsAwardedByCategory",
+            "description": "",
+            "defaultRows": [
+                {
+                    "numberOfGrantsAwarded": "0",
+                    "granteeCategory": "Community groups funded",
+                    "totalFunding": "0"
+                },
+                {
+                    "numberOfGrantsAwarded": "0",
+                    "granteeCategory": "Farm/Fishing business funded",
+                    "totalFunding": "0"
+                },
+                {
+                    "numberOfGrantsAwarded": "0",
+                    "granteeCategory": "Individual funded",
+                    "totalFunding": "0"
+                },
+                {
+                    "numberOfGrantsAwarded": "0",
+                    "granteeCategory": "Schools funded",
+                    "totalFunding": "0"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfIndigenousGrantees",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Is this the 1st use of the Community Grants form for this project? If not, ensure data provided has not been provided in earlier reporting periods.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [{
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "In this reporting period, has there been an expression of interest process for awarding Community Grants? ",
+                        "computed": null,
+                        "width": "95%",
+                        "source": "expressionOfInterestReceived",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "\t If yes, how many EOI were received",
+                        "computed": null,
+                        "width": "95%",
+                        "source": "numberOfExpressionsOfInterestReceived",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [{
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "source": "In this reporting period, how many Community Grants were awarded and what was the total value of the grants?",
+                        "type": "literal"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "computed": null,
+                        "columns": [
+                            {
+                                "width": "20%",
+                                "source": "numberOfGrantsAwarded",
+                                "title": "Number of grants awarded",
+                                "type": "number"
+                            },
+                            {
+                                "width": "60%",
+                                "readOnly": true,
+                                "source": "granteeCategory",
+                                "title": "",
+                                "type": "text"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "totalFunding",
+                                "title": "Funded amount ($)",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": false,
+                        "source": "grantsAwardedByCategory",
+                        "title": "In this reporting period, how many Community Grants were awarded and what was the total value of the grants?",
+                        "type": "table"
+                    },
+                    {
+                        "preLabel": "Of these grantees, how many were identified as Indigenous?",
+                        "computed": null,
+                        "width": "95%",
+                        "source": "numberOfIndigenousGrantees",
+                        "type": "number"
+                    }
+                ]
+            }]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [{
+                "preLabel": "Notes / Comments",
+                "computed": null,
+                "source": "notes",
+                "type": "textarea"
+            }]
+        }
+    ]
 }
