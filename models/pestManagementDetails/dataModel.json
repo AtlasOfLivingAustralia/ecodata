@@ -121,7 +121,7 @@
                     "dwcAttribute": "individualCount",
                     "name": "pestAnimalsTreatedNo",
                     "description": "Number of target pest animals or colonies of insects removed during this activity",
-                    "validate": "required"
+                    "validate": "required,integer,min[0]"
                 },
                 {
                     "dataType": "boolean",

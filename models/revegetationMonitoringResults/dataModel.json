@@ -58,7 +58,7 @@
                     "dwcAttribute": "individualCount",
                     "name": "numberSurviving",
                     "description": "The number of individual seedlings surviving at the time of this survey",
-                    "validate": "required"
+                    "validate": "required,integer,min[0]"
                 },
                 {
                     "dataType": "number",
