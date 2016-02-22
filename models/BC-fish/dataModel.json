@@ -89,7 +89,7 @@
             "name": "individualCount",
             "dwcAttribute": "individualCount",
             "description": "The number of individuals seen.",
-            "validate": "min[1]"
+            "validate": "integer,min[1]"
         },
         {
             "dataType": "text",

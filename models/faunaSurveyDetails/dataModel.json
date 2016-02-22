@@ -25,7 +25,8 @@
                     "dataType": "number",
                     "dwcAttribute": "individualCount",
                     "name": "numberOfOrganisms",
-                    "description": "The number of organisms in the survey at the sample site which share the same set of record attributes."
+                    "description": "The number of organisms in the survey at the sample site which share the same set of record attributes.",
+                    "validate": "integer,min[0]"
                 },
                 {
                     "dataType": "text",
