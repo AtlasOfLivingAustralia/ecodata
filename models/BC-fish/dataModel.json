@@ -166,7 +166,7 @@
                             "preLabel": "Survey start time",
                             "computed": null,
                             "source": "surveyStartTime",
-                            "type": "text"
+                            "type": "time"
                         },
                         {
                             "preLabel": "Notes",
