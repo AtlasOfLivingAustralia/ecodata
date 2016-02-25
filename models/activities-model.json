@@ -3086,6 +3086,16 @@
             "name": "Basin Champions - Farming Observations"
         },
         {
+            "template": "BC_debrisRemoval",
+            "scores": [],
+            "name": "Debris Removal Survey"
+        },
+        {
+            "template": "BC-invertebrates",
+            "scores": [],
+            "name": "Aquatic Macro-invertebrates (SIGNAL2 method)"
+        },
+        {
             "template": "BC-iconicSpecies",
             "scores": [],
             "name": "Basin Champions - Iconic Species"
