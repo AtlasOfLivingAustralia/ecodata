@@ -89,7 +89,7 @@
             "name": "individualCount",
             "dwcAttribute": "individualCount",
             "description": "The number of individuals seen.",
-            "validate": "min[1]"
+            "validate": "integer,min[1]"
         },
         {
             "dataType": "text",
@@ -129,7 +129,7 @@
             ]
         },
         {
-            "dataType": "text",
+            "dataType": "image",
             "name": "sightingPhoto",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
             "validate": "required"
@@ -230,7 +230,7 @@
                             "preLabel": "Sighting photo",
                             "computed": null,
                             "source": "sightingPhoto",
-                            "type": "text"
+                            "type": "image"
                         }
                     ]
                 },

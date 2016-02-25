@@ -3086,6 +3086,16 @@
             "name": "Basin Champions - Farming Observations"
         },
         {
+            "template": "BC_debrisRemoval",
+            "scores": [],
+            "name": "Debris Removal Survey"
+        },
+        {
+            "template": "BC-invertebrates",
+            "scores": [],
+            "name": "Aquatic Macro-invertebrates (SIGNAL2 method)"
+        },
+        {
             "template": "BC-iconicSpecies",
             "scores": [],
             "name": "Basin Champions - Iconic Species"
@@ -3107,34 +3117,26 @@
         }
     ],
     "selectedActivity": {
-        "outputs": [
-            "Upload of stage 1 and 2 reporting data"
-        ],
-        "outputConfig": [
-            {
-                "outputName": "Upload of stage 1 and 2 reporting data",
-                "optional": false,
-                "collapsedByDefault": false
-            }
-        ],
-        "gmsId": "",
-        "name": "Upload of stage 1 and 2 reporting data",
-        "type": "Activity",
-        "category": "None",
-        "status": "deleted"
+        "outputs": ["Basin Champions - Water Quality Monitoring"],
+        "supportsPhotoPoints": false,
+        "outputConfig": [{
+            "outputName": "Basin Champions - Water Quality Monitoring",
+            "optional": false,
+            "collapsedByDefault": false
+        }],
+        "name": "Basin Champions - Water quality monitoring",
+        "supportsSites": false,
+        "type": "Assessment",
+        "category": "Assessment & monitoring"
     },
     "activities": [
         {
-            "outputs": [
-                "Biodiversity Fund Outcomes & Monitoring Methodology"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
+            "outputConfig": [{
+                "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
             "status": "deleted"
@@ -3454,16 +3456,12 @@
             "category": "Administration, management & reporting"
         },
         {
-            "outputs": [
-                "Indigenous Knowledge Transfer Details"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Indigenous Knowledge Transfer Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Indigenous Knowledge Transfer Details"],
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "IKM IKT",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
@@ -3492,16 +3490,12 @@
             "category": "Implementation actions"
         },
         {
-            "outputs": [
-                "Management Practice Change Details"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Management Practice Change Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Management Practice Change Details"],
+            "outputConfig": [{
+                "outputName": "Management Practice Change Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "MPC MPCFE MPCSP",
             "name": "Management Practice Change",
             "supportsSites": true,
@@ -3806,16 +3800,12 @@
             "category": "Implementation actions"
         },
         {
-            "outputs": [
-                "Planned Monitoring Approach"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Planned Monitoring Approach",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Planned Monitoring Approach"],
+            "outputConfig": [{
+                "outputName": "Planned Monitoring Approach",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Site Monitoring Plan",
             "supportsSites": true,
             "type": "Activity",
@@ -3882,16 +3872,12 @@
             "category": "Training"
         },
         {
-            "outputs": [
-                "Water Management Details"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Water Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Water Management Details"],
+            "outputConfig": [{
+                "outputName": "Water Management Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "WMA WMN",
             "name": "Water Management",
             "supportsSites": true,
@@ -4109,33 +4095,25 @@
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [
-                "BioCondition Method"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "BioCondition Method",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["BioCondition Method"],
+            "outputConfig": [{
+                "outputName": "BioCondition Method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Floristic Composition"
-            ],
+            "outputs": ["Floristic Composition"],
             "supportsPhotoPoints": true,
-            "outputConfig": [
-                {
-                    "outputName": "Floristic Composition",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "supportsSites": true,
             "type": "Assessment",
@@ -4175,49 +4153,37 @@
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [
-                "Floristic Composition"
-            ],
+            "outputs": ["Floristic Composition"],
             "supportsPhotoPoints": true,
-            "outputConfig": [
-                {
-                    "outputName": "Floristic Composition",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "supportsSites": true,
             "type": "Assessment",
             "status": "deleted"
         },
         {
-            "outputs": [
-                "TasVeg Native Vegetation Assessment Method - Forest Vegetation"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "TasVeg Native Vegetation Assessment Method - Forest Vegetation",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"],
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "TasVeg - Native Vegetation Assessment - Forest Vegetation",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "status": "active"
         },
         {
-            "outputs": [
-                "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"],
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -4434,16 +4400,12 @@
             "status": "active"
         },
         {
-            "outputs": [
-                "Upload of stage 1 and 2 reporting data"
-            ],
-            "outputConfig": [
-                {
-                    "outputName": "Upload of stage 1 and 2 reporting data",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputs": ["Upload of stage 1 and 2 reporting data"],
+            "outputConfig": [{
+                "outputName": "Upload of stage 1 and 2 reporting data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "",
             "name": "Upload of stage 1 and 2 reporting data",
             "type": "Activity",
@@ -4451,17 +4413,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Monthly Status Report Data"
-            ],
+            "outputs": ["Monthly Status Report Data"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Monthly Status Report Data",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Monthly Status Report Data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Monthly project status report",
             "supportsSites": false,
             "type": "Report",
@@ -4469,17 +4427,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Three Monthly Report"
-            ],
+            "outputs": ["Three Monthly Report"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Three Monthly Report",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Three Monthly Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Quarterly project report",
             "supportsSites": false,
             "type": "Report",
@@ -4487,17 +4441,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "End of Project Report Details"
-            ],
+            "outputs": ["End of Project Report Details"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "End of Project Report Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "End of Project Report Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - End of Project Report",
             "supportsSites": false,
             "type": "Report",
@@ -4505,17 +4455,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Desktop Audit Checklist Details"
-            ],
+            "outputs": ["Desktop Audit Checklist Details"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Desktop Audit Checklist Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Desktop Audit Checklist Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Desktop Audit Checklist",
             "supportsSites": false,
             "type": "Report",
@@ -4523,17 +4469,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Change or Absence of Team Supervisor Report"
-            ],
+            "outputs": ["Change or Absence of Team Supervisor Report"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Change or Absence of Team Supervisor Report",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Change or Absence of Team Supervisor Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Change or Absence of Team Supervisor",
             "supportsSites": false,
             "type": "Report",
@@ -4541,17 +4483,13 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Site Visit Details"
-            ],
+            "outputs": ["Site Visit Details"],
             "supportsPhotoPoints": false,
-            "outputConfig": [
-                {
-                    "outputName": "Site Visit Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
+            "outputConfig": [{
+                "outputName": "Site Visit Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Site Visit Checklist",
             "supportsSites": false,
             "type": "Report",
@@ -4560,12 +4498,22 @@
         },
         {
             "outputs": ["Single Sighting"],
+            "outputConfig": [{
+                "outputName": "Single Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Single Sighting",
             "type": "Activity",
             "category": "Assessment & monitoring"
         },
         {
             "outputs": ["Multiple species sightings"],
+            "outputConfig": [{
+                "outputName": "Multiple species sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Multiple Sightings",
             "type": "Activity",
             "category": "Assessment & monitoring"
@@ -4573,6 +4521,11 @@
         {
             "outputs": ["Basin Champions - Water Quality Monitoring"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Water Quality Monitoring",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Water quality monitoring",
             "supportsSites": false,
             "type": "Assessment",
@@ -4580,6 +4533,11 @@
         },
         {
             "outputs": ["Basin Champions - Iconic Species"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Iconic Species",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Iconic species observations",
             "supportsSites": false,
             "type": "Assessment",
@@ -4587,6 +4545,11 @@
         },
         {
             "outputs": ["Basin Champions - Fish sightings"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Fish sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Fish sightings",
             "supportsSites": false,
             "type": "Assessment",
@@ -4594,6 +4557,11 @@
         },
         {
             "outputs": ["Aquatic Macro-invertebrates (SIGNAL2 method)"],
+            "outputConfig": [{
+                "outputName": "Aquatic Macro-invertebrates (SIGNAL2 method)",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Aquatic insects",
             "supportsSites": false,
             "type": "Assessment",
@@ -4601,6 +4569,11 @@
         },
         {
             "outputs": ["Basin Champions - Recreation Observations"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Recreation Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Recreation",
             "supportsSites": false,
             "type": "Assessment",
@@ -4608,6 +4581,11 @@
         },
         {
             "outputs": ["Basin Champions - Farming Observations"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Farming Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Farming",
             "supportsSites": false,
             "type": "Assessment",
@@ -4615,6 +4593,11 @@
         },
         {
             "outputs": ["Debris Removal Survey"],
+            "outputConfig": [{
+                "outputName": "Debris Removal Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Debris removal",
             "supportsSites": false,
             "type": "Assessment",
@@ -4622,11 +4605,21 @@
         },
         {
             "outputs": ["Indigenous Knowledge Transfer Details"],
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Indigenous knowledge transfer",
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
+            "outputs": [
+                "1. Community Grants Administration",
+                "2. Community Grants Reporting",
+                "Attachments"
+            ],
             "outputConfig": [
                 {
                     "outputName": "Community Grants Administration",
@@ -4654,14 +4647,9 @@
                     "collapsedByDefault": false
                 }
             ],
-            "category": "Community Grants",
             "name": "Community Grants",
             "type": "Activity",
-            "outputs": [
-                "1. Community Grants Administration",
-                "2. Community Grants Reporting",
-                "Attachments"
-            ]
+            "category": "Community Grants"
         }
     ]
 }

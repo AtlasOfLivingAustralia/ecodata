@@ -55,7 +55,7 @@
             "name": "individualCount1",
             "dwcAttribute": "individualCount",
             "description": "The number of individuals or colonies (for certain insects).",
-            "validate": "min[0]"
+            "validate": "integer,min[0]"
         },
         {
             "dataType": "text",
@@ -107,7 +107,7 @@
             ]
         },
         {
-            "dataType": "text",
+            "dataType": "image",
             "name": "sightingPhoto1",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
             "validate": "required"
@@ -125,7 +125,7 @@
                     "name": "individualCount2",
                     "dwcAttribute": "individualCount",
                     "description": "The number of individuals or colonies (for certain insects).",
-                    "validate": "min[0]"
+                    "validate": "integer,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -177,7 +177,7 @@
                     ]
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "image",
                     "name": "sightingPhoto2",
                     "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
                 }
@@ -286,7 +286,7 @@
                             "preLabel": "Sighting photo",
                             "computed": null,
                             "source": "sightingPhoto1",
-                            "type": "text"
+                            "type": "image"
                         }
                     ]
                 },
@@ -366,7 +366,7 @@
                         "width": "19%",
                         "source": "sightingPhoto2",
                         "title": "Species photo",
-                        "type": "text"
+                        "type": "imageDialog"
                     },
                     {
                         "width": "10%",

@@ -14,12 +14,9 @@
  */
 
 package au.org.ala.ecodata
-
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.apache.commons.validator.routines.UrlValidator
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
@@ -27,12 +24,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.index.query.BoolFilterBuilder
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.FilteredQueryBuilder
-import org.elasticsearch.index.query.GeoShapeFilterBuilder
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.*
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -47,13 +39,12 @@ import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import static org.elasticsearch.index.query.FilterBuilders.*
+import static au.org.ala.ecodata.ElasticIndex.*
+import static au.org.ala.ecodata.Status.*
+import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-import static au.org.ala.ecodata.Status.*
-import static au.org.ala.ecodata.ElasticIndex.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -385,21 +376,17 @@ class ElasticSearchService {
                 projectMap["className"] = docType
                 doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
+                if(projectMap.siteId){
+                    indexDocType(projectMap.siteId, Site.class.name)
+                }
+
                 break;
             case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
+                siteMap = prepareSiteForIndexing(siteMap, true)
                 indexDoc(siteMap, DEFAULT_INDEX)
-                // update linked projects -- index for homepage
-                doc.projects.each { // assume list of Strings (ids)
-                    def pDoc = Project.findByProjectId(it)
-                    if (pDoc) {
-                        indexHomePage(pDoc, "au.org.ala.ecodata.Project")
-                    } else {
-                        log.warn "Project not found for id: ${it}"
-                    }
-                }
                 break;
 
             case Record.class.name:
@@ -422,6 +409,10 @@ class ElasticSearchService {
                 if (pDoc) {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
+
+                if(activity.siteId){
+                    indexDocType(activity.siteId, Site.class.name)
+                }
                 break
             case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
@@ -439,6 +430,53 @@ class ElasticSearchService {
                 }
                 break
         }
+    }
+
+    /**
+     * Add additional data to site for indexing purposes. eg. project, photo point, survey name etc.
+     * @param siteMap
+     * @param indexNestedDocuments
+     * @return
+     */
+    private Map prepareSiteForIndexing(Map siteMap, Boolean indexNestedDocuments) {
+        List projects = [], surveys = [], surveysForProject
+        Map project, photoPoints
+        siteMap.projects.each { // assume list of Strings (ids)
+            def pDoc = Project.findByProjectId(it)
+            if (pDoc) {
+                if(indexNestedDocuments){
+                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                }
+
+                project = projectService.toMap(pDoc, LevelOfDetail.flat)
+                projects.push([
+                        projectName: project.name,
+                        projectId  : project.projectId
+                ])
+
+                surveysForProject = projectActivityService.getAllByProject(project.projectId);
+                surveys.addAll(surveysForProject.collect {
+                    [
+                            surveyName       : it.name,
+                            projectActivityId: it.projectActivityId
+                    ]
+                })
+
+            } else {
+                log.warn "Project not found for id: ${it}"
+            }
+        }
+
+        siteMap.projectList = projects;
+        siteMap.surveyList = surveys
+
+        // check for photo points
+        photoPoints = documentService.search([siteId:siteMap.siteId, type:'image', role:'photoPoint'])
+        if(photoPoints?.count > 0){
+            siteMap.photoType = 'photoPoint'
+        }
+
+        siteMap
     }
 
     /**
@@ -568,6 +606,7 @@ class ElasticSearchService {
         sites.each {
             def siteMap = siteService.toMap(it, "flat")
             siteMap["className"] = new Site().getClass().name
+            siteMap = prepareSiteForIndexing(siteMap, false)
             indexDoc(siteMap, DEFAULT_INDEX)
         }
 
@@ -597,6 +636,10 @@ class ElasticSearchService {
         if (results && results.documents) {
             organisation.logoUrl = results.documents[0].thumbnailUrl
         }
+
+        // get list of users of this organisation
+        List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
+        organisation.users = users;
     }
 
     /**
@@ -612,6 +655,7 @@ class ElasticSearchService {
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };

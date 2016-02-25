@@ -105,6 +105,9 @@ class DocumentService {
         urlImage
     }
 
+    String getLogoAttributionForProjectId(String id){
+        Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE)?.attribution
+    }
 
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
@@ -415,6 +418,20 @@ class DocumentService {
             it.role in MOBILE_APP_ROLE;
         }
         isMobileApp;
+    }
+
+    /**
+     * Remove necessary properties from a document that is embargoed.
+     * @param doc
+     * @return doc
+     */
+    public Map embargoDocument (Map doc){
+        List blackListProps = ['thumbnailUrl','url','dataTaken','attribution','notes','filename','filepath','documentId']
+        doc.isEmbargoed = true;
+        blackListProps.each { item ->
+            doc.remove(item)
+        }
+        doc
     }
 
 }

@@ -290,7 +290,7 @@ class SearchController {
                 render projects as JSON
             }
             xlsx {
-                XlsExporter exporter = exportMeritProjectsToXls(ids)
+                XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
 
                 exporter.setResponseHeaders(response)
                 exporter.save(response.outputStream)
@@ -298,12 +298,13 @@ class SearchController {
         }
     }
 
-    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds) {
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter("results")
+        File file = File.createTempFile("download", "xlsx")
+        XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter, tabsToExport)
 
         Project.withSession { session ->
             int batchSize = 50

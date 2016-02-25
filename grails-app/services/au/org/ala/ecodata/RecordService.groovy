@@ -30,6 +30,7 @@ class RecordService {
     SiteService siteService
     AuthService authService
     UserService userService
+    RecordAlertService recordAlertService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -136,6 +137,33 @@ class RecordService {
             ] as String[])
         }
         csvWriter.flush()
+    }
+
+    /**
+     * Updates record status by output id
+     *
+     * @param id output id
+     * @params status record status
+     * @return list of errors.
+     */
+    List updateRecordStatusByOutput(String id, String status = Status.ACTIVE) {
+        List<Record> records = Record.findAllByOutputId(id)
+        List<String> errors
+
+        records?.each { record ->
+            record.status = status
+            try {
+                record.save(flush: true)
+            }
+            catch (Exception e) {
+                Record.withSession { session -> session.clear() }
+                def error = "Error updating record ${record.occurrenceID} - ${e.message}"
+                log.error error
+                errors << [status: 'error', error: error]
+            }
+        }
+
+        errors
     }
 
     /**
@@ -290,6 +318,10 @@ class RecordService {
         } catch (Exception e) {
             log.error(e.getMessage(), e)
             errors['updateError'] = e.getClass().toString() + " " + e.getMessage()
+        }
+
+        if(!errors) {
+            recordAlertService.alertSubscribers(record)
         }
 
         errors

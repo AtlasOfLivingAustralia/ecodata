@@ -8,7 +8,7 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
+            "dataType": "time",
             "name": "eventTime",
             "description": "The time of the day that the activity was undertaken. Enter time as hh:mm"
         },
@@ -93,7 +93,7 @@
             "description": "General comments and notes about the site conditions at the time of the water quality monitoring event."
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterPh",
             "description": "The average pH of the top few centimetres of water at the sampling site",
             "constraints": [
@@ -112,7 +112,7 @@
             "description": "The average electrical conductivity (in microsiemens per centimetre) of the top few centimetres of water at the sampling site"
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterAlkalinity",
             "description": "Measure of the in milligrams per litre of the water at the sampling site",
             "constraints": [
@@ -126,7 +126,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterFreeChlorine",
             "description": "Measure of the amount of free chlorine in parts per million (milligrams per litre) of the water at the sampling site",
             "constraints": [
@@ -140,7 +140,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterTotalChlorine",
             "description": "Measure of the total amount of chlorine (reactive and unreactive components) dissolved in a water sample in parts per million (milligrams per litre)",
             "constraints": [
@@ -154,7 +154,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterHardness",
             "description": "Measure of the amount of dissolved calcium carbonate in parts per million (milligrams per litre)",
             "constraints": [
@@ -167,7 +167,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterIron",
             "description": "Measure of the concentration of iron (Fe ++) in a 100 millilitre sample of water",
             "constraints": [
@@ -179,7 +179,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterCopper",
             "description": "Measure of the concentration of copper (Cu + / Cu ++) in a 100 millilitre sample of water",
             "constraints": [
@@ -191,7 +191,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterNitrites",
             "description": "Measure of the amount of nitrite Nitrogen dissolved in a water sample in parts per million (milligrams per litre).",
             "constraints": [
@@ -203,7 +203,7 @@
             ]
         },
         {
-            "dataType": "number",
+            "dataType": "text",
             "name": "surfaceWaterNitrates",
             "description": "Measure of the amount of nitrates dissolved in a water sample in milligrams per litre",
             "constraints": [
@@ -294,7 +294,7 @@
                             "preLabel": "Activity time:",
                             "computed": null,
                             "source": "eventTime",
-                            "type": "text"
+                            "type": "time"
                         },
                         {
                             "preLabel": "Activity duration (hrs):",
@@ -407,7 +407,7 @@
                             "type": "number"
                         },
                         {
-                            "preLabel": "Freel Chlorine (ppm (mg/L)):",
+                            "preLabel": "Free Chlorine (ppm (mg/L)):",
                             "computed": null,
                             "source": "surfaceWaterFreeChlorine",
                             "type": "selectOne"

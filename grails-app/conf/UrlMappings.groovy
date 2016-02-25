@@ -30,6 +30,11 @@ class UrlMappings {
         "/ws/document/listImages"(controller: "document", action: "listImages")
         "/ws/document/$id/file"(controller: "document", action: "getFile")
 
+        "/ws/site/getImages"( controller: 'site', action: 'getImages')
+        "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
+
+        "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
+
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
             action = 'activitiesForProject'

@@ -180,6 +180,29 @@
             }
           }
         },
+        "projectList":{
+          "properties": {
+            "projectName": {
+              "type": "string",
+              "fields": {
+                "siteProjectNameFacet":{"type":"string", "index":"not_analyzed"}
+              }
+            }
+          }
+        },
+        "surveyList":{
+          "properties": {
+            "surveyName": {
+              "type": "string",
+              "fields": {
+                "siteSurveyNameFacet":{"type":"string", "index":"not_analyzed"}
+              }
+            }
+          }
+        },
+        "photoType":{
+          "type": "string"
+        },
         "activities":{
           "properties":{
             "mainTheme": {

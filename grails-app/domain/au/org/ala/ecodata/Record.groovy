@@ -13,6 +13,7 @@ class Record {
     String projectActivityId
     String activityId
     String occurrenceID
+    String outputSpeciesId  // reference to output species outputSpeciesId.
     String userId
     String eventDate //should be a date in "yyyy-MM-dd" or "2014-11-24T04:55:48+11:00" format
     Double decimalLatitude
@@ -49,5 +50,6 @@ class Record {
         json nullable: true
         outputItemId nullable: true
         status nullable: true
+        outputSpeciesId nullable: true
     }
 }

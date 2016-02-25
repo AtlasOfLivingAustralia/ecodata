@@ -30,6 +30,7 @@ class ProjectService {
     CollectoryService collectoryService
     WebService webService
     EmailService emailService
+    ReportingService reportingService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -68,7 +69,7 @@ class ProjectService {
         if (includeDeleted) {
             list = Project.findAllByIsMERIT(true)
         } else {
-            list = Project.findAllByIsMERITAndStatus(true, ACTIVE)
+            list = Project.findAllByIsMERITAndStatusNotEqual(true, DELETED)
         }
         list.collect { toMap(it, levelOfDetail) }
     }
@@ -125,6 +126,10 @@ class ProjectService {
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
+                    List<Report> reports = reportingService.findAllForProject(project.projectId)
+                    if (reports) {
+                        mapOfProperties.reports = reports
+                    }
                 } else if (levelOfDetail == OUTPUT_SUMMARY) {
                     mapOfProperties.outputSummary = projectMetrics(project.projectId, false, true)
                 }
@@ -411,10 +416,17 @@ class ProjectService {
         projects.collect{toMap(it, levelOfDetail)}
     }
 
-    def updateOrgName(orgId, orgName) {
-        Project.collection.update(
-            [organisationId: orgId],
-            ['$set': [organisationName: orgName]], false, true)
+    /**
+     * Updates the organisation name for all projects with the organisation id.
+     * (The name is stored alongside the id in the project because not all organisations have entries in the database).
+     * @param orgId identifies the organsation that has changed name
+     * @param orgName the new organisation name
+     */
+    void updateOrganisationName(orgId, orgName) {
+        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
+            project.organisationName = orgName
+            project.save()
+        }
     }
 
 }

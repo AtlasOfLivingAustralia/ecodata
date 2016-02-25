@@ -141,7 +141,7 @@
                     "dataType": "number",
                     "name": "individualCount",
                     "description": "Enter the actual number of each species/taxon that you count in your sample.",
-                    "validate": "min[0]"
+                    "validate": "integer,min[0]"
                 },
                 {
                     "dataType": "number",

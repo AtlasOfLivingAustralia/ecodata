@@ -521,6 +521,30 @@ class PermissionsController {
     }
 
     /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#editor editor}
+     * level access or higher for a given list of {@link Project project}
+     *
+     * @return JSON object with projectId as key and edit permission as value
+     */
+    def canUserEditProjects() {
+        String userId = params.userId
+        String [] projectIds = params.projectIds?.split(',')
+
+        if (projectIds?.size()) {
+            try{
+                Map out =  permissionService.isUserEditorForProjects(userId, projectIds)
+                render out as JSON
+            } catch (Exception e){
+                log.error(e.message);
+                log.error(e.stackTrace);
+                render status: 500, text: 'Internal server error'
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: projectIds'
+        }
+    }
+
+    /**
      * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#caseManager caseManager}
      * level access for a given {@link Project project}
      *
