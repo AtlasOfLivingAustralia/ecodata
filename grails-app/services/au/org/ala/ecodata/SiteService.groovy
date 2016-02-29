@@ -6,6 +6,7 @@ import com.mongodb.QueryBuilder
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import org.geotools.geojson.geom.GeometryJSON
+import static au.org.ala.ecodata.Status.*
 
 class SiteService {
 
