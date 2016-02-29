@@ -1,4 +1,8 @@
 package au.org.ala.ecodata
+
+import com.mongodb.DBCursor
+import com.mongodb.DBObject
+import com.mongodb.QueryBuilder
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import org.geotools.geojson.geom.GeometryJSON
@@ -371,6 +375,25 @@ class SiteService {
         }
 
         documents
+    }
+
+    /**
+     * Accepts a closure that will be called once for each (not deleted) Site in the system,
+     * passing the site (as a Map) as the single parameter.
+     * Implementation note, this uses the Mongo API directly as using GORM incurs a
+     * significant memory and performance overhead when dealing with so many entities
+     * at once.
+     * @param action the action to be performed on each Activity.
+     */
+    void doWithAllSites(Closure action) {
+        // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
+        com.mongodb.DBCollection collection = Site.getCollection()
+        DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
+        DBCursor results = collection.find(siteQuery).batchSize(100)
+
+        results.each { dbObject ->
+            action.call(dbObject.toMap())
+        }
     }
 
 }
