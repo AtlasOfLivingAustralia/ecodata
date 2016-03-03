@@ -108,7 +108,7 @@ class OutputModelProcessor {
 
         List rows = []
 
-        def flat = output.data
+        def flat = output.data?:[:]
         if (duplicateNonNestedValues) {
             flat += output
         }
