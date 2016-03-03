@@ -46,6 +46,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> prioritiesProperties = projectProperties + ['data1', 'data2', 'data3']
     List<String> whsAndCaseStudyHeaders = projectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
     List<String> whsAndCaseStudyProperties = projectProperties + ['obligations', 'policies', 'caseStudy']
+    List<String> attachmentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
+    List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
+
 
     XlsExporter exporter
 
@@ -180,6 +183,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportKeyEvaluationQuestion(project)
         exportPriorities(project)
         exportWHSAndCaseStudy(project)
+        exportAttachments(project)
 
     }
 
@@ -323,6 +327,11 @@ class ProjectXlsExporter extends ProjectExporter {
             }
 
         }
+    }
+
+    private void exportAttachments(Map project) {
+        List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
+        exportList("Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
     }
 
     String getStage(Map activity, project) {
