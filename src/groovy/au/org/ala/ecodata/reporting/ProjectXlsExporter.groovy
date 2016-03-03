@@ -207,7 +207,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 budgetLineItem
             }
 
-            budgetSheet.add(data, budgetProperties, row+1)
+            budgetSheet.add(data?:[], budgetProperties, row+1)
         }
 
     }
@@ -238,7 +238,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 objectivesItem
             }
 
-            sheet.add(data, outcomesProperties, row+1)
+            sheet.add(data?:[], outcomesProperties, row+1)
         }
 
     }
@@ -259,13 +259,13 @@ class ProjectXlsExporter extends ProjectExporter {
                 monitoringItem
             }
 
-            sheet.add(data, monitoringProperties, row+1)
+            sheet.add(data?:[], monitoringProperties, row+1)
         }
 
     }
 
     private void exportList(String tab, Map project, List data, List headers, List properties) {
-        if (shouldExport(tab)) {
+        if (shouldExport(tab) && data) {
             AdditionalSheet sheet = getSheet(tab, headers)
             int row = sheet.getSheet().lastRowNum
             List augmentedList = data?.collect {
@@ -287,10 +287,12 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Project Partnerships", projectImplementationHeaders)
             int row = sheet.getSheet().lastRowNum
 
-            Map data = [implementation:project?.custom?.details?.implementation?.description]
-            data.putAll(project)
+            if (project?.custom?.details?.implementation) {
+                Map data = [implementation:project?.custom?.details?.implementation?.description]
+                data.putAll(project)
 
-            sheet.add(data, projectImplementationProperties, row+1)
+                sheet.add(data, projectImplementationProperties, row+1)
+            }
         }
 
     }
@@ -310,10 +312,12 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("WHS and Case Study", whsAndCaseStudyHeaders)
             int row = sheet.getSheet().lastRowNum
 
-            Map data = project?.custom?.details
-            data.putAll(project)
+            if (project?.custom?.details) {
+                Map data = project?.custom?.details
+                data.putAll(project)
 
-            sheet.add(data, whsAndCaseStudyProperties, row+1)
+                sheet.add(data, whsAndCaseStudyProperties, row + 1)
+            }
         }
     }
 
