@@ -283,8 +283,8 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProjectImplementation(Map project) {
-        if (shouldExport("Project Partnerships")) {
-            AdditionalSheet sheet = getSheet("Project Partnerships", projectImplementationHeaders)
+        if (shouldExport("Project Implementation")) {
+            AdditionalSheet sheet = getSheet("Project Implementation", projectImplementationHeaders)
             int row = sheet.getSheet().lastRowNum
 
             if (project?.custom?.details?.implementation) {
