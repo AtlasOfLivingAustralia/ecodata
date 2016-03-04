@@ -37,7 +37,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> monitoringHeaders = projectHeaders + ['Monitoring Indicators', 'Monitoring Approach']
     List<String> monitoringProperties = projectProperties + ['indicator','approach']
     List<String> projectPartnershipHeaders = projectHeaders + ['Partner name', 'Nature of partnership', 'Type of organisation']
-    List<String> projectPartnershipProperties = projectHeaders + ['data1', 'data2', 'data3']
+    List<String> projectPartnershipProperties = projectProperties + ['data1', 'data2', 'data3']
     List<String> projectImplementationHeaders = projectHeaders + ['Project implementation / delivery mechanism']
     List<String> projectImplementationProperties = projectProperties + ['implementation']
     List<String> keyEvaluationQuestionHeaders = projectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
