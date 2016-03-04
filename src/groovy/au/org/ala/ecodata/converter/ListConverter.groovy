@@ -18,7 +18,6 @@ class ListConverter implements RecordFieldConverter {
                 fields?.each { record << it }
             }
 
-            record.json = (row as JSON).toString()
             record.outputItemId = index
 
             records << record

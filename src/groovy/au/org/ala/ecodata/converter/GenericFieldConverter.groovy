@@ -7,8 +7,6 @@ class GenericFieldConverter implements RecordFieldConverter {
     List<Map> convert(Map data, Map metadata = [:]) {
         Map record = [:]
 
-        record.json = (data as JSON).toString()
-
         Map dwcMappings = extractDwcMapping(metadata)
 
         record << getDwcAttributes(data, dwcMappings)
