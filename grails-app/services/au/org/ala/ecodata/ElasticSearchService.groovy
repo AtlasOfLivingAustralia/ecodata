@@ -470,10 +470,15 @@ class ElasticSearchService {
         siteMap.projectList = projects;
         siteMap.surveyList = surveys
 
-        // check for photo points
-        photoPoints = documentService.search([siteId:siteMap.siteId, type:'image', role:'photoPoint'])
-        if(photoPoints?.count > 0){
-            siteMap.photoType = 'photoPoint'
+        try {
+            // check for photo points
+            photoPoints = documentService.search([siteId: siteMap.siteId, type: 'image', role: 'photoPoint'])
+            if (photoPoints?.count > 0) {
+                siteMap.photoType = 'photoPoint'
+            }
+        }
+        catch (Exception e) {
+            log.error("Unable to index documents for site: "+siteMap?.siteId,e)
         }
 
         siteMap
@@ -579,8 +584,13 @@ class ElasticSearchService {
         log.debug "Indexing all MERIT based projects in MERIT SEARCH index."
         def list = projectService.listMeritProjects("flat", false)
         list.each {
-            it["className"] = new Project().getClass().name
-            indexDoc(it, DEFAULT_INDEX)
+            try {
+                it["className"] = Project.class.name
+                indexDoc(it, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index projewt: "+it?.projectId, e)
+            }
         }
 
         // homepage index (doing some manual batching due to memory constraints)
@@ -591,9 +601,14 @@ class ElasticSearchService {
 
             while (projects) {
                 projects.each { project ->
-                    Map projectMap = prepareProjectForHomePageIndex(project)
+                    try {
+                        Map projectMap = prepareProjectForHomePageIndex(project)
 
-                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                        indexDoc(projectMap, HOMEPAGE_INDEX)
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index projewt: "+it?.projectId, e)
+                    }
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
@@ -602,25 +617,45 @@ class ElasticSearchService {
         }
 
         log.debug "Indexing all sites"
-        def sites = Site.findAll()
-        sites.each {
-            def siteMap = siteService.toMap(it, "flat")
-            siteMap["className"] = new Site().getClass().name
-            siteMap = prepareSiteForIndexing(siteMap, false)
-            indexDoc(siteMap, DEFAULT_INDEX)
+        int count = 0
+        Site.withNewSession { session ->
+            siteService.doWithAllSites { Map siteMap ->
+                siteMap["className"] = Site.class.name
+                try {
+                    siteMap = prepareSiteForIndexing(siteMap, false)
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable index site: "+siteMap?.siteId, e)
+                }
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.debug("Indexed "+count+" sites")
+                }
+            }
         }
 
         log.debug "Indexing all activities"
-        activityService.doWithAllActivities { activity ->
-            prepareActivityForIndexing(activity)
-            indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+        activityService.doWithAllActivities { Map activity ->
+            try {
+                prepareActivityForIndexing(activity)
+                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index activity: "+activity?.activityId, e)
+            }
         }
 
         log.debug "Indexing all organisations"
-        List<Map> organisations = organisationService.list()
-        for (Map org : organisations) {
-            prepareOrganisationForIndexing(org)
-            indexDoc(org, DEFAULT_INDEX)
+        organisationService.doWithAllOrganisations { Map org ->
+            try {
+                prepareOrganisationForIndexing(org)
+                indexDoc(org, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index organisation: "+org?.organisationId, e)
+            }
         }
 
         log.debug "Indexing complete"
@@ -699,11 +734,16 @@ class ElasticSearchService {
             projectActivity.records = records
             projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
             projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
-            // check if activity has images
-            Map images = documentService.search([type: 'image', role:'surveyImage', activityId: activity.activityId]);
-            if(images.count > 0){
-                 projectActivity.surveyImage = true;
+            try {
+                // check if activity has images
+                Map images = documentService.search([type: 'image', role: 'surveyImage', activityId: activity.activityId]);
+                if (images.count > 0)
+                    projectActivity.surveyImage = true;
             }
+            catch (Exception e) {
+                log.error("unable to index images for projectActivity: " + projectActivity?.projectActivityId)
+            }
+
             projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity

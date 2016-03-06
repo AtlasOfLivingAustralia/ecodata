@@ -97,27 +97,32 @@ class DownloadService {
         XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, "data")
 
         new ZipOutputStream(outputStream).withStream { zip ->
-            zip.putNextEntry(new ZipEntry("data.xls"))
-            ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
-            xlsExporter.save(xslFile)
-            xslFile.flush()
-            zip << xslFile.toByteArray()
-            xslFile.flush()
-            xslFile.close()
-            zip.closeEntry()
-            log.debug("XLS file added")
+            try{
+                zip.putNextEntry(new ZipEntry("data.xls"))
+                ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
+                xlsExporter.save(xslFile)
+                xslFile.flush()
+                zip << xslFile.toByteArray()
+                xslFile.flush()
+                xslFile.close()
+                zip.closeEntry()
+                log.debug("XLS file added")
 
-            addShapeFilesToZip(zip, activitiesByProject.keySet())
-            log.debug("Shape files added")
+                addShapeFilesToZip(zip, activitiesByProject.keySet())
+                log.debug("Shape files added")
 
-            addImagesToZip(zip, activitiesByProject)
-            log.debug("Images added")
+                addImagesToZip(zip, activitiesByProject)
+                log.debug("Images added")
 
-            addReadmeToZip(zip)
-
-            zip.finish()
-            zip.flush()
-            zip.close()
+                addReadmeToZip(zip)
+            } catch (Exception e){
+                log.error(e.message)
+                log.error(e.stackTrace)
+            } finally {
+                zip.finish()
+                zip.flush()
+                zip.close()
+            }
         }
 
         log.debug("ZIP file created")
