@@ -108,7 +108,6 @@ class RecordConverter {
     /**
      * Return a new Map with the union of source and additional giving precedence to values from additional
      *
-     * If the value for a given key is null in additional the resulting map won't have that key at all
      *
      * If the same key already exists in target it will be overriden
      * @param source the original entries
@@ -119,12 +118,7 @@ class RecordConverter {
 
         Map result = [:]
         result << source
-
-        additional?.each { key, value ->
-            if (value) {
-                result[key] = value
-            }
-        }
+        result << additional
 
         result
     }

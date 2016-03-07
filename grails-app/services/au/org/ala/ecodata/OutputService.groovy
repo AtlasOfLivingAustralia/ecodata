@@ -179,7 +179,7 @@ class OutputService {
                     // [1] = Error object if the save failed, empty map if the save succeeded.
                     List result = recordService.createRecord(record)
                     if (result[1]) {
-                        throw new IllegalArgumentException("Failed to create record: ${record}")
+                        throw new IllegalArgumentException("Failed to create record: ${record} Errors: ${result[1]}")
                     }
                 }
             }

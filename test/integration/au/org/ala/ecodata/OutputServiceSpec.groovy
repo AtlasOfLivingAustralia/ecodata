@@ -76,8 +76,8 @@ class OutputServiceSpec extends IntegrationSpec {
     }
 
 
-    def "createOrUpdateRecordsForOutput should create associated Record objects accordingly"() {
-        setup:
+    def "createOrUpdateRecordsForOutput should create a Record for general data and three for the multisightings reusing general data"() {
+        setup: "Given a metadata model for multisightings and a properties map representing the input"
 
         Map outputMetadataModel =
                 [
@@ -141,11 +141,6 @@ class OutputServiceSpec extends IntegrationSpec {
                                               "constraints" : ["Male", "Female", "Male and female", "Unknown"],
                                               "dwcAttribute": "sex"
                                       ], [
-                                              "dataType"   : "text",
-                                              "description": "Indicate the health status of the organism sighted.",
-                                              "name"       : "status1",
-                                              "constraints": ["Alive", "Dead", "Sick or injured"]
-                                      ], [
                                               "dataType"    : "text",
                                               "description" : "Observation notes about the record.",
                                               "name"        : "comments1",
@@ -186,11 +181,6 @@ class OutputServiceSpec extends IntegrationSpec {
                                                                    "constraints" : ["Male", "Female", "Male and female", "Unknown"],
                                                                    "dwcAttribute": "sex"
                                                            ], [
-                                                                   "dataType"   : "text",
-                                                                   "description": "Indicate the health status of the organism sighted.",
-                                                                   "name"       : "status2",
-                                                                   "constraints": ["Alive", "Dead", "Sick or injured"]
-                                                           ], [
                                                                    "dataType"    : "text",
                                                                    "description" : "Observation notes about the record.",
                                                                    "name"        : "comments2",
@@ -212,47 +202,29 @@ class OutputServiceSpec extends IntegrationSpec {
                 ]
 
 
-
-
         metadataService.getOutputDataModelByName(_) >> outputMetadataModel
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
         Map properties =
-
                 [
                         "activityId"                              : "activity1",
                         "name"                                    : "Basin Champions - Iconic Species",
                         "data"                                    : [
                                 "identificationConfidence1": "Certain",
-                                "status1"                  : "Alive",
                                 "surveyStartTime"          : "12:10 PM",
                                 "multiSightingTable"       : [
 
                                         [
                                                 "previousSightings2"       : "1 Week to 1 month ago",
                                                 "identificationConfidence2": "Uncertain",
-                                                "status2"                  : "Dead",
                                                 "individualCount2"         : "2",
                                                 "sex2"                     : "Female",
                                                 "comments2"                : "More Species Sightings First",
                                                 "sightingPhoto2"           : [[
-                                                                                      "filepath"     : "2016-03",
-                                                                                      "status"       : "active",
-                                                                                      "outputId"     : "298eae02-d33c-4431-8d43-917087c38ccf",
-                                                                                      "contentType"  : "image/png",
-                                                                                      "type"         : "image",
-                                                                                      "formattedSize": "3.54 KB",
-                                                                                      "activityId"   : "e8590fe5-768e-463c-b2c2-37a547d4df87",
-                                                                                      "dateTaken"    : "2016-03-01T13:00:00.000Z",
-                                                                                      "filesize"     : 3538,
                                                                                       "name"         : "2.png",
                                                                                       "role"         : "surveyImage",
                                                                                       "filename"     : "2.png",
-                                                                                      "notes"        : "",
-                                                                                      "identifier"   : "http://devt.ala.org.au:8087/biocollect/image?id=2.png",
-                                                                                      "documentId"   : "7282ad1d-a346-4c1c-a2bb-00b75bc5b8de",
-                                                                                      "attribution"  : ""
                                                                               ]
                                                 ],
                                                 "species2"                 : [
@@ -264,29 +236,9 @@ class OutputServiceSpec extends IntegrationSpec {
                                         [
                                                 "previousSightings2"       : "1 Month to 6 months ago",
                                                 "identificationConfidence2": "Certain",
-                                                "status2"                  : "Sick or injured",
                                                 "individualCount2"         : "3",
                                                 "sex2"                     : "Male and female",
                                                 "comments2"                : "More Species Sightings Second",
-                                                "sightingPhoto2"           : [[
-                                                                                      "filepath"     : "2016-03",
-                                                                                      "status"       : "active",
-                                                                                      "outputId"     : "298eae02-d33c-4431-8d43-917087c38ccf",
-                                                                                      "contentType"  : "image/png",
-                                                                                      "type"         : "image",
-                                                                                      "formattedSize": "3.19 KB",
-                                                                                      "activityId"   : "e8590fe5-768e-463c-b2c2-37a547d4df87",
-                                                                                      "dateTaken"    : "2016-03-02T13:00:00.000Z",
-                                                                                      "filesize"     : 3189,
-                                                                                      "name"         : "3.png",
-                                                                                      "role"         : "surveyImage",
-                                                                                      "filename"     : "3.png",
-                                                                                      "notes"        : "",
-                                                                                      "identifier"   : "http://devt.ala.org.au:8087/biocollect/image?id=3.png",
-                                                                                      "documentId"   : "3f7f2ac7-a776-4a76-8051-30bd7c3cc8a2",
-                                                                                      "attribution"  : ""
-                                                                              ]
-                                                ],
                                                 "species2"                 : [
                                                         "guid"           : "urn:lsid:biodiversity.org.au:apni.taxon:759444",
                                                         "outputSpeciesId": "a1b7d9ec-f5da-49bb-9918-3494e0ef6ad0",
@@ -295,27 +247,12 @@ class OutputServiceSpec extends IntegrationSpec {
                                         ], [
                                                 "previousSightings2"       : "1 Year or longer ago",
                                                 "identificationConfidence2": "Uncertain",
-                                                "status2"                  : "Alive",
                                                 "individualCount2"         : "4",
                                                 "sex2"                     : "Unknown",
                                                 "comments2"                : "More Species Sightings Third",
                                                 "sightingPhoto2"           : [[
-                                                                                      "filepath"     : "2016-03",
-                                                                                      "status"       : "active",
-                                                                                      "outputId"     : "298eae02-d33c-4431-8d43-917087c38ccf",
-                                                                                      "contentType"  : "image/png",
-                                                                                      "type"         : "image",
-                                                                                      "formattedSize": "2.33 KB",
-                                                                                      "activityId"   : "e8590fe5-768e-463c-b2c2-37a547d4df87",
-                                                                                      "dateTaken"    : "2016-03-04T01:29:16Z",
-                                                                                      "filesize"     : 2325,
                                                                                       "name"         : "4.png",
-                                                                                      "role"         : "surveyImage",
                                                                                       "filename"     : "4.png",
-                                                                                      "notes"        : "",
-                                                                                      "identifier"   : "http://devt.ala.org.au:8087/biocollect/image?id=4.png",
-                                                                                      "documentId"   : "738ba822-81cb-4e9a-a54d-17b719c6aef8",
-                                                                                      "attribution"  : ""
                                                                               ]
                                                 ],
                                                 "species2"                 : [
@@ -330,30 +267,16 @@ class OutputServiceSpec extends IntegrationSpec {
                                         "outputSpeciesId": "1717aab2-cc1d-46ef-8f3b-56ca77be1d89",
                                         "name"           : "Tigrana"
                                 ],
-                                "locationLongitude"        : 146.10350847244263,
+                                "locationLongitude"        : 146.0,
                                 "comments1"                : "Single Species Sighting Comment",
                                 "sightingPhoto1"           : [[
-                                                                      "filepath"     : "2016-03",
-                                                                      "status"       : "active",
-                                                                      "outputId"     : "298eae02-d33c-4431-8d43-917087c38ccf",
-                                                                      "contentType"  : "image/png",
-                                                                      "type"         : "image",
-                                                                      "formattedSize": "9.07 KB",
-                                                                      "activityId"   : "e8590fe5-768e-463c-b2c2-37a547d4df87",
-                                                                      "dateTaken"    : "2016-02-29T13:00:00.000Z",
-                                                                      "filesize"     : 9072,
                                                                       "name"         : "1.png",
-                                                                      "role"         : "surveyImage",
                                                                       "filename"     : "1.png",
-                                                                      "notes"        : "",
-                                                                      "identifier"   : "http://devt.ala.org.au:8087/biocollect/image?id=1.png",
-                                                                      "documentId"   : "a3190c14-a18d-493d-bfcd-e226331815ec",
-                                                                      "attribution"  : ""
                                                               ]
                                 ],
                                 "sex1"                     : "Male",
                                 "previousSightings1"       : "Up to 1 week ago",
-                                "locationLatitude"         : -41.68385191046434,
+                                "locationLatitude"         : -41.0,
                                 "notes"                    : "Notes general",
                                 "surveyDate"               : "2016-03-03T13:00:00Z",
                                 "individualCount1"         : "1"
@@ -372,11 +295,11 @@ class OutputServiceSpec extends IntegrationSpec {
                         "outputNotCompleted"                      : false
                 ]
 
-        when:
+        when: "Records are created from Output"
         outputService.createOrUpdateRecordsForOutput(activity, output, properties)
 
-        then:
-        outputService.recordService.createRecord(_) >> { argument ->
+        then: "4 records will be created 1 general, 3 for each row. row records reuse information from the general record"
+        4 * outputService.recordService.createRecord(_) >> { argument ->
 
             //Let's cover the basics
             assert argument.activityId[0] == "activity1"
@@ -387,88 +310,57 @@ class OutputServiceSpec extends IntegrationSpec {
 
             // Still common but we need to ensure they comply
             assert argument?.json[0] == null
-//            argument.decimalLatitude[0] == -41.68385191046434
-//            argument.decimalLongitude[0] == 146.10350847244263
-
-            // And then the particular information
-            argument.scientificName[0] == "Tigrana"
-            argument.multimedia.filename[0] == "1.png"
-            argument.individualCount[0] == 1
-
-            [null, null]
-        }
-
-        then:
-        outputService.recordService.createRecord(_) >> { argument ->
-
-            //Let's cover the basics
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
-
-            // Still common but we need to ensure they comply
-            assert argument?.json[0] == null
-//            argument.decimalLatitude[0] == -41.68385191046434
-//            argument.decimalLongitude[0] == 146.10350847244263
-
-            // And then the particular information
-            argument.scientificName[0] == "Abcandonopsis Karanovic, 2004"
-            argument.multimedia.filename[0] == "2.png"
-            argument.individualCount[0] == 1
-
-            [null, null]
-        }
+            assert argument.decimalLatitude[0] == -41.0
+            assert argument.decimalLongitude[0] == 146.0
 
 
-        then:
-        outputService.recordService.createRecord(_) >> { argument ->
+            switch (argument.individualCount[0]) {
+                case '1':
+                // And then the particular information
+                assert argument.scientificName[0] == "Tigrana"
+                assert argument.multimedia.filename[0][0] == "1.png"
+                assert argument.individualCount[0] == '1'
+                assert argument.sex[0] == 'Male'
+                assert argument.notes[0] == 'Single Species Sighting Comment'
 
-            //Let's cover the basics
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
+                break;
 
-            // Still common but we need to ensure they comply
-            assert argument?.json[0] == null
-//            argument.decimalLatitude[0] == -41.68385191046434
-//            argument.decimalLongitude[0] == 146.10350847244263
+                case '2':
 
-            // And then the particular information
-            argument.scientificName[0] == "Sida sp. B (C.Dunlop 1739)"
-            argument.multimedia.filename[0] == "3.png"
-            argument.individualCount[0] == 1
+                // And then the particular information
+                assert argument.scientificName[0] == "Abcandonopsis Karanovic, 2004"
+                assert argument.multimedia.filename[0][0] == "2.png"
+                assert argument.individualCount[0] == '2'
+                assert argument.sex[0] == 'Female'
+                assert argument.notes[0] == 'More Species Sightings First'
+                break
+
+                case '3':
+                assert argument.scientificName[0] == "Sida sp. B (C.Dunlop 1739)"
+                //Missing elements from a row are null rather than inheriting the general data
+                assert argument.multimedia[0] == null
+
+                assert argument.individualCount[0] == '3'
+                assert argument.sex[0] == 'Male and female'
+                assert argument.notes[0] == 'More Species Sightings Second'
+                break
+
+                case '4':
+                assert argument.scientificName[0] == "Deflexula pacifica"
+                assert argument.multimedia.filename[0][0] == "4.png"
+                assert argument.individualCount[0] == '4'
+                assert argument.sex[0] == 'Unknown'
+                assert argument.notes[0] == 'More Species Sightings Third'
+                break;
+
+                default:
+
+                assert false: 'No valid value for individualCount ${argument.individualCount[0]}'
+
+            }
 
             [null, null]
         }
-
-        then:
-        outputService.recordService.createRecord(_) >> { argument ->
-
-            //Let's cover the basics
-            assert argument.activityId[0] == "activity1"
-            assert argument.outputId[0] == "output1"
-            assert argument.projectActivityId[0] == "projAct1"
-            assert argument.projectId[0] == "project1"
-            assert argument.userId[0] == "user1"
-
-            // Still common but we need to ensure they comply
-            assert argument?.json[0] == null
-//            argument.decimalLatitude[0] == -41.68385191046434
-//            argument.decimalLongitude[0] == 146.10350847244263
-
-            // And then the particular information
-            argument.scientificName[0] == "Deflexula pacifica"
-            argument.multimedia.filename[0] == "4.png"
-            argument.individualCount[0] == 1
-
-            [null, null]
-        }
-
-
 
     }
 
