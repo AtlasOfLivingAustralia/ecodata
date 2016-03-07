@@ -98,7 +98,7 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.activities) {
             project.activities.each { activity ->
 
-                if (tabsToExport && tabsToExport.contains(activity.type)) {
+                if (shouldExport(activity.type)) {
                     Map commonData = project + activity + [stage: getStage(activity, project)]
                     List activityData = []
                     List activityGetters = []
@@ -136,7 +136,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportSites(Map project) {
-        if (tabsToExport && tabsToExport.contains('Sites')) {
+        if (shouldExport('Sites')) {
             sitesSheet()
             if (project.sites) {
                 def sites = project.sites.collect {
@@ -151,7 +151,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportOutputTargets(Map project) {
-        if (tabsToExport && tabsToExport.contains('Output Targets')) {
+        if (shouldExport('Output Targets')) {
             outputTargetsSheet()
             if (project.outputTargets) {
                 List nonZeroTargets = project.outputTargets.findAll { it.scoreLabel && it.target && it.target != "0" }
@@ -163,7 +163,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
-        if (tabsToExport && tabsToExport.contains('Projects')) {
+        if (shouldExport('Projects')) {
             projectSheet()
             int row = projectSheet.getSheet().lastRowNum
 
@@ -188,7 +188,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportBudget(Map project) {
-        if (tabsToExport && tabsToExport.contains("Budget")) {
+        if (shouldExport("Budget")) {
             budgetSheet()
             int row = budgetSheet.getSheet().lastRowNum
 
