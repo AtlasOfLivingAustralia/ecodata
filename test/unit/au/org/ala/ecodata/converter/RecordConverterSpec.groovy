@@ -107,11 +107,15 @@ class RecordConverterSpec extends Specification {
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
 
         then:
-        fieldsets.size() == 2
-        fieldsets[0].attribute1 == "row1col1"
-        fieldsets[0].attribute2 == "row1col2"
-        fieldsets[1].attribute1 == "row2col1"
-        fieldsets[1].attribute2 == "row2col2"
+        fieldsets.size() == 3
+        // Base reord does not have any attributes, that's ok for a UT but would be useless in a real survey
+        fieldsets[0].attribute1 == null
+        fieldsets[0].attribute2 == null
+
+        fieldsets[1].attribute1 == "row1col1"
+        fieldsets[1].attribute2 == "row1col2"
+        fieldsets[2].attribute1 == "row2col1"
+        fieldsets[2].attribute2 == "row2col2"
     }
 
     def "convert should add all single-item dataModel values to each record field set in an output model with a 'list' data model"() {
@@ -179,15 +183,22 @@ class RecordConverterSpec extends Specification {
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
 
         then:
-        fieldsets.size() == 2
-        fieldsets[0].attribute1 == "row1col1"
-        fieldsets[0].attribute2 == "row1col2"
+        fieldsets.size() == 3
+
+        fieldsets[0].attribute1 == null
+        fieldsets[0].attribute2 == null
         fieldsets[0].attribute3 == "singleItemValue1"
         fieldsets[0].attribute4 == "singleItemValue2"
-        fieldsets[1].attribute1 == "row2col1"
-        fieldsets[1].attribute2 == "row2col2"
+
+
+        fieldsets[1].attribute1 == "row1col1"
+        fieldsets[1].attribute2 == "row1col2"
         fieldsets[1].attribute3 == "singleItemValue1"
         fieldsets[1].attribute4 == "singleItemValue2"
+        fieldsets[2].attribute1 == "row2col1"
+        fieldsets[2].attribute2 == "row2col2"
+        fieldsets[2].attribute3 == "singleItemValue1"
+        fieldsets[2].attribute4 == "singleItemValue2"
     }
 
     def "convert should populate the record field set with the related object ids"() {
@@ -212,7 +223,7 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].outputId == "outputId"
     }
 
-    def "convert should concatenate fields which appear in multiple components"() {
+    def "convert should override fields which appear in multiple components"() {
         setup:
         Project project = new Project()
         Site site = new Site()
@@ -247,10 +258,10 @@ class RecordConverterSpec extends Specification {
                             {
                               "mylist": [
                                 {
-                                  "field1": "firstValue"
+                                  "field1": "secondValue"
                                 }
                               ],
-                              "field2": "secondValue"
+                              "field2": "firstValue"
                             }
                             """
 
@@ -260,8 +271,9 @@ class RecordConverterSpec extends Specification {
         when: "two different fields are mapped to the same DwC attribute"
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
 
-        then: "the two values should be concatenated together in the resulting record field set"
-        fieldsets.size() == 1
-        fieldsets[0].dwc == "firstValue;secondValue"
+        then: "two records will be created, the second record will override value in general record in the resulting record field set"
+        fieldsets.size() == 2
+        fieldsets[0].dwc == "firstValue"
+        fieldsets[1].dwc == "secondValue"
     }
 }

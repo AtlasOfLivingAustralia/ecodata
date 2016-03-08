@@ -118,7 +118,7 @@ class OutputServiceSpec extends Specification {
         Output.count() == 1
     }
 
-    def "create output should create records for each list item if the output data model has record = true and data type = list"() {
+    def "create output should create records for each list item and a base re if the output data model has record = true and data type = list"() {
         setup:
         String activityId = 'activity1'
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
@@ -152,7 +152,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        2 * mockRecordService.createRecord(_) >> [[:]]
+        3 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 }

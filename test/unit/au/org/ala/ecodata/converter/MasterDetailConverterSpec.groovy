@@ -15,14 +15,10 @@ class MasterDetailConverterSpec extends Specification {
                           {
                             "userId": "user1",
                             "individualCount": "1",
-                            "decimalLatitude": "2.1",
-                            "decimalLongitude": "3.1"
                           },
                           {
                             "userId": "user11",
                             "individualCount": "11",
-                            "decimalLatitude": "12.1",
-                            "decimalLongitude": "13.1"
                           }
                         ]
                       }
@@ -36,13 +32,9 @@ class MasterDetailConverterSpec extends Specification {
         then:
         result.size() == 2
         result[0].individualCount == 1
-        result[0].decimalLatitude == 2.1
-        result[0].decimalLongitude == 3.1
         result[0].userId == "user1"
 
         result[1].individualCount == 11
-        result[1].decimalLatitude == 12.1
-        result[1].decimalLongitude == 13.1
         result[1].userId == "user11"
     }
 }

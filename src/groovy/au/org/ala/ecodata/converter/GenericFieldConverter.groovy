@@ -54,5 +54,4 @@ class GenericFieldConverter implements RecordFieldConverter {
 
         longitude
     }
-
 }
