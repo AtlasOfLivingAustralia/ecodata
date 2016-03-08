@@ -49,7 +49,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> attachmentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By']
-    List<String> reportProperties = projectProperties + ['name', 'fromDate', 'toDate', 'status', 'dateChanged', 'changedBy']
+    List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy']
 
     XlsExporter exporter
 
@@ -359,7 +359,7 @@ class ProjectXlsExporter extends ProjectExporter {
             List data = []
             project.reports?.each { report ->
                 data += report.statusChangeHistory?.collect {
-                    [name:report.name, fromDate:report.fromDate, toDate:report.toDate, status:it.status, changedBy:it.changedBy, dateChanged:it.dateChanged] + project
+                    [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:it.status, changedBy:it.changedBy, dateChanged:it.dateChanged] + project
                 }
             }
             sheet.add(data, reportProperties, row + 1)
