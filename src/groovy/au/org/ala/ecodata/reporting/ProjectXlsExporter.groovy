@@ -16,11 +16,11 @@ class ProjectXlsExporter extends ProjectExporter {
     static String DATE_CELL_FORMAT = "dd/mm/yyyy"
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3']
-    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2']
+    List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10']
+    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2', 'elect0', 'elect1', 'elect2', 'elect3', 'elect4', 'elect5', 'elect6', 'elect7', 'elect8', 'elect9']
 
     List<String> siteHeaders = projectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10', 'Last Modified']
-    List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0', 'nrm0', 'elect0', 'elect1', 'elect2', 'elect3', 'elect4', 'elect5', 'elect6', 'elect7', 'elect8', 'elect9', 'lastUpdated']
+    List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0-site', 'nrm0-site', 'elect0-site', 'elect1-site', 'elect2-site', 'elect3-site', 'elect4-site', 'elect5-site', 'elect6-site', 'elect7-site', 'elect8-site', 'elect9-site', 'lastUpdated']
     List<String> commonActivityHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
     List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
@@ -77,7 +77,7 @@ class ProjectXlsExporter extends ProjectExporter {
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
 
-        addProjectStates(project)
+        addProjectGeo(project)
 
         exportProject(project)
         exportOutputTargets(project)
@@ -88,11 +88,28 @@ class ProjectXlsExporter extends ProjectExporter {
         exportReports(project)
     }
 
-    private addProjectStates(Map project) {
-        List states = project.sites?.collect { it?.extent?.geometry?.state }?.findAll().unique()
-        states.eachWithIndex { String state, int i ->
-            String key = "state" + i
-            project.put(key, state)
+    private addProjectGeo(Map project) {
+        List geo = ['state',  'elect']
+        Map geoData = [:].withDefault{[]}
+        project.sites?.each { site ->
+            Map props = site?.extent?.geometry ?: [:]
+
+            geo.each { facet ->
+                Object value = props[facet]
+                if (value instanceof List) {
+                    value.eachWithIndex { i, val ->
+                        geoData[facet] << val
+                    }
+                }
+                else {
+                    geoData[facet] << value
+                }
+            }
+        }
+        geoData.each { facet, values ->
+            values.findAll().unique().eachWithIndex {value, i ->
+                project[facet+i] = value
+            }
         }
     }
 
@@ -148,11 +165,11 @@ class ProjectXlsExporter extends ProjectExporter {
                     props?.each { key, value ->
                         if (value instanceof List) {
                             value.eachWithIndex { i, val ->
-                                data.put(key+i, val)
+                                data.put(key+i+'-site', val)
                             }
                         }
                         else {
-                            data.put(key+'0', value)
+                            data.put(key+'0-site', value)
                         }
                     }
                     data
