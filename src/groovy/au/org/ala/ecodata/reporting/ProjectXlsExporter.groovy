@@ -19,8 +19,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3']
     List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2']
 
-    List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate', 'Last Modified']
-    List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon', 'state', 'nrm', 'elect', 'lastUpdated']
+    List<String> siteHeaders = projectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10', 'Last Modified']
+    List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0', 'nrm0', 'elect0', 'elect1', 'elect2', 'elect3', 'elect4', 'elect5', 'elect6', 'elect7', 'elect8', 'elect9', 'lastUpdated']
     List<String> commonActivityHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
     List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
@@ -48,7 +48,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> whsAndCaseStudyProperties = projectProperties + ['obligations', 'policies', 'caseStudy']
     List<String> attachmentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
-
+    List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By']
+    List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy']
 
     XlsExporter exporter
 
@@ -84,6 +85,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportActivities(project, activitiesModel, processor)
         exportRisks(project)
         exportMeriPlan(project)
+        exportReports(project)
     }
 
     private addProjectStates(Map project) {
@@ -98,7 +100,7 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.activities) {
             project.activities.each { activity ->
 
-                if (tabsToExport && tabsToExport.contains(activity.type)) {
+                if (shouldExport(activity.type)) {
                     Map commonData = project + activity + [stage: getStage(activity, project)]
                     List activityData = []
                     List activityGetters = []
@@ -136,13 +138,24 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportSites(Map project) {
-        if (tabsToExport && tabsToExport.contains('Sites')) {
+        if (shouldExport('Sites')) {
             sitesSheet()
             if (project.sites) {
                 def sites = project.sites.collect {
                     def centre = it.extent?.geometry?.centre
+                    Map data = [siteId: it.siteId, siteName: it.name, siteDescription: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + project
                     Map props = it.extent?.geometry ?: [:]
-                    [siteId: it.siteId, name: it.name, description: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + props
+                    props?.each { key, value ->
+                        if (value instanceof List) {
+                            value.eachWithIndex { i, val ->
+                                data.put(key+i, val)
+                            }
+                        }
+                        else {
+                            data.put(key+'0', value)
+                        }
+                    }
+                    data
                 }
                 int row = sitesSheet.getSheet().lastRowNum
                 sitesSheet.add(sites, siteProperties, row + 1)
@@ -151,7 +164,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportOutputTargets(Map project) {
-        if (tabsToExport && tabsToExport.contains('Output Targets')) {
+        if (shouldExport('Output Targets')) {
             outputTargetsSheet()
             if (project.outputTargets) {
                 List nonZeroTargets = project.outputTargets.findAll { it.scoreLabel && it.target && it.target != "0" }
@@ -163,7 +176,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportProject(Map project) {
-        if (tabsToExport && tabsToExport.contains('Projects')) {
+        if (shouldExport('Projects')) {
             projectSheet()
             int row = projectSheet.getSheet().lastRowNum
 
@@ -188,7 +201,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportBudget(Map project) {
-        if (tabsToExport && tabsToExport.contains("Budget")) {
+        if (shouldExport("Budget")) {
             budgetSheet()
             int row = budgetSheet.getSheet().lastRowNum
 
@@ -336,6 +349,21 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportAttachments(Map project) {
         List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
         exportList("Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
+    }
+
+    private void exportReports(Map project) {
+        if (shouldExport("Reports")) {
+            AdditionalSheet sheet = getSheet("Reports", reportHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List data = []
+            project.reports?.each { report ->
+                data += report.statusChangeHistory?.collect {
+                    [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:it.status, changedBy:it.changedBy, dateChanged:it.dateChanged] + project
+                }
+            }
+            sheet.add(data, reportProperties, row + 1)
+        }
     }
 
     String getStage(Map activity, project) {
