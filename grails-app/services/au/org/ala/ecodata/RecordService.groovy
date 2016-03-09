@@ -172,10 +172,10 @@ class RecordService {
      * @param json
      * @return
      */
-    def createRecord(json){
+    def  createRecord(json){
         Record record = new Record().save(true)
-        def errors = updateRecord(record, json)
-        [record, errors]
+        updateRecord(record, json)
+        record
     }
 
     def getAllByActivity(String activityId) {
@@ -208,123 +208,110 @@ class RecordService {
      * @param json A map or JSONObject containing the record data. This data must contain a userId.
      * @param imageMap a map of image resources to be associated with the record
      *
-     * @return Map of errors, or an empty map if there were no errors.
+     * @throws Exception in case of a validation failure or any unexpected system exception
      */
-    private Map updateRecord(Record record, json, Map imageMap = [:]) {
-        Map errors = [:]
+    private void updateRecord(Record record, json, Map imageMap = [:]) {
 
-        try {
-            def userDetails = userService.getCurrentUserDetails()
-            if (!userDetails && json.userId) {
-                userDetails = authService.getUserForUserId(json.userId)
+        def userDetails = userService.getCurrentUserDetails()
+        if (!userDetails && json.userId) {
+            userDetails = authService.getUserForUserId(json.userId)
+        }
+
+        if (!userDetails) {
+            throw new Exception("Unable to lookup user with ID: ${json.userId}. Check authorised systems in auth.")
+        }
+        record.userId = userDetails.userId
+        record.recordedBy = userDetails.displayName
+
+        //set all supplied properties
+        json.each {
+            if (it.key in ["decimalLatitude", "decimalLongitude"] && it.value) {
+                record[it.key] = it.value.toString().toDouble()
+            } else if (it.key in ["coordinateUncertaintyInMeters", "individualCount"] && it.value) {
+                record[it.key] = it.value.toString().toInteger()
+            } else if (it.key in ["dateCreated", "lastUpdated"] && it.value) {
+                //do nothing we these values...
+            } else if (!ignores.contains(it.key) && it.value) {
+                record[it.key] = it.value
             }
+        }
 
-            if (!userDetails) {
-                errors['updateError'] = "Unable to lookup user with ID: ${json.userId}. Check authorised systems in auth."
-                return errors
-            }
-            record.userId = userDetails.userId
-            record.recordedBy = userDetails.displayName
+        //if no projectId is supplied, use default
+        if (!record.projectId) {
+            record.projectId = grailsApplication.config.records.default.projectId
+        }
 
-            //set all supplied properties
-            json.each {
-                if (it.key in ["decimalLatitude", "decimalLongitude"] && it.value) {
-                    record[it.key] = it.value.toString().toDouble()
-                } else if (it.key in ["coordinateUncertaintyInMeters", "individualCount"] && it.value) {
-                    record[it.key] = it.value.toString().toInteger()
-                } else if (it.key in ["dateCreated", "lastUpdated"] && it.value) {
-                    //do nothing we these values...
-                } else if (!ignores.contains(it.key) && it.value) {
-                    record[it.key] = it.value
+        //use the data resource UID associated with the project
+        def project = Project.findByProjectId(record.projectId)
+        record.dataResourceUid = project.dataResourceId
+
+        //clear current imageMetadata references on the record
+        record.multimedia = []
+
+        //persist any supplied images into imageMetadata service
+        if (json.multimedia) {
+
+            json.multimedia.eachWithIndex { image, idx ->
+
+                record.multimedia[idx] = [:]
+
+                // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
+                record.multimedia[idx].documentId = image.documentId
+
+                // reconcile new with old images...
+                // Only upload images that are NOT already in images.ala.org.au
+                if (!image.creator) {
+                    image.creator = userDetails.displayName
                 }
-            }
 
-            //if no projectId is supplied, use default
-            if (!record.projectId) {
-                record.projectId = grailsApplication.config.records.default.projectId
-            }
-
-            //use the data resource UID associated with the project
-            def project = Project.findByProjectId(record.projectId)
-            record.dataResourceUid = project.dataResourceId
-
-            //clear current imageMetadata references on the record
-            record.multimedia = []
-
-            //persist any supplied images into imageMetadata service
-            if (json.multimedia) {
-
-                json.multimedia.eachWithIndex { image, idx ->
-
-                    record.multimedia[idx] = [:]
-
-                    // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
-                    record.multimedia[idx].documentId = image.documentId
-
-                    // reconcile new with old images...
-                    // Only upload images that are NOT already in images.ala.org.au
-                    if (!image.creator) {
-                        image.creator = userDetails.displayName
-                    }
-
-                    if (!image.rightsHolder) {
-                        image.rightsHolder = userDetails.displayName
-                    }
-
-                    def alreadyLoaded = false
-                    if (!image.imageId) {
-                        log.debug "Uploading imageMetadata - ${image.identifier}"
-                        def downloadedFile = download(record.occurrenceID, idx, image.identifier)
-                        def imageId = uploadImage(record, downloadedFile, image)
-
-                        record.multimedia[idx].imageId = imageId
-                        record.multimedia[idx].identifier = getImageUrl(imageId)
-
-                    } else {
-                        alreadyLoaded = true
-                        //re-use the existing imageId rather than upload again
-                        log.debug "Image already uploaded - ${image.imageId}"
-                        record.multimedia[idx].imageId = image.imageId
-                        record.multimedia[idx].identifier = image.identifier
-                    }
-
-                    setDCTerms(image, record.multimedia[idx])
-
-                    if (alreadyLoaded) {
-                        log.debug "Refreshing metadata - ${image.identifier}"
-                        //refresh metadata in imageMetadata service
-                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
-                    }
+                if (!image.rightsHolder) {
+                    image.rightsHolder = userDetails.displayName
                 }
-            } else if (imageMap) {
-                //upload the images supplied as bytes
-                def idx = 0
-                imageMap.each { imageFileName, imageInBytes ->
-                    def metadata = [
-                            title  : imageFileName,
-                            creator: userDetails.displayName
-                    ]
-                    def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
-                    record.multimedia[idx] = [:]
+
+                def alreadyLoaded = false
+                if (!image.imageId) {
+                    log.debug "Uploading imageMetadata - ${image.identifier}"
+                    def downloadedFile = download(record.occurrenceID, idx, image.identifier)
+                    def imageId = uploadImage(record, downloadedFile, image)
+
                     record.multimedia[idx].imageId = imageId
                     record.multimedia[idx].identifier = getImageUrl(imageId)
-                    //we only support one set of metadata for all images for this method
-                    setDCTerms(json, record.multimedia[idx])
-                    idx++
+
+                } else {
+                    alreadyLoaded = true
+                    //re-use the existing imageId rather than upload again
+                    log.debug "Image already uploaded - ${image.imageId}"
+                    record.multimedia[idx].imageId = image.imageId
+                    record.multimedia[idx].identifier = image.identifier
+                }
+
+                setDCTerms(image, record.multimedia[idx])
+
+                if (alreadyLoaded) {
+                    log.debug "Refreshing metadata - ${image.identifier}"
+                    //refresh metadata in imageMetadata service
+                    updateImageMetadata(image.imageId, record, record.multimedia[idx])
                 }
             }
-
-            record.save(flush: true)
-        } catch (Exception e) {
-            log.error(e.getMessage(), e)
-            errors['updateError'] = e.getClass().toString() + " " + e.getMessage()
+        } else if (imageMap) {
+            //upload the images supplied as bytes
+            def idx = 0
+            imageMap.each { imageFileName, imageInBytes ->
+                def metadata = [
+                        title  : imageFileName,
+                        creator: userDetails.displayName
+                ]
+                def imageId = uploadImageInByteArray(record, imageFileName, imageInBytes, metadata)
+                record.multimedia[idx] = [:]
+                record.multimedia[idx].imageId = imageId
+                record.multimedia[idx].identifier = getImageUrl(imageId)
+                //we only support one set of metadata for all images for this method
+                setDCTerms(json, record.multimedia[idx])
+                idx++
+            }
         }
-
-        if(!errors) {
-            recordAlertService.alertSubscribers(record)
-        }
-
-        errors
+        record.save(flush: true)
+        recordAlertService.alertSubscribers(record)
     }
 
     private setDCTerms(image, multimediaElement){

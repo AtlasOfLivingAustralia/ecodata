@@ -71,7 +71,7 @@ class OutputServiceSpec extends IntegrationSpec {
             assert argument.projectId[0] == "project1"
             assert argument.userId[0] == "user1"
 
-            [null, null]
+            null
         }
     }
 
@@ -359,7 +359,7 @@ class OutputServiceSpec extends IntegrationSpec {
 
             }
 
-            [null, null]
+            null
         }
 
     }

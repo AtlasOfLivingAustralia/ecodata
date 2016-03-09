@@ -138,11 +138,10 @@ class OutputService {
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
+                def error = "Error creating output for activity ${props.activityId} - ${e.message}"
+                log.error error, e
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Output.withSession { session -> session.clear() }
-                def error = "Error creating output for activity ${props.activityId} - ${e.message}"
-                e.printStackTrace()
-                log.error error, e
                 return [status: 'error', error: error]
             }
         } else {
@@ -169,17 +168,17 @@ class OutputService {
                 Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
                 if (existingRecord) {
                     existingRecord.status = Status.ACTIVE
-                    Map updateResult = recordService.updateRecord(existingRecord, record)
-                    if (updateResult) {
-                        throw new IllegalArgumentException("Failed to update record: ${record}")
+                    try {
+                        recordService.updateRecord(existingRecord, record)
+                    } catch (e) { // Never hide an exception, chain it instead
+                        //No need to log here if it is chained, the catcher should do the right thing
+                        throw new IllegalArgumentException("Failed to update record: ${record},\n Original Error: ${e.message}", e)
                     }
                 } else {
-                    // createRecord returns a 2-element list:
-                    // [0] = Record (always there even if the save failed);
-                    // [1] = Error object if the save failed, empty map if the save succeeded.
-                    List result = recordService.createRecord(record)
-                    if (result[1]) {
-                        throw new IllegalArgumentException("Failed to create record: ${record} Errors: ${result[1]}")
+                    try {
+                        recordService.createRecord(record)
+                    } catch (e) {
+                        throw new IllegalArgumentException("Failed to create record: ${record},\n Original Error: ${e.message}", e)
                     }
                 }
             }
@@ -207,9 +206,9 @@ class OutputService {
                 }
 
             } catch (Exception e) {
-                Output.withSession { session -> session.clear() }
                 String error = "Error updating output ${outputId} - ${e.message}"
                 log.error error, e
+                Output.withSession { session -> session.clear() }
                 result = [status: 'error', error: error]
             }
         } else {

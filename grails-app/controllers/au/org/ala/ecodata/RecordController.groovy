@@ -291,28 +291,29 @@ class RecordController {
                         imagesToBeLoaded.put(params.imageFileName, imageAsBytes)
                     }
 
-                    //save the record
-                    def (record, errors) = recordService.createRecordWithImages(recordParams, imagesToBeLoaded)
-                    if (errors.size() == 0) {
+                    try {
+                        def record = recordService.createRecordWithImages(recordParams, imagesToBeLoaded)
                         log.debug "Added record: ${record.occurrenceID}"
                         response.setStatus(SC_OK)
                         setResponseHeadersForRecord(response, record)
                         response.setContentType("application/json;charset=UTF-8")
                         [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
-                    } else {
-                        log.error "Problem creating record. ${errors}"
+
+                    } catch (e) {
+                        log.error("Problem creating record: ${e.message}", e)
                         record.delete(flush: true)
-                        response.addHeader 'errors', (errors as grails.converters.JSON).toString()
+                        response.addHeader 'errors', ([e.message] as grails.converters.JSON).toString()
                         response.sendError(SC_BAD_REQUEST, "Unable to create a new record. See errors for more details.")
                     }
                 } else {
                     response.setContentType("application/json")
-                    log.error("Unable to create record. " + errors)
+                    log.error("Unable to create record. " )
                     response.sendError(SC_BAD_REQUEST, errors)
                     [success: false]
                 }
 
             } catch (Exception e) {
+                log.error(e, e)
                 response.setStatus(SC_INTERNAL_SERVER_ERROR)
                 response.setContentType("application/json")
                 [success: false]
@@ -322,14 +323,15 @@ class RecordController {
             //if not multi part request, expect a JSON body
             def json = request.JSON
             if (json.userId) {
-                def (record, errors) = recordService.createRecord(json)
-                if (errors.size() == 0) {
+                try {
+                    def record = recordService.createRecord(json)
                     setResponseHeadersForRecord(response, record)
                     response.setContentType("application/json;charset=UTF-8")
                     [message: 'created', recordId: record.occurrenceID, occurrenceID: record.occurrenceID]
-                } else {
+                }  catch (e) {
+                    log.error("Problem creating record: ${e.message}", e)
                     record.delete(flush: true)
-                    response.addHeader 'errors', (errors as grails.converters.JSON).toString()
+                    response.addHeader 'errors', ([e.message] as grails.converters.JSON).toString()
                     response.sendError(SC_BAD_REQUEST, "Unable to create a new record. See errors for more details.")
                 }
             } else {

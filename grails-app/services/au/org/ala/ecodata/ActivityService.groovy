@@ -319,7 +319,7 @@ class ActivityService {
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"
-                    log.error error
+                    log.error ( error, e) //You have to hate exeption hiding
                     errors << [error: error, name: 'activity']
                 }
             }
