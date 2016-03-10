@@ -1,6 +1,5 @@
 {
     "modelName": "MDBA_farming_observations",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "date",
