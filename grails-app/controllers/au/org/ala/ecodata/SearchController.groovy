@@ -25,6 +25,7 @@ class SearchController {
     DocumentService documentService
     ActivityService activityService
     SiteService siteService
+    UserService userService
     DownloadService downloadService
 
     def index(String query) {
@@ -236,10 +237,11 @@ class SearchController {
             response.setStatus(400)
             render "A download ID is required"
         } else {
-            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.zip")
+            String extension = params.fileExtension ?: 'zip'
+            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
             if (file) {
                 response.setContentType(ContentType.BINARY.toString())
-                response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
+                response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')
 
                 file.withInputStream { i -> response.outputStream << i }
             } else {
@@ -273,6 +275,8 @@ class SearchController {
             }
         } else {
             downloadMeritData(params)
+            response.setStatus(200)
+            render "OK"
         }
     }
 
@@ -290,10 +294,15 @@ class SearchController {
                 render projects as JSON
             }
             xlsx {
-                XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
-
-                exporter.setResponseHeaders(response)
-                exporter.save(response.outputStream)
+                if (!params.email) {
+                    params.email = userService.getCurrentUserDetails().userName
+                }
+                params.fileExtension = "xlsx"
+                Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
+                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
+                    exporter.save(outputStream)
+                }
+                downloadService.downloadProjectDataAsync(params, doDownload)
             }
         }
     }

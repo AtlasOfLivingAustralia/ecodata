@@ -31,25 +31,28 @@ class DownloadService {
      * but the file is not streamed back on the HTTP Response: instead, the file is written to disk and an email notification
      * is sent to the requesting user
      *
-     * @param params
+     * @param params configures the email address, file extension and url path for the download.
+     * @param downloadAction must be a Closure taking two parameters, an OutputStream and a Map.
      */
-    void downloadProjectDataAsync(GrailsParameterMap params) {
+    void downloadProjectDataAsync(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
         File directoryPath = new File("${grailsApplication.config.temp.dir}")
         directoryPath.mkdirs()
-        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.zip"))
+        String fileExtension = params.fileExtension?:'zip'
+        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
 
         task {
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
             Project.withNewSession {
-                downloadProjectData(outputStream, params)
+                downloadAction(outputStream, params)
             }
         }.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
-            String url = "${grailsApplication.config.async.download.url.prefix}${downloadId}"
+            String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
+            String url = "${urlPrefix}${downloadId}"
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
-            emailService.sendEmail("Your download is ready", body, [params.email])
+            emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
@@ -57,12 +60,17 @@ class DownloadService {
         }.onError { Throwable error ->
             log.error("Failed to generate zip file for download.", error)
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
-            emailService.sendEmail("Your download has failed", body, [params.email])
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
             }
         }
+    }
+
+    void downloadProjectDataAsync(GrailsParameterMap map) {
+        Closure doDownload = {OutputStream outputStream, GrailsParameterMap params -> downloadProjectData(outputStream, params)}
+        downloadProjectDataAsync(map, doDownload)
     }
 
     /**
