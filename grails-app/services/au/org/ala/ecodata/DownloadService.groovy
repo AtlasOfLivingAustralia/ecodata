@@ -52,7 +52,7 @@ class DownloadService {
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
             String url = "${urlPrefix}${downloadId}"
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
-            emailService.sendEmail("Your download is ready", body, [params.email])
+            emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
@@ -60,7 +60,7 @@ class DownloadService {
         }.onError { Throwable error ->
             log.error("Failed to generate zip file for download.", error)
             String body = groovyPageRenderer.render(template: "/email/downloadFailed")
-            emailService.sendEmail("Your download has failed", body, [params.email])
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()

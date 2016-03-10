@@ -7,9 +7,9 @@ class EmailService {
     UserService userService
     def grailsApplication
 
-    def sendEmail(String subjectLine, String body, Collection recipients, Collection ccList = []) {
-        String systemEmailAddress = grailsApplication.config.ecodata.support.email.address
-        String sender = grailsApplication.config.ecodata.system.email.sender ?: systemEmailAddress
+    def sendEmail(String subjectLine, String body, Collection recipients, Collection ccList = [], String systemEmail = null, String senderEmail = null) {
+        String systemEmailAddress = systemEmail ?: grailsApplication.config.ecodata.support.email.address
+        String sender = (senderEmail ?: grailsApplication.config.ecodata.system.email.sender) ?: systemEmailAddress
         try {
             // This is to prevent spamming real users while testing.
             def emailFilter = grailsApplication.config.emailFilter
