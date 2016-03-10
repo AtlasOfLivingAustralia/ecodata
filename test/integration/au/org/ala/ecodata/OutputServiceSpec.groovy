@@ -364,6 +364,145 @@ class OutputServiceSpec extends IntegrationSpec {
 
     }
 
+    def "createOrUpdateRecordsForOutput should create one Record only for the entry that has outputSpecies info and none for the general information that lacks it"() {
+        setup: "Given a metadata model for multisightings and a properties map representing the input"
+
+        Map outputMetadataModel =
+                [
+                        "record" : "true",
+                        "modelName" : "Biological Survey - Fauna",
+                        "dataModel" : [[
+                                               "dataType" : "list",
+                                               "name" : "surveyResults",
+                                               "columns" : [[
+                                                                    "dataType" : "text",
+                                                                    "description" : "The identifier of the transect or plot in which sampling is being done.",
+                                                                    "name" : "plotId"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "The identifier of the point at which the observational record was made",
+                                                                    "name" : "sampleSiteId"
+                                                            ], [
+                                                                    "dataType" : "species",
+                                                                    "description" : "All species recorded at the sample site",
+                                                                    "name" : "species",
+                                                                    "dwcAttribute" : "scientificName",
+                                                                    "validate" : "required"
+                                                            ], [
+                                                                    "dataType" : "number",
+                                                                    "description" : "The number of organisms in the survey at the sample site which share the same set of record attributes.",
+                                                                    "name" : "numberOfOrganisms",
+                                                                    "dwcAttribute" : "individualCount",
+                                                                    "validate" : "integer,min[0]"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "Nature of the evidence for the basis of the record",
+                                                                    "name" : "evidence",
+                                                                    "constraints" : ["Living organism", "Dead organism", "Tracks", "Scats", "Debris from molting", "Scratchings", "Nest / burrow / lodgings", "Other (specify in notes)"],
+                                                                    "dwcAttribute" : "occurrenceEvidence"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "The sex of the organism recorded",
+                                                                    "name" : "sex",
+                                                                    "constraints" : ["Male", "Female", "Hermaphrodite", "Undetermined", "Other (specify in notes)"],
+                                                                    "dwcAttribute" : "sex"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "Life stage of the organism recorded",
+                                                                    "name" : "lifeStage",
+                                                                    "constraints" : ["Juvenile", "Adolescent", "Pre-metamorphic", "metamorphic juvenile", "Larva", "Nymph", "Pupa", "Adult - non reproductive", "Adult - reproductive", "Other (specify in notes)"],
+                                                                    "dwcAttribute" : "lifeStage"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "The health or condition of the organism recorded",
+                                                                    "name" : "health"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "Indicator as to whether biological material (either as a sample or whole organism) was taken.",
+                                                                    "name" : "biologicalMaterialTaken",
+                                                                    "constraints" : ["Yes", "No"],
+                                                                    "dwcAttribute" : "associatedOccurrences"
+                                                            ], [
+                                                                    "dataType" : "text",
+                                                                    "description" : "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.).",
+                                                                    "name" : "speciesNotes",
+                                                                    "dwcAttribute" : "occurrenceRemarks"
+                                                            ]
+                                               ]
+                                       ], [
+                                               "dataType" : "number",
+                                               "description" : "Aggregate total of the individual organisms recorded in the survey event",
+                                               "primaryResult" : "true",
+                                               "name" : "totalNumberOfOrganisms",
+                                               "computed" : [
+                                                       "operation" : "sum",
+                                                       "dependents" : [
+                                                               "source" : "numberOfOrganisms",
+                                                               "fromList" : "surveyResults"
+                                                       ]
+                                               ]
+                                       ], [
+                                               "dataType" : "text",
+                                               "name" : "notes",
+                                               "dwcAttribute" : "eventRemarks"
+                                       ]
+                        ]
+                ]
+
+        metadataService.getOutputDataModelByName(_) >> outputMetadataModel
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+        Map properties =
+                [
+                        name: 'Biological Survey - Fauna',
+                        data: [
+                                "totalNumberOfOrganisms": 3,
+                                "surveyResults"         : [[
+                                                                   "lifeStage"              : "Adolescent",
+                                                                   "sex"                    : "Male",
+                                                                   "species"                : [
+                                                                           "guid"           : "urn:lsid:biodiversity.org.au:afd.name:349301",
+                                                                           "outputSpeciesId": "40557c84-968e-4f44-851e-44a0395b115c",
+                                                                           "name"           : "Phocarctos hookeri"
+                                                                   ],
+                                                                   "numberOfOrganisms"      : "3",
+                                                                   "evidence"               : "Living organism",
+                                                                   "plotId"                 : "314",
+                                                                   "speciesNotes"           : "Notes go here",
+                                                                   "health"                 : "Good condition",
+                                                                   "biologicalMaterialTaken": "Yes",
+                                                                   "sampleSiteId"           : "314"
+                                                           ]
+                                ]
+                        ]
+                ]
+
+
+        when: "Records are created from Output"
+        outputService.createOrUpdateRecordsForOutput(activity, output, properties)
+
+        then: "1 records will be created, the one row with output species info."
+        1 * outputService.recordService.createRecord(_) >> { argument ->
+
+            //Inherited values
+            assert argument.activityId[0] == "activity1"
+            assert argument.outputId[0] == "output1"
+            assert argument.projectActivityId[0] == "projAct1"
+            assert argument.projectId[0] == "project1"
+            assert argument.userId[0] == "user1"
+
+            // Particular values, including species information
+            assert argument.outputSpeciesId[0] == '40557c84-968e-4f44-851e-44a0395b115c'
+
+            assert argument.scientificName[0] == "Phocarctos hookeri"
+            assert argument.individualCount[0] == '3'
+            assert argument.sex[0] == 'Male'
+            assert argument.occurrenceRemarks[0] == 'Notes go here'
+
+            null
+        }
+    }
 
     def "deleteProject should soft delete the project and all related records when destroy = false"() {
         setup:

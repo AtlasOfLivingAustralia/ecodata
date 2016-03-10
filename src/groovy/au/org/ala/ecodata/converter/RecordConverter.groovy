@@ -82,9 +82,11 @@ class RecordConverter {
             baseRecord << recordFieldSets[0]
         }
 
-        // Regardless of whether there is multimodels, the base record is the first entry that needs to be saved
-        List<Map> records = [baseRecord]
-
+        List<Map> records = []
+        // We want to create a record in the DB only if species information is present
+        if(baseRecord.outputSpeciesId) {
+            records << baseRecord
+        }
 
         if (multiItemModels) {
             // For each multiItemModel, get the appropriate field converter for the data type and generate the list of field
@@ -96,7 +98,12 @@ class RecordConverter {
 
                 recordFieldSets.each {
                     Map rowRecord = overrideFieldValues(baseRecord, it)
-                    records << rowRecord
+                    if(rowRecord.outputSpeciesId) {
+                        records << rowRecord
+                    } else {
+                        log.warn("Multi item Record [${rowRecord}] does not contain species information, " +
+                                "was the form intended to work like that?")
+                    }
                 }
             }
         }
