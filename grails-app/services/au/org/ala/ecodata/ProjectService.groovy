@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.converter.SciStarterConverter
+
 import java.lang.reflect.UndeclaredThrowableException
 
 import static au.org.ala.ecodata.Status.*
@@ -31,6 +33,7 @@ class ProjectService {
     WebService webService
     EmailService emailService
     ReportingService reportingService
+    OrganisationService organisationService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -185,7 +188,7 @@ class ProjectService {
         }
     }
 
-    def create(props) {
+    def create(props, collectoryLink = true) {
         assert getCommonService()
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
@@ -200,7 +203,7 @@ class ProjectService {
             props.remove('sites')
             props.remove('id')
 
-            establishCollectoryLinkForProject(project, props)
+            collectoryLink && establishCollectoryLinkForProject(project, props)
 
             getCommonService().updateProperties(project, props)
             return [status: 'ok', projectId: project.projectId]
@@ -429,4 +432,181 @@ class ProjectService {
         }
     }
 
+    /**
+     * Gets all SciStarter projects and import them into Biocollect. Import script does the following.
+     * 1. gets the list of projects and contacts SciStarter for more details on a project
+     * 2. checks if the project is already imported, if yes, update fields. TODO
+     * 3. if project does not exist, create a new project, organisation, project extent and project logo document.
+     *      And link artifacts to the project. TODO: creating project extent.
+     * @return
+     */
+    List importProjectsFromScistarter(){
+        List transformedProjects = []
+
+        try{
+            String scistarterProjectUrl;
+            Map additionalProp, transformedProject;
+            List projects = getScistarterProjectsFromFinder();
+            projects?.each{ pProperties ->
+                Map project = pProperties;
+                if(project && project.title){
+                    // get more details about the project
+                    scistarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                    additionalProp = webService.getJson(scistarterProjectUrl);
+                    if(!additionalProp.error){
+                        project = project + additionalProp;
+                    } else {
+                        log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                        return;
+                    }
+
+                    // check if this project was imported
+                    Project sciProject = Project.findByIsSciStarterAndSciStarterId(true, project.id);
+                    if(sciProject){
+                        // todo: update project
+                    } else {
+
+                        if(project.origin && project.orgin == 'atlasoflivingaustralia'){
+                            // ignore projects SciStarter imported from Biocollect
+                        } else {
+                            // map properties from SciStarter to Biocollect
+                            transformedProject = SciStarterConverter.convert(project)
+
+                            // create project & document & site & organisation
+                            transformedProject = createSciStarterProject(transformedProject)
+                            transformedProjects.push(transformedProject)
+                        }
+                    }
+                }
+            }
+
+        } catch (SocketTimeoutException ste){
+
+        } catch (Exception e){
+            log.error(e.message)
+            log.error(e.stackTrace)
+        }
+
+        return  transformedProjects
+    }
+
+    /**
+     * Get the entire project list from SciStarter
+     * @return
+     * @throws SocketTimeoutException
+     * @throws Exception
+     */
+    List getScistarterProjectsFromFinder() throws SocketTimeoutException, Exception{
+        String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
+        Map response = webService.getJson(scistarterFinderUrl);
+        if(response.error){
+            if(response.error.contains('Timed out')){
+                throw new SocketTimeoutException(response.error)
+            } else {
+                throw  new Exception(response.error);
+            }
+        }
+
+        return response.results
+    }
+
+    /**
+     * Creates a project in the database. It also creates all associated artifacts like organisation, document, site etc
+     * @param prop - mapped SciStarter project properties
+     * @return
+     */
+    Map createSciStarterProject(Map prop){
+        Map organisation
+
+        // create project extent
+        Map site = createSciStarterSite()
+        prop.projectSiteId = site.siteId
+
+        // create organisation
+        if(prop.organisationName){
+            organisation = createSciStarterOrganisation(prop.organisationName);
+            if(organisation.organisationId){
+                prop.organisationId = organisation.organisationId;
+            } else {
+                // throw exception?
+            }
+        }
+
+        // remove unnecessary properties
+        String imageUrl = prop.remove('image')
+        String attribution = prop.remove('attribution')
+        prop.remove('projectId')
+        // create project. do not call collectory to create data provider and data resource id
+        Map project = create(prop, false)
+        String projectId = project.projectId
+
+        // use the projectId to associate site with  project
+        if(projectId){
+            siteService.addProject(site.siteId, projectId);
+            // create project logo.
+            Map document = createSciStarterLogo(imageUrl, attribution, projectId);
+
+            return project
+        } else {
+            // todo: reverse transactions
+        }
+    }
+
+    /**
+     * todo: Create project extent.
+     * @return
+     */
+    Map createSciStarterSite(){
+        [siteId:'f9c4e9c6-844e-4b32-b4dc-effa66c567a3']
+    }
+
+    /**
+     * Create project logo. Logo are stored in document collection in Biocollect.
+     * @param imageUrl
+     * @param attribution
+     * @param projectId
+     * @return
+     */
+    Map createSciStarterLogo(String imageUrl, String attribution, String projectId){
+        Map props = [
+                "externalUrl" : imageUrl,
+                "isPrimaryProjectImage" : true,
+                "projectId" : projectId,
+                "attribution" : attribution,
+                "role" : "logo",
+                "status" : "active",
+                "type" : "link",
+                "hasPreview" : false,
+                "readOnly" : false,
+                "thirdPartyConsentDeclarationRequired" : false,
+                "public" : true,
+                "stages" : [ ],
+                "embeddedVideoVisible" : false
+        ]
+        // create logo document
+        documentService.create(props, null)
+    }
+
+    /**
+     * Check organisation.
+     * 1. if exist, use it.
+     * 2. otherwise, create new
+     * @param name
+     * @return
+     */
+    Map createSciStarterOrganisation(String name){
+        Organisation org = Organisation.findByName(name);
+        if(org){
+            return [organisationId:org.organisationId ]
+        } else {
+            // create organisation
+            Map orgProp = [
+                    "collectoryInstitutionId" : "null",
+                    "name" : name,
+                    "orgType" : "conservation",
+                    "description" : "This organisation is imported from SciStarter"
+            ]
+            return  organisationService.create(orgProp, false);
+        }
+    }
 }
