@@ -234,7 +234,7 @@ class ProjectXlsExporter extends ProjectExporter {
             List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
 
                 Map budgetLineItem = [
-                        investmentArea: lineItem.shortDescription,
+                        investmentArea: lineItem.shortLabel,
                         budgetDescription: lineItem.description
                 ]
                 budgetLineItem.putAll(project)
