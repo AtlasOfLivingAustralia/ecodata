@@ -280,30 +280,10 @@ class ActivityService {
         def activity = Activity.findByActivityId(id)
         def errors = []
         if (activity) {
-            // do updates for each attached output
-            props.outputs?.each { output ->
-                if (output.outputId && output.outputId != "null") {
-                    // update
-                    log.debug "Updating output ${output.name}"
-                    def result = outputService.update(output, output.outputId)
-                    if (result.error) {
-                        errors << [error: result.error, name: output.name]
-                    }
-                } else {
-                    // create
-                    log.debug "Creating output ${output.name}"
-                    output.remove('outputId')   // in case a blank one is supplied
-                    output.activityId = id
-                    def result = outputService.create(output)
-                    if (result.error) {
-                        errors << [error: result.error, name: output.name]
-                    }
-                }
-            }
+            def outputs = props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
             // see if the activity itself has updates
             if (props.activityId) {
                 try {
-                    props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
                     props.remove('userId')
                     props.remove('activityId')
                     props.remove('projectId')
@@ -321,6 +301,28 @@ class ActivityService {
                     def error = "Error updating Activity ${id} - ${e.message}"
                     log.error ( error, e) //You have to hate exeption hiding
                     errors << [error: error, name: 'activity']
+                }
+            }
+
+            // do updates for each attached output
+            //outputs and/or records depend on activity info so activity needs to be updated first
+            outputs?.each { output ->
+                if (output.outputId && output.outputId != "null") {
+                    // update
+                    log.debug "Updating output ${output.name}"
+                    def result = outputService.update(output, output.outputId)
+                    if (result.error) {
+                        errors << [error: result.error, name: output.name]
+                    }
+                } else {
+                    // create
+                    log.debug "Creating output ${output.name}"
+                    output.remove('outputId')   // in case a blank one is supplied
+                    output.activityId = id
+                    def result = outputService.create(output)
+                    if (result.error) {
+                        errors << [error: result.error, name: output.name]
+                    }
                 }
             }
             // aggregate errors

@@ -52,16 +52,35 @@ class OutputServiceSpec extends IntegrationSpec {
         savedOutput['data']['prop2'] == 'prop2'
     }
 
-    def "createOrUpdateRecordsForOutput should create associated Record objects"() {
+    def "createOrUpdateRecordsForOutput should not create associated Record objects when they does not contain species information"() {
         setup:
         metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[dataType: "doesNotMatter"], [dataType: "doesNotMatter"]]]
 
         Output output = new Output(outputId: "output1")
         Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
-        Map properties = [data: [userId: "666"]]
+
+        Map propertiesWithoutSpeciesInfo = [data: [userId: "666" ] ]
 
         when:
-        outputService.createOrUpdateRecordsForOutput(activity, output, properties)
+        outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithoutSpeciesInfo)
+
+        then:
+        0 * outputService.recordService.createRecord(_) >> {
+            null
+        }
+    }
+
+    def "createOrUpdateRecordsForOutput should create associated Record objects when they contain species information"() {
+        setup:
+        metadataService.getOutputDataModelByName(_) >> [record: true, dataModel: [[dataType: "doesNotMatter"], [
+                "dataType"    : "species", "name" : "species1", "dwcAttribute": "scientificName"]]]
+
+        Output output = new Output(outputId: "output1")
+        Activity activity = new Activity(activityId: "activity1", projectActivityId: "projAct1", projectId: "project1", userId: "user1")
+        Map propertiesWithSpeciesInfo = [data: [userId: "666", "species1": ["outputSpeciesId": "anhotherid"]]]
+
+        when:
+        outputService.createOrUpdateRecordsForOutput(activity, output, propertiesWithSpeciesInfo)
 
         then:
         1 * outputService.recordService.createRecord(_) >> { argument ->

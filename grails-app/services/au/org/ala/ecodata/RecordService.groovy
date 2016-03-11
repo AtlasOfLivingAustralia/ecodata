@@ -158,7 +158,7 @@ class RecordService {
             catch (Exception e) {
                 Record.withSession { session -> session.clear() }
                 def error = "Error updating record ${record.occurrenceID} - ${e.message}"
-                log.error error
+                log.error error, e
                 errors << [status: 'error', error: error]
             }
         }

@@ -10,26 +10,18 @@ class ActivityControllerSpec extends IntegrationSpec {
 
     def activityController = new ActivityController()
     // The original services
-    def userService
     def recordService
 
-    //def userServiceStub = Stub(UserService)
     def recordServiceStub = Stub(RecordService)
-
-
 
     def setup() {
         deleteAll()
         activityController.activityService.outputService.recordService = recordServiceStub
-        //activityController.activityService.outputService.recordService.userService = userServiceStub
     }
 
     def cleanup() {
         deleteAll()
         activityController.activityService.outputService.recordService = recordService
-      //  activityController.activityService.outputService.recordService.userService = userService // Restore the userService
-
-
     }
 
     private void deleteAll() {
@@ -70,17 +62,11 @@ class ActivityControllerSpec extends IntegrationSpec {
         def activityId = 'activity_1'
         Activity activity = new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:activityId)
         activity.save(flush: true, failOnError: true)
-        def outputs = [outputs:[[name:'Revegetation Details', data:[prop1:'prop1', prop2:'prop2']],[name:'Participant Details', data:[prop3:'prop3', prop4:'prop4']]]]
-        activityController.request.json = (outputs as JSON).toString()
-        //userServiceStub.getCurrentUserDetails() >> {[userId:123]}
+        def requestJson = [activityId:activityId,  outputs:[[name:'Revegetation Details', data:[prop1:'prop1', prop2:'prop2']],[name:'Participant Details', data:[prop3:'prop3', prop4:'prop4']]]]
+        activityController.request.json = (requestJson as JSON).toString()
 
         recordServiceStub.updateRecord(_,_) >> {//Do nothing
-             }
-
-        //projectServiceStub.create(_) >> {new Project(dataResourceId:'a dataResource', projectId: 'a project')}
-
-//        def projectMock = GroovyMock(Project, global: false)
-//        projectMock.metaClass.'static'.findByProjectId = {id -> new Project(dataResourceId:'a dataResource') }
+        }
 
         when: "update the activity to include the output details"
         def response = activityController.update(activityId)

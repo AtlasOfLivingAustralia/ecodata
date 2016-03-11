@@ -19,15 +19,15 @@ class RecordConverterSpec extends Specification {
         ProjectActivity projectActivity = new ProjectActivity()
         Activity activity = new Activity()
         Output output = new Output()
-        Map outputMetadata = [record: true, dataModel: [[dataType: "text", dwcAttribute: "someAttribute", name: "someField"]]]
-        Map submittedData = [someField: "fieldValue"]
+        Map outputMetadata = [record: true, dataModel: [[dataType: "text", dwcAttribute: "attribute1", name: "someField"], [dataType: "species", name: "species"]]]
+        Map submittedData = [ someField: "fieldValue", species: ["outputSpeciesId": "anhotherid"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
 
         then:
         fieldsets.size() == 1
-        fieldsets[0].someAttribute == "fieldValue"
+        fieldsets[0].attribute1 == "fieldValue"
     }
 
     def "convert should create a single record field set with all fields from an output model with 1 single-item data model"() {
@@ -40,9 +40,9 @@ class RecordConverterSpec extends Specification {
         Map outputMetadata = [record: true, dataModel: [
                 [dataType: "text", dwcAttribute: "attribute1", name: "field1"],
                 [dataType: "text", dwcAttribute: "attribute2", name: "field2"],
-                [dataType: "number", dwcAttribute: "attribute3", name: "field3"]
+                [dataType: "species", dwcAttribute: "attribute3", name: "field3"]
         ]]
-        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: "fieldValue3"]
+        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["outputSpeciesId": "anotherid"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -51,7 +51,7 @@ class RecordConverterSpec extends Specification {
         fieldsets.size() == 1
         fieldsets[0].attribute1 == "fieldValue1"
         fieldsets[0].attribute2 == "fieldValue2"
-        fieldsets[0].attribute3 == "fieldValue3"
+        fieldsets[0].outputSpeciesId == "anotherid"
     }
 
     def "convert should create a record field set with multiple fields for each item in an output model with a 'list' data model"() {
@@ -76,7 +76,7 @@ class RecordConverterSpec extends Specification {
                                       "dwcAttribute": "attribute1"
                                     },
                                     {
-                                      "dataType": "text",
+                                      "dataType": "species",
                                       "name": "col2",
                                       "dwcAttribute": "attribute2"
                                     }
@@ -90,11 +90,11 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "col1": "row1col1",
-                                  "col2": "row1col2"
+                                  "col2": {"outputSpeciesId": "anotherid1"}
                                 },
                                 {
                                   "col1": "row2col1",
-                                  "col2": "row2col2"
+                                  "col2": {"outputSpeciesId": "anotherid2"}
                                 }
                               ]
                             }
@@ -107,15 +107,11 @@ class RecordConverterSpec extends Specification {
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
 
         then:
-        fieldsets.size() == 3
-        // Base reord does not have any attributes, that's ok for a UT but would be useless in a real survey
-        fieldsets[0].attribute1 == null
-        fieldsets[0].attribute2 == null
-
-        fieldsets[1].attribute1 == "row1col1"
-        fieldsets[1].attribute2 == "row1col2"
-        fieldsets[2].attribute1 == "row2col1"
-        fieldsets[2].attribute2 == "row2col2"
+        fieldsets.size() == 2
+        fieldsets[0].attribute1 == "row1col1"
+        fieldsets[0].outputSpeciesId == "anotherid1"
+        fieldsets[1].attribute1 == "row2col1"
+        fieldsets[1].outputSpeciesId == "anotherid2"
     }
 
     def "convert should add all single-item dataModel values to each record field set in an output model with a 'list' data model"() {
@@ -140,7 +136,7 @@ class RecordConverterSpec extends Specification {
                                       "dwcAttribute": "attribute1"
                                     },
                                     {
-                                      "dataType": "text",
+                                      "dataType": "species",
                                       "name": "col2",
                                       "dwcAttribute": "attribute2"
                                     }
@@ -152,7 +148,7 @@ class RecordConverterSpec extends Specification {
                                   "dwcAttribute": "attribute3"
                                 },
                                 {
-                                  "dataType": "text",
+                                  "dataType": "species",
                                   "name": "singleItemField2",
                                   "dwcAttribute": "attribute4"
                                 }
@@ -164,15 +160,15 @@ class RecordConverterSpec extends Specification {
                               "mylist": [
                                 {
                                   "col1": "row1col1",
-                                  "col2": "row1col2"
+                                  "col2": {"outputSpeciesId": "row1col2"}
                                 },
                                 {
                                   "col1": "row2col1",
-                                  "col2": "row2col2"
+                                  "col2": {"outputSpeciesId": "row2col2"}
                                 }
                               ],
                               "singleItemField1": "singleItemValue1",
-                              "singleItemField2": "singleItemValue2"
+                              "singleItemField2": {"outputSpeciesId": "singleItemValue2"}
                             }
                             """
 
@@ -188,17 +184,15 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].attribute1 == null
         fieldsets[0].attribute2 == null
         fieldsets[0].attribute3 == "singleItemValue1"
-        fieldsets[0].attribute4 == "singleItemValue2"
+        fieldsets[0].outputSpeciesId == "singleItemValue2"
 
 
         fieldsets[1].attribute1 == "row1col1"
-        fieldsets[1].attribute2 == "row1col2"
+        fieldsets[1].outputSpeciesId == "row1col2"
         fieldsets[1].attribute3 == "singleItemValue1"
-        fieldsets[1].attribute4 == "singleItemValue2"
         fieldsets[2].attribute1 == "row2col1"
-        fieldsets[2].attribute2 == "row2col2"
+        fieldsets[2].outputSpeciesId == "row2col2"
         fieldsets[2].attribute3 == "singleItemValue1"
-        fieldsets[2].attribute4 == "singleItemValue2"
     }
 
     def "convert should populate the record field set with the related object ids"() {
@@ -208,8 +202,8 @@ class RecordConverterSpec extends Specification {
         ProjectActivity projectActivity = new ProjectActivity()
         Activity activity = new Activity(activityId: "activityId", projectActivityId: "projectActivityId", projectId: "projectId", userId: "user1")
         Output output = new Output(outputId: "outputId")
-        Map outputMetadata = [record: true, dataModel: [[dataType: "text", dwcAttribute: "someAttribute", name: "someField"]]]
-        Map submittedData = [someField: "fieldValue"]
+        Map outputMetadata = [record: true, dataModel: [[dataType: "species", dwcAttribute: "someAttribute", name: "someField"]]]
+        Map submittedData = [someField: [outputSpeciesId: "someFieldId"]]
 
         when:
         List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
@@ -250,7 +244,12 @@ class RecordConverterSpec extends Specification {
                                   "dataType": "text",
                                   "name": "field2",
                                   "dwcAttribute": "dwc"
+                                },
+                                                                {
+                                  "dataType": "species",
+                                  "name" : "speciesField"
                                 }
+
                               ]
                             }
                             """
@@ -261,7 +260,8 @@ class RecordConverterSpec extends Specification {
                                   "field1": "secondValue"
                                 }
                               ],
-                              "field2": "firstValue"
+                              "field2": "firstValue",
+                              "speciesField" : {"outputSpeciesId": "speciesFieldId"}
                             }
                             """
 
