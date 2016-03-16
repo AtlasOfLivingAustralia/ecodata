@@ -202,6 +202,10 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Project, projectId)
     }
 
+    def addUserAsRoleToSite(String userId, AccessLevel accessLevel, String siteId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Site, siteId)
+    }
+
     def addUserAsRoleToOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
         return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
     }
