@@ -457,7 +457,6 @@ class ProjectService {
 
             // list all SciStarter projects
             List projects = getScistarterProjectsFromFinder()
-            projects = projects.subList(0,5)
             projects?.each { pProperties ->
                 Map project = pProperties
                 if (project && project.title) {
