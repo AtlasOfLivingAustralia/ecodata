@@ -1,6 +1,7 @@
 {
   "projects" : [
   ],
+  "isSciStarter":true,
   "status" : "active",
   "poi" : [ ],
   "geoIndex" : {

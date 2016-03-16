@@ -1,13 +1,13 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
+import au.org.ala.ecodata.reporting.Score
+import grails.converters.JSON
 
 import java.lang.reflect.UndeclaredThrowableException
 
-import static au.org.ala.ecodata.Status.*
-
-import au.org.ala.ecodata.reporting.Score
-
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 import static grails.async.Promises.task
 
 class ProjectService {
@@ -433,7 +433,7 @@ class ProjectService {
     }
 
     /**
-     * Gets all SciStarter projects and import them into Biocollect. Import script does the following.
+     * Import SciStarter projects to Biocollect. Import script does the following.
      * 1. gets the list of projects and contacts SciStarter for more details on a project
      * 2. checks if the project is already imported, if yes, update fields. TODO
      * 3. if project does not exist, create a new project, organisation, project extent and project logo document.
@@ -443,48 +443,52 @@ class ProjectService {
     List importProjectsFromScistarter(){
         List transformedProjects = []
 
-        try{
-            String scistarterProjectUrl;
-            Map additionalProp, transformedProject;
-            List projects = getScistarterProjectsFromFinder();
-            projects?.each{ pProperties ->
-                Map project = pProperties;
-                if(project && project.title){
+        try {
+            String sciStarterProjectUrl
+            Map additionalProp, transformedProject
+
+            // delete artifacts from previous import
+            List sciStarterSites = Site.findAllByIsSciStarter(true)
+            Site.deleteAll(sciStarterSites)
+            List sciStarterProjects = Project.findAllByIsSciStarter(true)
+            Project.deleteAll(sciStarterProjects)
+            List sciStarterLogo = Document.findAllByIsSciStarter(true)
+            Document.deleteAll(sciStarterLogo)
+
+            // list all SciStarter projects
+            List projects = getScistarterProjectsFromFinder()
+            projects = projects.subList(0,5)
+            projects?.each { pProperties ->
+                Map project = pProperties
+                if (project && project.title) {
                     // get more details about the project
-                    scistarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    additionalProp = webService.getJson(scistarterProjectUrl);
-                    if(!additionalProp.error){
-                        project = project + additionalProp;
+                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                    additionalProp = webService.getJson(sciStarterProjectUrl)
+                    if (!additionalProp.error) {
+                        project = project + additionalProp
                     } else {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                        return;
                     }
 
-                    // check if this project was imported
-                    Project sciProject = Project.findByIsSciStarterAndSciStarterId(true, project.id);
-                    if(sciProject){
-                        // todo: update project
+                    if (project.origin && project.origin == 'atlasoflivingaustralia') {
+                        // ignore projects SciStarter imported from Biocollect
                     } else {
+                        // map properties from SciStarter to Biocollect
+                        transformedProject = SciStarterConverter.convert(project)
 
-                        if(project.origin && project.orgin == 'atlasoflivingaustralia'){
-                            // ignore projects SciStarter imported from Biocollect
-                        } else {
-                            // map properties from SciStarter to Biocollect
-                            transformedProject = SciStarterConverter.convert(project)
-
-                            // create project & document & site & organisation
-                            transformedProject = createSciStarterProject(transformedProject)
-                            transformedProjects.push(transformedProject)
-                        }
+                        // create project & document & site & organisation
+                        Map savedProject = createSciStarterProject(transformedProject, project)
+                        transformedProjects.push(savedProject)
                     }
                 }
             }
 
         } catch (SocketTimeoutException ste){
-
+            log.error(ste.message)
+            ste.printStackTrace()
         } catch (Exception e){
             log.error(e.message)
-            log.error(e.stackTrace)
+            e.printStackTrace()
         }
 
         return  transformedProjects
@@ -498,12 +502,12 @@ class ProjectService {
      */
     List getScistarterProjectsFromFinder() throws SocketTimeoutException, Exception{
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
-        Map response = webService.getJson(scistarterFinderUrl);
+        Map response = webService.getJson(scistarterFinderUrl)
         if(response.error){
             if(response.error.contains('Timed out')){
                 throw new SocketTimeoutException(response.error)
             } else {
-                throw  new Exception(response.error);
+                throw  new Exception(response.error)
             }
         }
 
@@ -512,39 +516,46 @@ class ProjectService {
 
     /**
      * Creates a project in the database. It also creates all associated artifacts like organisation, document, site etc
-     * @param prop - mapped SciStarter project properties
+     * @param transformedProp - mapped SciStarter project properties
      * @return
      */
-    Map createSciStarterProject(Map prop){
+    Map createSciStarterProject(Map transformedProp, Map rawProp){
         Map organisation
 
         // create project extent
-        Map site = createSciStarterSite()
-        prop.projectSiteId = site.siteId
+        Map sites = createSciStarterSites(rawProp)
+        String projectSiteId
+        if(sites?.siteIds?.size()){
+            projectSiteId = sites.siteIds[0]
+        }
+
+        transformedProp.projectSiteId = projectSiteId
 
         // create organisation
-        if(prop.organisationName){
-            organisation = createSciStarterOrganisation(prop.organisationName);
+        if(transformedProp.organisationName){
+            organisation = createSciStarterOrganisation(transformedProp.organisationName)
             if(organisation.organisationId){
-                prop.organisationId = organisation.organisationId;
+                transformedProp.organisationId = organisation.organisationId
             } else {
                 // throw exception?
             }
         }
 
         // remove unnecessary properties
-        String imageUrl = prop.remove('image')
-        String attribution = prop.remove('attribution')
-        prop.remove('projectId')
+        String imageUrl = transformedProp.remove('image')
+        String attribution = transformedProp.remove('attribution')
+        transformedProp.remove('projectId')
         // create project. do not call collectory to create data provider and data resource id
-        Map project = create(prop, false)
+        Map project = create(transformedProp, false)
         String projectId = project.projectId
 
         // use the projectId to associate site with  project
         if(projectId){
-            siteService.addProject(site.siteId, projectId);
+            sites?.siteIds?.each{ siteId ->
+                siteService.addProject(siteId, projectId)
+            }
             // create project logo.
-            Map document = createSciStarterLogo(imageUrl, attribution, projectId);
+            Map document = createSciStarterLogo(imageUrl, attribution, projectId)
 
             return project
         } else {
@@ -553,11 +564,33 @@ class ProjectService {
     }
 
     /**
-     * todo: Create project extent.
+     * Create sites for a project. if a project has regions then create sites using it.
+     * if project does not have region then set extent to the whole world map.
      * @return
      */
-    Map createSciStarterSite(){
-        [siteId:'f9c4e9c6-844e-4b32-b4dc-effa66c567a3']
+    Map createSciStarterSites(Map project){
+        Map result = [siteIds:null]
+        List sites = []
+        if(project.regions?.size()){
+            // convert region to site
+            project.regions.each { region ->
+                Map site = SciStarterConverter.siteMapping(region)
+                Map createdSite = siteService.create(site)
+                if(createdSite.siteId){
+                    sites.push(createdSite.siteId)
+                }
+            }
+
+            result.siteIds = sites
+        } else {
+            // if no region, then create world extent.
+            Map world = getWorldExtent()
+            if(world.siteId){
+                result.siteIds = [world.siteId]
+            }
+        }
+
+        result
     }
 
     /**
@@ -581,7 +614,8 @@ class ProjectService {
                 "thirdPartyConsentDeclarationRequired" : false,
                 "public" : true,
                 "stages" : [ ],
-                "embeddedVideoVisible" : false
+                "embeddedVideoVisible" : false,
+                "isSciStarter" : true
         ]
         // create logo document
         documentService.create(props, null)
@@ -595,7 +629,7 @@ class ProjectService {
      * @return
      */
     Map createSciStarterOrganisation(String name){
-        Organisation org = Organisation.findByName(name);
+        Organisation org = Organisation.findByName(name)
         if(org){
             return [organisationId:org.organisationId ]
         } else {
@@ -606,7 +640,27 @@ class ProjectService {
                     "orgType" : "conservation",
                     "description" : "This organisation is imported from SciStarter"
             ]
-            return  organisationService.create(orgProp, false);
+            return  organisationService.create(orgProp, false)
         }
+    }
+
+    /**
+     * World extent is used as project area of all SciStarter Projects without project area. This function retrieves
+     * site id of world extent already created or creates a world extent.
+     * @return - Map - [siteId: 'abc']
+     */
+    Map getWorldExtent() {
+        Map result = siteService.search([name: 'SciStarter Project Area', isSciStarter: true])
+        Map worldExtent = [:]
+        if (result?.sites?.size()) {
+            worldExtent.siteId = result.sites[0].siteId
+        } else {
+            // use JSON.parse since JSONSlurper converts numbers to BigDecimal which throws error on serialization.
+            Object world = JSON.parse(getClass().getResourceAsStream("/data/worldExtent.json")?.getText())
+            Map site = siteService.create(world)
+            worldExtent.siteId = site.siteId
+        }
+
+        return worldExtent
     }
 }

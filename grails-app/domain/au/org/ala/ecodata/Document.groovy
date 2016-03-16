@@ -44,6 +44,7 @@ class Document {
     String outputId
     String organisationId
     String externalUrl
+    Boolean isSciStarter = false
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText

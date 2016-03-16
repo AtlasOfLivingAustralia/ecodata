@@ -146,6 +146,23 @@ if(!google.geocode.url){
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
 
+if(!biocollect.scienceType){
+    biocollect.scienceType = [
+            "Animals",
+            "Nature & Outdoors",
+            "Ocean",
+            "Water",
+            "Marine & Terrestrial",
+            "Birds",
+            "Insects & Pollinators",
+            "Ecology & Environment",
+            "Biology",
+            "Biodiversity",
+            "NRM",
+            "Ecology"
+    ]
+}
+
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
 // Each gridded facet becomes a search facet.

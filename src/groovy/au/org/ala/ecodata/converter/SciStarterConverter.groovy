@@ -1,11 +1,10 @@
 package au.org.ala.ecodata.converter
 
+import grails.util.Holders
 import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
-import grails.util.Holders
 
 import java.text.SimpleDateFormat
-
 /*
  * Copyright (C) 2016 Atlas of Living Australia
  * All Rights Reserved.
@@ -38,30 +37,33 @@ import java.text.SimpleDateFormat
 class SciStarterConverter {
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [
-                'id'                 : 'sciStarterId',
-                'title'              : 'name',
-                'tags'               : [
+                'id'          : 'sciStarterId',
+                'title'       : 'name',
+                'tags'        : [
                         'name'     : 'keywords',
                         'transform': { props, target ->
                             StringUtils.join(props.tags ?: [], ',')
                         }],
-                'search_terms'       : [
+                'search_terms': [
                         'name'     : 'keywords',
                         'transform': { props, target ->
                             target.keywords + props.search_terms
                         }],
-                'goal'               : 'aim',
-                'task'               : 'task',
-                'project_owner_email': 'managerEmail',
-                'description'        : 'description',
-                'url'                : 'urlWeb',
-                'image'              : [
+                'goal'        : 'aim',
+                'task'        : 'task',
+                'description' : 'description',
+                'url'         : 'urlWeb',
+                'image'       : [
                         'name'     : 'image',
                         'transform': { props, target ->
-                            "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.url}"
+                            if (props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
+                                return props.image
+                            } else {
+                                return "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                            }
                         }],
-                'difficulty'         : 'difficulty',
-                'begin_date'         : [
+                'difficulty'  : 'difficulty',
+                'begin_date'  : [
                         'name'     : 'plannedStartDate',
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
@@ -69,7 +71,7 @@ class SciStarterConverter {
                                 return sdf.parse(props.begin_date)
                             }
                         }],
-                'end_date'           : [
+                'end_date'    : [
                         'name'     : 'plannedEndDate',
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
@@ -77,9 +79,25 @@ class SciStarterConverter {
                                 return sdf.parse(props.end_date)
                             }
                         }],
-                'state'              : 'state',
-                'image_credit'       : 'attribution',
-                'presenter'          : 'organisationName'
+                'state'       : 'state',
+                'image_credit': 'attribution',
+                'presenter'   : 'organisationName',
+                'topics' : [
+                        'name':'scienceType',
+                        'transform':{ props, target ->
+                            List approvedScienceType = Holders.grailsApplication.config.biocollect.scienceType
+                            List lowerScienceType = approvedScienceType.collect{ it?.toLowerCase() }
+                            List scienceTypes = []
+                            props?.topics?.each{ String type ->
+                                String lowerType = type?.toLowerCase()
+                                if (lowerType in lowerScienceType) {
+                                    scienceTypes.push(lowerType)
+                                }
+                            }
+
+                            scienceTypes
+                        }
+                ]
         ];
 
         // default values
@@ -111,7 +129,7 @@ class SciStarterConverter {
                 "plannedStartDate"       : null,
                 "plannedEndDate"         : null,
                 "projectType"            : "citizenScience",
-                "scienceType"            : "biodiversity",
+                "scienceType"            : ["biodiversity"],
                 "task"                   : null,
                 "projectSiteId"          : null,
                 "organisationId"         : null,
@@ -119,7 +137,7 @@ class SciStarterConverter {
                 "sciStarterId"           : null,
                 "isSciStarter"           : true,
                 "attribution"            : null,
-                "managerEmail"           : null,
+                "managerEmail"           : "contact@scistarter.com",
                 "urlWeb"                 : null,
                 "image"                  : null,
                 "state"                  : null
@@ -142,5 +160,43 @@ class SciStarterConverter {
         }
 
         target
+    }
+
+    static Map siteMapping(Map props){
+        Map site = [
+            "projects" : [
+            ],
+            "isSciStarter" : true,
+            "status" : "active",
+            "poi" : [ ],
+            "geoIndex" : [
+                "type" : null,
+                "coordinates" : null
+            ],
+            "extent" : [
+                "source" : "drawn",
+                "geometry" : [
+                    "centre" : null,
+                    "type" : null,
+                    "coordinates" : null
+                ]
+            ],
+            "externalId" : "",
+            "description" : null,
+            "name" : null,
+            "notes" : "",
+            "type" : "surveyArea"
+        ]
+
+        switch (props.geometry.type){
+            case 'MultiPolygon':
+                site.name = props.name;
+                // possible data loss here. converting multipolygon to polygon since biocollect/merit does not support it.
+                site.geoIndex.coordinates = site.extent.geometry.coordinates = props.geometry.coordinates[0]
+                site.geoIndex.type = site.extent.geometry.type = "Polygon"
+                break
+        }
+
+        site
     }
 }

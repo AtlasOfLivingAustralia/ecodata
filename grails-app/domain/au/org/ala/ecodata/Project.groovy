@@ -64,7 +64,8 @@ class Project {
     String projectType    // survey, works
     // TODO urlAndroid and urlITunes need to be phased out; replaced by link-type documente
     String aim, keywords, urlAndroid, urlITunes, urlWeb
-    String getInvolved, scienceType, projectSiteId
+    String getInvolved, projectSiteId
+    List <String> scienceType = []
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
