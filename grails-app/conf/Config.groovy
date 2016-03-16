@@ -145,6 +145,10 @@ if (!spatial.intersectBatchUrl) {
 if(!google.geocode.url){
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
+if (!temp.file.cleanup.days) {
+    temp.file.cleanup.days = 1
+}
+
 
 if(!biocollect.scienceType){
     biocollect.scienceType = [

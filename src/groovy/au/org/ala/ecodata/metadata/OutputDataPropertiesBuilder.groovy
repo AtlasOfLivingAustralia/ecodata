@@ -9,6 +9,9 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     private List outputDataModel
 
     public OutputDataPropertiesBuilder(String name, outputDataModel) {
+        if (!name) {
+            throw new IllegalArgumentException("Name cannot be null")
+        }
         if (name.endsWith(']')) {
             constraint = name.substring(name.indexOf('[')+1, name.indexOf(']'))
             name = name.substring(0, name.indexOf('['))

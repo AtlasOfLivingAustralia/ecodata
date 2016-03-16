@@ -8,21 +8,24 @@ import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
+
+import java.text.SimpleDateFormat
+
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
 class ProjectXlsExporter extends ProjectExporter {
 
-    static String DATE_CELL_FORMAT = "dd/mm/yyyy"
+    static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3']
-    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2']
+    List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10']
+    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2', 'elect0', 'elect1', 'elect2', 'elect3', 'elect4', 'elect5', 'elect6', 'elect7', 'elect8', 'elect9']
 
-    List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate', 'Last Modified']
-    List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon', 'state', 'nrm', 'elect', 'lastUpdated']
-    List<String> commonActivityHeaders = ['Project ID', 'Grant ID', 'External ID', 'Programme', 'Sub-Programme', 'Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = ['projectId', 'grantId', 'externalId', 'associatedProgram', 'associatedSubProgram', 'activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
+    List<String> siteHeaders = projectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10', 'Last Modified']
+    List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0-site', 'nrm0-site', 'elect0-site', 'elect1-site', 'elect2-site', 'elect3-site', 'elect4-site', 'elect5-site', 'elect6-site', 'elect7-site', 'elect8-site', 'elect9-site', 'lastUpdated']
+    List<String> commonActivityHeaders = projectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = projectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
     List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
     List<String> outputTargetProperties = ['projectId', 'scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
     List<String> risksAndThreatsHeaders = projectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -48,7 +51,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> whsAndCaseStudyProperties = projectProperties + ['obligations', 'policies', 'caseStudy']
     List<String> attachmentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
-
+    List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
+    List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
 
     XlsExporter exporter
 
@@ -76,7 +80,7 @@ class ProjectXlsExporter extends ProjectExporter {
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
 
-        addProjectStates(project)
+        addProjectGeo(project)
 
         exportProject(project)
         exportOutputTargets(project)
@@ -84,13 +88,31 @@ class ProjectXlsExporter extends ProjectExporter {
         exportActivities(project, activitiesModel, processor)
         exportRisks(project)
         exportMeriPlan(project)
+        exportReports(project)
     }
 
-    private addProjectStates(Map project) {
-        List states = project.sites?.collect { it?.extent?.geometry?.state }?.findAll().unique()
-        states.eachWithIndex { String state, int i ->
-            String key = "state" + i
-            project.put(key, state)
+    private addProjectGeo(Map project) {
+        List geo = ['state',  'elect']
+        Map geoData = [:].withDefault{[]}
+        project.sites?.each { site ->
+            Map props = site?.extent?.geometry ?: [:]
+
+            geo.each { facet ->
+                Object value = props[facet]
+                if (value instanceof List) {
+                    value.eachWithIndex { i, val ->
+                        geoData[facet] << val
+                    }
+                }
+                else {
+                    geoData[facet] << value
+                }
+            }
+        }
+        geoData.each { facet, values ->
+            values.findAll().unique().eachWithIndex {value, i ->
+                project[facet+i] = value
+            }
         }
     }
 
@@ -98,6 +120,11 @@ class ProjectXlsExporter extends ProjectExporter {
         if (project.activities) {
             project.activities.each { activity ->
 
+                if (shouldExport('Activity Summary')) {
+                    AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
+                    Map activityData = project + activity + [stage: getStage(activity, project)]
+                    sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
+                }
                 if (shouldExport(activity.type)) {
                     Map commonData = project + activity + [stage: getStage(activity, project)]
                     List activityData = []
@@ -141,8 +168,19 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.sites) {
                 def sites = project.sites.collect {
                     def centre = it.extent?.geometry?.centre
+                    Map data = [siteId: it.siteId, siteName: it.name, siteDescription: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + project
                     Map props = it.extent?.geometry ?: [:]
-                    [siteId: it.siteId, name: it.name, description: it.description, lat: centre ? centre[1] : "", lon: centre ? centre[0] : "", lastUpdated: it.lastUpdated] + props
+                    props?.each { key, value ->
+                        if (value instanceof List) {
+                            value.eachWithIndex { i, val ->
+                                data.put(key+i+'-site', val)
+                            }
+                        }
+                        else {
+                            data.put(key+'0-site', value)
+                        }
+                    }
+                    data
                 }
                 int row = sitesSheet.getSheet().lastRowNum
                 sitesSheet.add(sites, siteProperties, row + 1)
@@ -196,7 +234,7 @@ class ProjectXlsExporter extends ProjectExporter {
             List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
 
                 Map budgetLineItem = [
-                        investmentArea: lineItem.shortDescription,
+                        investmentArea: lineItem.shortLabel,
                         budgetDescription: lineItem.description
                 ]
                 budgetLineItem.putAll(project)
@@ -336,6 +374,29 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportAttachments(Map project) {
         List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
         exportList("Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
+    }
+
+    private void exportReports(Map project) {
+        if (shouldExport("Reports")) {
+            AdditionalSheet sheet = getSheet("Reports", reportHeaders)
+            int row = sheet.getSheet().lastRowNum
+            SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
+            List data = []
+            project.reports?.each { report ->
+                Map statusCounts = [:].withDefault{1}
+                Map previousChange = null
+                report.statusChangeHistory?.eachWithIndex { change, i ->
+                    int count = statusCounts[change.status]
+                    statusCounts[change.status] = count + 1
+                    String noTimeStr = format.format(change.dateChanged)
+                    Date noTime = format.parse(noTimeStr)
+                    int delta = previousChange ? Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged) : 0
+                    previousChange = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:change.status+" "+count, changedBy:change.changedBy, dateChanged: noTime, delta:delta]
+                    data << previousChange
+                }
+            }
+            sheet.add(data, reportProperties, row + 1)
+        }
     }
 
     String getStage(Map activity, project) {
