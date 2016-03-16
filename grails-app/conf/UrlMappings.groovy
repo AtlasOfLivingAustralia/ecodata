@@ -6,7 +6,8 @@ class UrlMappings {
         "/ws/record"(controller: "record"){ action = [GET:"list", POST:"create"] }
         "/ws/record/"(controller: "record"){ action = [GET:"list", POST:"create"] }
 
-        "/ws/record/csv"(controller: "record"){ action = [GET:"csv"] }
+        "/ws/record/export"(controller: "record"){ action = [GET:"export"] }
+        "/ws/record/csvProject"(controller: "record"){ action = [GET:"csvProject"] }
         "/ws/record/uncertainIdentifications"(controller: "record"){ action = [GET:"listUncertainIdentifications"] }
         "/ws/record/count"(controller: "record"){ action = [GET:"count"] }
         "/ws/record/user/$userId"(controller: "record", action: "listForUser")
@@ -25,6 +26,14 @@ class UrlMappings {
         "/ws/comment/canUserEditOrDeleteComment"(controller: "comment", action: "canUserEditOrDeleteComment")
 
         "/ws/audit/getAuditMessagesForProjectPerPage/$id"(controller: "audit", action: "getAuditMessagesForProjectPerPage")
+
+        "/ws/document/listImages"(controller: "document", action: "listImages")
+        "/ws/document/$id/file"(controller: "document", action: "getFile")
+
+        "/ws/site/getImages"( controller: 'site', action: 'getImages')
+        "/ws/site/getPoiImages"( controller: 'site', action: 'getPoiImages')
+
+        "/ws/output/getOutputSpeciesUUID/"(controller: "output"){ action = [GET:"getOutputSpeciesUUID"] }
 
         "/ws/activitiesForProject/$id" {
             controller = 'activity'
@@ -115,7 +124,9 @@ class UrlMappings {
             action = 'findByUserId'
         }
 
-		"/"(view:"/index")
+        "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
+
+        "/"(view:"/index")
 		"500"(view:'/error')
 	}
 }

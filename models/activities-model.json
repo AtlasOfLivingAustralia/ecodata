@@ -996,6 +996,7 @@
                 {
                     "aggregationType": "SUM",
                     "displayType": "",
+                    "gmsId": "EMS",
                     "name": "erosionStructuresInstalled",
                     "description": "The total number of structures installed to to control erosion.",
                     "label": "Total No. of erosion control structures installed",
@@ -2936,10 +2937,10 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "score",
-                    "label": "Total area treated (Ha)",
+                    "label": "Total new area treated (Ha)",
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
-                    "filterBy": "Total area treated (Ha)"
+                    "filterBy": "Total new area treated (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
@@ -3085,6 +3086,16 @@
             "name": "Basin Champions - Farming Observations"
         },
         {
+            "template": "BC_debrisRemoval",
+            "scores": [],
+            "name": "Debris Removal Survey"
+        },
+        {
+            "template": "BC-invertebrates",
+            "scores": [],
+            "name": "Aquatic Macro-invertebrates (SIGNAL2 method)"
+        },
+        {
             "template": "BC-iconicSpecies",
             "scores": [],
             "name": "Basin Champions - Iconic Species"
@@ -3093,11 +3104,26 @@
             "template": "BC-fish",
             "scores": [],
             "name": "Basin Champions - Fish sightings"
+        },
+        {
+            "template": "communityGrantsAdministration",
+            "scores": [],
+            "name": "1. Community Grants Administration"
+        },
+        {
+            "template": "communityGrantsReporting",
+            "scores": [],
+            "name": "2. Community Grants Reporting"
         }
     ],
     "selectedActivity": {
         "outputs": ["Basin Champions - Water Quality Monitoring"],
         "supportsPhotoPoints": false,
+        "outputConfig": [{
+            "outputName": "Basin Champions - Water Quality Monitoring",
+            "optional": false,
+            "collapsedByDefault": false
+        }],
         "name": "Basin Champions - Water quality monitoring",
         "supportsSites": false,
         "type": "Assessment",
@@ -3106,6 +3132,11 @@
     "activities": [
         {
             "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
+            "outputConfig": [{
+                "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Biodiversity Fund - Outcomes and Monitoring",
             "type": "Assessment",
             "status": "deleted"
@@ -3115,6 +3146,23 @@
                 "Event Details",
                 "Participant Information",
                 "Materials Provided to Participants"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Event Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Materials Provided to Participants",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "CPEE",
             "name": "Community Participation and Engagement",
@@ -3127,6 +3175,18 @@
                 "Debris Removal Details",
                 "Participant Information"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Debris Removal Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "DRV DRW",
             "name": "Debris Removal",
             "supportsSites": true,
@@ -3137,6 +3197,18 @@
             "outputs": [
                 "Disease Management Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Disease Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "DMA",
             "name": "Disease Management",
@@ -3150,7 +3222,19 @@
                 "Participant Information"
             ],
             "supportsPhotoPoints": true,
-            "gmsId": "EMA EML",
+            "outputConfig": [
+                {
+                    "outputName": "Erosion Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "gmsId": "EMA EML EMS",
             "name": "Erosion Management",
             "supportsSites": true,
             "type": "Activity",
@@ -3163,6 +3247,23 @@
                 "Participant Information"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Fauna Survey Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "FBS",
             "name": "Fauna Survey - general",
             "supportsSites": true,
@@ -3173,6 +3274,18 @@
             "outputs": [
                 "Fence Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Fence Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "FNC APF",
             "name": "Fencing",
@@ -3186,6 +3299,18 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Stock Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "CGM",
             "name": "Conservation Grazing Management",
             "supportsSites": true,
@@ -3198,21 +3323,27 @@
                 "Ecological Burn Details",
                 "Participant Information"
             ],
+            "supportsPhotoPoints": true,
             "outputConfig": [
                 {
-                    "outputName":"Asset Protection Details",
-                    "optional":true
+                    "outputName": "Asset Protection Details",
+                    "optional": true
                 },
                 {
-                    "outputName":"Ecological Burn Details",
-                    "optional":true
+                    "outputName": "Ecological Burn Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
-            "supportsPhotoPoints": true,
             "name": "Ecological Fire Management",
             "supportsSites": true,
             "type": "Activity",
-            "category": "Implementation actions"
+            "category": "Implementation actions",
+            "status": "deleted"
         },
         {
             "outputs": [
@@ -3221,12 +3352,29 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Fire Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "FMA FML",
             "name": "Fire Management",
             "supportsSites": true,
             "type": "Activity",
             "category": "Implementation actions",
-            "status": "deleted"
+            "status": "active"
         },
         {
             "outputs": [
@@ -3235,6 +3383,23 @@
                 "Participant Information"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Flora Survey Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "FRBS",
             "name": "Flora Survey - general",
             "supportsSites": true,
@@ -3246,6 +3411,23 @@
                 "Heritage Conservation Information",
                 "Expected Heritage Outcomes",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Heritage Conservation Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Expected Heritage Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "HC HSA HEC",
             "name": "Heritage Conservation",
@@ -3260,12 +3442,12 @@
             ],
             "outputConfig": [
                 {
-                    "outputName":"Indigenous Employment",
-                    "optional":true
+                    "outputName": "Indigenous Employment",
+                    "optional": true
                 },
                 {
-                    "outputName":"Indigenous Businesses",
-                    "optional":true
+                    "outputName": "Indigenous Businesses",
+                    "optional": true
                 }
             ],
             "gmsId": "IPE",
@@ -3275,6 +3457,11 @@
         },
         {
             "outputs": ["Indigenous Knowledge Transfer Details"],
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "IKM IKT",
             "name": "Indigenous Knowledge Transfer",
             "type": "Activity",
@@ -3285,6 +3472,18 @@
                 "Plan Development Details",
                 "Participant Information"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Plan Development Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "MPD",
             "name": "Management Plan Development",
             "type": "Activity",
@@ -3292,6 +3491,11 @@
         },
         {
             "outputs": ["Management Practice Change Details"],
+            "outputConfig": [{
+                "outputName": "Management Practice Change Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "MPC MPCFE MPCSP",
             "name": "Management Practice Change",
             "supportsSites": true,
@@ -3302,6 +3506,18 @@
             "outputs": [
                 "Conservation Works Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Conservation Works Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "CATS",
             "name": "Conservation Actions for Species and Communities",
@@ -3315,6 +3531,23 @@
                 "Evaluation",
                 "Lessons Learned"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Evaluation",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Lessons Learned",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "name": "Outcomes, Evaluation and Learning - final report",
             "type": "Activity",
             "category": "Administration, management & reporting"
@@ -3327,6 +3560,28 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Evidence of Pest Management Activity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Pest Observation and Monitoring Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "PSA",
             "name": "Pest Animal Survey",
             "supportsSites": true,
@@ -3341,13 +3596,28 @@
                 "Participant Information",
                 "Photo Points"
             ],
+            "supportsPhotoPoints": true,
             "outputConfig": [
                 {
-                    "outputName":"Fence Details",
-                    "optional":true
+                    "outputName": "Fence Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Pest Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
-            "supportsPhotoPoints": true,
             "gmsId": "PMA PMQ",
             "name": "Pest Management",
             "supportsSites": true,
@@ -3358,6 +3628,18 @@
             "outputs": [
                 "Plant Propagation Details",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Plant Propagation Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "PPRP",
             "name": "Plant Propagation",
@@ -3371,6 +3653,23 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Vegetation Monitoring Results",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "PSS PSC",
             "name": "Plant Survival Survey",
             "supportsSites": true,
@@ -3381,6 +3680,18 @@
             "outputs": [
                 "Administration Activities",
                 "Participant Information"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Administration Activities",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "name": "Project Administration",
             "type": "Activity",
@@ -3394,12 +3705,17 @@
             ],
             "outputConfig": [
                 {
-                    "outputName":"Access Control Details",
-                    "optional":true
+                    "outputName": "Access Control Details",
+                    "optional": true
                 },
                 {
-                    "outputName":"Infrastructure Details",
-                    "optional":true
+                    "outputName": "Infrastructure Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
             "gmsId": "PAM PAI APC",
@@ -3413,6 +3729,18 @@
                 "Research Information",
                 "Participant Information"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Research Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "name": "Research",
             "supportsSites": true,
             "type": "Activity",
@@ -3425,6 +3753,23 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Revegetation Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "RVA RVN RVSS RVT2A RVT2B RVS2B",
             "name": "Revegetation",
             "supportsSites": true,
@@ -3436,6 +3781,18 @@
                 "Seed Collection Details",
                 "Participant Information"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Seed Collection Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "SDC",
             "name": "Seed Collection",
             "supportsSites": true,
@@ -3444,6 +3801,11 @@
         },
         {
             "outputs": ["Planned Monitoring Approach"],
+            "outputConfig": [{
+                "outputName": "Planned Monitoring Approach",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Site Monitoring Plan",
             "supportsSites": true,
             "type": "Activity",
@@ -3456,17 +3818,27 @@
                 "Participant Information",
                 "Photo Points"
             ],
+            "supportsPhotoPoints": true,
             "outputConfig": [
                 {
-                    "outputName":"Weed Treatment Details",
-                    "optional":true
+                    "outputName": "Weed Treatment Details",
+                    "optional": true
                 },
                 {
-                    "outputName":"Site Preparation Actions",
-                    "optional":true
+                    "outputName": "Site Preparation Actions",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
-            "supportsPhotoPoints": true,
             "gmsId": "STP",
             "name": "Site Preparation",
             "supportsSites": true,
@@ -3481,12 +3853,17 @@
             ],
             "outputConfig": [
                 {
-                    "outputName":"Training Details",
-                    "optional":true
+                    "outputName": "Training Details",
+                    "optional": true
                 },
                 {
-                    "outputName":"Skills Development",
-                    "optional":true
+                    "outputName": "Skills Development",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
             "gmsId": "TSD",
@@ -3495,9 +3872,12 @@
             "category": "Training"
         },
         {
-            "outputs": [
-                "Water Management Details"
-            ],
+            "outputs": ["Water Management Details"],
+            "outputConfig": [{
+                "outputName": "Water Management Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "WMA WMN",
             "name": "Water Management",
             "supportsSites": true,
@@ -3509,6 +3889,23 @@
                 "General information & Participants",
                 "Environmental Information at the Time of Sampling",
                 "Water Quality Measurements"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "General information & Participants",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Environmental Information at the Time of Sampling",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Water Quality Measurements",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "gmsId": "WQSA",
             "name": "Water Quality Survey",
@@ -3524,6 +3921,28 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Evidence of Weed Treatment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Observation and Monitoring Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "WMM WSA",
             "name": "Weed Mapping & Monitoring",
             "supportsSites": true,
@@ -3537,6 +3956,23 @@
                 "Photo Points"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Weed Treatment Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "WDT",
             "name": "Weed Treatment",
             "supportsSites": true,
@@ -3549,17 +3985,22 @@
                 "Threatening Processes and Site Condition Risks",
                 "Participant Information"
             ],
+            "supportsPhotoPoints": true,
             "outputConfig": [
                 {
-                    "outputName":"Site Planning Details",
-                    "optional":true
+                    "outputName": "Site Planning Details",
+                    "optional": true
                 },
                 {
-                    "outputName":"Threatening Processes and Site Condition Risks",
-                    "optional":true
+                    "outputName": "Threatening Processes and Site Condition Risks",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
                 }
             ],
-            "supportsPhotoPoints": true,
             "gmsId": "STA",
             "name": "Works Planning and Risk",
             "supportsSites": true,
@@ -3572,6 +4013,28 @@
                 "Environmental, Economic and Social Outcomes",
                 "Implementation Update",
                 "Lessons Learned and Improvements"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Overview of Project Progress",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Environmental, Economic and Social Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Implementation Update",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Lessons Learned and Improvements",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "name": "Progress, Outcomes and Learning - stage report",
             "type": "Activity",
@@ -3588,6 +4051,43 @@
                 "Field Sheet 5 - Species Diversity"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Sampling Site Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 1 - Ground Cover",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 2 - Exotic Fauna",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 4 - Crown Type",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 5 - Species Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "VAC",
             "name": "Vegetation Assessment - Commonwealth government methodology",
             "supportsSites": true,
@@ -3596,6 +4096,11 @@
         },
         {
             "outputs": ["BioCondition Method"],
+            "outputConfig": [{
+                "outputName": "BioCondition Method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - BioCondition (QLD)",
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -3604,6 +4109,11 @@
         {
             "outputs": ["Floristic Composition"],
             "supportsPhotoPoints": true,
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - BioMetric (NSW)",
             "supportsSites": true,
             "type": "Assessment",
@@ -3616,6 +4126,28 @@
                 "Weed Species",
                 "Trees"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Vegetation Assessment - Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Native Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Trees",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "name": "Vegetation Assessment - Habitat Hectares v2 (VIC)",
             "type": "Assessment",
             "category": "Assessment & monitoring"
@@ -3623,6 +4155,11 @@
         {
             "outputs": ["Floristic Composition"],
             "supportsPhotoPoints": true,
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
             "supportsSites": true,
             "type": "Assessment",
@@ -3630,6 +4167,11 @@
         },
         {
             "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"],
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "TasVeg - Native Vegetation Assessment - Forest Vegetation",
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -3637,6 +4179,11 @@
         },
         {
             "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"],
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -3646,6 +4193,18 @@
             "outputs": [
                 "Feral Animal Abundance Score",
                 "Feral Animal Frequency Score"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Feral Animal Abundance Score",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Feral Animal Frequency Score",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "name": "Feral animal assessment",
             "type": "Assessment",
@@ -3659,6 +4218,38 @@
                 "Landscape Context Components",
                 "Threatening Processes and Site Condition Risks",
                 "Photo Points"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Vegetation Assessment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Site Condition Components",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Landscape Context Components",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Threatening Processes and Site Condition Risks",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
             ],
             "name": "Site assessment",
             "type": "Assessment",
@@ -3679,6 +4270,68 @@
                 "Indicator 10 - Bushland Degradation Risk",
                 "Benchmarks - SA"
             ],
+            "outputConfig": [
+                {
+                    "outputName": "Bushland Condition - Site Health Summary",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 1 - Plant Species Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 2 - Weed Abundance & Threat",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 3 - Structural Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 4 - Regeneration",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 5 - Tree and Shrub Health",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 6 - Tree Habitat",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 7 - Feral Animals",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 8 - Total Grazing Pressure",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 9 - Animal Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 10 - Bushland Degradation Risk",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Benchmarks - SA",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "type": "Assessment",
             "category": "Assessment & monitoring",
@@ -3690,6 +4343,18 @@
                 "Attachments"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Progress Report Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "PR25ALG",
             "name": "25th Anniversary Landcare Grants - Progress Report",
             "supportsSites": true,
@@ -3705,6 +4370,28 @@
                 "Attachments"
             ],
             "supportsPhotoPoints": true,
+            "outputConfig": [
+                {
+                    "outputName": "Final Report Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Output Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Project Acquittal",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "gmsId": "RVN25ALG RVA25ALG SDC25ALG RVSS25ALG PPRP25ALG ERA25ALG EML25ALG STP25ALG FMA25ALG DRV25ALG PMA25ALG PMQ25ALG WDT25ALG FNC25ALG CPEE25ALG CPEEP25ALG CPEEG25ALG CPEEV25ALG MPCFE25ALG MPCFEE25ALG MPCA25ALG IPP25ALG IPE25ALG ILSP25ALG IKTA25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG STA25ALG WQSA25ALG HC25ALG IKTN25ALG CGM25ALG PDN25ALG VAC25ALG",
             "name": "25th Anniversary Landcare Grants - Final Report",
             "supportsSites": true,
@@ -3714,6 +4401,11 @@
         },
         {
             "outputs": ["Upload of stage 1 and 2 reporting data"],
+            "outputConfig": [{
+                "outputName": "Upload of stage 1 and 2 reporting data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "gmsId": "",
             "name": "Upload of stage 1 and 2 reporting data",
             "type": "Activity",
@@ -3723,6 +4415,11 @@
         {
             "outputs": ["Monthly Status Report Data"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Monthly Status Report Data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Monthly project status report",
             "supportsSites": false,
             "type": "Report",
@@ -3732,6 +4429,11 @@
         {
             "outputs": ["Three Monthly Report"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Three Monthly Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Quarterly project report",
             "supportsSites": false,
             "type": "Report",
@@ -3741,6 +4443,11 @@
         {
             "outputs": ["End of Project Report Details"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "End of Project Report Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - End of Project Report",
             "supportsSites": false,
             "type": "Report",
@@ -3750,6 +4457,11 @@
         {
             "outputs": ["Desktop Audit Checklist Details"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Desktop Audit Checklist Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Desktop Audit Checklist",
             "supportsSites": false,
             "type": "Report",
@@ -3759,6 +4471,11 @@
         {
             "outputs": ["Change or Absence of Team Supervisor Report"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Change or Absence of Team Supervisor Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Change or Absence of Team Supervisor",
             "supportsSites": false,
             "type": "Report",
@@ -3768,6 +4485,11 @@
         {
             "outputs": ["Site Visit Details"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Site Visit Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Green Army - Site Visit Checklist",
             "supportsSites": false,
             "type": "Report",
@@ -3775,16 +4497,23 @@
             "status": "deleted"
         },
         {
-            "outputs": [
-                "Single Sighting",
-                "Attachments"
-            ],
+            "outputs": ["Single Sighting"],
+            "outputConfig": [{
+                "outputName": "Single Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Single Sighting",
             "type": "Activity",
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": ["Multiple Sightings"],
+            "outputs": ["Multiple species sightings"],
+            "outputConfig": [{
+                "outputName": "Multiple species sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Multiple Sightings",
             "type": "Activity",
             "category": "Assessment & monitoring"
@@ -3792,6 +4521,11 @@
         {
             "outputs": ["Basin Champions - Water Quality Monitoring"],
             "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Water Quality Monitoring",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Water quality monitoring",
             "supportsSites": false,
             "type": "Assessment",
@@ -3799,6 +4533,11 @@
         },
         {
             "outputs": ["Basin Champions - Iconic Species"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Iconic Species",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Iconic species observations",
             "supportsSites": false,
             "type": "Assessment",
@@ -3806,44 +4545,111 @@
         },
         {
             "outputs": ["Basin Champions - Fish sightings"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Fish sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Fish sightings",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [],
+            "outputs": ["Aquatic Macro-invertebrates (SIGNAL2 method)"],
+            "outputConfig": [{
+                "outputName": "Aquatic Macro-invertebrates (SIGNAL2 method)",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Aquatic insects",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
             "outputs": ["Basin Champions - Recreation Observations"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Recreation Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Recreation",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
             "outputs": ["Basin Champions - Farming Observations"],
+            "outputConfig": [{
+                "outputName": "Basin Champions - Farming Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Farming",
             "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": ["Debris Removal Details"],
+            "outputs": ["Debris Removal Survey"],
+            "outputConfig": [{
+                "outputName": "Debris Removal Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Debris removal",
-            "supportsSites": true,
+            "supportsSites": false,
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
         {
             "outputs": ["Indigenous Knowledge Transfer Details"],
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Basin Champions - Indigenous knowledge transfer",
             "type": "Assessment",
             "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": [
+                "1. Community Grants Administration",
+                "2. Community Grants Reporting",
+                "Attachments"
+            ],
+            "outputConfig": [
+                {
+                    "outputName": "Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Community Grants Reporting",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "1. Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "2. Community Grants Reporting",
+                    "optional": true,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Community Grants",
+            "type": "Activity",
+            "category": "Community Grants"
         }
     ]
 }

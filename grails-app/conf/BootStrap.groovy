@@ -37,6 +37,14 @@ class BootStrap {
             }
         });
 
+        // Allow GStrings to be saved to mongodb
+        BSON.addEncodingHook(GString.class, new Transformer() {
+            @Override
+            Object transform(Object o) {
+                return o?o.toString():null
+            }
+        })
+
         /**
          * Custom JSON serializer for {@link AccessLevel} enum
          */

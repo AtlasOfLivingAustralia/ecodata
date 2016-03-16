@@ -88,27 +88,30 @@ class CollectoryService {
      * @return a map containing the created data provider id and data resource id, or null.
      */
     Map createDataProviderAndResource(String id, Map props) {
-
         Map ids = [:]
 
-        try {
-            def collectoryProps = mapProjectAttributesToCollectory(props)
-            def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/', collectoryProps)
-            ids.dataProviderId = webService.extractCollectoryIdFromResult(result)
-            if (ids.dataProviderId) {
-                // create a dataResource in collectory to hold project outputs
-                collectoryProps.remove('hiddenJSON')
-                collectoryProps.dataProvider = [uid: ids.dataProviderId]
-                if (props.collectoryInstitutionId) collectoryProps.institution = [uid: props.collectoryInstitutionId]
-                result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
-                ids.dataResourceId = webService.extractCollectoryIdFromResult(result)
+        Map collectoryProps = mapProjectAttributesToCollectory(props)
+        Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/', collectoryProps)
+        if (result.error) {
+            throw new Exception("Failed to create Collectory data provider: ${result.error} ${result.detail ?: ""}")
+        }
+        ids.dataProviderId = webService.extractCollectoryIdFromResult(result)
+
+        if (ids.dataProviderId) {
+            // create a dataResource in collectory to hold project outputs
+            collectoryProps.remove('hiddenJSON')
+            collectoryProps.dataProvider = [uid: ids.dataProviderId]
+            if (props.collectoryInstitutionId) {
+                collectoryProps.institution = [uid: props.collectoryInstitutionId]
             }
-        } catch (Exception e) {
-            def error = "Error creating collectory info for project ${id} - ${e.message}"
-            log.error error
+            result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
+            if (result.error) {
+                throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
+            }
+            ids.dataResourceId = webService.extractCollectoryIdFromResult(result)
         }
 
-        return ids
+        ids
     }
 
     /**

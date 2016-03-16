@@ -161,6 +161,47 @@ class WebService {
         return urlConnection.content.getText(charset)
     }
 
+    /**
+     * Do post call with params
+     * @param url the URLConnection to read the response from.
+     * @param params
+     * @return the contents of the response as a map
+     */
+    Map doPostWithParams(String url, Map params) {
+        def conn = null
+        def charEncoding = 'utf-8'
+        try {
+            String query = ""
+            boolean first = true
+            for (String name:params.keySet()) {
+                query+=first?"?":"&"
+                first = false
+                query+=name.encodeAsURL()+"="+params.get(name).encodeAsURL()
+            }
+            conn = new URL(url+query).openConnection()
+            conn.setRequestMethod("POST")
+            conn.setDoOutput(true)
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
+
+            wr.flush()
+            def resp = conn.inputStream.text
+            wr.close()
+            return [resp: JSON.parse(resp?:"{}")]
+        } catch (SocketTimeoutException e) {
+            def error = [error: "Timed out calling web service. URL= ${url}."]
+            log.error(error, e)
+            return error
+        } catch (Exception e) {
+            def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
+                         statusCode: conn?.responseCode?:"",
+                         detail: conn?.errorStream?.text]
+            log.error(error, e)
+            return error
+        }
+    }
+
     Map doPost(String url, Map postBody) {
         def conn = null
         def charEncoding = 'utf-8'

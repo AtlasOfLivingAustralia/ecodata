@@ -14,11 +14,9 @@
  */
 
 package au.org.ala.ecodata
-
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
-import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.index.IndexRequestBuilder
 import org.elasticsearch.action.search.SearchRequest
 import org.elasticsearch.action.search.SearchType
@@ -26,12 +24,7 @@ import org.elasticsearch.client.Client
 import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
-import org.elasticsearch.index.query.BoolFilterBuilder
-import org.elasticsearch.index.query.FilterBuilder
-import org.elasticsearch.index.query.FilterBuilders
-import org.elasticsearch.index.query.FilteredQueryBuilder
-import org.elasticsearch.index.query.GeoShapeFilterBuilder
-import org.elasticsearch.index.query.QueryBuilders
+import org.elasticsearch.index.query.*
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -46,13 +39,12 @@ import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import static org.elasticsearch.index.query.FilterBuilders.*
+import static au.org.ala.ecodata.ElasticIndex.*
+import static au.org.ala.ecodata.Status.*
+import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
-import static au.org.ala.ecodata.Status.*
-import static au.org.ala.ecodata.ElasticIndex.*
-
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
  *
@@ -81,14 +73,15 @@ class ElasticSearchService {
     MetadataService metadataService
     OrganisationService organisationService
 
+
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
-    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, UserPermission, Setting]
+    private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
     /**
      * Init method to be called on service creation
      */
@@ -99,7 +92,7 @@ class ElasticSearchService {
         settings.put("path.home", grailsApplication.config.app.elasticsearch.location);
         node = nodeBuilder().local(true).settings(settings).node();
         client = node.client();
-        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet();
+        client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('30s').execute().actionGet();
     }
 
     /**
@@ -183,7 +176,7 @@ class ElasticSearchService {
             log.error "ES prepareGet error: ${e}", e
         }
 
-        if (resp && doc.status == DELETED) {
+        if (resp && doc.status?.toLowerCase() == DELETED) {
             try {
                 deleteDocById(docId, index)
                 isDeleted = true
@@ -268,289 +261,8 @@ class ElasticSearchService {
      * Add custom mapping for ES index.
      */
     def addMappings(index) {
-
-        def mappingJson = '''
-        {
-            "mappings":{
-                "doc": {
-                    "_all": {
-                        "enabled": true,
-                        "store": "yes"
-                    },
-                    "properties": {
-						"status": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "status" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "organisationName": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "organisationFacet" : {"type" : "string", "index" : "not_analyzed"},
-                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "serviceProviderName": {
-                            "type" : "string",
-                            "path" : "just_name",
-                            "fields" : {
-                                "organisationName" : {"type" : "string", "index" : "analyzed"},
-                                "organisationFacet" :  {"type" : "string", "index" : "not_analyzed"},
-                                "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "type": {
-                            "type" : "string",
-                            "fields" : {
-                                "typeFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "className": {
-                            "type":"string",
-                            "analyzer":"facetKeyword"
-                        },
-                        "associatedProgram": {
-                            "type" : "string",
-                            "fields" : {
-                                "associatedProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-                        "associatedSubProgram": {
-                            "type" : "string",
-                            "fields" : {
-                                "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
-                            }
-                        },
-
-                        "name": {
-                            "type" : "string",
-                            "fields" : {
-                                "nameSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"}
-                            }
-                        },
-                        "extent":{
-                            "properties": {
-                                "geometry": {
-                                    "properties": {
-
-
-                                    }
-                                }
-                            }
-                        },
-                        "sites":{
-                            "properties":{
-                                "extent":{
-                                    "properties": {
-                                        "geometry": {
-                                            "properties": {
-
-                                            }
-                                        }
-                                    }
-                                },
-                                "externalId":{"type":"string"},
-                                "geoIndex": {
-                                    "type": "geo_shape"
-                                }
-                            }
-                        },
-                        "externalId": {
-                            "type":"string"
-                        },
-                        "projectActivity":{
-                             "properties":{
-                                "embargoUntil":{
-                                   "type":"string"
-                                },
-                                "name":{
-                                    "type":"string",
-                                    "fields": {
-                                    "projectActivityNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-
-                                "projectName":{
-                                    "type":"string",
-                                    "fields": {
-                                        "projectNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "projectId":{
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                },
-                                "embargoed":{
-                                    "type":"boolean",
-                                    "index":"not_analyzed"
-                                },
-                                "activityOwnerName":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityOwnerNameFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "lastUpdatedYear":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityLastUpdatedYearFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "lastUpdatedMonth":{
-                                    "type":"string",
-                                    "fields": {
-                                        "activityLastUpdatedMonthFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                },
-                                "records":{
-                                     "properties":{
-                                        "name":{
-                                            "type":"string",
-                                            "fields": {
-                                                "recordNameFacet":{"type":"string", "index":"not_analyzed"}
-                                            }
-                                        }
-                                     }
-                                }
-                             }
-                        },
-                        "activities":{
-                            "properties":{
-                                "mainTheme": {
-                                    "type":"string",
-                                    "path":"just_name",
-                                    "fields": {
-                                        "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-                                    }
-                                }
-                            }
-                        },
-                        "mainTheme": {
-                            "type":"string",
-                            "path":"just_name",
-                            "fields": {
-                                "mainThemeFacet":{"type":"string", "index":"not_analyzed"}
-                            }
-                        },
-                        "publicationStatus":{
-                            "type":"string",
-                            "index":"not_analyzed"
-                        },
-                        "custom": {
-                            "properties": {
-                                "details": {
-                                    "properties": {
-                                        "objectives": {
-                                            "properties": {
-                                                "rows1": {
-                                                    "properties": {
-                                                        "assets": {
-                                                            "type":"string",
-                                                            "path":"just_name",
-                                                            "fields": {
-                                                                "meriPlanAssetFacet": {
-                                                                    "type":"string",
-                                                                    "index":"not_analyzed"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "partnership": {
-                                            "properties": {
-                                                "rows": {
-                                                    "properties": {
-                                                        "data3": {
-                                                            "type":"string",
-                                                            "path":"just_name",
-                                                            "fields": {
-                                                                "partnerOrganisationTypeFacet": {
-                                                                    "type":"string",
-                                                                    "index":"not_analyzed"
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        },
-                                        "budget": {
-                                            "properties": {
-                                                "rows": {
-                                                    "properties": {
-                                                        "shortLabel": {
-                                                           "type":"string",
-                                                           "index":"not_analyzed"
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                    },
-                    "dynamic_templates": [
-                        {
-                            "output_template": {
-                                "path_match": "outputTargets.*",
-                                "mapping": {
-                                    "type": "string",
-                                    "index": "analyzed"
-                                }
-                            }
-                        },
-                        {
-                            "custom_dollars_template": {
-                                "path_match":"custom.details.budget.rows.costs.dollar",
-                                "mapping": {
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                }
-                            }
-                        },
-                        {
-                            "custom_event_date_template": {
-                                "path_match":"custom.details.events.scheduledDate",
-                                "mapping": {
-                                    "type":"string",
-                                    "index":"not_analyzed"
-                                }
-                            }
-                        }
-                    ]
-                }
-            },
-            "settings":{
-                "analysis":{
-                    "analyzer":{
-                        "facetKeyword":{
-                           "filter":[
-                              "trim"
-                           ],
-                           "type":"custom",
-                           "tokenizer":"keyword"
-                        },
-                        "case_insensitive_sort": {
-                            "tokenizer": "keyword",
-                            "filter":  [ "lowercase" ]
-                        }
-                    }
-                }
-            }
-        }
-        '''
-
-        def parsedJson = new JsonSlurper().parseText(mappingJson)
+        def parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
         def facetMappings = buildFacetMapping()
-
         // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
         parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
         parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
@@ -658,30 +370,26 @@ class ElasticSearchService {
         }
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["className"] = docType
                 doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
+                if(projectMap.siteId){
+                    indexDocType(projectMap.siteId, Site.class.name)
+                }
+
                 break;
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 def doc = Site.findBySiteId(docId)
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
+                siteMap = prepareSiteForIndexing(siteMap, true)
                 indexDoc(siteMap, DEFAULT_INDEX)
-                // update linked projects -- index for homepage
-                doc.projects.each { // assume list of Strings (ids)
-                    def pDoc = Project.findByProjectId(it)
-                    if (pDoc) {
-                        indexHomePage(pDoc, "au.org.ala.ecodata.Project")
-                    } else {
-                        log.warn "Project not found for id: ${it}"
-                    }
-                }
                 break;
 
-            case "au.org.ala.ecodata.Record":
+            case Record.class.name:
                 Record record = Record.findByOccurrenceID(docId)
                 if(record) {
                     Activity activity = Activity.findByActivityId(record.activityId)
@@ -691,7 +399,7 @@ class ElasticSearchService {
                 }
                 break
 
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
@@ -701,13 +409,79 @@ class ElasticSearchService {
                 if (pDoc) {
                     indexHomePage(pDoc, "au.org.ala.ecodata.Project")
                 }
+
+                if(activity.siteId){
+                    indexDocType(activity.siteId, Site.class.name)
+                }
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 Map organisation = organisationService.get(docId)
                 prepareOrganisationForIndexing(organisation)
                 indexDoc(organisation, DEFAULT_INDEX)
                 break
+
+            case UserPermission.class.name:
+                String projectId = UserPermission.findByIdAndEntityType(docId, Project.class.name)?.getEntityId()
+                if (projectId) {
+                    Project doc = Project.findByProjectId(projectId)
+                    Map projectMap = projectService.toMap(doc, "flat")
+                    projectMap["className"] = Project.class.name
+                    indexHomePage(doc, Project.class.name)
+                }
+                break
         }
+    }
+
+    /**
+     * Add additional data to site for indexing purposes. eg. project, photo point, survey name etc.
+     * @param siteMap
+     * @param indexNestedDocuments
+     * @return
+     */
+    private Map prepareSiteForIndexing(Map siteMap, Boolean indexNestedDocuments) {
+        List projects = [], surveys = [], surveysForProject
+        Map project, photoPoints
+        siteMap.projects.each { // assume list of Strings (ids)
+            def pDoc = Project.findByProjectId(it)
+            if (pDoc) {
+                if(indexNestedDocuments){
+                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                }
+
+                project = projectService.toMap(pDoc, LevelOfDetail.flat)
+                projects.push([
+                        projectName: project.name,
+                        projectId  : project.projectId
+                ])
+
+                surveysForProject = projectActivityService.getAllByProject(project.projectId);
+                surveys.addAll(surveysForProject.collect {
+                    [
+                            surveyName       : it.name,
+                            projectActivityId: it.projectActivityId
+                    ]
+                })
+
+            } else {
+                log.warn "Project not found for id: ${it}"
+            }
+        }
+
+        siteMap.projectList = projects;
+        siteMap.surveyList = surveys
+
+        try {
+            // check for photo points
+            photoPoints = documentService.search([siteId: siteMap.siteId, type: 'image', role: 'photoPoint'])
+            if (photoPoints?.count > 0) {
+                siteMap.photoType = 'photoPoint'
+            }
+        }
+        catch (Exception e) {
+            log.error("Unable to index documents for site: "+siteMap?.siteId,e)
+        }
+
+        siteMap
     }
 
     /**
@@ -720,7 +494,7 @@ class ElasticSearchService {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
             def docId = getEntityId(doc)
-            if (checkForDelete(doc, docId)) {
+            if (checkForDelete(doc, docId, HOMEPAGE_INDEX)) {
                 return null
             }
 
@@ -763,23 +537,23 @@ class ElasticSearchService {
         def doc
 
         switch (docType) {
-            case "au.org.ala.ecodata.Project":
+            case Project.class.name:
                 doc = Project.findByProjectId(docId);
                 break
-            case "au.org.ala.ecodata.Site":
+            case Site.class.name:
                 doc = Site.findBySiteId(docId)
                 break
-            case "au.org.ala.ecodata.Activity":
+            case Activity.class.name:
                 doc = Activity.findByActivityId(docId)
                 break
-            case "au.org.ala.ecodata.Organisation":
+            case Organisation.class.name:
                 doc = Organisation.findByOrganisationId(docId)
                 break
         }
 
         if (doc) {
             deleteDocType(doc)
-        } else {
+        } else if(docType != UserPermission.class.name) {
             log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
         }
     }
@@ -795,7 +569,7 @@ class ElasticSearchService {
         // docIds is assumed to be a list of ProjectIds
         docIds.each { id ->
             //log.debug "Updating project id: ${id}"
-            indexDocType(id, "au.org.ala.ecodata.Project")
+            indexDocType(id, Project.class.name)
         }
 
     }
@@ -810,8 +584,13 @@ class ElasticSearchService {
         log.debug "Indexing all MERIT based projects in MERIT SEARCH index."
         def list = projectService.listMeritProjects("flat", false)
         list.each {
-            it["className"] = new Project().getClass().name
-            indexDoc(it, DEFAULT_INDEX)
+            try {
+                it["className"] = Project.class.name
+                indexDoc(it, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index projewt: "+it?.projectId, e)
+            }
         }
 
         // homepage index (doing some manual batching due to memory constraints)
@@ -822,9 +601,14 @@ class ElasticSearchService {
 
             while (projects) {
                 projects.each { project ->
-                    Map projectMap = prepareProjectForHomePageIndex(project)
+                    try {
+                        Map projectMap = prepareProjectForHomePageIndex(project)
 
-                    indexDoc(projectMap, HOMEPAGE_INDEX)
+                        indexDoc(projectMap, HOMEPAGE_INDEX)
+                    }
+                    catch (Exception e) {
+                        log.error("Unable to index projewt: "+it?.projectId, e)
+                    }
                 }
 
                 batchParams.offset = batchParams.offset + batchParams.max
@@ -833,24 +617,45 @@ class ElasticSearchService {
         }
 
         log.debug "Indexing all sites"
-        def sites = Site.findAll()
-        sites.each {
-            def siteMap = siteService.toMap(it, "flat")
-            siteMap["className"] = new Site().getClass().name
-            indexDoc(siteMap, DEFAULT_INDEX)
+        int count = 0
+        Site.withNewSession { session ->
+            siteService.doWithAllSites { Map siteMap ->
+                siteMap["className"] = Site.class.name
+                try {
+                    siteMap = prepareSiteForIndexing(siteMap, false)
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable index site: "+siteMap?.siteId, e)
+                }
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.debug("Indexed "+count+" sites")
+                }
+            }
         }
 
         log.debug "Indexing all activities"
-        activityService.doWithAllActivities { activity ->
-            prepareActivityForIndexing(activity)
-            indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+        activityService.doWithAllActivities { Map activity ->
+            try {
+                prepareActivityForIndexing(activity)
+                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index activity: "+activity?.activityId, e)
+            }
         }
 
         log.debug "Indexing all organisations"
-        List<Map> organisations = organisationService.list()
-        for (Map org : organisations) {
-            prepareOrganisationForIndexing(org)
-            indexDoc(org, DEFAULT_INDEX)
+        organisationService.doWithAllOrganisations { Map org ->
+            try {
+                prepareOrganisationForIndexing(org)
+                indexDoc(org, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index organisation: "+org?.organisationId, e)
+            }
         }
 
         log.debug "Indexing complete"
@@ -864,8 +669,12 @@ class ElasticSearchService {
         organisation["className"] = Organisation.class.name
         Map results = documentService.search([organisationId:organisation.organisationId, role:DocumentService.LOGO])
         if (results && results.documents) {
-            organisation.logoUrl = results.documents[0].url
+            organisation.logoUrl = results.documents[0].thumbnailUrl
         }
+
+        // get list of users of this organisation
+        List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
+        organisation.users = users;
     }
 
     /**
@@ -881,6 +690,7 @@ class ElasticSearchService {
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
+        projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };
@@ -896,7 +706,7 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT)
-
+        def organisation = organisationService.get(project?.organisationId)
         // Include project activity only for survey based projects.
         def pActivity = projectActivityService.get(activity.projectActivityId)
         if (pActivity) {
@@ -924,8 +734,20 @@ class ElasticSearchService {
             projectActivity.records = records
             projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
             projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            try {
+                // check if activity has images
+                Map images = documentService.search([type: 'image', role: 'surveyImage', activityId: activity.activityId]);
+                if (images.count > 0)
+                    projectActivity.surveyImage = true;
+            }
+            catch (Exception e) {
+                log.error("unable to index images for projectActivity: " + projectActivity?.projectActivityId)
+            }
+
+            projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
+
         } else if (project) {
             // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
             // faceting for reporting.
@@ -958,7 +780,7 @@ class ElasticSearchService {
      * @param params
      * @return IndexResponse
      */
-    def search(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def search(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         log.debug "search params: ${params}"
 
         index = index ?: DEFAULT_INDEX
@@ -1010,7 +832,7 @@ class ElasticSearchService {
     *       // c. unauthenticated user >> show only embargoed records across the projects.
     *
     */
-    void buildProjectActivityQuery(GrailsParameterMap params) {
+    void buildProjectActivityQuery(params) {
 
         String query = params.searchTerm ?: ''
         String userId = params.userId
@@ -1074,7 +896,7 @@ class ElasticSearchService {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
-        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet"
+        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
@@ -1083,9 +905,11 @@ class ElasticSearchService {
      *
      * @param query
      * @param params
+     * @param index index name
+     * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String query, GrailsParameterMap params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String query, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -1385,6 +1209,4 @@ class ElasticSearchService {
     def destroy() {
         node.close();
     }
-
-
 }

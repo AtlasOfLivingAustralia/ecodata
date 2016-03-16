@@ -86,7 +86,7 @@ class Document {
 
         path = path?path+'/':''
 
-        def encodedFileName = name.encodeAsURL().replaceAll('\\+', '%20')
+        def encodedFileName = URLEncoder.encode(name, 'UTF-8').replaceAll('\\+', '%20')
         URI uri = new URI(grailsApplication.config.app.uploads.url + path + encodedFileName)
         return uri.toURL();
     }

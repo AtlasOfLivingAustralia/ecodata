@@ -43,6 +43,13 @@ class OutputMetadata {
             }
             annotatedNodes << annotatedNode
         }
+
+        // Sort the nodes based on the order they appear in the view model for consistency.
+        if (metadata.viewModel) {
+            annotatedNodes.sort { node ->
+                metadata.viewModel.findIndexOf{it.source == node.name}
+            }
+        }
         annotatedNodes
     }
 
@@ -86,6 +93,39 @@ class OutputMetadata {
     }
     def isNestedViewModelType(node) {
         return (node.items != null || node.columns != null)
+    }
+
+    /**
+     * lists all names of type passed to function
+     * @param type
+     * @return
+     * [ 'imageList':true,
+     *   'multiSightingTable':['imageTable':true]
+     * ]
+     *
+     */
+    Map getNamesForDataType(String type, context){
+        Map names = [:], childrenNames
+
+        if(!context && metadata){
+            context = metadata.dataModel;
+        }
+
+        context?.each { data ->
+            if(isNestedDataModelType(data)){
+                // recursive call for nested data model
+                childrenNames = getNamesForDataType(type, getNestedDataModelNodes(data));
+                if(childrenNames?.size()){
+                    names[data.name] = childrenNames
+                }
+            }
+
+            if(data.dataType == type){
+                names[data.name] = true
+            }
+        }
+
+        return names;
     }
 
     static class ValidationRules {

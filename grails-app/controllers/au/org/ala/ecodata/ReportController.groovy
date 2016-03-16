@@ -20,6 +20,11 @@ class ReportController {
         }
     }
 
+    @RequireApiKey
+    def delete(String id) {
+        respond reportingService.delete(id, params.getBoolean('destroy', false))
+    }
+
     def find(String entity, String id) {
         respond reportingService.findAllByOwner(entity + 'Id', id)
     }

@@ -145,6 +145,10 @@ if (!spatial.intersectBatchUrl) {
 if(!google.geocode.url){
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
+if (!temp.file.cleanup.days) {
+    temp.file.cleanup.days = 1
+}
+
 
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
@@ -240,6 +244,13 @@ if(!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
 }
 
+if(!authGetKeyUrl) {
+    authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
+}
+
+if(!authCheckKeyUrl) {
+    authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
+}
 
 if (!grails.cache.ehcache) {
     grails {

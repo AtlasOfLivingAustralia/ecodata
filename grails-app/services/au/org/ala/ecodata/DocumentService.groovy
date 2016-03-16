@@ -1,19 +1,20 @@
 package au.org.ala.ecodata
-
-import org.grails.datastore.mapping.query.api.BuildableCriteria
-
-import static au.org.ala.ecodata.Status.*
+import com.itextpdf.text.PageSize
+import com.itextpdf.text.html.simpleparser.HTMLWorker
+import com.itextpdf.text.pdf.PdfWriter
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
-import com.itextpdf.text.html.simpleparser.HTMLWorker
-import com.itextpdf.text.pdf.PdfWriter
-import com.itextpdf.text.PageSize
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.imgscalr.Scalr
+
 import javax.imageio.ImageIO
 import java.awt.image.BufferedImage
 import java.text.DateFormat
 import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class DocumentService {
 
@@ -96,7 +97,7 @@ class DocumentService {
         Document primaryImageDoc;
         Document logoDoc = Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE);
         String urlImage;
-        urlImage = logoDoc?.url
+        urlImage = logoDoc?.url ? logoDoc.getThumbnailUrl() : ''
         if(!urlImage){
             primaryImageDoc = Document.findByProjectIdAndIsPrimaryProjectImage(id, true)
             urlImage = primaryImageDoc?.url;
@@ -104,6 +105,9 @@ class DocumentService {
         urlImage
     }
 
+    String getLogoAttributionForProjectId(String id){
+        Document.findByProjectIdAndRoleAndStatus(id, LOGO, ACTIVE)?.attribution
+    }
 
     /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
@@ -415,4 +419,19 @@ class DocumentService {
         }
         isMobileApp;
     }
+
+    /**
+     * Remove necessary properties from a document that is embargoed.
+     * @param doc
+     * @return doc
+     */
+    public Map embargoDocument (Map doc){
+        List blackListProps = ['thumbnailUrl','url','dataTaken','attribution','notes','filename','filepath','documentId']
+        doc.isEmbargoed = true;
+        blackListProps.each { item ->
+            doc.remove(item)
+        }
+        doc
+    }
+
 }

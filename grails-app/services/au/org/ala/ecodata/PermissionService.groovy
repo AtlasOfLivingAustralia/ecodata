@@ -54,6 +54,37 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    /**
+     * Given a userId and a list of projects, check if the user has edit permission on each project.
+     * The function returns a map with projectId as key and boolean for permission. Null if project is not found.
+     * @param userId
+     * @param projectIds []
+     * @return
+     */
+    Map isUserEditorForProjects(String userId, String [] projectIds) {
+        Map permissions =[:]
+        Boolean isEditor = false
+        Project project
+
+        if (userId && projectIds) {
+            projectIds.each { projectId ->
+                project = Project.findByProjectId(projectId)
+                if(project){
+                    permissions[projectId] = isUserAdminForProject(userId, projectId);
+                } else {
+                    permissions[projectId] = null;
+                }
+            }
+        } else if(userId == ''){
+            // for anonymous user
+            projectIds.each {
+                permissions[it] = false;
+            }
+        }
+
+        return permissions
+    }
+
     def isUserGrantManagerForOrganisation(String userId, String organisationId) {
         def isGrantManager = false
         if (userId && organisationId) {
@@ -222,5 +253,58 @@ class PermissionService {
 
     List getAllAdminsForProject(String id){
         getAllUserPermissionForEntity(id, Project.class.name, 'admin')
+    }
+
+    /**
+     * Check user permission against given access code
+     *
+     * @param userId
+     * @param entityId
+     * @param entityType
+     * @param accessCode
+     */
+    boolean checkUserPermission(String userId, String entityId, String entityType, int accessCode) {
+        def userPermission = UserPermission.findByUserIdAndEntityIdAndEntityType(userId, entityId, entityType)
+        userPermission ? userPermission.accessLevel.code >= accessCode  : false
+    }
+
+    /**
+     * Check user permission against given accessLevel
+     *
+     * @param accessLevel
+     * @param entityId
+     * @param entityType
+     * @param userId
+     */
+    Map checkPermission(String accessLevel, String entityId, String entityType, String userId){
+        Map result = [error:'', status: 401]
+        switch (accessLevel) {
+            case AccessLevel.admin.name():
+                if(!checkUserPermission(userId, entityId, entityType, AccessLevel.admin.code)){
+                    result.error = "Access denied, user does not have admin permission for the project."
+                }
+                break
+            case AccessLevel.caseManager.name():
+                if(!checkUserPermission(userId, entityId, entityType, AccessLevel.caseManager.code)) {
+                    result.error = "Access denied, user does not have caseManager permission for the project."
+                }
+                break
+            case AccessLevel.editor.name():
+                if(!checkUserPermission(userId, entityId, entityType, AccessLevel.editor.code)) {
+                    result.error = "Access denied, user does not have editor permission for the project."
+                }
+                break
+            case AccessLevel.projectParticipant.name():
+                if(!checkUserPermission(userId, entityId, entityType, AccessLevel.projectParticipant.code)){
+                    result.error = "Access denied, user does not have projectParticipant permission for the project."
+                }
+                break
+
+            default:
+                log.warn "Unexpected role: ${accessLevel}"
+                break
+        }
+
+        result
     }
 }

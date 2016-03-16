@@ -136,7 +136,7 @@
                     "dwcAttribute": "individualCount",
                     "name": "numberPlanted",
                     "description": "Number of plants planted",
-                    "validate": "required"
+                    "validate": "required,integer,min[0]"
                 },
                 {
                     "dataType": "number",

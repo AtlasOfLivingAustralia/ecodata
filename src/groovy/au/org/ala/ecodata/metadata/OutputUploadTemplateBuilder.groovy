@@ -180,6 +180,11 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     @Override
+    def time(Object node, ExcelValidationContext context) {
+        text(node, context)
+    }
+
+    @Override
     def text(Object node, ExcelValidationContext context) {
         if (node.constraints) {
 

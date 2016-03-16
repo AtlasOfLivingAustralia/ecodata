@@ -3,7 +3,7 @@ package au.org.ala.ecodata
 import static au.org.ala.ecodata.Status.*
 
 class ProjectActivityService {
-
+    static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
 
@@ -90,6 +90,7 @@ class ProjectActivityService {
                 break
             case EmbargoOption.DAYS:
                 visibility.embargoOption = EmbargoOption.DAYS
+                visibility.embargoForDays = incomingProperties.visibility?.embargoForDays
                 visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
                 break
             case EmbargoOption.DATE:
@@ -120,7 +121,7 @@ class ProjectActivityService {
             commentService.deleteAllForEntity(ProjectActivity.class.name, projectActivityId, destroy)
 
             if (destroy) {
-                projectActivity.delete()
+                projectActivity.delete(flush:true)
             } else {
                 projectActivity.status = DELETED
                 projectActivity.save(flush: true)

@@ -3,10 +3,15 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import groovy.json.JsonSlurper
+
+import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
 class ProjectController {
 
     def projectService, siteService, commonService, reportService, metadataService, activityService
+    ElasticSearchService elasticSearchService
 
     static final BRIEF = 'brief'
     static final RICH = 'rich'
@@ -262,40 +267,59 @@ class ProjectController {
         def projectList = projectService.search(searchCriteria, view)
         asJson projects:projectList
     }
+
+    @RequireApiKey
+    def findByName() {
+        if (!params.projectName) {
+            render status:400, text: "projectName is a required parameter"
+        } else {
+            render projectService.findByName(params.projectName) as JSON
+        }
+    }
+
+    @PreAuthorise
+    def eSearch() {
+        String error = ""
+        if (params.max && !params.max.isNumber()) {
+            error = "Invalid max parameter."
+        } else if (params.offset && !params.offset.isNumber()) {
+            error = "Invalid offset parameter."
+        } else if (params.sort) {
+            List options = ['nameSort', '_score', 'organisationSort']
+            String found = options.find { it == params.sort }
+            error = !found ? 'Invalid sort parameter (Accepted values: nameSort, _score, organisationSort ).' : ''
+        } else if(params.order) {
+            List options = ['ASC', 'DESC']
+            String found = options.find { it == params.sort }
+            error = !found ? 'Invalid order parameter (Accepted values: ASC, DESC ).' : ''
+        }
+        if (!error) {
+            Map params = buildParams(params)
+            def result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+
+            response.setContentType('application/json; charset="UTF-8"')
+            render result
+        } else {
+            render status: 400, text: error
+        }
+    }
+
+    private Map buildParams(Map params){
+        Map values = [:]
+        values.sort = params.sort ?: 'nameSort'
+        values.max = params.max ?: 10
+        values.skipDefaultFilters = false
+        values.offset = params?.offset ?: 0
+        values.query = "docType:project AND (isCitizenScience:true)" + (params.query ? (" AND " + params.query) : "")
+        values.order = params.order ?: 'ASC'
+
+        values
+    }
+
     private def setResponseHeadersForProjectId(response, projectId){
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/project/" + projectId)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/project/" +  projectId)
         response.addHeader("entityId", projectId)
     }
-
-/*
-    def loadTestData() {
-        def testFile = new File('/data/fieldcapture/site-test-data.csv')
-        testFile.eachCsvLine { tokens ->
-            def projectName = tokens[2]
-            def siteName = tokens[4]
-            if (projectName && siteName.toLowerCase() != 'site_name') {
-                Project p = Project.findByName(projectName)
-                if (!p) {
-                    p = new Project(name: tokens[2],
-                            organisationName: tokens[1],
-                            projectId: Identifiers.getNew(
-                                    grailsApplication.config.ecodata.use.uuids, tokens[2]))
-                    if (p.name == 'Bushbids') { p.description = bushbidsDescription }
-                }
-                Site s = Site.findByName(siteName)
-                if (s) {
-                    s.projectId = p.projectId
-                    s.projectName = p.name
-                    s.save()
-                    p.addToSites(s)
-                }
-                p.save()
-            }
-        }
-        render "${Project.count()} projects"
-    }
-    def bushbidsDescription = "Within the South Australian Murray-Darling Basin the northern Murray Plains and the southern parts of the Rangelands contain a concentration of remnant native woodlands on private land that are not well represented in conservation parks and reserves. The Woodland BushBids project will be implemented across this area. The eastern section of the Woodland BushBids project area contains large areas of woodland and mallee woodland where habitat quality could be improved through management. The western section contains smaller areas of priority woodland types in a largely cleared landscape. Protection and enhancement of native vegetation is necessary for the conservation of vegetation corridors through the region as well as management of woodland types such as Black Oak Woodlands. Management of native vegetation will also assist the protection of threatened species such as the Carpet Python, Regent Parrot, Bush Stone Curlew and the endangered Hopbush, Dodonea subglandulifera and will provide habitat for significant species such as the Southern Hairy Nosed Wombat. Woodland BushBids will assist landholders to provide management services to protect and enhance native vegetation quality."
-*/
 
 }

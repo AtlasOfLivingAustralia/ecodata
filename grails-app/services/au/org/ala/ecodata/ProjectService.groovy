@@ -1,8 +1,12 @@
 package au.org.ala.ecodata
 
+import java.lang.reflect.UndeclaredThrowableException
+
 import static au.org.ala.ecodata.Status.*
 
 import au.org.ala.ecodata.reporting.Score
+
+import static grails.async.Promises.task
 
 class ProjectService {
 
@@ -25,7 +29,8 @@ class ProjectService {
     PermissionService permissionService
     CollectoryService collectoryService
     WebService webService
-    OrganisationService organisationService
+    EmailService emailService
+    ReportingService reportingService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -64,7 +69,7 @@ class ProjectService {
         if (includeDeleted) {
             list = Project.findAllByIsMERIT(true)
         } else {
-            list = Project.findAllByIsMERITAndStatus(true, ACTIVE)
+            list = Project.findAllByIsMERITAndStatusNotEqual(true, DELETED)
         }
         list.collect { toMap(it, levelOfDetail) }
     }
@@ -121,6 +126,10 @@ class ProjectService {
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
+                    List<Report> reports = reportingService.findAllForProject(project.projectId)
+                    if (reports) {
+                        mapOfProperties.reports = reports
+                    }
                 } else if (levelOfDetail == OUTPUT_SUMMARY) {
                     mapOfProperties.outputSummary = projectMetrics(project.projectId, false, true)
                 }
@@ -185,12 +194,14 @@ class ProjectService {
                 return [status:'error',error:'Duplicate project id for create ' + props.projectId]
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-            def project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
+            Project project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
             project.save(failOnError: true)
 
             props.remove('sites')
             props.remove('id')
-            props << collectoryService.createDataProviderAndResource(project.projectId, props)
+
+            establishCollectoryLinkForProject(project, props)
+
             getCommonService().updateProperties(project, props)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
@@ -202,13 +213,37 @@ class ProjectService {
         }
     }
 
-    def update(props, id) {
-        def a = Project.findByProjectId(id)
-        if (a) {
+    /*
+     * Async task for establishing the Collectory data resource - this is because it could be relatively slow and we do
+     * not want to delay the project creation process for the user.
+     */
+    private establishCollectoryLinkForProject(Project project, Map props) {
+        task {
+            Map collectoryProps = [:]
+            collectoryProps << collectoryService.createDataProviderAndResource(project.projectId, props)
+            getCommonService().updateProperties(project, collectoryProps)
+        }.onComplete {
+            log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
+        }.onError { Throwable error ->
+            if (error instanceof UndeclaredThrowableException) {
+                error = error.undeclaredThrowable
+            }
+            String message = "Failed to establish collectory link for project ${project.name} (id = ${project.projectId})"
+            log.error(message, error)
+            emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
+        }
+    }
+
+    def update(Map props, String id) {
+        Project project = Project.findByProjectId(id)
+        if (project) {
             try {
-                getCommonService().updateProperties(a, props)
-                if (a.dataProviderId)
+                getCommonService().updateProperties(project, props)
+                if (project.dataProviderId && project.dataProviderId != "null") {
                     collectoryService.updateDataProviderAndResource(get(id, FLAT))
+                } else {
+                    establishCollectoryLinkForProject(project, toMap(project, FLAT))
+                }
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
@@ -338,6 +373,25 @@ class ProjectService {
     }
 
     /**
+     * Performs a case-insensitive search by project name
+     * @param name The project name to search for
+     * @return List of 'brief' projects with the same name (case-insensitive)
+     */
+    List<Map> findByName(String name) {
+        List<Map> matches = []
+
+        if (name) {
+            name = name.replaceAll(" +", " ").trim()
+            matches = Project.withCriteria {
+                ne "status", DELETED
+                rlike "name", "(?i)^${name}\$"
+            }.collect { toMap(it, LevelOfDetail.brief) }
+        }
+
+        matches
+    }
+
+    /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
      * Multiple properties will be ANDed together when producing results.
      *
@@ -362,10 +416,17 @@ class ProjectService {
         projects.collect{toMap(it, levelOfDetail)}
     }
 
-    def updateOrgName(orgId, orgName) {
-        Project.collection.update(
-            [organisationId: orgId],
-            ['$set': [organisationName: orgName]], false, true)
+    /**
+     * Updates the organisation name for all projects with the organisation id.
+     * (The name is stored alongside the id in the project because not all organisations have entries in the database).
+     * @param orgId identifies the organsation that has changed name
+     * @param orgName the new organisation name
+     */
+    void updateOrganisationName(orgId, orgName) {
+        Project.findAllByOrganisationIdAndStatusNotEqual(orgId, DELETED).each { project ->
+            project.organisationName = orgName
+            project.save()
+        }
     }
 
 }

@@ -24,51 +24,53 @@ class DownloadService {
     EmailService emailService
 
     def grailsApplication
+    def groovyPageRenderer
 
     /**
      * Produces the same file as {@link #downloadProjectData(java.io.OutputStream, org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap)}
      * but the file is not streamed back on the HTTP Response: instead, the file is written to disk and an email notification
      * is sent to the requesting user
      *
-     * @param params
+     * @param params configures the email address, file extension and url path for the download.
+     * @param downloadAction must be a Closure taking two parameters, an OutputStream and a Map.
      */
-    void downloadProjectDataAsync(GrailsParameterMap params) {
+    void downloadProjectDataAsync(GrailsParameterMap params, Closure downloadAction) {
         String downloadId = UUID.randomUUID().toString()
         File directoryPath = new File("${grailsApplication.config.temp.dir}")
         directoryPath.mkdirs()
-        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.zip"))
+        String fileExtension = params.fileExtension?:'zip'
+        FileOutputStream outputStream = new FileOutputStream(new File(directoryPath, "${downloadId}.${fileExtension}"))
 
         task {
             // need to create a new session to ensure that all <entity>.getProperty('dbo') calls work: by default, async
             // calls result in detached entities, which cannot get the underlying Mongo DBObject.
             Project.withNewSession {
-                downloadProjectData(outputStream, params)
+                downloadAction(outputStream, params)
             }
         }.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
-            String url = "${grailsApplication.config.async.download.url.prefix}${downloadId}"
-            String body = """
-                        <html><body>
-                        <p>You may download your file from <a href="${url}">this link</a>.</p>
-                        <p>Download files are automatically deleted from the server after ${days > 1 ? days + ' days' : ' 24 hours'}.
-                            If you have not downloaded your file before then, you will need to request a new download.</p>
-                        <p>This is an automated email. Please do not reply.</p>
-                        </body>
-                        </html>
-                        """
-            emailService.sendEmail("Your download is ready", body, [params.email])
+            String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
+            String url = "${urlPrefix}${downloadId}"
+            String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
+            emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
             }
         }.onError { Throwable error ->
             log.error("Failed to generate zip file for download.", error)
-            emailService.sendEmail("Your download has failed", "An unexpected error has occurred while creating your download. Please try again.", [params.email])
+            String body = groovyPageRenderer.render(template: "/email/downloadFailed")
+            emailService.sendEmail("Your download has failed", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {
                 outputStream.flush()
                 outputStream.close()
             }
         }
+    }
+
+    void downloadProjectDataAsync(GrailsParameterMap map) {
+        Closure doDownload = {OutputStream outputStream, GrailsParameterMap params -> downloadProjectData(outputStream, params)}
+        downloadProjectDataAsync(map, doDownload)
     }
 
     /**
@@ -77,12 +79,16 @@ class DownloadService {
      * |- images
      * |--- <projectId> --> one directory for each projectId
      * |--- |- <fileName> --> one file for each project-level image
-     * |--- |- <activityId> --> one directory for each activityId
-     * |--- |- |- <fileName> --> one file for each activity-level image
-     * |--- |- |- <outputId> --> one directory for each outputId
-     * |--- |- |--- |- <fileName> --> one file for each output-level image
-     * |--- |- |--- |- |- <recordId> --> one directory for each recordId
-     * |--- |- |--- |- |--- <fileName> --> one file for each record-level image
+     * |--- |- activities
+     * |--- |- |- <activityId> --> one directory for each activityId
+     * |--- |- |- |- <fileName> --> one file for each activity-level image
+     * |--- |- |- |- <outputId> --> one directory for each outputId
+     * |--- |- |- |--- |- <fileName> --> one file for each output-level image
+     * |--- |- |- |- <recordId> --> one directory for each recordId
+     * |--- |- |- |--- |- <fileName> --> one file for each record-level image
+     * |--- |- records
+     * |--- |- |- <recordId> --> one directory for each record occurrenceId
+     * |--- |- |- |- <fileName> --> one file for each record-level image
      * |- shapes
      * |--- <projectId> --> one directory for each projectId
      * |--- |- extent.zip --> shapefile for the project extent
@@ -99,29 +105,66 @@ class DownloadService {
         XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, "data")
 
         new ZipOutputStream(outputStream).withStream { zip ->
-            zip.putNextEntry(new ZipEntry("data.xls"))
-            ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
-            xlsExporter.save(xslFile)
-            xslFile.flush()
-            zip << xslFile.toByteArray()
-            xslFile.flush()
-            xslFile.close()
-            zip.closeEntry()
-            log.debug("XLS file added")
+            try{
+                zip.putNextEntry(new ZipEntry("data.xls"))
+                ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
+                xlsExporter.save(xslFile)
+                xslFile.flush()
+                zip << xslFile.toByteArray()
+                xslFile.flush()
+                xslFile.close()
+                zip.closeEntry()
+                log.debug("XLS file added")
 
-            addShapeFilesToZip(zip, activitiesByProject.keySet())
-            log.debug("Shape files added")
+                addShapeFilesToZip(zip, activitiesByProject.keySet())
+                log.debug("Shape files added")
 
-            addImagesToZip(zip, activitiesByProject)
-            log.debug("Images added")
+                addImagesToZip(zip, activitiesByProject)
+                log.debug("Images added")
 
-            zip.finish()
-            zip.flush()
-            zip.close()
+                addReadmeToZip(zip)
+            } catch (Exception e){
+                log.error(e.message)
+                log.error(e.stackTrace)
+            } finally {
+                zip.finish()
+                zip.flush()
+                zip.close()
+            }
         }
 
         log.debug("ZIP file created")
         true
+    }
+
+    private static addReadmeToZip(ZipOutputStream zip) {
+        zip.putNextEntry(new ZipEntry("README.txt"))
+        zip << """\
+            File format is as follows:
+
+            |- data.xls -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
+            |- README.txt -> this file
+            |- shapefiles
+            |- - <projectId>
+            |- - - projectExtent.zip -> Shape file for the project extent
+            |- - - sites.zip -> Shape file containing all Sites associated with the project
+            |- images
+            |- - <projectId>
+            |- - - <image files> -> Images associated with the project itself (e.g. logo)
+            |- - - activities -> directory structure containing images for the activities and their outputs
+            |- - - - <activityId>
+            |- - - - - <image files> -> Images associated with the activity itself
+            |- - - - - <outputId>
+            |- - - - - - <image files> -> images associated with an individual Output entity
+            |- - - records -> directory structure containing images for individual records
+            |- - - - <occurrenceId>
+            |- - - - - <image files> -> Images associated with the record
+
+
+            This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
+        """.stripIndent()
+
+        zip.closeEntry()
     }
 
     private addShapeFilesToZip(ZipOutputStream zip, Set<String> projectIds) {
@@ -155,25 +198,25 @@ class DownloadService {
         zip.putNextEntry(new ZipEntry("images/"))
 
         activitiesByProject.each { projectId, activityIds ->
-            zip.putNextEntry(new ZipEntry("images/${projectId}/"))
+            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/"))
 
             groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
-                    zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/"))
+                    zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/"))
 
                     documentsMap.each { outputId, documentList ->
                         if (outputId) {
-                            zip.putNextEntry(new ZipEntry("images/${projectId}/${activityId}/${outputId}/"))
+                            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/${outputId}/"))
 
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/${outputId}/", doc)
+                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/${outputId}/", doc)
                                 }
                             }
                         } else {
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/${activityId}/", doc)
+                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/", doc)
                                 }
                             }
                         }
@@ -190,7 +233,28 @@ class DownloadService {
             }
 
             zip.closeEntry()
+
+            // put record images into a separate directory structure
+            zip.putNextEntry(new ZipEntry("images/${projectId}/records/"))
+
+            groupDocumentsByRecord(projectId).each { recordId, documentList ->
+                if (documentList) {
+                    zip.putNextEntry(new ZipEntry("images/${projectId}/records/${recordId}/"))
+
+                    documentList.each { doc ->
+                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                            addFileToZip(zip, "images/${projectId}/records/${recordId}/", doc)
+                        }
+                    }
+
+                    zip.closeEntry()
+                }
+            }
+
+            zip.closeEntry()
         }
+
+
         log.info "Zipping images took ${System.currentTimeMillis() - start} millis"
     }
 
@@ -216,6 +280,20 @@ class DownloadService {
         Activity.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { activity ->
             Document.findAllByActivityId(activity.activityId)?.each {
                 documents[it.activityId ?: null][it.outputId ?: null] << it
+            }
+        }
+
+        documents
+    }
+
+    private static Map<String, List<Document>> groupDocumentsByRecord(String projectId) {
+        Map<String, List<Document>> documents = [:].withDefault { [] }
+
+        Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
+            record.multimedia?.each { multimedia ->
+                Document.findAllByDocumentId(multimedia.documentId)?.each { doc ->
+                    documents[record.occurrenceID ?: null] << doc
+                }
             }
         }
 

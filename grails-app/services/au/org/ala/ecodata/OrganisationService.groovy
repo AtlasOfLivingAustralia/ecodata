@@ -1,6 +1,10 @@
 package au.org.ala.ecodata
 
+import com.mongodb.DBCursor
+import com.mongodb.DBObject
+import com.mongodb.QueryBuilder
 import grails.validation.ValidationException
+import static au.org.ala.ecodata.Status.*
 
 /**
  * Works with Organisations, mostly CRUD operations at this point.
@@ -68,9 +72,11 @@ class OrganisationService {
         def organisation = Organisation.findByOrganisationId(id)
         if (organisation) {
             try {
-                if (organisation.name != props.name)
-                    projectService.updateOrgName(organisation.organisationId, props.name)
+                String oldName = organisation.name
                 getCommonService().updateProperties(organisation, props)
+                if (props.name && (oldName != props.name)) {
+                    projectService.updateOrganisationName(organisation.organisationId, props.name)
+                }
                 return [status:'ok']
             } catch (Exception e) {
                 Organisation.withSession { session -> session.clear() }
@@ -132,6 +138,25 @@ class OrganisationService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    /**
+     * Accepts a closure that will be called once for each (not deleted) Organisation in the system,
+     * passing the site (as a Map) as the single parameter.
+     * Implementation note, this uses the Mongo API directly as using GORM incurs a
+     * significant memory and performance overhead when dealing with so many entities
+     * at once.
+     * @param action the action to be performed on each Organisation.
+     */
+    void doWithAllOrganisations(Closure action) {
+        // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
+        com.mongodb.DBCollection collection = Organisation.getCollection()
+        DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
+        DBCursor results = collection.find(siteQuery).batchSize(100)
+
+        results.each { dbObject ->
+            action.call(dbObject.toMap())
+        }
     }
 
 }

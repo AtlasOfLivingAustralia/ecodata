@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
-
-import static au.org.ala.ecodata.Status.*
-
 import au.org.ala.ecodata.converter.RecordConverter
+import au.org.ala.ecodata.metadata.OutputMetadata
+
+import static au.org.ala.ecodata.Status.DELETED
 
 class OutputService {
 
@@ -128,9 +128,13 @@ class OutputService {
             try {
                 output.save(failOnError: true) // Getting dynamic properties not saving without this.
 
+                // save images to ecodata
+                props.data = saveImages(props.data, props.name, output.outputId, props.activityId);
+                props.data = saveAudio(props.data, props.name, output.outputId, props.activityId);
+
                 getCommonService().updateProperties(output, props)
 
-                createRecordsForOutput(activity, output, props)
+                createOrUpdateRecordsForOutput(activity, output, props)
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
@@ -148,7 +152,7 @@ class OutputService {
         }
     }
 
-    void createRecordsForOutput(Activity activity, Output output, Map props) {
+    void createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
         boolean createRecord = outputMetadata && outputMetadata["record"]?.toBoolean()
@@ -161,12 +165,22 @@ class OutputService {
             List<Map> records = RecordConverter.convertRecords(project, site, projectActivity, activity, output, props.data, outputMetadata)
 
             records.each { record ->
-                // createRecord returns a 2-element list:
-                // [0] = Record (always there even if the save failed);
-                // [1] = Error object if the save failed, empty map if the save succeeded.
-                List result = recordService.createRecord(record)
-                if (result[1]) {
-                    throw new IllegalArgumentException("Failed to create record: ${record}")
+                //Create or update record?
+                Record existingRecord = Record.findByOutputSpeciesId(record.outputSpeciesId)
+                if (existingRecord) {
+                    existingRecord.status = Status.ACTIVE
+                    Map updateResult = recordService.updateRecord(existingRecord, record)
+                    if (updateResult) {
+                        throw new IllegalArgumentException("Failed to update record: ${record}")
+                    }
+                } else {
+                    // createRecord returns a 2-element list:
+                    // [0] = Record (always there even if the save failed);
+                    // [1] = Error object if the save failed, empty map if the save succeeded.
+                    List result = recordService.createRecord(record)
+                    if (result[1]) {
+                        throw new IllegalArgumentException("Failed to create record: ${record}")
+                    }
                 }
             }
         }
@@ -174,30 +188,37 @@ class OutputService {
 
     def update(Map props, String outputId) {
         Output output = Output.findByOutputId(outputId)
+        Map result
         if (output) {
             Activity activity = Activity.findByActivityId(output.activityId)
             try {
+                // save image properties to db
+                props.data = saveImages(props.data, props.name, output.outputId, activity.activityId)
+                props.data = saveAudio(props.data, props.name, output.outputId, activity.activityId)
+
                 getCommonService().updateProperties(output, props)
 
-                List<Record> records = Record.findAllByOutputId(outputId)
-                if (records) {
-                    Record.deleteAll(records)
+                List statusUpdate = recordService.updateRecordStatusByOutput(outputId, Status.DELETED)
+                if (!statusUpdate) {
+                    createOrUpdateRecordsForOutput(activity, output, props)
+                    result = [status: 'ok']
+                } else {
+                    result = [status: 'error', error: "Error updating the record status"]
                 }
 
-                createRecordsForOutput(activity, output, props)
-
-                return [status: 'ok']
             } catch (Exception e) {
                 Output.withSession { session -> session.clear() }
                 String error = "Error updating output ${outputId} - ${e.message}"
                 log.error error, e
-                return [status: 'error', error: error]
+                result = [status: 'error', error: error]
             }
         } else {
             String error = "Error updating output - no such id ${outputId}"
             log.error error
-            return [status: 'error', error: error]
+            result = [status: 'error', error: error]
         }
+
+        result
     }
 
     def getAllOutputIdsForActivity(String activityId) {
@@ -220,5 +241,89 @@ class OutputService {
        Output.findAllByActivityIdAndStatus(activityId, ACTIVE)?.collect{
            toMap(it)
        }
+    }
+
+    /**
+     * find images and save or delete it.
+     * @param activityId
+     * @param outputs
+     * @return the output data, with any image objects updated to include the new document id
+     */
+    Map saveImages(Map output, String metadataName, String outputId, String activityId, Map context = null) {
+        saveMultimedia(output, metadataName, outputId, activityId, "image", "surveyImage", "image", context)
+    }
+
+    /**
+     * find images and save or delete it.
+     * @param activityId
+     * @param outputs
+     * @return the output data, with any image objects updated to include the new document id
+     */
+    Map saveAudio(Map output, String metadataName, String outputId, String activityId, Map context = null) {
+        saveMultimedia(output, metadataName, outputId, activityId, "audio", "surveyAudio", "audio", context)
+    }
+
+    Map saveMultimedia(Map output, String metadataName, String outputId, String activityId, String dataTypeName, String role, String type, Map context = null) {
+        URL biocollect
+        InputStream stream
+        Map outputMetadata, names
+        OutputMetadata dataModel
+        List remove
+
+        if(!context){
+            outputMetadata = metadataService.getOutputDataModelByName(metadataName) as Map
+            dataModel = new OutputMetadata(outputMetadata);
+            names = dataModel.getNamesForDataType(dataTypeName, null);
+        } else {
+            names = context
+        }
+
+        if (activityId && output?.size() > 0) {
+            names?.each { name, node ->
+                if(node instanceof Boolean){
+                    remove = []
+                    output[name]?.each {
+                        // save image if document id not found
+                        if (!it.documentId) {
+                            it.activityId = activityId
+                            it.outputId = outputId
+                            it.remove('staged')
+                            it.role = role
+                            it.type = type
+                            // record creation requires images to have an 'identifier' attribute containing the url for the image
+                            it.identifier = it.url
+
+                            biocollect = new URL(it.url)
+                            stream = biocollect.openStream()
+                            Map document = documentService.create(it, stream)
+                            it.documentId = document.documentId
+                        } else {
+                            documentService.update(it, it.documentId);
+                            // if deleted remove the document
+                            if (it.status == DELETED) {
+                                remove.push(it);
+                            }
+                        }
+                    }
+                    // remove all deleted images
+                    output[name]?.removeAll(remove)
+                }
+
+                // recursive check for image data
+                if(node instanceof Map){
+                    if(output[name] instanceof Map){
+                        output[name] = saveMultimedia(output[name], metadataName, outputId, activityId, dataTypeName, role, type, node)
+                    }
+
+                    if(output[name] instanceof  List){
+                        output[name].eachWithIndex{ column, index ->
+                            output[name][index] = saveMultimedia(column, metadataName, outputId, activityId, dataTypeName, role, type,  node)
+                        }
+                    }
+                }
+            }
+        }
+
+        output
     }
 }

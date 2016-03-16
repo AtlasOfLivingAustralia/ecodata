@@ -24,8 +24,10 @@ class UserService {
 
         def userDetails = getUserForUserId(userId)
         if (!userDetails) {
-            log.warn("Unable to lookup user details for userId: ${userId}")
-            userDetails = new UserDetails(userId: userId?:'<not recorded>', userName: 'unknown', displayName: 'Unknown')
+            if (log.debugEnabled) {
+                log.debug("Unable to lookup user details for userId: ${userId}")
+            }
+            userDetails = new UserDetails(userId: userId, userName: 'unknown', displayName: 'Unknown')
         }
 
         userDetails
@@ -77,5 +79,44 @@ class UserService {
         if (_currentUser) {
             _currentUser.remove()
         }
+    }
+
+    /**
+     * Check username against the auth key.
+     *
+     * @param username
+     * @param authKey
+     */
+    String authorize(userName, authKey) {
+        String userId = ""
+
+        if (authKey && userName) {
+            String key = new String(authKey)
+            String username = new String(userName)
+
+            def url = grailsApplication.config.authCheckKeyUrl
+            def params = [userName: username, authKey: key]
+            def result = webService.doPostWithParams(url, params)
+            if (!result?.resp?.statusCode && result.resp?.status == 'success') {
+                params = [userName: username]
+                url = grailsApplication.config.userDetails.url + "getUserDetails"
+                result = webService.doPostWithParams(url, params)
+                if (!result?.resp?.statusCode && result.resp) {
+                    userId = result.resp.userId
+                }
+            }
+        }
+
+        return userId
+    }
+
+    /**
+     * Get auth key for the given username and password
+     *
+     * @param username
+     * @param password
+     */
+    def getUserKey(String username, String password) {
+        webService.doPostWithParams(grailsApplication.config.authGetKeyUrl, [userName: username, password: password])
     }
 }

@@ -25,6 +25,7 @@ class SearchController {
     DocumentService documentService
     ActivityService activityService
     SiteService siteService
+    UserService userService
     DownloadService downloadService
 
     def index(String query) {
@@ -236,10 +237,11 @@ class SearchController {
             response.setStatus(400)
             render "A download ID is required"
         } else {
-            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.zip")
+            String extension = params.fileExtension ?: 'zip'
+            File file = new File("${grailsApplication.config.temp.dir}${File.separator}${params.id}.${extension}")
             if (file) {
                 response.setContentType(ContentType.BINARY.toString())
-                response.setHeader('Content-Disposition', 'Attachment;Filename="data.zip"')
+                response.setHeader('Content-Disposition', 'Attachment;Filename="data.'+extension+'"')
 
                 file.withInputStream { i -> response.outputStream << i }
             } else {
@@ -273,6 +275,8 @@ class SearchController {
             }
         } else {
             downloadMeritData(params)
+            response.setStatus(200)
+            render "OK"
         }
     }
 
@@ -290,20 +294,26 @@ class SearchController {
                 render projects as JSON
             }
             xlsx {
-                XlsExporter exporter = exportMeritProjectsToXls(ids)
-
-                exporter.setResponseHeaders(response)
-                exporter.save(response.outputStream)
+                if (!params.email) {
+                    params.email = userService.getCurrentUserDetails().userName
+                }
+                params.fileExtension = "xlsx"
+                Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
+                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
+                    exporter.save(outputStream)
+                }
+                downloadService.downloadProjectDataAsync(params, doDownload)
             }
         }
     }
 
-    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds) {
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport) {
         long start = System.currentTimeMillis()
 
-        XlsExporter xlsExporter = new XlsExporter("results")
+        File file = File.createTempFile("download", "xlsx")
+        XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(xlsExporter, tabsToExport)
 
         Project.withSession { session ->
             int batchSize = 50
@@ -312,7 +322,7 @@ class SearchController {
                 projects << projectService.get(projectIds[i], ProjectService.ALL)
 
                 if (i % batchSize == batchSize - 1 || i == projectIds.size() - 1) {
-                    projectExporter.exportAll(projects)
+                    projectExporter.exportAllProjects(projects)
                     projects.clear()
                     session.clear()
 
@@ -376,6 +386,9 @@ class SearchController {
                         writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
                         first = false
                     }
+                }
+                else {
+                    writer.println()
                 }
 
 

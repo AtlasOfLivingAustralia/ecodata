@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import grails.transaction.Transactional
+import grails.validation.ValidationException
+
 import static au.org.ala.ecodata.Status.*
 
 /**
@@ -81,6 +83,30 @@ class ReportingService {
         report.properties = properties
         report.save(flush:true)
         return report
+    }
+
+    def delete(String id, boolean destroy) {
+        Report report = get(id)
+        if (report) {
+            try {
+                if (destroy) {
+                    report.delete()
+                } else {
+                    report.status = DELETED
+                    report.save(flush: true, failOnError: true)
+                }
+                return [status: 'ok']
+
+            } catch (Exception e) {
+                Organisation.withSession { session -> session.clear() }
+                def error = "Error deleting report ${id} - ${e.message}"
+                log.error error, e
+                def errors = (e instanceof ValidationException)?e.errors:[error]
+                return [status:'error',errors:errors]
+            }
+        } else {
+            return [status: 'error', errors: ['No such id']]
+        }
     }
 
     def submit(String id) {

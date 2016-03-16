@@ -1,0 +1,144 @@
+{
+    "modelName": "MDBA_recreation_observations",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the observation was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the observation."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "name": "recreationType",
+            "description": "The type of farming activity observed.",
+            "constraints": [
+                "Fishing",
+                "Swimming",
+                "Motor boat / Water skiing",
+                "Steam / House boat",
+                "Kayaking / canoeing / rowing",
+                "Windsurfing",
+                "Bird watching",
+                "Walking or jogging",
+                "Cycling",
+                "Photography / Painting / Drawing",
+                "Relaxing",
+                "Other"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedActivity",
+            "description": "General remarks about the recreation activity observation, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "number",
+            "name": "peopleInvolved",
+            "description": "The number of individuals seen.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "image",
+            "name": "photo",
+            "description": "Upload a photo taken of the farming activity at the time of the record."
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Record your observations of recreational activities being undertaken in the Murray-Darling Basin",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h1>Recreation Observation Details<\/h1>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Date of observation",
+                            "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Recorded by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Type of recreation",
+                            "computed": null,
+                            "source": "recreationType",
+                            "type": "selectMany"
+                        },
+                        {
+                            "preLabel": "Activity observed",
+                            "computed": null,
+                            "source": "observedActivity",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "How many people were observed undertaking the recreation activity?",
+                            "computed": null,
+                            "source": "peopleInvolved",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Upload photo",
+                            "computed": null,
+                            "source": "photo",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        }
+    ]
+}
