@@ -6,6 +6,8 @@ import com.mongodb.QueryBuilder
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import org.geotools.geojson.geom.GeometryJSON
+import org.grails.datastore.mapping.query.api.BuildableCriteria
+
 import static au.org.ala.ecodata.Status.*
 
 class SiteService {
@@ -395,6 +397,35 @@ class SiteService {
         results.each { dbObject ->
             action.call(dbObject.toMap())
         }
+    }
+
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a map with two keys: "count": the total number of results, "sites": a list of the sites that match the supplied criteria
+     */
+    public Map search(Map searchCriteria, Integer max = 100, Integer offset = 0, String sort = null, String orderBy = null) {
+
+        BuildableCriteria criteria = Site.createCriteria()
+        List sites = criteria.list(max:max, offset:offset) {
+            ne("status", DELETED)
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+            if (sort) {
+                order(sort, orderBy?:'asc')
+            }
+
+        }
+        [sites:sites.collect{toMap(it)}, count:sites.totalCount]
     }
 
 }

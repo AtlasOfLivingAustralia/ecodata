@@ -125,6 +125,8 @@ class UrlMappings {
         }
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
+        "/ws/project/importProjectsFromScistarter"(controller: "project"){ action = [GET:"importProjectsFromScistarter"] }
+
 
         "/"(view:"/index")
 		"500"(view:'/error')

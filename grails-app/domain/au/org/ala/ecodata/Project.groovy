@@ -64,11 +64,14 @@ class Project {
     String projectType    // survey, works
     // TODO urlAndroid and urlITunes need to be phased out; replaced by link-type documente
     String aim, keywords, urlAndroid, urlITunes, urlWeb
-    String getInvolved, scienceType, projectSiteId
+    String getInvolved, projectSiteId
+    List <String> scienceType = []
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
     boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
+    boolean isSciStarter = false
+    String sciStarterId
 
     List<AssociatedOrg> associatedOrganisations
 
@@ -167,5 +170,6 @@ class Project {
         task nullable:true
         userCreated nullable:true
         userLastModified nullable:true
+        sciStarterId nullable: true
     }
 }
