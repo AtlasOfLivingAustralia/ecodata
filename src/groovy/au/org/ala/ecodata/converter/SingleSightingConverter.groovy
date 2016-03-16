@@ -16,8 +16,6 @@ class SingleSightingConverter implements RecordFieldConverter {
         record.guid = data.guid
         record.outputSpeciesId = data.outputSpeciesId
 
-        record.json = (data as JSON).toString()
-
         [record]
     }
 }

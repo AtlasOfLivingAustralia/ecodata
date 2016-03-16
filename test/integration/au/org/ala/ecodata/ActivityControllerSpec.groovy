@@ -2,19 +2,26 @@ package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
 import grails.converters.JSON
+import grails.test.GrailsMock
 import grails.test.spock.IntegrationSpec
 
 
 class ActivityControllerSpec extends IntegrationSpec {
 
     def activityController = new ActivityController()
+    // The original services
+    def recordService
+
+    def recordServiceStub = Stub(RecordService)
 
     def setup() {
         deleteAll()
+        activityController.activityService.outputService.recordService = recordServiceStub
     }
 
     def cleanup() {
         deleteAll()
+        activityController.activityService.outputService.recordService = recordService
     }
 
     private void deleteAll() {
@@ -55,8 +62,11 @@ class ActivityControllerSpec extends IntegrationSpec {
         def activityId = 'activity_1'
         Activity activity = new Activity(type: 'Revegetation', projectId:'a project', description: 'Test activity', dynamicProperty: 'dynamicProperty', activityId:activityId)
         activity.save(flush: true, failOnError: true)
-        def outputs = [outputs:[[name:'Revegetation Details', data:[prop1:'prop1', prop2:'prop2']],[name:'Participant Details', data:[prop3:'prop3', prop4:'prop4']]]]
-        activityController.request.json = (outputs as JSON).toString()
+        def requestJson = [activityId:activityId,  outputs:[[name:'Revegetation Details', data:[prop1:'prop1', prop2:'prop2']],[name:'Participant Details', data:[prop3:'prop3', prop4:'prop4']]]]
+        activityController.request.json = (requestJson as JSON).toString()
+
+        recordServiceStub.updateRecord(_,_) >> {//Do nothing
+        }
 
         when: "update the activity to include the output details"
         def response = activityController.update(activityId)

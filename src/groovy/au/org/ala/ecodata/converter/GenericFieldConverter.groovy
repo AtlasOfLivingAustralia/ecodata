@@ -1,13 +1,10 @@
 package au.org.ala.ecodata.converter
 
-import net.sf.json.JSON
-
 class GenericFieldConverter implements RecordFieldConverter {
 
     List<Map> convert(Map data, Map metadata = [:]) {
         Map record = [:]
 
-        record.json = (data as JSON).toString()
 
         Double latitude = getLatitude(data)
         Double longitude = getLongitude(data)
@@ -20,6 +17,7 @@ class GenericFieldConverter implements RecordFieldConverter {
         if(longitude) {
             record.decimalLongitude = longitude
         }
+
 
         Map dwcMappings = extractDwcMapping(metadata)
 
@@ -34,27 +32,26 @@ class GenericFieldConverter implements RecordFieldConverter {
 
 
     private Double getLatitude(Map data) {
-        Double lat = null
+        Double latitude = null
 
         if (data.decimalLatitude) {
-            lat = toDouble(data.decimalLatitude)
+            latitude = toDouble(data.decimalLatitude)
         } else if (data.locationLatitude) {
-            lat = toDouble(data.locationLatitude)
+            latitude = toDouble(data.locationLatitude)
         }
 
-        lat
+        latitude
     }
 
     private Double getLongitude(Map data) {
-        Double lng = null
+        Double longitude = null
 
         if (data.decimalLongitude) {
-            lng = toDouble(data.decimalLongitude)
+            longitude = toDouble(data.decimalLongitude)
         } else if (data.locationLongitude) {
-            lng = toDouble(data.locationLongitude)
+            longitude = toDouble(data.locationLongitude)
         }
 
-        lng
+        longitude
     }
-
 }

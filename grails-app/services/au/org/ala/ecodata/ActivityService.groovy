@@ -280,8 +280,33 @@ class ActivityService {
         def activity = Activity.findByActivityId(id)
         def errors = []
         if (activity) {
+            def outputs = props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
+            // see if the activity itself has updates
+            if (props.activityId) {
+                try {
+                    props.remove('userId')
+                    props.remove('activityId')
+                    props.remove('projectId')
+                    props.remove('projectActivityId')
+                    // If the activity type has changed, we need to delete any outputs associated with
+                    // the previous type or they will hang around and be counted in dashboards etc.
+                    // A more sophisticated routine may keep output data that is common to both the
+                    // old type and new type.
+                    if (props.type && activity.type != props.type) {
+                        deleteActivityOutputs(id)
+                    }
+                    commonService.updateProperties(activity, props)
+                } catch (Exception e) {
+                    Activity.withSession { session -> session.clear() }
+                    def error = "Error updating Activity ${id} - ${e.message}"
+                    log.error ( error, e) //You have to hate exeption hiding
+                    errors << [error: error, name: 'activity']
+                }
+            }
+
             // do updates for each attached output
-            props.outputs?.each { output ->
+            //outputs and/or records depend on activity info so activity needs to be updated first
+            outputs?.each { output ->
                 if (output.outputId && output.outputId != "null") {
                     // update
                     log.debug "Updating output ${output.name}"
@@ -298,29 +323,6 @@ class ActivityService {
                     if (result.error) {
                         errors << [error: result.error, name: output.name]
                     }
-                }
-            }
-            // see if the activity itself has updates
-            if (props.activityId) {
-                try {
-                    props.remove('outputs') // get rid of the hitchhiking outputs before updating the activity
-                    props.remove('userId')
-                    props.remove('activityId')
-                    props.remove('projectId')
-                    props.remove('projectActivityId')
-                    // If the activity type has changed, we need to delete any outputs associated with
-                    // the previous type or they will hang around and be counted in dashboards etc.
-                    // A more sophisticated routine may keep output data that is common to both the
-                    // old type and new type.
-                    if (props.type && activity.type != props.type) {
-                        deleteActivityOutputs(id)
-                    }
-                    commonService.updateProperties(activity, props)
-                } catch (Exception e) {
-                    Activity.withSession { session -> session.clear() }
-                    def error = "Error updating Activity ${id} - ${e.message}"
-                    log.error error
-                    errors << [error: error, name: 'activity']
                 }
             }
             // aggregate errors
