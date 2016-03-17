@@ -330,7 +330,8 @@ class MetadataService {
         pointsArray
     }
 
-    private def buildFieldIds(sites){
+    /** Returns a list of spatial portal layer/field ids that ecodata will intersect every site against to support facetted geographic searches */
+    List<String> getSpatialLayerIdsToIntersect() {
         def contextualLayers = grailsApplication.config.app.facets.geographic.contextual
         def groupedFacets = grailsApplication.config.app.facets.geographic.grouped
         def fieldIds = contextualLayers.collect { k, v -> v }
@@ -338,6 +339,35 @@ class MetadataService {
             fieldIds.addAll(v.collect { k1, v1 -> v1 })
         }
         fieldIds
+    }
+
+    /**
+     * Returns a map of the form [grouped:Boolean, name:String] describing the configuration for the facet that
+     * uses the supplied field id.
+     * @param fid the field id.
+     */
+    Map getGeographicFacetConfig(String fid) {
+        Map config = grailsApplication.config.app.facets.geographic
+        Map facetConfig = null
+        config.contextual.each { String groupName, String groupFid ->
+            if (fid == groupFid) {
+                facetConfig = [grouped:false, name:groupName]
+                return false
+            }
+        }
+        if (!facetConfig) {
+            config.grouped.each { String groupName, Map<String, String> layers ->
+                if (layers.values().contains(fid)) {
+                    facetConfig = [grouped:true, name:groupName]
+                    return false
+                }
+            }
+        }
+        if (!facetConfig) {
+            throw new IllegalArgumentException("No configuration for field id: ${fid}")
+        }
+        facetConfig
+
     }
 
     /**
@@ -351,7 +381,7 @@ class MetadataService {
 
         def pointsArray = buildPointsArray(sites)
 
-        def fieldIds = buildFieldIds(sites)
+        def fieldIds = getSpatialLayerIdsToIntersect()
 
         def results = []
 
