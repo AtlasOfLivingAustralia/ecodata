@@ -212,7 +212,7 @@ class WebService {
             conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
 
             def user = getUserService().getCurrentUserDetails()
-            if (user) {
+            if (user && user.userId) {
                 conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
                 conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
             }
