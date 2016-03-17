@@ -119,8 +119,8 @@ class SciStarterConverter {
                 "collectoryInstitutionId": null,
                 "termsOfUseAccepted"     : true,
                 "dataSharing"            : "Disabled",
-                "aim"                    : "",
-                "description"            : "",
+                "aim"                    : "Imported from SciStarter",
+                "description"            : "Imported from SciStarter",
                 "difficulty"             : "Medium",
                 "gear"                   : "",
                 "getInvolved"            : "",
@@ -129,7 +129,7 @@ class SciStarterConverter {
                 "plannedStartDate"       : null,
                 "plannedEndDate"         : null,
                 "projectType"            : "citizenScience",
-                "scienceType"            : ["biodiversity"],
+                "scienceType"            : [],
                 "task"                   : null,
                 "projectSiteId"          : null,
                 "organisationId"         : null,
@@ -198,5 +198,20 @@ class SciStarterConverter {
         }
 
         site
+    }
+
+    /**
+     * check if the SciStarter meets import conditions.
+     * 1. if project topic is in the white list of topics
+     * @return
+     */
+    static Boolean canImportProject(Map project){
+        List topicWhiteList = Holders.grailsApplication.config.biocollect.scienceType
+        List intersect = project.topics?.intersect(topicWhiteList)
+        if(intersect?.size()>0){
+            return true
+        } else {
+            return  false
+        }
     }
 }
