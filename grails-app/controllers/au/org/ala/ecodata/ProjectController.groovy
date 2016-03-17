@@ -301,9 +301,8 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
-    def importProjectsFromScistarter(){
-        List projects = projectService.importProjectsFromScistarter()?:[]
+    def importProjectsFromSciStarter(){
+        List projects = projectService.importProjectsFromSciStarter()?:[]
         render(text: [count: projects.size(), projects: projects] as JSON, contentType: 'application/json');
     }
 

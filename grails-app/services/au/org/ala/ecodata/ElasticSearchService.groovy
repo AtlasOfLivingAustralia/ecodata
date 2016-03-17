@@ -336,6 +336,7 @@ class ElasticSearchService {
                     case EventType.PostInsert:
                         indexDocType(message.docId, message.docType)
                         break
+                    case EventType.PreDelete:
                     case EventType.PostDelete:
                         deleteDocByIdAndType(message.docId, message.docType)
                         break
@@ -536,26 +537,21 @@ class ElasticSearchService {
     def deleteDocByIdAndType(docId, docType) {
         def doc
 
-        switch (docType) {
-            case Project.class.name:
-                doc = Project.findByProjectId(docId);
-                break
-            case Site.class.name:
-                doc = Site.findBySiteId(docId)
-                break
-            case Activity.class.name:
-                doc = Activity.findByActivityId(docId)
-                break
-            case Organisation.class.name:
-                doc = Organisation.findByOrganisationId(docId)
-                break
+        try{
+            switch (docType) {
+                case Project.class.name:
+                    deleteDocById(docId, HOMEPAGE_INDEX)
+                case Site.class.name:
+                case Activity.class.name:
+                case Organisation.class.name:
+                    deleteDocById(docId)
+            }
+        } catch (Exception e){
+            log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
+            log.error(e.message)
+            e.stackTrace()
         }
 
-        if (doc) {
-            deleteDocType(doc)
-        } else if(docType != UserPermission.class.name) {
-            log.warn "Attempting to delete an unknown doc type: ${docType}. Doc not deleted from search index"
-        }
     }
 
     /**

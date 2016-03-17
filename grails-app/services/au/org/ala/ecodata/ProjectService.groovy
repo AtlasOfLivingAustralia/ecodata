@@ -440,7 +440,7 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    List importProjectsFromScistarter(){
+    List importProjectsFromSciStarter(){
         List transformedProjects = []
 
         try {
@@ -449,14 +449,25 @@ class ProjectService {
 
             // delete artifacts from previous import
             List sciStarterSites = Site.findAllByIsSciStarter(true)
-            Site.deleteAll(sciStarterSites)
+            // deleteAll does not fire any messages. Hence elastic search is not updated.
+            sciStarterSites.each{ Site site ->
+                site.delete()
+            }
+
             List sciStarterProjects = Project.findAllByIsSciStarter(true)
-            Project.deleteAll(sciStarterProjects)
+            sciStarterProjects.each{ Project project ->
+                project.delete()
+            }
+
             List sciStarterLogo = Document.findAllByIsSciStarter(true)
-            Document.deleteAll(sciStarterLogo)
+            sciStarterLogo.each{ Document logo ->
+                logo.delete()
+            }
+
+            Integer ignoredProjects = 0
 
             // list all SciStarter projects
-            List projects = getScistarterProjectsFromFinder()
+            List projects = getSciStarterProjectsFromFinder()
             projects?.each { pProperties ->
                 Map project = pProperties
                 if (project && project.title) {
@@ -469,19 +480,25 @@ class ProjectService {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                     }
 
-                    if (project.origin && project.origin == 'atlasoflivingaustralia') {
-                        // ignore projects SciStarter imported from Biocollect
-                    } else {
-                        // map properties from SciStarter to Biocollect
-                        transformedProject = SciStarterConverter.convert(project)
+                    if(SciStarterConverter.canImportProject(project)){
+                        if (project.origin && project.origin == 'atlasoflivingaustralia') {
+                            // ignore projects SciStarter imported from Biocollect
+                        } else {
+                            // map properties from SciStarter to Biocollect
+                            transformedProject = SciStarterConverter.convert(project)
 
-                        // create project & document & site & organisation
-                        Map savedProject = createSciStarterProject(transformedProject, project)
-                        transformedProjects.push(savedProject)
+                            // create project & document & site & organisation
+                            Map savedProject = createSciStarterProject(transformedProject, project)
+                            transformedProjects.push(savedProject)
+                        }
+                    } else {
+                        log.info("Cannot import project ${project.title} ${project.id}");
+                        ignoredProjects++
                     }
                 }
             }
 
+            log.debug("Number of ignored projects ${ignoredProject}")
         } catch (SocketTimeoutException ste){
             log.error(ste.message)
             ste.printStackTrace()
@@ -499,7 +516,7 @@ class ProjectService {
      * @throws SocketTimeoutException
      * @throws Exception
      */
-    List getScistarterProjectsFromFinder() throws SocketTimeoutException, Exception{
+    List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception{
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
         Map response = webService.getJson(scistarterFinderUrl)
         if(response.error){
