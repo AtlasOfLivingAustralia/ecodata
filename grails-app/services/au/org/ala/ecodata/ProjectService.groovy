@@ -480,7 +480,7 @@ class ProjectService {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                     }
 
-                    if(SciStarterConverter.canImportProject(project)){
+                    if (SciStarterConverter.canImportProject(project)) {
                         if (project.origin && project.origin == 'atlasoflivingaustralia') {
                             // ignore projects SciStarter imported from Biocollect
                         } else {
@@ -492,7 +492,7 @@ class ProjectService {
                             transformedProjects.push(savedProject)
                         }
                     } else {
-                        log.info("Cannot import project ${project.title} ${project.id}");
+                        log.info("Cannot import project ${project.title} ${project.id}")
                         ignoredProjects++
                     }
                 }
@@ -520,7 +520,7 @@ class ProjectService {
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
         Map response = webService.getJson(scistarterFinderUrl)
         if(response.error){
-            if(response.error.contains('Timed out')){
+            if (response.error.contains('Timed out')) {
                 throw new SocketTimeoutException(response.error)
             } else {
                 throw  new Exception(response.error)
@@ -541,14 +541,14 @@ class ProjectService {
         // create project extent
         Map sites = createSciStarterSites(rawProp)
         String projectSiteId
-        if(sites?.siteIds?.size()){
+        if (sites?.siteIds?.size()) {
             projectSiteId = sites.siteIds[0]
         }
 
         transformedProp.projectSiteId = projectSiteId
 
         // create organisation
-        if(transformedProp.organisationName){
+        if (transformedProp.organisationName) {
             organisation = createSciStarterOrganisation(transformedProp.organisationName)
             if(organisation.organisationId){
                 transformedProp.organisationId = organisation.organisationId
@@ -566,7 +566,7 @@ class ProjectService {
         String projectId = project.projectId
 
         // use the projectId to associate site with  project
-        if(projectId){
+        if (projectId) {
             sites?.siteIds?.each{ siteId ->
                 siteService.addProject(siteId, projectId)
             }
@@ -587,7 +587,7 @@ class ProjectService {
     Map createSciStarterSites(Map project){
         Map result = [siteIds:null]
         List sites = []
-        if(project.regions?.size()){
+        if (project.regions?.size()) {
             // convert region to site
             project.regions.each { region ->
                 Map site = SciStarterConverter.siteMapping(region)
@@ -646,7 +646,7 @@ class ProjectService {
      */
     Map createSciStarterOrganisation(String name){
         Organisation org = Organisation.findByName(name)
-        if(org){
+        if (org) {
             return [organisationId:org.organisationId ]
         } else {
             // create organisation
