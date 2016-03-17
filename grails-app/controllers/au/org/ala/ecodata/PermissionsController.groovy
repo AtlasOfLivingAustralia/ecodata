@@ -299,6 +299,42 @@ class PermissionsController {
         }
     }
 
+    def asJson = { model ->
+        response.setContentType("application/json;charset=UTF-8")
+        model
+    }
+
+
+    /**
+     * Create a {@link AccessLevel#starred starred} role user-project {@link UserPermission}
+     *
+     * @return
+     */
+    def addStarSiteForUser() {
+        String siteId = params.siteId
+        String userId = params.userId
+        AccessLevel role = AccessLevel.starred
+
+        if (userId && siteId) {
+            Site site = Site.findBySiteId(siteId)
+            if (site) {
+                log.debug "addUserAsRoleToSite: ${userId}, ${role}, ${site}"
+                Map ps = permissionService.addUserAsRoleToSite(userId, role, siteId)
+                if (ps.status == "ok") {
+                    def result = [id: "${ps.id}"]
+                    asJson(result)
+                } else {
+                    render status: 500, text: "Error adding starred site: ${ps}"
+                }
+            } else {
+                render status: 404, text: "Site not found for siteId: ${siteId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, siteId.'
+        }
+    }
+
+
     /**
      * Get a list of users with {@link AccessLevel#editor editor} role access to the given projectId
      *

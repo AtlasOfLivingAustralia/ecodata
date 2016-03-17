@@ -4,7 +4,7 @@ import net.sf.json.groovy.JsonSlurper
 import spock.lang.Specification
 
 class ListConverterSpec extends Specification {
-    def "convert should create records for each list item in the output data model with the json attribute set to the list item"() {
+    def "convert should create records for each list item in the output data model"() {
         setup:
         Map metadata = [
                 record  : "true",
@@ -36,9 +36,7 @@ class ListConverterSpec extends Specification {
 
         then:
         result.size() == 2
-        result[0].json.replaceAll("\\s", "") == col1.replaceAll("\\s", "")
         result[0].outputItemId == 0
-        result[1].json.replaceAll("\\s", "") == col2.replaceAll("\\s", "")
         result[1].outputItemId == 1
     }
 
@@ -90,13 +88,11 @@ class ListConverterSpec extends Specification {
 
         then:
         result.size() == 2
-        result[0].json.replaceAll("\\s", "") == col1.replaceAll("\\s", "")
         result[0].outputItemId == 0
         result[0].individualCount == "1"
         result[0].decimalLatitude == "1.1"
         result[0].decimalLongitude == "1.11"
         result[0].somethingElse == "foo"
-        result[1].json.replaceAll("\\s", "") == col2.replaceAll("\\s", "")
         result[1].outputItemId == 1
         result[1].individualCount == "2"
         result[1].decimalLatitude == "2.1"
