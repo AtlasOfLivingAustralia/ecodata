@@ -11,7 +11,9 @@ import com.vividsolutions.jts.geom.Polygon
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
 import org.geotools.geojson.geom.GeometryJSON
+import org.geotools.geometry.jts.JTS
 import org.geotools.referencing.GeodeticCalculator
+import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
 import org.geotools.referencing.CRS
@@ -22,7 +24,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem
  */
 class GeometryUtils {
 
-    static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326")
+    static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326", true)
     static GeometryFactory geometryFactory = new GeometryFactory()
 
     static String wktToMultiPolygonWkt(String wkt) {
@@ -155,5 +157,20 @@ class GeometryUtils {
 
         return geometryFactory.createPolygon(rectangleCoords)
     }
+
+    /**
+     * Projects the site geometry into the appropriate UTM zone based on the centroid and calculates the area
+     * @param wgs84Geom Geometry with coordinates in WGS84 lon/lat
+     * @return the area of the geometry in m2
+     */
+    static double area(Geometry wgs84Geom) {
+
+        CoordinateReferenceSystem utm = CRS.decode("AUTO2:42001,"+wgs84Geom.centroid.x+","+wgs84Geom.centroid.y, true);
+        MathTransform toMetres = CRS.findMathTransform(sourceCRS, utm);
+        Geometry result = JTS.transform(wgs84Geom, toMetres)
+
+        result.area
+    }
+
 
 }
