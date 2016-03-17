@@ -206,6 +206,10 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Site, siteId)
     }
 
+    def removeUserAsRoleToSite(String userId, AccessLevel accessLevel, String siteId) {
+        removeUserAsRoleToEntity(userId, accessLevel, Site, siteId)
+    }
+
     def addUserAsRoleToOrganisation(String userId, AccessLevel accessLevel, String organisationId) {
         return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
     }
