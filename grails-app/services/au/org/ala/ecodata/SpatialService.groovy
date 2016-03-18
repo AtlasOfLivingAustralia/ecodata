@@ -12,8 +12,8 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 @Transactional
 class SpatialService {
 
-    final String GEOJSON_INTERSECT_URL_PREFIX = "/intersect/geojson/"
-    final String PID_INTERSECT_URL_PREFIX = "/intersect/object/"
+    final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
+    final String PID_INTERSECT_URL_PREFIX = "/ws/intersect/object/"
 
     WebService webService
     MetadataService metadataService
@@ -28,7 +28,7 @@ class SpatialService {
      */
     Map<String,List<String>> intersectGeometry(Map geoJson) {
 
-        String url = 'http://spatial.ala.org.au/ws'+GEOJSON_INTERSECT_URL_PREFIX //grailsApplication.config.spatial.baseUrl+GEOJSON_INTERSECT_URL_PREFIX
+        String url = grailsApplication.config.spatial.baseUrl+GEOJSON_INTERSECT_URL_PREFIX
         List<String> fieldIds = metadataService.getSpatialLayerIdsToIntersect()
         Map result = [:]
         fieldIds.each { fid ->
@@ -50,7 +50,7 @@ class SpatialService {
      */
     Map<String,List<String>> intersectPid(String pid) {
 
-        String url = 'http://spatial.ala.org.au/ws'+PID_INTERSECT_URL_PREFIX //grailsApplication.config.spatial.baseUrl+PID_INTERSECT_URL_PREFIX
+        String url = grailsApplication.config.spatial.baseUrl+PID_INTERSECT_URL_PREFIX
         List<String> fieldIds = metadataService.getSpatialLayerIdsToIntersect()
 
         Map result = [:]

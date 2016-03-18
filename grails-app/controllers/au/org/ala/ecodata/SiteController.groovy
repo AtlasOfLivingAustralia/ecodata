@@ -230,4 +230,9 @@ class SiteController {
             response.sendError(HttpStatus.SC_BAD_REQUEST, 'Site id and Poi id must be provided')
         }
     }
+
+    def lookupLocationMetadataForSite() {
+        def site = request.JSON
+        render siteService.lookupGeographicFacetsForSite(site) as JSON
+    }
 }
