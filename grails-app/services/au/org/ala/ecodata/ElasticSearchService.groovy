@@ -924,13 +924,21 @@ class ElasticSearchService {
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params)
 
+        String sourceQuery
         // add query
         if (geoSearchCriteria) {
             // geo shape filters are not supported by the queryString syntax, so we need to create a filteredQuery
-            source.query(filteredQuery(queryStringQuery(query), buildGeoFilter(geoSearchCriteria)))
+            sourceQuery = filteredQuery(queryStringQuery(query),   buildGeoFilter(geoSearchCriteria))
+        } else if(params.terms) {
+            // At this stage search this is only added for site favourite search
+            // In the future the geo and term search could be combined together as per new business requirements
+            sourceQuery = filteredQuery(
+                    queryStringQuery(query),
+                    FilterBuilders.termsFilter(param.terms.field, param.terms.values))
         } else {
-            source.query(queryStringQuery(query))
+            sourceQuery = queryStringQuery(query)
         }
+        source.query(sourceQuery)
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
