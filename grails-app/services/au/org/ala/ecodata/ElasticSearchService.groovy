@@ -930,7 +930,7 @@ class ElasticSearchService {
             // In the future the geo and term search could be combined together as per new business requirements
             sourceQuery = filteredQuery(
                     queryStringQuery(query),
-                    FilterBuilders.termsFilter(param.terms.field, param.terms.values))
+                    FilterBuilders.termsFilter(params.terms.field, params.terms.values))
         } else {
             sourceQuery = queryStringQuery(query)
         }
