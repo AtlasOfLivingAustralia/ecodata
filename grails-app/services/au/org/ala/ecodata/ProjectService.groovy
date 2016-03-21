@@ -203,7 +203,10 @@ class ProjectService {
             props.remove('sites')
             props.remove('id')
 
-            collectoryLink && establishCollectoryLinkForProject(project, props)
+
+            if(collectoryLink){
+                establishCollectoryLinkForProject(project, props)
+            }
 
             getCommonService().updateProperties(project, props)
             return [status: 'ok', projectId: project.projectId]
@@ -440,8 +443,9 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    List importProjectsFromSciStarter(){
+    List importProjectsFromSciStarter(String whiteList){
         List transformedProjects = []
+        List whiteListIds = whiteList?.split (',') ?.collect { Integer.parseInt(it) } ?:[]
 
         try {
             String sciStarterProjectUrl
@@ -470,7 +474,7 @@ class ProjectService {
             List projects = getSciStarterProjectsFromFinder()
             projects?.each { pProperties ->
                 Map project = pProperties
-                if (project && project.title) {
+                if (project && project.title && project.id in whiteListIds ) {
                     // get more details about the project
                     sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
                     additionalProp = webService.getJson(sciStarterProjectUrl)

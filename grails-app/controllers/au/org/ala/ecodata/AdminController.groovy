@@ -1,12 +1,13 @@
 package au.org.ala.ecodata
-
 import grails.converters.JSON
 import grails.util.Environment
+import org.apache.http.HttpStatus
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
@@ -500,5 +501,27 @@ class AdminController {
         render reports as JSON
     }
 
+    /**
+     * a test function to index a project.
+     * @return
+     */
+    def indexProjectDoc() {
+        if(params.projectId){
+            def projects = Project.findAllByProjectId(params.projectId)
 
+            while (projects) {
+                projects.each { project ->
+                    try {
+                        Map projectMap = elasticSearchService.prepareProjectForHomePageIndex(project)
+                        elasticSearchService.indexDoc(projectMap, HOMEPAGE_INDEX)
+                    } catch (Exception e) {
+                        log.error("Unable to index projewt: " + project?.projectId, e)
+                        e.printStackTrace();
+                    }
+                }
+            }
+        } else{
+            render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
+        }
+    }
 }
