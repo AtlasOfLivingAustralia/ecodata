@@ -564,6 +564,23 @@ class PermissionsController {
     }
 
     /**
+     * Get a list of {@link Site#id} with {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def getStarredSiteIdsForUserId() {
+        String userId = params.id
+
+        if (userId) {
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
+            render permissions.collect { it.entityId } as JSON
+        } else {
+            render status: 400, text: "Required params not provided: id"
+        }
+    }
+
+    /**
      * Does a given {@link Project project} have {@link AccessLevel#starred starred} level access
      * for a given {@link UserDetails#userId userId}
      *

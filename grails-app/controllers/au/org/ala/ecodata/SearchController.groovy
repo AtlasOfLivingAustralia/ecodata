@@ -34,6 +34,10 @@ class SearchController {
     }
 
     def elastic() {
+        if (params.terms) {
+            params.terms = JSON.parse( params.terms)
+        }
+
         def res = elasticSearchService.search(params.query, params, DEFAULT_INDEX)
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
