@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j
 import org.apache.commons.lang.StringUtils
 
 import java.text.SimpleDateFormat
+
 /*
  * Copyright (C) 2016 Atlas of Living Australia
  * All Rights Reserved.
@@ -38,7 +39,11 @@ class SciStarterConverter {
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [
                 'id'          : 'sciStarterId',
-                'title'       : 'name',
+                'title'       : [
+                        'name'     : 'name',
+                        'transform': { props, target ->
+                            props.title?.trim()
+                        }],
                 'tags'        : [
                         'name'     : 'keywords',
                         'transform': { props, target ->
@@ -47,7 +52,11 @@ class SciStarterConverter {
                 'search_terms': [
                         'name'     : 'keywords',
                         'transform': { props, target ->
-                            target.keywords + props.search_terms
+                            if (target.keywords && props.search_terms) {
+                                target.keywords + "," + props.search_terms
+                            } else {
+                                target.keywords + props.search_terms
+                            }
                         }],
                 'goal'        : 'aim',
                 'task'        : 'task',
@@ -57,9 +66,9 @@ class SciStarterConverter {
                         'name'     : 'image',
                         'transform': { props, target ->
                             if (props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
-                                return props.image
+                                props.image
                             } else {
-                                return "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                                "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
                             }
                         }],
                 'difficulty'  : 'difficulty',
@@ -68,7 +77,9 @@ class SciStarterConverter {
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
                             if (props.begin_date) {
-                                return sdf.parse(props.begin_date)
+                                sdf.parse(props.begin_date)
+                            } else {
+                                new Date()
                             }
                         }],
                 'end_date'    : [
@@ -76,19 +87,19 @@ class SciStarterConverter {
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat('yyyy-MM-dd');
                             if (props.end_date) {
-                                return sdf.parse(props.end_date)
+                                sdf.parse(props.end_date)
                             }
                         }],
                 'state'       : 'state',
                 'image_credit': 'attribution',
                 'presenter'   : 'organisationName',
-                'topics' : [
-                        'name':'scienceType',
-                        'transform':{ props, target ->
+                'topics'      : [
+                        'name'     : 'scienceType',
+                        'transform': { props, target ->
                             List approvedScienceType = Holders.grailsApplication.config.biocollect.scienceType
-                            List lowerScienceType = approvedScienceType.collect{ it?.toLowerCase() }
+                            List lowerScienceType = approvedScienceType.collect { it?.toLowerCase() }
                             List scienceTypes = []
-                            props?.topics?.each{ String type ->
+                            props?.topics?.each { String type ->
                                 String lowerType = type?.toLowerCase()
                                 if (lowerType in lowerScienceType) {
                                     scienceTypes.push(lowerType)
@@ -162,33 +173,33 @@ class SciStarterConverter {
         target
     }
 
-    static Map siteMapping(Map props){
+    static Map siteMapping(Map props) {
         Map site = [
-            "projects" : [
-            ],
-            "isSciStarter" : true,
-            "status" : "active",
-            "poi" : [ ],
-            "geoIndex" : [
-                "type" : null,
-                "coordinates" : null
-            ],
-            "extent" : [
-                "source" : "drawn",
-                "geometry" : [
-                    "centre" : null,
-                    "type" : null,
-                    "coordinates" : null
-                ]
-            ],
-            "externalId" : "",
-            "description" : null,
-            "name" : null,
-            "notes" : "",
-            "type" : "surveyArea"
+                "projects"    : [
+                ],
+                "isSciStarter": true,
+                "status"      : "active",
+                "poi"         : [],
+                "geoIndex"    : [
+                        "type"       : null,
+                        "coordinates": null
+                ],
+                "extent"      : [
+                        "source"  : "drawn",
+                        "geometry": [
+                                "centre"     : null,
+                                "type"       : null,
+                                "coordinates": null
+                        ]
+                ],
+                "externalId"  : "",
+                "description" : null,
+                "name"        : null,
+                "notes"       : "",
+                "type"        : "surveyArea"
         ]
 
-        switch (props.geometry.type){
+        switch (props.geometry.type) {
             case 'MultiPolygon':
                 site.name = props.name;
                 // possible data loss here. converting multipolygon to polygon since biocollect/merit does not support it.
@@ -205,13 +216,13 @@ class SciStarterConverter {
      * 1. if project topic is in the white list of topics
      * @return
      */
-    static Boolean canImportProject(Map project){
+    static Boolean canImportProject(Map project) {
         List topicWhiteList = Holders.grailsApplication.config.biocollect.scienceType
         List intersect = project.topics?.intersect(topicWhiteList)
-        if(intersect?.size()>0){
+        if (intersect?.size() > 0) {
             return true
         } else {
-            return  false
+            return false
         }
     }
 }
