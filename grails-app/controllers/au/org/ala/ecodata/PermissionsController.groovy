@@ -299,11 +299,6 @@ class PermissionsController {
         }
     }
 
-    def asJson = { model ->
-        response.setContentType("application/json;charset=UTF-8")
-        model
-    }
-
 
     /**
      * Create a {@link AccessLevel#starred starred} role user-project {@link UserPermission}
@@ -322,7 +317,7 @@ class PermissionsController {
                 Map ps = permissionService.addUserAsRoleToSite(userId, role, siteId)
                 if (ps.status == "ok") {
                     def result = [id: "${ps.id}"]
-                    asJson(result)
+                    render result as JSON
                 } else {
                     render status: 500, text: "Error adding starred site: ${ps}"
                 }
@@ -350,7 +345,7 @@ class PermissionsController {
                 Map ps = permissionService.removeUserAsRoleToSite(userId, role, siteId)
                 if (ps && ps.status == "ok") {
                     def result = [id: "${ps.id}"]
-                    asJson(result)
+                    render result as JSON
                 } else if (ps) {
                     render status: 500, text: "Error removing star: ${ps}"
                 } else {

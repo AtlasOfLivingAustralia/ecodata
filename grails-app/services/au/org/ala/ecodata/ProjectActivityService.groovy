@@ -35,7 +35,7 @@ class ProjectActivityService {
             // clear session to avoid exception when GORM tries to autoflush the changes
             ProjectActivity.withSession { session -> session.clear() }
             String error = "Error creating project activity for project ${props.projectId} - ${e.message}"
-            log.error error
+            log.error error, e
             result = [status: 'error', error: error]
         }
 
