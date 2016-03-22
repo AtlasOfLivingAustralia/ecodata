@@ -40,6 +40,12 @@ class SiteController {
         render list as JSON
     }
 
+    def findByProjectIdOrFavouritesForUserId(String projectId, String userId) {
+        def list = siteService.findAllForProjectIdOrFavouritesForUserId(projectId, userId, [SiteService.FLAT])
+        list.sort {it.name}
+        list
+    }
+
     def get(String id) {
         def levelOfDetail = []
         if (params.brief || params.view == BRIEF) { levelOfDetail << BRIEF }
@@ -49,14 +55,20 @@ class SiteController {
         if (params.projects || params.view == LevelOfDetail.PROJECTS.name().toLowerCase()) { levelOfDetail << LevelOfDetail.PROJECTS.name()}
 
         if (!id) {
-            def list = []
-            def sites = params.includeDeleted ? Site.list() :
-                Site.findAllByStatus('active')
-            sites.each { site ->
-                list << siteService.toMap(site, levelOfDetail)
+            if(params?.call == "findByProjectIdOrFavouritesForUserId")
+            {
+                def list = findByProjectIdOrFavouritesForUserId(params.projectId, params.userId)
+                asJson([list:list])
+            } else {
+                def list = []
+                def sites = params.includeDeleted ? Site.list() :
+                        Site.findAllByStatus('active')
+                sites.each { site ->
+                    list << siteService.toMap(site, levelOfDetail)
+                }
+                list.sort {it.name}
+                asJson([list:list])
             }
-            list.sort {it.name}
-            asJson([list:list])
         } else {
             def s = siteService.get(id, levelOfDetail)
             if (s) {

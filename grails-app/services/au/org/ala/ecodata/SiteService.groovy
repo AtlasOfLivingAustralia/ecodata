@@ -59,6 +59,15 @@ class SiteService {
         Site.findAllByProjects(id).findAll({it.status == ACTIVE}).collect { toMap(it, levelOfDetail) }
     }
 
+    def findAllForProjectIdOrFavouritesForUserId(String projectId, String userId, levelOfDetail = [] )
+    {
+        List<UserPermission> permissions = UserPermission.
+                findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
+        def siteIds = permissions.collect { it.entityId }
+        def projectSites = Site.findAllByProjectsOrSiteIdInList(projectId, siteIds).findAll({it.status == ACTIVE}).
+                collect { toMap(it, levelOfDetail) }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
