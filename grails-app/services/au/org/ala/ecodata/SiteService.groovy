@@ -300,9 +300,8 @@ class SiteService {
             else {
                 log.error("No geometry for site: ${site.siteId}")
             }
+            site.extent.geometry += lookupGeographicFacetsForSite(site)
         }
-
-        site.extent.geometry += lookupGeographicFacetsForSite(site)
     }
 
     /**

@@ -18,6 +18,7 @@ class SiteServiceSpec extends Specification {
     def service = new SiteService()
     def webServiceMock = Mock(WebService)
     def metadataServiceMock = Mock(MetadataService)
+    def spatialServiceMock = Mock(SpatialService)
     void setup() {
         mongoDomain([Site])
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -25,6 +26,7 @@ class SiteServiceSpec extends Specification {
         service.webService = webServiceMock
         service.grailsApplication = grailsApplication
         service.metadataService = metadataServiceMock
+        service.spatialService = spatialServiceMock
         grailsApplication.mainContext.registerSingleton('commonService', CommonService)
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
     }
@@ -103,9 +105,10 @@ class SiteServiceSpec extends Specification {
             session.flush()
         }
 
+
         then:
-        1 * webServiceMock.getJson(_) >> [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
-        1 * metadataServiceMock.getLocationMetadataForPoint('-34.5', '136.5') >> [test:'test']
+        1 * webServiceMock.getJson(_) >>  [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
+        1 * spatialServiceMock.intersectPid('cl123') >> [state:'state1', test:'test']
 
         def site = Site.collection.find([siteId:result.siteId]).next()
 
