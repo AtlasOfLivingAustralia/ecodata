@@ -87,6 +87,11 @@ class UrlMappings {
             action = [POST:'createPoi']
         }
 
+        "/ws/site/lookupLocationMetadataForSite" {
+            controller = 'site'
+            action = 'lookupLocationMetadataForSite'
+        }
+
         "/ws/$controller/search" {
             action = [POST:"search"]
         }
