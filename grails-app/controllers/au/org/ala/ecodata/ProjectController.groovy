@@ -301,10 +301,19 @@ class ProjectController {
         }
     }
 
-    @RequireApiKey
-    def importProjectsFromScistarter(){
-        List projects = projectService.importProjectsFromScistarter()?:[]
+    def importProjectsFromSciStarter(){
+        String whiteList = params.whiteList
+        List projects = projectService.importProjectsFromSciStarter(whiteList)?:[]
         render(text: [count: projects.size(), projects: projects] as JSON, contentType: 'application/json');
+    }
+
+    /**
+     * get science types supported by CS projects
+     * @return
+     */
+    def getScienceTypes(){
+        List scienceTypes = grailsApplication.config.biocollect.scienceType
+        render(text:  scienceTypes as JSON, contentType: 'application/json')
     }
 
     private Map buildParams(Map params){

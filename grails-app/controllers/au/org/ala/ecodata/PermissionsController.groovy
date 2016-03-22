@@ -334,6 +334,61 @@ class PermissionsController {
         }
     }
 
+    /**
+     * Delete a {@link AccessLevel#starred starred} role user-project {@link UserPermission}
+     *
+     * @return
+     */
+    def removeStarSiteForUser() {
+        String userId = params.userId
+        String siteId = params.siteId
+        AccessLevel role = AccessLevel.starred
+
+        if (userId && siteId) {
+            Site site = Site.findBySiteId(siteId)
+            if (site) {
+                Map ps = permissionService.removeUserAsRoleToSite(userId, role, siteId)
+                if (ps && ps.status == "ok") {
+                    def result = [id: "${ps.id}"]
+                    asJson(result)
+                } else if (ps) {
+                    render status: 500, text: "Error removing star: ${ps}"
+                } else {
+                    render status: 404, text: "Project: ${siteId} not starred for userId: ${userId}"
+                }
+            } else {
+                render status: 404, text: "Project not found for projectId: ${siteId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, projectId.'
+        }
+    }
+
+    /**
+     * Does a given {@link Site site} have {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def isSiteStarredByUser() {
+        String userId = params.userId
+        String siteId = params.siteId
+
+        if (userId && siteId) {
+            Site site = Site.findBySiteId(siteId)
+            if (site) {
+                List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, siteId, Site.class.name, AccessLevel.starred)
+                Map outMap = [isSiteStarredByUser: !permissions.isEmpty()]
+                render outMap as JSON
+            } else {
+                render status: 404, text: "Project not found for projectId: ${siteId}"
+            }
+
+        } else {
+            render status: 400, text: "Required params not provided: id"
+        }
+    }
+
 
     /**
      * Get a list of users with {@link AccessLevel#editor editor} role access to the given projectId
@@ -503,6 +558,23 @@ class PermissionsController {
         if (userId) {
             List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
             render permissions.collect { Project.findByProjectId(it.entityId) }?.minus(null) as JSON
+        } else {
+            render status: 400, text: "Required params not provided: id"
+        }
+    }
+
+    /**
+     * Get a list of {@link Site#id} with {@link AccessLevel#starred starred} level access
+     * for a given {@link UserDetails#userId userId}
+     *
+     * @return
+     */
+    def getStarredSiteIdsForUserId() {
+        String userId = params.id
+
+        if (userId) {
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelAndStatusNotEqual(userId, AccessLevel.starred, DELETED)
+            render permissions.collect { it.entityId } as JSON
         } else {
             render status: 400, text: "Required params not provided: id"
         }
