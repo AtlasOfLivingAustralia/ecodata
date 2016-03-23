@@ -49,13 +49,12 @@ class SiteServiceSpec extends Specification {
         geojson.coordinates == coordinates
 
         when: "The site is a drawn circle"
-        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
+        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], coordinates: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
         geojson = service.geometryAsGeoJson([extent:extent])
 
-        then: "Circles aren't valid geojson so we should ask the spatial portal for help"
-        1 * webServiceMock.getJson("${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/1234") >> [type:'Polygon', coordinates: []]
+        then: "Circles aren't valid geojson so we need to convert them to a polygon"
         geojson.type == 'Polygon'
-        geojson.coordinates == []
+        geojson.coordinates.size() == 101
     }
 
     def "A new site can be created"() {
