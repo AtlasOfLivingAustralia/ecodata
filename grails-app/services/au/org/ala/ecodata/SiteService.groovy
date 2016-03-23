@@ -461,18 +461,31 @@ class SiteService {
         boolean finished = false
         while (results.hasNext() && !finished) {
             DBObject site = results.next()
-            if (site.extent?.geometry) {
-                Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
-                site.extent.geometry.putAll(geoFacets)
-                site.lastUpdated = now
-                println "Updating site: "+ site
+            try {
+                if (site.extent?.geometry) {
 
-                collection.save(site)
+                    if (!site.extent?.geometry.aream2) {
+                        populateLocationMetadataForSite(site)
+                    }
+                    else {
+                        Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
+                        site.extent.geometry.putAll(geoFacets)
+                        site.lastUpdated = now
+                    }
+
+                    collection.save(site)
+                }
+                else {
+                    log.warn( "No geometry for site "+site)
+                }
             }
-            else {
-                println "No geometry for site "+site
+            catch (Exception e) {
+                log.error("Error updating site: "+site,e)
             }
             count ++
+            if (count % 20 == 0) {
+                log.info("Updated "+count+" of "+max+ " sites")
+            }
             if (count >= max) {
                 finished = true
             }
