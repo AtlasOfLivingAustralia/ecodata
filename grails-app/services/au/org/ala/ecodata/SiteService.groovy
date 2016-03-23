@@ -227,13 +227,10 @@ class SiteService {
         def result = null
         switch (geometry.type) {
             case 'Circle':
-                // We support circles, but they are not valid geojson. The spatial portal does a conversion for us.
-                if (geometry.pid) {
-                    result = geometryForPid(geometry.pid)
-                }
-                else {
-                    result = [type: 'Point', coordinates: geometry.centre]
-                }
+                // We support circles, but they are not valid geojson.
+                Geometry geom = GeometryUtils.geometryForCircle(geometry.coordinates[1], geometry.coordinates[0], geometry.radius)
+                result = [type:'Polygon', coordinates: Arrays.asList(geom.coordinates).collect{[it.x, it.y]}]
+
                 break
             case 'Point':
             case 'point':
@@ -463,8 +460,18 @@ class SiteService {
         Map<String, List<String>> geographicFacets = null
         switch (site.extent.source) {
             case 'pid':
-                geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String)
-                break
+                if (false && site.extent.geometry.fid) {  // This is causing performing performance issues - temporarily disabled.
+                    // We buffer the polygon so that the intersect doesn't match adjoining objects
+                    // (the intersect matches any other objects that touch the boundaries)
+                    Map geom = geometryAsGeoJson(site)
+                    Map scaled = GeometryUtils.scale(geom)
+                    geographicFacets = spatialService.intersectGeometry(scaled)
+                    break
+                }
+                else {
+                    geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String)
+                    break
+                }
             default:
                 Map geom = geometryAsGeoJson(site)
                 geographicFacets = spatialService.intersectGeometry(geom)
