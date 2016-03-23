@@ -100,7 +100,7 @@ class SiteServiceSpec extends Specification {
         when:
         def result
         Site.withSession { session ->
-            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', fid: '123', pid: 'cl123']]])
+            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', pid: 'cl123']]])
             session.flush()
         }
 
