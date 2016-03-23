@@ -456,6 +456,7 @@ class SiteService {
         }
 
         DBCursor results = collection.find(query).batchSize(100)
+        Date now = new Date()
         int count = 0
         boolean finished = false
         while (results.hasNext() && !finished) {
@@ -463,6 +464,7 @@ class SiteService {
             if (site.extent?.geometry) {
                 Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
                 site.extent.geometry.putAll(geoFacets)
+                site.lastUpdated = now
                 println "Updating site: "+ site
 
                 collection.save(site)
