@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import com.mongodb.QueryBuilder
@@ -18,7 +19,7 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
 
-    def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService
+    def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
     ProjectActivityService projectActivityService
     SpatialService spatialService
@@ -396,7 +397,7 @@ class SiteService {
      * at once.
      * @param action the action to be performed on each Activity.
      */
-    void doWithAllSites(Closure action) {
+    void doWithAllSites(Closure action, Integer max = null) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
         com.mongodb.DBCollection collection = Site.getCollection()
         DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
@@ -436,22 +437,35 @@ class SiteService {
         [sites:sites.collect{toMap(it)}, count:sites.totalCount]
     }
 
-    void reloadSiteMetadata() {
+    void reloadSiteMetadata(Date modifiedBefore = null, Integer max = 1000) {
         com.mongodb.DBCollection collection = Site.getCollection()
-        int i = 0
-        doWithAllSites { site ->
-            i++
-            if (i%1000 == 0) {
-                if (site.extent?.geometry) {
-                    Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
-                    site.extent.geometry.putAll(geoFacets)
-                    println "Updating site: "+ site
 
-                    collection.save(site)
-                }
-                else {
-                    println "No geometry for site "+site
-                }
+        BasicDBObject query = new BasicDBObject()
+        query.put('status', new BasicDBObject('$ne', DELETED))
+        if (modifiedBefore) {
+            query.put('lastUpdated', new BasicDBObject('$lt', modifiedBefore))
+        }
+
+        DBCursor results = collection.find(query).batchSize(100)
+        Date now = new Date()
+        int count = 0
+        boolean finished = false
+        while (results.hasNext() && !finished) {
+            DBObject site = results.next()
+            if (site.extent?.geometry) {
+                Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
+                site.extent.geometry.putAll(geoFacets)
+                site.lastUpdated = now
+                println "Updating site: "+ site
+
+                collection.save(site)
+            }
+            else {
+                println "No geometry for site "+site
+            }
+            count ++
+            if (count >= max) {
+                finished = true
             }
         }
     }
@@ -460,12 +474,15 @@ class SiteService {
         Map<String, List<String>> geographicFacets = null
         switch (site.extent.source) {
             case 'pid':
-                if (false && site.extent.geometry.fid) {  // This is causing performing performance issues - temporarily disabled.
-                    // We buffer the polygon so that the intersect doesn't match adjoining objects
-                    // (the intersect matches any other objects that touch the boundaries)
-                    Map geom = geometryAsGeoJson(site)
-                    Map scaled = GeometryUtils.scale(geom)
-                    geographicFacets = spatialService.intersectGeometry(scaled)
+                String fid = site.extent.geometry.fid
+                if (fid && fid != 'cl22' && fid != 'cl927') { // Don't do this for states as they are very slow and the results aren't meaningful
+                    geographicFacets =  cacheService.get('metadata-'+fid+'-'+site.extent.geometry.pid, {
+                        // We buffer the polygon so that the intersect doesn't match adjoining objects
+                        // (the intersect matches any other objects that touch the boundaries)
+                        Map geom = geometryAsGeoJson(site)
+                        Map scaled = GeometryUtils.scale(geom)
+                        spatialService.intersectGeometry(scaled)
+                    })
                     break
                 }
                 else {
@@ -480,5 +497,4 @@ class SiteService {
         geographicFacets
 
     }
-
 }

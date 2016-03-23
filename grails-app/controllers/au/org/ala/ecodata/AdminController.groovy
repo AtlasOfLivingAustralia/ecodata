@@ -7,6 +7,8 @@ import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 
+import java.text.SimpleDateFormat
+
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static groovyx.gpars.actor.Actors.actor
 
@@ -183,43 +185,13 @@ class AdminController {
      * @return {"result":"success"} if the operation is successful.
      */
     def reloadSiteMetadata() {
-
-        def code = "success"
-
-        def total = 0
-        def offset = 0
-        def batchSize = 200
-
-        def count = batchSize // For first loop iteration
-        while (count == batchSize) {
-            def sites = Site.findAllByStatus('active', [offset:offset, max:batchSize]).collect{siteService.toMap(it, 'flat')}
-            count = sites.size()
-
-            try {
-                def results = metadataService.getLocationMetadataForSites(sites)
-
-                log.info("Initiating database update..")
-                Site.withSession { session -> session.clear() }
-                Site.withNewSession {
-                    results.eachWithIndex { site, index ->
-                        siteService.update([extent: site.extent], site.siteId, false)
-                        total++
-                        if(total > 0 && (total % 200) == 0) {
-                            log.info("(${total+1}) records updated in db..")
-                        }
-                    }
-                }
-                log.info("Database updated completed.")
-            }
-            catch(Exception e) {
-                log.error("Unable to complete the operation ", e)
-                code = "error"
-            }
-            offset += batchSize
-
+        String dateStr = params.lastUpdatedBefore
+        Date date
+        if (dateStr) {
+            date = new SimpleDateFormat('yyyy-MM-dd').parse(dateStr)
         }
-
-        def result = [result: "${code}"]
+        siteService.reloadSiteMetadata(date, params.getInt('max', 100))
+        Map result = [status:'OK']
         render result as grails.converters.JSON
     }
 
