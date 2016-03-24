@@ -123,5 +123,6 @@ class Document {
         externalUrl nullable: true
         projectActivityId nullable: true
         labels nullable: true
+        isSciStarter nullable: true
     }
 }
