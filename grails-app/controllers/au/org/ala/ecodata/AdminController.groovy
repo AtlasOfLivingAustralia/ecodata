@@ -188,7 +188,7 @@ class AdminController {
         String dateStr = params.lastUpdatedBefore
         Date date
         if (dateStr) {
-            date = new SimpleDateFormat('yyyy-MM-dd').parse(dateStr)
+            date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(dateStr)
         }
         siteService.reloadSiteMetadata(date, params.getInt('max', 100))
         Map result = [status:'OK']
