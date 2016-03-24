@@ -442,6 +442,7 @@ class SiteService {
 
         BasicDBObject query = new BasicDBObject()
         query.put('status', new BasicDBObject('$ne', DELETED))
+        query.put('refreshed', new BasicDBObject('$ne', 'Y'))
         if (modifiedBefore) {
             query.put('lastUpdated', new BasicDBObject('$lt', modifiedBefore))
         }
@@ -461,14 +462,15 @@ class SiteService {
                     else {
                         Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
                         site.extent.geometry.putAll(geoFacets)
-                        site.lastUpdated = now
-                    }
 
+                    }
+                    site.refreshed = "Y"
                     collection.save(site)
                 }
                 else {
                     log.warn( "No geometry for site "+site)
                 }
+
             }
             catch (Exception e) {
                 log.error("Error updating site: "+site,e)
