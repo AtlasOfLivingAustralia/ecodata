@@ -1,11 +1,8 @@
 package au.org.ala.ecodata
-
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
-import groovy.json.JsonSlurper
 
-import static au.org.ala.ecodata.ElasticIndex.DEFAULT_INDEX
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
 class ProjectController {
@@ -302,6 +299,21 @@ class ProjectController {
         } else {
             render status: 400, text: error
         }
+    }
+
+    def importProjectsFromSciStarter(){
+        String whiteList = params.whiteList
+        List projects = projectService.importProjectsFromSciStarter(whiteList)?:[]
+        render(text: [count: projects.size(), projects: projects] as JSON, contentType: 'application/json');
+    }
+
+    /**
+     * get science types supported by CS projects
+     * @return
+     */
+    def getScienceTypes(){
+        List scienceTypes = grailsApplication.config.biocollect.scienceType
+        render(text:  scienceTypes as JSON, contentType: 'application/json')
     }
 
     private Map buildParams(Map params){

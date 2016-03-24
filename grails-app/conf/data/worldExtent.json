@@ -1,0 +1,97 @@
+{
+  "projects" : [
+  ],
+  "isSciStarter":true,
+  "status" : "active",
+  "poi" : [ ],
+  "geoIndex" : {
+    "type" : "Polygon",
+    "coordinates" : [
+      [
+        [
+          -180,
+          -90
+        ],
+        [
+          -180,
+          90
+        ],
+        [
+          180,
+          90
+        ],
+        [
+          180,
+          -90
+        ],
+        [
+          -180,
+          -90
+        ]
+      ]
+    ]
+  },
+  "extent" : {
+    "source" : "drawn",
+    "geometry" : {
+      "fid" : "",
+      "mvs" : null,
+      "precision" : "",
+      "centre" : [
+        "11.601562499999986",
+        "-0.7859697100237464"
+      ],
+      "state" : null,
+      "layerName" : "",
+      "pid" : 6958738,
+      "datum" : "",
+      "type" : "Polygon",
+      "decimalLatitude" : -0.7859697100237497,
+      "areaKmSq" : 509700727.0660377,
+      "nrm" : null,
+      "bbox" : "",
+      "mvg" : null,
+      "name" : "",
+      "decimalLongitude" : 11.601562499999986,
+      "locality" : "Lolo-Bouenguidi, Gabon",
+      "lga" : null,
+      "uncertainty" : "",
+      "coordinates" : [
+        [
+          [
+            -180,
+            -90
+          ],
+          [
+            -180,
+            90
+          ],
+          [
+            180,
+            90
+          ],
+          [
+            180,
+            -90
+          ],
+          [
+            -180,
+            -90
+          ]
+        ]
+      ],
+      "ibra" : null,
+      "imcra4_pb" : null,
+      "elect" : null,
+      "cmz" : null,
+      "other" : [ ],
+      "gerSubRegion" : [ ]
+    }
+  },
+  "externalId" : "",
+  "area" : "5.097007270660377E8",
+  "description" : "Default map for SciStarter projects without a predefined region.",
+  "name" : "SciStarter Project Area",
+  "notes" : "",
+  "type" : "surveyArea"
+}

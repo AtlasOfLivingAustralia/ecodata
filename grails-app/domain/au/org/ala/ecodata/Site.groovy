@@ -33,6 +33,7 @@ class Site {
     String notes
     Date dateCreated
     Date lastUpdated
+    Boolean isSciStarter = false
 
     static constraints = {
         name nullable: true
@@ -45,6 +46,7 @@ class Site {
         landTenure nullable:true
         protectionMechanism nullable:true
         notes nullable:true, maxSize: 40000
+        isSciStarter nullable: true
     }
 
     def getAssociations(){

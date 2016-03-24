@@ -1,28 +1,25 @@
 package au.org.ala.ecodata
 
-import com.vividsolutions.jts.geom.Coordinate
-import com.vividsolutions.jts.geom.Geometry
-import com.vividsolutions.jts.geom.GeometryFactory
-import com.vividsolutions.jts.geom.LineString
-import com.vividsolutions.jts.geom.MultiLineString
-import com.vividsolutions.jts.geom.MultiPolygon
-import com.vividsolutions.jts.geom.Point
-import com.vividsolutions.jts.geom.Polygon
+import com.vividsolutions.jts.geom.*
 import com.vividsolutions.jts.io.WKTReader
 import com.vividsolutions.jts.io.WKTWriter
+import com.vividsolutions.jts.util.GeometricShapeFactory
+import grails.converters.JSON
 import org.geotools.geojson.geom.GeometryJSON
+import org.geotools.geometry.jts.JTS
+import org.geotools.referencing.CRS
 import org.geotools.referencing.GeodeticCalculator
+import org.opengis.referencing.crs.CoordinateReferenceSystem
+import org.opengis.referencing.operation.MathTransform
 
 import java.awt.geom.Point2D
-import org.geotools.referencing.CRS
-import org.opengis.referencing.crs.CoordinateReferenceSystem
 
 /**
  * Helper class for working with site geometry.
  */
 class GeometryUtils {
 
-    static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326")
+    static CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326", true)
     static GeometryFactory geometryFactory = new GeometryFactory()
 
     static String wktToMultiPolygonWkt(String wkt) {
@@ -155,5 +152,57 @@ class GeometryUtils {
 
         return geometryFactory.createPolygon(rectangleCoords)
     }
+
+    /**
+     * Projects the site geometry into the appropriate UTM zone based on the centroid and calculates the area
+     * @param wgs84Geom Geometry with coordinates in WGS84 lon/lat
+     * @return the area of the geometry in m2
+     */
+    static double area(Geometry wgs84Geom) {
+        Geometry utmGeom = wgs84ToUtm(wgs84Geom)
+        utmGeom.area
+    }
+
+    static Geometry wgs84ToUtm(Geometry wgs84Geom) {
+        CoordinateReferenceSystem utm = CRS.decode("AUTO2:42001,"+wgs84Geom.centroid.x+","+wgs84Geom.centroid.y, true)
+        MathTransform toMetres = CRS.findMathTransform(sourceCRS, utm)
+        JTS.transform(wgs84Geom, toMetres)
+    }
+
+    static Geometry geometryForCircle(double centreLat, double centreLon, double radiusInMetres) {
+
+        Geometry geometry = geometryFactory.createPoint(new Coordinate(centreLon, centreLat))
+        Geometry utmGeom = wgs84ToUtm(geometry)
+
+        GeometricShapeFactory factory = new GeometricShapeFactory()
+        factory.size = radiusInMetres
+        factory.centre = utmGeom.coordinate
+
+        Geometry circle = factory.createCircle()
+        CoordinateReferenceSystem utm = CRS.decode("AUTO2:42001,"+centreLon+","+centreLat, true)
+        MathTransform toLatLon = CRS.findMathTransform(utm, sourceCRS)
+        JTS.transform(circle, toLatLon)
+    }
+
+
+    static Map scale(Map geom) {
+
+        Geometry input = geoJsonMapToGeometry(geom)
+        Geometry output = input.buffer(-0.01)
+        geometryToGeoJsonMap(output)
+    }
+
+    static Geometry geoJsonMapToGeometry(Map geoJson) {
+        String json = (geoJson as JSON).toString()
+        new GeometryJSON().read(json)
+    }
+
+    static Map geometryToGeoJsonMap(Geometry input) {
+        ByteArrayOutputStream byteOut = new ByteArrayOutputStream()
+        new GeometryJSON().write(input, new OutputStreamWriter(byteOut, 'UTF-8'))
+
+        JSON.parse(byteOut.toString('UTF-8'))
+    }
+
 
 }

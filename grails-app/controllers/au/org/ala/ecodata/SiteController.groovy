@@ -51,12 +51,12 @@ class SiteController {
         if (!id) {
             def list = []
             def sites = params.includeDeleted ? Site.list() :
-                Site.findAllByStatus('active')
+                    Site.findAllByStatus('active')
             sites.each { site ->
                 list << siteService.toMap(site, levelOfDetail)
             }
-            list.sort {it.name}
-            asJson([list:list])
+            list.sort { it.name }
+            asJson([list: list])
         } else {
             def s = siteService.get(id, levelOfDetail)
             if (s) {
@@ -229,5 +229,10 @@ class SiteController {
         } else {
             response.sendError(HttpStatus.SC_BAD_REQUEST, 'Site id and Poi id must be provided')
         }
+    }
+
+    def lookupLocationMetadataForSite() {
+        def site = request.JSON
+        render siteService.lookupGeographicFacetsForSite(site) as JSON
     }
 }

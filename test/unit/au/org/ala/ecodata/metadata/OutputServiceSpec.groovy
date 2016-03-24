@@ -32,7 +32,7 @@ class OutputServiceSpec extends Specification {
         service.grailsApplication = [mainContext: [commonService: Mock(CommonService)]]
     }
 
-    def "create output should create a record if the output data model has record = true"() {
+    def "create output should not create a record even if the output data model has record = true as there is no species info"() {
         setup:
         String activityId = 'activity1'
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
@@ -57,7 +57,7 @@ class OutputServiceSpec extends Specification {
 
         then:
         response.status != "error"
-        1 * mockRecordService.createRecord(_) >> [[:]]
+        0 * mockRecordService.createRecord(_) >> [[:]]
         Output.count() == 1
     }
 
@@ -118,7 +118,7 @@ class OutputServiceSpec extends Specification {
         Output.count() == 1
     }
 
-    def "create output should create records for each list item if the output data model has record = true and data type = list"() {
+    def "create output should create records for each list item if the output data model has record = true, data type = list and species information is present"() {
         setup:
         String activityId = 'activity1'
         Activity activity = new Activity(activityId: activityId, type: 'Test', description: 'A test activity')
@@ -132,7 +132,7 @@ class OutputServiceSpec extends Specification {
                                                                             columns : [
                                                                                     [
                                                                                             name: "col1",
-                                                                                            dataType: "text"
+                                                                                            dataType: "species"
                                                                                     ]
                                                                             ]]]]
 
@@ -142,8 +142,8 @@ class OutputServiceSpec extends Specification {
             "name": "Something",
             "data": {
                     "actions": [
-                        {"col1": "action1"},
-                        {"col1": "action2"}
+                        {"col1" : {"guid": "urn:lsid:someid", "outputSpeciesId": "anhotherid", "name" : "SpiciesName"}},
+                        {"col1" : {"guid": "urn:lsid:someid2", "outputSpeciesId": "anhotherid2", "name" : "SpiciesName2"}}
                     ]
             }
         }"""

@@ -15,8 +15,6 @@ class OutputModelProcessor {
     interface ProcessingContext {}
 
     interface Processor<T extends ProcessingContext> {
-        def singleSighting(Object node, T outputValue)
-
         def number(node, T context)
 
         def integer(node, T context)
@@ -48,9 +46,6 @@ class OutputModelProcessor {
             return;
         }
         switch(type) {
-            case 'singleSighting':
-                processor.singleSighting(node, context);
-                break;
             case 'number':
                 processor.number(node, context);
                 break;
@@ -117,20 +112,28 @@ class OutputModelProcessor {
             rows << flat
         }
         if (nested) {
+            Map toRepeat = duplicateNonNestedValues?flat:getRepeatingData(flat, outputMetadata)
             nested.each { property ->
                 Collection nestedData = flat.remove(property)
                 nestedData.each { row ->
-                    if (duplicateNonNestedValues) {
-                        rows << (row + flat)
-                    }
-                    else {
-                        rows << row
-                    }
-
+                    rows << (row + toRepeat)
                 }
             }
         }
         rows
+    }
+
+    Map getRepeatingData(Map data, OutputMetadata outputMetadata) {
+
+        Map result = [:]
+        ['text', 'stringList'].each {
+            outputMetadata.getNamesForDataType(it, null).each {name, val ->
+                if (val == true) {
+                    result[name] = data[name]
+                }
+            }
+        }
+        result
     }
 
 }

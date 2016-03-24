@@ -161,11 +161,6 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     }
 
     @Override
-    def singleSighting(Object node, ExcelValidationContext outputValue) {
-        return null
-    }
-
-    @Override
     def number(Object node, ExcelValidationContext context) {
         DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
         OutputMetadata.ValidationRules rules = new OutputMetadata.ValidationRules(node)

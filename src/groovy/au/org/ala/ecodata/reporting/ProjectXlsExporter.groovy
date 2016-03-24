@@ -26,8 +26,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0-site', 'nrm0-site', 'elect0-site', 'elect1-site', 'elect2-site', 'elect3-site', 'elect4-site', 'elect5-site', 'elect6-site', 'elect7-site', 'elect8-site', 'elect9-site', 'lastUpdated']
     List<String> commonActivityHeaders = projectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = projectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
-    List<String> outputTargetHeaders = ['Project ID', 'Output Target Measure', 'Target', 'Units']
-    List<String> outputTargetProperties = ['projectId', 'scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
+    List<String> outputTargetHeaders = projectHeaders + ['Output Target Measure', 'Target', 'Units']
+    List<String> outputTargetProperties = projectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
     List<String> risksAndThreatsHeaders = projectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
     List<String> risksAndThreatsProperties = projectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
     List<String> budgetHeaders = projectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
@@ -193,7 +193,7 @@ class ProjectXlsExporter extends ProjectExporter {
             outputTargetsSheet()
             if (project.outputTargets) {
                 List nonZeroTargets = project.outputTargets.findAll { it.scoreLabel && it.target && it.target != "0" }
-                List targets = nonZeroTargets.collect { [projectId: project.projectId] << it }
+                List targets = nonZeroTargets.collect { project + it }
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
             }
@@ -234,7 +234,7 @@ class ProjectXlsExporter extends ProjectExporter {
             List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
 
                 Map budgetLineItem = [
-                        investmentArea: lineItem.shortDescription,
+                        investmentArea: lineItem.shortLabel,
                         budgetDescription: lineItem.description
                 ]
                 budgetLineItem.putAll(project)

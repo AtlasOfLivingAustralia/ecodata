@@ -87,6 +87,11 @@ class UrlMappings {
             action = [POST:'createPoi']
         }
 
+        "/ws/site/lookupLocationMetadataForSite" {
+            controller = 'site'
+            action = 'lookupLocationMetadataForSite'
+        }
+
         "/ws/$controller/search" {
             action = [POST:"search"]
         }
@@ -125,6 +130,9 @@ class UrlMappings {
         }
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
+        "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
+        "/ws/project/getScienceTypes"(controller: "project"){ action = [GET:"getScienceTypes"] }
+
 
         "/"(view:"/index")
 		"500"(view:'/error')

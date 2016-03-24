@@ -18,6 +18,7 @@ class SiteServiceSpec extends Specification {
     def service = new SiteService()
     def webServiceMock = Mock(WebService)
     def metadataServiceMock = Mock(MetadataService)
+    def spatialServiceMock = Mock(SpatialService)
     void setup() {
         mongoDomain([Site])
         JSON.registerObjectMarshaller(new MapMarshaller())
@@ -25,6 +26,7 @@ class SiteServiceSpec extends Specification {
         service.webService = webServiceMock
         service.grailsApplication = grailsApplication
         service.metadataService = metadataServiceMock
+        service.spatialService = spatialServiceMock
         grailsApplication.mainContext.registerSingleton('commonService', CommonService)
         grailsApplication.mainContext.commonService.grailsApplication = grailsApplication
     }
@@ -47,13 +49,12 @@ class SiteServiceSpec extends Specification {
         geojson.coordinates == coordinates
 
         when: "The site is a drawn circle"
-        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
+        extent = [source:'drawn', geometry: [type:'Circle', centre: [134.82421875, -33.41310193384], coordinates: [134.82421875, -33.41310193384], radius:12700, pid:'1234']]
         geojson = service.geometryAsGeoJson([extent:extent])
 
-        then: "Circles aren't valid geojson so we should ask the spatial portal for help"
-        1 * webServiceMock.getJson("${grailsApplication.config.spatial.baseUrl}/ws/shape/geojson/1234") >> [type:'Polygon', coordinates: []]
+        then: "Circles aren't valid geojson so we need to convert them to a polygon"
         geojson.type == 'Polygon'
-        geojson.coordinates == []
+        geojson.coordinates.size() == 101
     }
 
     def "A new site can be created"() {
@@ -99,13 +100,14 @@ class SiteServiceSpec extends Specification {
         when:
         def result
         Site.withSession { session ->
-            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', fid: '123', pid: 'cl123']]])
+            result = service.create([name: 'Site 1', extent: [source: 'pid', geometry: [type: 'pid', pid: 'cl123']]])
             session.flush()
         }
 
+
         then:
-        1 * webServiceMock.getJson(_) >> [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
-        1 * metadataServiceMock.getLocationMetadataForPoint('-34.5', '136.5') >> [test:'test']
+        1 * webServiceMock.getJson(_) >>  [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
+        1 * spatialServiceMock.intersectPid('cl123') >> [state:'state1', test:'test']
 
         def site = Site.collection.find([siteId:result.siteId]).next()
 

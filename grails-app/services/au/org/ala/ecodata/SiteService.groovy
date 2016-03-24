@@ -1,12 +1,15 @@
 package au.org.ala.ecodata
 
+import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import com.mongodb.QueryBuilder
 import com.vividsolutions.jts.geom.Geometry
 import grails.converters.JSON
 import org.geotools.geojson.geom.GeometryJSON
-import static au.org.ala.ecodata.Status.*
+import org.grails.datastore.mapping.query.api.BuildableCriteria
+
+import static au.org.ala.ecodata.Status.DELETED
 
 class SiteService {
 
@@ -16,9 +19,10 @@ class SiteService {
     static final RAW = 'raw'
     static final FLAT = 'flat'
 
-    def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService
+    def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
     ProjectActivityService projectActivityService
+    SpatialService spatialService
 
     def getCommonService() {
         grailsApplication.mainContext.commonService
@@ -109,8 +113,8 @@ class SiteService {
         }
     }
 
-    def update(props, id, boolean enableCentroidRefresh = true) {
-        def site = Site.findBySiteId(id)
+    def update(Map props, String id, boolean enableCentroidRefresh = true) {
+        Site site = Site.findBySiteId(id)
 
         if (site) {
             try {
@@ -129,21 +133,28 @@ class SiteService {
         }
     }
 
-    private updateSite(site, props, enableCentroidRefresh) {
+    private updateSite(Site site, Map props, boolean forceRefresh = false) {
         props.remove('id')
         props.remove('siteId')
 
         assignPOIIds(props)
 
         // If the site location is being updated, refresh the location metadata.
-        def centroid = props.extent?.geometry?.centre
-        if (centroid && centroid.size() == 2 && enableCentroidRefresh) {
-            props.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
-        }
-        else if (props.extent?.geometry && !centroid) { // Sites created from known shapes need a centroid to be calculated.
+        if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             populateLocationMetadataForSite(props)
         }
         getCommonService().updateProperties(site, props)
+    }
+
+    /** Recomputing geographic facets, centroid and area can be expensive so we only want to do it if we have to */
+    private boolean hasGeometryChanged(Map site, Map newProps) {
+        if (!newProps.extent?.geometry) {
+            return false
+        }
+
+        return (site.extent?.source != newProps.extent.source) ||
+                (site.extent?.geometry?.coordinates != newProps.extent.geometry.coordinates) ||
+                (site.extent?.geometry?.pid != newProps.extent.geometry.pid)
     }
 
     def deleteSitesFromProject(String projectId){
@@ -207,7 +218,7 @@ class SiteService {
         [status:'ok']
     }
 
-    def geometryAsGeoJson(site) {
+    Map geometryAsGeoJson(site) {
         def geometry = site?.extent?.geometry
 
         if (!geometry) {
@@ -217,13 +228,10 @@ class SiteService {
         def result = null
         switch (geometry.type) {
             case 'Circle':
-                // We support circles, but they are not valid geojson. The spatial portal does a conversion for us.
-                if (geometry.pid) {
-                    result = geometryForPid(geometry.pid)
-                }
-                else {
-                    result = [type: 'Point', coordinates: geometry.centre]
-                }
+                // We support circles, but they are not valid geojson.
+                Geometry geom = GeometryUtils.geometryForCircle(geometry.coordinates[1], geometry.coordinates[0], geometry.radius)
+                result = [type:'Polygon', coordinates: Arrays.asList(geom.coordinates).collect{[it.x, it.y]}]
+
                 break
             case 'Point':
             case 'point':
@@ -238,8 +246,15 @@ class SiteService {
                     return
                 }
                 // The map drawing tools allow you to draw lines using the "polygon" tool.
-                def type = geometry.coordinates.size() < 4 ? 'LineString' : 'Polygon'
-                result = [type:type, coordinates: geometry.coordinates]
+                def coordinateLength = geometry.coordinates.size()
+                if (coordinateLength == 1 && geometry.coordinates[0] instanceof List) {
+                    def type = geometry.coordinates[0].size() < 4 ? 'MultiLineString' : 'MultiPolygon'
+                    result = [type:type, coordinates: geometry.coordinates]
+                }
+                else {
+                    def type = coordinateLength < 4 ? 'LineString' : 'Polygon'
+                    result = [type: type, coordinates: geometry.coordinates]
+                }
                 break
             case 'pid':
                 result = geometryForPid(geometry.pid)
@@ -253,33 +268,29 @@ class SiteService {
         webService.getJson(url)
     }
 
-    def populateLocationMetadataForSite(site) {
-        def centroid = site?.extent?.geometry?.centre
-        if (!centroid || centroid.size() != 2) {
-            def siteGeom = geometryAsGeoJson(site)
-            if (siteGeom) {
-                GeometryJSON gjson = new GeometryJSON()
-                Geometry geom = gjson.read((siteGeom as JSON).toString())
-                if (!site.extent) {
-                    site.extent = [geometry:[:]]
-                }
-                if (!site.extent.geometry) {
-                    site.extent.geometry = [:]
-                }
-                if (geom) {
-                    centroid = [Double.toString(geom.centroid.x), Double.toString(geom.centroid.y)]
-                    site.extent.geometry.centre = centroid
-                }
-                else {
-                    log.error("No geometry for site: ${site.siteId}")
-                }
-            }
+    def populateLocationMetadataForSite(Map site) {
 
+        def siteGeom = geometryAsGeoJson(site)
+        if (siteGeom) {
+            GeometryJSON gjson = new GeometryJSON()
+            Geometry geom = gjson.read((siteGeom as JSON).toString())
+            if (!site.extent) {
+                site.extent = [geometry:[:]]
+            }
+            if (!site.extent.geometry) {
+                site.extent.geometry = [:]
+            }
+            if (geom) {
+                def centroid = [Double.toString(geom.centroid.x), Double.toString(geom.centroid.y)]
+                site.extent.geometry.centre = centroid
+
+                site.extent.geometry.aream2 = GeometryUtils.area(geom)
+            }
+            else {
+                log.error("No geometry for site: ${site.siteId}")
+            }
+            site.extent.geometry += lookupGeographicFacetsForSite(site)
         }
-        if (centroid) {
-            site.extent.geometry += metadataService.getLocationMetadataForPoint(centroid[1], centroid[0])
-        }
-        site
     }
 
     /**
@@ -386,7 +397,7 @@ class SiteService {
      * at once.
      * @param action the action to be performed on each Activity.
      */
-    void doWithAllSites(Closure action) {
+    void doWithAllSites(Closure action, Integer max = null) {
         // Due to various memory & performance issues with GORM mongo plugin 1.3, this method uses the native API.
         com.mongodb.DBCollection collection = Site.getCollection()
         DBObject siteQuery = new QueryBuilder().start('status').notEquals(DELETED).get()
@@ -397,4 +408,106 @@ class SiteService {
         }
     }
 
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a map with two keys: "count": the total number of results, "sites": a list of the sites that match the supplied criteria
+     */
+    public Map search(Map searchCriteria, Integer max = 100, Integer offset = 0, String sort = null, String orderBy = null) {
+
+        BuildableCriteria criteria = Site.createCriteria()
+        List sites = criteria.list(max:max, offset:offset) {
+            ne("status", DELETED)
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+            if (sort) {
+                order(sort, orderBy?:'asc')
+            }
+
+        }
+        [sites:sites.collect{toMap(it)}, count:sites.totalCount]
+    }
+
+    void reloadSiteMetadata(Date modifiedBefore = null, Integer max = 1000) {
+        com.mongodb.DBCollection collection = Site.getCollection()
+
+        BasicDBObject query = new BasicDBObject()
+        query.put('status', new BasicDBObject('$ne', DELETED))
+        if (modifiedBefore) {
+            query.put('lastUpdated', new BasicDBObject('$lt', modifiedBefore))
+        }
+
+        DBCursor results = collection.find(query).batchSize(100)
+        Date now = new Date()
+        int count = 0
+        boolean finished = false
+        while (results.hasNext() && !finished) {
+            DBObject site = results.next()
+            try {
+                if (site.extent?.geometry) {
+
+                    if (!site.extent?.geometry.aream2) {
+                        populateLocationMetadataForSite(site)
+                    }
+                    else {
+                        Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
+                        site.extent.geometry.putAll(geoFacets)
+                        site.lastUpdated = now
+                    }
+
+                    collection.save(site)
+                }
+                else {
+                    log.warn( "No geometry for site "+site)
+                }
+            }
+            catch (Exception e) {
+                log.error("Error updating site: "+site,e)
+            }
+            count ++
+            if (count % 20 == 0) {
+                log.info("Updated "+count+" of "+max+ " sites")
+            }
+            if (count >= max) {
+                finished = true
+            }
+        }
+    }
+    Map<String, List<String>> lookupGeographicFacetsForSite(Map site) {
+
+        Map<String, List<String>> geographicFacets = null
+        switch (site.extent.source) {
+            case 'pid':
+                String fid = site.extent.geometry.fid
+                if (fid && fid != 'cl22' && fid != 'cl927') { // Don't do this for states as they are very slow and the results aren't meaningful
+                    geographicFacets =  cacheService.get('metadata-'+fid+'-'+site.extent.geometry.pid, {
+                        // We buffer the polygon so that the intersect doesn't match adjoining objects
+                        // (the intersect matches any other objects that touch the boundaries)
+                        Map geom = geometryAsGeoJson(site)
+                        Map scaled = GeometryUtils.scale(geom)
+                        spatialService.intersectGeometry(scaled)
+                    })
+                    break
+                }
+                else {
+                    geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String)
+                    break
+                }
+            default:
+                Map geom = geometryAsGeoJson(site)
+                geographicFacets = spatialService.intersectGeometry(geom)
+                break
+        }
+        geographicFacets
+
+    }
 }
