@@ -447,7 +447,7 @@ class SiteService {
             query.put('lastUpdated', new BasicDBObject('$lt', modifiedBefore))
         }
 
-        DBCursor results = collection.find(query).batchSize(100)
+        DBCursor results = collection.find(query).batchSize(10)
         Date now = new Date()
         int count = 0
         boolean finished = false
