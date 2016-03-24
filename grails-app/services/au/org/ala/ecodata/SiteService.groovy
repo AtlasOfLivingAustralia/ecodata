@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import com.mongodb.BasicDBObject
+import com.mongodb.Bytes
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import com.mongodb.QueryBuilder
@@ -443,15 +444,15 @@ class SiteService {
         BasicDBObject query = new BasicDBObject()
         query.put('status', new BasicDBObject('$ne', DELETED))
         query.put('refreshed', new BasicDBObject('$ne', 'Y'))
+        query.put('projects', new BasicDBObject(['$exists':true, '$ne':[]]))
         if (modifiedBefore) {
             query.put('lastUpdated', new BasicDBObject('$lt', modifiedBefore))
         }
 
-        DBCursor results = collection.find(query).batchSize(10)
-        Date now = new Date()
+        println collection.count(query)
+        DBCursor results = collection.find(query).batchSize(10).addOption(Bytes.QUERYOPTION_NOTIMEOUT).limit(max)
         int count = 0
-        boolean finished = false
-        while (results.hasNext() && !finished) {
+        while (results.hasNext()) {
             DBObject site = results.next()
             try {
                 if (site.extent?.geometry) {
@@ -462,25 +463,24 @@ class SiteService {
                     else {
                         Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
                         site.extent.geometry.putAll(geoFacets)
-
                     }
-                    site.refreshed = "Y"
-                    collection.save(site)
+
                 }
                 else {
                     log.warn( "No geometry for site "+site)
+                    site.refreshFailed = 'no geometry'
                 }
 
             }
             catch (Exception e) {
                 log.error("Error updating site: "+site,e)
+                site.refreshFailed = e.getMessage()
             }
+            site.refreshed = "Y"
+            collection.save(site)
             count ++
             if (count % 20 == 0) {
                 log.info("Updated "+count+" of "+max+ " sites")
-            }
-            if (count >= max) {
-                finished = true
             }
         }
     }
