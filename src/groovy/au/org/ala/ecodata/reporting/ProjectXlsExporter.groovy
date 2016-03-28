@@ -53,8 +53,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
     List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
-    List<String> documentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
-    List<String> documentProperties = projectProperties + ['name', 'attribution', 'filename']
+    List<String> documentHeaders = projectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
+    List<String> documentProperties = projectProperties + ['name', 'attribution', 'filename', 'role']
 
     XlsExporter exporter
 
@@ -103,9 +103,7 @@ class ProjectXlsExporter extends ProjectExporter {
             geo.each { facet ->
                 Object value = props[facet]
                 if (value instanceof List) {
-                    value.eachWithIndex { i, val ->
-                        geoData[facet] << val
-                    }
+                    geoData[facet].addAll(value)
                 }
                 else {
                     geoData[facet] << value
@@ -175,7 +173,7 @@ class ProjectXlsExporter extends ProjectExporter {
                     Map props = it.extent?.geometry ?: [:]
                     props?.each { key, value ->
                         if (value instanceof List) {
-                            value.eachWithIndex { i, val ->
+                            value.eachWithIndex { val, i ->
                                 data.put(key+i+'-site', val)
                             }
                         }
