@@ -53,6 +53,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
     List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
+    List<String> documentHeaders = projectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
+    List<String> documentProperties = projectProperties + ['name', 'attribution', 'filename', 'role']
 
     XlsExporter exporter
 
@@ -85,6 +87,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportProject(project)
         exportOutputTargets(project)
         exportSites(project)
+        exportDocuments(project)
         exportActivities(project, activitiesModel, processor)
         exportRisks(project)
         exportMeriPlan(project)
@@ -100,9 +103,7 @@ class ProjectXlsExporter extends ProjectExporter {
             geo.each { facet ->
                 Object value = props[facet]
                 if (value instanceof List) {
-                    value.eachWithIndex { i, val ->
-                        geoData[facet] << val
-                    }
+                    geoData[facet].addAll(value)
                 }
                 else {
                     geoData[facet] << value
@@ -172,7 +173,7 @@ class ProjectXlsExporter extends ProjectExporter {
                     Map props = it.extent?.geometry ?: [:]
                     props?.each { key, value ->
                         if (value instanceof List) {
-                            value.eachWithIndex { i, val ->
+                            value.eachWithIndex { val, i ->
                                 data.put(key+i+'-site', val)
                             }
                         }
@@ -374,6 +375,10 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportAttachments(Map project) {
         List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
         exportList("Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
+    }
+
+    private void exportDocuments(Map project) {
+        exportList("Documents", project, project.documents, documentHeaders, documentProperties)
     }
 
     private void exportReports(Map project) {
