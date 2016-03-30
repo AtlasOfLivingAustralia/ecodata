@@ -74,11 +74,19 @@ class SearchController {
         }
 
         def legendName, index
-        def name =  hit.source[markBy.replaceAll("Facet", "")] ?: hit.source[markBy.replaceAll("Facet", "Name")] ?:""
+        // When fields are indexed, "Facet" or "Name" is appended to the field name.
+        String propertyName = markBy.replaceAll("Facet", "")
 
-        if(name){
+        def facetValue = hit.source[propertyName] ?:""
+
+        if (facetValue) {
+            // Geographic facets will be List typed (as a site can be in more than one state for example)
+            // We have to assign the site to a category, so we'll just pick the first one.
+            if (facetValue instanceof List) {
+                facetValue = facetValue[0]
+            }
             for(int i = 0; i < selectedFacetTerms.size(); i++){
-                if(selectedFacetTerms[i].legendName.equals(name)){
+                if(selectedFacetTerms[i].legendName.equals(facetValue)){
                     legendName = selectedFacetTerms[i].legendName
                     index = selectedFacetTerms[i].index
                     selectedFacetTerms[i].count++
@@ -94,12 +102,16 @@ class SearchController {
         else {
             hit.source.sites.each { site ->
                 if(site.extent?.geometry) {
-                    name =  site.extent?.geometry[markBy.replaceAll("Facet", "")] ?:
-                            site.extent?.geometry[markBy.replaceAll("Facet", "Name")] ?: ""
+                    facetValue =  site.extent?.geometry[propertyName] ?: ""
 
-                    if(name) {
+                    if(facetValue) {
+                        // Geographic facets will be List typed (as a site can be in more than one state for example)
+                        // We have to assign the site to a category, so we'll just pick the first one.
+                        if (facetValue instanceof List) {
+                            facetValue = facetValue[0]
+                        }
                         for(int i = 0; i < selectedFacetTerms.size(); i++){
-                            if(selectedFacetTerms[i].legendName.equals(name)){
+                            if(selectedFacetTerms[i].legendName.equals(facetValue)){
                                 legendName = selectedFacetTerms[i].legendName
                                 index = selectedFacetTerms[i].index
                                 selectedFacetTerms[i].count++
