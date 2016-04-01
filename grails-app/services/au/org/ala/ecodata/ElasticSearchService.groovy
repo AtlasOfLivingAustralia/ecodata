@@ -43,6 +43,7 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
+import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
@@ -1034,38 +1035,6 @@ class ElasticSearchService {
         }
 
         return facetList
-    }
-
-    /**
-     * Generate FilterBuilders from the fq request params
-     *
-     * @param filterList
-     * @return FilterBuilders
-     */
-    def addFacetFilter(filterList) {
-        def fb
-        List repeatFacets = getRepeatFacetList(filterList)
-
-        filterList.each {
-            if (it) {
-                if (!fb) {
-                    fb = FilterBuilders.boolFilter()
-                }
-                def fqs = it.tokenize(":")
-                if (fqs.size() > 1) {
-
-                    if (repeatFacets.find { it == fqs[0] }) {
-                        fb.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    } else {
-                        fb.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    }
-                } else {
-                    fb.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
-                }
-            }
-        }
-
-        fb
     }
 
     /**
