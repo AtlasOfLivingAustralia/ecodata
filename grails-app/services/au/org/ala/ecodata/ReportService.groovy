@@ -105,18 +105,15 @@ class ReportService {
         }
 
         def outputData = results.findAll{it.results}
-        [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects]]
+        [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
-    private def aggregateActivity (aggregator, activity) {
+    private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
 
         Output.withNewSession {
             def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
-            outputs.each { output ->
-                output.activity = activity
-                aggregator.aggregate(output)
-            }
-
+            activity.outputs = outputs
+            aggregator.aggregate(activity)
         }
     }
 

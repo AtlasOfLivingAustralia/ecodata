@@ -19,42 +19,67 @@ class ProjectXlsExporter extends ProjectExporter {
     static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
-    List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified', 'State 1', 'State 2', 'State 3', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10', 'Electorate 11', 'Electorate 12', 'Electorate 13', 'Electorate 14', 'Electorate 15']
-    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated', 'state0', 'state1', 'state2', 'elect0', 'elect1', 'elect2', 'elect3', 'elect4', 'elect5', 'elect6', 'elect7', 'elect8', 'elect9', 'elect10', 'elect11', 'elect12', 'elect13', 'elect14']
+    List<String> stateHeaders = (1..3).collect{'State '+it}
+    List<String> stateProperties = (0..2).collect{'state'+it}
 
-    List<String> siteHeaders = projectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'State', 'NRM', 'Electorate 1', 'Electorate 2', 'Electorate 3', 'Electorate 4', 'Electorate 5', 'Electorate 6', 'Electorate 7', 'Electorate 8', 'Electorate 9', 'Electorate 10', 'Electorate 11', 'Electorate 12', 'Electorate 13', 'Electorate 14', 'Electorate 15','Last Modified']
-    List<String> siteProperties = projectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'state0-site', 'nrm0-site', 'elect0-site', 'elect1-site', 'elect2-site', 'elect3-site', 'elect4-site', 'elect5-site', 'elect6-site', 'elect7-site', 'elect8-site', 'elect9-site', 'elect10-site', 'elect11-site', 'elect12-site', 'elect13-site', 'elect14-site', 'lastUpdated']
-    List<String> commonActivityHeaders = projectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = projectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
-    List<String> outputTargetHeaders = projectHeaders + ['Output Target Measure', 'Target', 'Units']
-    List<String> outputTargetProperties = projectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
-    List<String> risksAndThreatsHeaders = projectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
-    List<String> risksAndThreatsProperties = projectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
-    List<String> budgetHeaders = projectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
-    List<String> budgetProperties = projectProperties + ['investmentArea', 'budgetDescription',  '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
+    List<String> electorateHeaders = (1..15).collect{'Electorate '+it}
+    List<String> electorateProperties = (0..14).collect{'elect'+it}
+
+    List<String> projectStateHeaders = (1..5).collect{'State '+it}
+    List<String> projectStateProperties = (0..4).collect{'state'+it}
+
+    List<String> projectElectorateHeaders = (1..40).collect{'Electorate '+it}
+    List<String> projectElectorateProperties = (0..39).collect{'elect'+it}
+
+    List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified']
+    List<String> commonProjectPropertiesWithoutSites =  ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
+
+    List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
+    List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
+
+    List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders + projectElectorateHeaders
+    List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties + projectElectorateProperties
+
+    List<String> siteStateHeaders = (1..5).collect{'State '+it}
+    List<String> siteStateProperties = (0..4).collect{'state'+it+'-site'}
+
+    List<String> siteElectorateHeaders = (1..40).collect{'Electorate '+it}
+    List<String> siteElectorateProperties = (0..39).collect{'elect'+it+'-site'}
+
+    List<String> siteHeaders = commonProjectHeaders + ['Site ID', 'Name', 'Description', 'lat', 'lon', 'Last Modified', 'NRM'] + siteStateHeaders + siteElectorateHeaders
+    List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
+
+    List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
+    List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Units']
+    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
+    List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
+    List<String> risksAndThreatsProperties = commonProjectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
+    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
+    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'budgetDescription', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
     List<String> assetsAddressed = ['Natural/Cultural assets managed','Threatened Species', 'Threatened Ecological Communities',
         'Migratory Species', 'Ramsar Wetland', 'World Heritage area', 'Community awareness/participation in NRM', 'Indigenous Cultural Values',
         'Indigenous Ecological Knowledge', 'Remnant Vegetation', 'Aquatic and Coastal systems including wetlands', 'Not Applicable']
-    List<String> outcomesHeaders = projectHeaders + ['Outcomes'] + assetsAddressed
-    List<String> outcomesProperties = projectProperties + ['outcomes'] + assetsAddressed
-    List<String> monitoringHeaders = projectHeaders + ['Monitoring Indicators', 'Monitoring Approach']
-    List<String> monitoringProperties = projectProperties + ['indicator','approach']
-    List<String> projectPartnershipHeaders = projectHeaders + ['Partner name', 'Nature of partnership', 'Type of organisation']
-    List<String> projectPartnershipProperties = projectProperties + ['data1', 'data2', 'data3']
-    List<String> projectImplementationHeaders = projectHeaders + ['Project implementation / delivery mechanism']
-    List<String> projectImplementationProperties = projectProperties + ['implementation']
-    List<String> keyEvaluationQuestionHeaders = projectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
-    List<String> keyEvaluationQuestionProperties = projectProperties + ['data1', 'data2']
-    List<String> prioritiesHeaders = projectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment']
-    List<String> prioritiesProperties = projectProperties + ['data1', 'data2', 'data3']
-    List<String> whsAndCaseStudyHeaders = projectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
-    List<String> whsAndCaseStudyProperties = projectProperties + ['obligations', 'policies', 'caseStudy']
-    List<String> attachmentHeaders = projectHeaders + ['Title', 'Attribution', 'File name']
-    List<String> attachmentProperties = projectProperties + ['name', 'attribution', 'filename']
-    List<String> reportHeaders = projectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
-    List<String> reportProperties = projectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
-    List<String> documentHeaders = projectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
-    List<String> documentProperties = projectProperties + ['name', 'attribution', 'filename', 'role']
+    List<String> outcomesHeaders = commonProjectHeaders + ['Outcomes'] + assetsAddressed
+    List<String> outcomesProperties = commonProjectProperties + ['outcomes'] + assetsAddressed
+    List<String> monitoringHeaders = commonProjectHeaders + ['Monitoring Indicators', 'Monitoring Approach']
+    List<String> monitoringProperties = commonProjectProperties + ['indicator', 'approach']
+    List<String> projectPartnershipHeaders = commonProjectHeaders + ['Partner name', 'Nature of partnership', 'Type of organisation']
+    List<String> projectPartnershipProperties = commonProjectProperties + ['data1', 'data2', 'data3']
+    List<String> projectImplementationHeaders = commonProjectHeaders + ['Project implementation / delivery mechanism']
+    List<String> projectImplementationProperties = commonProjectProperties + ['implementation']
+    List<String> keyEvaluationQuestionHeaders = commonProjectHeaders + ['Project Key evaluation question (KEQ)', 'How will KEQ be monitored?']
+    List<String> keyEvaluationQuestionProperties = commonProjectProperties + ['data1', 'data2']
+    List<String> prioritiesHeaders = commonProjectHeaders + ['Document name', 'Relevant section', 'Explanation of strategic alignment']
+    List<String> prioritiesProperties = commonProjectProperties + ['data1', 'data2', 'data3']
+    List<String> whsAndCaseStudyHeaders = commonProjectHeaders + ['Are you aware of, and compliant with, your workplace health and safety legislation and obligations', 'Do you have appropriate policies and procedures in place that are commensurate with your project activities?', 'Are you willing for your project to be used as a case study by the Department?']
+    List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
+    List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
+    List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
+    List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
+    List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
+    List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
+    List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
 
     XlsExporter exporter
 

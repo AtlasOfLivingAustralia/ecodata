@@ -43,6 +43,7 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
+import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
@@ -919,32 +920,11 @@ class ElasticSearchService {
 
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params)
-
-        String sourceQuery
-        // add query
-        if (geoSearchCriteria) {
-            // geo shape filters are not supported by the queryString syntax, so we need to create a filteredQuery
-            sourceQuery = filteredQuery(queryStringQuery(query),   buildGeoFilter(geoSearchCriteria))
-        } else if(params.terms) {
-            // At this stage search this is only added for site favourite search
-            // In the future the geo and term search could be combined together as per new business requirements
-            sourceQuery = filteredQuery(
-                    queryStringQuery(query),
-                    FilterBuilders.termsFilter(params.terms.field, params.terms.values))
-        } else {
-            sourceQuery = queryStringQuery(query)
-        }
-        source.query(sourceQuery)
+        source.query(buildQuery(query, params, geoSearchCriteria))
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
             source.facet(it)
-        }
-
-        // handle facet filter
-        if (params.fq) {
-            log.debug "fq detected: ${params.fq}"
-            source.postFilter(buildFilters(params.fq))
         }
 
         if (params.highlight) {
@@ -958,6 +938,32 @@ class ElasticSearchService {
         request.source(source)
 
         return request
+    }
+
+    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null) {
+        QueryBuilder queryBuilder
+        List filters = []
+        if (params.fq) {
+            filters << buildFilters(params.fq)
+        }
+        if (geoSearchCriteria) {
+            filters << buildGeoFilter(geoSearchCriteria)
+        }
+        if (params.terms) {
+            filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
+        }
+
+        if (filters) {
+            FilterBuilder fb = filters[0]
+            for (int i=1; i<filters.size(); i++) {
+                fb = FilterBuilders.andFilter(filters[i])
+            }
+            queryBuilder = filteredQuery(queryStringQuery(query), fb)
+        }
+        else {
+            queryBuilder = queryStringQuery(query)
+        }
+        queryBuilder
     }
 
     private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria) {
@@ -1003,7 +1009,7 @@ class ElasticSearchService {
      * @param filters
      * @return facetList
      */
-    def addFacets(facets, filters, flimit, fsort) {
+    List addFacets(facets, filters, flimit, fsort) {
         // use FacetBuilders
         // e.g. FacetBuilders.termsFacet("f1").field("field")
         log.debug "filters = $filters; flimit = ${flimit}"
@@ -1020,55 +1026,15 @@ class ElasticSearchService {
             fsort = TermsFacet.ComparatorType.COUNT
         }
 
-        def facetList = []
-        def filterList = getFilterList(filters)
+        List facetList = []
 
         if (facets) {
             facets.split(",").each {
-                facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).facetFilter(addFacetFilter(filterList)))
+                facetList.add(FacetBuilders.termsFacet(it).field(it).size(flimit).order(fsort))
             }
-        } else {
-
-            def defaultFacets = ['typeFacet', 'className', 'organisationFacet', 'stateFacet', 'lgaFacet', 'nrmFacet']
-            defaultFacets.each { facet ->
-                facetList.add(FacetBuilders.termsFacet(facet).field(facet).size(flimit).order(fsort).facetFilter(addFacetFilter(filterList)))
-            }
-
         }
 
         return facetList
-    }
-
-    /**
-     * Generate FilterBuilders from the fq request params
-     *
-     * @param filterList
-     * @return FilterBuilders
-     */
-    def addFacetFilter(filterList) {
-        def fb
-        List repeatFacets = getRepeatFacetList(filterList)
-
-        filterList.each {
-            if (it) {
-                if (!fb) {
-                    fb = FilterBuilders.boolFilter()
-                }
-                def fqs = it.tokenize(":")
-                if (fqs.size() > 1) {
-
-                    if (repeatFacets.find { it == fqs[0] }) {
-                        fb.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    } else {
-                        fb.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    }
-                } else {
-                    fb.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
-                }
-            }
-        }
-
-        fb
     }
 
     /**
@@ -1077,7 +1043,7 @@ class ElasticSearchService {
      * @param filters
      * @return
      */
-    def buildFilters(filters) {
+    BoolFilterBuilder buildFilters(filters) {
         // see http://www.elasticsearch.org/guide/reference/java-api/query-dsl-filters/
         //log.debug "filters (fq) = ${filters} - type: ${filters.getClass().name}"
 
