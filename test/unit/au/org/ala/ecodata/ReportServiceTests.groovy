@@ -161,7 +161,7 @@ class ReportServiceTests extends TestCase {
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 1, results.outputData[0].results[2].count
 
-        assertEquals 3, results.metadata.activities
+        assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
 
 
@@ -235,7 +235,7 @@ class ReportServiceTests extends TestCase {
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 2, results.outputData[0].results[2].count
 
-        assertEquals 3, results.metadata.activities
+        assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
 
     }

@@ -345,13 +345,13 @@ class ProjectService {
                 if (target.outcomeTarget) {
                     return
                 }
-                def score = outputSummary.find{it.score.isOutputTarget && it.score.outputName == target.outputLabel && it.score.label == target.scoreLabel}
+                def score = outputSummary.find{it.score.isOutputTarget && it.score.label == target.scoreLabel}
                 if (score) {
                     score['target'] = target.target
                 } else {
                		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
                			// one in containing the target.
-                    score = toAggregate.find{it.score?.outputName == target.outputLabel && it.score?.label == target.scoreLabel}
+                    score = toAggregate.find{it.score?.label == target.scoreLabel}
                     if (score) {
                         outputSummary << [score:score.score, target:target.target]
                     } else {

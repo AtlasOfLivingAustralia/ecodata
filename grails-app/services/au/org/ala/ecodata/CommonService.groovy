@@ -8,7 +8,7 @@ import java.text.SimpleDateFormat
 class CommonService {
 
     //static transactional = false
-    def grailsApplication
+    def grailsApplication, cacheService
 
     static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
@@ -77,23 +77,32 @@ class CommonService {
     }
 
     def checkApiKey(key) {
-        // try the preferred api key store first
-        def url = grailsApplication.config.security.apikey.serviceUrl + key
-        try {
-            def conn = new URL(url).openConnection()
-            if (conn.getResponseCode() == 200) {
-                def resp = JSON.parse(conn.content.text as String)
-                if (!resp.valid) {
+        boolean error = false
+        String cacheKey = 'apikey-'+key
+        Map result = cacheService.get(cacheKey, {
+            // try the preferred api key store first
+            def url = grailsApplication.config.security.apikey.serviceUrl + key
+            try {
+                def conn = new URL(url).openConnection()
+                if (conn.getResponseCode() == 200) {
+                    def resp = JSON.parse(conn.content.text as String)
+                    if (!resp.valid) {
+                        log.info "Rejected change - " + (key ? "using key ${key}" : "no key present")
+                    }
+                    return resp
+                } else {
                     log.info "Rejected change - " + (key ? "using key ${key}" : "no key present")
+                    return [valid:false]
                 }
-                return resp
-            } else {
-                log.info "Rejected change - " + (key ? "using key ${key}" : "no key present")
+            } catch (Exception e) {
+                error = true
+                log.info "Failed to lookup key ${key}"
                 return [valid:false]
             }
-        } catch (Exception e) {
-            log.info "Failed to lookup key ${key}"
-            return [valid:false]
+        })
+        if (error) {
+            cacheService.clear(cacheKey)
         }
+        result
     }
 }

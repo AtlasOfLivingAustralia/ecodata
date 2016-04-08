@@ -7,7 +7,7 @@ package au.org.ala.ecodata.reporting
 class GroupingAggregator {
 
     Map<String, List> aggregatorsByGroup
-    def metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet()]
+    def metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
 
 
     ReportGroups.GroupingStrategy groupingStrategy
@@ -39,24 +39,32 @@ class GroupingAggregator {
         aggregators
     }
 
-    def aggregate(output) {
+    def aggregate(Map activity) {
 
-        updateMetadata(output)
+        updateMetadata(activity)
 
-        List aggregrators = aggregatorFor(output)
+        activity.outputs.each { output ->
+            output.activity = activity
+            List aggregrators = aggregatorFor(output)
 
-        aggregrators.each {
-            it.aggregate(output)
+            aggregrators.each {
+                it.aggregate(output)
+            }
         }
+
     }
 
-    private def updateMetadata(output) {
+    private def updateMetadata(Map activity) {
 
-       metadata.distinctActivities << output.activity.activityId
+        metadata.distinctActivities << activity.activityId
+        if (!metadata.activitiesByType[activity.type]) {
+            metadata.activitiesByType[activity.type] = 0
+        }
+        metadata.activitiesByType[activity.type] = metadata.activitiesByType[activity.type] + 1
 
-        metadata.distinctProjects << output.activity?.projectId
-        if (output.activity?.sites) {
-            metadata.distinctSites << output.activity.sites.siteId
+        metadata.distinctProjects << activity?.projectId
+        if (activity?.sites) {
+            metadata.distinctSites << activity.sites.siteId
         }
     }
 
