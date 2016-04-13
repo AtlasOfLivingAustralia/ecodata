@@ -484,7 +484,8 @@ class ProjectService {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                     }
 
-                    if (SciStarterConverter.canImportProject(project)) {
+                    // switch off the can import project test
+                    if (true || SciStarterConverter.canImportProject(project)) {
                         if (project.origin && project.origin == 'atlasoflivingaustralia') {
                             // ignore projects SciStarter imported from Biocollect
                         } else {
