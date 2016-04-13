@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.Score
+import grails.test.GrailsMock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin
 import junit.framework.TestCase
@@ -19,11 +20,15 @@ class ReportServiceTests extends TestCase {
     def setupInputs(outputs, activities, outputData) {
 
         def model = [outputs:outputs]
+        def dataModel = [dataModel:[[type:'string', name:'banana']]]
 
         Output.metaClass.static.withNewSession = {Closure c -> c.call() }
 
-        def metadataService = mockFor(MetadataService)
+        GrailsMock metadataService = mockFor(MetadataService, true)
         metadataService.demand.activitiesModel {->model}
+        metadataService.demand.getOutputDataModel() {outputName ->
+            dataModel
+        }
         service.metadataService = metadataService.createMock()
 
         def activityDocs = activities.collect{[source:it]}
@@ -83,14 +88,14 @@ class ReportServiceTests extends TestCase {
         assertEquals 1, results.outputData.results.size()
 
         def expected = 1+2+5
-        assertEquals expected as Double, results.outputData[0].results[0].result, 0
-        assertEquals "theme1", results.outputData[0].results[0].group
-        assertEquals 3, results.outputData[0].results[0].count
+        assertEquals expected as Double, results.outputData[0].results[0].result[0].result.result, 0
+        assertEquals "theme1", results.outputData[0].results[0].result[0].group
+        assertEquals 3, results.outputData[0].results[0].result[0].result.count
 
         expected = 3+4
-        assertEquals expected as Double, results.outputData[0].results[1].result, 0
-        assertEquals "theme2", results.outputData[0].results[1].group
-        assertEquals 2, results.outputData[0].results[1].count
+        assertEquals expected as Double, results.outputData[0].results[0].result[1].result.result, 0
+        assertEquals "theme2", results.outputData[0].results[0].result[1].group
+        assertEquals 2, results.outputData[0].results[0].result[1].result.count
 
         assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
@@ -118,9 +123,10 @@ class ReportServiceTests extends TestCase {
         assertEquals 1, results.outputData.results.size()
 
         def expected = 1+2+5
-        assertEquals expected as Double, results.outputData[0].results[0].result, 0
-        assertEquals "", results.outputData[0].results[0].group // Groups are removed from filtered scores.
-        assertEquals 3, results.outputData[0].results[0].count
+
+        assertEquals expected as Double, results.outputData[0].results[0].result[0].result.result, 0
+        assertEquals "", results.outputData[0].results[0].result[0].group // Groups are removed from filtered scores.
+        assertEquals 3, results.outputData[0].results[0].result[0].result.count
 
         assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
@@ -149,15 +155,15 @@ class ReportServiceTests extends TestCase {
         assertEquals(1, results.outputData.size())
         assertEquals 3, results.outputData[0].results.size()
 
-        assertEquals new Double(11), results.outputData[0].results[0].result, 0
-        assertEquals "group1", results.outputData[0].results[0].group
+        assertEquals new Double(11), results.outputData[0].results[0].result[0].result.result, 0
+        assertEquals "group1", results.outputData[0].results[0].result[0].result.group
         assertEquals 2, results.outputData[0].results[0].count
 
-        assertEquals new Double(14), results.outputData[0].results[1].result, 0
-        assertEquals "group2", results.outputData[0].results[1].group
-        assertEquals 2, results.outputData[0].results[1].count
+        assertEquals new Double(14), results.outputData[0].results[1].result[0].result.result, 0
+        assertEquals "group2", results.outputData[0].results[1].result[0].result.group
+        assertEquals 2, results.outputData[0].results[1].result[0].result.count
 
-        assertEquals new Double(3), results.outputData[0].results[2].result, 0
+        assertEquals new Double(3), results.outputData[0].results[2].result[0].result.result, 0
         assertEquals "group3", results.outputData[0].results[2].group
         assertEquals 1, results.outputData[0].results[2].count
 

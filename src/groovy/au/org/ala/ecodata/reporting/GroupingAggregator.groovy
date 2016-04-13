@@ -4,52 +4,50 @@ package au.org.ala.ecodata.reporting
  * Categorises an activity into a group based on a supplied grouping criteria then delegates to the appropriate
  * Aggregator.
  */
-class GroupingAggregator {
+class GroupingAggregator implements AggregatorIf {
 
     Map<String, List> aggregatorsByGroup
+
     def metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
 
-
+    AggregatorFactory factory = new AggregatorFactory()
     ReportGroups.GroupingStrategy groupingStrategy
 
+    AggregrationConfig config
 
-    public GroupingAggregator(groupingSpec, List scores) {
 
-        this.groupingStrategy = new AggregatorBuilder().groupingStategyFor(groupingSpec)
+    public GroupingAggregator(AggregrationConfig config) {
+
+        this.config = config
+        this.groupingStrategy = factory.createGroupingStategy(config.groups)
 
         aggregatorsByGroup = new LinkedHashMap().withDefault { key ->
-
-            newAggregator(scores)
-        }
-
-        if (groupingSpec?.buckets) {
-            groupingStrategy.groups().each { aggregatorsByGroup.get(it) }  // Prepop the groups in the correct order.
+            newAggregator(config)
         }
     }
 
-    private List newAggregator(scores) {
+    private List<AggregatorIf> newAggregator(AggregrationConfig config) {
         List<Aggregator> aggregators = []
 
-        def groupedScores = scores.groupBy { it.score.label }
 
-        groupedScores.each { k, v ->
-            aggregators << new AggregatorBuilder().scores(v.collect { it.score }).build()
+        if (config.score) {
+            aggregators << factory.createAggregator(config.label, config.score)
+        }
+        config.children?.each { child ->
+            aggregators << factory.createAggregator(child)
         }
 
         aggregators
     }
 
-    def aggregate(Map activity) {
+    void aggregate(Map output) {
 
-        updateMetadata(activity)
+        updateMetadata(output.activity)
 
-        activity.outputs.each { output ->
-            output.activity = activity
-            List aggregrators = aggregatorFor(output)
+        List<AggregatorIf> aggregrators = aggregatorFor(output)
 
-            aggregrators.each {
-                it.aggregate(output)
-            }
+        aggregrators.each {
+            it.aggregate(output)
         }
 
     }
@@ -68,12 +66,22 @@ class GroupingAggregator {
         }
     }
 
-    def results() {
+    AggregrationResult result() {
 
-        def results = aggregatorsByGroup.collect {k, v ->  [group:k, results: v.collect{it.results()}]}
+        def results = aggregatorsByGroup.collect { String group, List<AggregatorIf> aggregators ->
 
+            def result = [group:group]
+            if (config.score) {
+                AggregatorIf agg = aggregators.remove(0)
+                result.result = agg.result()
+            }
+            result.results = aggregators.collect{it.result()}
+            result
+        }
 
-        [metadata:metadata, results:results]
+        def result = new AggregrationResult([metadata:metadata, result:results])
+        println result
+        result
     }
 
     /**
@@ -83,7 +91,7 @@ class GroupingAggregator {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    List aggregatorFor(output) {
+    List<AggregatorIf> aggregatorFor(output) {
 
         def group = groupingStrategy.group(output)
 

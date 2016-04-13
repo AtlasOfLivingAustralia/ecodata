@@ -188,7 +188,7 @@ class GeometryUtils {
     static Map scale(Map geom) {
 
         Geometry input = geoJsonMapToGeometry(geom)
-        Geometry output = input.buffer(-0.01)
+        Geometry output = input.buffer(-0.06)
         geometryToGeoJsonMap(output)
     }
 

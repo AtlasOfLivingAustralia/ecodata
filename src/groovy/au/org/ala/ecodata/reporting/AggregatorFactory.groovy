@@ -4,31 +4,20 @@ package au.org.ala.ecodata.reporting
  * An AggregationBuilder can create instances of the Aggregator class based on the supplied information about
  * how the aggregation should be performed.
  */
-class AggregatorBuilder {
+class AggregatorFactory {
 
-    Map groupingSpec
-    List<Score> scores = []
-
-    public AggregatorBuilder groupBy(groupingSpec) {
-        this.groupingSpec = groupingSpec
-        this
-    }
-
-    public AggregatorBuilder scores(List<Score> scores) {
-        this.scores = scores
-        this
-    }
-
-    public AggregatorBuilder accumulate(Score score) {
-        this.scores << score
-    }
-
-
-    public Aggregator build() {
-        if (!scores) {
-            throw new IllegalArgumentException("At least one score must be supplied.")
+    public AggregatorIf createAggregator(AggregrationConfig config) {
+        if (config.groups) {
+            // create GroupingAggregator
+            new GroupingAggregator(config)
         }
-        return new Aggregator(scores[0].label, scores, this)
+        else if (config.children) {
+            // create CompositeAggregator
+            new CompositeAggregator(config.children)
+        }
+        else {
+            return createAggregator(config.label, config.score)
+        }
     }
 
     /**
@@ -37,27 +26,26 @@ class AggregatorBuilder {
      * @param group the value of the group that the Aggregator is aggregating.
      * @return a new instance of OutputAggregator
      */
-    def createAggregator(label, aggregationType, group = '') {
+    AggregatorIf createAggregator(String label, Aggregration config) {
 
-        def params = [label:label, group:group]
-        switch (aggregationType) {
+       switch (config.type) {
             case Score.AGGREGATION_TYPE.SUM.name():
-                return new Aggregators.SummingAggegrator(params)
+                return new Aggregators.SummingAggegrator(label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.COUNT.name():
-                return new Aggregators.CountingAggregator(params)
+                return new Aggregators.CountingAggregator(label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.AVERAGE.name():
-                return new Aggregators.AverageAggregator(params)
+                return new Aggregators.AverageAggregator(label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.HISTOGRAM.name():
-                return new Aggregators.HistogramAggregator(params)
+                return new Aggregators.HistogramAggregator(label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.SET.name():
-                return new Aggregators.SetAggregator(params)
+                return new Aggregators.SetAggregator(label, config.property)
                 break;
             default:
-                throw new IllegalAccessException('Invalid aggregation type: '+aggregationType)
+                throw new IllegalAccessException('Invalid aggregation type: '+config.type)
         }
 
 
@@ -76,13 +64,16 @@ class AggregatorBuilder {
      * }
      * @return
      */
-    ReportGroups.GroupingStrategy groupingStategyFor(groupingSpec) {
+    ReportGroups.GroupingStrategy createGroupingStategy(GroupingConfig groupingSpec) {
 
         if (!groupingSpec) {
             return new ReportGroups.NotGrouped()
         }
 
         final String property = groupingSpec.property
+        if (!property || property == '*') {
+            return new ReportGroups.NotGrouped()
+        }
 
         switch (groupingSpec.entity) {
 
@@ -105,11 +96,11 @@ class AggregatorBuilder {
 
     static Map cachedStrategies = [:]
 
-    private String buildCacheKey(String nestedProperty, groupingSpec) {
+    private String buildCacheKey(String nestedProperty, GroupingConfig groupingSpec) {
         def key = groupingSpec.type + ':' + nestedProperty
 
-        if (groupingSpec.filterBy) {
-            key += ':'+groupingSpec.filterBy
+        if (groupingSpec.filterValue) {
+            key += ':'+groupingSpec.filterValue
         }
         if (groupingSpec.buckets) {
             key += ':'+groupingSpec.buckets.join(',')
@@ -117,7 +108,7 @@ class AggregatorBuilder {
         key
     }
 
-    def buildGroupingStrategy(String nestedProperty, groupingSpec) {
+    def buildGroupingStrategy(String nestedProperty, GroupingConfig groupingSpec) {
 
         def key = buildCacheKey(nestedProperty, groupingSpec)
             if (cachedStrategies.containsKey(key)) {
@@ -135,7 +126,7 @@ class AggregatorBuilder {
                 strategy = new ReportGroups.DateGroup(nestedProperty, groupingSpec.buckets, groupingSpec.format)
                 break
             case 'filter':
-                strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterBy)
+                strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterValue)
                 break
             case 'discrete':
             default:
