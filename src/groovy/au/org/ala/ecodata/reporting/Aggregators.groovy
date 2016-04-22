@@ -2,9 +2,6 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.log4j.Logger
 
-import java.text.NumberFormat
-import java.text.ParseException
-
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
@@ -12,14 +9,21 @@ class Aggregators {
 
     def log = Logger.getLogger(getClass())
 
-    public static abstract class OutputAggregator {
+    public static abstract class OutputAggregator implements AggregatorIf {
 
         String group
-        int count;
+        int count = 0
         String label
-        PropertyAccessor propertyAccessor = new PropertyAccessor('')
 
-        public void aggregateValue(value) {
+        PropertyAccessor propertyAccessor
+
+        public OutputAggregator(String label, String property) {
+            this.label = label
+            propertyAccessor = new PropertyAccessor('data.'+property)
+        }
+
+        public void aggregate(Map values) {
+            Object value = propertyAccessor.getPropertyValue(values)
             if (value != null) {
                 count++;
                 doAggregation(value);
@@ -37,7 +41,10 @@ class Aggregators {
      */
     static class AverageAggregator extends OutputAggregator {
 
-        double total
+        public AverageAggregator(String label, String property) {
+            super(label, property)
+        }
+        double total = 0
 
         public void doAggregation(value) {
             def numericValue = propertyAccessor.getValueAsNumeric(value)
@@ -56,11 +63,15 @@ class Aggregators {
      */
     static class SummingAggegrator extends OutputAggregator {
 
-        double total
+        double total = 0
+        public SummingAggegrator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
 
             def numericValue = propertyAccessor.getValueAsNumeric(value)
+            println numericValue
             if (numericValue) {
                 total += numericValue
             }
@@ -77,6 +88,9 @@ class Aggregators {
      */
     static class CountingAggregator extends OutputAggregator {
 
+        public CountingAggregator(String label, String property) {
+            super(label, property)
+        }
         public void doAggregation(output) {}
 
         public AggregrationResult result() {
@@ -92,6 +106,9 @@ class Aggregators {
     static class HistogramAggregator extends OutputAggregator {
 
         Map histogram = [:].withDefault { 0 };
+        public HistogramAggregator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
 
@@ -119,6 +136,9 @@ class Aggregators {
     static class SetAggregator extends OutputAggregator {
 
         List values = []
+        public SetAggregator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
             values << value
@@ -129,33 +149,5 @@ class Aggregators {
             return new AggregrationResult([label:label, units:"", group:group, count:count, result:values])
         }
     }
-
-
-    /**
-     * Defines the format of the result of the aggregation
-     */
-    static class AggregrationResult {
-        /** The score label */
-        String label
-
-        /** The units of the aggregation */
-        String units
-        /** The group that was aggregrated */
-        String group
-
-        int count;
-
-        /**
-         * The result of the aggregation. Normally will be a numerical value (e.g. for a sum etc) or a List (for a collecting aggregator)
-         */
-        def result
-
-        public String toString() {
-            return "$label:,count=$count,result=$result"
-        }
-    }
-
-
-
 
 }

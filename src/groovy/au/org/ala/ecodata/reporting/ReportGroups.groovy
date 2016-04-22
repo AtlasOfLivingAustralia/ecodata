@@ -45,7 +45,7 @@ class ReportGroups {
         }
 
         def group(data) {
-            def group = super.propertyAccessor.getPropertyValue(data)
+            def group = propertyAccessor.getPropertyValue(data)
             if (group instanceof List) { // values are lists when the data is collected via multi select
                 return group.contains(filterValue) ? Aggregator.DEFAULT_GROUP : null
             }

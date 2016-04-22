@@ -13,9 +13,9 @@ class Aggregator {
 
     List<Score> scores = []
     String title
-    AggregatorBuilder builder
+    AggregatorFactory builder
 
-    public Aggregator(String title, List<Score> scores, AggregatorBuilder builder) {
+    public Aggregator(String title, List<Score> scores, AggregatorFactory builder) {
 
         this.scores = scores
         this.title = title

@@ -1,5 +1,13 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.metadata.OutputModelProcessor
+import au.org.ala.ecodata.reporting.AggregatorFactory
+import au.org.ala.ecodata.reporting.AggregatorIf
+import au.org.ala.ecodata.reporting.Aggregration
+import au.org.ala.ecodata.reporting.AggregrationConfig
 import au.org.ala.ecodata.reporting.GroupingAggregator
+import au.org.ala.ecodata.reporting.GroupingConfig
 import au.org.ala.ecodata.reporting.PropertyAccessor
 import au.org.ala.ecodata.reporting.Score
 import au.org.ala.ecodata.reporting.ShapefileBuilder
@@ -65,7 +73,7 @@ class ReportService {
         aggregate(filters, null, report.scores, report.groupingSpec)
     }
 
-    def queryPaginated(List filters, String searchTerm, GroupingAggregator aggregator, Closure action) {
+    def queryPaginated(List filters, String searchTerm, AggregatorIf aggregator, Closure action) {
 
         // Only dealing with approved activities.
 
@@ -91,18 +99,28 @@ class ReportService {
         aggregate(filters, null, buildReportSpec())
     }
 
-    def aggregate(List filters, String searchTerm, toAggregate, topLevelGrouping = null) {
+    def aggregate(List filters, String searchTerm, List<Map<String, Score>> toAggregate, topLevelGrouping = null) {
 
-        GroupingAggregator aggregator = new GroupingAggregator(topLevelGrouping, toAggregate)
+        List<AggregrationConfig> config = toAggregate.collect {
+            Score score = it.score
+
+            AggregrationConfig aggConfig = new AggregrationConfig(score:new Aggregration([label:score.label, type:score.aggregationType?.name(), property:score.name]))
+            if (score.filterBy || score.groupBy) {
+                Map props = score.defaultGrouping()
+                aggConfig.groups = new GroupingConfig([property:props.property, filterValue:props.filterBy, type:props.type, entity:props.entity])
+            }
+
+            aggConfig
+        }
+        AggregrationConfig topLevelConfig = new AggregrationConfig(children:config, groups:topLevelGrouping?:new GroupingConfig())
+
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(topLevelConfig)
 
         queryPaginated(filters, searchTerm, aggregator, this.&aggregateActivity)
 
-        def allResults = aggregator.results()
+        def allResults = aggregator.result()
         def metadata = allResults.metadata
-        def results = allResults.results
-        if (!topLevelGrouping) {
-            results = results?results[0].results:[]
-        }
+        def results = allResults.result
 
         def outputData = results.findAll{it.results}
         [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
@@ -112,8 +130,15 @@ class ReportService {
 
         Output.withNewSession {
             def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
-            activity.outputs = outputs
-            aggregator.aggregate(activity)
+            outputs.each { output ->
+                OutputMetadata outputMetadata = new OutputMetadata(metadataService.getOutputDataModel(output.name))
+                List outputData = new OutputModelProcessor().flatten(output, outputMetadata, true)
+
+                outputData.each {
+                    it.activity = activity
+                    aggregator.aggregate(it)
+                }
+            }
         }
     }
 
