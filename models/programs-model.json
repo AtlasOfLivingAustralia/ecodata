@@ -277,7 +277,7 @@
     },
     {
         "weekDaysToCompleteReport": 0,
-        "reportingPeriod": "3",
+        "reportingPeriod": "6",
         "activities": [
             "Green Army - Monthly project status report",
             "Green Army - Quarterly project report",
