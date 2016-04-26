@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import grails.transaction.Transactional
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.commons.GrailsApplication
 
 /**
@@ -14,10 +16,19 @@ class SpatialService {
 
     final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
     final String PID_INTERSECT_URL_PREFIX = "/ws/intersect/object/"
+    final String LOOKUP_TABLE_PATH = "/data/pidIntersectCache.json"
 
     WebService webService
     MetadataService metadataService
     GrailsApplication grailsApplication
+
+    Map lookupTable
+
+    public SpatialService() {
+        JsonSlurper js = new JsonSlurper()
+        js.setType(JsonParserType.CHARACTER_SOURCE)
+        lookupTable = js.parse(SpatialService.getResourceAsStream(LOOKUP_TABLE_PATH))
+    }
 
     /**
      * Invokes the spatial portal layer service to intersect the supplied geojson against a list of fields (layers)
@@ -45,19 +56,26 @@ class SpatialService {
      * Invokes the spatial portal layer service to intersect the geometry of the supplied pid against a list of fields (layers)
      * and returns the names of the objects in each field that intersect with the supplied geometry.
      * @param pid the spatial portal object id
+     * @param fid the field id that identifies the layer the object/pid is related to.
      * @return Map with key = fieldId, value = List<String>, the names of the field objects that intersect with the
      * supplied geometry
      */
-    Map<String,List<String>> intersectPid(String pid) {
+    Map<String,List<String>> intersectPid(String pid, String pidFid = null) {
 
         String url = grailsApplication.config.spatial.baseUrl+PID_INTERSECT_URL_PREFIX
         List<String> fieldIds = metadataService.getSpatialLayerIdsToIntersect()
 
         Map result = [:]
         fieldIds.each { fid ->
-            Object response = webService.getJson(url+fid+"/"+pid)
-            if (response instanceof List) {
-                result[fid] = response
+
+            if (pidFid && lookupTable.get(pidFid)?.get(pid)?.get(fid)) {
+                result[fid] = lookupTable[pidFid][pid][fid].collect{[name:it]}
+            }
+            else {
+                Object response = webService.getJson(url+fid+"/"+pid)
+                if (response instanceof List) {
+                    result[fid] = response
+                }
             }
         }
         convertResponsesToGeographicFacets(result)
@@ -88,6 +106,8 @@ class SpatialService {
         }
         result
     }
+
+
 
 
 }
