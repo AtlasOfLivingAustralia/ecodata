@@ -155,7 +155,13 @@ class DocumentController {
         def props, file = null
         def stream = null
         if (request.respondsTo('getFile')) {
-            file = request.getFile('files')
+            Map files = request.getFileMap()
+            if (files.size() > 1) {
+                render status:400, text: 'Only one file can be attached'
+                return
+            }
+
+            file = files.values()[0]
             props = JSON.parse(params.document)
             if (!props.contentType && file) {
                props.contentType = file.contentType

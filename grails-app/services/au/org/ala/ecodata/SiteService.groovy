@@ -490,20 +490,8 @@ class SiteService {
         switch (site.extent.source) {
             case 'pid':
                 String fid = site.extent.geometry.fid
-                if (fid && fid != 'cl22' && fid != 'cl927') { // Don't do this for states as they are very slow and the results aren't meaningful
-                    geographicFacets =  cacheService.get('metadata-'+fid+'-'+site.extent.geometry.pid, {
-                        // We buffer the polygon so that the intersect doesn't match adjoining objects
-                        // (the intersect matches any other objects that touch the boundaries)
-                        Map geom = geometryAsGeoJson(site)
-                        Map scaled = GeometryUtils.scale(geom)
-                        spatialService.intersectGeometry(scaled)
-                    })
-                    break
-                }
-                else {
-                    geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String)
-                    break
-                }
+                geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String, fid)
+                break
             default:
                 Map geom = geometryAsGeoJson(site)
                 geographicFacets = spatialService.intersectGeometry(geom)

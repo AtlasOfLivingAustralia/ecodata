@@ -1,91 +1,8 @@
 {"programs": [
     {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Biodiversity Fund",
-        "optionalProjectContent": ["Risks and Threats"],
-        "subprograms": [
-            {
-                "startDate": "",
-                "name": "Round 1",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Round 2 - 2013/14",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Round 2 - Northern Landscape Strategy",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Tasmania's Native Forests 2013/14",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Round 2 - Expression of Interest 2013/14",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Reef Rescue 2013/14",
-                "endDate": "",
-                "optionalProjectContent": ["MERI Plan"],
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
-                "activities": []
-            }
-        ],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -126,70 +43,145 @@
             "Training and Skills Development",
             "Fire Management"
         ],
-        "reportingPeriodAlignedToCalendar": true
-    },
-    {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Caring for Our Country 2",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
+        "name": "Biodiversity Fund",
         "subprograms": [
             {
-                "startDate": "",
-                "name": "Regional Delivery 1318",
-                "endDate": "",
-                "optionalProjectContent": [],
                 "themes": [
-                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
-                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
-                    {"name": "Protecting Ramsar sites and values"},
-                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
-                    {"name": "Building natural resource management community skills, knowledge and engagement"},
-                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
                 ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Target Area Grants - 2013/14",
                 "endDate": "",
-                "optionalProjectContent": ["MERI Plan"],
-                "themes": [
-                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
-                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
-                    {"name": "Protecting Ramsar sites and values"},
-                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
-                    {"name": "Building natural resource management community skills, knowledge and engagement"},
-                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Community Environment Grants 1314",
-                "endDate": "",
+                "activities": [],
+                "name": "Round 1",
                 "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Round 2 - 2013/14",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Round 2 - Northern Landscape Strategy",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Tasmania's Native Forests 2013/14",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Round 2 - Expression of Interest 2013/14",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Rescue 2013/14",
+                "optionalProjectContent": ["MERI Plan"],
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": ["Risks and Threats"],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [],
+        "name": "Caring for Our Country 2",
+        "subprograms": [
+            {
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ],
                 "endDate": "",
+                "activities": [],
+                "name": "Regional Delivery 1318",
                 "optionalProjectContent": [],
-                "themes": [{"name": "Protecting the Great Barrier Reef"}],
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Regional Delivery (sustainable agriculture)",
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ],
                 "endDate": "",
+                "activities": [],
+                "name": "Target Area Grants - 2013/14",
+                "optionalProjectContent": ["MERI Plan"],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Community Environment Grants 1314",
                 "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [{"name": "Protecting the Great Barrier Reef"}],
+                "endDate": "",
+                "activities": [],
+                "name": "Reef Rescue 2013/14",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Increase the adoption of sustainable land management practices"},
                     {"name": "Increase the adoption of sustainable fishing practices"},
@@ -200,103 +192,92 @@
                     {"name": "Increase community awareness of natural resources"},
                     {"name": "Regional Land care Facilitator position"}
                 ],
-                "activities": []
+                "endDate": "",
+                "activities": [],
+                "name": "Regional Delivery (sustainable agriculture)",
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Target Area Grants -  Expression of Interest 2013/14",
-                "endDate": "",
                 "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "0210 1318",
-                "endDate": "",
                 "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
+                "startDate": ""
             }
         ],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
+        "weekDaysToCompleteReport": 0,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Project Administration",
+            "Outcomes, Evaluation and Learning - final report",
+            "Progress, Outcomes and Learning - stage report",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
         "name": "Cumberland Plain",
-        "optionalProjectContent": ["Risks and Threats"],
         "subprograms": [{
-            "startDate": "",
-            "name": "Cumberland Plain Projects",
-            "endDate": "",
-            "optionalProjectContent": [],
             "themes": [],
-            "activities": []
+            "endDate": "",
+            "activities": [],
+            "name": "Cumberland Plain Projects",
+            "optionalProjectContent": [],
+            "startDate": ""
         }],
-        "activities": []
+        "optionalProjectContent": ["Risks and Threats"],
+        "isMeritProgramme": true
     },
     {
-        "reportingPeriod": "3",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Green Army",
-        "optionalProjectContent": [],
-        "subprograms": [
-            {
-                "startDate": "2014-06-30T14:00:00Z",
-                "name": "Green Army Round 1",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia's native vegetation"},
-                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
-                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                    {"name": "Protect and conserve Australia's natural, historic and Indigenous heritage"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Green Army Round 2",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Green Army Round 3",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Increase the area , linkages between (Connectivity) and condition of Australia's native vegetation"},
-                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
-                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
-                    {"name": "Protect and conserve Australia 's natural, historic and Indigenous heritage"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Green Army Natural Disaster Recovery Round",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Green Army Round 4",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
-            }
-        ],
+        "reportingPeriod": "6",
         "activities": [
             "Green Army - Monthly project status report",
             "Green Army - Quarterly project report",
@@ -336,52 +317,122 @@
             "Outcomes, Evaluation and Learning - final report",
             "Indigenous Employment and Businesses"
         ],
-        "reportingPeriodAlignedToCalendar": true
+        "name": "Green Army",
+        "subprograms": [
+            {
+                "themes": [
+                    {"name": "Increase the area, linkages between (Connectivity) and condition of Australia's native vegetation"},
+                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                    {"name": "Protect and conserve Australia's natural, historic and Indigenous heritage"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Green Army Round 1",
+                "optionalProjectContent": [],
+                "startDate": "2014-06-30T14:00:00Z"
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Green Army Round 2",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Increase the area , linkages between (Connectivity) and condition of Australia's native vegetation"},
+                    {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
+                    {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
+                    {"name": "Protect and conserve Australia 's natural, historic and Indigenous heritage"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Green Army Round 3",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Green Army Natural Disaster Recovery Round",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Green Army Round 4",
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [],
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Outcomes, Evaluation and Learning - final report",
+            "Progress, Outcomes and Learning - stage report",
+            "Project Administration",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
         "name": "20 Million Trees (NLP)",
+        "subprograms": [{
+            "themes": [],
+            "endDate": "",
+            "activities": [],
+            "name": "Round One",
+            "optionalProjectContent": [],
+            "startDate": ""
+        }],
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
-        "subprograms": [{
-            "startDate": "",
-            "name": "Round One",
-            "endDate": "",
-            "optionalProjectContent": [],
-            "themes": [],
-            "activities": []
-        }],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": true
-    },
-    {
-        "projectDatesContracted": true,
-        "reportingPeriod": "3",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Environmental Stewardship",
-        "optionalProjectContent": ["Risks and Threats"],
-        "subprograms": [{
-            "startDate": "",
-            "name": "Environmental Stewardship 1318",
-            "endDate": "",
-            "optionalProjectContent": [],
-            "themes": [],
-            "activities": []
-        }],
-        "activities": [],
-        "reportingPeriodAlignedToCalendar": false
+        "isMeritProgramme": true
     },
     {
         "weekDaysToCompleteReport": 0,
-        "name": "None",
-        "optionalProjectContent": [],
-        "subprograms": [],
         "activities": [
             "Fauna Survey - general",
             "Flora Survey - general",
@@ -397,192 +448,15 @@
             "TasVeg - Native Vegetation Assessment - Forest Vegetation",
             "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
             "Vegetation Assessment - Bushland Condition Monitoring (SA)"
-        ]
+        ],
+        "name": "None",
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "National Landcare Programme",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
-        "subprograms": [
-            {
-                "startDate": "",
-                "name": "Regional Delivery",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Local Programmes",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "2015-01-31T13:00:00Z",
-                "name": "25th Anniversary Landcare Grants 2014-15",
-                "endDate": "2016-06-29T14:00:00Z",
-                "optionalProjectContent": ["MERI Plan"],
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": [
-                    "Indigenous Employment and Businesses",
-                    "Project Administration",
-                    "Progress, Outcomes and Learning - stage report",
-                    "Outcomes, Evaluation and Learning - final report",
-                    "Fauna Survey - general",
-                    "Flora Survey - general",
-                    "Pest Animal Survey",
-                    "Plant Survival Survey",
-                    "Site Monitoring Plan",
-                    "Water Quality Survey",
-                    "Weed Mapping & Monitoring",
-                    "Vegetation Assessment - Commonwealth government methodology",
-                    "Community Participation and Engagement",
-                    "Debris Removal",
-                    "Disease Management",
-                    "Erosion Management",
-                    "Fencing",
-                    "Conservation Grazing Management",
-                    "Fire Management",
-                    "Heritage Conservation",
-                    "Management Plan Development",
-                    "Management Practice Change",
-                    "Conservation Actions for Species and Communities",
-                    "Pest Management",
-                    "Plant Propagation",
-                    "Public Access and Infrastructure",
-                    "Research",
-                    "Revegetation",
-                    "Seed Collection",
-                    "Site Preparation",
-                    "Water Management",
-                    "Weed Treatment",
-                    "Works Planning and Risk",
-                    "25th Anniversary Landcare Grants - Progress Report",
-                    "25th Anniversary Landcare Grants - Final Report",
-                    "Indigenous Knowledge Transfer",
-                    "Training and Skills Development"
-                ]
-            },
-            {
-                "startDate": "",
-                "name": "20 Million Trees Grants",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "World Heritage",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "Regional Funding",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "activities": [
-                    "Community Grants",
-                    "Weed Mapping & Monitoring",
-                    "Water Quality Survey",
-                    "Vegetation Assessment - Commonwealth government methodology",
-                    "Site Monitoring Plan",
-                    "Plant Survival Survey",
-                    "Pest Animal Survey",
-                    "Progress, Outcomes and Learning - stage report",
-                    "Project Administration",
-                    "Outcomes, Evaluation and Learning - final report",
-                    "Indigenous Employment and Businesses",
-                    "Flora Survey - general",
-                    "Fauna Survey - general",
-                    "Community Participation and Engagement",
-                    "Debris Removal",
-                    "Disease Management",
-                    "Erosion Management",
-                    "Fencing",
-                    "Conservation Grazing Management",
-                    "Fire Management",
-                    "Heritage Conservation",
-                    "Management Plan Development",
-                    "Management Practice Change",
-                    "Conservation Actions for Species and Communities",
-                    "Pest Management",
-                    "Plant Propagation",
-                    "Public Access and Infrastructure",
-                    "Research",
-                    "Revegetation",
-                    "Seed Collection",
-                    "Site Preparation",
-                    "Water Management",
-                    "Weed Treatment",
-                    "Works Planning and Risk",
-                    "Indigenous Knowledge Transfer",
-                    "Training and Skills Development"
-                ]
-            },
-            {
-                "startDate": "",
-                "name": "Landcare Network Grants 2014-15",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [
-                    {"name": "Strategic Outcome 1. Maintain and improve ecosystem services through sustainable management of local and regional landscapes."},
-                    {"name": "Strategic Outcome 2. Increase in the number of farmers and fishers adopting practices that improve the quality of the natural resource base, and the area of land over which those practices are applied."},
-                    {"name": "Strategic Outcome 3. Increase engagement and participation of the community, including landcare, farmers and Indigenous people, in sustainable natural resource management."},
-                    {"name": "Strategic Outcome 4. Increase restoration and rehabilitation of the natural environment, including protecting and conserving nationally and internationally significant species, ecosystems, ecological communities, places and values."}
-                ],
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "name": "20 Million Trees Grants Round 2",
-                "endDate": "",
-                "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
-            }
-        ],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -617,81 +491,401 @@
             "Weed Treatment",
             "Works Planning and Risk",
             "Indigenous Knowledge Transfer",
-            "Training and Skills Development"
+            "Training and Skills Development",
+            "Vegetation Assessment - Commonwealth government methodology"
         ],
-        "reportingPeriodAlignedToCalendar": true
-    },
-    {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Reef Trust",
+        "name": "National Landcare Programme",
+        "subprograms": [
+            {
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Regional Delivery",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Local Programmes",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "2016-06-29T14:00:00Z",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "25th Anniversary Landcare Grants - Progress Report",
+                    "25th Anniversary Landcare Grants - Final Report"
+                ],
+                "name": "25th Anniversary Landcare Grants 2014-15",
+                "optionalProjectContent": ["MERI Plan"],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": "2015-01-31T13:00:00Z"
+            },
+            {
+                "themes": [
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Grants Round 1",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "World Heritage",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Community Grants"
+                ],
+                "name": "Regional Funding",
+                "optionalProjectContent": ["MERI Plan"],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Strategic Outcome 1. Maintain and improve ecosystem services through sustainable management of local and regional landscapes."},
+                    {"name": "Strategic Outcome 2. Increase in the number of farmers and fishers adopting practices that improve the quality of the natural resource base, and the area of land over which those practices are applied."},
+                    {"name": "Strategic Outcome 3. Increase engagement and participation of the community, including landcare, farmers and Indigenous people, in sustainable natural resource management."},
+                    {"name": "Strategic Outcome 4. Increase restoration and rehabilitation of the natural environment, including protecting and conserving nationally and internationally significant species, ecosystems, ecological communities, places and values."}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Landcare Network Grants 2014-16",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Grants Round 2",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees West Melbourne",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Discretionary Grants",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Cumberland Conservation Corridor Grants",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Cumberland Conservation Corridor Land Management",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Service Providers Tranche 1",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Service Providers Tranche 2",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology"
+                ],
+                "name": "20 Million Trees Service Providers",
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Outcomes, Evaluation and Learning - final report",
+            "Project Administration",
+            "Progress, Outcomes and Learning - stage report",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
+        "name": "Reef Trust",
         "subprograms": [
             {
-                "startDate": "",
-                "name": "Reef Trust Phase 1 Investment",
-                "endDate": "",
-                "optionalProjectContent": [],
                 "themes": [
                     {"name": "Outcome 1: Improve the quality of water entering the Great Barrier Reef from broad-scale land use to increase the health and resilience of the Great Barrier Reef."},
                     {"name": "Outcome 2: Improve the health and resilience of coastal habitats."},
                     {"name": "Outcome 3: Improve and protect marine biodiversity, including the reduction of crown-of-thorns starfish and protection of listed threatened and migratory species, such as dugongs and turtles."},
                     {"name": "Outcome 4: Any new development maintains or improves the condition of matters of national and state environmental significance through the strategic delivery of offsets through the Reef Trust."}
                 ],
-                "activities": []
+                "endDate": "",
+                "activities": [],
+                "name": "Reef Trust Phase 1 Investment",
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 2 Investment",
-                "endDate": "",
                 "optionalProjectContent": [],
-                "themes": [],
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "name": "Reef Trust Phase 3 Investment",
-                "endDate": "",
-                "optionalProjectContent": [],
                 "themes": [],
-                "activities": []
+                "endDate": "",
+                "activities": [],
+                "name": "Reef Trust Phase 3 Investment",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Reef Trust Discretionary Grants",
+                "optionalProjectContent": [],
+                "startDate": ""
             }
         ],
-        "activities": []
-    },
-    {
-        "weekDaysToCompleteReport": 0,
-        "name": "Weedwatcher",
-        "optionalProjectContent": [],
-        "subprograms": [],
-        "activities": [
-            "Weed Mapping & Monitoring",
-            "Weed Treatment"
-        ]
-    },
-    {
-        "projectDatesContracted": true,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "20 Million Trees Service Providers",
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
-        "subprograms": [],
-        "activities": []
+        "isMeritProgramme": true
     },
     {
         "weekDaysToCompleteReport": 0,
-        "name": "Citizen Science Projects",
-        "optionalProjectContent": [],
+        "activities": [
+            "Weed Mapping & Monitoring",
+            "Weed Treatment"
+        ],
+        "name": "Weedwatcher",
         "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Fauna Survey - general",
             "Flora Survey - general",
@@ -702,13 +896,133 @@
             "Vegetation Assessment - Commonwealth government methodology",
             "Vegetation Assessment - Habitat Hectares v2 (VIC)",
             "TasVeg - Native Vegetation Assessment - Forest Vegetation"
-        ]
+        ],
+        "name": "Citizen Science Projects",
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
         "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Water Quality Survey",
+            "Single Sighting",
+            "Multiple Sightings"
+        ],
         "name": "Basin Champions",
-        "optionalProjectContent": [],
         "subprograms": [],
-        "activities": ["Water Quality Survey"]
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "3",
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Outcomes, Evaluation and Learning - final report",
+            "Project Administration",
+            "Progress, Outcomes and Learning - stage report",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
+        "name": "Environmental Stewardship",
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Environmental Stewardship 1318",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Environmental Stewardship 1319",
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": false,
+        "optionalProjectContent": ["Risks and Threats"],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Outcomes, Evaluation and Learning - final report",
+            "Project Administration",
+            "Progress, Outcomes and Learning - stage report",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
+        "name": "20 Million Trees Service Providers",
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     }
 ]}
