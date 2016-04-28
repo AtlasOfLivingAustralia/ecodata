@@ -12,7 +12,8 @@
                 "Hand broadcast seeding",
                 "Hand planting",
                 "Machine planting",
-                "Natural regeneration from threat exclusion / removal"
+                "Natural regeneration from threat exclusion / removal",
+                "Infill plantings"
             ],
             "validate": "required"
         },
