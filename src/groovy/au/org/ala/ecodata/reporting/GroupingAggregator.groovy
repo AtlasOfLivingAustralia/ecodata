@@ -1,5 +1,4 @@
 package au.org.ala.ecodata.reporting
-
 /**
  * Categorises an activity into a group based on a supplied grouping criteria then delegates to the appropriate
  * Aggregator.
@@ -7,33 +6,30 @@ package au.org.ala.ecodata.reporting
 class GroupingAggregator implements AggregatorIf {
 
     Map<String, List> aggregatorsByGroup
-
-    def metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
+    Map<String, Integer> countsByGroup
+    int count
 
     AggregatorFactory factory = new AggregatorFactory()
     ReportGroups.GroupingStrategy groupingStrategy
 
-    AggregrationConfig config
+    GroupingAggregationConfig config
 
 
-    public GroupingAggregator(AggregrationConfig config) {
+    public GroupingAggregator(GroupingAggregationConfig config) {
 
         this.config = config
-        this.groupingStrategy = factory.createGroupingStategy(config.groups)
+        this.groupingStrategy = factory.createGroupingStrategy(config.groups)
 
         aggregatorsByGroup = new LinkedHashMap().withDefault { key ->
-            newAggregator(config)
+            newAggregator()
         }
+        countsByGroup = [:].withDefault { 0 }
     }
 
-    private List<AggregatorIf> newAggregator(AggregrationConfig config) {
+    private List<AggregatorIf> newAggregator() {
         List<Aggregator> aggregators = []
 
-
-        if (config.score) {
-            aggregators << factory.createAggregator(config.label, config.score)
-        }
-        config.children?.each { child ->
+        config.childAggregations?.each { child ->
             aggregators << factory.createAggregator(child)
         }
 
@@ -42,45 +38,30 @@ class GroupingAggregator implements AggregatorIf {
 
     void aggregate(Map output) {
 
-        updateMetadata(output.activity)
+        def group = groupingStrategy.group(output)
+        if (group == null) {
+            return
+        }
 
-        List<AggregatorIf> aggregrators = aggregatorFor(output)
+        if (group) {
+            count++
+        }
+        incrementGroupCount(group)
 
-        aggregrators.each {
+        List<AggregatorIf> aggregators = aggregatorFor(group)
+        aggregators.each {
             it.aggregate(output)
         }
 
     }
 
-    private def updateMetadata(Map activity) {
+    GroupedAggregationResult result() {
 
-        metadata.distinctActivities << activity.activityId
-        if (!metadata.activitiesByType[activity.type]) {
-            metadata.activitiesByType[activity.type] = 0
+        AggregationResult result = new GroupedAggregationResult(label:config.label, count:count)
+
+        result.groups = countsByGroup.collect { String group, Integer count ->
+            new GroupedResult([group:group, count:count, results:aggregatorsByGroup[group].collect{it.result()}])
         }
-        metadata.activitiesByType[activity.type] = metadata.activitiesByType[activity.type] + 1
-
-        metadata.distinctProjects << activity?.projectId
-        if (activity?.sites) {
-            metadata.distinctSites << activity.sites.siteId
-        }
-    }
-
-    AggregrationResult result() {
-
-        def results = aggregatorsByGroup.collect { String group, List<AggregatorIf> aggregators ->
-
-            def result = [group:group]
-            if (config.score) {
-                AggregatorIf agg = aggregators.remove(0)
-                result.result = agg.result()
-            }
-            result.results = aggregators.collect{it.result()}
-            result
-        }
-
-        def result = new AggregrationResult([metadata:metadata, result:results])
-        println result
         result
     }
 
@@ -91,19 +72,30 @@ class GroupingAggregator implements AggregatorIf {
      * @param output the output containing the scores to be aggregated. The output itself may also be used by the
      * grouping function.
      */
-    List<AggregatorIf> aggregatorFor(output) {
-
-        def group = groupingStrategy.group(output)
+    List<AggregatorIf> aggregatorFor(group) {
 
         if (group == null) {
             return []
         }
 
-        if (group instanceof List) { // values are lists when the data is collected via multi select
-            return group.collect { aggregatorsByGroup[it] }.flatten()
-        }
-
         return aggregatorsByGroup[group]
+    }
+
+    List<AggregatorIf> aggregatorFor(Collection group) {
+        if (group == null) {
+            return []
+        }
+        return group.collect { aggregatorsByGroup[it] }.flatten()
+    }
+
+    void incrementGroupCount(Collection group) {
+        group.each { entry ->
+            countsByGroup[entry]++
+        }
+    }
+
+    void incrementGroupCount(group) {
+        countsByGroup[group]++
     }
 
 }

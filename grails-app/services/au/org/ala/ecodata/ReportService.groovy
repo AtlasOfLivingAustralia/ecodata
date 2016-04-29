@@ -1,11 +1,13 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputMetadata
-import au.org.ala.ecodata.metadata.OutputModelProcessor
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
-import au.org.ala.ecodata.reporting.Aggregration
-import au.org.ala.ecodata.reporting.AggregrationConfig
+import au.org.ala.ecodata.reporting.Aggregation
+import au.org.ala.ecodata.reporting.AggregationConfig
+import au.org.ala.ecodata.reporting.FilteredAggregationConfig
+import au.org.ala.ecodata.reporting.GroupedAggregationResult
+import au.org.ala.ecodata.reporting.GroupingAggregationConfig
 import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.GroupingConfig
 import au.org.ala.ecodata.reporting.PropertyAccessor
@@ -101,29 +103,59 @@ class ReportService {
 
     def aggregate(List filters, String searchTerm, List<Map<String, Score>> toAggregate, topLevelGrouping = null) {
 
-        List<AggregrationConfig> config = toAggregate.collect {
-            Score score = it.score
-
-            AggregrationConfig aggConfig = new AggregrationConfig(score:new Aggregration([label:score.label, type:score.aggregationType?.name(), property:score.name]))
-            if (score.filterBy || score.groupBy) {
-                Map props = score.defaultGrouping()
-                aggConfig.groups = new GroupingConfig([property:props.property, filterValue:props.filterBy, type:props.type, entity:props.entity])
-            }
-
-            aggConfig
-        }
-        AggregrationConfig topLevelConfig = new AggregrationConfig(children:config, groups:topLevelGrouping?:new GroupingConfig())
+        GroupingAggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
         AggregatorIf aggregator = new AggregatorFactory().createAggregator(topLevelConfig)
 
-        queryPaginated(filters, searchTerm, aggregator, this.&aggregateActivity)
+        Map metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
 
-        def allResults = aggregator.result()
-        def metadata = allResults.metadata
-        def results = allResults.result
+        Closure aggregateActivityWithMetadata =  { AggregatorIf aggregatorIf, Map activity ->
+            aggregateActivity(aggregatorIf, activity)
+            updateMetadata(activity, metadata)
+        }
+        queryPaginated(filters, searchTerm, aggregator, aggregateActivityWithMetadata)
 
-        def outputData = results.findAll{it.results}
+        GroupedAggregationResult allResults = aggregator.result()
+        def outputData = allResults
+        if (topLevelGrouping == null) {
+            outputData = allResults.groups[0].results
+        }
+
         [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
+    }
+
+    private GroupingAggregationConfig aggregationConfigFromScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
+        List<AggregationConfig> config = toAggregate.collect {
+            Score score = it.score
+            AggregationConfig aggregationConfig
+//            String property = ''
+//            if (score.listName) {
+//                property += score.listName+'.'
+//            }
+            String property = score.name
+
+            Aggregation aggregation = new Aggregation([type:score.aggregationType?.name(), property:property])
+            if (score.filterBy) {
+                Map groupingProperties = score.defaultGrouping()
+                aggregationConfig = new FilteredAggregationConfig(
+                        label:score.label,
+                        childAggregations: [aggregation],
+                        filter: new GroupingConfig([property:groupingProperties.property, filterValue:groupingProperties.filterBy, type:groupingProperties.type]))
+            }
+            else if (score.groupBy) {
+                Map groupingProperties = score.defaultGrouping()
+                aggregationConfig = new GroupingAggregationConfig(
+                        label:score.label,
+                        childAggregations: [aggregation],
+                        groups: new GroupingConfig([property:groupingProperties.property, type:groupingProperties.type]))
+            }
+            else {
+                aggregationConfig = aggregation
+            }
+            aggregationConfig
+        }
+        GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
+        new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
     }
 
     private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
@@ -131,14 +163,61 @@ class ReportService {
         Output.withNewSession {
             def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
             outputs.each { output ->
-                OutputMetadata outputMetadata = new OutputMetadata(metadataService.getOutputDataModel(output.name))
-                List outputData = new OutputModelProcessor().flatten(output, outputMetadata, true)
+
+                List outputData = flatten(output)
 
                 outputData.each {
                     it.activity = activity
                     aggregator.aggregate(it)
                 }
             }
+        }
+    }
+
+    /**
+     * Takes an output containing potentially nested values and produces a flat List of stuff.
+     * If the output contains more than one set of nested properties, the number of items returned will
+     * be the sum of the nested properties - any particular row will only contain values from one of the
+     * nested rows.
+     * @param output the data to flatten
+     */
+    List flatten(Map output) {
+
+        OutputMetadata outputMetadata = new OutputMetadata(metadataService.getOutputDataModel(output.name))
+
+        List rows = []
+
+        def flat = output + output.data
+        def nested = outputMetadata.getNestedPropertyNames()
+        if (!nested) {
+            return [flat]
+        }
+        nested.each { property ->
+            Collection nestedData = flat.remove(property)
+            nestedData.each { row ->
+                rows << (row + flat)
+            }
+        }
+        // If the duplicate data is absent from the output, just return the non-nested data.
+        if (!rows) {
+            rows << flat
+        }
+
+        rows
+    }
+
+
+    private def updateMetadata(Map activity, Map metadata) {
+
+        metadata.distinctActivities << activity.activityId
+        if (!metadata.activitiesByType[activity.type]) {
+            metadata.activitiesByType[activity.type] = 0
+        }
+        metadata.activitiesByType[activity.type] = metadata.activitiesByType[activity.type] + 1
+
+        metadata.distinctProjects << activity?.projectId
+        if (activity?.sites) {
+            metadata.distinctSites << activity.sites.siteId
         }
     }
 

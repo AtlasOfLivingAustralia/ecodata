@@ -2,6 +2,12 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.log4j.Logger
 
+
+interface AggregatorIf {
+    void aggregate(Map data)
+    AggregationResult result()
+}
+
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
@@ -11,7 +17,6 @@ class Aggregators {
 
     public static abstract class OutputAggregator implements AggregatorIf {
 
-        String group
         int count = 0
         String label
 
@@ -19,7 +24,7 @@ class Aggregators {
 
         public OutputAggregator(String label, String property) {
             this.label = label
-            propertyAccessor = new PropertyAccessor('data.'+property)
+            propertyAccessor = new PropertyAccessor(property)
         }
 
         public void aggregate(Map values) {
@@ -32,7 +37,7 @@ class Aggregators {
 
         public abstract void doAggregation(output);
 
-        public abstract AggregrationResult result();
+        public abstract AggregationResult result();
 
     }
 
@@ -53,8 +58,8 @@ class Aggregators {
             }
         }
 
-        public AggregrationResult result() {
-            return new AggregrationResult([label:label, group:group, count: count, result:count > 0 ? total/count : 0])
+        public AggregationResult result() {
+            return new SingleResult([label:label, count: count, result:count > 0 ? total/count : 0])
         }
     }
 
@@ -71,14 +76,13 @@ class Aggregators {
         public void doAggregation(value) {
 
             def numericValue = propertyAccessor.getValueAsNumeric(value)
-            println numericValue
             if (numericValue) {
                 total += numericValue
             }
 
         }
-        public AggregrationResult result() {
-            return new AggregrationResult([label:label, group:group, count:count, result:total])
+        public AggregationResult result() {
+            return new SingleResult([label:label, count:count, result:total])
         }
 
     }
@@ -93,9 +97,9 @@ class Aggregators {
         }
         public void doAggregation(output) {}
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:count])
+            return new SingleResult([label:label, count:count, result:count])
         }
     }
 
@@ -124,9 +128,9 @@ class Aggregators {
             histogram[value]++
         }
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:histogram])
+            return new SingleResult([label:label, units:"", count:count, result:histogram])
         }
     }
 
@@ -144,9 +148,9 @@ class Aggregators {
             values << value
         }
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:values])
+            return new SingleResult([label:label, count:count, result:values])
         }
     }
 

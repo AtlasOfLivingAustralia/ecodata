@@ -6,17 +6,19 @@ package au.org.ala.ecodata.reporting
  */
 class AggregatorFactory {
 
-    public AggregatorIf createAggregator(AggregrationConfig config) {
-        if (config.groups) {
-            // create GroupingAggregator
+    public AggregatorIf createAggregator(AggregationConfig config) {
+        if (config instanceof GroupingAggregationConfig) {
             new GroupingAggregator(config)
         }
-        else if (config.children) {
-            // create CompositeAggregator
-            new CompositeAggregator(config.children)
+        else if (config instanceof CompositeAggregationConfig) {
+
+            new CompositeAggregator(config)
+        }
+        else if (config instanceof FilteredAggregationConfig) {
+            new FilteredAggregator(config)
         }
         else {
-            return createAggregator(config.label, config.score)
+            return createAggregator((Aggregation)config)
         }
     }
 
@@ -26,23 +28,23 @@ class AggregatorFactory {
      * @param group the value of the group that the Aggregator is aggregating.
      * @return a new instance of OutputAggregator
      */
-    AggregatorIf createAggregator(String label, Aggregration config) {
+    AggregatorIf createAggregator(Aggregation config) {
 
        switch (config.type) {
             case Score.AGGREGATION_TYPE.SUM.name():
-                return new Aggregators.SummingAggegrator(label, config.property)
+                return new Aggregators.SummingAggegrator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.COUNT.name():
-                return new Aggregators.CountingAggregator(label, config.property)
+                return new Aggregators.CountingAggregator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.AVERAGE.name():
-                return new Aggregators.AverageAggregator(label, config.property)
+                return new Aggregators.AverageAggregator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.HISTOGRAM.name():
-                return new Aggregators.HistogramAggregator(label, config.property)
+                return new Aggregators.HistogramAggregator(config.label, config.property)
                 break;
             case Score.AGGREGATION_TYPE.SET.name():
-                return new Aggregators.SetAggregator(label, config.property)
+                return new Aggregators.SetAggregator(config.label, config.property)
                 break;
             default:
                 throw new IllegalAccessException('Invalid aggregation type: '+config.type)
@@ -64,7 +66,7 @@ class AggregatorFactory {
      * }
      * @return
      */
-    ReportGroups.GroupingStrategy createGroupingStategy(GroupingConfig groupingSpec) {
+    ReportGroups.GroupingStrategy createGroupingStrategy(GroupingConfig groupingSpec) {
 
         if (!groupingSpec) {
             return new ReportGroups.NotGrouped()
@@ -74,22 +76,6 @@ class AggregatorFactory {
         if (!property || property == '*') {
             return new ReportGroups.NotGrouped()
         }
-
-        switch (groupingSpec.entity) {
-
-            case 'activity':
-            case 'project':
-            case 'site':
-                property = groupingSpec.entity+'.'+property
-                break
-            case 'output':
-                break // aggregation is done on outputs at the moment.
-            case '*':
-                return {""}  // No grouping required.
-            default:
-                throw new IllegalArgumentException("Invalid grouping Entity: "+groupingSpec.entity)
-        }
-
 
         return buildGroupingStrategy(property, groupingSpec)
     }
