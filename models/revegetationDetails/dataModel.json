@@ -13,7 +13,8 @@
                 "Hand planting",
                 "Machine planting",
                 "Natural regeneration from threat exclusion / removal",
-                "Infill plantings"
+                "Infill plantings",
+                "Combination of methods"
             ],
             "validate": "required"
         },
