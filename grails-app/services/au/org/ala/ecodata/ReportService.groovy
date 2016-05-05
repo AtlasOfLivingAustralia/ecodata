@@ -1,5 +1,16 @@
 package au.org.ala.ecodata
+
+import au.org.ala.ecodata.metadata.OutputMetadata
+import au.org.ala.ecodata.reporting.AggregatorFactory
+import au.org.ala.ecodata.reporting.AggregatorIf
+import au.org.ala.ecodata.reporting.Aggregation
+import au.org.ala.ecodata.reporting.AggregationConfig
+import au.org.ala.ecodata.reporting.CompositeAggregationConfig
+import au.org.ala.ecodata.reporting.FilteredAggregationConfig
+import au.org.ala.ecodata.reporting.GroupedAggregationResult
+import au.org.ala.ecodata.reporting.GroupingAggregationConfig
 import au.org.ala.ecodata.reporting.GroupingAggregator
+import au.org.ala.ecodata.reporting.GroupingConfig
 import au.org.ala.ecodata.reporting.PropertyAccessor
 import au.org.ala.ecodata.reporting.Score
 import au.org.ala.ecodata.reporting.ShapefileBuilder
@@ -65,7 +76,7 @@ class ReportService {
         aggregate(filters, null, report.scores, report.groupingSpec)
     }
 
-    def queryPaginated(List filters, String searchTerm, GroupingAggregator aggregator, Closure action) {
+    def queryPaginated(List filters, String searchTerm, AggregatorIf aggregator, Closure action) {
 
         // Only dealing with approved activities.
 
@@ -91,29 +102,120 @@ class ReportService {
         aggregate(filters, null, buildReportSpec())
     }
 
-    def aggregate(List filters, String searchTerm, toAggregate, topLevelGrouping = null) {
+    def aggregate(List filters, String searchTerm, List<Map<String, Score>> toAggregate, topLevelGrouping = null) {
 
-        GroupingAggregator aggregator = new GroupingAggregator(topLevelGrouping, toAggregate)
+        GroupingAggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
-        queryPaginated(filters, searchTerm, aggregator, this.&aggregateActivity)
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(topLevelConfig)
 
-        def allResults = aggregator.results()
-        def metadata = allResults.metadata
-        def results = allResults.results
-        if (!topLevelGrouping) {
-            results = results?results[0].results:[]
+        Map metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
+
+        Closure aggregateActivityWithMetadata =  { AggregatorIf aggregatorIf, Map activity ->
+            aggregateActivity(aggregatorIf, activity)
+            updateMetadata(activity, metadata)
+        }
+        queryPaginated(filters, searchTerm, aggregator, aggregateActivityWithMetadata)
+
+        GroupedAggregationResult allResults = aggregator.result()
+        def outputData = allResults
+        if (topLevelGrouping == null) {
+            outputData = postProcessOutputData(allResults.groups[0].results, toAggregate)
         }
 
-        def outputData = results.findAll{it.results}
         [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
+    }
+
+    private List postProcessOutputData(List outputData, List scores) {
+        List processedOutputData = []
+        outputData.each { result ->
+            Map scoreMap = scores.find{it.score.label == result.label}
+
+            if (!scoreMap) {
+                println "No score for ${result.label}"
+                return
+            }
+            Map resultMap = result.properties
+
+            resultMap.score = scoreMap.score
+            processedOutputData << resultMap
+        }
+        processedOutputData
+    }
+
+    private GroupingAggregationConfig aggregationConfigFromScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
+
+        Map<String, List> groupedScores = toAggregate.groupBy { it.score.label }
+
+        AggregationConfig aggregationConfig
+        List<AggregationConfig> config = groupedScores.collect { label, scores ->
+
+            List<AggregationConfig> config = scores.collect {configFor(it.score)}
+            if (config.size() > 1) {
+                aggregationConfig = new CompositeAggregationConfig(childAggregations: config, label:label)
+            }
+            else {
+                aggregationConfig = config[0]
+            }
+            aggregationConfig
+        }
+        GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
+        new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
+    }
+
+    private AggregationConfig configFor(Score score) {
+        AggregationConfig aggregationConfig
+
+        String property = 'data.'
+        if (score.listName) {
+            property+=score.listName+'.'
+        }
+        property+=score.name
+
+        Aggregation aggregation = new Aggregation([type: score.aggregationType?.name(), property: property, label:score.label])
+        if (score.filterBy) {
+            Map groupingProperties = score.defaultGrouping()
+            aggregationConfig = new FilteredAggregationConfig(
+                    label: score.label,
+                    childAggregations: [aggregation],
+                    filter: new GroupingConfig([property: groupingProperties.property, filterValue: groupingProperties.filterBy, type: groupingProperties.type]))
+        } else if (score.groupBy) {
+            Map groupingProperties = score.defaultGrouping()
+            aggregationConfig = new GroupingAggregationConfig(
+                    label: score.label,
+                    childAggregations: [aggregation],
+                    groups: new GroupingConfig([property: groupingProperties.property, type: groupingProperties.type]))
+        } else {
+            aggregationConfig = aggregation
+        }
+        // All scores need to be filtered by output
+        GroupingConfig outputFilter = new GroupingConfig(property: 'name', filterValue: score.outputName, type:'filter')
+        FilteredAggregationConfig filteredConfig = new FilteredAggregationConfig([label:score.label, filter:outputFilter, childAggregations:[aggregationConfig]])
+
+        filteredConfig
     }
 
     private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
 
         Output.withNewSession {
             def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
-            activity.outputs = outputs
-            aggregator.aggregate(activity)
+            outputs.each { output ->
+                output.activity = activity
+                aggregator.aggregate(output)
+            }
+        }
+    }
+
+    private def updateMetadata(Map activity, Map metadata) {
+
+        metadata.distinctActivities << activity.activityId
+        if (!metadata.activitiesByType[activity.type]) {
+            metadata.activitiesByType[activity.type] = 0
+        }
+        metadata.activitiesByType[activity.type] = metadata.activitiesByType[activity.type] + 1
+
+        metadata.distinctProjects << activity?.projectId
+        if (activity?.sites) {
+            metadata.distinctSites << activity.sites.siteId
         }
     }
 
@@ -137,14 +239,16 @@ class ReportService {
             activities = activities.findAll{it.publicationStatus == 'published'}
         }
 
-        GroupingAggregator aggregator = new GroupingAggregator(null, aggregationSpec)
+        AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec)
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(aggregationConfig)
 
         activities.each { activity ->
             aggregateActivity(aggregator, activity)
         }
 
-        def results = aggregator.results().results
-        return results?results[0].results:[]
+        GroupedAggregationResult allResults = aggregator.result()
+
+        return allResults.groups[0].results?:[]
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {

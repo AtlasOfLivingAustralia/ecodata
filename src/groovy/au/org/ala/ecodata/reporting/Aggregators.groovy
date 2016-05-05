@@ -2,8 +2,32 @@ package au.org.ala.ecodata.reporting
 
 import org.apache.log4j.Logger
 
-import java.text.NumberFormat
-import java.text.ParseException
+
+interface AggregatorIf {
+    void aggregate(Map data)
+    AggregationResult result()
+}
+
+public abstract class BaseAggregator implements AggregatorIf {
+
+    void aggregate(Map output) {
+        PropertyAccessor propertyAccessor = getPropertyAccessor()
+        if (propertyAccessor?.isNested(output)) {
+            propertyAccessor.unroll(output).each {
+                aggregateSingle(it)
+            }
+        }
+        else {
+            aggregateSingle(output)
+        }
+
+    }
+
+    abstract PropertyAccessor getPropertyAccessor()
+
+    abstract void aggregateSingle(Map output)
+
+}
 
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
@@ -12,14 +36,20 @@ class Aggregators {
 
     def log = Logger.getLogger(getClass())
 
-    public static abstract class OutputAggregator {
+    public static abstract class OutputAggregator extends BaseAggregator {
 
-        String group
-        int count;
+        int count = 0
         String label
-        PropertyAccessor propertyAccessor = new PropertyAccessor('')
 
-        public void aggregateValue(value) {
+        PropertyAccessor propertyAccessor
+
+        public OutputAggregator(String label, String property) {
+            this.label = label
+            propertyAccessor = new PropertyAccessor(property)
+        }
+
+        public void aggregateSingle(Map values) {
+            Object value = propertyAccessor.getPropertyValue(values)
             if (value != null) {
                 count++;
                 doAggregation(value);
@@ -28,7 +58,7 @@ class Aggregators {
 
         public abstract void doAggregation(output);
 
-        public abstract AggregrationResult result();
+        public abstract AggregationResult result();
 
     }
 
@@ -37,7 +67,10 @@ class Aggregators {
      */
     static class AverageAggregator extends OutputAggregator {
 
-        double total
+        public AverageAggregator(String label, String property) {
+            super(label, property)
+        }
+        double total = 0
 
         public void doAggregation(value) {
             def numericValue = propertyAccessor.getValueAsNumeric(value)
@@ -46,8 +79,8 @@ class Aggregators {
             }
         }
 
-        public AggregrationResult result() {
-            return new AggregrationResult([label:label, group:group, count: count, result:count > 0 ? total/count : 0])
+        public AggregationResult result() {
+            return new SingleResult([label:label, count: count, result:count > 0 ? total/count : 0])
         }
     }
 
@@ -56,7 +89,10 @@ class Aggregators {
      */
     static class SummingAggegrator extends OutputAggregator {
 
-        double total
+        double total = 0
+        public SummingAggegrator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
 
@@ -66,8 +102,8 @@ class Aggregators {
             }
 
         }
-        public AggregrationResult result() {
-            return new AggregrationResult([label:label, group:group, count:count, result:total])
+        public AggregationResult result() {
+            return new SingleResult([label:label, count:count, result:total])
         }
 
     }
@@ -77,11 +113,14 @@ class Aggregators {
      */
     static class CountingAggregator extends OutputAggregator {
 
+        public CountingAggregator(String label, String property) {
+            super(label, property)
+        }
         public void doAggregation(output) {}
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:count])
+            return new SingleResult([label:label, count:count, result:count])
         }
     }
 
@@ -92,9 +131,22 @@ class Aggregators {
     static class HistogramAggregator extends OutputAggregator {
 
         Map histogram = [:].withDefault { 0 };
+        public HistogramAggregator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
 
+            if (value instanceof Collection) {
+                value.each { aggregateSingleValue(it) }
+            }
+            else {
+                aggregateSingleValue(value)
+            }
+
+        }
+
+        private void aggregateSingleValue(value) {
             if (value =~ /name:/) {
                 // extract sci name from complex key. e.g.
                 // [guid:urn:lsid:biodiversity.org.au:apni.taxon:56760, listId:Atlas of Living Australia, name:Paspalum punctatum, list:]
@@ -107,9 +159,9 @@ class Aggregators {
             histogram[value]++
         }
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:histogram])
+            return new SingleResult([label:label, count:count, result:histogram])
         }
     }
 
@@ -119,43 +171,18 @@ class Aggregators {
     static class SetAggregator extends OutputAggregator {
 
         List values = []
+        public SetAggregator(String label, String property) {
+            super(label, property)
+        }
 
         public void doAggregation(value) {
             values << value
         }
 
-        public AggregrationResult result() {
+        public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new AggregrationResult([label:label, units:"", group:group, count:count, result:values])
+            return new SingleResult([label:label, count:count, result:values])
         }
     }
-
-
-    /**
-     * Defines the format of the result of the aggregation
-     */
-    static class AggregrationResult {
-        /** The score label */
-        String label
-
-        /** The units of the aggregation */
-        String units
-        /** The group that was aggregrated */
-        String group
-
-        int count;
-
-        /**
-         * The result of the aggregation. Normally will be a numerical value (e.g. for a sum etc) or a List (for a collecting aggregator)
-         */
-        def result
-
-        public String toString() {
-            return "$label:,count=$count,result=$result"
-        }
-    }
-
-
-
 
 }

@@ -336,7 +336,6 @@ class ProjectService {
             }
 			
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
-			
 
             // Add project output target information where it exists.
 
@@ -345,15 +344,15 @@ class ProjectService {
                 if (target.outcomeTarget != null) {
                     return
                 }
-                def score = outputSummary.find{it.score.isOutputTarget && it.score.label == target.scoreLabel}
-                if (score) {
-                    score['target'] = target.target
+                def result = outputSummary.find{it.label == target.scoreLabel}
+                if (result) {
+                    result.target = target.target
                 } else {
                		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
                			// one in containing the target.
-                    score = toAggregate.find{it.score?.label == target.scoreLabel}
+                    def score = toAggregate.find{it.score?.label == target.scoreLabel}
                     if (score) {
-                        outputSummary << [score:score.score, target:target.target]
+                        outputSummary << [label:score.label, score:score, target:target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.

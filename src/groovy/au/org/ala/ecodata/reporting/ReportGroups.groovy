@@ -13,6 +13,7 @@ class ReportGroups {
 
     interface GroupingStrategy {
         def group(data)
+        PropertyAccessor getPropertyAccessor()
     }
 
     static abstract class SinglePropertyGroupingStrategy implements GroupingStrategy {
@@ -45,7 +46,7 @@ class ReportGroups {
         }
 
         def group(data) {
-            def group = super.propertyAccessor.getPropertyValue(data)
+            def group = propertyAccessor.getPropertyValue(data)
             if (group instanceof List) { // values are lists when the data is collected via multi select
                 return group.contains(filterValue) ? Aggregator.DEFAULT_GROUP : null
             }
@@ -172,6 +173,8 @@ class ReportGroups {
         public group(data) {
             return Aggregator.DEFAULT_GROUP
         }
+
+        public PropertyAccessor getPropertyAccessor() { return null }
     }
 
 

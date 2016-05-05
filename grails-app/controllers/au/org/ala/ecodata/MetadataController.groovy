@@ -2,14 +2,11 @@ package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import grails.converters.JSON
-import org.apache.poi.ss.usermodel.Workbook
-import org.apache.poi.ss.usermodel.WorkbookFactory
-import org.apache.poi.ss.util.CellReference
 import org.springframework.web.multipart.MultipartFile
 
 class MetadataController {
 
-    def metadataService, activityService, commonService, projectService
+    def metadataService, activityService, commonService, projectService, webService
 
     def activitiesModel() {
         render metadataService.activitiesModel()
@@ -235,5 +232,54 @@ class MetadataController {
 
     def getGeographicFacetConfig() {
         render grailsApplication.config.app.facets.geographic as JSON
+    }
+
+    def pullOutScores() {
+        List scores = []
+
+        metadataService.activitiesModel().activities.each { Map activity ->
+
+            activity.outputs?.each { String outputName ->
+
+                Map output = metadataService.getOutputModel(outputName)
+                output?.scores?.each { score ->
+                    Map updatedScore = new HashMap(score)
+
+                    updatedScore.output = outputName
+                    updatedScore.activity = activity.name
+                    updatedScore.category = activity.category
+
+                    scores << updatedScore
+
+                    Score scoreEntity = new Score(updatedScore)
+                    scoreEntity.save()
+
+                }
+            }
+        }
+
+        render scores as JSON
+    }
+
+    def doSomething() {
+
+        List pids = ['6246097', '5388513']
+
+        def returnValue = [:]
+
+        pids.each { pid ->
+            String url = 'http://spatial.ala.org.au/ws/shape/geojson/' + pid
+
+            Map result = webService.getJson(url)
+
+            int i = 0
+            List<Set> latLons = result.coordinates.flatten().split { i++ % 2 == 0 }
+            def max = latLons[1].max()
+            def min = latLons[1].min()
+
+
+            returnValue[pid] = [max: max, min: min]
+        }
+        render returnValue as JSON
     }
 }

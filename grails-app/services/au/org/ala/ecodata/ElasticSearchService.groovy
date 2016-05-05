@@ -302,12 +302,13 @@ class ElasticSearchService {
     def queueGormEvent(AbstractPersistenceEvent event) {
         def doc = event.entityObject
         def docType = doc.getClass().name
-        def docId = getEntityId(doc)
-        def projectIdsToUpdate = []
 
         if (!ALLOWED_DOC_TYPES.contains(docType)) {
             return
         }
+
+        def docId = getEntityId(doc)
+        def projectIdsToUpdate = []
 
         try {
             def message = new IndexDocMsg(docType: docType, docId: docId, indexType: event.eventType, docIds: projectIdsToUpdate)

@@ -4,43 +4,43 @@
     {
       "dataType":"number",
       "name":"areaRevegHa",
-      "description":"The hectare area that was actually revegetated (i.e. hectares over which direct seeding, planting and/or natural regeneration techniques were employed).",
+      "description":"Area revegetated, e.g. hectares of planting and direct seed sowing.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"totalNumberPlanted",
-      "description":"The total number of individual plants actually planted (excludes direct seeding and natural regeneration).",
+      "description":"The number plants planted, excludes direct seeding and natural regeneration.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"totalSeedCollectedKg",
-      "description":"The total kg weight of seed collected through the project for revegetation purposes.",
+      "description":"The kg weight of seed collected.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"totalNumberGrown",
-      "description":"Total number of individual plants propagated.",
+      "description":"Number of individual plants propagated.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"erosionAreaTreated",
-      "description":"The hectare area over which actual erosion reduction/prevention works have been undertaken. Note - it does not include those areas that are remote from the site(s) managed but that may potentially benefit from the works at the site(s).",
+      "description":"The area of erosion works undertaken.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"erosionLength",
-      "description":"The km length of stream/coastline over which actual erosion reduction/prevention works have been undertaken. Note - it does not include those areas that are remote from the site(s) managed but that may potentially benefit from the works at the site(s).",
+      "description":"The km of stream/coastline over which erosion works have been undertaken.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"areaOfFireHa",
-      "description":"Actual hectare area over which a controlled burn has been undertaken. E.g. Ecological burn, hazard reduction burn.",
+      "description":"Area over which a controlled burn has been undertaken, e.g. Ecological burn, hazard reduction burn.",
       "validate":"min[0]"
     },
     {
@@ -52,19 +52,19 @@
     {
       "dataType":"number",
       "name":"totalSeedSownKg",
-      "description":"Weight (in kilograms) of seed sown in the project area. Species can be listed in the 'Comments on outputs field'.",
+      "description":"Weight (in kilograms) of seed sown in the project area. Species can be listed in the 'Comments field'.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"totalAreaTreatedHa",
-      "description":"The total hectare area where pest animal control has been undertaken (area includes all species controlled). For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line.",
+      "description":"The total area where all pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"totalPestAnimalsTreatedNo",
-      "description":"The total number of animals and/or insect colonies (inclusive of all species controlled) killed and/or removed from the area of control.",
+      "description":"The total number of all animals and/or insect colonies killed and/or removed from the project area.",
       "validate":"min[0]"
     },
     {
@@ -72,7 +72,7 @@
         {
           "dataType":"species",
           "name":"pestAnimalsTargetSpecies",
-          "description":"The pest species targeted for control (start typing a scientific or a common name for the species)."
+          "description":"The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry."
         }
       ],
       "dataType":"list",
@@ -81,7 +81,7 @@
     {
       "dataType":"number",
       "name":"areaTreatedHa",
-      "description":"The total new hectare area where weed control has been undertaken (inclusive of all species controlled) Please avoid double counting the same area for different species or for retreatment.",
+      "description":"The total area where weed control has been undertaken. Do not double count (1) the same area for different species or retreatment, e.g 20ha of treatment that targeted Lantana and Camphor laurel at a single site is be reported as 20ha, not 40ha. or (2) follow up treatment. Eg. If the initial 20ha site is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of the 20ha initial treatment and the 20ha follow up treatment.",
       "validate":"min[0]"
     },
     {
@@ -89,7 +89,7 @@
         {
           "dataType":"species",
           "name":"weedsTargetSpecies",
-          "description":"The plant species targeted for control (start typing a scientific or a common name for the species)."
+          "description":"The species targeted for control. Start typing a scientific or a common name and autofill will complete the entry)."
         }
       ],
       "dataType":"list",
@@ -98,19 +98,19 @@
     {
       "dataType":"number",
       "name":"totalChangePracticeTreatedArea",
-      "description":"The increased area of land (in hectares) over which improved management practices have been implemented. Note - Management practice change (area changed to sustainable practices) may be reported here, except if Management practice change (area implemented) is also in your Agreement. In such cases, report the 'area changed to sustainable practices' in the 'Comments on outputs' field.",
+      "description":"The  hectares of agricultural land where improved management practices have been adopted.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"numberOfEvents",
-      "description":"Number of events held with a focus on increasing community engagement, participation and knowledge/skills. E.g. Training sessions, workshops, planting days, field days, knowledge sharing/awareness raising  events, etc.",
+      "description":"Number of events held to increase community engagement, such as, training, workshops, planting days, field days, knowledge sharing.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"numberOfPublications",
-      "description":"Number of different publications produced (NOT the number of copies of a publication produced). Includes: books, films/DVDs/CDs, guides, journal articles, pamphlets, report cards, management plans, media releases and/or similar.",
+      "description":"Number of different publications produced (NOT the number of copies of a publication produced).",
       "validate":"min[0]"
     },
     {
@@ -122,7 +122,7 @@
     {
       "dataType":"number",
       "name":"entitiesAdoptingChange",
-      "description":"The number of farming/fisher entities that implemented management practice changes during the project. Excludes those intending to change practice.",
+      "description":"The number of farming/fisher entities that adopted management practice change during the project.",
       "validate":"min[0]"
     },
     {
@@ -152,19 +152,19 @@
     {
       "dataType":"number",
       "name":"indigenousProductsDeveloped",
-      "description":"The total number of publications and other products (eg. videos) developed by the project to facilitate the sharing of Indigenous Ecological Knowledge.",
+      "description":"The total number of publications and other products developed that share Indigenous Ecological Knowledge.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"datasetsShared",
-      "description":"Number of datasets collected and/or shared that relate to Indigenous ecological knowledge. Excludes publications. E.g. Data on Indigenous sites, uses of plants, rock holes, etc.",
+      "description":"Number of Indigenous ecological knowledge datasets shared or collected.",
       "validate":"min[0]"
     },
     {
       "dataType":"number",
       "name":"indigenousKnowledgeTransferActionsNo",
-      "description":"Number of discrete activities where Indigenous knowledge transfer occurs. It excludes datasets collected/shared.  E.g. Number of indigenous on-country visits, cultural training sessions.",
+      "description":"Number of discrete activities where Indigenous knowledge transfer occurs. E.g. Number of indigenous on-country visits, cultural training sessions. It excludes datasets collected or shared.",
       "validate":"min[0]"
     },
     {
@@ -176,13 +176,13 @@
     {
       "dataType":"number",
       "name":"managementPlansNo",
-      "description":"The number of new management plan documents completed and/or the number of existing plans where revisions/updates have been completed. Management plans may include: conservation action plans; catchment plans; land and sea plans; property management plans; vegetation/weed/pest plans; threatened species/community plans; and/or similar. Names and types of plans should be included in your 'project summary' or 'comments on outputs'.",
+      "description":"The number of new management plan documents completed and/or the number of existing plans where revisions/updates have been completed. Names and types of plans can be included in your 'project summary' or 'comments on outputs'.",
       "validate":"min[0]"
     },
     {
       "dataType":"text",
       "name":"otherOutputs",
-      "description":"Include here any additional and/or explanatory information relating to achievement of your project activities (see Project Activities Table, Item 3.5 in Part A of your Funding Agreement). If your Agreement lists activities that are not addressed in the above list, please indicate here the activity and the units achieved. You may also add to this field any other comments you have on your project that do not sit more appropriately elsewhere."
+      "description":"Include here any additional comments you have on your Community Grant projects that do not sit more appropriately elsewhere."
     }
   ],
   "viewModel":[
