@@ -13,9 +13,6 @@ class CompositeAggregator implements AggregatorIf {
     public CompositeAggregator(CompositeAggregationConfig config) {
         this.config = config
         aggregators = config.childAggregations.collect {
-            if (it.type != "SUM" && it.type != "COUNT") {
-                throw new IllegalArgumentException("All child aggregations must have type SUM or COUNT")
-            }
             new AggregatorFactory().createAggregator(it)
         }
     }

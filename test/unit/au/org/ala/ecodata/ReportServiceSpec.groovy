@@ -335,8 +335,37 @@ class ReportServiceSpec extends Specification {
 
     }
 
+    def "scores with the same label should produce a single result"() {
+        given:
+        def output = "output"
+        def property = "prop"
+        def property2 = "prop2"
+        String label = "label"
+        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, label:label]
+        def score2 = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property2, outputName:output, label:label]
+
+        def values = [1:[(property):1, (property2):6], 2:[(property):2, (property2):7],3:[(property):3, (property2):8],
+                      4:[(property):4, (property2):9],5:[(property):5, (property2):10]]
+
+        def activities = values.collect{[activityId:it.key]}
+        def outputs = values.collectEntries{[(it.key):[createOutput(it.key, output, it.value)]]}
+        setupInputs([[name:output, scores:[score, score2]]], activities, outputs)
+
+        when:
+        def results = service.aggregate([])
+
+        then:
+        results.outputData[0].result == values.values().sum{it[property]+it[property2]}
+        results.metadata.activities == 5
+        results.metadata.projects.size() == 1
+
+    }
+
     def createOutput(activityId, name, property, value) {
         return [activityId:activityId, name:name, data:[(property):value]]
     }
 
+    def createOutput(activityId, name, Map data) {
+        return [activityId:activityId, name:name, data:data]
+    }
 }

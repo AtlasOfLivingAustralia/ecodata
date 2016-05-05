@@ -5,6 +5,7 @@ import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
 import au.org.ala.ecodata.reporting.Aggregation
 import au.org.ala.ecodata.reporting.AggregationConfig
+import au.org.ala.ecodata.reporting.CompositeAggregationConfig
 import au.org.ala.ecodata.reporting.FilteredAggregationConfig
 import au.org.ala.ecodata.reporting.GroupedAggregationResult
 import au.org.ala.ecodata.reporting.GroupingAggregationConfig
@@ -118,39 +119,42 @@ class ReportService {
         GroupedAggregationResult allResults = aggregator.result()
         def outputData = allResults
         if (topLevelGrouping == null) {
-            outputData = allResults.groups[0].results
+            outputData = postProcessOutputData(allResults.groups[0].results, toAggregate)
         }
 
         [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
-    private GroupingAggregationConfig aggregationConfigFromScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
-        List<AggregationConfig> config = toAggregate.collect {
-            Score score = it.score
-            AggregationConfig aggregationConfig
-//            String property = ''
-//            if (score.listName) {
-//                property += score.listName+'.'
-//            }
-            String property = score.name
+    private List postProcessOutputData(List outputData, List scores) {
+        List processedOutputData = []
+        outputData.each { result ->
+            Map scoreMap = scores.find{it.score.label == result.label}
 
-            Aggregation aggregation = new Aggregation([type:score.aggregationType?.name(), property:property])
-            if (score.filterBy) {
-                Map groupingProperties = score.defaultGrouping()
-                aggregationConfig = new FilteredAggregationConfig(
-                        label:score.label,
-                        childAggregations: [aggregation],
-                        filter: new GroupingConfig([property:groupingProperties.property, filterValue:groupingProperties.filterBy, type:groupingProperties.type]))
+            if (!scoreMap) {
+                println "No score for ${result.label}"
+                return
             }
-            else if (score.groupBy) {
-                Map groupingProperties = score.defaultGrouping()
-                aggregationConfig = new GroupingAggregationConfig(
-                        label:score.label,
-                        childAggregations: [aggregation],
-                        groups: new GroupingConfig([property:groupingProperties.property, type:groupingProperties.type]))
+            Map resultMap = result.properties
+
+            resultMap.score = scoreMap.score
+            processedOutputData << resultMap
+        }
+        processedOutputData
+    }
+
+    private GroupingAggregationConfig aggregationConfigFromScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
+
+        Map<String, List> groupedScores = toAggregate.groupBy { it.score.label }
+
+        AggregationConfig aggregationConfig
+        List<AggregationConfig> config = groupedScores.collect { label, scores ->
+
+            List<AggregationConfig> config = scores.collect {configFor(it.score)}
+            if (config.size() > 1) {
+                aggregationConfig = new CompositeAggregationConfig(childAggregations: config, label:label)
             }
             else {
-                aggregationConfig = aggregation
+                aggregationConfig = config[0]
             }
             aggregationConfig
         }
@@ -158,54 +162,48 @@ class ReportService {
         new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
     }
 
+    private AggregationConfig configFor(Score score) {
+        AggregationConfig aggregationConfig
+
+        String property = 'data.'
+        if (score.listName) {
+            property+=score.listName+'.'
+        }
+        property+=score.name
+
+        Aggregation aggregation = new Aggregation([type: score.aggregationType?.name(), property: property, label:score.label])
+        if (score.filterBy) {
+            Map groupingProperties = score.defaultGrouping()
+            aggregationConfig = new FilteredAggregationConfig(
+                    label: score.label,
+                    childAggregations: [aggregation],
+                    filter: new GroupingConfig([property: groupingProperties.property, filterValue: groupingProperties.filterBy, type: groupingProperties.type]))
+        } else if (score.groupBy) {
+            Map groupingProperties = score.defaultGrouping()
+            aggregationConfig = new GroupingAggregationConfig(
+                    label: score.label,
+                    childAggregations: [aggregation],
+                    groups: new GroupingConfig([property: groupingProperties.property, type: groupingProperties.type]))
+        } else {
+            aggregationConfig = aggregation
+        }
+        // All scores need to be filtered by output
+        GroupingConfig outputFilter = new GroupingConfig(property: 'name', filterValue: score.outputName, type:'filter')
+        FilteredAggregationConfig filteredConfig = new FilteredAggregationConfig([label:score.label, filter:outputFilter, childAggregations:[aggregationConfig]])
+
+        filteredConfig
+    }
+
     private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
 
         Output.withNewSession {
             def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
             outputs.each { output ->
-
-                List outputData = flatten(output)
-
-                outputData.each {
-                    it.activity = activity
-                    aggregator.aggregate(it)
-                }
+                output.activity = activity
+                aggregator.aggregate(output)
             }
         }
     }
-
-    /**
-     * Takes an output containing potentially nested values and produces a flat List of stuff.
-     * If the output contains more than one set of nested properties, the number of items returned will
-     * be the sum of the nested properties - any particular row will only contain values from one of the
-     * nested rows.
-     * @param output the data to flatten
-     */
-    List flatten(Map output) {
-
-        OutputMetadata outputMetadata = new OutputMetadata(metadataService.getOutputDataModel(output.name))
-
-        List rows = []
-
-        def flat = output + output.data
-        def nested = outputMetadata.getNestedPropertyNames()
-        if (!nested) {
-            return [flat]
-        }
-        nested.each { property ->
-            Collection nestedData = flat.remove(property)
-            nestedData.each { row ->
-                rows << (row + flat)
-            }
-        }
-        // If the duplicate data is absent from the output, just return the non-nested data.
-        if (!rows) {
-            rows << flat
-        }
-
-        rows
-    }
-
 
     private def updateMetadata(Map activity, Map metadata) {
 
@@ -241,14 +239,16 @@ class ReportService {
             activities = activities.findAll{it.publicationStatus == 'published'}
         }
 
-        GroupingAggregator aggregator = new GroupingAggregator(null, aggregationSpec)
+        AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec)
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(aggregationConfig)
 
         activities.each { activity ->
             aggregateActivity(aggregator, activity)
         }
 
-        def results = aggregator.results().results
-        return results?results[0].results:[]
+        GroupedAggregationResult allResults = aggregator.result()
+
+        return allResults.groups[0].results?:[]
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {

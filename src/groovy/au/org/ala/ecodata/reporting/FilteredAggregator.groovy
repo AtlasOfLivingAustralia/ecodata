@@ -3,7 +3,7 @@ package au.org.ala.ecodata.reporting
  * Categorises an activity into a group based on a supplied grouping criteria then delegates to the appropriate
  * Aggregator.
  */
-class FilteredAggregator implements AggregatorIf {
+class FilteredAggregator extends BaseAggregator {
 
     List<AggregatorIf> aggregators
     int count
@@ -24,7 +24,11 @@ class FilteredAggregator implements AggregatorIf {
         }
     }
 
-    void aggregate(Map output) {
+    PropertyAccessor getPropertyAccessor() {
+        return filteringStrategy.propertyAccessor
+    }
+
+    void aggregateSingle(Map output) {
 
         def group = filteringStrategy.group(output)
         if (group == null) {
@@ -55,7 +59,7 @@ class FilteredAggregator implements AggregatorIf {
         else {
             result = aggregators[0].result()
             result.label = config.label
-            result.count = count
+            result.count = aggregators[0].count
         }
 
         result

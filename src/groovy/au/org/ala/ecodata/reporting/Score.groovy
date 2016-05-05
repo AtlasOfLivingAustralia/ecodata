@@ -54,7 +54,11 @@ class Score {
             if (bits.length == 2) {
                 def property = ''
                 if (bits[0] == 'output') {
-                    property += bits[1] // lists are unrolled before the property value is obtained.
+                    property = "data."
+                    if (listName) {
+                        property+=listName+'.'
+                    }
+                    property += bits[1]
                 }
                 else {
                     property += bits[0]+'.'+bits[1]

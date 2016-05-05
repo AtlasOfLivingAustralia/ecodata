@@ -8,6 +8,27 @@ interface AggregatorIf {
     AggregationResult result()
 }
 
+public abstract class BaseAggregator implements AggregatorIf {
+
+    void aggregate(Map output) {
+        PropertyAccessor propertyAccessor = getPropertyAccessor()
+        if (propertyAccessor?.isNested(output)) {
+            propertyAccessor.unroll(output).each {
+                aggregateSingle(it)
+            }
+        }
+        else {
+            aggregateSingle(output)
+        }
+
+    }
+
+    abstract PropertyAccessor getPropertyAccessor()
+
+    abstract void aggregateSingle(Map output)
+
+}
+
 /**
  * Convenience class to group together implementations of various types of aggregration functions (summing, counting etc)
  */
@@ -15,7 +36,7 @@ class Aggregators {
 
     def log = Logger.getLogger(getClass())
 
-    public static abstract class OutputAggregator implements AggregatorIf {
+    public static abstract class OutputAggregator extends BaseAggregator {
 
         int count = 0
         String label
@@ -27,7 +48,7 @@ class Aggregators {
             propertyAccessor = new PropertyAccessor(property)
         }
 
-        public void aggregate(Map values) {
+        public void aggregateSingle(Map values) {
             Object value = propertyAccessor.getPropertyValue(values)
             if (value != null) {
                 count++;
@@ -116,6 +137,16 @@ class Aggregators {
 
         public void doAggregation(value) {
 
+            if (value instanceof Collection) {
+                value.each { aggregateSingleValue(it) }
+            }
+            else {
+                aggregateSingleValue(value)
+            }
+
+        }
+
+        private void aggregateSingleValue(value) {
             if (value =~ /name:/) {
                 // extract sci name from complex key. e.g.
                 // [guid:urn:lsid:biodiversity.org.au:apni.taxon:56760, listId:Atlas of Living Australia, name:Paspalum punctatum, list:]
@@ -130,7 +161,7 @@ class Aggregators {
 
         public AggregationResult result() {
             // Units don't make sense for a count, regardless of the units of the score.
-            return new SingleResult([label:label, units:"", count:count, result:histogram])
+            return new SingleResult([label:label, count:count, result:histogram])
         }
     }
 

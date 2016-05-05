@@ -1,9 +1,11 @@
 package au.org.ala.ecodata.reporting
+
+
 /**
  * Categorises an activity into a group based on a supplied grouping criteria then delegates to the appropriate
  * Aggregator.
  */
-class GroupingAggregator implements AggregatorIf {
+class GroupingAggregator extends BaseAggregator {
 
     Map<String, List> aggregatorsByGroup
     Map<String, Integer> countsByGroup
@@ -36,7 +38,11 @@ class GroupingAggregator implements AggregatorIf {
         aggregators
     }
 
-    void aggregate(Map output) {
+    PropertyAccessor getPropertyAccessor() {
+        return groupingStrategy.propertyAccessor
+    }
+
+    void aggregateSingle(Map output) {
 
         def group = groupingStrategy.group(output)
         if (group == null) {
@@ -59,7 +65,7 @@ class GroupingAggregator implements AggregatorIf {
 
         AggregationResult result = new GroupedAggregationResult(label:config.label, count:count)
 
-        result.groups = countsByGroup.collect { String group, Integer count ->
+        result.groups = countsByGroup.collect { Object group, Integer count ->
             new GroupedResult([group:group, count:count, results:aggregatorsByGroup[group].collect{it.result()}])
         }
         result

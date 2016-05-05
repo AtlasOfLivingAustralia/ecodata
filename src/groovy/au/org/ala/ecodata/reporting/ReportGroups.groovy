@@ -13,6 +13,7 @@ class ReportGroups {
 
     interface GroupingStrategy {
         def group(data)
+        PropertyAccessor getPropertyAccessor()
     }
 
     static abstract class SinglePropertyGroupingStrategy implements GroupingStrategy {
@@ -172,6 +173,8 @@ class ReportGroups {
         public group(data) {
             return Aggregator.DEFAULT_GROUP
         }
+
+        public PropertyAccessor getPropertyAccessor() { return null }
     }
 
 
