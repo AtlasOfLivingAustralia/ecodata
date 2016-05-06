@@ -276,7 +276,7 @@ class ReportService {
 
     def outputTargetReport(List filters, String searchTerm, scores) {
 
-        def groupingSpec = [entity:'activity', property:'programSubProgram', type:'discrete']
+        def groupingSpec = [property:'activity.programSubProgram', type:'discrete']
 
         aggregate(filters, searchTerm, scores, groupingSpec)
     }
