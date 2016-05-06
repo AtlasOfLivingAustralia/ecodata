@@ -286,10 +286,6 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
         grails.hostname = "devt.ala.org.au"
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        security.cas.appServerName = serverName
-        security.cas.contextPath = "/" + appName
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
     }
@@ -298,10 +294,6 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        security.cas.appServerName = serverName
-        security.cas.contextPath = "/" + appName
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
