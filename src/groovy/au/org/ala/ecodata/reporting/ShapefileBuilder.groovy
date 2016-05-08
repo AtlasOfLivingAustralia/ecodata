@@ -33,7 +33,7 @@ class ShapefileBuilder {
     static CoordinateReferenceSystem DEFAULT_CRS = DefaultGeographicCRS.WGS84
     /** Attributes of each site to write to the shape file */
     static
-    def DEFAULT_SITE_PROPERTIES = [[property: 'name', attribute: 'name'], [property: 'description', attribute: 'description']]
+    def DEFAULT_SITE_PROPERTIES = [[property: 'name', attribute: 'name'], [property: 'description', attribute: 'description'], [property: 'siteId', attribute:'siteId'], [property:'type', attribute:'type'], [property:'dateCreated', attribute:'dateCreated'], [property:'lastUpdated', attribute:'lastUpdated']]
 
     /** Attributes of each project to write to the shape file */
     static
