@@ -248,7 +248,7 @@ class ReportService {
 
         GroupedAggregationResult allResults = aggregator.result()
 
-        return postProcessOutputData(allResults.groups[0].results?:[], aggregationSpec)
+        return postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {
