@@ -355,7 +355,7 @@ class ProjectService {
                			// one in containing the target.
                     def score = toAggregate.find{it.score?.label == target.scoreLabel}
                     if (score) {
-                        outputSummary << [label:score.label, score:score, target:target.target]
+                        outputSummary << [label:score.label, score:score.score, target:target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
