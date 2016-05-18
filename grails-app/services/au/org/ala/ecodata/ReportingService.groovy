@@ -11,7 +11,7 @@ import static au.org.ala.ecodata.Status.*
 @Transactional
 class ReportingService {
 
-    def permissionService, userService, activityService
+    def permissionService, userService, activityService, commonService
 
     def get(String reportId, includeDeleted = false) {
         if (includeDeleted) {
@@ -73,14 +73,15 @@ class ReportingService {
     Report create(Map properties) {
 
         properties.reportId = Identifiers.getNew(true, '')
-        Report report = new Report(properties)
+        Report report = new Report(reportId:properties.reportId)
+        commonService.updateProperties(report, properties)
         report.save(flush:true)
         return report
     }
 
     Report update(String id, Map properties) {
         Report report = get(id)
-        report.properties = properties
+        commonService.updateProperties(report, properties)
         report.save(flush:true)
         return report
     }

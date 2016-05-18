@@ -346,13 +346,16 @@ class ProjectService {
                 }
                 def result = outputSummary.find{it.label == target.scoreLabel}
                 if (result) {
-                    result.target = target.target
+                    if (!result.target || result.target == "0") { // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
+                        result.target = target.target
+                    }
+
                 } else {
                		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
                			// one in containing the target.
                     def score = toAggregate.find{it.score?.label == target.scoreLabel}
                     if (score) {
-                        outputSummary << [label:score.label, score:score, target:target.target]
+                        outputSummary << [label:score.label, score:score.score, target:target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.

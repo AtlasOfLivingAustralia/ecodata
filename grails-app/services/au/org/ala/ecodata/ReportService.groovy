@@ -248,7 +248,7 @@ class ReportService {
 
         GroupedAggregationResult allResults = aggregator.result()
 
-        return allResults.groups[0].results?:[]
+        return postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {
@@ -276,7 +276,7 @@ class ReportService {
 
     def outputTargetReport(List filters, String searchTerm, scores) {
 
-        def groupingSpec = [entity:'activity', property:'programSubProgram', type:'discrete']
+        def groupingSpec = [property:'activity.programSubProgram', type:'discrete']
 
         aggregate(filters, searchTerm, scores, groupingSpec)
     }
