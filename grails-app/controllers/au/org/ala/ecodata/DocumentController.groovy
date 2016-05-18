@@ -4,6 +4,7 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
+import static au.org.ala.ecodata.Status.ACTIVE
 
 class DocumentController {
 
@@ -231,6 +232,7 @@ class DocumentController {
     @RequireApiKey
     def listImages(){
         Map searchCriteria = request.JSON
+
         Map mongoSearch = [:]
         Map documentResult
         GrailsParameterMap params
@@ -238,7 +240,28 @@ class DocumentController {
         mongoSearch.role = searchCriteria.remove('role');
         params = new GrailsParameterMap(searchCriteria, request)
         documentResult = listImagesForView(mongoSearch, params)
-        asJson  documentResult
+
+        if (params?.version) {
+            def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(
+                    documentResult.documents.collect { it.id },
+                    Document.class.name,
+                    new Date(params?.version as Long), [sort:'date', order:'desc'])
+            def images = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE && Document.DOCUMENT_TYPE_IMAGE == it.entity.type &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        images << it.entity
+                    }
+                }
+            }
+
+            asJson ([documents: images, total: images.size()])
+        } else {
+            asJson documentResult
+        }
     }
 
     /**

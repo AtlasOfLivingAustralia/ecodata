@@ -58,7 +58,7 @@ class SiteController {
             list.sort { it.name }
             asJson([list: list])
         } else {
-            def s = siteService.get(id, levelOfDetail)
+            def s = siteService.get(id, levelOfDetail, params?.version)
             if (s) {
                 withFormat {
                     json {
