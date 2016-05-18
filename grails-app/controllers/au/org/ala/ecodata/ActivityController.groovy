@@ -37,7 +37,7 @@ class ActivityController {
             //log.debug list
             asJson([list: list])
         } else {
-            def act = activityService.get(id, detail)
+            def act = activityService.get(id, detail, params?.version)
             if (act) {
                 asJson act
             } else {

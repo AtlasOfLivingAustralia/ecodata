@@ -27,6 +27,7 @@ class SearchController {
     SiteService siteService
     UserService userService
     DownloadService downloadService
+    PermissionService permissionService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -59,10 +60,103 @@ class SearchController {
     */
     @RequireApiKey
     def elasticProjectActivity(){
-        elasticSearchService.buildProjectActivityQuery(params)
-        def res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+        def res
+        if (params?.version) {
+            //search auditMessage
+            res = (auditMessageSearch(params) as JSON).toString()
+        } else {
+            elasticSearchService.buildProjectActivityQuery(params)
+            res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+        }
         response.setContentType("application/json; charset=\"UTF-8\"")
         render res
+    }
+
+    /*
+    * AuditMessage search that is equivalent to the elastic search with a version
+    *
+    *       elasticSearchService.buildProjectActivityQuery(params)
+    *       res = elasticSearchService.search(params.query, params, PROJECT_ACTIVITY_INDEX)
+    *
+     */
+    private def auditMessageSearch(params) {
+        String userId = params.userId
+        String projectId = params.projectId
+        List<String> projectsTheUserIsAMemberOf
+
+        //find project activities
+        def all
+        if (projectId) {
+            all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(projectId, ProjectActivity.class.name, new Date(params.version as Long), [sort:'date', order:'desc'])
+        } else {
+            all = AuditMessage.findAllByEntityTypeAndDateLessThanEquals(ProjectActivity.class.name, new Date(params.version as Long), [sort:'date', order:'desc'])
+        }
+        def projectActivities = []
+        def found = []
+        all.each {
+            if (!found.contains(it.entityId)) {
+                found << it.entityId
+
+                if (it.eventType == AuditEventType.Update || it.eventType == AuditEventType.Insert) {
+                    def added = false
+
+                    it.entity.lastUpdated = it.date
+
+                    switch (params.view) {
+
+                        case 'myrecords':
+                            if (userId && it.userId == userId) {
+                                projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                added = true
+                            }
+                            break
+
+                        case 'project':
+                            if (projectId) {
+                                if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                                    projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                    added = true
+                                } else if (userId && (!it.entity.embargoed || it.userId == userId)) {
+                                    projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                    added = true
+                                } else if (!userId && !it.entity.embargoed) {
+                                    projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                    added = true
+                                }
+                            }
+                            break
+
+                        case 'allrecords':
+                            if (!projectId) {
+                                if (userId && permissionService.isUserAlaAdmin(userId)) {
+                                    projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                    added = true
+                                } else if (userId) {
+                                    if (!projectsTheUserIsAMemberOf) projectsTheUserIsAMemberOf = permissionService.getProjectsForUser(userId, AccessLevel.admin, AccessLevel.editor)
+
+                                    if ((!projectsTheUserIsAMemberOf || projectsTheUserIsAMemberOf.contains(it.projectId)) &&
+                                            (!it.entity.embargoed || it.userId == userId)) {
+                                        projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                        added = true
+                                    }
+                                } else if (!userId && !it.entity.embargoed) {
+                                    projectActivities << elasticSearchService.prepareActivityForIndexing(it.entity, params?.version)
+                                    added = true
+                                }
+                            }
+                            break
+                    }
+
+                    if (!added) {
+                        if (!it.entity.embargoed) {
+                            projectActivities << it.entity
+                        }
+                    }
+                }
+            }
+        }
+
+        [hits: [hits: projectActivities.collect { [_source: it]}, total: projectActivities.size() ]]
     }
 
     private def populateGeoInfo(markBy, hit, selectedFacetTerms){

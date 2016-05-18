@@ -53,15 +53,17 @@ class ProjectController {
             list.sort {it.name}
             asJson([list: list])
         } else {
-            def p = Project.findByProjectId(id)
+            def p = params?.version ?
+                    AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(params.version as Long), [sort:'date', order:'desc', max: 1])[0].entity :
+                    Project.findByProjectId(id)
             if (p) {
 
                 withFormat {
                     json {
-                        asJson projectService.toMap(p, levelOfDetail, includeDeleted)
+                        asJson projectService.toMap(p, levelOfDetail, includeDeleted, params?.version)
                     }
                     xlsx {
-                        asXlsx projectService.toMap(p, 'all')  // Probably should only support one level of detail?
+                        asXlsx projectService.toMap(p, 'all', false, params?.version)  // Probably should only support one level of detail?
                     }
                     shp {
                         asShapefile p // Make sure sites are included
