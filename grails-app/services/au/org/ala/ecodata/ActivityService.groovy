@@ -20,9 +20,23 @@ class ActivityService {
     CommentService commentService
     UserService userService
 
-    def get(id, levelOfDetail = []) {
-        def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
-        return o ? toMap(o, levelOfDetail) : null
+    def get(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByEntityIdAndEntityTypeAndDateLessThanEquals(id, Activity.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc', max: 1])
+            def activity = null
+            all?.each {
+                if (it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                    activity = toMap(it.entity, levelOfDetail, version)
+                }
+            }
+
+            activity
+        } else {
+            def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
+            o ? toMap(o, levelOfDetail) : null
+        }
     }
 
     def getAll(boolean includeDeleted = false, levelOfDetail = []) {
@@ -66,8 +80,27 @@ class ActivityService {
         Activity.findAllByActivityIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForSiteId(id, levelOfDetail = []) {
-        Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForSiteId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def activityIds = Activity.findAllBySiteId(id).collect { it.activityId }
+            def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(activityIds, Activity.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def activities = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        activities << toMap(it.entity, levelOfDetail, version)
+                    }
+                }
+            }
+
+            activities
+        } else {
+            Activity.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     List findAllForProjectId(id, levelOfDetail = [], includeDeleted = false) {
@@ -132,22 +165,21 @@ class ActivityService {
      * @param act an Activity instance
      * @return map of properties
      */
-    def toMap(act, levelOfDetail = ['all']) {
-        def dbo = act.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+    def toMap(act, levelOfDetail = ['all'], version = null) {
+        def mapOfProperties = act instanceof Activity ? act.getProperty("dbo").toMap() : act
         mapOfProperties.complete = act.complete // This is not a persistent property so is not in the dbo.
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         if (levelOfDetail == SITE) {
             if (mapOfProperties.siteId) {
-                mapOfProperties.site = siteService.get(mapOfProperties.siteId, SiteService.FLAT)
+                mapOfProperties.site = siteService.get(mapOfProperties.siteId, SiteService.FLAT, version)
             }
         }
         else if (levelOfDetail != FLAT && levelOfDetail != LevelOfDetail.NO_OUTPUTS.name()) {
             mapOfProperties.remove("outputs")
-            mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail)
-            mapOfProperties.documents = documentService.findAllForActivityId(act.activityId)
+            mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail, version)
+            mapOfProperties.documents = documentService.findAllForActivityId(act.activityId, version)
         }
 
         mapOfProperties.findAll {k,v -> v != null}

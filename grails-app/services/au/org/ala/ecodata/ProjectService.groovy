@@ -39,20 +39,37 @@ class ProjectService {
         grailsApplication.mainContext.commonService
     }
 
-    def getBrief(listOfIds) {
+    def getBrief(listOfIds, version = null) {
         if (listOfIds) {
-            Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
-                [projectId: it.projectId, name: it.name]
+            if (version) {
+                def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort:'date', order:'desc'])
+                def projects = []
+                def found = []
+                all?.each {
+                    if (!found.contains(it.projectId)) {
+                        found << it.projectId
+                        if (it.entity.status != DELETED &&
+                                (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                            projects << [projectId: it.projectId, name: it.entity.name]
+                        }
+                    }
+                }
+            } else {
+                Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
+                    [projectId: it.projectId, name: it.name]
+                }
             }
         } else {
             []
         }
     }
 
-    def get(String id, levelOfDetail = []) {
-        def p = Project.findByProjectId(id)
+    def get(String id, levelOfDetail = [], version = null) {
+        def p = version ?
+                AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(version as Long), [sort:'date', order:'desc', max: 1])[0].entity :
+                Project.findByProjectId(id)
 
-        return p?toMap(p, levelOfDetail):null
+        return p?toMap(p, levelOfDetail, version):null
     }
 
     def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
@@ -88,10 +105,10 @@ class ProjectService {
      * @param prj a Project instance
      * @return map of properties
      */
-    Map toMap(Project project, levelOfDetail = [], includeDeletedActivities = false) {
+    Map toMap(project, levelOfDetail = [], includeDeletedActivities = false, version = null) {
         Map result
 
-        Map mapOfProperties = project.getProperty("dbo").toMap()
+        Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
 
         if (levelOfDetail == BRIEF) {
             result = [
@@ -123,9 +140,9 @@ class ProjectService {
 
             if (levelOfDetail != FLAT) {
                 mapOfProperties.remove("sites")
-                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT])
-                mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail)
-                mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail)
+                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
+                mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
