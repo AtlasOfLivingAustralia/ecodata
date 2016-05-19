@@ -45,20 +45,52 @@ class SiteService {
         list
     }
 
-    def get(id, levelOfDetail = []) {
-        def o = Site.findBySiteId(id)
-        if (!o) { return null }
-        def map = [:]
-        if (levelOfDetail.contains(RAW)) {
-            map = commonService.toBareMap(o)
+    def get(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByEntityIdAndEntityTypeAndDateLessThanEquals(id, Site.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc', max: 1])
+            def site = [:]
+            all?.each {
+                if (it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                    site = toMap(it.entity, levelOfDetail, version)
+                }
+            }
+
+            site
         } else {
-            map = toMap(o, levelOfDetail)
+            def o = Site.findBySiteId(id)
+            if (!o) {
+                return null
+            }
+            def map = [:]
+            if (levelOfDetail.contains(RAW)) {
+                map = commonService.toBareMap(o)
+            } else {
+                map = toMap(o, levelOfDetail)
+            }
+            map
         }
-        map
     }
 
-    def findAllForProjectId(id, levelOfDetail = []) {
-        Site.findAllByProjects(id).findAll({it.status == ACTIVE}).collect { toMap(it, levelOfDetail) }
+    def findAllForProjectId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Site.class.name,
+                    new Date(version as Long), [sort: 'date', order: 'desc'])
+            def sites = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entity.siteId)) {
+                    found << it.entity.siteId
+                    if (it.entity.status == ACTIVE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        sites << toMap(it.entity, [SiteService.FLAT], version)
+                    }
+                }
+            }
+        } else {
+            Site.findAllByProjects(id).findAll({ it.status == ACTIVE }).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     /**
@@ -68,22 +100,21 @@ class SiteService {
      * @param levelOfDetail list of features to include
      * @return map of properties
      */
-    def toMap(site, levelOfDetail = []) {
-        def dbo = site.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+    def toMap(site, levelOfDetail = [], version = null) {
+        def mapOfProperties = site instanceof Site ? site.getProperty("dbo").toMap() : site
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
-            mapOfProperties.documents = documentService.findAllForSiteId(site.siteId)
+            mapOfProperties.documents = documentService.findAllForSiteId(site.siteId, version)
             if (levelOfDetail.contains(LevelOfDetail.PROJECTS.name())) {
-                def projects = projectService.getBrief(mapOfProperties.projects)
+                def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
             } else if (!levelOfDetail.contains(LevelOfDetail.NO_ACTIVITIES.name())) {
-                def projects = projectService.getBrief(mapOfProperties.projects)
+                def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
-                mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail)
+                mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail, version)
             }
         }
 

@@ -13,6 +13,7 @@ class ProjectActivityService {
     ActivityService activityService
     CommentService commentService
     PermissionService permissionService
+    ElasticSearchService elasticSearchService
 
     /**
      * Creates an project activity.
@@ -139,13 +140,45 @@ class ProjectActivityService {
         result
     }
 
-    Map get(String id, levelOfDetail = []) {
-        ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(id)
-        projectActivity ? toMap(projectActivity, levelOfDetail) : [:]
+    Map get(String id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByEntityIdAndEntityTypeAndDateLessThanEquals(id, ProjectActivity.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc', max: 1])
+            def projectActivity = [:]
+            all?.each {
+                if (it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                    projectActivity = elasticSearchService.prepareActivityForIndexing(toMap(it.entity, levelOfDetail))
+                }
+            }
+
+            projectActivity
+        } else {
+            ProjectActivity projectActivity = ProjectActivity.findByProjectActivityId(id)
+            projectActivity ? toMap(projectActivity, levelOfDetail) : [:]
+        }
     }
 
-    List getAllByProject(id, levelOfDetail = []) {
-        ProjectActivity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    List getAllByProject(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, ProjectActivity.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def projectActivities = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entity.projectActivityId)) {
+                    found << it.entity.projectActivityId
+                    if (it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        projectActivities << elasticSearchService.prepareActivityForIndexing(toMap(it.entity, levelOfDetail))
+                    }
+                }
+            }
+
+            projectActivities
+        } else {
+            ProjectActivity.findAllByProjectIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     /**
@@ -156,7 +189,8 @@ class ProjectActivityService {
      * @return map of properties
      */
     Map toMap(projectActivity, levelOfDetail = []) {
-        Map mapOfProperties = projectActivity.getProperty("dbo").toMap()
+        Map mapOfProperties = projectActivity instanceof ProjectActivity ?
+                projectActivity.getProperty("dbo").toMap() : projectActivity
 
         if (levelOfDetail == DOCS) {
             mapOfProperties["documents"] = documentService.findAllForProjectActivityId(mapOfProperties.projectActivityId)

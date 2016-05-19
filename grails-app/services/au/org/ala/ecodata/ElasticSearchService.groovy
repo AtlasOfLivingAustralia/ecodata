@@ -700,13 +700,13 @@ class ElasticSearchService {
         projectMap
     }
 
-    private Map prepareActivityForIndexing(Map activity) {
+    private Map prepareActivityForIndexing(Map activity, version = null) {
         activity["className"] = Activity.class.getName()
 
-        def project = projectService.get(activity.projectId, ProjectService.FLAT)
+        def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
         def organisation = organisationService.get(project?.organisationId)
         // Include project activity only for survey based projects.
-        def pActivity = projectActivityService.get(activity.projectActivityId)
+        def pActivity = version ? activity : projectActivityService.get(activity.projectActivityId)
         if (pActivity) {
             Map projectActivity = [:]
             List records = []
@@ -720,7 +720,8 @@ class ElasticSearchService {
             projectActivity.projectName = project?.name
             projectActivity.projectId = project?.projectId
 
-            def allRecords = recordService.getAllByActivity(activity.activityId)
+            def allRecords = activity.activityId ? recordService.getAllByActivity(activity.activityId) :
+                    recordService.getAllByProjectActivity(pActivity.projectActivityId, version)
             allRecords?.each {
                 Map values = [:]
                 values.name = it.name
@@ -728,13 +729,21 @@ class ElasticSearchService {
                 values.occurrenceID = it.occurrenceID
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
                 records << values
+
+                if (!activity.activityId) {
+                    activity.activityId = it.activityId
+                    projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(it.lastUpdated)
+                    projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(it.lastUpdated)
+                }
             }
             projectActivity.records = records
-            projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
-            projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            if (activity?.lastUpdated) {
+                projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
+                projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
+            }
             try {
                 // check if activity has images
-                Map images = documentService.search([type: 'image', role: 'surveyImage', activityId: activity.activityId]);
+                Map images = documentService.search([type: 'image', role: 'surveyImage', activityId: activity.activityId], version);
                 if (images.count > 0)
                     projectActivity.surveyImage = true;
             }
@@ -762,7 +771,7 @@ class ElasticSearchService {
         }
 
         if (activity.siteId) {
-            def site = siteService.get(activity.siteId, SiteService.FLAT)
+            def site = siteService.get(activity.siteId, SiteService.FLAT, version)
             if (site) {
                 activity.sites = [site]
             }

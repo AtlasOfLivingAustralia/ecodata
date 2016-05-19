@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.RecordConverter
 import au.org.ala.ecodata.metadata.OutputMetadata
 
+import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
 class OutputService {
@@ -14,6 +15,7 @@ class OutputService {
     UserService userService
     DocumentService documentService
     CommentService commentService
+    ActivityService activityService
 
     static final ACTIVE = "active"
     static final SCORES = 'scores'
@@ -31,8 +33,27 @@ class OutputService {
         Output.findAllByOutputIdInListAndStatus(listOfIds, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForActivityId(id, levelOfDetail = []) {
-        Output.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForActivityId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def sourceOutputs = Output.findAllByActivityId(id).collect { it.outputId }
+            def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(sourceOutputs, Output.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def outputs = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.activityId == id && it.entity.status == ACTIVE &&
+                        (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        outputs << toMap(it.entity, levelOfDetail)
+                    }
+                }
+            }
+
+            outputs
+        } else {
+            Output.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     def findAllForActivityIdAndName(id, name, levelOfDetail = []) {
@@ -84,8 +105,7 @@ class OutputService {
      * @return map of properties
      */
     def toMap(output, levelOfDetail = []) {
-        def dbo = output.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = output instanceof Output ?  output.getProperty("dbo").toMap() : output
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
