@@ -601,11 +601,10 @@ class ElasticSearchService {
                 projects.each { project ->
                     try {
                         Map projectMap = prepareProjectForHomePageIndex(project)
-
                         indexDoc(projectMap, HOMEPAGE_INDEX)
                     }
                     catch (Exception e) {
-                        log.error("Unable to index projewt: "+it?.projectId, e)
+                        log.error("Unable to index project:  " + project?.projectId, e)
                     }
                 }
 
