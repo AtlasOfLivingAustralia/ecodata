@@ -294,6 +294,11 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
+        // Only for travis CI, they must be overriden by ecodata-config.properties
+        serverName = "http://${grails.hostname}:8080"
+        grails.app.context = "ecodata"
+        grails.serverURL = serverName + "/" + grails.app.context
+
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
