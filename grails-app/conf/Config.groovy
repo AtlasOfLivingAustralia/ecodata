@@ -298,6 +298,7 @@ environments {
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
+        app.uploads.url = "${grails.serverURL}/document/download?filename="
 
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
