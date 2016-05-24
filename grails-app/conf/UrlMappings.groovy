@@ -132,6 +132,7 @@ class UrlMappings {
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
         "/ws/project/getScienceTypes"(controller: "project"){ action = [GET:"getScienceTypes"] }
+        "/ws/project/getEcoScienceTypes"(controller: "project"){ action = [GET:"getEcoScienceTypes"] }
 
 
         "/"(view:"/index")

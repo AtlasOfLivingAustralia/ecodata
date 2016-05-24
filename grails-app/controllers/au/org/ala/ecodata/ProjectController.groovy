@@ -318,6 +318,15 @@ class ProjectController {
         render(text:  scienceTypes as JSON, contentType: 'application/json')
     }
 
+    /**
+     * get eco science types supported by ecoscience projects
+     * @return
+     */
+    def getEcoScienceTypes(){
+        List ecoScienceTypes = grailsApplication.config.biocollect.ecoScienceType
+        render(text:  ecoScienceTypes as JSON, contentType: 'application/json')
+    }
+
     private Map buildParams(Map params){
         Map values = [:]
         values.sort = params.sort ?: 'nameSort'

@@ -453,7 +453,8 @@ class ElasticSearchService {
                 project = projectService.toMap(pDoc, LevelOfDetail.flat)
                 projects.push([
                         projectName: project.name,
-                        projectId  : project.projectId
+                        projectId  : project.projectId,
+                        projectType: project?.projectType
                 ])
 
                 surveysForProject = projectActivityService.getAllByProject(project.projectId);
@@ -718,6 +719,7 @@ class ElasticSearchService {
             projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
             projectActivity.projectName = project?.name
             projectActivity.projectId = project?.projectId
+            projectActivity.projectType = project?.projectType
 
             def allRecords = activity.activityId ? recordService.getAllByActivity(activity.activityId) :
                     recordService.getAllByProjectActivity(pActivity.projectActivityId, version)

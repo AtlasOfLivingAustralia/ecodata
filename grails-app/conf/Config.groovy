@@ -167,6 +167,50 @@ if(!biocollect.scienceType){
     ]
 }
 
+if(!biocollect.ecoScienceType) {
+    biocollect.ecoScienceType = [
+            "Agroecology",
+            "Behavioural Ecology",
+            "Biodiversity Inventory",
+            "Species Composition",
+            "Structural Assemblage",
+            "Biogeography",
+            "Bioregional Inventory",
+            "Chemical Ecology",
+            "Competition/Resource Partitioning",
+            "Decomposition",
+            "Disease Ecology",
+            "Disturbances",
+            "Ecological Succession",
+            "Ecophysiology",
+            "Ecosystem Modelling",
+            "Ecotoxicology",
+            "Evolutionary Ecology",
+            "Fire Ecology",
+            "Functional Ecology",
+            "Global Ecology",
+            "Herbivory",
+            "Landscape Ecology",
+            "Long-Term Community Monitoring",
+            "Long-Term Species Monitoring",
+            "Macroecology",
+            "Molecular Ecology",
+            "None",
+            "Other",
+            "Paleoecology",
+            "Pollination",
+            "Population Dynamics",
+            "Predator-Prey Interactions",
+            "Productivity",
+            "Restoration Ecology",
+            "Soil Ecology",
+            "Species Decline",
+            "Species Distribution Modelling",
+            "Symbyotic Interactions",
+            "Urban Ecology"
+    ]
+}
+
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
 // Each gridded facet becomes a search facet.
