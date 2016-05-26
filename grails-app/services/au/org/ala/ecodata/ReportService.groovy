@@ -118,8 +118,8 @@ class ReportService {
 
         GroupedAggregationResult allResults = aggregator.result()
         def outputData = allResults
-        if (topLevelGrouping == null) {
-            outputData = postProcessOutputData(allResults.groups[0].results, toAggregate)
+        if (topLevelGrouping == null ) {
+            outputData = postProcessOutputData(allResults.groups? allResults.groups[0].results : [], toAggregate)
         }
 
         [outputData:outputData, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
