@@ -73,10 +73,12 @@ class SciStarterConverter {
                                 } catch (MalformedURLException e) {
                                     "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
                                 }
-                            } else  if (props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
+                            } else  if (!props.image?.equals(null) && props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
                                 props.image
-                            } else {
+                            } else if (!props.image?.equals(null)){
                                 "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                            } else {
+                                return null
                             }
                         }],
                 'difficulty'  : 'difficulty',

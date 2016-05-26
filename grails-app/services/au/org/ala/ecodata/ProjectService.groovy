@@ -615,9 +615,12 @@ class ProjectService {
             // convert region to site
             project.regions.each { region ->
                 Map site = SciStarterConverter.siteMapping(region)
-                Map createdSite = siteService.create(site)
-                if(createdSite.siteId){
-                    sites.push(createdSite.siteId)
+                // only add valid geojson objects
+                if(site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())){
+                    Map createdSite = siteService.create(site)
+                    if(createdSite.siteId){
+                        sites.push(createdSite.siteId)
+                    }
                 }
             }
 
