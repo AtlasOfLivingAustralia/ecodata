@@ -542,6 +542,7 @@ class SiteService {
             parser.nextToken();
             ShapeBuilder.parse(parser).build();
         } catch (Exception e){
+            log.error('Invalid GeoJson. ' + e.message)
             return false
         }
 
