@@ -19,6 +19,7 @@ class Report {
         Date dateChanged
         String changedBy
         String status
+        String comment
         static constraints = {
             version false
         }
@@ -39,6 +40,8 @@ class Report {
     Date fromDate
     Date toDate
     Date dueDate
+
+    Map data
 
     /** The number of activities associated with this report. */
     Integer activityCount
@@ -96,25 +99,25 @@ class Report {
     }
 
 
-    public void approve(String userId, Date changeDate = new Date()) {
+    public void approve(String userId, String comment = '' , Date changeDate = new Date()) {
         if (publicationStatus != REPORT_SUBMITTED) {
             throw new IllegalArgumentException("Only submitted reports can be approved.")
         }
         if (!approvalDeltaInWeekdays) {
             approvalDeltaInWeekdays = weekDaysBetween(dateSubmitted, changeDate)
         }
-        StatusChange change = changeStatus(userId, 'approved', changeDate)
+        StatusChange change = changeStatus(userId, 'approved', changeDate, comment)
 
         publicationStatus = REPORT_APPROVED
         approvedBy = change.changedBy
         dateApproved = change.dateChanged
     }
 
-    public void submit(String userId,  Date changeDate = new Date()) {
+    public void submit(String userId, String comment = '', Date changeDate = new Date()) {
         if (isSubmittedOrApproved()) {
             throw new IllegalArgumentException("An approved or submitted report cannot be resubmitted")
         }
-        StatusChange change = changeStatus(userId, 'submitted', changeDate)
+        StatusChange change = changeStatus(userId, 'submitted', changeDate, comment)
 
         if (dueDate && !submissionDeltaInWeekdays) {
             submissionDeltaInWeekdays = weekDaysBetween(dueDate, changeDate)
@@ -124,16 +127,16 @@ class Report {
         dateSubmitted = change.dateChanged
     }
 
-    public void returnForRework(String userId, Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'returned', changeDate)
+    public void returnForRework(String userId, String comment = '', Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'returned', changeDate, comment)
 
         publicationStatus = REPORT_NOT_APPROVED
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
     }
 
-    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date()) {
-        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status)
+    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '') {
+        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment)
         statusChangeHistory << change
 
         return change
@@ -157,6 +160,7 @@ class Report {
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
         activityCount nullable: true
+        data nullable: true
 
     }
 

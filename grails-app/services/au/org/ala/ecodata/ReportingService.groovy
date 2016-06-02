@@ -110,26 +110,26 @@ class ReportingService {
         }
     }
 
-    def submit(String id) {
+    def submit(String id, String comment = '') {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)
-        r.submit(user.userId)
+        r.submit(user.userId, comment)
         r.save()
         return r
     }
 
-    def approve(String id) {
+    def approve(String id, String comment = '') {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)
-        r.approve(user.userId)
+        r.approve(user.userId, comment)
         r.save()
         return r
     }
 
-    def returnForRework(String id) {
+    def returnForRework(String id, String comment = '') {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)
-        r.returnForRework(user.userId)
+        r.returnForRework(user.userId, comment)
         r.save()
         return r
     }

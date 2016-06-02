@@ -7,7 +7,7 @@ class ReportController {
     def reportingService
 
     def get(String id) {
-        reportingService.get(id, false)
+        respond reportingService.get(id, false)
     }
 
     @RequireApiKey
@@ -42,17 +42,23 @@ class ReportController {
 
     @RequireApiKey
     def submit(String id) {
-        respond reportingService.submit(id)
+        Map params = request.JSON
+
+        respond reportingService.submit(id, params.comment)
     }
 
     @RequireApiKey
     def approve(String id) {
-        respond reportingService.approve(id)
+        Map params = request.JSON
+
+        respond reportingService.approve(id, params.comment)
     }
 
     @RequireApiKey
     def returnForRework(String id) {
-        respond reportingService.returnForRework(id)
+        Map params = request.JSON
+
+        respond reportingService.returnForRework(id, params.comment)
     }
 
 }
