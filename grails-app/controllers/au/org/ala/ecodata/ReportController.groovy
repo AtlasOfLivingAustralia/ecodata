@@ -1,5 +1,7 @@
 package au.org.ala.ecodata
 
+import org.codehaus.groovy.grails.web.json.JSONObject
+
 
 class ReportController {
 
@@ -43,6 +45,9 @@ class ReportController {
     @RequireApiKey
     def submit(String id) {
         Map params = request.JSON
+        if (params.comment == JSONObject.NULL) {
+            params.comment = null
+        }
 
         respond reportingService.submit(id, params.comment)
     }
@@ -50,13 +55,18 @@ class ReportController {
     @RequireApiKey
     def approve(String id) {
         Map params = request.JSON
-
+        if (params.comment == JSONObject.NULL) {
+            params.comment = null
+        }
         respond reportingService.approve(id, params.comment)
     }
 
     @RequireApiKey
     def returnForRework(String id) {
         Map params = request.JSON
+        if (params.comment == JSONObject.NULL) {
+            params.comment = null
+        }
 
         respond reportingService.returnForRework(id, params.comment)
     }

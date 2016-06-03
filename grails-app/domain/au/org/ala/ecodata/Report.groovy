@@ -35,13 +35,14 @@ class Report {
 
     String name
     String description
-    String type // What do we want here...? (Stage, Green Army Monthly, Green Army 3 Monthly)
+    String type // "Activity" for stage reporting, "Performance" for organisation performance self assessments
 
     Date fromDate
     Date toDate
     Date dueDate
 
-    Map data
+    String progress // For reports that have data (e.g self assessment)
+    Map data // report type specific data for this report.
 
     /** The number of activities associated with this report. */
     Integer activityCount
@@ -161,7 +162,7 @@ class Report {
         submissionDeltaInWeekdays nullable: true
         activityCount nullable: true
         data nullable: true
-
+        progress nullable: true
     }
 
     static embedded = ['statusChangeHistory']
