@@ -22,6 +22,42 @@ class AggregatorFactory {
         }
     }
 
+    public AggregatorIf createAggregator(Map config) {
+
+        AggregationConfig configObject = configFromMap(config)
+        return createAggregator(configObject)
+    }
+
+
+    private AggregationConfig configFromMap(Map config) {
+        AggregationConfig configObject
+        if (config.containsKey('groups')) {
+            GroupingConfig groupingConfig = new GroupingConfig(config.groups)
+
+            configObject = new GroupingAggregationConfig(label:config.label, groups: groupingConfig, childAggregations: createChildConfig(config))
+        }
+        else if (config.containsKey('filter')) {
+            GroupingConfig filterConfig = new GroupingConfig(config.filter)
+
+            configObject =  new FilteredAggregationConfig(label:config.label, filter: filterConfig, childAggregations: createChildConfig(config))
+        }
+        else if (config.containsKey('childAggregations')) {
+            configObject =  new CompositeAggregationConfig(label:config.label, childAggregations: createChildConfig(config))
+        }
+        else {
+            configObject =  new Aggregation(config)
+        }
+        return configObject
+    }
+
+    private List<AggregationConfig> createChildConfig(Map config) {
+        List childAggregations = []
+        config.childAggregations.each {
+            childAggregations << configFromMap(it)
+        }
+        return childAggregations
+    }
+
     /**
      * Creates an appropriate OutputAggregator for the supplied score.
      * @param score the score to be aggregated.
