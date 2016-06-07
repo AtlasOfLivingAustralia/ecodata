@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.codehaus.groovy.grails.web.json.JSONObject
 
 
@@ -71,4 +72,10 @@ class ReportController {
         respond reportingService.returnForRework(id, params.comment)
     }
 
+    @RequireApiKey
+    def runReport() {
+        Map params = request.JSON
+
+        render reportingService.aggregateReports(params.searchCriteria, params.reportConfig) as JSON
+    }
 }
