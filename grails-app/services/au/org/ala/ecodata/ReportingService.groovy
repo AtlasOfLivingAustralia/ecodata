@@ -141,10 +141,10 @@ class ReportingService {
         return r
     }
 
-    def returnForRework(String id, String comment = '') {
+    def returnForRework(String id, String comment = '', String category = '') {
         def user = userService.getCurrentUserDetails()
         Report r = get(id)
-        r.returnForRework(user.userId, comment)
+        r.returnForRework(user.userId, comment, category)
         r.save()
         return r
     }

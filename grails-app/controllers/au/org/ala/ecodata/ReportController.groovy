@@ -68,8 +68,11 @@ class ReportController {
         if (params.comment == JSONObject.NULL) {
             params.comment = null
         }
+        if (params.category == JSONObject.NULL) {
+            params.category = null
+        }
 
-        respond reportingService.returnForRework(id, params.comment)
+        respond reportingService.returnForRework(id, params.comment, params.category)
     }
 
     @RequireApiKey
