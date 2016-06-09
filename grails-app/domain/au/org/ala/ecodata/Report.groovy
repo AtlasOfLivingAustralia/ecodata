@@ -20,6 +20,7 @@ class Report {
         String changedBy
         String status
         String comment
+        String category
         static constraints = {
             version false
         }
@@ -128,16 +129,16 @@ class Report {
         dateSubmitted = change.dateChanged
     }
 
-    public void returnForRework(String userId, String comment = '', Date changeDate = new Date()) {
-        StatusChange change = changeStatus(userId, 'returned', changeDate, comment)
+    public void returnForRework(String userId, String comment = '', String category = '', Date changeDate = new Date()) {
+        StatusChange change = changeStatus(userId, 'returned', changeDate, comment, category)
 
         publicationStatus = REPORT_NOT_APPROVED
         returnedBy = change.changedBy
         dateReturned = change.dateChanged
     }
 
-    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '') {
-        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment)
+    private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
+        StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, category:category)
         statusChangeHistory << change
 
         return change

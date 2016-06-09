@@ -76,8 +76,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> whsAndCaseStudyProperties = commonProjectProperties + ['obligations', 'policies', 'caseStudy']
     List<String> attachmentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name']
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
-    List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action']
-    List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta']
+    List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
+    List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
 
@@ -416,12 +416,16 @@ class ProjectXlsExporter extends ProjectExporter {
                 Map statusCounts = [:].withDefault{1}
                 Map previousChange = null
                 report.statusChangeHistory?.eachWithIndex { change, i ->
-                    int count = statusCounts[change.status]
+                    String statusChange = change.status
+                    if (change.category) {
+                        statusChange = change.category + ' '+change.status
+                    }
+                    int count = statusCounts[statusChange]
                     statusCounts[change.status] = count + 1
                     String noTimeStr = format.format(change.dateChanged)
                     Date noTime = format.parse(noTimeStr)
                     int delta = previousChange ? Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged) : 0
-                    previousChange = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:change.status+" "+count, changedBy:change.changedBy, dateChanged: noTime, delta:delta]
+                    previousChange = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:statusChange+" "+count, changedBy:change.changedBy, dateChanged: noTime, delta:delta, comment:change.comment]
                     data << previousChange
                 }
             }
