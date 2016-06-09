@@ -129,6 +129,8 @@ class UrlMappings {
             action = 'findByUserId'
         }
 
+        "/ws/report/runReport"(controller:"report", action:"runReport")
+
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
         "/ws/project/getScienceTypes"(controller: "project"){ action = [GET:"getScienceTypes"] }

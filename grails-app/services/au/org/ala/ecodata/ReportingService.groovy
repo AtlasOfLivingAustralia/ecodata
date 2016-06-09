@@ -1,5 +1,12 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.Aggregation
+import au.org.ala.ecodata.reporting.AggregationResult
+import au.org.ala.ecodata.reporting.AggregatorFactory
+import au.org.ala.ecodata.reporting.AggregatorIf
+import au.org.ala.ecodata.reporting.GroupingAggregationConfig
+import au.org.ala.ecodata.reporting.GroupingAggregator
+import au.org.ala.ecodata.reporting.GroupingConfig
 import grails.transaction.Transactional
 import grails.validation.ValidationException
 
@@ -13,6 +20,8 @@ class ReportingService {
 
     def permissionService, userService, activityService, commonService
 
+    AggregatorFactory aggregatorFactory = new AggregatorFactory()
+
     def get(String reportId, includeDeleted = false) {
         if (includeDeleted) {
             return Report.findByReportId(reportId)
@@ -20,6 +29,12 @@ class ReportingService {
         Report report = Report.findByReportIdAndStatusNotEqual(reportId, 'deleted')
         report.activityCount = getActivityCountForReport(report)
         report
+    }
+
+    Map toMap(Report report, levelOfDetail = []) {
+        def dbo = report.dbo
+        def mapOfProperties = dbo.toMap()
+        mapOfProperties.findAll {k,v -> v != null}
     }
 
     def findAllForProject(String projectId) {
@@ -142,6 +157,17 @@ class ReportingService {
      */
     public search(Map searchCriteria, levelOfDetail = []) {
 
+        def startDate = null, endDate = null, planned = null
+        def dateProperty = searchCriteria.remove('dateProperty')
+        if (dateProperty && searchCriteria.startDate) {
+            def startDateStr = searchCriteria.remove('startDate')
+            startDate = commonService.parse(startDateStr)
+        }
+        if (dateProperty && searchCriteria.endDate) {
+            def endDateStr = searchCriteria.remove('endDate')
+            endDate = commonService.parse(endDateStr)
+        }
+
         def criteria = Report.createCriteria()
         def reports = criteria.list {
             ne("status", "deleted")
@@ -155,9 +181,23 @@ class ReportingService {
                 }
             }
 
+            if (dateProperty && startDate) {
+                ge(dateProperty, startDate)
+            }
+            if (dateProperty && endDate) {
+                lt(dateProperty, endDate)
+            }
         }
         reports
     }
 
+    public AggregationResult aggregateReports(Map searchCriteria, Map reportConfig) {
+
+        AggregatorIf aggregatorIf = aggregatorFactory.createAggregator(reportConfig)
+        search(searchCriteria).each {
+            aggregatorIf.aggregate(toMap(it))
+        }
+        aggregatorIf.result()
+    }
 
 }
