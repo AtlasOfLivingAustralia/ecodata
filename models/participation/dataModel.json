@@ -34,7 +34,7 @@
         },
         {
             "dataType": "number",
-            "description": "Total number of farm entities participating in project activities for the first time",
+            "description": "A farming entity is a farm business (whether sole trader, partnership, company, etc.) that would be considered a primary producer for tax purposes.",
             "name": "numberOfFarmingEntitiesNew",
             "validate": "required,min[0]"
         }

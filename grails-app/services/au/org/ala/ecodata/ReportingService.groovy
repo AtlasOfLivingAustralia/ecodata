@@ -1,12 +1,8 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.Aggregation
 import au.org.ala.ecodata.reporting.AggregationResult
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
-import au.org.ala.ecodata.reporting.GroupingAggregationConfig
-import au.org.ala.ecodata.reporting.GroupingAggregator
-import au.org.ala.ecodata.reporting.GroupingConfig
 import grails.transaction.Transactional
 import grails.validation.ValidationException
 
@@ -26,7 +22,7 @@ class ReportingService {
         if (includeDeleted) {
             return Report.findByReportId(reportId)
         }
-        Report report = Report.findByReportIdAndStatusNotEqual(reportId, 'deleted')
+        Report report = Report.findByReportIdAndStatusNotEqual(reportId, DELETED)
         report.activityCount = getActivityCountForReport(report)
         report
     }
@@ -45,12 +41,12 @@ class ReportingService {
         // Join on project & organisation ids.
         List permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred)
 
-        def projectReports = Report.findAllByProjectIdInList(permissions.collect{it.entityId})
+        def projectReports = Report.findAllByProjectIdInListAndStatusNotEqual(permissions.collect{it.entityId}, DELETED)
         populateActivityCounts(projectReports)
 
         permissions = UserPermission.findAllByUserIdAndEntityType(userId, Organisation.class)
 
-        def organisationReports = Report.findAllByOrganisationIdInList(permissions.collect{it.entityId})
+        def organisationReports = Report.findAllByOrganisationIdInListAndStatusNotEqual(permissions.collect{it.entityId}, DELETED)
 
         [projectReports:projectReports, organisationReports:organisationReports]
     }
