@@ -66,6 +66,7 @@ class Project {
     String aim, keywords, urlAndroid, urlITunes, urlWeb
     String getInvolved, projectSiteId
     List <String> scienceType = []
+    List <String> ecoScienceType = []
     double funding
     String orgIdGrantee, orgIdSponsor, orgIdSvcProvider
     String userCreated, userLastModified
@@ -161,6 +162,7 @@ class Project {
         urlWeb nullable:true, url:true
         getInvolved nullable:true
         scienceType nullable:true
+        ecoScienceType nullable:true
         orgIdGrantee nullable:true
         orgIdSponsor nullable:true
         orgIdSvcProvider nullable:true

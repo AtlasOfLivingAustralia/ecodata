@@ -178,8 +178,50 @@ class RecordService {
         record
     }
 
-    def getAllByActivity(String activityId) {
-        Record.findAllByActivityIdAndStatus(activityId, ACTIVE).collect { toMap(it) }
+    def getAllByActivity(String activityId, String projectId = null, version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(projectId, Record.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def records = []
+            def found = []
+            all?.each {
+                if (it.entity.activityId == activityId && !found.contains(it.entity.projectActivityId)) {
+                    if (it.entityType == AuditEventType.Insert || it.entityType == AuditEventType.Update) {
+                        records << it.entity
+                    }
+                    found << it.entity.projectActivityId
+                }
+            }
+
+            records
+        } else {
+            Record.findAllByActivityIdAndStatus(activityId, ACTIVE).collect { toMap(it) }
+        }
+    }
+
+    def getAllByProjectActivity(String projectActivityId, version = null) {
+        if (version) {
+            def recordIds = Record.findAllByProjectActivityId(projectActivityId).collect {
+                it.id
+            }
+            def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(recordIds, Record.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def records = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        records << it.entity
+                    }
+                }
+            }
+
+            records
+        } else {
+            Record.findAllByProjectActivityIdAndStatus(projectActivityId, ACTIVE).collect { toMap(it) }
+        }
     }
 
     def getAllByProject(String projectId) {

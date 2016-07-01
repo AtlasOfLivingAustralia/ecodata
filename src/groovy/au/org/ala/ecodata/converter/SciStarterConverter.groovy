@@ -65,10 +65,20 @@ class SciStarterConverter {
                 'image'       : [
                         'name'     : 'image',
                         'transform': { props, target ->
-                            if (props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
+                            if (Holders.grailsApplication.config.scistarter.forceHttpsUrls == 'true') {
+                                try {
+                                    URL oldUrl = new URL(props.image)
+                                    URL newUrl = new URL("https", oldUrl.getHost(), oldUrl.getPort(), oldUrl.getFile())
+                                    newUrl.toString()
+                                } catch (MalformedURLException e) {
+                                    "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                                }
+                            } else  if (!props.image?.equals(null) && props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
                                 props.image
-                            } else {
+                            } else if (!props.image?.equals(null)){
                                 "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
+                            } else {
+                                return null
                             }
                         }],
                 'difficulty'  : 'difficulty',

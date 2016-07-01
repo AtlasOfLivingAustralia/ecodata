@@ -39,20 +39,37 @@ class ProjectService {
         grailsApplication.mainContext.commonService
     }
 
-    def getBrief(listOfIds) {
+    def getBrief(listOfIds, version = null) {
         if (listOfIds) {
-            Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
-                [projectId: it.projectId, name: it.name]
+            if (version) {
+                def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort:'date', order:'desc'])
+                def projects = []
+                def found = []
+                all?.each {
+                    if (!found.contains(it.projectId)) {
+                        found << it.projectId
+                        if (it.entity.status != DELETED &&
+                                (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                            projects << [projectId: it.projectId, name: it.entity.name]
+                        }
+                    }
+                }
+            } else {
+                Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
+                    [projectId: it.projectId, name: it.name]
+                }
             }
         } else {
             []
         }
     }
 
-    def get(String id, levelOfDetail = []) {
-        def p = Project.findByProjectId(id)
+    def get(String id, levelOfDetail = [], version = null) {
+        def p = version ?
+                AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(version as Long), [sort:'date', order:'desc', max: 1])[0].entity :
+                Project.findByProjectId(id)
 
-        return p?toMap(p, levelOfDetail):null
+        return p?toMap(p, levelOfDetail, version):null
     }
 
     def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
@@ -88,10 +105,10 @@ class ProjectService {
      * @param prj a Project instance
      * @return map of properties
      */
-    Map toMap(Project project, levelOfDetail = [], includeDeletedActivities = false) {
+    Map toMap(project, levelOfDetail = [], includeDeletedActivities = false, version = null) {
         Map result
 
-        Map mapOfProperties = project.getProperty("dbo").toMap()
+        Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
 
         if (levelOfDetail == BRIEF) {
             result = [
@@ -123,9 +140,9 @@ class ProjectService {
 
             if (levelOfDetail != FLAT) {
                 mapOfProperties.remove("sites")
-                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT])
-                mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail)
-                mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail)
+                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
+                mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
 
                 if (levelOfDetail == ALL) {
                     mapOfProperties.activities = activityService.findAllForProjectId(project.projectId, levelOfDetail, includeDeletedActivities)
@@ -336,7 +353,6 @@ class ProjectService {
             }
 			
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
-			
 
             // Add project output target information where it exists.
 
@@ -345,15 +361,18 @@ class ProjectService {
                 if (target.outcomeTarget != null) {
                     return
                 }
-                def score = outputSummary.find{it.score.isOutputTarget && it.score.label == target.scoreLabel}
-                if (score) {
-                    score['target'] = target.target
+                def result = outputSummary.find{it.label == target.scoreLabel}
+                if (result) {
+                    if (!result.target || result.target == "0") { // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
+                        result.target = target.target
+                    }
+
                 } else {
                		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
                			// one in containing the target.
-                    score = toAggregate.find{it.score?.label == target.scoreLabel}
+                    def score = toAggregate.find{it.score?.label == target.scoreLabel}
                     if (score) {
-                        outputSummary << [score:score.score, target:target.target]
+                        outputSummary << [label:score.label, score:score.score, target:target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
@@ -596,9 +615,12 @@ class ProjectService {
             // convert region to site
             project.regions.each { region ->
                 Map site = SciStarterConverter.siteMapping(region)
-                Map createdSite = siteService.create(site)
-                if(createdSite.siteId){
-                    sites.push(createdSite.siteId)
+                // only add valid geojson objects
+                if(site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())){
+                    Map createdSite = siteService.create(site)
+                    if(createdSite.siteId){
+                        sites.push(createdSite.siteId)
+                    }
                 }
             }
 

@@ -494,13 +494,6 @@
                     "category": "Invasive Species Management - Weeds"
                 },
                 {
-                    "aggregationType": "AVERAGE",
-                    "displayType": "",
-                    "description": "Average cost per hectare of weed treatment. This is a non-mandatory field and the calculated average may be skewed by incomplete data.",
-                    "label": "Average cost ($/Ha) of weed treatment",
-                    "category": "Invasive Species Management - Weeds"
-                },
-                {
                     "aggregationType": "COUNT",
                     "displayType": "",
                     "name": "targetSpecies",

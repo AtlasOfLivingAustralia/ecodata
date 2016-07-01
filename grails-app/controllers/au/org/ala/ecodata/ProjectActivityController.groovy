@@ -20,7 +20,7 @@ class ProjectActivityController {
     def getAllByProject(String id) {
         if (id) {
             def list = []
-            list.addAll(projectActivityService.getAllByProject(id, params.view))
+            list.addAll(projectActivityService.getAllByProject(id, params.view, params?.version))
             asJson([list: list])
         } else {
             response.status = 404
@@ -39,7 +39,7 @@ class ProjectActivityController {
         if (!id) {
             result = [status: 404, text: 'No such id'];
         } else {
-            result = projectActivityService.get(id, params.view)
+            result = projectActivityService.get(id, params.view, params?.version)
             if (!result) {
                 result = [status: 404, text: 'Invalid id'];
             }

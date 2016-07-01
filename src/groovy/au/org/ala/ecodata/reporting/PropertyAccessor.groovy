@@ -18,7 +18,57 @@ class PropertyAccessor {
     private String[] propertyToGroupOn
 
     public PropertyAccessor(String nestedProperty) {
+        if (!nestedProperty) {
+            throw new IllegalArgumentException("nestedProperty cannot be null")
+        }
         this.propertyToGroupOn = nestedProperty.split('\\.')
+    }
+
+    public boolean isNested(Map output) {
+        int i=0
+        def data = output
+        while (i < propertyToGroupOn.length - 1) {
+            if (!data) {
+                return false
+            }
+
+            data = data[propertyToGroupOn[i]]
+            if (data instanceof List) {
+                return true
+            }
+            i++
+        }
+        return false
+    }
+
+    public List<Map> unroll(Map output) {
+        List<Map> unrolled = []
+        int i = 0
+        def value = output
+
+        while (i < propertyToGroupOn.length - 1) {
+            String propertyName = propertyToGroupOn[i]
+            value = value[propertyName]
+
+            if (value instanceof List) {
+                value.each {
+                    Map unrolledCopy = new HashMap(output)
+                    Map currentPropertyValue = unrolledCopy
+                    for (int j=0; j<i; j ++) {
+                        def copy = new HashMap(currentPropertyValue[propertyToGroupOn[j]])
+                        currentPropertyValue[propertyToGroupOn[j]] = copy
+                        currentPropertyValue = copy
+                    }
+                    currentPropertyValue.remove(propertyName)
+                    currentPropertyValue[propertyName] = it
+                    unrolled << unrolledCopy
+
+                }
+                break // Only support one level of list
+            }
+            i++
+        }
+        unrolled
     }
 
     /** Returns the value of the nested property from the supplied data object */

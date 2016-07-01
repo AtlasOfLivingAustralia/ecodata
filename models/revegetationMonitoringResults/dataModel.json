@@ -22,10 +22,7 @@
             "description": "The method used to determine the number of surviving plants",
             "constraints": [
                 "Direct count",
-                "Calculated estimate - stratified sample (plot-based)",
-                "Calculated estimate - stratified sample (transect-based)",
-                "Extrapolated estimate - non-stratified sample",
-                "Remote sensing estimate"
+                "Estimated count"
             ],
             "validate": "required"
         },

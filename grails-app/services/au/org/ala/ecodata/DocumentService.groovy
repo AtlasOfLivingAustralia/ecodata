@@ -28,7 +28,7 @@ class DocumentService {
                                      "iTunes",
                                      "windowsPhone"]
 
-    def commonService, grailsApplication
+    def commonService, grailsApplication, activityService
     
     /**
      * Converts the domain object into a map of properties, including
@@ -38,14 +38,13 @@ class DocumentService {
      * @return map of properties
      */
     def toMap(document, levelOfDetail = []) {
-        def dbo = document.getProperty("dbo")
-        def mapOfProperties = dbo.toMap()
+        def mapOfProperties = document instanceof Document ? document.getProperty("dbo").toMap() : document
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
         // construct document url based on the current configuration
         mapOfProperties.url = document.url
-        if (document.isImage()) {
+        if (document?.type == Document.DOCUMENT_TYPE_IMAGE) {
             mapOfProperties.thumbnailUrl = document.thumbnailUrl
         }
         mapOfProperties.findAll {k,v -> v != null}
@@ -66,24 +65,96 @@ class DocumentService {
         Document.findAllByType(LINKTYPE).collect { toMap(it, levelOfDetail) }
     }
 
-    def findAllForProjectId(id, levelOfDetail = []) {
-        Document.findAllByProjectIdAndStatusAndTypeNotEqual(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+    def findAllForProjectId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Document.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def documents = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE && it.entity.type != LINKTYPE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        documents << toMap(it.entity, levelOfDetail)
+                    }
+                }
+            }
+            documents
+        } else {
+            Document.findAllByProjectIdAndStatusAndTypeNotEqual(id, ACTIVE, LINKTYPE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
-    def findAllLinksForProjectId(id, levelOfDetail = []) {
-        Document.findAllByProjectIdAndType(id, LINKTYPE).collect { toMap(it, levelOfDetail) }
+    def findAllLinksForProjectId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Document.class.name,
+                    new Date(version as Long), [sort: 'date', order: 'desc'])
+            def links = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE && it.entity.type == LINKTYPE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        links << toMap(it.entity, levelOfDetail)
+                    }
+                }
+            }
+            links
+        } else {
+            Document.findAllByProjectIdAndType(id, LINKTYPE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     def findAllForProjectIdAndIsPrimaryProjectImage(id, levelOfDetail = []) {
 		Document.findAllByProjectIdAndStatusAndIsPrimaryProjectImage(id, ACTIVE,true).collect { toMap(it, levelOfDetail) }
 	}
 
-    def findAllForActivityId(id, levelOfDetail = []) {
-        Document.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForActivityId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def projectId = activityService.get(id)
+            def all = AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(projectId, Document.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def outputs = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.activityId == id && it.entity.status == ACTIVE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        outputs << toMap(it.entity, levelOfDetail)
+                    }
+                }
+            }
+
+            outputs
+        } else {
+            Document.findAllByActivityIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
-    def findAllForSiteId(id, levelOfDetail = []) {
-        Document.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+    def findAllForSiteId(id, levelOfDetail = [], version = null) {
+        if (version) {
+            def documentIds = Document.findAllBySiteId(id).collect { it.documentId }
+            def all = AuditMessage.findAllByEntityIdInListAndEntityTypeAndDateLessThanEquals(documentIds, Document.class.name,
+                    new Date(version as Long), [sort:'date', order:'desc'])
+            def documents = []
+            def found = []
+            all?.each {
+                if (!found.contains(it.entityId)) {
+                    found << it.entityId
+                    if (it.entity.status == ACTIVE &&
+                            (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
+                        documents << toMap(it.entity, levelOfDetail)
+                    }
+                }
+            }
+
+            documents
+        } else {
+            Document.findAllBySiteIdAndStatus(id, ACTIVE).collect { toMap(it, levelOfDetail) }
+        }
     }
 
     def findAllForOutputId(id, levelOfDetail = []) {

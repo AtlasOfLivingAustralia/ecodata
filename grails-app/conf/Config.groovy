@@ -167,6 +167,50 @@ if(!biocollect.scienceType){
     ]
 }
 
+if(!biocollect.ecoScienceType) {
+    biocollect.ecoScienceType = [
+            "Agroecology",
+            "Behavioural Ecology",
+            "Biodiversity Inventory",
+            "Species Composition",
+            "Structural Assemblage",
+            "Biogeography",
+            "Bioregional Inventory",
+            "Chemical Ecology",
+            "Competition/Resource Partitioning",
+            "Decomposition",
+            "Disease Ecology",
+            "Disturbances",
+            "Ecological Succession",
+            "Ecophysiology",
+            "Ecosystem Modelling",
+            "Ecotoxicology",
+            "Evolutionary Ecology",
+            "Fire Ecology",
+            "Functional Ecology",
+            "Global Ecology",
+            "Herbivory",
+            "Landscape Ecology",
+            "Long-Term Community Monitoring",
+            "Long-Term Species Monitoring",
+            "Macroecology",
+            "Molecular Ecology",
+            "None",
+            "Other",
+            "Paleoecology",
+            "Pollination",
+            "Population Dynamics",
+            "Predator-Prey Interactions",
+            "Productivity",
+            "Restoration Ecology",
+            "Soil Ecology",
+            "Species Decline",
+            "Species Distribution Modelling",
+            "Symbyotic Interactions",
+            "Urban Ecology"
+    ]
+}
+
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
 // Each gridded facet becomes a search facet.
@@ -286,12 +330,6 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "/data/ecodata/models/"
         grails.hostname = "devt.ala.org.au"
-        serverName = "http://${grails.hostname}:8080"
-        grails.app.context = "ecodata"
-        grails.serverURL = serverName + "/" + grails.app.context
-        security.cas.appServerName = serverName
-        security.cas.contextPath = "/" + appName
-        app.uploads.url = "${grails.serverURL}/document/download?filename="
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
     }
@@ -300,12 +338,12 @@ environments {
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
+        // Only for travis CI, they must be overriden by ecodata-config.properties
         serverName = "http://${grails.hostname}:8080"
         grails.app.context = "ecodata"
         grails.serverURL = serverName + "/" + grails.app.context
-        security.cas.appServerName = serverName
-        security.cas.contextPath = "/" + appName
         app.uploads.url = "${grails.serverURL}/document/download?filename="
+
         app.elasticsearch.indexOnGormEvents = true
         app.elasticsearch.indexAllOnStartup = false // Makes integration tests slow to start
         app.elasticsearch.location = "./target/elasticsearch/"
