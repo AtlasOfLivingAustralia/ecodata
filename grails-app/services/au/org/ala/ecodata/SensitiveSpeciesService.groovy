@@ -17,7 +17,7 @@ class SensitiveSpeciesService {
 
     void loadSensitiveData() {
         log.info("Loading sensitive data.")
-        String data = new File("${grailsApplication.config.senstive.species.data}")?.getText('UTF-8')
+        String data = new File("${grailsApplication.config.sensitive.species.data}")?.getText('UTF-8')
         sensitiveSpeciesData = new XmlParser().parseText(data)
     }
 
