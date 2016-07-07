@@ -17,8 +17,12 @@ class SensitiveSpeciesService {
 
     void loadSensitiveData() {
         log.info("Loading sensitive data.")
-        String data = new File("${grailsApplication.config.sensitive.species.data}")?.getText('UTF-8')
-        sensitiveSpeciesData = new XmlParser().parseText(data)
+        File data = new File("${grailsApplication.config.sensitive.species.data}")
+        if(data.exists()) {
+            sensitiveSpeciesData = new XmlParser().parseText(data.getText('UTF-8'))
+        } else {
+            log.error("Sensitive species file (${grailsApplication.config.sensitive.species.data}) not found.")
+        }
     }
 
     /*
