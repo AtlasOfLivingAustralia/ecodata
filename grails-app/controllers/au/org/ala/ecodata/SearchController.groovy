@@ -28,6 +28,7 @@ class SearchController {
     UserService userService
     DownloadService downloadService
     PermissionService permissionService
+    SensitiveSpeciesService sensitiveSpeciesService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -545,4 +546,24 @@ class SearchController {
         }
     }
 
+    /**
+     * Check given species is in a senstive list.
+     * @param name species common name or scientific name
+     * @param lat latitude
+     * @param lng latitude
+     * @return generalised lat and lng value
+     */
+    def sensitiveSpecies(String name, double lat, double lng){
+        if(name && lat && lng){
+            def result = sensitiveSpeciesService.findSpecies(name, lat, lng)
+            if(result) {
+                render ([status:'ok', text:"sensitive species", result: result] as JSON)
+            } else {
+                render ([status:'ok', text:"not a sensitive species"] as JSON)
+            }
+        } else {
+            response.setStatus(400)
+            render ([status:'error', error:'Invalid query (expected: name, lat and lng)'] as JSON)
+        }
+    }
 }
