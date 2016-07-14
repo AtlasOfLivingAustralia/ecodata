@@ -52,6 +52,15 @@ class SensitiveSpeciesServiceSpec extends Specification {
         result != [:]
     }
 
+    void "species is in sensitive list but not in the specified zone"() {
+        when:
+        webservice.getJson(_) >>  [status:"OK", results:[[address_components:[[short_name:'WA', types:['administrative_area_level_1']]]]]]
+        Map result = sensitiveSpeciesService.findSpecies('Caladenia sp. aff. fragrantissima (Central Victoria)',-37.965605, 145.071759)
+
+        then:
+        result == [:]
+    }
+
 
     void "get new coordinate if species falls under WA zone"() {
         when:
