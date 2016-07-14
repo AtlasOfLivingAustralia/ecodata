@@ -5,6 +5,7 @@ import static java.lang.Math.*
 
 class SensitiveSpeciesService {
     def sensitiveSpeciesData, webService, grailsApplication
+    String googleMapsUrl
     static supportedZones = ['AUS', 'AU', 'NZ', 'VIC', 'WA', 'QLD', 'NT', 'ACT', 'TAS', 'NSW', 'SA']
     static earthRadiusInKm = 6378
     static transactional = false
@@ -18,6 +19,7 @@ class SensitiveSpeciesService {
     void loadSensitiveData() {
         log.info("Loading sensitive data.")
         File data = new File("${grailsApplication.config.sensitive.species.data}")
+        googleMapsUrl = "${grailsApplication.config.google.maps.geocode.url}"
         if(data.exists()) {
             sensitiveSpeciesData = new XmlParser().parseText(data.getText('UTF-8'))
         } else {
@@ -34,6 +36,7 @@ class SensitiveSpeciesService {
     * @param lng longitude
     * */
     Map findSpecies(String speciesName, double lat = 0.0, double lng = 0.0) {
+
         // Is species in the list
         def sensitiveSpecies = sensitiveSpeciesData?.'*'.find { sensitiveSpecies ->
             speciesName.equalsIgnoreCase(sensitiveSpecies.@name) || speciesName.equalsIgnoreCase(sensitiveSpecies.@commonName)
@@ -60,7 +63,7 @@ class SensitiveSpeciesService {
         // Go through google maps api and determine whether given coordinates fall under specific zone.
         spatialConfigs?.each { item ->
             String latlng = "latlng=${lat},${lng}"
-            String url = "${grailsApplication.config.google.maps.geocode.url}?${latlng}"
+            String url = "${googleMapsUrl}?${latlng}"
             def geocode = webService.getJson(url)
 
             //Get Country and State Code
@@ -128,12 +131,22 @@ class SensitiveSpeciesService {
         return standardCode?.toUpperCase()
     }
 
-    private double addDistanceToLat(double lat, double distance){
-        lat  + (distance / earthRadiusInKm) * (180 / 3.14159)
+    private double addDistanceToLat(double lat, double distanceKm){
+        double newLat = 0.0
+        if(distanceKm > 0) {
+            newLat = lat  + (distanceKm / earthRadiusInKm) * (180 / 3.14159)
+        }
+
+        newLat
     }
 
-    private double addDistanceToLng(double lat, double lng, double distance){
-        lng + (distance / earthRadiusInKm) * (180 / 3.14159) / cos(lat * 3.14159/180)
+    private double addDistanceToLng(double lat, double lng, double distanceKm){
+        double newLng = 0.0
+        if(distanceKm > 0) {
+            newLng = lng + (distanceKm / earthRadiusInKm) * (180 / 3.14159) / cos(lat * 3.14159 / 180)
+        }
+
+        newLng
     }
 
 }
