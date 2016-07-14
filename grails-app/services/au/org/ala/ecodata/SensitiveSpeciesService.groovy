@@ -132,7 +132,7 @@ class SensitiveSpeciesService {
     }
 
     private double addDistanceToLat(double lat, double distanceKm){
-        double newLat = 0.0
+        double newLat = lat
         if(distanceKm > 0) {
             newLat = lat  + (distanceKm / earthRadiusInKm) * (180 / 3.14159)
         }
@@ -141,7 +141,7 @@ class SensitiveSpeciesService {
     }
 
     private double addDistanceToLng(double lat, double lng, double distanceKm){
-        double newLng = 0.0
+        double newLng = lng
         if(distanceKm > 0) {
             newLng = lng + (distanceKm / earthRadiusInKm) * (180 / 3.14159) / cos(lat * 3.14159 / 180)
         }
