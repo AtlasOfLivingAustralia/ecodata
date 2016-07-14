@@ -18,6 +18,8 @@ class Record {
     String eventDate //should be a date in "yyyy-MM-dd" or "2014-11-24T04:55:48+11:00" format
     Double decimalLatitude
     Double decimalLongitude
+    Double generalizedDecimalLatitude
+    Double generalizedDecimalLongitude
     Integer coordinateUncertaintyInMeters
     Integer individualCount
     Integer numberOfOrganisms
@@ -42,6 +44,8 @@ class Record {
         eventDate nullable: true
         decimalLatitude nullable: true
         decimalLongitude nullable: true
+        generalizedDecimalLatitude nullable: true
+        generalizedDecimalLongitude nullable: true
         userId nullable: true
         coordinateUncertaintyInMeters nullable: true
         individualCount nullable: true

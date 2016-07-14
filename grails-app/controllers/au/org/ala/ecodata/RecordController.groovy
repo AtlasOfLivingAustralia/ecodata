@@ -231,6 +231,18 @@ class RecordController {
     }
 
     /**
+     * Get list of records for the given activityId
+     */
+    @RequireApiKey
+    def listForActivity (String id){
+        String activityId = id
+        log.debug("Retrieving a list for records for the given activityId: ${activityId}")
+        response.setContentType("application/json")
+        Map model = [records:recordService.getForActivity(id)]
+        render model as JSON
+    }
+
+    /**
      * Delete by occurrence ID
      */
     @RequireApiKey
