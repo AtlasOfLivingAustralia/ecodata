@@ -1,10 +1,13 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.Report
+import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
@@ -78,6 +81,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
     List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
+    List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
+    List<String> reportSummaryProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
 
@@ -95,7 +100,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
     Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
-    public ProjectXlsExporter(XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
+    UserService userService
+
+    public ProjectXlsExporter(UserService userService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
+        this.userService = userService
         this.exporter = exporter
         this.tabsToExport = tabsToExport
         this.sheets = new HashMap<String, AdditionalSheet>()
@@ -117,6 +125,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRisks(project)
         exportMeriPlan(project)
         exportReports(project)
+        exportReportSummary(project)
     }
 
     private addProjectGeo(Map project) {
@@ -430,6 +439,48 @@ class ProjectXlsExporter extends ProjectExporter {
                 }
             }
             sheet.add(data, reportProperties, row + 1)
+        }
+    }
+
+    private void exportReportSummary(Map project) {
+        if (shouldExport("Report Summary")) {
+            AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
+            int row = sheet.getSheet().lastRowNum
+            SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
+            List data = []
+            project.reports?.each { report ->
+
+                Map reportDetails = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate]
+
+                if (report.statusChangeHistory) {
+                    int numChanges = report.statusChangeHistory.size()
+                    def change = report.statusChangeHistory[numChanges-1]
+                    String noTimeStr = format.format(change.dateChanged)
+                    Date noTime = format.parse(noTimeStr)
+                    int delta = 0
+                    if (numChanges > 1) {
+                        def previousChange = report.statusChangeHistory[numChanges-2]
+                        delta = Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged)
+
+                    }
+                    reportDetails.reportStatus = change.status
+                    reportDetails.changedBy = change.changedBy
+                    if (change.changedBy) {
+                        reportDetails.changedByName = userService.lookupUserDetails(change.changedBy).displayName
+                    }
+                    reportDetails.dateChanged = noTime
+                    reportDetails.delta = delta
+
+                    data << reportDetails
+                }
+                else if (report.toDate <= new Date()) {
+                    reportDetails.reportStatus = 'Unpublished (no action – never been submitted)'
+                    reportDetails.delta = 0
+
+                    data << reportDetails
+                }
+            }
+            sheet.add(data, reportSummaryProperties, row + 1)
         }
     }
 

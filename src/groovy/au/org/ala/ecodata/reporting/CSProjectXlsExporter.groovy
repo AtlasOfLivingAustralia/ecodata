@@ -1,10 +1,13 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.AccessLevel
 import au.org.ala.ecodata.ActivityService
+import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.ProjectActivityService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.RecordService
 import au.org.ala.ecodata.SiteService
+import au.org.ala.ecodata.UserPermission
 import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.ConstantGetter
 import au.org.ala.ecodata.metadata.OutputMetadata
@@ -14,6 +17,8 @@ import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.multisheet.AdditionalSheet
+
+import static au.org.ala.ecodata.Status.DELETED
 
 /**
  * Export Citizen Science style projects to a zip file containing:
@@ -211,13 +216,26 @@ class CSProjectXlsExporter extends ProjectExporter {
         properties << ""
 
         List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
-
+        def userId = userService.currentUserDetails?.userId
         recordService.getAllByProject(project.projectId).each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
             if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
-                properties[-2] = new ConstantGetter("Latitude", it.decimalLatitude ?: "")
-                properties[-1] = new ConstantGetter("Longitude", it.decimalLongitude ?: "")
+
+                def lat, lng
+
+                if (userId) {
+                    List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
+                    def permission = permissions?.find { it.entityId == project.projectId }
+                    lat = !permission ? it.generalizedDecimalLatitude : it.decimalLatitude
+                    lng = !permission ? it.generalizedDecimalLongitude : it.decimalLongitude
+                } else {
+                    lat = it.generalizedDecimalLatitude ?: it.decimalLatitude
+                    lng = it.generalizedDecimalLongitude ?: it.decimalLongitude
+                }
+
+                properties[-2] = new ConstantGetter("Latitude", lat ?: "")
+                properties[-1] = new ConstantGetter("Longitude", lng ?: "")
 
                 recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
             }

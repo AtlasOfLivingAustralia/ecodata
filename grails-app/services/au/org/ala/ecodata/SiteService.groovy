@@ -468,7 +468,7 @@ class SiteService {
         [sites:sites.collect{toMap(it)}, count:sites.totalCount]
     }
 
-    void reloadSiteMetadata(Date modifiedBefore = null, Integer max = 1000) {
+    void reloadSiteMetadata(List<String> fids = null, Date modifiedBefore = null, Integer max = 1000) {
         com.mongodb.DBCollection collection = Site.getCollection()
 
         BasicDBObject query = new BasicDBObject()
@@ -487,11 +487,11 @@ class SiteService {
             try {
                 if (site.extent?.geometry) {
 
-                    if (!site.extent?.geometry.aream2) {
+                    if (site.extent?.geometry.aream2 == null) {
                         populateLocationMetadataForSite(site)
                     }
                     else {
-                        Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site)
+                        Map<String, List<String>> geoFacets = lookupGeographicFacetsForSite(site, fids)
                         site.extent.geometry.putAll(geoFacets)
                     }
 
@@ -514,17 +514,17 @@ class SiteService {
             }
         }
     }
-    Map<String, List<String>> lookupGeographicFacetsForSite(Map site) {
+    Map<String, List<String>> lookupGeographicFacetsForSite(Map site, List<String> fidsToLookup = null) {
 
         Map<String, List<String>> geographicFacets = null
         switch (site.extent.source) {
             case 'pid':
                 String fid = site.extent.geometry.fid
-                geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String, fid)
+                geographicFacets = spatialService.intersectPid(site.extent.geometry.pid as String, fid, fidsToLookup)
                 break
             default:
                 Map geom = geometryAsGeoJson(site)
-                geographicFacets = spatialService.intersectGeometry(geom)
+                geographicFacets = spatialService.intersectGeometry(geom, fidsToLookup)
                 break
         }
         geographicFacets

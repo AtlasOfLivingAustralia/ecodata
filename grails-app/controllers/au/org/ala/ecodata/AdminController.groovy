@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 import grails.converters.JSON
 import grails.util.Environment
+import groovy.json.JsonParserType
+import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -186,11 +188,12 @@ class AdminController {
      */
     def reloadSiteMetadata() {
         String dateStr = params.lastUpdatedBefore
-        Date date
+        Date date = null
+        List fids = params.getList("fids")
         if (dateStr) {
             date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm").parse(dateStr)
         }
-        siteService.reloadSiteMetadata(date, params.getInt('max', 100))
+        siteService.reloadSiteMetadata(fids, date, params.getInt('max', 100))
         Map result = [status:'OK']
         render result as grails.converters.JSON
     }
@@ -496,4 +499,5 @@ class AdminController {
             render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
         }
     }
+
 }

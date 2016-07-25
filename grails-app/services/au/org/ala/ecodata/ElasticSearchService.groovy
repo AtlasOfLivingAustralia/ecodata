@@ -729,6 +729,9 @@ class ElasticSearchService {
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+                if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
+                    values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
+                }
                 records << values
 
                 if (!activity.activityId) {

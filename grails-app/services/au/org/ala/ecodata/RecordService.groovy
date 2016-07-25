@@ -31,9 +31,14 @@ class RecordService {
     AuthService authService
     UserService userService
     RecordAlertService recordAlertService
+    SensitiveSpeciesService sensitiveSpeciesService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
+
+    def getProjectActivityService() {
+        grailsApplication.mainContext.projectActivityService
+    }
 
     def exportRecordsToCSV(OutputStream outputStream, String projectId, String userId, List<String> restrictedProjectActivities) {
         // Different Records may have different DwC attributes, as these are based on the 'dwcAttribute' mapping in the
@@ -278,6 +283,17 @@ class RecordService {
             }
         }
 
+        // Apply sensitive coordinates
+        def activity = getProjectActivityService().get(record?.projectActivityId)
+        String name = getSpeciesName(record, activity)
+        if(record.decimalLatitude && record.decimalLongitude && name) {
+            Map sensitive = sensitiveSpeciesService.findSpecies(name.trim(), record.decimalLatitude, record.decimalLongitude)
+            if(sensitive?.lat && sensitive?.lng){
+                record.generalizedDecimalLatitude  = sensitive.lat
+                record.generalizedDecimalLongitude = sensitive.lng
+            }
+        }
+
         //if no projectId is supplied, use default
         if (!record.projectId) {
             record.projectId = grailsApplication.config.records.default.projectId
@@ -506,6 +522,13 @@ class RecordService {
         out << new URL(decodedAddress).openStream()
         out.close()
         destFile
+    }
+
+    /**
+     * Get record for a given activityId
+     */
+    def getForActivity(String activityId) {
+        Record.findAllByActivityIdAndStatus(activityId, Status.ACTIVE).collect { toMap(it) }
     }
 
     def toMap(record){
@@ -738,5 +761,43 @@ class RecordService {
                         dwc.locationID?:""
                 ] as String[]
         )
+    }
+
+    /*
+    * Parse species name and get species name.
+    * (Use guid once bie new index is in place)
+    * (Refactor BioCollect autocomplete to store both scientific and common name.)
+    *
+    * */
+    public String getSpeciesName(record, projectActivity){
+        String name = ''
+        if(record && projectActivity){
+            name = record.name
+            switch(projectActivity?.species?.speciesDisplayFormat) {
+                case 'SCIENTIFICNAME(COMMONNAME)':
+                    List tokens = record.name ? record.name?.tokenize('(') : []
+                    if (tokens && tokens.size() == 2) {
+                        name = tokens.get(0)?.trim()
+                    } else if (tokens && tokens.size() > 2) {
+                        String find = tokens.get(tokens.size() - 1)
+                        String modified = record.name?.replace(find, "")?.trim()
+                        name = modified?.length() > 2 ? modified?.substring(0, modified.length() - 2) : modified
+                    } else {
+                        name = record.name
+                    }
+                    break
+                case 'COMMONNAME(SCIENTIFICNAME)':
+                    List tokens = record.name ? record.name?.tokenize( '(' ) : []
+                    name = tokens ? tokens.get(0)?.trim() : record.name
+                    break
+                case 'SCIENTIFICNAME':
+                case 'COMMONNAME':
+                default:
+                    name = record.name
+                    break
+            }
+        }
+
+        name
     }
 }
