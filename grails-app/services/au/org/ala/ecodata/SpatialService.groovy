@@ -37,10 +37,13 @@ class SpatialService {
      * @return Map with key = fieldId, value = List<String>, the names of the field objects that intersect with the
      * supplied geometry
      */
-    Map<String,List<String>> intersectGeometry(Map geoJson) {
+    Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
 
         String url = grailsApplication.config.spatial.baseUrl+GEOJSON_INTERSECT_URL_PREFIX
-        List<String> fieldIds = metadataService.getSpatialLayerIdsToIntersect()
+        if (!fieldIds) {
+            fieldIds = metadataService.getSpatialLayerIdsToIntersect()
+        }
+
         Map result = [:]
         fieldIds.each { fid ->
             Map response = webService.doPost(url+fid, geoJson)
@@ -60,10 +63,12 @@ class SpatialService {
      * @return Map with key = fieldId, value = List<String>, the names of the field objects that intersect with the
      * supplied geometry
      */
-    Map<String,List<String>> intersectPid(String pid, String pidFid = null) {
+    Map<String,List<String>> intersectPid(String pid, String pidFid = null, List<String> fieldIds = null) {
 
         String url = grailsApplication.config.spatial.baseUrl+PID_INTERSECT_URL_PREFIX
-        List<String> fieldIds = metadataService.getSpatialLayerIdsToIntersect()
+        if (!fieldIds) {
+            fieldIds = metadataService.getSpatialLayerIdsToIntersect()
+        }
 
         Map result = [:]
         fieldIds.each { fid ->
