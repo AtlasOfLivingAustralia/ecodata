@@ -107,7 +107,7 @@ class SiteServiceSpec extends Specification {
 
         then:
         1 * webServiceMock.getJson(_) >>  [type:'Polygon', coordinates: [[137, -34], [137,-35], [136, -35], [136, -34], [137, -34]]]
-        1 * spatialServiceMock.intersectPid('cl123', null) >> [state:'state1', test:'test']
+        1 * spatialServiceMock.intersectPid('cl123', null, null) >> [state:'state1', test:'test']
 
         def site = Site.collection.find([siteId:result.siteId]).next()
 
