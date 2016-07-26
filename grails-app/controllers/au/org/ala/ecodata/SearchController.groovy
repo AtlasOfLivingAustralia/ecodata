@@ -29,6 +29,7 @@ class SearchController {
     DownloadService downloadService
     PermissionService permissionService
     SensitiveSpeciesService sensitiveSpeciesService
+    ReportingService reportingService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -424,7 +425,7 @@ class SearchController {
         File file = File.createTempFile("download", "xlsx")
         XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, xlsExporter, tabsToExport)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, xlsExporter, tabsToExport)
 
         Project.withSession { session ->
             int batchSize = 50

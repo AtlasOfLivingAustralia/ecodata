@@ -1,13 +1,13 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.Report
+import au.org.ala.ecodata.ReportingService
 import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
+
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
@@ -81,8 +81,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> attachmentProperties = commonProjectProperties + ['name', 'attribution', 'filename']
     List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
     List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
-    List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
-    List<String> reportSummaryProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
+    List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Activity Count', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
+    List<String> reportSummaryProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
 
@@ -101,9 +101,11 @@ class ProjectXlsExporter extends ProjectExporter {
     Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
     UserService userService
+    ReportingService reportingService
 
-    public ProjectXlsExporter(UserService userService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
+    public ProjectXlsExporter(UserService userService, ReportingService reportingService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
         this.userService = userService
+        this.reportingService = reportingService
         this.exporter = exporter
         this.tabsToExport = tabsToExport
         this.sheets = new HashMap<String, AdditionalSheet>()
@@ -451,7 +453,7 @@ class ProjectXlsExporter extends ProjectExporter {
             project.reports?.each { report ->
 
                 Map reportDetails = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate]
-
+                reportDetails.activityCount = reportingService.getActivityCountForReport(report)
                 if (report.statusChangeHistory) {
                     int numChanges = report.statusChangeHistory.size()
                     def change = report.statusChangeHistory[numChanges-1]
