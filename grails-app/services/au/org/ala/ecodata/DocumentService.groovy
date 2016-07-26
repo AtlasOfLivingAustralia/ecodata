@@ -447,8 +447,9 @@ class DocumentService {
 
         if (fileToArchive.exists()) {
             File archiveDir = new File("${grailsApplication.config.app.file.archive.path}/${document.filepath}")
-
-            FileUtils.moveFileToDirectory(fileToArchive, archiveDir, true)
+            // This overwrites an archived file with the same name.
+            FileUtils.copyFileToDirectory(fileToArchive, archiveDir)
+            FileUtils.deleteQuietly(fileToArchive)
         } else {
             log.warn("Unable to move file for document ${document.documentId}: the file ${fileToArchive.absolutePath} does not exist.")
         }
