@@ -7,7 +7,7 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
 class ProjectController {
 
-    def projectService, siteService, commonService, reportService, metadataService, activityService, userService
+    def projectService, siteService, commonService, reportService, metadataService, reportingService, activityService, userService
     ElasticSearchService elasticSearchService
 
     static final BRIEF = 'brief'
@@ -81,7 +81,7 @@ class ProjectController {
 
         XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, exporter, metadataService)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, exporter, metadataService)
         projectExporter.export(project)
         exporter.sizeColumns()
 
@@ -217,7 +217,7 @@ class ProjectController {
                 xlsx {
                     XlsExporter exporter = new XlsExporter("results")
                     exporter.setResponseHeaders(response)
-                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, exporter, metadataService)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, exporter, metadataService)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                     projectExporter.exportAll(projects)

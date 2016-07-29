@@ -180,6 +180,12 @@
       "validate":"min[0]"
     },
     {
+      "dataType":"number",
+      "name":"lengthOfFence",
+      "description":"",
+      "validate":"min[0]"
+    },
+    {
       "dataType":"text",
       "name":"otherOutputs",
       "description":"Include here any additional comments you have on your Community Grant projects that do not sit more appropriately elsewhere."
