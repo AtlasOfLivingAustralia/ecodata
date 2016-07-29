@@ -5,7 +5,7 @@ import static java.lang.Math.*
 
 class SensitiveSpeciesService {
     def sensitiveSpeciesData, webService, grailsApplication
-    String googleMapsUrl
+    String googleMapsUrl, mapsApiKey
     static supportedZones = ['AUS', 'AU', 'NZ', 'VIC', 'WA', 'QLD', 'NT', 'ACT', 'TAS', 'NSW', 'SA']
     static earthRadiusInKm = 6378
     static transactional = false
@@ -19,6 +19,7 @@ class SensitiveSpeciesService {
     void loadSensitiveData() {
         log.info("Loading sensitive data.")
         googleMapsUrl = "${grailsApplication.config.google.maps.geocode.url}"
+        mapsApiKey = "${grailsApplication.config.google.api.key}"
         try {
             File data = new File("${grailsApplication.config.sensitive.species.data}")
             if(data?.exists()){
@@ -67,7 +68,7 @@ class SensitiveSpeciesService {
         // Go through google maps api and determine whether given coordinates fall under specific zone.
         spatialConfigs?.each { item ->
             String latlng = "latlng=${lat},${lng}"
-            String url = "${googleMapsUrl}?${latlng}"
+            String url = "${googleMapsUrl}?${latlng}&key=${mapsApiKey}"
             def geocode = webService.getJson(url)
 
             //Get Country and State Code
@@ -101,16 +102,16 @@ class SensitiveSpeciesService {
         if (code(item.zone) == code(item.state) || code(item.zone) == code(item.country)) {
             switch (item.generalisation) {
                 case "10km":
-                    item.lat = addDistanceToLat(lat, 10)
-                    item.lng = addDistanceToLng(lat, lng, 10)
+                    item.lat = addDistanceToLat(lat, 10, 1)
+                    item.lng = addDistanceToLng(lat, lng, 10, 1)
                     break
                 case "1km":
-                    item.lat = addDistanceToLat(lat, 1)
-                    item.lng = addDistanceToLng(lat, lng, 1)
+                    item.lat = addDistanceToLat(lat, 1, 2)
+                    item.lng = addDistanceToLng(lat, lng, 1, 2)
                     break
                 case "100m":
-                    item.lat = addDistanceToLat(lat, 0.1)
-                    item.lng = addDistanceToLng(lat, lng, 0.1)
+                    item.lat = addDistanceToLat(lat, 0.1, 3)
+                    item.lng = addDistanceToLng(lat, lng, 0.1, 3)
                     break
                 default:
                     break
@@ -135,22 +136,36 @@ class SensitiveSpeciesService {
         return standardCode?.toUpperCase()
     }
 
-    private double addDistanceToLat(double lat, double distanceKm){
+    private double addDistanceToLat(double lat, double distanceKm, int round){
         double newLat = lat
         if(distanceKm > 0) {
-            newLat = lat  + (distanceKm / earthRadiusInKm) * (180 / 3.14159)
+            newLat = adjustAccuracy(lat  + (distanceKm / earthRadiusInKm) * (180 / 3.14159), round)
         }
-
         newLat
     }
 
-    private double addDistanceToLng(double lat, double lng, double distanceKm){
+    private double addDistanceToLng(double lat, double lng, double distanceKm, int round){
         double newLng = lng
         if(distanceKm > 0) {
-            newLng = lng + (distanceKm / earthRadiusInKm) * (180 / 3.14159) / cos(lat * 3.14159 / 180)
+            newLng = adjustAccuracy(lng + (distanceKm / earthRadiusInKm) * (180 / 3.14159) / cos(lat * 3.14159 / 180), round)
         }
 
         newLng
+    }
+
+    private double adjustAccuracy (double coordinate, int round){
+        switch (round) {
+            case 3:
+                coordinate = Math.round(coordinate * 1000) / 1000
+                break
+            case 2:
+                coordinate = Math.round(coordinate * 100) / 100
+                break
+            case 1:
+                coordinate = Math.round(coordinate * 10) / 10
+                break
+        }
+        coordinate
     }
 
 }
