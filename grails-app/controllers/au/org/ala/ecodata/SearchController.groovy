@@ -425,7 +425,7 @@ class SearchController {
         File file = File.createTempFile("download", "xlsx")
         XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, xlsExporter, tabsToExport)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, projectService, xlsExporter, tabsToExport)
 
         Project.withSession { session ->
             int batchSize = 50

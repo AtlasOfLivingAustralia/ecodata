@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.ReportingService
 import au.org.ala.ecodata.UserService
@@ -54,8 +55,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
-    List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Units']
-    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'units']
+    List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered', 'Units']
+    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'delivered', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
     List<String> risksAndThreatsProperties = commonProjectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
     List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
@@ -102,12 +103,14 @@ class ProjectXlsExporter extends ProjectExporter {
 
     UserService userService
     ReportingService reportingService
+    ProjectService projectService
 
-    public ProjectXlsExporter(UserService userService, ReportingService reportingService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
+    public ProjectXlsExporter(UserService userService, ReportingService reportingService, ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
         this.userService = userService
         this.reportingService = reportingService
         this.exporter = exporter
         this.tabsToExport = tabsToExport
+        this.projectService = projectService
         this.sheets = new HashMap<String, AdditionalSheet>()
         exporter.setDateCellFormat(dateFormat)
     }
@@ -229,8 +232,8 @@ class ProjectXlsExporter extends ProjectExporter {
         if (shouldExport('Output Targets')) {
             outputTargetsSheet()
             if (project.outputTargets) {
-                List nonZeroTargets = project.outputTargets.findAll { it.scoreLabel && it.target && it.target != "0" }
-                List targets = nonZeroTargets.collect { project + it }
+                List metrics = projectService.projectMetrics(project.projectId, true, true)
+                List targets = metrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.score.label, target:it.target, delivered:it.result]}
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
             }
