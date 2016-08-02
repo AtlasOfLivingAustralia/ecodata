@@ -12,8 +12,8 @@ function renameListValue(outputName, property, oldValue, newValue) {
         query[property] = newValue;
         var updatedCount = db.output.find(query).count();
 
-        if (updatedCount != affectedCount) {
-            throw {name:'Error', message:'Updating '+outputName+'.'+property+', expected '+affectedCount+', was '+updatedCount};
+        if (updatedCount < affectedCount) {
+            throw ('Updating '+outputName+'.'+property+', expected '+affectedCount+', was '+updatedCount);
         }
 
         print('Updated '+updatedCount+' outputs. '+outputName+'.'+property+' from '+oldValue+' to '+newValue);

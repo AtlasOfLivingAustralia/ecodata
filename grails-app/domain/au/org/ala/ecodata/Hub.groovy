@@ -18,6 +18,8 @@ class Hub {
     String skin = 'ala2'
     /** The names of the programs projects created under this hub can be assigned to */
     List supportedPrograms
+    /** New projects created from this hub will inherit the default program, if specified */
+    String defaultProgram
     /** Defines the full set of facets available for use on search pages for this hub */
     List availableFacets
     /** Defines the subset of availableFacets that should only be visible to FC_ADMINS */
@@ -45,5 +47,6 @@ class Hub {
         skin inList: ['ala2', 'nrm','mdba']
         title nullable:true
         homePagePath nullable:true
+        defaultProgram nullable: true
     }
 }
