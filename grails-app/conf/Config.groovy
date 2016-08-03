@@ -153,17 +153,33 @@ if (!temp.file.cleanup.days) {
 if(!biocollect.scienceType){
     biocollect.scienceType = [
             "Animals",
-            "Nature & Outdoors",
-            "Ocean",
-            "Water",
-            "Marine & Terrestrial",
-            "Birds",
-            "Insects & Pollinators",
-            "Ecology & Environment",
+            "Agricultural & veterinary science",
+            "Astronomy",
             "Biology",
             "Biodiversity",
+            "Biogeography",
+            "Birds",
+            "Chemical sciences",
+            "Climate & meteorology",
+            "Ecology",
+            "Ecology & Environment",
+            "Fire Ecology",
+            "Genetics",
+            "Geology & soils",
+            "Geomorphology",
+            "Information & computing sciences",
+            "Insects & Pollinators",
+            "Long-Term Species Monitoring",
+            "Marine & Terrestrial",
+            "Medical & human health",
+            "Nature & Outdoors",
             "NRM",
-            "Ecology"
+            "Ocean",
+            "Physical science",
+            "Social sciences",
+            "Symbyotic Interactions",
+            "Technology",
+            "Water"
     ]
 }
 
@@ -418,8 +434,9 @@ log4j = {
                     'grails.app.services.au.org.ala.ecodata',
                     'grails.app.taglib.au.org.ala.ecodata',
                     'grails.app.conf.au.org.ala.ecodata',
-                    'grails.app.filters.au.org.ala.ecodata'/*,
-                    'au.org.ala.cas.client'*/
+                    'grails.app.filters.au.org.ala.ecodata',
+                    'org.elasticsearch'
+//                    'au.org.ala.cas.client'*/
             ]
         }
     }

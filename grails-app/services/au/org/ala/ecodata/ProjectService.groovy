@@ -93,12 +93,12 @@ class ProjectService {
         }
         list.collect { toMap(it, levelOfDetail) }
     }
-	
+
 	def promoted(){
 		def list = Project.findAllByPromoteOnHomepage("yes")
 		list.collect { toMap(it, PROMO) }
 	}
-	
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -351,7 +351,7 @@ class ProjectService {
                     }
                 }
             }
-			
+
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
 
             // Add project output target information where it exists.
@@ -491,14 +491,16 @@ class ProjectService {
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
+            List projs=[]
             projects?.each { pProperties ->
                 Map project = pProperties
-                if (project && project.title && project.id in whiteListIds ) {
+                if (project && project.title) {
                     // get more details about the project
                     sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
                     additionalProp = webService.getJson(sciStarterProjectUrl)
                     if (!additionalProp.error) {
                         project = project + additionalProp
+                        projs.push(project)
                     } else {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                     }
@@ -510,10 +512,15 @@ class ProjectService {
                         } else {
                             // map properties from SciStarter to Biocollect
                             transformedProject = SciStarterConverter.convert(project)
+                            if (project.id in whiteListIds) {
+                                transformedProject.isWorldWide = false
+                            } else {
+                                transformedProject.isWorldWide = true
+                            }
 
                             // create project & document & site & organisation
-                            Map savedProject = createSciStarterProject(transformedProject, project)
-                            transformedProjects.push(savedProject)
+                            Map savedProject = createSciStarterProject (transformedProject, project)
+                            transformedProjects.push (savedProject)
                         }
                     } else {
                         log.info("Cannot import project ${project.title} ${project.id}")
