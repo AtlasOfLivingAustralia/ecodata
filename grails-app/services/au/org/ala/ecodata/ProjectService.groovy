@@ -205,7 +205,7 @@ class ProjectService {
         }
     }
 
-    def create(props, collectoryLink = true) {
+    def create(props, boolean collectoryLink = true, boolean overrideUpdateDate = false) {
         assert getCommonService()
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
@@ -215,7 +215,8 @@ class ProjectService {
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             Project project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
-            project.save(failOnError: true)
+            // Not flushing on create was causing that further updates to fields were overriden by old values
+            project.save(flush: true, failOnError: true)
 
             props.remove('sites')
             props.remove('id')
@@ -225,7 +226,7 @@ class ProjectService {
                 establishCollectoryLinkForProject(project, props)
             }
 
-            getCommonService().updateProperties(project, props)
+            getCommonService().updateProperties(project, props, overrideUpdateDate)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -487,7 +488,7 @@ class ProjectService {
                 logo.delete()
             }
 
-            Integer ignoredProjects = 0
+            int ignoredProjects = 0
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
@@ -503,12 +504,15 @@ class ProjectService {
                         projs.push(project)
                     } else {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                        ignoredProjects++
                     }
 
                     // switch off the can import project test
                     if (true || SciStarterConverter.canImportProject(project)) {
                         if (project.origin && project.origin == 'atlasoflivingaustralia') {
                             // ignore projects SciStarter imported from Biocollect
+                            log.warn("Ignoring ${project.title} - ${project.id} - This is an ALA project.")
+                            ignoredProjects++
                         } else {
                             // map properties from SciStarter to Biocollect
                             transformedProject = SciStarterConverter.convert(project)
@@ -529,13 +533,11 @@ class ProjectService {
                 }
             }
 
-            log.debug("Number of ignored projects ${ignoredProject}")
+            log.info("Number of ignored projects ${ignoredProject}")
         } catch (SocketTimeoutException ste){
-            log.error(ste.message)
-            ste.printStackTrace()
+            log.error(ste.message, ste)
         } catch (Exception e){
-            log.error(e.message)
-            e.printStackTrace()
+            log.error(e.message, e)
         }
 
         return  transformedProjects
@@ -579,7 +581,7 @@ class ProjectService {
         transformedProp.projectSiteId = projectSiteId
 
         // create organisation
-        if (transformedProp.organisationName) {
+        if (transformedProp.organisationName && transformedProp.organisationName != SciStarterConverter.NO_ORGANISATION_NAME) {
             organisation = createSciStarterOrganisation(transformedProp.organisationName)
             if(organisation.organisationId){
                 transformedProp.organisationId = organisation.organisationId
@@ -593,7 +595,7 @@ class ProjectService {
         String attribution = transformedProp.remove('attribution')
         transformedProp.remove('projectId')
         // create project. do not call collectory to create data provider and data resource id
-        Map project = create(transformedProp, false)
+        Map project = create(transformedProp, false, true)
         String projectId = project.projectId
 
         // use the projectId to associate site with  project

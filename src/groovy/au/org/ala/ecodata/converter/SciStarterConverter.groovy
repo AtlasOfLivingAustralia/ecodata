@@ -36,6 +36,9 @@ import java.text.SimpleDateFormat
 
 @Log4j
 class SciStarterConverter {
+
+    public static final String NO_ORGANISATION_NAME = "Organisation name not supplied"
+
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [
                 'id'          : 'sciStarterId',
@@ -100,6 +103,22 @@ class SciStarterConverter {
                                 sdf.parse(props.end_date)
                             }
                         }],
+                'date'    : [
+                        'name'     : 'dateCreated',
+                        'transform': { props, target ->
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                            if (props.date) {
+                                sdf.parse(props.date )
+                            }
+                        }],
+                'updated'    : [
+                        'name'     : 'lastUpdated',
+                        'transform': { props, target ->
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                            if (props.updated) {
+                                sdf.parse(props.updated)
+                            }
+                        }],
                 'state'       : 'state',
                 'image_credit': 'attribution',
                 'presenter'   : 'organisationName',
@@ -154,14 +173,15 @@ class SciStarterConverter {
                 "task"                   : null,
                 "projectSiteId"          : null,
                 "organisationId"         : null,
-                "organisationName"       : null,
+                "organisationName"       : NO_ORGANISATION_NAME,
                 "sciStarterId"           : null,
                 "isSciStarter"           : true,
                 "attribution"            : null,
                 "managerEmail"           : "contact@scistarter.com",
                 "urlWeb"                 : null,
                 "image"                  : null,
-                "state"                  : null
+                "state"                  : null,
+                "importDate"             : new Date()
         ] << override;
 
         // iterate through mapping variable and copy or tranform the value
@@ -174,7 +194,8 @@ class SciStarterConverter {
             }
 
             if (value instanceof String) {
-                if (sciStarter[key] != null) {
+                def sciStarterValue = sciStarter[key]
+                if (sciStarterValue != null && !sciStarterValue.toString().isEmpty()) {
                     target[value] = sciStarter[key]
                 }
             }
