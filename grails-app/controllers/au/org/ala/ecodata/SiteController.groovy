@@ -6,7 +6,7 @@ import org.apache.http.HttpStatus
 
 class SiteController {
 
-    def siteService, commonService, projectService
+    def siteService, commonService, projectService, webService
     DocumentService documentService
 
     static final RICH = "rich"
@@ -234,5 +234,24 @@ class SiteController {
     def lookupLocationMetadataForSite() {
         def site = request.JSON
         render siteService.lookupGeographicFacetsForSite(site) as JSON
+    }
+
+    def lookupLocationMetadataForSiteById(String id) {
+        Map site = siteService.get(id)
+        render siteService.lookupGeographicFacetsForSite(site) as JSON
+    }
+
+    def updateGeographicFacetsForSite(String id) {
+        Map site = siteService.get(id)
+        if (site && site.extent && site.extent.geometry) {
+            Map facets = siteService.lookupGeographicFacetsForSite(site, params.getList('fids'))
+            site.extent.geometry += facets
+            siteService.update([extent:site.extent], id)
+            render text:"OK"
+        }
+        else {
+            render text:"Site has no geometry"
+        }
+
     }
 }

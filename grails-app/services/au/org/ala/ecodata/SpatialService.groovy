@@ -15,6 +15,8 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 class SpatialService {
 
     final String GEOJSON_INTERSECT_URL_PREFIX = "/ws/intersect/geojson/"
+    final String WKT_INTERSECT_URL_PREFIX = "/ws/intersect/wkt/"
+
     final String PID_INTERSECT_URL_PREFIX = "/ws/intersect/object/"
     final String LOOKUP_TABLE_PATH = "/data/pidIntersectCache.json"
 
@@ -39,14 +41,18 @@ class SpatialService {
      */
     Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
 
-        String url = grailsApplication.config.spatial.baseUrl+GEOJSON_INTERSECT_URL_PREFIX
+        String url = grailsApplication.config.spatial.baseUrl+WKT_INTERSECT_URL_PREFIX
         if (!fieldIds) {
             fieldIds = metadataService.getSpatialLayerIdsToIntersect()
         }
 
+        // We are using a WKT string instead of geojson as the spatial portal validates geojson - using
+        // WKT allows us to get away with self intersecting polygons that users occasionally draw.
+        String wkt = GeometryUtils.geoJsonMapToGeometry(geoJson).toText()
+
         Map result = [:]
         fieldIds.each { fid ->
-            Map response = webService.doPost(url+fid, geoJson)
+            Map response = webService.doPost(url+fid, wkt)
             if (response.resp && !response.error) {
                 result[fid] = response.resp
             }
