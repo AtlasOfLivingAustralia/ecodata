@@ -526,7 +526,7 @@ class ProjectService {
                 }
             }
 
-            log.info("Number of ignored projects ${ignoredProject}")
+            log.info("Number of ignored projects ${ignoredProjects}")
         } catch (SocketTimeoutException ste){
             log.error(ste.message, ste)
         } catch (Exception e){
