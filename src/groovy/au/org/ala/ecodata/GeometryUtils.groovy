@@ -184,11 +184,9 @@ class GeometryUtils {
         JTS.transform(circle, toLatLon)
     }
 
-
-    static Map scale(Map geom) {
-
+    static Map buffer(Map geom, int buffer) {
         Geometry input = geoJsonMapToGeometry(geom)
-        Geometry output = input.buffer(-0.06)
+        Geometry output = input.buffer(buffer)
         geometryToGeoJsonMap(output)
     }
 
