@@ -23,15 +23,13 @@ class CommonService {
      * @param o the domain instance
      * @param props the properties to use
      */
-    def updateProperties(o, props, boolean overrideUpdateDate = false) {
+    def updateProperties(o, props) {
         assert grailsApplication
         def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE,
                 o.getClass().name)
         props.remove('id')
         props.remove('api_key')  // don't ever let this be stored in public data
-        // Dump data such as projects from SciStarter will want to preserve the original date not the date
-        // it was imported, we have another field for it.
-        !overrideUpdateDate && props.remove('lastUpdated') // in case we are loading from dumped data
+        props.remove('lastUpdated') // in case we are loading from dumped data
         props.each { k,v ->
             log.debug "updating ${k} to ${v}"
             /*

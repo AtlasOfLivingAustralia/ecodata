@@ -25,13 +25,6 @@
             "organisationSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"},
           }
         },
-        "dateCreated": {
-          "type" : "string",
-          "path" : "just_name",
-          "fields" : {
-            "dateCreatedSort" : {"type" : "string", "analyzer" : "case_insensitive_sort"},
-          }
-        },
         "serviceProviderName": {
           "type" : "string",
           "path" : "just_name",
