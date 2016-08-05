@@ -243,10 +243,15 @@ class SiteService {
 
     def addProject(siteId, projectId){
         def site = Site.findBySiteId(siteId)
-        site.projects << projectId
-        site.projects.unique()
-        site.save()
-        [status:'ok']
+        if(site){
+            site.projects << projectId
+            site.projects.unique()
+            site.save()
+            [status:'ok']
+        } else {
+            log.error("Could not find site - ${siteId}")
+            [status:'site not found']
+        }
     }
 
     Map geometryAsGeoJson(site) {

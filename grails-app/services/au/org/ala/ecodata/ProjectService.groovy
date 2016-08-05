@@ -216,7 +216,7 @@ class ProjectService {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             Project project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
             // Not flushing on create was causing that further updates to fields were overriden by old values
-            project.save(flush: true, failOnError: true)
+            project.save(failOnError: true)
 
             props.remove('sites')
             props.remove('id')
@@ -463,13 +463,12 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    List importProjectsFromSciStarter(String whiteList){
-        List transformedProjects = []
+    Integer importProjectsFromSciStarter(String whiteList){
         List whiteListIds = whiteList?.split (',') ?.collect { Integer.parseInt(it) } ?:[]
+        Integer createdProjects = 0
 
         try {
             String sciStarterProjectUrl
-            Map additionalProp, transformedProject
 
             // delete artifacts from previous import
             List sciStarterSites = Site.findAllByIsSciStarter(true)
@@ -492,55 +491,61 @@ class ProjectService {
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
-            List projs=[]
-            projects?.each { pProperties ->
+            projects?.eachWithIndex { pProperties, index ->
+                Map transformedProject
                 Map project = pProperties
                 if (project && project.title) {
                     // get more details about the project
                     sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    additionalProp = webService.getJson(sciStarterProjectUrl)
-                    if (!additionalProp.error) {
-                        project = project + additionalProp
-                        projs.push(project)
+                    Map projectDetails = webService.getJson(sciStarterProjectUrl)
+                    if (!projectDetails.error) {
+                        projectDetails << project
+                        // switch off the can import project test
+                        if (true || SciStarterConverter.canImportProject(projectDetails)) {
+                            if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
+                                // ignore projects SciStarter imported from Biocollect
+                                log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
+                                ignoredProjects++
+                            } else {
+                                // map properties from SciStarter to Biocollect
+                                transformedProject = SciStarterConverter.convert(projectDetails)
+                                if (projectDetails.id in whiteListIds) {
+                                    transformedProject.isWorldWide = false
+                                } else {
+                                    transformedProject.isWorldWide = true
+                                }
+
+                                // create project & document & site & organisation
+                                createSciStarterProject (transformedProject, projectDetails)
+                                createdProjects ++
+                            }
+                        } else {
+                            log.info("Cannot import project ${projectDetails.title} ${projectDetails.id}")
+                            ignoredProjects++
+                        }
                     } else {
                         log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                         ignoredProjects++
                     }
+                }
 
-                    // switch off the can import project test
-                    if (true || SciStarterConverter.canImportProject(project)) {
-                        if (project.origin && project.origin == 'atlasoflivingaustralia') {
-                            // ignore projects SciStarter imported from Biocollect
-                            log.warn("Ignoring ${project.title} - ${project.id} - This is an ALA project.")
-                            ignoredProjects++
-                        } else {
-                            // map properties from SciStarter to Biocollect
-                            transformedProject = SciStarterConverter.convert(project)
-                            if (project.id in whiteListIds) {
-                                transformedProject.isWorldWide = false
-                            } else {
-                                transformedProject.isWorldWide = true
-                            }
-
-                            // create project & document & site & organisation
-                            Map savedProject = createSciStarterProject (transformedProject, project)
-                            transformedProjects.push (savedProject)
-                        }
-                    } else {
-                        log.info("Cannot import project ${project.title} ${project.id}")
-                        ignoredProjects++
-                    }
+                if(index % 10 == 0 ){
+                    log.info( "Imported ${index} scistarter projects")
+                    Site.withSession { session -> session.clear()}
+                    Project.withSession { session -> session.clear()}
+                    Document.withSession { session -> session.clear()}
+                    Organisation.withSession { session -> session.clear()}
                 }
             }
 
-            log.info("Number of ignored projects ${ignoredProject}")
+            log.info("Number of ignored projects ${ignoredProjects}")
         } catch (SocketTimeoutException ste){
             log.error(ste.message, ste)
         } catch (Exception e){
             log.error(e.message, e)
         }
 
-        return  transformedProjects
+        createdProjects
     }
 
     /**
@@ -604,7 +609,7 @@ class ProjectService {
                 siteService.addProject(siteId, projectId)
             }
             // create project logo.
-            Map document = createSciStarterLogo(imageUrl, attribution, projectId)
+            createSciStarterLogo(imageUrl, attribution, projectId)
 
             return project
         } else {

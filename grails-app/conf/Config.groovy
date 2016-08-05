@@ -435,7 +435,6 @@ log4j = {
                     'grails.app.taglib.au.org.ala.ecodata',
                     'grails.app.conf.au.org.ala.ecodata',
                     'grails.app.filters.au.org.ala.ecodata',
-                    'org.elasticsearch'
 //                    'au.org.ala.cas.client'*/
             ]
         }

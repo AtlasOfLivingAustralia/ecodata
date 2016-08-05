@@ -305,8 +305,8 @@ class ProjectController {
 
     def importProjectsFromSciStarter(){
         String whiteList = params.whiteList
-        List projects = projectService.importProjectsFromSciStarter(whiteList)?:[]
-        render(text: [count: projects.size(), projects: projects] as JSON, contentType: 'application/json');
+        Integer count = projectService.importProjectsFromSciStarter(whiteList)?:[]
+        render(text: [count: count] as JSON, contentType: 'application/json');
     }
 
     /**
