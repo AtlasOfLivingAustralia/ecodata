@@ -489,39 +489,48 @@ class ProjectService {
             }
 
             int ignoredProjects = 0
+            List alreadyProcessedIds = []
+
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
             projects?.each { pProperties ->
                 Map project = pProperties
                 if (project && project.title && project.id in whiteListIds ) {
-                    // get more details about the project
-                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    additionalProp = webService.getJson(sciStarterProjectUrl)
-                    if (!additionalProp.error) {
-                        project = project + additionalProp
-                    } else {
-                        log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                        ignoredProjects++
-                    }
+                    if(! (project.id in alreadyProcessedIds)) {
 
-                    // switch off the can import project test
-                    if (true || SciStarterConverter.canImportProject(project)) {
-                        if (project.origin && project.origin == 'atlasoflivingaustralia') {
-                            // ignore projects SciStarter imported from Biocollect
-                            log.warn("Ignoring ${project.title} - ${project.id} - This is an ALA project.")
-                            ignoredProjects++
+                        // get more details about the project
+                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        additionalProp = webService.getJson(sciStarterProjectUrl)
+                        if (!additionalProp.error) {
+                            project = project + additionalProp
                         } else {
-                            // map properties from SciStarter to Biocollect
-                            transformedProject = SciStarterConverter.convert(project)
+                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                            ignoredProjects++
+                        }
 
-                            // create project & document & site & organisation
-                            Map savedProject = createSciStarterProject(transformedProject, project)
-                            transformedProjects.push(savedProject)
+                        // switch off the can import project test
+                        if (true || SciStarterConverter.canImportProject(project)) {
+                            if (project.origin && project.origin == 'atlasoflivingaustralia') {
+                                // ignore projects SciStarter imported from Biocollect
+                                log.warn("Ignoring ${project.title} - ${project.id} - This is an ALA project.")
+                                ignoredProjects++
+                            } else {
+                                // map properties from SciStarter to Biocollect
+                                transformedProject = SciStarterConverter.convert(project)
+
+                                // create project & document & site & organisation
+                                Map savedProject = createSciStarterProject(transformedProject, project)
+                                transformedProjects.push(savedProject)
+                                alreadyProcessedIds << project.id
+                            }
+                        } else {
+                            log.info("Cannot import project ${project.title} ${project.id}")
+                            ignoredProjects++
                         }
                     } else {
-                        log.info("Cannot import project ${project.title} ${project.id}")
-                        ignoredProjects++
+                        log.warn("Project ${project.title} ${project.id} has already been imported")
+
                     }
                 }
             }
