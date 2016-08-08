@@ -41,8 +41,6 @@ class LocationController {
             response.sendError(400, 'Missing decimalLatitude')
         } else if (!json.decimalLongitude){
             response.sendError(400, 'Missing decimalLongitude')
-        } else if (!json.locality){
-            response.sendError(400, 'Missing locality')
         } else {
             Location l = new Location(json)
             json.each {
@@ -51,11 +49,7 @@ class LocationController {
                 }
             }
             Location createdLocation = l.save(true)
-            // r.errors.each { println it}
-            response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/fielddata/location/" + createdLocation.getId().toString())
-            response.addHeader("location", grailsApplication.config.grails.serverURL + "/fielddata/location/" + createdLocation.getId().toString())
-            response.addHeader("entityId", createdLocation.getId().toString())
-            //download the supplied images......
+            response.addHeader("entityId", createdLocation?.getId()?.toString())
             response.setContentType("application/json")
             def model = [id:createdLocation.getId().toString()]
             render model as JSON

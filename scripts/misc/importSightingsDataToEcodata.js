@@ -1,6 +1,6 @@
 load('/Users/sat01a/All/sat01a_git/merged/ecodata/scripts/misc/uuid.js');
 // cd /Users/sat01a/All/j2ee/mongodb_2.6.2/bin
-// ./mongo /Users/sat01a/All/sat01a_git/merged/ecodata-2/scripts/misc/ImportSightingsDataToEcodata.js
+// ./mongo /Users/sat01a/All/sat01a_git/merged/ecodata-2/scripts/misc/importSightingsDataToEcodata.js
 /*
  mr = db.runCommand({
  "mapreduce" : "record",
@@ -62,8 +62,9 @@ ecodataDb.activity.remove({importedFrom: "ecodata-sightings"});
 ecodataDb.output.remove({importedFrom: "ecodata-sightings"});
 ecodataDb.record.remove({importedFrom: "ecodata-sightings"});
 ecodataDb.document.remove({importedFrom: "ecodata-sightings"});
+ecodataDb.location.remove({importedFrom: "ecodata-sightings"});
 
-print('Import sightings data');
+print('Importing sightings data...');
 var ecodataProject = ecodataDb.project.find({projectId: '89c78c40-29e5-46f6-8720-d1e3bd2f170a'}).next();
 var ecodataSurvey = ecodataDb.projectActivity.find({projectId: ecodataProject.projectId}).next();
 var count = 0;
@@ -71,7 +72,7 @@ var records = sightingsDb.record.find({});
 var formName = "ALA Single Sighting";
 var importedFrom = 'ecodata-sightings';
 
-//while (count < 500) {
+//while (count < 100) {
 while (records.hasNext()) {
     var record = records.next();
 
@@ -193,6 +194,9 @@ while (records.hasNext()) {
                 certainOrUncertain = 'Certain';
             }
         }
+
+        //Used in pasearch indexing
+        record.guid = record.occurrenceID;
 
         // Build species info
         var species = {};
@@ -322,3 +326,16 @@ while (records.hasNext()) {
         print("Created " + count + " activities");
     }
 }
+
+print('Importing location/bookmark...');
+print('Total location/bookmark to import : ' + sightingsDb.location.find({}).count());
+// import location bookmark.
+var locations = sightingsDb.location.find({});
+while (locations.hasNext()) {
+    var location = locations.next();
+    location.importedFrom = importedFrom;
+    location.locationId = UUID.generate();
+    ecodataDb.location.save(location);
+}
+
+print('Done.');
