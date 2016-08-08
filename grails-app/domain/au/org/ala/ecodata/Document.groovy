@@ -13,6 +13,7 @@ class Document {
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
     static final String THUMBNAIL_PREFIX = 'thumb_'
+    static final String ALA_IMAGE_SERVER = 'images.ala.org.au'
 
     static mapping = {
         name index: true
@@ -45,6 +46,8 @@ class Document {
     String organisationId
     String externalUrl
     Boolean isSciStarter = false
+    String hosted
+    String identifier
 
     boolean thirdPartyConsentDeclarationMade = false
     String thirdPartyConsentDeclarationText
@@ -66,6 +69,10 @@ class Document {
     def getThumbnailUrl() {
         if (isImage()) {
 
+            if(hosted == ALA_IMAGE_SERVER){
+                return identifier
+            }
+
             File thumbFile = new File(filePath(THUMBNAIL_PREFIX+filename))
             if (thumbFile.exists()) {
                 return urlFor(filepath, THUMBNAIL_PREFIX + filename)
@@ -83,6 +90,10 @@ class Document {
     private def urlFor(path, name) {
         if (!name) {
             return ''
+        }
+
+        if(hosted == ALA_IMAGE_SERVER){
+            return identifier
         }
 
         path = path?path+'/':''
@@ -124,5 +135,7 @@ class Document {
         projectActivityId nullable: true
         labels nullable: true
         isSciStarter nullable: true
+        hosted nullable: true
+        identifier nullable: true
     }
 }

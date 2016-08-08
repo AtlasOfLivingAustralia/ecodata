@@ -29,6 +29,7 @@ class SensitiveSpeciesServiceSpec extends Specification {
         webservice = Mock(WebService)
         sensitiveSpeciesService.webService = webservice
         sensitiveSpeciesService.googleMapsUrl = "https://maps.googleapis.com/maps/api/geocode/json"
+        sensitiveSpeciesService.mapsApiKey = ""
     }
 
     def cleanup() {
@@ -68,8 +69,8 @@ class SensitiveSpeciesServiceSpec extends Specification {
         Map result = sensitiveSpeciesService.findSpecies('Amphidium tortuosum',-28.221294, 125.199572)
 
         then:
-        result.lat == -28.131460466119787
-        result.lng == 125.30152488031297
+        result.lat == -28.1
+        result.lng == 125.3
         result.zone == "WA"
 
     }
@@ -81,8 +82,8 @@ class SensitiveSpeciesServiceSpec extends Specification {
         Map result = sensitiveSpeciesService.findSpecies('Caladenia sp. aff. fragrantissima (Central Victoria)',-37.965605, 145.071759)
 
         then:
-        result.lat == -37.87577146611979
-        result.lng == 145.18570591926883
+        result.lat == -37.9
+        result.lng == 145.2
         result.zone == "VIC"
     }
 }

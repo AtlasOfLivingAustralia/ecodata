@@ -135,8 +135,8 @@ class PermissionService {
         }
     }
 
-    def getMembersForProject(String projectId) {
-        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqual(projectId, Project.class.name, AccessLevel.starred)
+    def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor]) {
+        def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInList(projectId, Project.class.name, AccessLevel.starred, roles)
         def out = []
         up.each {
             def rec = [:]

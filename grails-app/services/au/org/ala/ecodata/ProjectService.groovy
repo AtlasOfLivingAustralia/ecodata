@@ -205,7 +205,7 @@ class ProjectService {
         }
     }
 
-    def create(props, collectoryLink = true) {
+    def create(props, boolean collectoryLink = true, boolean overrideUpdateDate = false) {
         assert getCommonService()
         try {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
@@ -215,7 +215,8 @@ class ProjectService {
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             Project project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
-            project.save(failOnError: true)
+            // Not flushing on create was causing that further updates to fields were overriden by old values
+            project.save(flush: true, failOnError: true)
 
             props.remove('sites')
             props.remove('id')
@@ -225,7 +226,7 @@ class ProjectService {
                 establishCollectoryLinkForProject(project, props)
             }
 
-            getCommonService().updateProperties(project, props)
+            getCommonService().updateProperties(project, props, overrideUpdateDate)
             return [status: 'ok', projectId: project.projectId]
         } catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -487,48 +488,58 @@ class ProjectService {
                 logo.delete()
             }
 
-            Integer ignoredProjects = 0
+            int ignoredProjects = 0
+            List alreadyProcessedIds = []
+
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
             projects?.each { pProperties ->
                 Map project = pProperties
                 if (project && project.title && project.id in whiteListIds ) {
-                    // get more details about the project
-                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    additionalProp = webService.getJson(sciStarterProjectUrl)
-                    if (!additionalProp.error) {
-                        project = project + additionalProp
-                    } else {
-                        log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                    }
+                    if(! (project.id in alreadyProcessedIds)) {
 
-                    // switch off the can import project test
-                    if (true || SciStarterConverter.canImportProject(project)) {
-                        if (project.origin && project.origin == 'atlasoflivingaustralia') {
-                            // ignore projects SciStarter imported from Biocollect
+                        // get more details about the project
+                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        additionalProp = webService.getJson(sciStarterProjectUrl)
+                        if (!additionalProp.error) {
+                            project = project + additionalProp
                         } else {
-                            // map properties from SciStarter to Biocollect
-                            transformedProject = SciStarterConverter.convert(project)
+                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                            ignoredProjects++
+                        }
 
-                            // create project & document & site & organisation
-                            Map savedProject = createSciStarterProject(transformedProject, project)
-                            transformedProjects.push(savedProject)
+                        // switch off the can import project test
+                        if (true || SciStarterConverter.canImportProject(project)) {
+                            if (project.origin && project.origin == 'atlasoflivingaustralia') {
+                                // ignore projects SciStarter imported from Biocollect
+                                log.warn("Ignoring ${project.title} - ${project.id} - This is an ALA project.")
+                                ignoredProjects++
+                            } else {
+                                // map properties from SciStarter to Biocollect
+                                transformedProject = SciStarterConverter.convert(project)
+
+                                // create project & document & site & organisation
+                                Map savedProject = createSciStarterProject(transformedProject, project)
+                                transformedProjects.push(savedProject)
+                                alreadyProcessedIds << project.id
+                            }
+                        } else {
+                            log.info("Cannot import project ${project.title} ${project.id}")
+                            ignoredProjects++
                         }
                     } else {
-                        log.info("Cannot import project ${project.title} ${project.id}")
-                        ignoredProjects++
+                        log.warn("Project ${project.title} ${project.id} has already been imported")
+
                     }
                 }
             }
 
-            log.debug("Number of ignored projects ${ignoredProject}")
+            log.info("Number of ignored projects ${ignoredProjects}")
         } catch (SocketTimeoutException ste){
-            log.error(ste.message)
-            ste.printStackTrace()
+            log.error(ste.message, ste)
         } catch (Exception e){
-            log.error(e.message)
-            e.printStackTrace()
+            log.error(e.message, e)
         }
 
         return  transformedProjects
@@ -572,7 +583,7 @@ class ProjectService {
         transformedProp.projectSiteId = projectSiteId
 
         // create organisation
-        if (transformedProp.organisationName) {
+        if (transformedProp.organisationName && transformedProp.organisationName != SciStarterConverter.NO_ORGANISATION_NAME) {
             organisation = createSciStarterOrganisation(transformedProp.organisationName)
             if(organisation.organisationId){
                 transformedProp.organisationId = organisation.organisationId
@@ -586,7 +597,7 @@ class ProjectService {
         String attribution = transformedProp.remove('attribution')
         transformedProp.remove('projectId')
         // create project. do not call collectory to create data provider and data resource id
-        Map project = create(transformedProp, false)
+        Map project = create(transformedProp, false, true)
         String projectId = project.projectId
 
         // use the projectId to associate site with  project

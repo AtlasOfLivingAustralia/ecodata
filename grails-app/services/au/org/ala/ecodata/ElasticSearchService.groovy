@@ -580,7 +580,7 @@ class ElasticSearchService {
         log.debug "Clearing index first"
         deleteIndex()
 
-        log.debug "Indexing all MERIT based projects in MERIT SEARCH index."
+        log.info "Indexing all MERIT based projects in MERIT SEARCH index."
         def list = projectService.listMeritProjects("flat", false)
         list.each {
             try {
@@ -593,7 +593,7 @@ class ElasticSearchService {
         }
 
         // homepage index (doing some manual batching due to memory constraints)
-        log.debug "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
+        log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
             def batchParams = [offset: 0, max: 50]
             def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
@@ -614,7 +614,7 @@ class ElasticSearchService {
             }
         }
 
-        log.debug "Indexing all sites"
+        log.info "Indexing all sites"
         int count = 0
         Site.withNewSession { session ->
             siteService.doWithAllSites { Map siteMap ->
@@ -634,7 +634,7 @@ class ElasticSearchService {
             }
         }
 
-        log.debug "Indexing all activities"
+        log.info "Indexing all activities"
         activityService.doWithAllActivities { Map activity ->
             try {
                 prepareActivityForIndexing(activity)
@@ -645,7 +645,7 @@ class ElasticSearchService {
             }
         }
 
-        log.debug "Indexing all organisations"
+        log.info "Indexing all organisations"
         organisationService.doWithAllOrganisations { Map org ->
             try {
                 prepareOrganisationForIndexing(org)
@@ -656,7 +656,7 @@ class ElasticSearchService {
             }
         }
 
-        log.debug "Indexing complete"
+        log.info "Indexing complete"
     }
 
     /**
@@ -1178,7 +1178,7 @@ class ElasticSearchService {
      * Create a new index add configure custom mappings
      */
     def createIndexAndMapping(index) {
-        log.debug "Creating new index and configuring elastic search custom mapping"
+        log.info "Creating new index and configuring elastic search custom mapping"
         try {
             addMappings(index)
         } catch (Exception e) {
