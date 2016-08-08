@@ -51,6 +51,8 @@ load('/Users/sat01a/All/sat01a_git/merged/ecodata/scripts/misc/uuid.js');
 
  */
 
+// IMPORTANT : Make sure to enable "Allow public users to enter data" flag under survey settings.
+
 var sightingsConn = new Mongo();
 var sightingsDb = sightingsConn.getDB("ecodata-sightings");
 var ecodataDb = sightingsConn.getDB("ecodata");
@@ -96,7 +98,7 @@ while (records.hasNext()) {
 
     if (userPermission.count() == 0) {
         userPermission = {
-            accessLevel: "editor",
+            accessLevel: "projectParticipant",
             entityId: ecodataProject.projectId,
             entityType: "au.org.ala.ecodata.Project",
             status: "active",
