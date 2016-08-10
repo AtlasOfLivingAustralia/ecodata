@@ -304,8 +304,7 @@ class ProjectController {
     }
 
     def importProjectsFromSciStarter(){
-        String whiteList = params.whiteList
-        Integer count = projectService.importProjectsFromSciStarter(whiteList)?:[]
+        Integer count = projectService.importProjectsFromSciStarter()?:0
         render(text: [count: count] as JSON, contentType: 'application/json');
     }
 
@@ -325,6 +324,24 @@ class ProjectController {
     def getEcoScienceTypes(){
         List ecoScienceTypes = grailsApplication.config.biocollect.ecoScienceType
         render(text:  ecoScienceTypes as JSON, contentType: 'application/json')
+    }
+
+    /**
+     * Get all UN regions
+     * @return
+     */
+    def getUNRegions(){
+        List regions = grailsApplication.config.uNRegions
+        render( text: regions as JSON, contentType: 'application/json' )
+    }
+
+    /**
+     * Get list of countries
+     * @return
+     */
+    def getCountries(){
+        List countries = grailsApplication.config.countries
+        render( text: countries as JSON, contentType: 'application/json' )
     }
 
     private Map buildParams(Map params){

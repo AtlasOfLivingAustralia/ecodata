@@ -135,7 +135,8 @@ class UrlMappings {
         "/ws/project/importProjectsFromSciStarter"(controller: "project", action: "importProjectsFromSciStarter")
         "/ws/project/getScienceTypes"(controller: "project"){ action = [GET:"getScienceTypes"] }
         "/ws/project/getEcoScienceTypes"(controller: "project"){ action = [GET:"getEcoScienceTypes"] }
-
+        "/ws/project/getCountries"(controller: "project"){ action = [GET:"getCountries"] }
+        "/ws/project/getUNRegions"(controller: "project"){ action = [GET:"getUNRegions"] }
 
         "/"(view:"/index")
 		"500"(view:'/error')

@@ -43,7 +43,6 @@ import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
-import static org.elasticsearch.index.query.QueryBuilders.queryString
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**

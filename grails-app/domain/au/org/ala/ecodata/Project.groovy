@@ -72,7 +72,9 @@ class Project {
     String userCreated, userLastModified
     boolean isExternal = false // An external project only has a listing with the ALA and is not using data capture capabilities
     boolean isSciStarter = false
-    String sciStarterId
+    List<String> uNRegions = []
+    List<String> countries = []
+    String origin = 'atlasoflivingaustralia'
 
     List<AssociatedOrg> associatedOrganisations
 
@@ -172,6 +174,8 @@ class Project {
         task nullable:true
         userCreated nullable:true
         userLastModified nullable:true
-        sciStarterId nullable: true
+        origin nullable: false
+        uNRegions nullable: true
+        countries nullable: true
     }
 }

@@ -1,10 +1,10 @@
 package au.org.ala.ecodata
 
+import com.vividsolutions.jts.geom.Geometry
 import grails.transaction.Transactional
 import groovy.json.JsonParserType
 import groovy.json.JsonSlurper
 import org.codehaus.groovy.grails.commons.GrailsApplication
-
 /**
  * The SpatialService is responsible for:
  * 1. The interface to the spatial portal.
@@ -38,6 +38,12 @@ class SpatialService {
      * supplied geometry
      */
     Map<String,List<String>> intersectGeometry(Map geoJson, List<String> fieldIds = null) {
+        int length = geoJson?.toString().size()
+        int threshold = grailsApplication.config.spatial.geoJsonEnvelopeConversionThreshold
+        if(length > threshold){
+            Geometry geo = GeometryUtils.geoJsonMapToGeometry (geoJson)
+            geoJson = GeometryUtils.geometryToGeoJsonMap (geo.getEnvelope())
+        }
 
         String url = grailsApplication.config.spatial.baseUrl+GEOJSON_INTERSECT_URL_PREFIX
         if (!fieldIds) {

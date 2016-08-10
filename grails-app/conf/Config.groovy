@@ -4,17 +4,17 @@
 def appName = 'ecodata'
 def ENV_NAME = "${appName.toUpperCase()}_CONFIG"
 default_config = "/data/${appName}/config/${appName}-config.properties"
-if(!grails.config.locations || !(grails.config.locations instanceof List)) {
+if (!grails.config.locations || !(grails.config.locations instanceof List)) {
     grails.config.locations = []
 }
 
-if(System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
+if (System.getenv(ENV_NAME) && new File(System.getenv(ENV_NAME)).exists()) {
     println "[${appName}] Including configuration file specified in environment: " + System.getenv(ENV_NAME);
     grails.config.locations.add "file:" + System.getenv(ENV_NAME)
-} else if(System.getProperty(ENV_NAME) && new File(System.getProperty(ENV_NAME)).exists()) {
+} else if (System.getProperty(ENV_NAME) && new File(System.getProperty(ENV_NAME)).exists()) {
     println "[${appName}] Including configuration file specified on command line: " + System.getProperty(ENV_NAME);
     grails.config.locations.add "file:" + System.getProperty(ENV_NAME)
-} else if(new File(default_config).exists()) {
+} else if (new File(default_config).exists()) {
     println "[${appName}] Including default configuration file: " + default_config;
     grails.config.locations.add "file:" + default_config
 } else {
@@ -35,26 +35,26 @@ grails.project.groupId = 'au.org.ala' // change this to alter the default packag
 grails.mime.file.extensions = true // enables the parsing of file extensions from URLs into the request format
 grails.mime.use.accept.header = false
 grails.mime.types = [
-    all:           '*/*',
-    atom:          'application/atom+xml',
-    css:           'text/css',
-    csv:           'text/csv',
-    form:          'application/x-www-form-urlencoded',
-    html:          ['text/html','application/xhtml+xml'],
-    js:            'text/javascript',
-    json:          ['application/json', 'text/json'],
-    multipartForm: 'multipart/form-data',
-    rss:           'application/rss+xml',
-    text:          'text/plain',
-    xlsx:          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    xls:           'application/vnd.ms-excel',
-    xml:           ['text/xml', 'application/xml'],
-    shp:           'application/zip'
+        all          : '*/*',
+        atom         : 'application/atom+xml',
+        css          : 'text/css',
+        csv          : 'text/csv',
+        form         : 'application/x-www-form-urlencoded',
+        html         : ['text/html', 'application/xhtml+xml'],
+        js           : 'text/javascript',
+        json         : ['application/json', 'text/json'],
+        multipartForm: 'multipart/form-data',
+        rss          : 'application/rss+xml',
+        text         : 'text/plain',
+        xlsx         : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        xls          : 'application/vnd.ms-excel',
+        xml          : ['text/xml', 'application/xml'],
+        shp          : 'application/zip'
 ]
 
 /******************************************************************************\
  *  RELOADABLE CONFIG
-\******************************************************************************/
+ \******************************************************************************/
 reloadable.cfgs = ["file:/data/${appName}/config/${appName}-config.properties"]
 
 // URL Mapping Cache Max Size, defaults to 5000
@@ -79,7 +79,7 @@ grails.enable.native2ascii = true
 // packages to include in Spring bean scanning
 grails.spring.bean.packages = []
 // whether to disable processing of multi part requests
-grails.web.disable.multipart=false
+grails.web.disable.multipart = false
 
 // request parameters to mask when logging exceptions
 grails.exceptionresolver.params.exclude = ['password']
@@ -101,39 +101,39 @@ cors.url.pattern = ['/document/download']
 records.default.projectId = "4084c7ea-94f6-42f2-9c65-da18dcabf08"
 records.default.dataResourceId = "dr364"
 
-if(!app.dump.location){
+if (!app.dump.location) {
     app.dump.location = "/data/ecodata/dump/"
 }
-if(!app.elasticsearch.location){
+if (!app.elasticsearch.location) {
     app.elasticsearch.location = "/data/ecodata/elasticsearch/"
 }
-if(!app.elasticsearch.indexAllOnStartup){
+if (!app.elasticsearch.indexAllOnStartup) {
     app.elasticsearch.indexAllOnStartup = true
 }
-if(!app.elasticsearch.indexOnGormEvents){
+if (!app.elasticsearch.indexOnGormEvents) {
     app.elasticsearch.indexOnGormEvents = true
 }
-if(!app.http.header.userId){
+if (!app.http.header.userId) {
     app.http.header.userId = "X-ALA-userId"
 }
-if(!app.file.upload.path){
+if (!app.file.upload.path) {
     app.file.upload.path = "/data/ecodata/uploads"
 }
-if(!app.file.archive.path){
+if (!app.file.archive.path) {
     app.file.archive.path = "/data/ecodata/archive"
 }
-if(!app.external.api.version){
+if (!app.external.api.version) {
     app.external.api.version = 'draft'
 }
 
-if(!webservice.connectTimeout){
+if (!webservice.connectTimeout) {
     webservice.connectTimeout = 10000
 }
-if(!webservice.readTimeout){
+if (!webservice.readTimeout) {
     webservice.readTimeout = 20000
 }
 // spatial services
-if(!spatial.baseUrl){
+if (!spatial.baseUrl) {
     spatial.baseUrl = "http://spatial-dev.ala.org.au"
 }
 if (!spatial.intersectUrl) {
@@ -142,7 +142,7 @@ if (!spatial.intersectUrl) {
 if (!spatial.intersectBatchUrl) {
     spatial.intersectBatchUrl = spatial.baseUrl + '/ws/intersect/batch/'
 }
-if(!google.geocode.url){
+if (!google.geocode.url) {
     google.geocode.url = "https://maps.googleapis.com/maps/api/geocode/json?sensor=false&latlng="
 }
 if (!temp.file.cleanup.days) {
@@ -150,7 +150,7 @@ if (!temp.file.cleanup.days) {
 }
 
 
-if(!biocollect.scienceType){
+if (!biocollect.scienceType) {
     biocollect.scienceType = [
             "Animals",
             "Agricultural & veterinary science",
@@ -183,7 +183,7 @@ if(!biocollect.scienceType){
     ]
 }
 
-if(!biocollect.ecoScienceType) {
+if (!biocollect.ecoScienceType) {
     biocollect.ecoScienceType = [
             "Agroecology",
             "Behavioural Ecology",
@@ -225,6 +225,219 @@ if(!biocollect.ecoScienceType) {
             "Symbyotic Interactions",
             "Urban Ecology"
     ]
+}
+
+if (!uNRegions) {
+    uNRegions = [
+            "Africa",
+            "America",
+            "Asia",
+            "Europe",
+            "Oceania"
+    ]
+}
+
+if (!countries) {
+    countries = [
+            "Worldwide",
+            "Afghanistan",
+            "Albania",
+            "Algeria",
+            "Andorra",
+            "Angola",
+            "Antigua and Barbuda",
+            "Argentina",
+            "Armenia",
+            "Australia",
+            "Austria",
+            "Azerbaijan",
+            "Bahamas",
+            "Bahrain",
+            "Bangladesh",
+            "Barbados",
+            "Belarus",
+            "Belgium",
+            "Belize",
+            "Benin",
+            "Bhutan",
+            "Bolivia",
+            "Bosnia and Herzegovina",
+            "Botswana",
+            "Brazil",
+            "Brunei Darussalam",
+            "Bulgaria",
+            "Burkina Faso",
+            "Burundi",
+            "Cabo Verde",
+            "Cambodia",
+            "Cameroon",
+            "Canada",
+            "Central African Republic",
+            "Chad",
+            "Chile",
+            "China",
+            "Colombia",
+            "Comoros",
+            "Congo",
+            "Costa Rica",
+            "Côte d'Ivoire",
+            "Croatia",
+            "Cuba",
+            "Cyprus",
+            "Czech Republic",
+            "Democratic People's Republic of Korea (North Korea)",
+            "Democratic Republic of the Cong",
+            "Denmark",
+            "Djibouti",
+            "Dominica",
+            "Dominican Republic",
+            "Ecuador",
+            "Egypt",
+            "El Salvador",
+            "Equatorial Guinea",
+            "Eritrea",
+            "Estonia",
+            "Ethiopia",
+            "Fiji",
+            "Finland",
+            "France",
+            "Gabon",
+            "Gambia",
+            "Georgia",
+            "Germany",
+            "Ghana",
+            "Greece",
+            "Grenada",
+            "Guatemala",
+            "Guinea",
+            "Guinea-Bissau",
+            "Guyana",
+            "Haiti",
+            "Honduras",
+            "Hungary",
+            "Iceland",
+            "India",
+            "Indonesia",
+            "Iran",
+            "Iraq",
+            "Ireland",
+            "Israel",
+            "Italy",
+            "Jamaica",
+            "Japan",
+            "Jordan",
+            "Kazakhstan",
+            "Kenya",
+            "Kiribati",
+            "Kuwait",
+            "Kyrgyzstan",
+            "Lao People's Democratic Republic (Laos)",
+            "Latvia",
+            "Lebanon",
+            "Lesotho",
+            "Liberia",
+            "Libya",
+            "Liechtenstein",
+            "Lithuania",
+            "Luxembourg",
+            "Macedonia",
+            "Madagascar",
+            "Malawi",
+            "Malaysia",
+            "Maldives",
+            "Mali",
+            "Malta",
+            "Marshall Islands",
+            "Mauritania",
+            "Mauritius",
+            "Mexico",
+            "Micronesia (Federated States of)",
+            "Monaco",
+            "Mongolia",
+            "Montenegro",
+            "Morocco",
+            "Mozambique",
+            "Myanmar",
+            "Namibia",
+            "Nauru",
+            "Nepal",
+            "Netherlands",
+            "New Zealand",
+            "Nicaragua",
+            "Niger",
+            "Nigeria",
+            "Norway",
+            "Oman",
+            "Pakistan",
+            "Palau",
+            "Panama",
+            "Papua New Guinea",
+            "Paraguay",
+            "Peru",
+            "Philippines",
+            "Poland",
+            "Portugal",
+            "Qatar",
+            "Republic of Korea (South Korea)",
+            "Republic of Moldova",
+            "Romania",
+            "Russian Federation",
+            "Rwanda",
+            "Saint Kitts and Nevis",
+            "Saint Lucia",
+            "Saint Vincent and the Grenadines",
+            "Samoa",
+            "San Marino",
+            "Sao Tome and Principe",
+            "Saudi Arabia",
+            "Senegal",
+            "Serbia",
+            "Seychelles",
+            "Sierra Leone",
+            "Singapore",
+            "Slovakia",
+            "Slovenia",
+            "Solomon Islands",
+            "Somalia",
+            "South Africa",
+            "South Sudan",
+            "Spain",
+            "Sri Lanka",
+            "Sudan",
+            "Suriname",
+            "Swaziland",
+            "Sweden",
+            "Switzerland",
+            "Syrian Arab Republic",
+            "Tajikistan",
+            "Thailand",
+            "Timor-Leste",
+            "Togo",
+            "Tonga",
+            "Trinidad and Tobago",
+            "Tunisia",
+            "Turkey",
+            "Turkmenistan",
+            "Tuvalu",
+            "Uganda",
+            "Ukraine",
+            "United Arab Emirates",
+            "United Kingdom",
+            "United Republic of Tanzania",
+            "United States of America",
+            "Uruguay",
+            "Uzbekistan",
+            "Vanuatu",
+            "Venezuela",
+            "Vietnam",
+            "Yemen",
+            "Zambia",
+            "Zimbabwe",
+    ]
+}
+
+if(!spatial.geoJsonEnvelopeConversionThreshold){
+    spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
@@ -283,10 +496,9 @@ app {
     }
 }
 
-
 /******************************************************************************\
  *  EXTERNAL SERVERS
-\******************************************************************************/
+ \******************************************************************************/
 if (!ala.baseURL) {
     ala.baseURL = "http://www.ala.org.au"
 }
@@ -299,33 +511,33 @@ if (!headerAndFooter.baseURL) {
 if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
 }
-if(!biocacheService.baseURL){
+if (!biocacheService.baseURL) {
     biocacheService.baseURL = 'http://biocache.ala.org.au/ws'
 }
-if(!imagesService.baseURL){
+if (!imagesService.baseURL) {
     imagesService.baseURL = 'http://images-dev.ala.org.au'
 }
-if(!security.cas.bypass){
+if (!security.cas.bypass) {
     security.cas.bypass = false
 }
-if(!security.cas.adminRole){
+if (!security.cas.adminRole) {
     security.cas.adminRole = "ROLE_ADMIN"
 }
-if(!ecodata.use.uuids){
+if (!ecodata.use.uuids) {
     ecodata.use.uuids = false
 }
-if(!userDetailsSingleUrl){
+if (!userDetailsSingleUrl) {
     userDetailsSingleUrl = "https://auth.ala.org.au/userdetails/userDetails/getUserDetails"
 }
-if(!userDetailsUrl) {
+if (!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
 }
 
-if(!authGetKeyUrl) {
+if (!authGetKeyUrl) {
     authGetKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/generateKey"
 }
 
-if(!authCheckKeyUrl) {
+if (!authCheckKeyUrl) {
     authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
 }
 
@@ -374,11 +586,11 @@ environments {
 
 // log4j configuration - this can be overridden in the external configuration
 if (!logging.dir) {
-    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs'  : '/var/log/tomcat7')
+    logging.dir = (System.getProperty('catalina.base') ? System.getProperty('catalina.base') + '/logs' : '/var/log/tomcat7')
 }
 def loggingDir = logging.dir
 //if logging not available (e.g. Travis) log to /tmp and avoid errors
-if(!new File(loggingDir).exists()){
+if (!new File(loggingDir).exists()) {
     loggingDir = "/tmp"
 }
 
@@ -386,19 +598,19 @@ println "[${appName}] Logging to ${loggingDir}"
 
 log4j = {
     appenders {
-        environments{
+        environments {
             development {
                 console name: "stdout",
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n"),
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata.log",
+                        file: loggingDir + "/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-stacktrace.log"
+                        file: loggingDir + "/ecodata-stacktrace.log"
             }
             test {
                 console name: "stdout",
@@ -406,22 +618,22 @@ log4j = {
                         threshold: org.apache.log4j.Level.DEBUG
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-test.log",
+                        file: loggingDir + "/ecodata-test.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-test-stacktrace.log"
+                        file: loggingDir + "/ecodata-test-stacktrace.log"
             }
             production {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata.log",
+                        file: loggingDir + "/ecodata.log",
                         threshold: org.apache.log4j.Level.INFO,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
-                        file: loggingDir+"/ecodata-stacktrace.log"
+                        file: loggingDir + "/ecodata-stacktrace.log"
             }
         }
     }
@@ -449,9 +661,9 @@ log4j = {
             'grails.app.filters.au.org.ala.ecodata'
     ]
 
-    debug 'grails.app.controllers.au.org.ala','au.org.ala.ecodata'
+    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata'
 
-    error  'org.codehaus.groovy.grails.web.servlet',        // controllers
+    error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
             'org.codehaus.groovy.grails.web.sitemesh',       // layouts
             'org.codehaus.groovy.grails.web.mapping.filter', // URL mapping

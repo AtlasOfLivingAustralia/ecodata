@@ -3,6 +3,9 @@ package au.org.ala.ecodata
 import au.org.ala.ecodata.converter.SciStarterConverter
 import au.org.ala.ecodata.reporting.Score
 import grails.converters.JSON
+import org.codehaus.jackson.map.ObjectMapper
+import org.springframework.context.MessageSource
+import org.springframework.web.servlet.i18n.SessionLocaleResolver
 
 import java.lang.reflect.UndeclaredThrowableException
 
@@ -17,11 +20,13 @@ class ProjectService {
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
-	static final PROMO = 'promo'
+    static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
     static final ENHANCED = 'enhanced'
 
     def grailsApplication
+    MessageSource messageSource
+    SessionLocaleResolver localeResolver
     SiteService siteService
     DocumentService documentService
     MetadataService metadataService
@@ -42,7 +47,7 @@ class ProjectService {
     def getBrief(listOfIds, version = null) {
         if (listOfIds) {
             if (version) {
-                def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort:'date', order:'desc'])
+                def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort: 'date', order: 'desc'])
                 def projects = []
                 def found = []
                 all?.each {
@@ -66,16 +71,16 @@ class ProjectService {
 
     def get(String id, levelOfDetail = [], version = null) {
         def p = version ?
-                AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(version as Long), [sort:'date', order:'desc', max: 1])[0].entity :
+                AuditMessage.findAllByProjectIdAndEntityTypeAndDateLessThanEquals(id, Project.class.name, new Date(version as Long), [sort: 'date', order: 'desc', max: 1])[0].entity :
                 Project.findByProjectId(id)
 
-        return p?toMap(p, levelOfDetail, version):null
+        return p ? toMap(p, levelOfDetail, version) : null
     }
 
     def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
         def list
         if (!citizenScienceOnly)
-            list = includeDeleted ? Project.list(): Project.findAllByStatus(ACTIVE)
+            list = includeDeleted ? Project.list() : Project.findAllByStatus(ACTIVE)
         else if (includeDeleted)
             list = Project.findAllByIsCitizenScience(true)
         else
@@ -83,7 +88,7 @@ class ProjectService {
         list?.collect { toMap(it, levelOfDetail) }
     }
 
-    def listMeritProjects (levelOfDetail = [], includeDeleted = false){
+    def listMeritProjects(levelOfDetail = [], includeDeleted = false) {
         def list = []
 
         if (includeDeleted) {
@@ -94,10 +99,10 @@ class ProjectService {
         list.collect { toMap(it, levelOfDetail) }
     }
 
-	def promoted(){
-		def list = Project.findAllByPromoteOnHomepage("yes")
-		list.collect { toMap(it, PROMO) }
-	}
+    def promoted() {
+        def list = Project.findAllByPromoteOnHomepage("yes")
+        list.collect { toMap(it, PROMO) }
+    }
 
     /**
      * Converts the domain object into a map of properties, including
@@ -136,6 +141,7 @@ class ProjectService {
             String id = mapOfProperties["_id"].toString()
             mapOfProperties["id"] = id
             mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
+            mapOfProperties.origin = messageSource.getMessage( "project.origin." + mapOfProperties.origin, null, mapOfProperties.origin, localeResolver.defaultLocale)
             mapOfProperties.remove("_id")
 
             if (levelOfDetail != FLAT) {
@@ -191,12 +197,12 @@ class ProjectService {
         def mapOfProperties = dbo.toMap()
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
-		mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
+        mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
         mapOfProperties.remove("_id")
         mapOfProperties.remove("sites")
         mapOfProperties.sites = siteService.findAllForProjectId(prj.projectId, true)
         // remove nulls
-        mapOfProperties.findAll {k,v -> v != null}
+        mapOfProperties.findAll { k, v -> v != null }
     }
 
     def loadAll(list) {
@@ -211,18 +217,18 @@ class ProjectService {
             if (props.projectId && Project.findByProjectId(props.projectId)) {
                 // clear session to avoid exception when GORM tries to autoflush the changes
                 Project.withSession { session -> session.clear() }
-                return [status:'error',error:'Duplicate project id for create ' + props.projectId]
+                return [status: 'error', error: 'Duplicate project id for create ' + props.projectId]
             }
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
-            Project project = new Project(projectId: props.projectId?: Identifiers.getNew(true,''), name:props.name)
+            Project project = new Project(projectId: props.projectId ?: Identifiers.getNew(true, ''), name: props.name)
             // Not flushing on create was causing that further updates to fields were overriden by old values
-            project.save(failOnError: true)
+            project.save(flush: true, failOnError: true)
 
             props.remove('sites')
             props.remove('id')
 
 
-            if(collectoryLink){
+            if (collectoryLink) {
                 establishCollectoryLinkForProject(project, props)
             }
 
@@ -233,7 +239,7 @@ class ProjectService {
             Project.withSession { session -> session.clear() }
             def error = "Error creating project - ${e.message}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
     }
 
@@ -241,6 +247,7 @@ class ProjectService {
      * Async task for establishing the Collectory data resource - this is because it could be relatively slow and we do
      * not want to delay the project creation process for the user.
      */
+
     private establishCollectoryLinkForProject(Project project, Map props) {
         task {
             Map collectoryProps = [:]
@@ -278,7 +285,7 @@ class ProjectService {
         } else {
             def error = "Error updating project - no such id ${id}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
     }
 
@@ -330,7 +337,6 @@ class ProjectService {
         result
     }
 
-
     /**
      * Returns the reportable metrics for a project as determined by the project output targets and activities
      * that have been undertaken.
@@ -345,7 +351,7 @@ class ProjectService {
 
             def toAggregate = []
 
-            metadataService.activitiesModel().outputs?.each{
+            metadataService.activitiesModel().outputs?.each {
                 Score.outputScores(it).each { score ->
                     if (!targetsOnly || score.isOutputTarget) {
                         toAggregate << [score: score]
@@ -362,18 +368,19 @@ class ProjectService {
                 if (target.outcomeTarget != null) {
                     return
                 }
-                def result = outputSummary.find{it.label == target.scoreLabel}
+                def result = outputSummary.find { it.label == target.scoreLabel }
                 if (result) {
-                    if (!result.target || result.target == "0") { // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
+                    if (!result.target || result.target == "0") {
+                        // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
                         result.target = target.target
                     }
 
                 } else {
-               		   // If there are no Outputs recorded containing the score, the results won't be returned, so add
-               			// one in containing the target.
-                    def score = toAggregate.find{it.score?.label == target.scoreLabel}
+                    // If there are no Outputs recorded containing the score, the results won't be returned, so add
+                    // one in containing the target.
+                    def score = toAggregate.find { it.score?.label == target.scoreLabel }
                     if (score) {
-                        outputSummary << [label:score.label, score:score.score, target:target.target]
+                        outputSummary << [label: score.label, score: score.score, target: target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
@@ -385,7 +392,7 @@ class ProjectService {
         } else {
             def error = "Error retrieving metrics for project - no such id ${id}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
     }
 
@@ -428,18 +435,17 @@ class ProjectService {
         def criteria = Project.createCriteria()
         def projects = criteria.list {
             ne("status", DELETED)
-            searchCriteria.each { prop,value ->
+            searchCriteria.each { prop, value ->
 
                 if (value instanceof List) {
                     inList(prop, value)
-                }
-                else {
+                } else {
                     eq(prop, value)
                 }
             }
 
         }
-        projects.collect{toMap(it, levelOfDetail)}
+        projects.collect { toMap(it, levelOfDetail) }
     }
 
     /**
@@ -463,45 +469,27 @@ class ProjectService {
      *      And link artifacts to the project. TODO: creating project extent.
      * @return
      */
-    Integer importProjectsFromSciStarter(String whiteList){
-        List whiteListIds = whiteList?.split (',') ?.collect { Integer.parseInt(it) } ?:[]
-        Integer createdProjects = 0
+    Integer importProjectsFromSciStarter() {
+        int ignoredProjects = 0, createdProjects = 0
 
         try {
             String sciStarterProjectUrl
-
-            // delete artifacts from previous import
-            List sciStarterSites = Site.findAllByIsSciStarter(true)
-            // deleteAll does not fire any messages. Hence elastic search is not updated.
-            sciStarterSites.each{ Site site ->
-                site.delete()
-            }
-
-            List sciStarterProjects = Project.findAllByIsSciStarter(true)
-            sciStarterProjects.each{ Project project ->
-                project.delete()
-            }
-
-            List sciStarterLogo = Document.findAllByIsSciStarter(true)
-            sciStarterLogo.each{ Document logo ->
-                logo.delete()
-            }
-
-            int ignoredProjects = 0
 
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
             projects?.eachWithIndex { pProperties, index ->
                 Map transformedProject
                 Map project = pProperties
-                if (project && project.title) {
-                    // get more details about the project
-                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                    Map projectDetails = webService.getJson(sciStarterProjectUrl)
-                    if (!projectDetails.error) {
-                        projectDetails << project
-                        // switch off the can import project test
-                        if (true || SciStarterConverter.canImportProject(projectDetails)) {
+                if (project && project.title && project.id) {
+                    Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
+                    if (!importedSciStarterProject) {
+                        // get more details about the project
+                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                        String text = webService.get(sciStarterProjectUrl, false);
+                        ObjectMapper mapper = new ObjectMapper()
+                        Map projectDetails = mapper.readValue(text, Map.class)
+                        if (!projectDetails.error) {
+                            projectDetails << project
                             if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
                                 // ignore projects SciStarter imported from Biocollect
                                 log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
@@ -509,39 +497,25 @@ class ProjectService {
                             } else {
                                 // map properties from SciStarter to Biocollect
                                 transformedProject = SciStarterConverter.convert(projectDetails)
-                                if (projectDetails.id in whiteListIds) {
-                                    transformedProject.isWorldWide = false
-                                } else {
-                                    transformedProject.isWorldWide = true
-                                }
-
                                 // create project & document & site & organisation
-                                createSciStarterProject (transformedProject, projectDetails)
-                                createdProjects ++
+                                createSciStarterProject(transformedProject, projectDetails)
+                                createdProjects++
                             }
                         } else {
-                            log.info("Cannot import project ${projectDetails.title} ${projectDetails.id}")
+                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
                             ignoredProjects++
                         }
                     } else {
-                        log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                        ignoredProjects++
+                        log.info("Ignoring ${project.title} - ${project.id} - since it already exists.")
+                        ignoredProjects ++
                     }
-                }
-
-                if(index % 10 == 0 ){
-                    log.info( "Imported ${index} scistarter projects")
-                    Site.withSession { session -> session.clear()}
-                    Project.withSession { session -> session.clear()}
-                    Document.withSession { session -> session.clear()}
-                    Organisation.withSession { session -> session.clear()}
                 }
             }
 
-            log.info("Number of ignored projects ${ignoredProjects}")
-        } catch (SocketTimeoutException ste){
+            log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}")
+        } catch (SocketTimeoutException ste) {
             log.error(ste.message, ste)
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error(e.message, e)
         }
 
@@ -554,14 +528,14 @@ class ProjectService {
      * @throws SocketTimeoutException
      * @throws Exception
      */
-    List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception{
+    List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
         Map response = webService.getJson(scistarterFinderUrl)
-        if(response.error){
+        if (response.error) {
             if (response.error.contains('Timed out')) {
                 throw new SocketTimeoutException(response.error)
             } else {
-                throw  new Exception(response.error)
+                throw new Exception(response.error)
             }
         }
 
@@ -573,7 +547,7 @@ class ProjectService {
      * @param transformedProp - mapped SciStarter project properties
      * @return
      */
-    Map createSciStarterProject(Map transformedProp, Map rawProp){
+    Map createSciStarterProject(Map transformedProp, Map rawProp) {
         Map organisation
 
         // create project extent
@@ -588,7 +562,7 @@ class ProjectService {
         // create organisation
         if (transformedProp.organisationName && transformedProp.organisationName != SciStarterConverter.NO_ORGANISATION_NAME) {
             organisation = createSciStarterOrganisation(transformedProp.organisationName)
-            if(organisation.organisationId){
+            if (organisation.organisationId) {
                 transformedProp.organisationId = organisation.organisationId
             } else {
                 // throw exception?
@@ -605,7 +579,7 @@ class ProjectService {
 
         // use the projectId to associate site with  project
         if (projectId) {
-            sites?.siteIds?.each{ siteId ->
+            sites?.siteIds?.each { siteId ->
                 siteService.addProject(siteId, projectId)
             }
             // create project logo.
@@ -622,17 +596,17 @@ class ProjectService {
      * if project does not have region then set extent to the whole world map.
      * @return
      */
-    Map createSciStarterSites(Map project){
-        Map result = [siteIds:null]
+    Map createSciStarterSites(Map project) {
+        Map result = [siteIds: null]
         List sites = []
         if (project.regions?.size()) {
             // convert region to site
             project.regions.each { region ->
                 Map site = SciStarterConverter.siteMapping(region)
                 // only add valid geojson objects
-                if(site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())){
+                if (site?.extent?.geometry && siteService.isGeoJsonValid((site?.extent?.geometry as JSON).toString())) {
                     Map createdSite = siteService.create(site)
-                    if(createdSite.siteId){
+                    if (createdSite.siteId) {
                         sites.push(createdSite.siteId)
                     }
                 }
@@ -642,7 +616,7 @@ class ProjectService {
         } else {
             // if no region, then create world extent.
             Map world = getWorldExtent()
-            if(world.siteId){
+            if (world.siteId) {
                 result.siteIds = [world.siteId]
             }
         }
@@ -657,22 +631,22 @@ class ProjectService {
      * @param projectId
      * @return
      */
-    Map createSciStarterLogo(String imageUrl, String attribution, String projectId){
+    Map createSciStarterLogo(String imageUrl, String attribution, String projectId) {
         Map props = [
-                "externalUrl" : imageUrl,
-                "isPrimaryProjectImage" : true,
-                "projectId" : projectId,
-                "attribution" : attribution,
-                "role" : "logo",
-                "status" : "active",
-                "type" : "link",
-                "hasPreview" : false,
-                "readOnly" : false,
-                "thirdPartyConsentDeclarationRequired" : false,
-                "public" : true,
-                "stages" : [ ],
-                "embeddedVideoVisible" : false,
-                "isSciStarter" : true
+                "externalUrl"                         : imageUrl,
+                "isPrimaryProjectImage"               : true,
+                "projectId"                           : projectId,
+                "attribution"                         : attribution,
+                "role"                                : "logo",
+                "status"                              : "active",
+                "type"                                : "link",
+                "hasPreview"                          : false,
+                "readOnly"                            : false,
+                "thirdPartyConsentDeclarationRequired": false,
+                "public"                              : true,
+                "stages"                              : [],
+                "embeddedVideoVisible"                : false,
+                "isSciStarter"                        : true
         ]
         // create logo document
         documentService.create(props, null)
@@ -685,19 +659,19 @@ class ProjectService {
      * @param name
      * @return
      */
-    Map createSciStarterOrganisation(String name){
+    Map createSciStarterOrganisation(String name) {
         Organisation org = Organisation.findByName(name)
         if (org) {
-            return [organisationId:org.organisationId ]
+            return [organisationId: org.organisationId]
         } else {
             // create organisation
             Map orgProp = [
-                    "collectoryInstitutionId" : "null",
-                    "name" : name,
-                    "orgType" : "conservation",
-                    "description" : "This organisation is imported from SciStarter"
+                    "collectoryInstitutionId": "null",
+                    "name"                   : name,
+                    "orgType"                : "conservation",
+                    "description"            : "This organisation is imported from SciStarter"
             ]
-            return  organisationService.create(orgProp, false)
+            return organisationService.create(orgProp, false)
         }
     }
 

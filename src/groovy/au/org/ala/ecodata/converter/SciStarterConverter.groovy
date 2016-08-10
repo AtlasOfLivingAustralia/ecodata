@@ -41,7 +41,7 @@ class SciStarterConverter {
 
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [
-                'id'          : 'sciStarterId',
+                'id'          : 'externalId',
                 'title'       : [
                         'name'     : 'name',
                         'transform': { props, target ->
@@ -76,9 +76,9 @@ class SciStarterConverter {
                                 } catch (MalformedURLException e) {
                                     "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
                                 }
-                            } else  if (!props.image?.equals(null) && props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
+                            } else if (!props.image?.equals(null) && props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
                                 props.image
-                            } else if (!props.image?.equals(null)){
+                            } else if (!props.image?.equals(null)) {
                                 "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
                             } else {
                                 return null
@@ -103,15 +103,15 @@ class SciStarterConverter {
                                 sdf.parse(props.end_date)
                             }
                         }],
-                'date'    : [
+                'date'        : [
                         'name'     : 'dateCreated',
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                             if (props.date) {
-                                sdf.parse(props.date )
+                                sdf.parse(props.date)
                             }
                         }],
-                'updated'    : [
+                'updated'     : [
                         'name'     : 'lastUpdated',
                         'transform': { props, target ->
                             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -126,16 +126,50 @@ class SciStarterConverter {
                         'name'     : 'scienceType',
                         'transform': { props, target ->
                             List approvedScienceType = Holders.grailsApplication.config.biocollect.scienceType
-                            List lowerScienceType = approvedScienceType.collect { it?.toLowerCase() }
                             List scienceTypes = []
                             props?.topics?.each { String type ->
                                 String lowerType = type?.toLowerCase()
-                                if (lowerType in lowerScienceType) {
-                                    scienceTypes.push(lowerType)
+                                approvedScienceType?.each { String scienceType ->
+                                    if(scienceType.toLowerCase() == lowerType){
+                                        scienceTypes.push(scienceType)
+                                    }
                                 }
                             }
 
                             scienceTypes
+                        }
+                ],
+                "origin"      : "origin",
+                "country"     : [
+                        name       : "countries",
+                        'transform': { props, target ->
+                            List countries = Holders.grailsApplication.config.countries
+                            String country
+                            if (props.country instanceof String) {
+                                country = countries.find { String cntry ->
+                                    cntry.toLowerCase() == props.country?.toLowerCase()
+                                }
+                            }
+
+                            country ? [country] : []
+                        }
+                ],
+                "UN_regions"  : [
+                        name       : "uNRegions",
+                        'transform': { props, target ->
+                            List uNRegions = Holders.grailsApplication.config.uNRegions
+                            List matchedRegions = []
+                            props.UN_regions?.each { String region ->
+                                String matchedRegion = uNRegions.find { String UN_region ->
+                                    UN_region.toLowerCase() == region.toLowerCase()
+                                }
+
+                                if (matchedRegion) {
+                                    matchedRegions.push(matchedRegion)
+                                }
+                            }
+
+                            matchedRegions
                         }
                 ]
         ];
@@ -174,14 +208,17 @@ class SciStarterConverter {
                 "projectSiteId"          : null,
                 "organisationId"         : null,
                 "organisationName"       : NO_ORGANISATION_NAME,
-                "sciStarterId"           : null,
+                "externalId"             : null,
                 "isSciStarter"           : true,
                 "attribution"            : null,
                 "managerEmail"           : "contact@scistarter.com",
                 "urlWeb"                 : null,
                 "image"                  : null,
                 "state"                  : null,
-                "importDate"             : new Date()
+                "importDate"             : new Date(),
+                "origin"                 : "scistarter",
+                "countries"              : [],
+                "unRegions"             : []
         ] << override;
 
         // iterate through mapping variable and copy or tranform the value

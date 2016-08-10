@@ -14,17 +14,11 @@
  */
 
 package au.org.ala.ecodata
+
 import grails.converters.JSON
-import groovyx.net.http.HTTPBuilder
-import groovyx.net.http.Method
-import org.apache.http.entity.mime.HttpMultipartMode
-import org.apache.http.entity.mime.MultipartEntity
-import org.apache.http.entity.mime.content.InputStreamBody
-import org.apache.http.entity.mime.content.StringBody
 import org.codehaus.groovy.grails.web.converters.exceptions.ConverterException
 import org.codehaus.groovy.grails.web.servlet.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.web.multipart.MultipartFile
 
 import javax.servlet.http.HttpServletResponse
 /**
@@ -52,7 +46,7 @@ class WebService {
             def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
                     statusCode: conn?.responseCode?:"",
                     detail: conn?.errorStream?.text]
-            log.error error
+            log.error error, e
             return error
         }
     }

@@ -51,6 +51,9 @@ grails.project.dependency.resolution = {
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
         compile "org.apache.poi:ooxml-schemas:1.0"
 
+        compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
+        compile 'org.codehaus.jackson:jackson-mapper-asl:1.9.13'
+
         runtime "javax.transaction:jta:1.1" // Required as a side effect of ehcache field walking.
 
 
