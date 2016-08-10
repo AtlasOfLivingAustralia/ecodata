@@ -104,7 +104,7 @@
       "type": "row",
       "items": [{
                   "computed": null,
-                  "source": "Record your individual sightings of iconic species in the project region.",
+                  "source": "<h4 class='text-default text-center'><b>Record your individual sightings of iconic species in the project region.</b><h4></br>",
                   "type": "literal"
                 }]
     },
@@ -118,7 +118,7 @@
           "items": [
             {
               "computed": null,
-              "source": "<h1>Survey Information<\/h1>",
+              "source": "<h4 class='text-default text-left'><b>A. Sightings Information: </b></h4></br>",
               "type": "literal"
             },
             {
@@ -147,7 +147,12 @@
             },
             {
               "computed": null,
-              "source": "<h1>Single Species Sighting<\/h1>",
+              "source": "<hr><h4 class='text-default text-left'><b>B. Species Information: </b></h4></br>",
+              "type": "literal"
+            },
+            {
+              "computed": null,
+              "source": "<small>Start typing a common or scientific name.</small>",
               "type": "literal"
             },
             {
@@ -156,10 +161,12 @@
               "source": "species1",
               "type": "autocomplete"
             },
+
             {
+              "preLabel": "Are you confident of the species identification?",
               "computed": null,
-              "source": "<i>Start typing a common or scientific name.<\/i>",
-              "type": "literal"
+              "source": "identificationConfidence1",
+              "type": "selectOne"
             },
             { "preLabel": "Identification tags",
               "computed": null,
@@ -167,10 +174,15 @@
               "type": "selectManyCombo"
             },
             {
-              "preLabel": "Are you confident of the species identification?",
               "computed": null,
-              "source": "identificationConfidence1",
-              "type": "selectOne"
+              "source": "</br>",
+              "type": "literal"
+            },
+            {
+              "preLabel": "Comments",
+              "computed": null,
+              "source": "comments1",
+              "type": "textarea"
             },
             {
               "preLabel": "How many individuals did you see?",
@@ -178,11 +190,11 @@
               "source": "individualCount1",
               "type": "number"
             },
+
             {
-              "preLabel": "Comments",
               "computed": null,
-              "source": "comments1",
-              "type": "textarea"
+              "source": "</br>",
+              "type": "literal"
             },
             {
               "preLabel": "Sighting photo",
