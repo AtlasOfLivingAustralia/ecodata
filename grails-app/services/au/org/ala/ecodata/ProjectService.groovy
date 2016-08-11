@@ -141,7 +141,7 @@ class ProjectService {
             String id = mapOfProperties["_id"].toString()
             mapOfProperties["id"] = id
             mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
-            mapOfProperties.origin = messageSource.getMessage( "project.origin." + mapOfProperties.origin, null, mapOfProperties.origin, localeResolver.defaultLocale)
+            mapOfProperties.origin = messageSource?.getMessage( "project.origin." + mapOfProperties.origin, null, mapOfProperties.origin, localeResolver?.defaultLocale)
             mapOfProperties.remove("_id")
 
             if (levelOfDetail != FLAT) {

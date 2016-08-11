@@ -33,7 +33,7 @@ class ProjectServiceSpec extends Specification {
         def dataProviderId = 'dp1'
         def dataResourceId = 'dr1'
         stubbedCollectoryService.createDataProviderAndResource(_,_) >> [dataProviderId: dataProviderId, dataResourceId: dataResourceId]
-        def updatedData = projData + [description: 'test proj updated description']
+        def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
 
         def result, projectId
