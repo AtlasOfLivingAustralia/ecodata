@@ -14,9 +14,8 @@
  * 
  * Created by Temi on 8/08/2016.
  */
-var projects = db.project.find({isCitizenScience:true, isSciStarter:{$ne:true}})
-while (projects.hasNext()) {
-    var project = projects.next();
-    db.project.update({projectId: project.projectId}, {$set: {countries:['Australia'], uNRegions:['Oceania'], origin: 'atlasoflivingaustralia'}})
-    print("updated project id - " + project.projectId)
-}
+
+db.project.update({isCitizenScience:true, isSciStarter:{$ne:true}},
+    {$set: {countries:['Australia'], uNRegions:['Oceania'],
+        origin: 'atlasoflivingaustralia', termsOfUseAccepted: true}}, {multi:true})
+print("updated all projects")

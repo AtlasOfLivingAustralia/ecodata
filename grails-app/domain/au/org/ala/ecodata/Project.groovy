@@ -58,7 +58,7 @@ class Project {
 	String promoteOnHomepage = 'no'
     List activities
 	boolean isContributingDataToAla = false
-    boolean isCitizenScience, isMetadataSharing, isMERIT
+    boolean isCitizenScience, isMERIT
     boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
     String difficulty, gear, task
     String projectType    // survey, works

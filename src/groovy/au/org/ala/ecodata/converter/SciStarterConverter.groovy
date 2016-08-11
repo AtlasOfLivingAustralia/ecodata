@@ -184,7 +184,6 @@ class SciStarterConverter {
                 "isDataSharing"          : false,
                 "isExternal"             : true,
                 "isMERIT"                : false,
-                "isMetadataSharing"      : true,
                 "isSuitableForChildren"  : false,
                 "name"                   : null,
                 "promoteOnHomepage"      : "no",
