@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import grails.gorm.CriteriaBuilder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
 import org.grails.datastore.mapping.mongo.MongoSession
@@ -192,6 +193,31 @@ class AuditService {
         results.addAll(documentMessages)
 
         return results.sort { it.date }.reverse()
+    }
+
+    List getAuditMessagesForOrganisation(String organisationId) {
+        List results = AuditMessage.findAllByEntityId(organisationId)
+
+        BuildableCriteria c = Report.createCriteria()
+        List reportIds = c {
+            eq('organisationId', organisationId)
+            projections {
+                property('reportId')
+            }
+        }
+        results += AuditMessage.findAllByEntityIdInList(reportIds)
+
+        results.sort { it.date }.reverse()
+    }
+
+    List getAuditMessagesForSettings(String keyPrefix) {
+
+        // We can get away with this because the number of settings objects is small.
+        List settingIds = Setting.findAll().findAll{it.key.startsWith(keyPrefix)}.collect{it._id.toHexString()}
+
+        List results = AuditMessage.findAllByEntityIdInList(settingIds)
+
+        results.sort { it.date }.reverse()
     }
 
     def getUserDisplayNamesForMessages(auditMessages) {
