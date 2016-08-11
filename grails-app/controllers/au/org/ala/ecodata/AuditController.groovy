@@ -99,6 +99,49 @@ class AuditController {
         render(retVal as JSON)
     }
 
+    def getAuditMessagesForOrganisation() {
+
+        def organisation = Organisation.findByOrganisationId(params.organisationId)
+        def retVal  = [success:false, errorMessage:'', messages:[], userMap:[:]]
+        if (!organisation) {
+            retVal.message = "Invalid organisation id ${params.organisationId}"
+        } else {
+            def auditMessages = auditService.getAuditMessagesForOrganisation(organisation.organisationId)
+
+            if (auditMessages) {
+                auditMessages.each{ audit ->
+                    def matches = auditMessages.findAll{it.entityId == audit.entityId && it.date < audit.date }
+                    if(matches?.size() > 0){
+                        audit.entity['compareId'] = matches.get(0).id
+                    }
+                }
+                retVal.success = true
+                retVal.messages = auditMessages
+                retVal.userMap = auditService.getUserDisplayNamesForMessages(auditMessages)
+            }
+        }
+
+        render(retVal as JSON)
+    }
+
+    def getAuditMessagesForSettings() {
+        Map retVal  = [success:false, errorMessage:'', messages:[], userMap:[:]]
+        List auditMessages = auditService.getAuditMessagesForSettings(params.keyPrefix?:'')
+        if (auditMessages) {
+            auditMessages.each{ audit ->
+                def matches = auditMessages.findAll{it.entityId == audit.entityId && it.date < audit.date }
+                if(matches?.size() > 0){
+                    audit.entity['compareId'] = matches.get(0).id
+                }
+            }
+            retVal.success = true
+            retVal.messages = auditMessages
+            retVal.userMap = auditService.getUserDisplayNamesForMessages(auditMessages)
+        }
+
+        render retVal as JSON
+    }
+
     def ajaxGetAuditMessage() {
         def auditMessage = AuditMessage.get(params.id)
         def results = [success:true, errorMessage:'']
