@@ -32,6 +32,7 @@ class RecordService {
     UserService userService
     RecordAlertService recordAlertService
     SensitiveSpeciesService sensitiveSpeciesService
+    DocumentService documentService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
@@ -327,13 +328,18 @@ class RecordService {
                 }
 
                 def alreadyLoaded = false
-                if (!image.imageId) {
+
+                def document = documentService.get(image.documentId)
+
+                // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
+                if (!document.imageId) {
                     log.debug "Uploading imageMetadata - ${image.identifier}"
                     def downloadedFile = download(record.occurrenceID, idx, image.identifier)
                     def imageId = uploadImage(record, downloadedFile, image)
-
                     record.multimedia[idx].imageId = imageId
                     record.multimedia[idx].identifier = getImageUrl(imageId)
+                    document.imageId = imageId
+                    documentService.update(document, document.documentId)
 
                 } else {
                     alreadyLoaded = true

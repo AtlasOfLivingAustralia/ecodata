@@ -474,7 +474,6 @@ class ProjectService {
 
         try {
             String sciStarterProjectUrl
-
             // list all SciStarter projects
             List projects = getSciStarterProjectsFromFinder()
             projects?.eachWithIndex { pProperties, index ->
