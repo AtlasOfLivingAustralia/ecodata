@@ -83,7 +83,7 @@ class WebService {
             conn.setRequestProperty("Authorization", grailsApplication.config.api_key);
         }
 
-        def headers = [HttpHeaders.CONTENT_DISPOSITION, HttpHeaders.TRANSFER_ENCODING]
+        def headers = [HttpHeaders.CONTENT_DISPOSITION]
         response.setContentType(conn.getContentType())
         response.setContentLength(conn.getContentLength())
 
@@ -197,10 +197,11 @@ class WebService {
     }
 
     Map doPost(String url, Map postBody) {
-        def conn = null
+        HttpURLConnection conn = null
         def charEncoding = 'utf-8'
         try {
             conn = new URL(url).openConnection()
+            conn.setRequestMethod("POST")
             conn.setDoOutput(true)
             conn.setRequestProperty("Content-Type", "application/json;charset=${charEncoding}");
             conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
@@ -224,6 +225,43 @@ class WebService {
             def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
                     statusCode: conn?.responseCode?:"",
                     detail: conn?.errorStream?.text]
+            log.error(error, e)
+            return error
+        }
+    }
+
+    Map doPost(String url, String postBody, boolean includeAuthKey = true) {
+        HttpURLConnection conn = null
+        def charEncoding = 'utf-8'
+        try {
+            conn = new URL(url).openConnection()
+            conn.setRequestMethod("POST")
+            conn.setDoOutput(true)
+            conn.setRequestProperty("Content-Type", "text/plain;charset=${charEncoding}");
+            if (includeAuthKey) {
+                conn.setRequestProperty("Authorization", "${grailsApplication.config.api_key}");
+
+            }
+
+            def user = getUserService().getCurrentUserDetails()
+            if (user && user.userId) {
+                conn.setRequestProperty(grailsApplication.config.app.http.header.userId, user.userId)
+                conn.setRequestProperty("Cookie", "ALA-Auth="+java.net.URLEncoder.encode(user.userName, charEncoding))
+            }
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream(), charEncoding)
+            wr.write(postBody)
+            wr.flush()
+            def resp = conn.inputStream.text
+            wr.close()
+            return [resp: JSON.parse(resp?:"{}"), headers: conn.getHeaderFields()] // fail over to empty json object if empty response string otherwise JSON.parse fails
+        } catch (SocketTimeoutException e) {
+            def error = [error: "Timed out calling web service. URL= ${url}."]
+            log.error(error, e)
+            return error
+        } catch (Exception e) {
+            def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
+                         statusCode: conn?.responseCode?:"",
+                         detail: conn?.errorStream?.text]
             log.error(error, e)
             return error
         }
