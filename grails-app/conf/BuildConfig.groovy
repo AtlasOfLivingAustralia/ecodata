@@ -70,13 +70,13 @@ grails.project.dependency.resolution = {
         runtime ":ala-bootstrap2:1.2"
         runtime ":cors:1.1.8"
 
-        compile ":mongodb:3.0.2"
+        compile ":mongodb:3.0.3"
         compile ":quartz:1.0.2"
         compile ":excel-export:0.2.1"
         compile ":excel-import:1.0.1"
         compile ":mail:1.0.7"
 
-        build ":tomcat:7.0.55"
+        build ":tomcat:7.0.55.2"
         build ":release:3.0.1"
         compile ':cache:1.1.8'
         compile ":cache-ehcache:1.0.5"
