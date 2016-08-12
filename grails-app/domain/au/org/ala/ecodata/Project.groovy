@@ -59,7 +59,7 @@ class Project {
     List activities
 	boolean isContributingDataToAla = false
     boolean isCitizenScience, isMERIT
-    boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren
+    boolean hasParticipantCost, hasTeachingMaterials, isDIY, isSuitableForChildren, isHome
     String difficulty, gear, task
     String projectType    // survey, works
     // TODO urlAndroid and urlITunes need to be phased out; replaced by link-type documente
@@ -177,5 +177,6 @@ class Project {
         origin nullable: true
         uNRegions nullable: true
         countries nullable: true
+        isHome nullable: true
     }
 }
