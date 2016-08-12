@@ -137,6 +137,7 @@ class UrlMappings {
         "/ws/project/getEcoScienceTypes"(controller: "project"){ action = [GET:"getEcoScienceTypes"] }
         "/ws/project/getCountries"(controller: "project"){ action = [GET:"getCountries"] }
         "/ws/project/getUNRegions"(controller: "project"){ action = [GET:"getUNRegions"] }
+        "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
 
         "/"(view:"/index")
 		"500"(view:'/error')

@@ -344,6 +344,16 @@ class ProjectController {
         render( text: countries as JSON, contentType: 'application/json' )
     }
 
+
+    /**
+     * Get list of countries
+     * @return
+     */
+    def getDataCollectionWhiteList(){
+        List dataCollectionWhiteList = grailsApplication.config.biocollect.dataCollectionWhiteList
+        render( text: dataCollectionWhiteList as JSON, contentType: 'application/json' )
+    }
+
     private Map buildParams(Map params){
         Map values = [:]
         values.sort = params.sort ?: 'nameSort'

@@ -174,7 +174,7 @@ class Project {
         task nullable:true
         userCreated nullable:true
         userLastModified nullable:true
-        origin nullable: false
+        origin nullable: true
         uNRegions nullable: true
         countries nullable: true
     }
