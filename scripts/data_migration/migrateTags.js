@@ -17,46 +17,51 @@
 
 var fields = ['hasParticipantCost', 'isSuitableForChildren', 'isDIY', 'isHome', 'hasTeachingMaterials', 'isContributingDataToAla']
 var condition = {
-    "$or" : [{
-        'hasParticipantCost':true
-    },{
-        'isSuitableForChildren':true
-    },{
-        'isDIY':true
-    },{
-        'isHome':true
-    },{
-        'hasTeachingMaterials':true
-    },{
-        'isContributingDataToAla':true
+    "$or": [{
+        'hasParticipantCost': true
+    }, {
+        'isSuitableForChildren': true
+    }, {
+        'isDIY': true
+    }, {
+        'isHome': true
+    }, {
+        'hasTeachingMaterials': true
+    }, {
+        'isContributingDataToAla': true
     }]
-}
-
-var unset = {
-    'hasParticipantCost':"",
-    'isSuitableForChildren':"",
-    'isDIY':"",
-    'isHome':"",
-    'hasTeachingMaterials':"",
-    'isContributingDataToAla':""
 }
 
 var projects = db.project.find(condition)
 while (projects.hasNext()) {
     var project = projects.next();
-    if(!project.tags){
+    if (!project.tags) {
         var tags = []
-        for(var i = 0; i < fields.length; i++){
+        for (var i = 0; i < fields.length; i++) {
             var field = fields[i]
             if (project[field]) {
                 tags.push(field)
             }
 
+            if ((field == 'hasParticipantCost') && (!project['hasParticipantCost'])) {
+                tags.push('noCost')
+            }
+
             delete  project[field]
         }
 
+        // add mobile tag
+        var documents = db.document.find({
+            projectId: project.projectId,
+            status: {$ne: 'deleted'},
+            role: {$in: ["android", "blackberry", "iTunes", "windowsPhone"]}
+        })
 
-        db.project.update({projectId:project.projectId},{$set:{tags: tags}})
+        if (documents.hasNext()) {
+            tags.push('mobileApp')
+        }
+
+        db.project.update({projectId: project.projectId}, {$set: {tags: tags}})
         print("updated project " + project.projectId)
     }
 }

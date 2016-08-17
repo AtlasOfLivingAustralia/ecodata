@@ -579,17 +579,17 @@ class ElasticSearchService {
         log.debug "Clearing index first"
         deleteIndex()
 
-//        log.info "Indexing all MERIT based projects in MERIT SEARCH index."
-//        def list = projectService.listMeritProjects("flat", false)
-//        list.each {
-//            try {
-//                it["className"] = Project.class.name
-//                indexDoc(it, DEFAULT_INDEX)
-//            }
-//            catch (Exception e) {
-//                log.error("Unable to index projewt: "+it?.projectId, e)
-//            }
-//        }
+        log.info "Indexing all MERIT based projects in MERIT SEARCH index."
+        def list = projectService.listMeritProjects("flat", false)
+        list.each {
+            try {
+                it["className"] = Project.class.name
+                indexDoc(it, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index projewt: "+it?.projectId, e)
+            }
+        }
 
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
@@ -613,47 +613,47 @@ class ElasticSearchService {
             }
         }
 
-//        log.info "Indexing all sites"
-//        int count = 0
-//        Site.withNewSession { session ->
-//            siteService.doWithAllSites { Map siteMap ->
-//                siteMap["className"] = Site.class.name
-//                try {
-//                    siteMap = prepareSiteForIndexing(siteMap, false)
-//                    indexDoc(siteMap, DEFAULT_INDEX)
-//                }
-//                catch (Exception e) {
-//                    log.error("Unable index site: "+siteMap?.siteId, e)
-//                }
-//                count++
-//                if (count % 100 == 0) {
-//                    session.clear()
-//                    log.debug("Indexed "+count+" sites")
-//                }
-//            }
-//        }
-//
-//        log.info "Indexing all activities"
-//        activityService.doWithAllActivities { Map activity ->
-//            try {
-//                prepareActivityForIndexing(activity)
-//                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
-//            }
-//            catch (Exception e) {
-//                log.error("Unable to index activity: "+activity?.activityId, e)
-//            }
-//        }
-//
-//        log.info "Indexing all organisations"
-//        organisationService.doWithAllOrganisations { Map org ->
-//            try {
-//                prepareOrganisationForIndexing(org)
-//                indexDoc(org, DEFAULT_INDEX)
-//            }
-//            catch (Exception e) {
-//                log.error("Unable to index organisation: "+org?.organisationId, e)
-//            }
-//        }
+        log.info "Indexing all sites"
+        int count = 0
+        Site.withNewSession { session ->
+            siteService.doWithAllSites { Map siteMap ->
+                siteMap["className"] = Site.class.name
+                try {
+                    siteMap = prepareSiteForIndexing(siteMap, false)
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable index site: "+siteMap?.siteId, e)
+                }
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.debug("Indexed "+count+" sites")
+                }
+            }
+        }
+
+        log.info "Indexing all activities"
+        activityService.doWithAllActivities { Map activity ->
+            try {
+                prepareActivityForIndexing(activity)
+                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index activity: "+activity?.activityId, e)
+            }
+        }
+
+        log.info "Indexing all organisations"
+        organisationService.doWithAllOrganisations { Map org ->
+            try {
+                prepareOrganisationForIndexing(org)
+                indexDoc(org, DEFAULT_INDEX)
+            }
+            catch (Exception e) {
+                log.error("Unable to index organisation: "+org?.organisationId, e)
+            }
+        }
 
         log.info "Indexing complete"
     }
