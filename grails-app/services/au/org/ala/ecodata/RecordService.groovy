@@ -33,12 +33,25 @@ class RecordService {
     RecordAlertService recordAlertService
     SensitiveSpeciesService sensitiveSpeciesService
     DocumentService documentService
+    CommonService commonService
 
     final def ignores = ["action", "controller", "associatedMedia"]
     private static final List<String> EXCLUDED_RECORD_PROPERTIES = ["_id", "activityId", "dateCreated", "json", "outputId", "projectActivityId", "projectId", "status", "dataResourceUid"]
 
     def getProjectActivityService() {
         grailsApplication.mainContext.projectActivityService
+    }
+
+    def getAll(int max, int offset) {
+        def list = Record.createCriteria().list(max: max, offset: offset) {
+            eq("status", ACTIVE)
+        }
+
+        [count: list.totalCount, list: list.collect { toMap(it) }]
+    }
+
+    def countRecords() {
+        Record.countByStatus(ACTIVE)
     }
 
     def exportRecordsToCSV(OutputStream outputStream, String projectId, String userId, List<String> restrictedProjectActivities) {
@@ -244,6 +257,37 @@ class RecordService {
         Record record = new Record().save(true)
         def errors = updateRecord(record, json, fileMap)
         [record, errors]
+    }
+
+    /**
+     * Update guid for the given record id
+     *
+     * @param id record id or occurence id
+     * @param guid species unique identifier.
+     */
+    Map updateGuid(id, String guid) {
+        Map result
+
+        Record record = Record.findByOccurrenceID(id)
+        if (record) {
+            try {
+                def props = [guid: guid]
+                commonService.updateProperties(record, props)
+
+                result = [status: 'ok', id: record.occurrenceID]
+            } catch (Exception e) {
+                Record.withSession { session -> session.clear() }
+                def error = "Error updating record ${id} - ${e.message}"
+                log.error error, e
+                result = [status: 'error', error: error]
+            }
+        } else {
+            def error = "Error updating record - no such id ${id}"
+            log.error error
+            result = [status: 'error', error: error]
+        }
+
+        result
     }
 
     /**
@@ -535,6 +579,14 @@ class RecordService {
      */
     def getForActivity(String activityId) {
         Record.findAllByActivityIdAndStatus(activityId, Status.ACTIVE).collect { toMap(it) }
+    }
+
+    /**
+     * Get record for a given activityId
+     */
+    def getRecordForOutputSpeciesId(String outputSpeciesId) {
+        def record = Record.findByOutputSpeciesIdAndStatus(outputSpeciesId, Status.ACTIVE)
+        record ? toMap(record) : [:]
     }
 
     def toMap(record){

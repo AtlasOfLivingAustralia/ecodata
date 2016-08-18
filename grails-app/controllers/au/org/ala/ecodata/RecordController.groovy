@@ -374,6 +374,19 @@ class RecordController {
         }
     }
 
+    /**
+     * Get record for given output species identifier.
+     *
+     */
+    def getRecordForOutputSpeciesId(String id){
+        def record = recordService.getRecordForOutputSpeciesId(id)
+        if(record) {
+            render record as JSON
+        } else{
+            render (status: 404, text: 'No such id')
+        }
+    }
+
     private def setResponseHeadersForRecord(response, record) {
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)

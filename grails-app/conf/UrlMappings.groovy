@@ -13,8 +13,9 @@ class UrlMappings {
         "/ws/record/user/$userId"(controller: "record", action: "listForUser")
         "/ws/record/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
-
+        "/ws/record/getRecordForOutputSpeciesId/"(controller: "record", action: "getRecordForOutputSpeciesId")
         "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
+
 
         "/ws/location"(controller: "location"){ action = [GET:"list", POST:"create"] }
         "/ws/location/"(controller: "location"){ action = [GET:"list", POST:"create"] }
@@ -138,6 +139,8 @@ class UrlMappings {
         "/ws/project/getCountries"(controller: "project"){ action = [GET:"getCountries"] }
         "/ws/project/getUNRegions"(controller: "project"){ action = [GET:"getUNRegions"] }
         "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
+        "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
+
 
         "/"(view:"/index")
 		"500"(view:'/error')
