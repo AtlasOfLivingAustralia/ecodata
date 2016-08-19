@@ -20,7 +20,7 @@ class AdminController {
 
     def outputService, activityService, siteService, projectService, authService,
         collectoryService, organisationService,
-        commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService
+        commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
     /**
@@ -498,6 +498,15 @@ class AdminController {
         } else{
             render(status: HttpStatus.SC_BAD_REQUEST, text: 'projectId must be provided')
         }
+    }
+
+   /**
+    * Initiate species rematch.
+    */
+
+    def initiateSpeciesRematch() {
+        speciesReMatchService.rematch()
+        render ([message:' ok'] as JSON)
     }
 
 }
