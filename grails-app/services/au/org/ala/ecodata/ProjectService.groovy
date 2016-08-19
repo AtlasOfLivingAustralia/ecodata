@@ -475,6 +475,7 @@ class ProjectService {
         try {
             String sciStarterProjectUrl
             // list all SciStarter projects
+//            List projects = [[id: 1810, title: 'sci import test']]
             List projects = getSciStarterProjectsFromFinder()
             projects?.eachWithIndex { pProperties, index ->
                 Map transformedProject
@@ -485,24 +486,26 @@ class ProjectService {
                         // get more details about the project
                         sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
                         String text = webService.get(sciStarterProjectUrl, false);
-                        ObjectMapper mapper = new ObjectMapper()
-                        Map projectDetails = mapper.readValue(text, Map.class)
-                        if (!projectDetails.error) {
-                            projectDetails << project
-                            if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
-                                // ignore projects SciStarter imported from Biocollect
-                                log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
-                                ignoredProjects++
+                        if(text instanceof String){
+                            ObjectMapper mapper = new ObjectMapper()
+                            Map projectDetails = mapper.readValue(text, Map.class)
+                            if (!projectDetails.error) {
+                                projectDetails << project
+                                if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
+                                    // ignore projects SciStarter imported from Biocollect
+                                    log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
+                                    ignoredProjects++
+                                } else {
+                                    // map properties from SciStarter to Biocollect
+                                    transformedProject = SciStarterConverter.convert(projectDetails)
+                                    // create project & document & site & organisation
+                                    createSciStarterProject(transformedProject, projectDetails)
+                                    createdProjects++
+                                }
                             } else {
-                                // map properties from SciStarter to Biocollect
-                                transformedProject = SciStarterConverter.convert(projectDetails)
-                                // create project & document & site & organisation
-                                createSciStarterProject(transformedProject, projectDetails)
-                                createdProjects++
+                                log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                                ignoredProjects++
                             }
-                        } else {
-                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                            ignoredProjects++
                         }
                     } else {
                         log.info("Ignoring ${project.title} - ${project.id} - since it already exists.")
@@ -529,16 +532,12 @@ class ProjectService {
      */
     List getSciStarterProjectsFromFinder() throws SocketTimeoutException, Exception {
         String scistarterFinderUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.finderUrl}?format=json&q="
-        Map response = webService.getJson(scistarterFinderUrl)
-        if (response.error) {
-            if (response.error.contains('Timed out')) {
-                throw new SocketTimeoutException(response.error)
-            } else {
-                throw new Exception(response.error)
-            }
+        String responseText = webService.get(scistarterFinderUrl, false)
+        if(responseText instanceof String){
+            ObjectMapper mapper = new ObjectMapper()
+            Map response = mapper.readValue(responseText,  Map.class)
+            return response.results
         }
-
-        return response.results
     }
 
     /**
@@ -692,5 +691,24 @@ class ProjectService {
         }
 
         return worldExtent
+    }
+
+    /**
+     * Get a String that describes a project. This used for indexing purposes currently.
+     * The motivaion for this method was because there was no single field to distinguish between projects but had multiple
+     * fields like isWorks, isCitizenScience.
+     * There is a ticket to have a single field - https://github.com/AtlasOfLivingAustralia/biocollect/issues/655
+     * This method will become redundant when the above is implemented.
+     */
+    String getTypeOfProject(Map projectMap){
+        if(projectMap.isWorks){
+            return "works"
+        } else if(projectMap.isMERIT){
+            return "merit"
+        } else if(projectMap.isCitizenScience){
+            return "citizenScience"
+        } else if(projectMap.isEcoScience){
+            return "ecoScience"
+        }
     }
 }

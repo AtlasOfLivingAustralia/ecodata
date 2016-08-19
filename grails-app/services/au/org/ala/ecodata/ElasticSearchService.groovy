@@ -691,6 +691,8 @@ class ElasticSearchService {
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };
+        projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
+
         // Include only for MERIT type projects.
         if (project.isMERIT) {
             projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())

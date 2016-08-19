@@ -151,7 +151,13 @@ class SciStarterConverter {
                                 }
                             }
 
-                            country ? [country] : []
+                            List countryAsList = country ? [country] : []
+
+                            if (country?.size()) {
+                                return countryAsList
+                            } else {
+                                return ["United States of America (USA)"]
+                            }
                         }
                 ],
                 "UN_regions"  : [
@@ -169,7 +175,11 @@ class SciStarterConverter {
                                 }
                             }
 
-                            matchedRegions
+                            if(matchedRegions.size()){
+                                return matchedRegions
+                            } else {
+                                return ["Americas – Northern America"]
+                            }
                         }
                 ]
         ];
