@@ -22,7 +22,7 @@ class SpeciesReMatchService {
         task {
             Record.withSession { session -> session.clear() }
             Record.withNewSession {
-                int max = 100
+                int max = 200
                 int total = recordService.countRecords()
                 int offset = 0, index = 0, nomatch = 0, error = 0
 
@@ -72,13 +72,13 @@ class SpeciesReMatchService {
                         log.info("Progress status: offset: ${offset}")
                     }
                 }
-            }
 
-            log.info("Completed - Total records: ${total}")
-            log.info("Completed - Total records updated: ${index}")
-            log.info("Completed - Total species not found ${nomatch}")
-            log.info("Completed - Total db update error ${error}")
-            log.info("Completed - Offset: ${offset}")
+                log.info("Completed - Total records: ${total}")
+                log.info("Completed - Total records updated: ${index}")
+                log.info("Completed - Total species not found ${nomatch}")
+                log.info("Completed - Total db update error ${error}")
+                log.info("Completed - Offset: ${offset}")
+            }
         }
     }
 }
