@@ -637,7 +637,7 @@ class ProjectService {
                 "attribution"                         : attribution,
                 "role"                                : "logo",
                 "status"                              : "active",
-                "type"                                : "link",
+                "type"                                : "image",
                 "hasPreview"                          : false,
                 "readOnly"                            : false,
                 "thirdPartyConsentDeclarationRequired": false,
