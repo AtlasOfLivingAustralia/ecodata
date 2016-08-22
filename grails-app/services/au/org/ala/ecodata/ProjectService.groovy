@@ -141,7 +141,6 @@ class ProjectService {
             String id = mapOfProperties["_id"].toString()
             mapOfProperties["id"] = id
             mapOfProperties["status"] = mapOfProperties["status"]?.capitalize();
-            mapOfProperties.origin = messageSource?.getMessage( "project.origin." + mapOfProperties.origin, null, mapOfProperties.origin, localeResolver?.defaultLocale)
             mapOfProperties.remove("_id")
 
             if (levelOfDetail != FLAT) {
@@ -475,7 +474,6 @@ class ProjectService {
         try {
             String sciStarterProjectUrl
             // list all SciStarter projects
-//            List projects = [[id: 1810, title: 'sci import test']]
             List projects = getSciStarterProjectsFromFinder()
             projects?.eachWithIndex { pProperties, index ->
                 Map transformedProject
