@@ -477,7 +477,7 @@
                     "gmsId": "WDT",
                     "name": "areaTreatedHa",
                     "description": "The total area of weeds for which an initial treatment was undertaken.",
-                    "label": "Total new area treated (Ha)",
+                    "label": "Total new area treated for weeds (Ha)",
                     "units": "Ha",
                     "groupBy": "output:treatmentEventType",
                     "category": "Invasive Species Management - Weeds",
@@ -2930,10 +2930,10 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "name": "score",
-                    "label": "Total new area treated (Ha)",
+                    "label": "Total new area treated for weeds (Ha)",
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
-                    "filterBy": "Total new area treated (Ha)"
+                    "filterBy": "Total new area treated for weeds (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
