@@ -2579,7 +2579,7 @@
                     "gmsId": "WDT25ALG",
                     "name": "areaTreatedHa",
                     "description": "The total area of weeds for which an initial treatment was undertaken.",
-                    "label": "Total new area of weeds treated (Ha)",
+                    "label": "Total new area treated for weeds (Ha)",
                     "units": "Ha",
                     "listName": "",
                     "category": "Invasive Species Management - Weeds",
