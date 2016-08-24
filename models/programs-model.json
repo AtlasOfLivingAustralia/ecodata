@@ -434,8 +434,6 @@
     {
         "weekDaysToCompleteReport": 0,
         "activities": [
-            "Fauna Survey - general",
-            "Flora Survey - general",
             "Pest Animal Survey",
             "Plant Survival Survey",
             "Site Monitoring Plan",
@@ -447,7 +445,13 @@
             "Vegetation Assessment - Habitat Hectares v2 (VIC)",
             "TasVeg - Native Vegetation Assessment - Forest Vegetation",
             "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
-            "Vegetation Assessment - Bushland Condition Monitoring (SA)"
+            "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "Fauna survey - trap and transect",
+            "Floristic survey - plot and transect",
+            "General Weed Sighting",
+            "Camera Trap Monitoring",
+            "Single Sighting",
+            "Multiple Sightings"
         ],
         "name": "None",
         "subprograms": [],
@@ -935,17 +939,22 @@
         "optionalProjectContent": []
     },
     {
-        "weekDaysToCompleteReport": 0,
         "activities": [
-            "Fauna Survey - general",
-            "Flora Survey - general",
-            "Pest Animal Survey",
-            "Plant Survival Survey",
-            "Water Quality Survey",
-            "Weed Mapping & Monitoring",
-            "Vegetation Assessment - Commonwealth government methodology",
-            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
-            "TasVeg - Native Vegetation Assessment - Forest Vegetation"
+            "Single Sighting",
+            "Multiple Sightings",
+            "Nature Watch",
+            "Redland CC raptor nest monitoring",
+            "General Weed Monitoring",
+            "General Weed Treatment",
+            "General Weed Sighting",
+            "Koala Count - Redlands",
+            "Significant Trees Survey",
+            "Camera Trap Monitoring",
+            "Tweed Koala Sightings",
+            "Floristic survey - plot and transect",
+            "Fauna survey - trap and transect",
+            "OzAtlas Sightings",
+            "Flying Fox Survey"
         ],
         "name": "Citizen Science Projects",
         "subprograms": [],
