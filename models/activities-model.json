@@ -1,4 +1,1816 @@
 {
+    "activities": [
+        {
+            "outputConfig": [{
+                "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "status": "deleted",
+            "name": "Biodiversity Fund - Outcomes and Monitoring",
+            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Event Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Materials Provided to Participants",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Community Participation and Engagement",
+            "outputs": [
+                "Event Details",
+                "Participant Information",
+                "Materials Provided to Participants"
+            ],
+            "type": "Activity",
+            "gmsId": "CPEE"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Debris Removal Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Debris Removal",
+            "outputs": [
+                "Debris Removal Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "DRV DRW"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Disease Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Disease Management",
+            "outputs": [
+                "Disease Management Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "DMA"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Erosion Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Erosion Management",
+            "outputs": [
+                "Erosion Management Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "EMA EML EMS"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Fauna Survey Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Fauna Survey - general",
+            "outputs": [
+                "Survey Information",
+                "Fauna Survey Details",
+                "Participant Information"
+            ],
+            "type": "Assessment",
+            "gmsId": "FBS"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Fence Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Fencing",
+            "outputs": [
+                "Fence Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "FNC APF"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Stock Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Conservation Grazing Management",
+            "outputs": [
+                "Stock Management Details",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "CGM"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Asset Protection Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Ecological Burn Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "status": "deleted",
+            "supportsPhotoPoints": true,
+            "name": "Ecological Fire Management",
+            "outputs": [
+                "Asset Protection Details",
+                "Ecological Burn Details",
+                "Participant Information"
+            ],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Fire Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "status": "active",
+            "supportsPhotoPoints": true,
+            "name": "Fire Management",
+            "outputs": [
+                "Fire Management Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "FMA FML"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Flora Survey Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Flora Survey - general",
+            "outputs": [
+                "Survey Information",
+                "Flora Survey Details",
+                "Participant Information"
+            ],
+            "type": "Assessment",
+            "gmsId": "FRBS"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Heritage Conservation Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Expected Heritage Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Heritage Conservation",
+            "outputs": [
+                "Heritage Conservation Information",
+                "Expected Heritage Outcomes",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "HC HSA HEC"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Indigenous Employment",
+                    "optional": true
+                },
+                {
+                    "outputName": "Indigenous Businesses",
+                    "optional": true
+                }
+            ],
+            "category": "Administration, management & reporting",
+            "name": "Indigenous Employment and Businesses",
+            "outputs": [
+                "Indigenous Employment",
+                "Indigenous Businesses"
+            ],
+            "type": "Activity",
+            "gmsId": "IPE"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Training",
+            "name": "Indigenous Knowledge Transfer",
+            "outputs": ["Indigenous Knowledge Transfer Details"],
+            "type": "Activity",
+            "gmsId": "IKM IKT"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Plan Development Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Management Plan Development",
+            "outputs": [
+                "Plan Development Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "MPD"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [{
+                "outputName": "Management Practice Change Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Implementation actions",
+            "name": "Management Practice Change",
+            "outputs": ["Management Practice Change Details"],
+            "type": "Activity",
+            "gmsId": "MPC MPCFE MPCSP"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Conservation Works Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Conservation Actions for Species and Communities",
+            "outputs": [
+                "Conservation Works Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "CATS"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Evaluation",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Lessons Learned",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Administration, management & reporting",
+            "name": "Outcomes, Evaluation and Learning - final report",
+            "outputs": [
+                "Outcomes",
+                "Evaluation",
+                "Lessons Learned"
+            ],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Evidence of Pest Management Activity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Pest Observation and Monitoring Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "status": "active",
+            "supportsPhotoPoints": true,
+            "name": "Pest Animal Survey",
+            "outputs": [
+                "Evidence of Pest Management Activity",
+                "Pest Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Assessment",
+            "gmsId": "PSA"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Fence Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Pest Management Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Pest Management",
+            "outputs": [
+                "Pest Management Details",
+                "Fence Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "PMA PMQ"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Plant Propagation Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Plant Propagation",
+            "outputs": [
+                "Plant Propagation Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "PPRP"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Vegetation Monitoring Results",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Plant Survival Survey",
+            "outputs": [
+                "Vegetation Monitoring Results",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Assessment",
+            "gmsId": "PSS PSC"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Administration Activities",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Administration, management & reporting",
+            "name": "Project Administration",
+            "outputs": [
+                "Administration Activities",
+                "Participant Information"
+            ],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Access Control Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Infrastructure Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Public Access and Infrastructure",
+            "outputs": [
+                "Access Control Details",
+                "Infrastructure Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "PAM PAI APC"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Research Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Research",
+            "outputs": [
+                "Research Information",
+                "Participant Information"
+            ],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Revegetation Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Revegetation",
+            "outputs": [
+                "Revegetation Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "RVA RVN RVSS RVT2A RVT2B RVS2B"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Seed Collection Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "Seed Collection",
+            "outputs": [
+                "Seed Collection Details",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "SDC"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [{
+                "outputName": "Planned Monitoring Approach",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Site Monitoring Plan",
+            "outputs": ["Planned Monitoring Approach"],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Weed Treatment Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Site Preparation Actions",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Site Preparation",
+            "outputs": [
+                "Site Preparation Actions",
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "STP"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Training Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Skills Development",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Training",
+            "name": "Training and Skills Development",
+            "outputs": [
+                "Training Details",
+                "Skills Development",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "TSD"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [{
+                "outputName": "Water Management Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Implementation actions",
+            "name": "Water Management",
+            "outputs": ["Water Management Details"],
+            "type": "Activity",
+            "gmsId": "WMA WMN"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "General information & Participants",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Environmental Information at the Time of Sampling",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Water Quality Measurements",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "name": "Water Quality Survey",
+            "outputs": [
+                "General information & Participants",
+                "Environmental Information at the Time of Sampling",
+                "Water Quality Measurements"
+            ],
+            "type": "Assessment",
+            "gmsId": "WQSA"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Evidence of Weed Treatment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Observation and Monitoring Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Weed Mapping & Monitoring",
+            "outputs": [
+                "Evidence of Weed Treatment",
+                "Weed Observation and Monitoring Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Assessment",
+            "gmsId": "WMM WSA"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Weed Treatment Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Weed Treatment",
+            "outputs": [
+                "Weed Treatment Details",
+                "Participant Information",
+                "Photo Points"
+            ],
+            "type": "Activity",
+            "gmsId": "WDT"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Site Planning Details",
+                    "optional": true
+                },
+                {
+                    "outputName": "Threatening Processes and Site Condition Risks",
+                    "optional": true
+                },
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Works Planning and Risk",
+            "outputs": [
+                "Site Planning Details",
+                "Threatening Processes and Site Condition Risks",
+                "Participant Information"
+            ],
+            "type": "Activity",
+            "gmsId": "STA"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Overview of Project Progress",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Environmental, Economic and Social Outcomes",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Implementation Update",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Lessons Learned and Improvements",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Administration, management & reporting",
+            "name": "Progress, Outcomes and Learning - stage report",
+            "outputs": [
+                "Overview of Project Progress",
+                "Environmental, Economic and Social Outcomes",
+                "Implementation Update",
+                "Lessons Learned and Improvements"
+            ],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Sampling Site Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 1 - Ground Cover",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 2 - Exotic Fauna",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 4 - Crown Type",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Field Sheet 5 - Species Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Vegetation Assessment - Commonwealth government methodology",
+            "outputs": [
+                "Sampling Site Information",
+                "Photo Points",
+                "Field Sheet 1 - Ground Cover",
+                "Field Sheet 2 - Exotic Fauna",
+                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
+                "Field Sheet 4 - Crown Type",
+                "Field Sheet 5 - Species Diversity"
+            ],
+            "type": "Assessment",
+            "gmsId": "VAC"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "BioCondition Method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "status": "deleted",
+            "name": "Vegetation Assessment - BioCondition (QLD)",
+            "outputs": ["BioCondition Method"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "status": "deleted",
+            "supportsPhotoPoints": true,
+            "name": "Vegetation Assessment - BioMetric (NSW)",
+            "outputs": ["Floristic Composition"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Vegetation Assessment - Survey Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Native Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Trees",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "name": "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+            "outputs": [
+                "Vegetation Assessment - Survey Information",
+                "Native Species",
+                "Weed Species",
+                "Trees"
+            ],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [{
+                "outputName": "Floristic Composition",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "status": "deleted",
+            "supportsPhotoPoints": true,
+            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
+            "outputs": ["Floristic Composition"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "status": "active",
+            "name": "TasVeg - Native Vegetation Assessment - Forest Vegetation",
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "status": "deleted",
+            "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
+            "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Feral Animal Abundance Score",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Feral Animal Frequency Score",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "status": "deleted",
+            "name": "Feral animal assessment",
+            "outputs": [
+                "Feral Animal Abundance Score",
+                "Feral Animal Frequency Score"
+            ],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Participant Information",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Vegetation Assessment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Site Condition Components",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Landscape Context Components",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Threatening Processes and Site Condition Risks",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "status": "deleted",
+            "name": "Site assessment",
+            "outputs": [
+                "Participant Information",
+                "Vegetation Assessment",
+                "Site Condition Components",
+                "Landscape Context Components",
+                "Threatening Processes and Site Condition Risks",
+                "Photo Points"
+            ],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Bushland Condition - Site Health Summary",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 1 - Plant Species Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 2 - Weed Abundance & Threat",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 3 - Structural Diversity",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 4 - Regeneration",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 5 - Tree and Shrub Health",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 6 - Tree Habitat",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 7 - Feral Animals",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 8 - Total Grazing Pressure",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 9 - Animal Species",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Indicator 10 - Bushland Degradation Risk",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Benchmarks - SA",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "status": "deleted",
+            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
+            "outputs": [
+                "Bushland Condition - Site Health Summary",
+                "Indicator 1 - Plant Species Diversity",
+                "Indicator 2 - Weed Abundance & Threat",
+                "Indicator 3 - Structural Diversity",
+                "Indicator 4 - Regeneration",
+                "Indicator 5 - Tree and Shrub Health",
+                "Indicator 6 - Tree Habitat",
+                "Indicator 7 - Feral Animals",
+                "Indicator 8 - Total Grazing Pressure",
+                "Indicator 9 - Animal Species",
+                "Indicator 10 - Bushland Degradation Risk",
+                "Benchmarks - SA"
+            ],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Progress Report Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Small Grants",
+            "status": "active",
+            "supportsPhotoPoints": true,
+            "name": "25th Anniversary Landcare Grants - Progress Report",
+            "outputs": [
+                "Progress Report Details",
+                "Attachments"
+            ],
+            "type": "Activity",
+            "gmsId": "PR25ALG"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Final Report Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Output Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Project Acquittal",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Small Grants",
+            "status": "active",
+            "supportsPhotoPoints": true,
+            "name": "25th Anniversary Landcare Grants - Final Report",
+            "outputs": [
+                "Final Report Details",
+                "Output Details",
+                "Project Acquittal",
+                "Attachments"
+            ],
+            "type": "Activity",
+            "gmsId": "RVN25ALG RVA25ALG SDC25ALG RVSS25ALG PPRP25ALG ERA25ALG EML25ALG STP25ALG FMA25ALG DRV25ALG PMA25ALG PMQ25ALG WDT25ALG FNC25ALG CPEE25ALG CPEEP25ALG CPEEG25ALG CPEEV25ALG MPCFE25ALG MPCFEE25ALG MPCA25ALG IPP25ALG IPE25ALG ILSP25ALG IKTA25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG STA25ALG WQSA25ALG HC25ALG IKTN25ALG CGM25ALG PDN25ALG VAC25ALG"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Upload of stage 1 and 2 reporting data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "None",
+            "status": "deleted",
+            "name": "Upload of stage 1 and 2 reporting data",
+            "outputs": ["Upload of stage 1 and 2 reporting data"],
+            "type": "Activity",
+            "gmsId": ""
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Monthly Status Report Data",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - Monthly project status report",
+            "outputs": ["Monthly Status Report Data"],
+            "type": "Report"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Three Monthly Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - Quarterly project report",
+            "outputs": ["Three Monthly Report"],
+            "type": "Report"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "End of Project Report Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - End of Project Report",
+            "outputs": ["End of Project Report Details"],
+            "type": "Report"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Desktop Audit Checklist Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - Desktop Audit Checklist",
+            "outputs": ["Desktop Audit Checklist Details"],
+            "type": "Report"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Change or Absence of Team Supervisor Report",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - Change or Absence of Team Supervisor",
+            "outputs": ["Change or Absence of Team Supervisor Report"],
+            "type": "Report"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Site Visit Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Programme Reporting",
+            "status": "deleted",
+            "supportsPhotoPoints": false,
+            "name": "Green Army - Site Visit Checklist",
+            "outputs": ["Site Visit Details"],
+            "type": "Report"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Single Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Single Sighting",
+            "outputs": ["Single Sighting"],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Multiple species sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Multiple Sightings",
+            "outputs": ["Multiple species sightings"],
+            "type": "Activity"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Water Quality Monitoring",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": false,
+            "name": "Basin Champions - Water quality monitoring",
+            "outputs": ["Basin Champions - Water Quality Monitoring"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Iconic Species",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Iconic species observations",
+            "outputs": ["Basin Champions - Iconic Species"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Fish sightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Fish sightings",
+            "outputs": ["Basin Champions - Fish sightings"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Aquatic Macro-invertebrates (SIGNAL2 method)",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Aquatic insects",
+            "outputs": ["Aquatic Macro-invertebrates (SIGNAL2 method)"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Recreation Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Recreation",
+            "outputs": ["Basin Champions - Recreation Observations"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Basin Champions - Farming Observations",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Farming",
+            "outputs": ["Basin Champions - Farming Observations"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": false,
+            "outputConfig": [{
+                "outputName": "Debris Removal Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Debris removal",
+            "outputs": ["Debris Removal Survey"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Indigenous Knowledge Transfer Details",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Basin Champions - Indigenous knowledge transfer",
+            "outputs": ["Indigenous Knowledge Transfer Details"],
+            "type": "Assessment"
+        },
+        {
+            "supportsSites": true,
+            "outputConfig": [
+                {
+                    "outputName": "Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Community Grants Reporting",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "1. Community Grants Administration",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Attachments",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "2. Community Grants Reporting",
+                    "optional": true,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Community Grants",
+            "supportsPhotoPoints": true,
+            "name": "Community Grants",
+            "outputs": [
+                "1. Community Grants Administration",
+                "2. Community Grants Reporting",
+                "Attachments"
+            ],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Nature Watch Species",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Nature Watch",
+            "outputs": ["Nature Watch Species"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Nest monitoring",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Redland CC raptor nest monitoring",
+            "outputs": ["Nest monitoring"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Survey Fauna - Trap and Transect",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Fauna survey - trap and transect",
+            "outputs": ["Survey Fauna - Trap and Transect"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Floristic Survey - Plot and Transect",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Floristic survey - plot and transect",
+            "outputs": ["Floristic Survey - Plot and Transect"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Single Weed Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Single Weed Sighting",
+            "outputs": ["Single Weed Sighting"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "2-ha Track-plot method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "2-ha Track-plot datasheet",
+            "outputs": ["2-ha Track-plot method"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Koala Sightings - Redlands",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Koala Count - Redlands",
+            "outputs": ["Koala Sightings - Redlands"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Community Participation and Engagement v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Debris removal v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Disease Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Erosion Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Fencing v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Conservation Grazing Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Ecological Fire Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Heritage Conservation v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Management Plan Development v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Conservation Actions for Species and Communities v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Administration, management & reporting",
+            "name": "Outcomes, Evaluation and Learning - General",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Pest Animal Survey v2",
+            "outputs": [],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Pest Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Plant Propagation v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Plant Survival Survey v2",
+            "outputs": [],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [],
+            "category": "Administration, management & reporting",
+            "name": "Project Administration v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Public Access and Infrastructure v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Research v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Revegetation v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Seed Collection v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Assessment & monitoring",
+            "name": "Site Monitoring Plan v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Site Preparation v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Training",
+            "name": "Training and Skills Development v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "name": "Water Management v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Assessment & monitoring",
+            "name": "Water Quality Survey v2",
+            "outputs": [],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [],
+            "category": "Assessment & monitoring",
+            "supportsPhotoPoints": true,
+            "name": "Weed Mapping & Monitoring v2",
+            "outputs": [],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Weed Treatment v2",
+            "outputs": [],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [],
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "name": "Works Planning and Risk v2",
+            "outputs": [],
+            "type": "Activity"
+        }
+    ],
     "outputs": [
         {
             "template": "revegetationDetails",
@@ -3151,1817 +4963,5 @@
         "name": "Pest Animal Survey v2",
         "outputs": [],
         "type": "Assessment"
-    },
-    "activities": [
-        {
-            "outputConfig": [{
-                "outputName": "Biodiversity Fund Outcomes & Monitoring Methodology",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "status": "deleted",
-            "name": "Biodiversity Fund - Outcomes and Monitoring",
-            "outputs": ["Biodiversity Fund Outcomes & Monitoring Methodology"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Event Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Materials Provided to Participants",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Community Participation and Engagement",
-            "outputs": [
-                "Event Details",
-                "Participant Information",
-                "Materials Provided to Participants"
-            ],
-            "type": "Activity",
-            "gmsId": "CPEE"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Debris Removal Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Debris Removal",
-            "outputs": [
-                "Debris Removal Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "DRV DRW"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Disease Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Disease Management",
-            "outputs": [
-                "Disease Management Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "DMA"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Erosion Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Erosion Management",
-            "outputs": [
-                "Erosion Management Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "EMA EML EMS"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Survey Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Fauna Survey Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Fauna Survey - general",
-            "outputs": [
-                "Survey Information",
-                "Fauna Survey Details",
-                "Participant Information"
-            ],
-            "type": "Assessment",
-            "gmsId": "FBS"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Fence Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Fencing",
-            "outputs": [
-                "Fence Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "FNC APF"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Stock Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Conservation Grazing Management",
-            "outputs": [
-                "Stock Management Details",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "CGM"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Asset Protection Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Ecological Burn Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "status": "deleted",
-            "supportsPhotoPoints": true,
-            "name": "Ecological Fire Management",
-            "outputs": [
-                "Asset Protection Details",
-                "Ecological Burn Details",
-                "Participant Information"
-            ],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Fire Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "status": "active",
-            "supportsPhotoPoints": true,
-            "name": "Fire Management",
-            "outputs": [
-                "Fire Management Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "FMA FML"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Survey Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Flora Survey Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Flora Survey - general",
-            "outputs": [
-                "Survey Information",
-                "Flora Survey Details",
-                "Participant Information"
-            ],
-            "type": "Assessment",
-            "gmsId": "FRBS"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Heritage Conservation Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Expected Heritage Outcomes",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Heritage Conservation",
-            "outputs": [
-                "Heritage Conservation Information",
-                "Expected Heritage Outcomes",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "HC HSA HEC"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Indigenous Employment",
-                    "optional": true
-                },
-                {
-                    "outputName": "Indigenous Businesses",
-                    "optional": true
-                }
-            ],
-            "category": "Administration, management & reporting",
-            "name": "Indigenous Employment and Businesses",
-            "outputs": [
-                "Indigenous Employment",
-                "Indigenous Businesses"
-            ],
-            "type": "Activity",
-            "gmsId": "IPE"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Indigenous Knowledge Transfer Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Training",
-            "name": "Indigenous Knowledge Transfer",
-            "outputs": ["Indigenous Knowledge Transfer Details"],
-            "type": "Activity",
-            "gmsId": "IKM IKT"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Plan Development Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Management Plan Development",
-            "outputs": [
-                "Plan Development Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "MPD"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [{
-                "outputName": "Management Practice Change Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Implementation actions",
-            "name": "Management Practice Change",
-            "outputs": ["Management Practice Change Details"],
-            "type": "Activity",
-            "gmsId": "MPC MPCFE MPCSP"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Conservation Works Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Conservation Actions for Species and Communities",
-            "outputs": [
-                "Conservation Works Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "CATS"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Outcomes",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Evaluation",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Lessons Learned",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Administration, management & reporting",
-            "name": "Outcomes, Evaluation and Learning - final report",
-            "outputs": [
-                "Outcomes",
-                "Evaluation",
-                "Lessons Learned"
-            ],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Evidence of Pest Management Activity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Pest Observation and Monitoring Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "status": "active",
-            "supportsPhotoPoints": true,
-            "name": "Pest Animal Survey",
-            "outputs": [
-                "Evidence of Pest Management Activity",
-                "Pest Observation and Monitoring Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Assessment",
-            "gmsId": "PSA"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Fence Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Pest Management Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Pest Management",
-            "outputs": [
-                "Pest Management Details",
-                "Fence Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "PMA PMQ"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Plant Propagation Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Plant Propagation",
-            "outputs": [
-                "Plant Propagation Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "PPRP"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Vegetation Monitoring Results",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Plant Survival Survey",
-            "outputs": [
-                "Vegetation Monitoring Results",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Assessment",
-            "gmsId": "PSS PSC"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Administration Activities",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Administration, management & reporting",
-            "name": "Project Administration",
-            "outputs": [
-                "Administration Activities",
-                "Participant Information"
-            ],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Access Control Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Infrastructure Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Public Access and Infrastructure",
-            "outputs": [
-                "Access Control Details",
-                "Infrastructure Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "PAM PAI APC"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Research Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Research",
-            "outputs": [
-                "Research Information",
-                "Participant Information"
-            ],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Revegetation Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Revegetation",
-            "outputs": [
-                "Revegetation Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "RVA RVN RVSS RVT2A RVT2B RVS2B"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Seed Collection Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "name": "Seed Collection",
-            "outputs": [
-                "Seed Collection Details",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "SDC"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [{
-                "outputName": "Planned Monitoring Approach",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Site Monitoring Plan",
-            "outputs": ["Planned Monitoring Approach"],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Weed Treatment Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Site Preparation Actions",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Site Preparation",
-            "outputs": [
-                "Site Preparation Actions",
-                "Weed Treatment Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "STP"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Training Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Skills Development",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Training",
-            "name": "Training and Skills Development",
-            "outputs": [
-                "Training Details",
-                "Skills Development",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "TSD"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [{
-                "outputName": "Water Management Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Implementation actions",
-            "name": "Water Management",
-            "outputs": ["Water Management Details"],
-            "type": "Activity",
-            "gmsId": "WMA WMN"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "General information & Participants",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Environmental Information at the Time of Sampling",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Water Quality Measurements",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "name": "Water Quality Survey",
-            "outputs": [
-                "General information & Participants",
-                "Environmental Information at the Time of Sampling",
-                "Water Quality Measurements"
-            ],
-            "type": "Assessment",
-            "gmsId": "WQSA"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Evidence of Weed Treatment",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Weed Observation and Monitoring Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Weed Mapping & Monitoring",
-            "outputs": [
-                "Evidence of Weed Treatment",
-                "Weed Observation and Monitoring Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Assessment",
-            "gmsId": "WMM WSA"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Weed Treatment Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Weed Treatment",
-            "outputs": [
-                "Weed Treatment Details",
-                "Participant Information",
-                "Photo Points"
-            ],
-            "type": "Activity",
-            "gmsId": "WDT"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Site Planning Details",
-                    "optional": true
-                },
-                {
-                    "outputName": "Threatening Processes and Site Condition Risks",
-                    "optional": true
-                },
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Works Planning and Risk",
-            "outputs": [
-                "Site Planning Details",
-                "Threatening Processes and Site Condition Risks",
-                "Participant Information"
-            ],
-            "type": "Activity",
-            "gmsId": "STA"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Overview of Project Progress",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Environmental, Economic and Social Outcomes",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Implementation Update",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Lessons Learned and Improvements",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Administration, management & reporting",
-            "name": "Progress, Outcomes and Learning - stage report",
-            "outputs": [
-                "Overview of Project Progress",
-                "Environmental, Economic and Social Outcomes",
-                "Implementation Update",
-                "Lessons Learned and Improvements"
-            ],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Sampling Site Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Field Sheet 1 - Ground Cover",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Field Sheet 2 - Exotic Fauna",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Field Sheet 4 - Crown Type",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Field Sheet 5 - Species Diversity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Vegetation Assessment - Commonwealth government methodology",
-            "outputs": [
-                "Sampling Site Information",
-                "Photo Points",
-                "Field Sheet 1 - Ground Cover",
-                "Field Sheet 2 - Exotic Fauna",
-                "Field Sheet 3 - Overstorey and Midstorey Projected Crown Cover",
-                "Field Sheet 4 - Crown Type",
-                "Field Sheet 5 - Species Diversity"
-            ],
-            "type": "Assessment",
-            "gmsId": "VAC"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "BioCondition Method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "status": "deleted",
-            "name": "Vegetation Assessment - BioCondition (QLD)",
-            "outputs": ["BioCondition Method"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [{
-                "outputName": "Floristic Composition",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "status": "deleted",
-            "supportsPhotoPoints": true,
-            "name": "Vegetation Assessment - BioMetric (NSW)",
-            "outputs": ["Floristic Composition"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Vegetation Assessment - Survey Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Native Species",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Weed Species",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Trees",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "name": "Vegetation Assessment - Habitat Hectares v2 (VIC)",
-            "outputs": [
-                "Vegetation Assessment - Survey Information",
-                "Native Species",
-                "Weed Species",
-                "Trees"
-            ],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [{
-                "outputName": "Floristic Composition",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "status": "deleted",
-            "supportsPhotoPoints": true,
-            "name": "Vegetation Assessment - Native Vegetation Condition Assessment and Monitoring (WA)",
-            "outputs": ["Floristic Composition"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "TasVeg Native Vegetation Assessment Method - Forest Vegetation",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "status": "active",
-            "name": "TasVeg - Native Vegetation Assessment - Forest Vegetation",
-            "outputs": ["TasVeg Native Vegetation Assessment Method - Forest Vegetation"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "status": "deleted",
-            "name": "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
-            "outputs": ["TasVeg Native Vegetation Assessment Method - Non-Forest Vegetation"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Feral Animal Abundance Score",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Feral Animal Frequency Score",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "status": "deleted",
-            "name": "Feral animal assessment",
-            "outputs": [
-                "Feral Animal Abundance Score",
-                "Feral Animal Frequency Score"
-            ],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Participant Information",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Vegetation Assessment",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Site Condition Components",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Landscape Context Components",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Threatening Processes and Site Condition Risks",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Photo Points",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "status": "deleted",
-            "name": "Site assessment",
-            "outputs": [
-                "Participant Information",
-                "Vegetation Assessment",
-                "Site Condition Components",
-                "Landscape Context Components",
-                "Threatening Processes and Site Condition Risks",
-                "Photo Points"
-            ],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [
-                {
-                    "outputName": "Bushland Condition - Site Health Summary",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 1 - Plant Species Diversity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 2 - Weed Abundance & Threat",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 3 - Structural Diversity",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 4 - Regeneration",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 5 - Tree and Shrub Health",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 6 - Tree Habitat",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 7 - Feral Animals",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 8 - Total Grazing Pressure",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 9 - Animal Species",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Indicator 10 - Bushland Degradation Risk",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Benchmarks - SA",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Assessment & monitoring",
-            "status": "deleted",
-            "name": "Vegetation Assessment - Bushland Condition Monitoring (SA)",
-            "outputs": [
-                "Bushland Condition - Site Health Summary",
-                "Indicator 1 - Plant Species Diversity",
-                "Indicator 2 - Weed Abundance & Threat",
-                "Indicator 3 - Structural Diversity",
-                "Indicator 4 - Regeneration",
-                "Indicator 5 - Tree and Shrub Health",
-                "Indicator 6 - Tree Habitat",
-                "Indicator 7 - Feral Animals",
-                "Indicator 8 - Total Grazing Pressure",
-                "Indicator 9 - Animal Species",
-                "Indicator 10 - Bushland Degradation Risk",
-                "Benchmarks - SA"
-            ],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Progress Report Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Attachments",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Small Grants",
-            "status": "active",
-            "supportsPhotoPoints": true,
-            "name": "25th Anniversary Landcare Grants - Progress Report",
-            "outputs": [
-                "Progress Report Details",
-                "Attachments"
-            ],
-            "type": "Activity",
-            "gmsId": "PR25ALG"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Final Report Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Output Details",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Project Acquittal",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Attachments",
-                    "optional": false,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Small Grants",
-            "status": "active",
-            "supportsPhotoPoints": true,
-            "name": "25th Anniversary Landcare Grants - Final Report",
-            "outputs": [
-                "Final Report Details",
-                "Output Details",
-                "Project Acquittal",
-                "Attachments"
-            ],
-            "type": "Activity",
-            "gmsId": "RVN25ALG RVA25ALG SDC25ALG RVSS25ALG PPRP25ALG ERA25ALG EML25ALG STP25ALG FMA25ALG DRV25ALG PMA25ALG PMQ25ALG WDT25ALG FNC25ALG CPEE25ALG CPEEP25ALG CPEEG25ALG CPEEV25ALG MPCFE25ALG MPCFEE25ALG MPCA25ALG IPP25ALG IPE25ALG ILSP25ALG IKTA25ALG IKM25ALG PSA25ALG FBS25ALG WMM25ALG STA25ALG WQSA25ALG HC25ALG IKTN25ALG CGM25ALG PDN25ALG VAC25ALG"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Upload of stage 1 and 2 reporting data",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "None",
-            "status": "deleted",
-            "name": "Upload of stage 1 and 2 reporting data",
-            "outputs": ["Upload of stage 1 and 2 reporting data"],
-            "type": "Activity",
-            "gmsId": ""
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Monthly Status Report Data",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - Monthly project status report",
-            "outputs": ["Monthly Status Report Data"],
-            "type": "Report"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Three Monthly Report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - Quarterly project report",
-            "outputs": ["Three Monthly Report"],
-            "type": "Report"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "End of Project Report Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - End of Project Report",
-            "outputs": ["End of Project Report Details"],
-            "type": "Report"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Desktop Audit Checklist Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - Desktop Audit Checklist",
-            "outputs": ["Desktop Audit Checklist Details"],
-            "type": "Report"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Change or Absence of Team Supervisor Report",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - Change or Absence of Team Supervisor",
-            "outputs": ["Change or Absence of Team Supervisor Report"],
-            "type": "Report"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Site Visit Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Programme Reporting",
-            "status": "deleted",
-            "supportsPhotoPoints": false,
-            "name": "Green Army - Site Visit Checklist",
-            "outputs": ["Site Visit Details"],
-            "type": "Report"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Single Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Single Sighting",
-            "outputs": ["Single Sighting"],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Multiple species sightings",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Multiple Sightings",
-            "outputs": ["Multiple species sightings"],
-            "type": "Activity"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Basin Champions - Water Quality Monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": false,
-            "name": "Basin Champions - Water quality monitoring",
-            "outputs": ["Basin Champions - Water Quality Monitoring"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Basin Champions - Iconic Species",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Iconic species observations",
-            "outputs": ["Basin Champions - Iconic Species"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Basin Champions - Fish sightings",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Fish sightings",
-            "outputs": ["Basin Champions - Fish sightings"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Aquatic Macro-invertebrates (SIGNAL2 method)",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Aquatic insects",
-            "outputs": ["Aquatic Macro-invertebrates (SIGNAL2 method)"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Basin Champions - Recreation Observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Recreation",
-            "outputs": ["Basin Champions - Recreation Observations"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Basin Champions - Farming Observations",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Farming",
-            "outputs": ["Basin Champions - Farming Observations"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": false,
-            "outputConfig": [{
-                "outputName": "Debris Removal Survey",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Debris removal",
-            "outputs": ["Debris Removal Survey"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Indigenous Knowledge Transfer Details",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Basin Champions - Indigenous knowledge transfer",
-            "outputs": ["Indigenous Knowledge Transfer Details"],
-            "type": "Assessment"
-        },
-        {
-            "supportsSites": true,
-            "outputConfig": [
-                {
-                    "outputName": "Community Grants Administration",
-                    "optional": true,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Community Grants Reporting",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "1. Community Grants Administration",
-                    "optional": true,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "Attachments",
-                    "optional": false,
-                    "collapsedByDefault": false
-                },
-                {
-                    "outputName": "2. Community Grants Reporting",
-                    "optional": true,
-                    "collapsedByDefault": false
-                }
-            ],
-            "category": "Community Grants",
-            "supportsPhotoPoints": true,
-            "name": "Community Grants",
-            "outputs": [
-                "1. Community Grants Administration",
-                "2. Community Grants Reporting",
-                "Attachments"
-            ],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Nature Watch Species",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Nature Watch",
-            "outputs": ["Nature Watch Species"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Nest monitoring",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Redland CC raptor nest monitoring",
-            "outputs": ["Nest monitoring"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Survey Fauna - Trap and Transect",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Fauna survey - trap and transect",
-            "outputs": ["Survey Fauna - Trap and Transect"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Floristic Survey - Plot and Transect",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Floristic survey - plot and transect",
-            "outputs": ["Floristic Survey - Plot and Transect"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Single Weed Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Single Weed Sighting",
-            "outputs": ["Single Weed Sighting"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "2-ha Track-plot method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "2-ha Track-plot datasheet",
-            "outputs": ["2-ha Track-plot method"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [{
-                "outputName": "Koala Sightings - Redlands",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
-            "category": "Assessment & monitoring",
-            "name": "Koala Count - Redlands",
-            "outputs": ["Koala Sightings - Redlands"],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Community Participation and Engagement v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Debris removal v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Disease Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Erosion Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Fencing v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Conservation Grazing Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Ecological Fire Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Heritage Conservation v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Management Plan Development v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Conservation Actions for Species and Communities v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Administration, management & reporting",
-            "name": "Outcomes, Evaluation and Learning - General",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Pest Animal Survey v2",
-            "outputs": [],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Pest Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Plant Propagation v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Plant Survival Survey v2",
-            "outputs": [],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [],
-            "category": "Administration, management & reporting",
-            "name": "Project Administration v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Public Access and Infrastructure v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Research v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Revegetation v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Seed Collection v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Assessment & monitoring",
-            "name": "Site Monitoring Plan v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Site Preparation v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Training",
-            "name": "Training and Skills Development v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "name": "Water Management v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Assessment & monitoring",
-            "name": "Water Quality Survey v2",
-            "outputs": [],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [],
-            "category": "Assessment & monitoring",
-            "supportsPhotoPoints": true,
-            "name": "Weed Mapping & Monitoring v2",
-            "outputs": [],
-            "type": "Assessment"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Weed Treatment v2",
-            "outputs": [],
-            "type": "Activity"
-        },
-        {
-            "outputConfig": [],
-            "category": "Implementation actions",
-            "supportsPhotoPoints": true,
-            "name": "Works Planning and Risk v2",
-            "outputs": [],
-            "type": "Activity"
-        }
-    ]
+    }
 }
