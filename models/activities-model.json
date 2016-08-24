@@ -338,6 +338,7 @@
             "gmsId": "IKM IKT"
         },
         {
+            "supportsSites": true,
             "outputConfig": [
                 {
                     "outputName": "Plan Development Details",
@@ -1546,15 +1547,79 @@
             "type": "Assessment"
         },
         {
-            "outputConfig": [{
-                "outputName": "Survey Fauna - Trap and Transect",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
+            "outputConfig": [
+                {
+                    "outputName": "General weed monitoring",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Weed Observation and Monitoring Details",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "General Weed Monitoring",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "name": "General Weed Monitoring",
+            "outputs": [
+                "General Weed Monitoring",
+                "Photo Points"
+            ],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "General weed treatment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "General Weed Treatment",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Photo Points",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Implementation actions",
+            "name": "General Weed Treatment",
+            "outputs": [
+                "General Weed Treatment",
+                "Photo Points"
+            ],
+            "type": "Activity"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Survey Fauna - Trap and Transect",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Fauna Survey - Trap and Transect",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "category": "Assessment & monitoring",
             "supportsPhotoPoints": true,
             "name": "Fauna survey - trap and transect",
-            "outputs": ["Survey Fauna - Trap and Transect"],
+            "outputs": ["Fauna Survey - Trap and Transect"],
             "type": "Assessment"
         },
         {
@@ -1570,25 +1635,67 @@
             "type": "Assessment"
         },
         {
-            "outputConfig": [{
-                "outputName": "Single Weed Sighting",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
+            "outputConfig": [
+                {
+                    "outputName": "Tweed Koala Sightings",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Koala Sightings - Redlands",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Koala Sightings Tweed ",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Koala Sightings - Tweed ",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "category": "Assessment & monitoring",
-            "name": "Single Weed Sighting",
-            "outputs": ["Single Weed Sighting"],
+            "name": "Tweed Koala Sightings",
+            "outputs": ["Koala Sightings - Tweed "],
             "type": "Assessment"
         },
         {
-            "outputConfig": [{
-                "outputName": "2-ha Track-plot method",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
+            "outputConfig": [
+                {
+                    "outputName": "Brisbane Ranges Camera Traps",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Camera Trap Records",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
             "category": "Assessment & monitoring",
-            "name": "2-ha Track-plot datasheet",
-            "outputs": ["2-ha Track-plot method"],
+            "name": "Camera Trap Monitoring",
+            "outputs": ["Camera Trap Records"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "significantTreesSurvey",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Significant Trees Survey",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "name": "Significant Trees Survey",
+            "outputs": ["Significant Trees Survey"],
             "type": "Assessment"
         },
         {
@@ -1600,6 +1707,57 @@
             "category": "Assessment & monitoring",
             "name": "Koala Count - Redlands",
             "outputs": ["Koala Sightings - Redlands"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "General Weed Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "General Weed Sighting",
+            "outputs": ["General Weed Sighting"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [
+                {
+                    "outputName": "Oz Atlas Sightings",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Single Sighting - Advanced",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "category": "Assessment & monitoring",
+            "name": "OzAtlas Sightings",
+            "outputs": ["Single Sighting - Advanced"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "2-ha Track Plot Method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "2-ha Track Plot Datasheet",
+            "outputs": ["2-ha Track Plot Method"],
+            "type": "Assessment"
+        },
+        {
+            "outputConfig": [{
+                "outputName": "Flying Fox Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "category": "Assessment & monitoring",
+            "name": "Flying Fox Survey",
+            "outputs": ["Flying Fox Survey"],
             "type": "Assessment"
         },
         {
@@ -2094,17 +2252,6 @@
                 }
             ],
             "name": "Participant Information"
-        },
-        {
-            "template": "photoPoints",
-            "scores": [{
-                "isOutputTarget": false,
-                "name": "numberOfPoints",
-                "aggregationType": "SUM",
-                "label": "No. of photo points",
-                "units": ""
-            }],
-            "name": "Photo Points"
         },
         {
             "template": "communityActivityDetails",
@@ -4856,11 +5003,6 @@
             "name": "Single Sighting"
         },
         {
-            "template": "multipleSightings",
-            "scores": [],
-            "name": "Multiple Sightings"
-        },
-        {
             "template": "singleSiteMultiSpeciesSightings",
             "scores": [],
             "name": "Multiple species sightings"
@@ -4917,7 +5059,316 @@
         },
         {
             "template": "communityGrantsReporting",
-            "scores": [],
+            "scores": [
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The area of land actually revegetated with native species by the planting of seedlings, sowing of seed and managed native regeneration actions.",
+                    "name": "areaRevegHa",
+                    "aggregationType": "SUM",
+                    "label": "Area of revegetation works (Ha)",
+                    "gmsId": "RVA25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total number of seedlings planted.",
+                    "name": "totalNumberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "Number of plants planted",
+                    "gmsId": "RVN25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total weight of seed collected for storage or propagation.",
+                    "name": "totalSeedCollectedKg",
+                    "aggregationType": "SUM",
+                    "label": "Total seed collected (Kg)",
+                    "gmsId": "SDC25ALG",
+                    "units": "Kg"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total number of plants which have been propagated and nurtured to the point of being ready for planting out.",
+                    "name": "totalNumberGrown",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of plants grown and ready for planting",
+                    "gmsId": "PPRP25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "description": "The total area of erosion treated by management actions.",
+                    "name": "erosionAreaTreated",
+                    "aggregationType": "SUM",
+                    "label": "Erosion area treated (Ha)",
+                    "gmsId": "ERA25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "description": "Total lineal length of stream frontage and/or coastline which has been treated with erosion management actions.",
+                    "name": "erosionLength",
+                    "aggregationType": "SUM",
+                    "label": "Length of stream/coastline treated (Km)",
+                    "gmsId": "EML25ALG",
+                    "units": "Km"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "description": "The area of the fire ground actually burnt. This may be different to the total area managed.",
+                    "name": "areaOfFireHa",
+                    "aggregationType": "SUM",
+                    "label": "Burnt area (Ha)",
+                    "gmsId": "FMA25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "description": "The total volume of debris removed.",
+                    "name": "debrisVolumeM3",
+                    "aggregationType": "SUM",
+                    "label": "Volume of debris removed (m3)",
+                    "gmsId": "DRV25ALG",
+                    "units": "m3"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total weight of seed sown in revegetation plots.",
+                    "name": "totalSeedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown",
+                    "gmsId": "RVSS25ALG",
+                    "units": "Kg"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "displayType": "",
+                    "description": "The total area over which pest treatment activities have been undertaken. Note that re-treatments of the same area may be double-counted.",
+                    "name": "totalAreaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered (Ha) by pest treatment actions",
+                    "gmsId": "PMA25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "displayType": "",
+                    "description": "The total number of individual pest animals killed and colonies (ants, wasps, etc.) destroyed.",
+                    "name": "totalPestAnimalsTreatedNo",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of individuals or colonies of pest animals destroyed",
+                    "gmsId": "PMQ25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Invasive Species Management - Weeds",
+                    "displayType": "",
+                    "description": "The total area of weeds for which an initial treatment was undertaken.",
+                    "name": "areaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Total new area treated for weeds (Ha)",
+                    "gmsId": "WDT25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "description": "The surface area of land/water over which improved management practices have been undertaken/implemented as a result of government funded projects. ",
+                    "name": "totalChangePracticeTreatedArea",
+                    "aggregationType": "SUM",
+                    "label": "Area of land (Ha) on which improved management practices have been implemented",
+                    "gmsId": "MPCA25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
+                    "description": "Count of the number of community participation and engagement events run.",
+                    "name": "numberOfEvents",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of community participation and engagement events run",
+                    "gmsId": "CPEE25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
+                    "description": "Number of different publications produced (NOT the number of copies of a publication produced). Includes: books, films/DVDs/CDs, guides, journal articles, pamphlets, report cards, management plans, media releases and/or similar.",
+                    "name": "numberOfPublications",
+                    "aggregationType": "SUM",
+                    "label": "Community participation and engagement (publications)",
+                    "gmsId": "CPEEP25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Community Engagement and Capacity Building",
+                    "displayType": "",
+                    "description": "The number of different community groups participating in the project that were not project delivery partners.",
+                    "name": "numberOfCommunityGroups",
+                    "aggregationType": "SUM",
+                    "label": "No. of community groups that participated in delivery of the project",
+                    "gmsId": "CPEEG25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "description": "The number of farming/fisher entities that implemented management practice changes during the project. Excludes those intending to change practice.",
+                    "name": "entitiesAdoptingChange",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of farming entities adopting sustainable practice change",
+                    "gmsId": "MPCFE25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Farm Management Practices",
+                    "displayType": "",
+                    "description": "The total number of unique farming/fisher entities participating in the project.",
+                    "name": "numberOfFarmingEntitiesNew",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of unique farming entities engaged",
+                    "gmsId": "MPCFEE25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
+                    "name": "numberOfIndigenousParticipants",
+                    "aggregationType": "SUM",
+                    "label": "No of Indigenous participants at project events. ",
+                    "gmsId": "IPP25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "description": "The number of Indigenous persons employed/sub-contracted during the project (measured in persons, not FTE). Includes ongoing, non-ongoing, casual, and contracted persons.",
+                    "name": "totalEmployees",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous people employed",
+                    "gmsId": "IPE25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Project Management, Planning and Research Outputs",
+                    "displayType": "",
+                    "description": "The total number of Indigenous Land and Sea Plans developed by the project.",
+                    "name": "indigenousPlansCompleted",
+                    "aggregationType": "SUM",
+                    "label": "No. of Indigenous Land and Sea Plans completed",
+                    "gmsId": "ILSP25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "description": "The total number of publications and other products (eg. videos) developed by the project to facilitate the sharing of Indigenous Ecological Knowledge.",
+                    "name": "indigenousProductsDeveloped",
+                    "aggregationType": "SUM",
+                    "label": "Indigenous knowledge transfer (no. of activities)",
+                    "gmsId": "IKTA25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "description": "Sum of the number of datasets recorded as having been shared into the public domain.",
+                    "name": "datasetsShared",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of Indigenous datasets shared publicly",
+                    "gmsId": "IKM25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Indigenous Capacity",
+                    "displayType": "",
+                    "description": "Sum of the activities which have included at least one aspect of the sharing and/or transfer of indigenous knowledge",
+                    "name": "indigenousKnowledgeTransferActionsNo",
+                    "aggregationType": "SUM",
+                    "label": "Total No. of activities involving the sharing of Indigenous knowledge",
+                    "gmsId": "IKTN25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "displayType": "",
+                    "description": "Total area managed with conservation grazing",
+                    "name": "conservationGrazingActionsArea",
+                    "aggregationType": "SUM",
+                    "label": "Area managed with conservation grazing (Ha)",
+                    "gmsId": "CGM25ALG",
+                    "units": "Ha"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Project Management, Planning and Research Outputs",
+                    "displayType": "",
+                    "description": "Count of the number of plans developed which have been classified as NEW plans (ie. not revisions of existing plans).",
+                    "name": "managementPlansNo",
+                    "aggregationType": "SUM",
+                    "label": "No. of new plans developed",
+                    "gmsId": "PDN25ALG"
+                },
+                {
+                    "isOutputTarget": true,
+                    "listName": "",
+                    "category": "Biodiversity Management",
+                    "displayType": "",
+                    "description": "The total length of fencing erected.",
+                    "name": "lengthOfFence",
+                    "aggregationType": "SUM",
+                    "label": "Total length of fence (Km)",
+                    "gmsId": "FNC25ALG",
+                    "units": "kilometres"
+                }
+            ],
             "name": "2. Community Grants Reporting"
         },
         {
@@ -4931,9 +5382,19 @@
             "name": "Nest monitoring"
         },
         {
-            "template": "surveyFaunaTrapTransect",
+            "template": "generalWeedMonitoring",
             "scores": [],
-            "name": "Survey Fauna - Trap and Transect"
+            "name": "General Weed Monitoring"
+        },
+        {
+            "template": "generalWeedTreatment",
+            "scores": [],
+            "name": "General Weed Treatment"
+        },
+        {
+            "template": "faunaSurveyTrapTransect",
+            "scores": [],
+            "name": "Fauna Survey - Trap and Transect"
         },
         {
             "template": "surveyFloraPlotTransect",
@@ -4941,27 +5402,55 @@
             "name": "Floristic Survey - Plot and Transect"
         },
         {
-            "template": "singleWeedSighting",
+            "template": "cameraTrapRecords_1",
             "scores": [],
-            "name": "Single Weed Sighting"
+            "name": "Camera Trap Records"
         },
         {
-            "template": "2haTrackPlotMethod",
+            "template": "significantTreesSurvey",
             "scores": [],
-            "name": "2-ha Track-plot method"
+            "name": "Significant Trees Survey"
+        },
+        {
+            "template": "2-haTrackPlotMethod",
+            "scores": [],
+            "name": "2-ha Track Plot Method"
+        },
+        {
+            "template": "koalaSightingsTweed",
+            "scores": [],
+            "name": "Koala Sightings - Tweed "
         },
         {
             "template": "koalaSightingsRedlands",
             "scores": [],
             "name": "Koala Sightings - Redlands"
+        },
+        {
+            "template": "generalWeedSighting",
+            "scores": [],
+            "name": "General Weed Sighting"
+        },
+        {
+            "template": "singleSighting-Advanced",
+            "scores": [],
+            "name": "Single Sighting - Advanced"
+        },
+        {
+            "template": "flyingFoxSurvey",
+            "scores": [],
+            "name": "Flying Fox Survey"
         }
     ],
     "selectedActivity": {
-        "outputConfig": [],
+        "outputConfig": [{
+            "outputName": "Flying Fox Survey",
+            "optional": false,
+            "collapsedByDefault": false
+        }],
         "category": "Assessment & monitoring",
-        "supportsPhotoPoints": true,
-        "name": "Pest Animal Survey v2",
-        "outputs": [],
+        "name": "Flying Fox Survey",
+        "outputs": ["Flying Fox Survey"],
         "type": "Assessment"
     }
 }
