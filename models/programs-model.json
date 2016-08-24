@@ -1098,5 +1098,46 @@
         "name": "Ecological Science Projects",
         "subprograms": [],
         "optionalProjectContent": []
+    },
+    {
+        "activities": [
+            "Fauna survey - trap and transect",
+            "Floristic survey - plot and transecty",
+            "Project Administration v2",
+            "Site Monitoring Plan v2",
+            "Water Quality Survey v2",
+            "Weed Mapping & Monitoring v2",
+            "Pest Animal Survey v2",
+            "Plant Survival Survey v2",
+            "Community Participation and Engagement v2",
+            "Heritage Conservation v2",
+            "Debris removal v2",
+            "Disease Management v2",
+            "Erosion Management v2",
+            "Fencing v2",
+            "Conservation Grazing Management v2",
+            "Ecological Fire Management v2",
+            "Management Plan Development v2",
+            "Conservation Actions for Species and Communities v2",
+            "Pest Management v2",
+            "Plant Propagation v2",
+            "Public Access and Infrastructure v2",
+            "Research v2",
+            "Revegetation v2",
+            "Seed Collection v2",
+            "Site Preparation v2",
+            "Weed Treatment v2",
+            "Works Planning and Risk v2",
+            "Training and Skills Development v2",
+            "Water Management v2",
+            "Floristic survey - plot and transect",
+            "Outcomes, Evaluation and Learning - General"
+        ],
+        "name": "General Works Projects",
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
     }
 ]}
