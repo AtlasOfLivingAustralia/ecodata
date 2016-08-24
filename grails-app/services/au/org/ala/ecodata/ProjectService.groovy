@@ -470,7 +470,7 @@ class ProjectService {
      */
     Integer importProjectsFromSciStarter() {
         int ignoredProjects = 0, createdProjects = 0
-
+        log.info("Starting SciStarter import")
         try {
             String sciStarterProjectUrl
             // list all SciStarter projects
@@ -519,6 +519,7 @@ class ProjectService {
             log.error(e.message, e)
         }
 
+        log.info("Completed SciStarter import")
         createdProjects
     }
 
@@ -611,9 +612,9 @@ class ProjectService {
             result.siteIds = sites
         } else {
             // if no region, then create world extent.
-            Map world = getWorldExtent()
-            if (world.siteId) {
-                result.siteIds = [world.siteId]
+            String siteId = getWorldExtent()
+            if (siteId) {
+                result.siteIds = [ siteId ]
             }
         }
 
@@ -672,23 +673,15 @@ class ProjectService {
     }
 
     /**
-     * World extent is used as project area of all SciStarter Projects without project area. This function retrieves
-     * site id of world extent already created or creates a world extent.
-     * @return - Map - [siteId: 'abc']
+     * World extent is used as project area of all SciStarter Projects without project area. This function
+     * creates a new world extent every time it is called.
+     * @return - siteId - 'abcd-sds'
      */
-    Map getWorldExtent() {
-        Map result = siteService.search([name: 'SciStarter Project Area', isSciStarter: true])
-        Map worldExtent = [:]
-        if (result?.sites?.size()) {
-            worldExtent.siteId = result.sites[0].siteId
-        } else {
-            // use JSON.parse since JSONSlurper converts numbers to BigDecimal which throws error on serialization.
-            Object world = JSON.parse(getClass().getResourceAsStream("/data/worldExtent.json")?.getText())
-            Map site = siteService.create(world)
-            worldExtent.siteId = site.siteId
-        }
-
-        return worldExtent
+    String getWorldExtent() {
+        // use JSON.parse since JSONSlurper converts numbers to BigDecimal which throws error on serialization.
+        Object world = JSON.parse(getClass().getResourceAsStream("/data/worldExtent.json")?.getText())
+        Map site = siteService.create(world)
+        return site.siteId
     }
 
     /**
