@@ -7,6 +7,8 @@ import grails.converters.JSON
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
+import org.codehaus.groovy.grails.web.json.JSONException
+import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
@@ -159,7 +161,9 @@ class MetadataService {
 
         // write the new content
         f.withWriter { out ->
-            out.write content as String
+            use(OrderedJSONAttributePrinter) {
+                out.write content as String
+            }
         }
     }
 

@@ -26,8 +26,10 @@ function renameOutputTargetScore(outputLabel, oldName, newName) {
 
 }
 
-renameOutputTargetScore('Indigenous Businesses', 'No. of new enterprises established', 'No. of new businesses established');
-renameOutputTargetScore('Indigenous Businesses', 'No. of formal (contractual) engagements with Indigenous enterprises', 'No. of formal (contractual) engagements with Indigenous businesses');
+renameOutputTargetScore('Weed Treatment Details', 'Total new area treated (Ha)', 'Total new area treated for weeds (Ha)');
+renameOutputTargetScore('Upload of stage 1 and 2 reporting data', 'Total new area treated (Ha)', 'Total new area treated for weeds (Ha)');
+renameOutputTargetScore('Output Details', 'Total new area treated (Ha)', 'Total new area treated for weeds (Ha)');
+renameOutputTargetScore('Output Details', 'Total new area of weeds treated (Ha)', 'Total new area treated for weeds (Ha)');
 
 
 //renameOutputTargetScore('Fauna Survey Details', 'No. of surveys undertaken', 'No. of fauna surveys undertaken');
