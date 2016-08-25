@@ -37,7 +37,7 @@ import java.text.SimpleDateFormat
 @Log4j
 class SciStarterConverter {
 
-    public static final String NO_ORGANISATION_NAME = "Organisation name not supplied"
+    public static final String NO_ORGANISATION_NAME = "Organisation not provided"
 
     public static convert(Map sciStarter, Map override = [:]) {
         Map mapping = [

@@ -557,7 +557,7 @@ class ProjectService {
         transformedProp.projectSiteId = projectSiteId
 
         // create organisation
-        if (transformedProp.organisationName && transformedProp.organisationName != SciStarterConverter.NO_ORGANISATION_NAME) {
+        if (transformedProp.organisationName) {
             organisation = createSciStarterOrganisation(transformedProp.organisationName)
             if (organisation.organisationId) {
                 transformedProp.organisationId = organisation.organisationId
