@@ -1,5 +1,5 @@
 {
-    "modelName": "Single Sighting",
+    "modelName": "ad-hoc_species_sightings",
     "record": "true",
     "dataModel": [
         {
@@ -36,18 +36,6 @@
                 {
                     "dwcAttribute": "verbatimLongitude",
                     "source": "locationLongitude"
-                },
-                {
-                    "source": "Locality"
-                },
-                {
-                    "source": "Accuracy"
-                },
-                {
-                    "source": "Notes"
-                },
-                {
-                    "source": "Source"
                 }
             ],
             "dataType": "geoMap",
@@ -59,7 +47,7 @@
             "dataType": "species",
             "name": "species1",
             "dwcAttribute": "scientificName",
-            "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
+            "description": "The species name of the plant, animal or fungus observed.",
             "validate": "required"
         },
         {
@@ -89,14 +77,6 @@
             "name": "sightingPhoto1",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
             "validate": "required"
-        },
-        {
-            "dataType": "stringList",
-            "description": "Tag this sighting with species group and/or sub-group",
-            "name": "tags",
-            "constraints": [
-                "Amphibians","Amphibians, Australian Ground Frogs","Amphibians, Narrow-Mouthed Frogs","Amphibians, Tree Frogs","Amphibians, True Frogs","Amphibians, True Toads","Birds","Birds, Bitterns, Ibises","Birds, Buttonquails","Birds, Cranes","Birds, Cuckoos","Birds, Doves","Birds, Ducks, Geese, Swans","Birds, Falcons","Birds, Flamingos","Birds, Fowls","Birds, Grebes","Birds, Hummingbirds, Swifts","Birds, Kingfishers","Birds, Large waterbirds","Birds, Nightjars, Frogmouths, Potoos","Birds, Ostriches","Birds, Owls","Birds, Parrots","Birds, Penguins","Birds, Perching Birds","Birds, Petrels, Fulmars","Birds, Waders, Gulls, Auks","Crustaceans","Crustaceans, Barnacles, Copepods","Crustaceans, Crabs, Lobsters","Crustaceans, Fairy shrimp, Clam shrimp","Crustaceans, Seed shrimp","Fish","Fish, Anchovies ","Fish, Angel Sharks","Fish, Anglerfishes","Fish, Baldfishes,Tubeshoulders","Fish, Batoids","Fish, Batrachoidiforms","Fish, Beardfishes","Fish, Boarfishes","Fish, Bonefishes","Fish, Bonytongues","Fish, Bullhead Sharks","Fish, Carpet Sharks","Fish, Catfishes","Fish, Chimaeras","Fish, Cods","Fish, Cow Sharks","Fish, Cowfishes","Fish, Deep-sea ray-finned fishes","Fish, Deep-sea ray-finned fishes","Fish, Dogfish Sharks","Fish, Dragonfishes","Fish, Eels","Fish, Electric Rays","Fish, Flatfishes","Fish, Ground Sharks","Fish, Guitarfish","Fish, Hagfishes","Fish, Halfbeeks","Fish, Jellynose Fishes","Fish, Killifishes","Fish, Latern Fishes, Neoscopelids","Fish, Lungfish","Fish, Mackerel Sharks","Fish, Marine ray-finned fish","Fish, Milkfishes","Fish, Minnows","Fish, Mullet fish","Fish, Opahs","Fish, Ophidiiforms","Fish, Perch-like Fishes","Fish, Rainbow Fishes","Fish, Ray-finned fishes","Fish, Sackpharynx Fishes","Fish, Salmons","Fish, Saw Sharks","Fish, Sawfish","Fish, Scorpion Fishes, Sculpins","Fish, Softnose Skates","Fish, Spiny Eels","Fish, Swamp Eels","Fish, Tarpons","Fungi","Fungi, Asco's","Fungi, Basidio's","Fungi, Chytrids","Fungi, Glomeromycota","Fungi, Zygomycetes","Insects and Spiders","Insects and Spiders, Alderflies, Dobsonflies, Fishflies","Insects and Spiders, Beetles","Insects and Spiders, Booklice, Barklice, Barkflies","Insects and Spiders, Bristletails","Insects and Spiders, Butterflies, Moths","Insects and Spiders, Caddisflies, Sedge-flies or Rail-flies","Insects and Spiders, Cicadas, Aphids, Planthoppers, Leafhoppers, Shield Bugs","Insects and Spiders, Cockroaches, Termites","Insects and Spiders, Dragonflies, Damselflies","Insects and Spiders, Earwigs","Insects and Spiders, Fleas","Insects and Spiders, Flies, Mosquitoes","Insects and Spiders, Grasshoppers, Crickets, Locusts, Katydids, Weta, Lubber","Insects and Spiders, Lacewings, Mantidflies, Antlions","Insects and Spiders, Lice","Insects and Spiders, Mantises","Insects and Spiders, Mayflies, Shadlfies","Insects and Spiders, Scorpionflies, Hangingflies","Insects and Spiders, Silverfish","Insects and Spiders, Spiders","Insects and Spiders, Stick Insects, Phasmids","Insects and Spiders, Stoneflies","Insects and Spiders, Thrips","Insects and Spiders, Twisted-Wing Parasites","Insects and Spiders, Wasps, Ants, Bees, Sawflies","Insects and Spiders, Webspinners","Insects and Spiders, Zorapterans","Mammals","Mammals, Bandicoots, Bilbies","Mammals, Bats","Mammals, Carnivores","Mammals, Carnivorous Marsupials","Mammals, Dolphins, Porpoises, Whales","Mammals, Dugongs, Manatees, Sea Cows","Mammals, Even-toed hoofed","Mammals, Hares, Pikas, Rabbits","Mammals, Herbivorous Marsupials","Mammals, Marsupial Moles","Mammals, Monotremes","Mammals, Odd-toed hoofed","Mammals, Rodents","Mammals, Shrews, Hedgehogs","Molluscs","Molluscs, Chitons","Molluscs, Cuttlefish","Molluscs, Gastropods, Slugs, Snails","Molluscs, Mussels, Clams","Molluscs, Solenogasters","Molluscs, Tooth Shells","Plants","Plants, Conifers, Cycads","Plants, Dicots","Plants, Ferns and Allies","Plants, Flowering plants","Plants, Monocots","Reptiles","Reptiles, Crocodiles","Reptiles, Lizards, Snakes","Reptiles, Tortoises, Turtles, Terrapins"
-            ]
         }
     ],
     "viewModel": [
@@ -104,12 +84,11 @@
             "type": "row",
             "items": [{
                 "computed": null,
-                "source": "Record your individual sightings of iconic species in the project region.",
+                "source": "Record your individual sightings of species in the project region.",
                 "type": "literal"
             }]
         },
         {
-
             "type": "row",
             "items": [
                 {
@@ -118,7 +97,23 @@
                     "items": [
                         {
                             "computed": null,
-                            "source": "<h1>Survey Information<\/h1>",
+                            "source": "<h4>Step 1: Upload one or more of the best images of your sighting.<\/h4><i>This is strongly recommended so that the record can be validated and used in scientific work.<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Sighting photo",
+                            "computed": null,
+                            "source": "sightingPhoto1",
+                            "type": "image"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Step 2: Check & update or Record the details of your sighting.<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h3>Sighting Event Information<\/h3>",
                             "type": "literal"
                         },
                         {
@@ -147,7 +142,7 @@
                         },
                         {
                             "computed": null,
-                            "source": "<h1>Single Species Sighting<\/h1>",
+                            "source": "<h3>Single Species Sighting<\/h3>",
                             "type": "literal"
                         },
                         {
@@ -160,11 +155,6 @@
                             "computed": null,
                             "source": "<i>Start typing a common or scientific name.<\/i>",
                             "type": "literal"
-                        },
-                        { "preLabel": "Identification tags",
-                            "computed": null,
-                            "source": "tags",
-                            "type": "selectManyCombo"
                         },
                         {
                             "preLabel": "Are you confident of the species identification?",
@@ -183,12 +173,6 @@
                             "computed": null,
                             "source": "comments1",
                             "type": "textarea"
-                        },
-                        {
-                            "preLabel": "Sighting photo",
-                            "computed": null,
-                            "source": "sightingPhoto1",
-                            "type": "image"
                         }
                     ]
                 },
@@ -200,10 +184,6 @@
                         "computed": null,
                         "readonly": true,
                         "source": "location",
-                        "includeLocality": true,
-                        "includeAccuracy": true,
-                        "includeSource": true,
-                        "includeNotes": true,
                         "type": "geoMap"
                     }]
                 }
