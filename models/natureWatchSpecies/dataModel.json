@@ -75,8 +75,7 @@
         {
             "dataType": "image",
             "name": "sightingPhoto1",
-            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
-            "validate": "required"
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
         },
         {
             "columns": [

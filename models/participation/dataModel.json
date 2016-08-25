@@ -2,104 +2,104 @@
     "modelName": "Participant Information",
     "dataModel": [
         {
-            "dataType": "number",
             "primaryResult": "true",
-            "description": "The number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants.",
+            "dataType": "number",
             "name": "totalParticipantsNotEmployed",
+            "description": "The number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants.",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of indigenous people participating in an activity who are not delivery partners or employed in the project (ie. Indigenous volunteers)",
             "name": "numberOfIndigenousParticipants",
+            "description": "The number of indigenous people participating in an activity who are not delivery partners or employed in the project (ie. Indigenous volunteers)",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of unique indigenous on-country visits undertaken as part of this activity",
             "name": "numberOnCountryVisits",
+            "description": "The number of unique indigenous on-country visits undertaken as part of this activity",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of people involved in an activity who have not attended other activities associated with the project",
             "name": "totalParticipantsNew",
+            "description": "The number of people involved in an activity who have not attended other activities associated with the project",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "The number of different community groups (non delivery partners) participating in this activity",
             "name": "numberOfCommunityGroups",
+            "description": "The number of different community groups (non delivery partners) participating in this activity",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "description": "A farming entity is a farm business (whether sole trader, partnership, company, etc.) that would be considered a primary producer for tax purposes.",
             "name": "numberOfFarmingEntitiesNew",
+            "description": "A farming entity is a farm business (whether sole trader, partnership, company, etc.) that would be considered a primary producer for tax purposes.",
             "validate": "required,min[0]"
         }
     ],
     "viewModel": [{
+        "type": "row",
         "items": [
             {
+                "computed": null,
+                "width": "30%",
+                "type": "col",
                 "items": [
                     {
-                        "source": "totalParticipantsNotEmployed",
-                        "computed": null,
                         "preLabel": "No. of participants (ie. not employed on project):",
+                        "computed": null,
+                        "source": "totalParticipantsNotEmployed",
                         "type": "number"
                     },
                     {
-                        "source": "numberOfIndigenousParticipants",
-                        "computed": null,
                         "preLabel": "No. of Indigenous participants (ie. not employed on project):",
+                        "computed": null,
+                        "source": "numberOfIndigenousParticipants",
                         "type": "number"
                     }
-                ],
-                "computed": null,
-                "width": "30%",
-                "type": "col"
+                ]
             },
             {
+                "computed": null,
+                "width": "30%",
+                "type": "col",
                 "items": [
                     {
-                        "source": "totalParticipantsNew",
-                        "computed": null,
                         "preLabel": "No. of new people attending project activities:",
+                        "computed": null,
+                        "source": "totalParticipantsNew",
                         "type": "number"
                     },
                     {
-                        "source": "numberOfFarmingEntitiesNew",
-                        "computed": null,
                         "preLabel": "No. of farming entities participating in project activities for the first time:",
+                        "computed": null,
+                        "source": "numberOfFarmingEntitiesNew",
                         "type": "number"
                     }
-                ],
-                "computed": null,
-                "width": "30%",
-                "type": "col"
+                ]
             },
             {
+                "computed": null,
+                "width": "30%",
+                "type": "col",
                 "items": [
                     {
-                        "source": "numberOfCommunityGroups",
-                        "computed": null,
                         "preLabel": "No. of community groups (non delivery partners) participating:",
+                        "computed": null,
+                        "source": "numberOfCommunityGroups",
                         "type": "number"
                     },
                     {
-                        "source": "numberOnCountryVisits",
-                        "computed": null,
                         "preLabel": "No. of Indigenous on-country visits:",
+                        "computed": null,
+                        "source": "numberOnCountryVisits",
                         "type": "number"
                     }
-                ],
-                "computed": null,
-                "width": "30%",
-                "type": "col"
+                ]
             }
         ],
-        "class": "output-section",
-        "type": "row"
+        "class": "output-section"
     }]
 }
