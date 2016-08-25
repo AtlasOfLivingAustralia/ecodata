@@ -1,0 +1,418 @@
+{
+    "modelName": "koalaSightingsRedlands",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "eventStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "noEdit": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Upload a photo taken of the koala at the time of your sighting. This is essential for verification of the record."
+        },
+        {
+            "dataType": "species",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "description": "The scientific name of the koala",
+            "noEdit": "true",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "description": "The number of individual koalas observed at this place and time.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "locationContext",
+            "description": "This describes the type of landuse around where the koala was sighted.",
+            "constraints": [
+                "Roadside",
+                "Residential ¼ ac (1000 m2) or less",
+                "Residential over  ¼ ac  (1000 m2)",
+                "Park/School or similar",
+                "Commercial or Industrial",
+                "Creek line or bush"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "treeSpecies",
+            "description": "If the koala was sighted in a tree, please indivate the species of the tree if you know it, or describe it as best you can."
+        },
+        {
+            "dataType": "text",
+            "name": "gender",
+            "description": "Please indicate the age and/or sex of the koala if you are able to identify it.",
+            "constraints": [
+                "Adult female",
+                "Female & young",
+                "Adult male",
+                "Adult unknown",
+                "Juvenile female",
+                "Juvenile male",
+                "Juvenile unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "condition",
+            "description": "Please describe the general condition of the koala, especially if it appeared to be sick or injured."
+        },
+        {
+            "dataType": "text",
+            "name": "sightingFrequency",
+            "description": "Please indicate how often you have seen koalas at this location.",
+            "constraints": [
+                "Weekly",
+                "Monthly",
+                "Yearly",
+                "Rarely (less that once a year)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventRemarks",
+            "dwcAttribute": "eventRemarks",
+            "description": "General notes about the observation event, including any characteristic site features, conditions, etc."
+        },
+        {
+            "dataType": "text",
+            "name": "observerName",
+            "description": "The name of the person who made the observation, if different from the person who made the record."
+        },
+        {
+            "dataType": "text",
+            "name": "piSaringAgreement",
+            "description": "Your contact information forms part of your registration details on this website. Select 'Yes' if you consent to the Atlas of Living Australia providing your contact details to KAG.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "kagContactAgreement",
+            "description": "A member of the Koala Action Group may need to contact you to confirm certain aspects of your sighting. Select 'Yes' if you agree to be contacted by KAG for this purpose.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "locationAddress",
+            "description": "Please provide the street address of the location where you made the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "suburbName",
+            "description": "Select the name of the suburb where you made the sighting.",
+            "constraints": [
+                "Alexandra Hills",
+                "Amity",
+                "Bahrs Scrub",
+                "Barkers Vale",
+                "Bellmere",
+                "Birkdale",
+                "Bli Bli",
+                "Bray Park",
+                "Bridgeman Downs",
+                "Brisbane",
+                "Burbank",
+                "Capalaba",
+                "Carindale",
+                "Cashmere",
+                "Chandler",
+                "Chermside West",
+                "Cleveland",
+                "Cornubia",
+                "Dakabin",
+                "Dunwich",
+                "Eight Mile Plains",
+                "Engadine",
+                "Everton Hills",
+                "Fernvale",
+                "Ferny Hills",
+                "Gaven",
+                "Greenbank",
+                "Gumdale",
+                "Holland Park West",
+                "Ipswich",
+                "Isaac",
+                "Jimboomba",
+                "Joyner",
+                "Kallangur",
+                "Kandanga",
+                "Logan Reserve",
+                "Logan Village",
+                "Mango Hill",
+                "Mansfield",
+                "Maslin Beach",
+                "McDowall",
+                "Morayfield",
+                "Morphett Vale",
+                "Mount Coolum",
+                "Mount Cotton",
+                "Mount Gravatt East",
+                "Mount Warren Park",
+                "Mt Gravatt",
+                "Mudgeeraba",
+                "Mullaley",
+                "Mundoolun",
+                "Murrumba Downs",
+                "Narangba",
+                "Nimbin",
+                "Noosa Heads",
+                "North Haven",
+                "North Lakes",
+                "North Stradbroke Island",
+                "Nt Tamborine",
+                "Nunderi",
+                "Ormiston",
+                "Perseverance",
+                "Petrie",
+                "Ransome",
+                "Redland Bay",
+                "Redland City",
+                "Ripley",
+                "Rockley Mount",
+                "Ruse",
+                "Shailer Park",
+                "Sheldon",
+                "Southport",
+                "Stony Chute",
+                "Tallebudgera",
+                "Tambourine",
+                "Tanilba Bay",
+                "Tarragindi",
+                "Tewantin",
+                "Thorneside",
+                "Thornlands",
+                "Victoria Point",
+                "Wakerley",
+                "Waterford",
+                "Wellington Point",
+                "Woody Head",
+                "Woolloongabba",
+                "Wynnum West"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "localAuthority",
+            "description": "",
+            "constraints": [
+                "Redland City Council",
+                "Brisbane City Council",
+                "Gold Coast City Council",
+                "Logan City Council",
+                "Moreton Bay Regional Council",
+                "Sunshine Coast Council",
+                "Ipswich City Council",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "locationRemarks",
+            "description": "Please provide any additional information about the sighting location which might be useful."
+        }
+    ],
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h3>Details of my Koala sighting<\/h3>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Date koala sighted *",
+                        "computed": null,
+                        "source": "eventDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Time koala sighted *",
+                        "computed": null,
+                        "source": "eventStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Species name",
+                        "computed": null,
+                        "source": "species",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "preLabel": "How many individuals did you see here?",
+                        "computed": null,
+                        "source": "individualCount",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "How would you describe the area the koala was in?",
+                        "computed": null,
+                        "source": "locationContext",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Can you identify the tree the koala was in? (if not in tree, please describe the situation or write Not)",
+                        "computed": null,
+                        "source": "treeSpecies",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Could you tell the gender/status of the koala?",
+                        "computed": null,
+                        "source": "gender",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Did it appear sick or injured?",
+                        "computed": null,
+                        "source": "condition",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "How often do you see koalas here?",
+                        "computed": null,
+                        "source": "sightingFrequency",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Do you have any other comments?",
+                        "computed": null,
+                        "source": "eventRemarks",
+                        "type": "textarea"
+                    },
+                    {
+                        "preLabel": "Your name (optional)",
+                        "computed": null,
+                        "source": "observerName",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Do you agree to ALA sharing your details with the Koala Action Group for the purpose of record verification?",
+                        "computed": null,
+                        "source": "piSaringAgreement",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Do you agree to the Koala Action Group contacting you for the purpose of record verification?",
+                        "computed": null,
+                        "source": "kagContactAgreement",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<b>Please upload one or more of the best images of your sighting.<\/b><i>This is strongly recommended so that the record can be validated and used in scientific work.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Sighting photo",
+                        "computed": null,
+                        "source": "sightingPhoto",
+                        "type": "image"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h4>Sighting location details<\/h4><i>Please zoom in on the map, then select and place the marker on location where you saw the koala and record what details you can below (* details are essential).<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    },
+                    {
+                        "preLabel": "Street address",
+                        "computed": null,
+                        "source": "locationAddress",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Suburb",
+                        "computed": null,
+                        "source": "suburbName",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Local authority",
+                        "computed": null,
+                        "source": "localAuthority",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Any additional location comments?",
+                        "computed": null,
+                        "source": "locationRemarks",
+                        "type": "textarea"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}
