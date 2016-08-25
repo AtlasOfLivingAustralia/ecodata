@@ -67,7 +67,6 @@
             "dwcAttribute": "verbatimCoordinates",
             "validate": "required"
         }
-
     ],
     "viewModel": [{
         "type": "row",

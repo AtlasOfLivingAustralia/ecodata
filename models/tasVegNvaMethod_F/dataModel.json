@@ -3,31 +3,38 @@
     "dataModel": [
         {
             "dataType": "text",
-            "description": "",
             "name": "assessor",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the observation was made.",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "",
-            "name": "currentLandUse"
+            "name": "currentLandUse",
+            "description": ""
         },
         {
             "dataType": "text",
-            "description": "The unique name or identifier given to the habitat zone.",
             "name": "habitatZone",
+            "description": "The unique name or identifier given to the habitat zone.",
             "validate": "required"
         },
         {
             "dataType": "number",
-            "description": "The area in hectares of the habitat zone being assessed.",
             "name": "zoneAreaHa",
+            "description": "The area in hectares of the habitat zone being assessed.",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "description": "Select the appropriate TasVeg condition code and refer to the vegetation community benchmark. Fill all of the relevant benchmark values into the form.",
             "name": "tasvegVcCode",
+            "description": "Select the appropriate TasVeg condition code and refer to the vegetation community benchmark. Fill all of the relevant benchmark values into the form.",
             "constraints": [
                 "DAD - Eucalyptus amygdalina forest and woodland on dolerite",
                 "DAM - Eucalyptus amygdalina forest on mudstone",
@@ -112,46 +119,63 @@
                 "WRE - Eucalyptus regnans forest",
                 "WSU - Eucalyptus subcrenulata forest and woodland",
                 "WVI - Eucalyptus viminalis wet forest"
-            ]
+            ],
+            "validate": "required"
         },
         {
             "dataType": "text",
-            "description": "Short description of where the assessment zone is located",
-            "name": "location"
+            "name": "location",
+            "description": "Short description of where the assessment zone is located"
         },
         {
             "dataType": "text",
-            "description": "Record any additional information which may be relevant/useful in understanding or interpreting the assessment results.",
-            "name": "comments"
+            "name": "comments",
+            "description": "Record any additional information which may be relevant/useful in understanding or interpreting the assessment results."
         },
         {
             "dataType": "number",
-            "description": "The area of the assessment zone in hectares",
             "name": "surveyArea",
+            "description": "The area of the assessment zone in hectares",
             "validate": "min[0]"
         },
         {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
             "dataType": "number",
-            "description": "1. Record benchmark large trees DBH",
             "name": "numberOfLargeTreesBenchmark",
+            "description": "1. Record benchmark large trees DBH",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "1. Record benchmark large trees expected number/ha",
             "name": "largeTreeBenchmarkDbh",
+            "description": "1. Record benchmark large trees expected number/ha",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "2. Determine number of large trees, record and compare to benchmark",
             "name": "numberOfLargeTreesObserved",
+            "description": "2. Determine number of large trees, record and compare to benchmark",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "description": "Large trees are defined by diameter at breast height (dbh) – see benchmark. Estimate proportion of an expected healthy canopy cover that is present (ie. not missing due to tree death or decline)",
             "name": "largeTreeDensityClass",
+            "description": "Large trees are defined by diameter at breast height (dbh) – see benchmark. Estimate proportion of an expected healthy canopy cover that is present (ie. not missing due to tree death or decline)",
             "constraints": [
                 "None present",
                 ">0 to 20% of the benchmark No. of large trees / Ha.",
@@ -164,8 +188,8 @@
         },
         {
             "dataType": "text",
-            "description": "3. Determine the canopy health of large trees",
             "name": "largeTreeCanopyHealthPercent",
+            "description": "3. Determine the canopy health of large trees",
             "constraints": [
                 "> 70%",
                 "30 - 70%",
@@ -174,122 +198,122 @@
             "validate": "required"
         },
         {
-            "dataType": "number",
-            "description": "",
             "primaryResult": "true",
-            "name": "largeTreesScore"
+            "dataType": "number",
+            "name": "largeTreesScore",
+            "description": ""
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "largeTreeScoreLookup",
             "map": [
                 {
-                    "largeTreeDensityClass": "None present",
+                    "output": "0",
                     "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "0"
-                },
-                {
-                    "largeTreeDensityClass": "None present",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "0"
-                },
-                {
-                    "largeTreeDensityClass": "None present",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "0"
-                },
-                {
-                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "3"
-                },
-                {
-                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "2"
-                },
-                {
-                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "1"
-                },
-                {
-                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "4"
-                },
-                {
-                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "3"
-                },
-                {
-                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "2"
-                },
-                {
-                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "6"
-                },
-                {
-                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "5"
-                },
-                {
-                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "4"
-                },
-                {
-                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "8"
-                },
-                {
-                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "7"
-                },
-                {
-                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "6"
-                },
-                {
-                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "> 70%",
-                    "output": "10"
-                },
-                {
-                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "30 - 70%",
-                    "output": "9"
-                },
-                {
-                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha.",
-                    "largeTreeCanopyHealthPercent": "< 30%",
-                    "output": "8"
+                    "largeTreeDensityClass": "None present"
                 },
                 {
                     "output": "0",
-                    "value1": "0",
-                    "value2": "0"
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": "None present"
+                },
+                {
+                    "output": "0",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": "None present"
+                },
+                {
+                    "output": "3",
+                    "largeTreeCanopyHealthPercent": "> 70%",
+                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "2",
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "1",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": ">0 to 20% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "4",
+                    "largeTreeCanopyHealthPercent": "> 70%",
+                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "3",
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "2",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": ">20 to 40% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "6",
+                    "largeTreeCanopyHealthPercent": "> 70%",
+                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "5",
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "4",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": ">40 to 70% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "8",
+                    "largeTreeCanopyHealthPercent": "> 70%",
+                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "7",
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "6",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": ">70 to 100% of the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "10",
+                    "largeTreeCanopyHealthPercent": "> 70%",
+                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "9",
+                    "largeTreeCanopyHealthPercent": "30 - 70%",
+                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "8",
+                    "largeTreeCanopyHealthPercent": "< 30%",
+                    "largeTreeDensityClass": ">= the benchmark No. of large trees / Ha."
+                },
+                {
+                    "output": "0",
+                    "value2": "0",
+                    "value1": "0"
                 }
             ]
         },
         {
             "dataType": "number",
-            "description": "2. Estimate tree canopy cover, record and compare to the benchmark",
             "name": "canopyCoverPercent",
+            "description": "2. Estimate tree canopy cover, record and compare to the benchmark",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
-            "description": "3. Select the appropriate canopy cover class within the assessment zone",
             "name": "canopyCoverClass",
+            "description": "3. Select the appropriate canopy cover class within the assessment zone",
             "constraints": [
                 "< 10% of benchmark cover",
                 "< 50% or > 150% of benchmark cover",
@@ -299,8 +323,8 @@
         },
         {
             "dataType": "text",
-            "description": "4. Determine the tree canopy health within the assessment zone",
             "name": "canopyHealthPercent",
+            "description": "4. Determine the tree canopy health within the assessment zone",
             "constraints": [
                 "> 70%",
                 "30 - 70%",
@@ -310,195 +334,68 @@
         },
         {
             "dataType": "number",
-            "description": "1. Record benchmark tree canopy cover",
             "name": "canopyCoverBenchmark",
+            "description": "1. Record benchmark tree canopy cover",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "number",
-            "dependents": {"source": "canopyCoverScoreLookup"},
+            "name": "canopyCoverScore",
             "description": "",
-            "name": "canopyCoverScore"
+            "dependents": {"source": "canopyCoverScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "canopyCoverScoreLookup",
             "map": [
                 {
-                    "canopyHealthPercent": "> 70%",
                     "canopyCoverClass": "< 10% of benchmark cover",
-                    "output": "0"
+                    "output": "0",
+                    "canopyHealthPercent": "> 70%"
                 },
                 {
-                    "canopyHealthPercent": "30 - 70%",
                     "canopyCoverClass": "< 10% of benchmark cover",
-                    "output": "0"
+                    "output": "0",
+                    "canopyHealthPercent": "30 - 70%"
                 },
                 {
-                    "canopyHealthPercent": "< 30%",
                     "canopyCoverClass": "< 10% of benchmark cover",
-                    "output": "0"
+                    "output": "0",
+                    "canopyHealthPercent": "< 30%"
                 },
                 {
-                    "canopyHealthPercent": "> 70%",
                     "canopyCoverClass": "< 50% or > 150% of benchmark cover",
-                    "output": "3"
+                    "output": "3",
+                    "canopyHealthPercent": "> 70%"
                 },
                 {
-                    "canopyHealthPercent": "30 - 70%",
                     "canopyCoverClass": "< 50% or > 150% of benchmark cover",
-                    "output": "2"
+                    "output": "2",
+                    "canopyHealthPercent": "30 - 70%"
                 },
                 {
-                    "canopyHealthPercent": "< 30%",
                     "canopyCoverClass": "< 50% or > 150% of benchmark cover",
-                    "output": "1"
+                    "output": "1",
+                    "canopyHealthPercent": "< 30%"
                 },
                 {
-                    "canopyHealthPercent": "> 70%",
                     "canopyCoverClass": ">= 50% or <= 150% of benchmark cover",
-                    "output": "5"
+                    "output": "5",
+                    "canopyHealthPercent": "> 70%"
                 },
                 {
-                    "canopyHealthPercent": "30 - 70%",
                     "canopyCoverClass": ">= 50% or <= 150% of benchmark cover",
-                    "output": "4"
+                    "output": "4",
+                    "canopyHealthPercent": "30 - 70%"
                 },
                 {
-                    "canopyHealthPercent": "< 30%",
                     "canopyCoverClass": ">= 50% or <= 150% of benchmark cover",
-                    "output": "3"
+                    "output": "3",
+                    "canopyHealthPercent": "< 30%"
                 }
             ]
         },
         {
-            "defaultRows": [
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "IT - Immature tree",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "T - Tree (sub-canopy) or large shrub",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "S - Medium shrub/small shrub",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "numberObserved": "",
-                    "lifeform": "Total",
-                    "noEdit": "true"
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "PS - Prostrate and mat forming shrubs, including cushion plants",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "H - Herbs and orchids",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "G - Grass",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "LSR - Large sedge/rush/sagg/lily",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "MSR - Medium to small sedge/rush/sagg/lily",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "GF - Ground fern",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "TF - Tree fern",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "SCE - Scrambler/Climber and Epiphytes",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "ML - Mosses and Lichens",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                },
-                {
-                    "numberBenchmark": "",
-                    "present": "",
-                    "numberObserved": "",
-                    "lifeform": "SC - Soil crust",
-                    "coverPercentObserved": "",
-                    "coverPercentBenchmark": "",
-                    "modified": ""
-                }
-            ],
-            "dataType": "list",
-            "name": "underStoreyLifeforms",
             "columns": [
                 {
                     "dataType": "text",
@@ -506,32 +403,32 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "2. Record observed number of species for each life form.",
                     "name": "numberObserved",
+                    "description": "2. Record observed number of species for each life form.",
                     "validate": "min[0]"
                 },
                 {
                     "dataType": "number",
-                    "description": "1. Record benchmark number of species for each life form.",
                     "name": "numberBenchmark",
+                    "description": "1. Record benchmark number of species for each life form.",
                     "validate": "min[0]"
                 },
                 {
                     "dataType": "number",
-                    "description": "2. Record observed % cover for each life form.",
                     "name": "coverPercentObserved",
+                    "description": "2. Record observed % cover for each life form.",
                     "validate": "min[0],max[100]"
                 },
                 {
                     "dataType": "number",
-                    "description": "1. Record benchmark % cover for each life form.",
                     "name": "coverPercentBenchmark",
+                    "description": "1. Record benchmark % cover for each life form.",
                     "validate": "min[0],max[100]"
                 },
                 {
                     "dataType": "text",
-                    "description": "Life forms with benchmark cover of < 10% are considered ‘present’ if any specimens are observed Life forms with benchmark cover of ≥ 10% are considered ‘present’ if the life form occupies at least 10% of benchmark cover.",
                     "name": "present",
+                    "description": "Life forms with benchmark cover of < 10% are considered ‘present’ if any specimens are observed Life forms with benchmark cover of ≥ 10% are considered ‘present’ if the life form occupies at least 10% of benchmark cover.",
                     "constraints": [
                         "Yes",
                         "No"
@@ -539,49 +436,176 @@
                 },
                 {
                     "dataType": "text",
-                    "description": "(Apply only where life form is ‘present’) Life forms with benchmark cover of <10% are considered substantially modified if the life form has either: - <50% of benchmark species diversity; or - no reproductively mature specimens are observed Life forms with benchmark cover of ≥ 10% are considered substantially modified if the life form has either: - <50% of benchmark cover; or - < 50% of benchmark species diversity.",
                     "name": "modified",
+                    "description": "(Apply only where life form is ‘present’) Life forms with benchmark cover of <10% are considered substantially modified if the life form has either: - <50% of benchmark species diversity; or - no reproductively mature specimens are observed Life forms with benchmark cover of ≥ 10% are considered substantially modified if the life form has either: - <50% of benchmark cover; or - < 50% of benchmark species diversity.",
                     "constraints": [
                         "Yes",
                         "No"
                     ]
                 }
+            ],
+            "dataType": "list",
+            "name": "underStoreyLifeforms",
+            "defaultRows": [
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "IT - Immature tree",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "T - Tree (sub-canopy) or large shrub",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "S - Medium shrub/small shrub",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "numberBenchmark": "",
+                    "noEdit": "true",
+                    "lifeform": "Total"
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "PS - Prostrate and mat forming shrubs, including cushion plants",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "H - Herbs and orchids",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "G - Grass",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "LSR - Large sedge/rush/sagg/lily",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "MSR - Medium to small sedge/rush/sagg/lily",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "GF - Ground fern",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "TF - Tree fern",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "SCE - Scrambler/Climber and Epiphytes",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "ML - Mosses and Lichens",
+                    "present": "",
+                    "coverPercentObserved": ""
+                },
+                {
+                    "numberObserved": "",
+                    "coverPercentBenchmark": "",
+                    "numberBenchmark": "",
+                    "modified": "",
+                    "lifeform": "SC - Soil crust",
+                    "present": "",
+                    "coverPercentObserved": ""
+                }
             ]
         },
         {
             "dataType": "number",
-            "description": "1. Record benchmark number of life forms.",
-            "name": "lifeformsPresentNoBenchmark"
+            "name": "lifeformsPresentNoBenchmark",
+            "description": "1. Record benchmark number of life forms."
         },
         {
             "dataType": "boolean",
-            "description": "3. Tick if symptoms of Phytophthora cinnamomi are observed in the zone.",
-            "name": "lifeformsPhytophthoraPresent"
+            "name": "lifeformsPhytophthoraPresent",
+            "description": "3. Tick if symptoms of Phytophthora cinnamomi are observed in the zone."
         },
         {
             "dataType": "number",
-            "dependents": {"source": "understoreyScoreLookup"},
-            "name": "understoreyScore"
+            "name": "understoreyScore",
+            "dependents": {"source": "understoreyScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "understoreyScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
             "dataType": "number",
-            "description": "1. Record the % of life forms present (see Understorey Life Forms table).",
             "name": "lifeformsPresentPercentBenchmark",
+            "description": "1. Record the % of life forms present (see Understorey Life Forms table).",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
-            "description": "2. Determine the % of life forms assessed as present vs the benchmark.  3. If ≥50% of benchmark no. of life forms are present determine the % modified.",
             "name": "lifeformsPresentClass",
+            "description": "2. Determine the % of life forms assessed as present vs the benchmark.  3. If ≥50% of benchmark no. of life forms are present determine the % modified.",
             "constraints": [
                 "All strata and life forms effectively absent",
                 "Up to 50% of life forms present",
@@ -595,59 +619,59 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "understoreySummaryScoreLookup"},
-            "name": "understoreySummaryScore"
+            "name": "understoreySummaryScore",
+            "dependents": {"source": "understoreySummaryScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "understoreySummaryScoreLookup",
             "map": [
                 {
-                    "lifeformsPresentClass": "All strata and life forms effectively absent",
-                    "output": "0"
+                    "output": "0",
+                    "lifeformsPresentClass": "All strata and life forms effectively absent"
                 },
                 {
-                    "lifeformsPresentClass": "Up to 50% of life forms present",
-                    "output": "5"
+                    "output": "5",
+                    "lifeformsPresentClass": "Up to 50% of life forms present"
                 },
                 {
-                    "lifeformsPresentClass": ">= 50% to 90% of life forms present - of those >= 50% substantially modified",
-                    "output": "10"
+                    "output": "10",
+                    "lifeformsPresentClass": ">= 50% to 90% of life forms present - of those >= 50% substantially modified"
                 },
                 {
-                    "lifeformsPresentClass": ">= 50% to 90% of life forms present - of those < 50% substantially modified",
-                    "output": "15"
+                    "output": "15",
+                    "lifeformsPresentClass": ">= 50% to 90% of life forms present - of those < 50% substantially modified"
                 },
                 {
-                    "lifeformsPresentClass": ">= 90% of life forms present - of those >= 50% substantially modified",
-                    "output": "15"
+                    "output": "15",
+                    "lifeformsPresentClass": ">= 90% of life forms present - of those >= 50% substantially modified"
                 },
                 {
-                    "lifeformsPresentClass": ">= 90% of life forms present - of those < 50% substantially modified",
-                    "output": "20"
+                    "output": "20",
+                    "lifeformsPresentClass": ">= 90% of life forms present - of those < 50% substantially modified"
                 },
                 {
-                    "lifeformsPresentClass": ">= 90% of life forms present - of those none substantially modified",
-                    "output": "25"
+                    "output": "25",
+                    "lifeformsPresentClass": ">= 90% of life forms present - of those none substantially modified"
                 }
             ]
         },
         {
             "dataType": "number",
-            "description": "1. Record the observed overall % weed cover and place in appropriate weed cover category.",
             "name": "totalWeedCoverPercent",
+            "description": "1. Record the observed overall % weed cover and place in appropriate weed cover category.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "number",
-            "description": "2. Estimate the % cover of ‘high threat’ weed species, record and determine appropriate category.",
             "name": "highThreatWeedCoverPercent",
+            "description": "2. Estimate the % cover of ‘high threat’ weed species, record and determine appropriate category.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
-            "description": "1. Choose the appropriate category for total weed cover.",
             "name": "weedCoverClass",
+            "description": "1. Choose the appropriate category for total weed cover.",
             "constraints": [
                 "> 75% cover of weeds",
                 "25 - 75% cover of weeds",
@@ -659,8 +683,8 @@
         },
         {
             "dataType": "text",
-            "description": "2. Choose the appropriate category for the percentage of 'high threat' weeds.",
             "name": "highThreatWeedClass",
+            "description": "2. Choose the appropriate category for the percentage of 'high threat' weeds.",
             "constraints": [
                 "None",
                 "<= 50%",
@@ -670,43 +694,43 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "weedsScoreLookup"},
-            "name": "weedsScore"
+            "name": "weedsScore",
+            "dependents": {"source": "weedsScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "weedsScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
-            "dataType": "list",
-            "name": "recruitmentSpecies",
             "columns": [
                 {
                     "dataType": "species",
-                    "description": "1. Record each woody species observed in the zone and the total number.",
                     "name": "speciesRecruited",
+                    "description": "1. Record each woody species observed in the zone and the total number.",
                     "noEdit": "true"
                 },
                 {
                     "dataType": "text",
-                    "description": "2. Determine if recruitment of each woody species is adequate and record the number of adequately recruiting woody species.",
                     "name": "recruitmentAdequate",
+                    "description": "2. Determine if recruitment of each woody species is adequate and record the number of adequately recruiting woody species.",
                     "constraints": [
                         "Yes",
                         "No"
                     ]
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "recruitmentSpecies"
         },
         {
             "dataType": "text",
-            "description": "1. Is there any evidence of woody recruitment? 2. Is vegetation community reliant on episodic events for recruitment? 3. Determine if episodic event has occurred. 4. Determine proportion of woody spp. with adequate recruitment. ’Cohort’ refers to a group of woody plants established in a single episode (can include suppressed canopy species individuals). Refer to benchmark for clarification.",
             "name": "recruitmentCohorts",
+            "description": "1. Is there any evidence of woody recruitment? 2. Is vegetation community reliant on episodic events for recruitment? 3. Determine if episodic event has occurred. 4. Determine proportion of woody spp. with adequate recruitment. ’Cohort’ refers to a group of woody plants established in a single episode (can include suppressed canopy species individuals). Refer to benchmark for clarification.",
             "constraints": [
                 "No evidence of a recruitment cohort within community - not driven by episodic events",
                 "No evidence of a recruitment cohort - driven by episodic events - clear evidence of appropriate episodic event",
@@ -719,8 +743,8 @@
         },
         {
             "dataType": "text",
-            "description": "4. Determine proportion of woody spp. with adequate recruitment. High diversity defined as ≥50% of benchmark woody species diversity.",
             "name": "recruitmentDiversity",
+            "description": "4. Determine proportion of woody spp. with adequate recruitment. High diversity defined as ≥50% of benchmark woody species diversity.",
             "constraints": [
                 "High diversity",
                 "Low diversity"
@@ -729,35 +753,35 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "recruitmentScoreLookup"},
             "name": "recruitmentScore",
-            "noEdit": "true"
+            "noEdit": "true",
+            "dependents": {"source": "recruitmentScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "recruitmentScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
             "dataType": "number",
-            "description": "1. Refer to vegetation community benchmark and record benchmark % litter cover.",
             "name": "organicLitterBenchmarkPercent",
+            "description": "1. Refer to vegetation community benchmark and record benchmark % litter cover.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "number",
-            "description": "2. Determine the % cover of organic litter in the zone and record. Compare to benchmark %.",
             "name": "organicLitterObservedPercent",
+            "description": "2. Determine the % cover of organic litter in the zone and record. Compare to benchmark %.",
             "validate": "min[0],max[100]"
         },
         {
             "dataType": "text",
-            "description": "3. Select the appropriate organic litter cover category.",
             "name": "organicLitterCoverCategory",
+            "description": "3. Select the appropriate organic litter cover category.",
             "constraints": [
                 "< 10% of benchmark cover",
                 "< 50% of benchmark cover",
@@ -767,8 +791,8 @@
         },
         {
             "dataType": "text",
-            "description": "4. Determine if organic litter dominated by native or non-native litter.",
             "name": "organicLitterType",
+            "description": "4. Determine if organic litter dominated by native or non-native litter.",
             "constraints": [
                 "Dominated by native organic litter",
                 "Dominated by non-native organic litter"
@@ -777,35 +801,35 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "organicLitterScoreLookup"},
             "name": "organicLitterScore",
-            "noEdit": "true"
+            "noEdit": "true",
+            "dependents": {"source": "organicLitterScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "organicLitterScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
             "dataType": "number",
-            "description": "1. Refer to vegetation community benchmark and record benchmark log length.",
             "name": "logLengthBenchmark",
+            "description": "1. Refer to vegetation community benchmark and record benchmark log length.",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
-            "description": "2. Record the total length of logs within the zone. Compare to benchmark.",
             "name": "logLengthObserved",
+            "description": "2. Record the total length of logs within the zone. Compare to benchmark.",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "description": "3. Select the appropriate large logs category.",
             "name": "logLengthCategory",
+            "description": "3. Select the appropriate large logs category.",
             "constraints": [
                 "< 10% of benchmark length",
                 "< 50% of benchmark length",
@@ -815,8 +839,8 @@
         },
         {
             "dataType": "text",
-            "description": "4. Determine the presence of 'large logs' in the zone.",
             "name": "largeLogsPresent",
+            "description": "4. Determine the presence of 'large logs' in the zone.",
             "constraints": [
                 "Large logs present",
                 "Large logs absent"
@@ -825,17 +849,17 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "logScoreLookup"},
             "name": "logScore",
-            "noEdit": "true"
+            "noEdit": "true",
+            "dependents": {"source": "logScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "logScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
@@ -852,41 +876,41 @@
                     "inputMax": "0"
                 },
                 {
-                    "inputMin": "0",
                     "output": "0 to 20% of the benchmark number of trees/ha",
-                    "inputMax": "20"
+                    "inputMax": "20",
+                    "inputMin": "0"
                 },
                 {
-                    "inputMin": "20",
                     "output": "20 to 40% of the benchmark number of trees/ha",
-                    "inputMax": "40"
+                    "inputMax": "40",
+                    "inputMin": "20"
                 },
                 {
-                    "inputMin": "40",
                     "output": "40 to 70% of the benchmark number of trees/ha",
-                    "inputMax": "70"
+                    "inputMax": "70",
+                    "inputMin": "40"
                 },
                 {
-                    "inputMin": "70",
                     "output": "70 to 100% of the benchmark number of trees/ha",
-                    "inputMax": "100"
+                    "inputMax": "100",
+                    "inputMin": "70"
                 },
                 {
-                    "inputMin": "100",
-                    "output": ">= the benchmark number of trees/ha"
+                    "output": ">= the benchmark number of trees/ha",
+                    "inputMin": "100"
                 }
             ]
         },
         {
             "dataType": "number",
-            "description": "1. Determine the size of the patch. Record and assign to a patch size class.",
             "name": "patchSize",
+            "description": "1. Determine the size of the patch. Record and assign to a patch size class.",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "description": "2. Select the appropriate patch size category. If patch >20ha, decide if it is 'significantly disturbed'.",
             "name": "patchCategory",
+            "description": "2. Select the appropriate patch size category. If patch >20ha, decide if it is 'significantly disturbed'.",
             "constraints": [
                 "< 2 ha",
                 "Between 2 and 5 ha",
@@ -899,63 +923,63 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "patchSizeScoreLookup"},
+            "name": "patchSizeScore",
             "description": "",
-            "name": "patchSizeScore"
+            "dependents": {"source": "patchSizeScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "patchSizeScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
-            "defaultRows": [
-                {
-                    "radiusFromSite": "100 m",
-                    "neighbourhoodWeighting": "0.03",
-                    "nativeVegetationPercent": "",
-                    "weightedScore": ""
-                },
-                {
-                    "radiusFromSite": "1 km",
-                    "neighbourhoodWeighting": "0.04",
-                    "nativeVegetationPercent": "",
-                    "weightedScore": ""
-                },
-                {
-                    "radiusFromSite": "5 km",
-                    "neighbourhoodWeighting": "0.03",
-                    "nativeVegetationPercent": "",
-                    "weightedScore": ""
-                }
-            ],
-            "dataType": "list",
-            "name": "neighbourhood",
             "columns": [
                 {
                     "dataType": "number",
-                    "description": "",
-                    "name": "radiusFromSite"
+                    "name": "radiusFromSite",
+                    "description": ""
                 },
                 {
                     "dataType": "number",
-                    "description": "1. Determine and record the % of native vegetation within 3 radii from perimeter of the zone to nearest 20%.",
                     "name": "nativeVegetationPercent",
+                    "description": "1. Determine and record the % of native vegetation within 3 radii from perimeter of the zone to nearest 20%.",
                     "validate": "min[0],max[100]"
                 },
                 {
                     "dataType": "number",
-                    "description": "",
-                    "name": "neighbourhoodWeighting"
+                    "name": "neighbourhoodWeighting",
+                    "description": ""
                 },
                 {
                     "dataType": "number",
-                    "description": "",
-                    "name": "weightedScore"
+                    "name": "weightedScore",
+                    "description": ""
+                }
+            ],
+            "dataType": "list",
+            "name": "neighbourhood",
+            "defaultRows": [
+                {
+                    "radiusFromSite": "100 m",
+                    "nativeVegetationPercent": "",
+                    "neighbourhoodWeighting": "0.03",
+                    "weightedScore": ""
+                },
+                {
+                    "radiusFromSite": "1 km",
+                    "nativeVegetationPercent": "",
+                    "neighbourhoodWeighting": "0.04",
+                    "weightedScore": ""
+                },
+                {
+                    "radiusFromSite": "5 km",
+                    "nativeVegetationPercent": "",
+                    "neighbourhoodWeighting": "0.03",
+                    "weightedScore": ""
                 }
             ]
         },
@@ -965,8 +989,8 @@
         },
         {
             "dataType": "text",
-            "description": "",
             "name": "neighbourhoodSignificantlyDisturbed",
+            "description": "",
             "constraints": [
                 "Yes",
                 "No"
@@ -979,8 +1003,8 @@
         },
         {
             "dataType": "text",
-            "description": "1. Determine the distance to the nearest core area.",
             "name": "distanceToCoreArea",
+            "description": "1. Determine the distance to the nearest core area.",
             "constraints": [
                 "> 5 km",
                 "1 to 5 km",
@@ -991,8 +1015,8 @@
         },
         {
             "dataType": "text",
-            "description": "2. Determine if core area is significantly disturbed.",
             "name": "coreAreaSignificantlyDisturbed",
+            "description": "2. Determine if core area is significantly disturbed.",
             "constraints": [
                 "Yes",
                 "No"
@@ -1001,16 +1025,16 @@
         },
         {
             "dataType": "number",
-            "dependents": {"source": "distanceToCoreScoreLookup"},
-            "name": "distanceToCoreScore"
+            "name": "distanceToCoreScore",
+            "dependents": {"source": "distanceToCoreScoreLookup"}
         },
         {
             "dataType": "lookupByDiscreteValues",
             "name": "distanceToCoreScoreLookup",
             "map": [{
                 "output": "0",
-                "value1": "0",
-                "value2": "0"
+                "value2": "0",
+                "value1": "0"
             }]
         },
         {
@@ -1020,959 +1044,958 @@
     ],
     "viewModel": [
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h3>Survey Information<\/h3>",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "assessor",
-                            "computed": null,
                             "preLabel": "Assessor:",
+                            "computed": null,
+                            "source": "assessor",
                             "type": "text"
                         },
                         {
-                            "source": "currentLandUse",
+                            "preLabel": "Date of survey",
                             "computed": null,
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
                             "preLabel": "Current land use",
-                            "type": "text"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "habitatZone",
                             "computed": null,
+                            "source": "currentLandUse",
+                            "type": "text"
+                        },
+                        {
                             "preLabel": "Zone No./name:",
+                            "computed": null,
+                            "source": "habitatZone",
                             "type": "text"
                         },
                         {
-                            "source": "zoneAreaHa",
-                            "computed": null,
                             "preLabel": "Size of zone (Ha):",
-                            "type": "number"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "location",
                             "computed": null,
+                            "source": "zoneAreaHa",
+                            "type": "number"
+                        },
+                        {
                             "preLabel": "Location:",
+                            "computed": null,
+                            "source": "location",
                             "type": "text"
                         },
                         {
-                            "source": "tasvegVcCode",
-                            "computed": null,
                             "preLabel": "TasVeg VC code:",
+                            "computed": null,
+                            "source": "tasvegVcCode",
                             "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments:",
+                            "computed": null,
+                            "source": "comments",
+                            "type": "textarea"
                         }
-                    ],
+                    ]
+                },
+                {
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": false,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "items": [{
-                    "source": "comments",
-                    "computed": null,
-                    "preLabel": "Comments:",
-                    "type": "textarea"
-                }],
                 "computed": null,
-                "type": "col"
-            }],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
                 "source": "<h3>Site Condition Components<\/h3>",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h4>Large Trees<\/h4>Large trees are defined by diameter at breast height (dbh) – see benchmark.  *Estimate the proportion of an expected healthy canopy cover that is present (ie. not missing due to tree death or decline).",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "numberOfLargeTreesObserved",
-                            "computed": null,
                             "preLabel": "No. of trees counted / Ha.:",
+                            "computed": null,
+                            "source": "numberOfLargeTreesObserved",
                             "type": "number"
                         },
                         {
-                            "source": "largeTreeDensityClass",
-                            "computed": null,
                             "preLabel": "Large tree density category:",
+                            "computed": null,
+                            "source": "largeTreeDensityClass",
                             "type": "selectOne"
                         },
                         {
-                            "source": "largeTreeCanopyHealthPercent",
-                            "computed": null,
                             "preLabel": "Large tree canopy health (%):",
+                            "computed": null,
+                            "source": "largeTreeCanopyHealthPercent",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "numberOfLargeTreesBenchmark",
-                            "computed": null,
                             "preLabel": "Large tree benchmark No. / Ha:",
-                            "type": "number"
-                        },
-                        {
-                            "source": "largeTreeBenchmarkDbh",
                             "computed": null,
-                            "preLabel": "Large tree benchmark DBH:",
+                            "source": "numberOfLargeTreesBenchmark",
                             "type": "number"
                         },
                         {
-                            "source": "largeTreesScore",
-                            "computed": "{\"operation\":\"lookup\",\"dependents\":{\"lookupMap\":\"largeTreeScoreLookup\"}}",
+                            "preLabel": "Large tree benchmark DBH:",
+                            "computed": null,
+                            "source": "largeTreeBenchmarkDbh",
+                            "type": "number"
+                        },
+                        {
                             "preLabel": "<b>Large Trees Score:<\/b>",
+                            "computed": "{\"operation\":\"lookup\",\"dependents\":{\"lookupMap\":\"largeTreeScoreLookup\"}}",
                             "noEdit": "true",
+                            "source": "largeTreesScore",
                             "type": "number"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Tree Canopy Cover<\/h4>Tree canopy cover is defined as those canopy tree species reaching ≥80% of mature height – see benchmark description.  *Estimate the proportion of an expected healthy canopy cover that is present (ie not missing due to tree death or decline).",
                 "computed": null,
+                "source": "<h4>Tree Canopy Cover<\/h4>Tree canopy cover is defined as those canopy tree species reaching ≥80% of mature height – see benchmark description.  *Estimate the proportion of an expected healthy canopy cover that is present (ie not missing due to tree death or decline).",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "canopyCoverPercent",
-                            "computed": null,
                             "preLabel": "Tree canopy cover (observerd %):",
+                            "computed": null,
+                            "source": "canopyCoverPercent",
                             "type": "number"
                         },
                         {
-                            "source": "canopyCoverClass",
-                            "computed": null,
                             "preLabel": "Canopy cover category:",
+                            "computed": null,
+                            "source": "canopyCoverClass",
                             "type": "selectOne"
                         },
                         {
-                            "source": "canopyHealthPercent",
-                            "computed": null,
                             "preLabel": "Tree canopy health (%):",
+                            "computed": null,
+                            "source": "canopyHealthPercent",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "canopyCoverBenchmark",
-                            "computed": null,
                             "preLabel": "Canopy cover benchmark %:",
+                            "computed": null,
+                            "source": "canopyCoverBenchmark",
                             "type": "number"
                         },
                         {
-                            "source": "canopyCoverScore",
-                            "computed": null,
                             "preLabel": "<b>Canopy Cover Score:<\/b>",
+                            "computed": null,
                             "noEdit": "true",
+                            "source": "canopyCoverScore",
                             "type": "number"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Understory life forms<\/h4>",
                 "computed": null,
+                "source": "<h4>Understory life forms<\/h4>",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
-                    "source": "lifeformsPresentNoBenchmark",
                     "preLabel": "Benchmark No. of Life forms:",
+                    "computed": null,
+                    "source": "lifeformsPresentNoBenchmark",
                     "type": "number"
                 },
                 {
-                    "source": "lifeformsPhytophthoraPresent",
                     "preLabel": "Phytophthora cinnamomi symptoms (tick if observed):",
+                    "computed": null,
+                    "source": "lifeformsPhytophthoraPresent",
                     "type": "boolean"
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
             "footer": {"rows": [{"columns": [
                 {
-                    "source": "<b>Understorey Life Forms Score<\/b>",
                     "computed": null,
+                    "source": "<b>Understorey Life Forms Score<\/b>",
                     "type": "literal"
                 },
                 {
-                    "source": "understoreyScore",
                     "computed": null,
                     "noEdit": "true",
+                    "source": "understoreyScore",
                     "type": "number"
                 },
                 {
                     "colspan": "2",
+                    "computed": null,
                     "source": "",
-                    "computed": null,
                     "type": "literal"
                 },
                 {
+                    "computed": null,
                     "source": "<b>Total<\/b>",
-                    "computed": null,
                     "type": "literal"
                 },
                 {
-                    "source": "numberLifeformsPresent",
                     "computed": null,
+                    "source": "numberLifeformsPresent",
                     "type": "number"
                 },
                 {
-                    "source": "numberLifeformsModified",
                     "computed": null,
+                    "source": "numberLifeformsModified",
                     "type": "number"
                 }
             ]}]},
-            "source": "underStoreyLifeforms",
             "columns": [
                 {
-                    "title": "Life form",
-                    "source": "lifeform",
                     "noEdit": "true",
+                    "source": "lifeform",
+                    "title": "Life form",
                     "type": "text"
                 },
                 {
-                    "title": "No. of species (Observed)",
                     "source": "numberObserved",
+                    "title": "No. of species (Observed)",
                     "type": "number"
                 },
                 {
-                    "title": "No. of species (Benchmark)",
                     "source": "numberBenchmark",
+                    "title": "No. of species (Benchmark)",
                     "type": "number"
                 },
                 {
-                    "title": "% cover (Observed)",
                     "source": "coverPercentObserved",
+                    "title": "% cover (Observed)",
                     "type": "number"
                 },
                 {
-                    "title": "% cover (Benchmark)",
                     "source": "coverPercentBenchmark",
+                    "title": "% cover (Benchmark)",
                     "type": "number"
                 },
                 {
-                    "title": "Present",
                     "source": "present",
+                    "title": "Present",
                     "type": "selectOne"
                 },
                 {
-                    "title": "Modified",
                     "source": "modified",
+                    "title": "Modified",
                     "type": "selectOne"
                 }
             ],
-            "class": "output-section",
-            "type": "table"
+            "source": "underStoreyLifeforms",
+            "type": "table",
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h4>Understorey Summary<\/h4>",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "lifeformsPresentPercentBenchmark",
-                            "computed": null,
                             "preLabel": "Benchmark life forms present (%):",
+                            "computed": null,
+                            "source": "lifeformsPresentPercentBenchmark",
                             "type": "number"
                         },
                         {
-                            "source": "lifeformsPresentClass",
-                            "computed": null,
                             "preLabel": "Number of life forms present",
+                            "computed": null,
+                            "source": "lifeformsPresentClass",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "understoreySummaryScore",
-                        "computed": null,
-                        "preLabel": "Understorey Summary Score",
-                        "noEdit": "true",
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Understorey Summary Score",
+                        "computed": null,
+                        "noEdit": "true",
+                        "source": "understoreySummaryScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Lack of Weeds<\/h4>‘High threat’ weed species are defined as introduced species (including non-indigenous ‘natives’) that achieve >5% cover in the zone or those weed species listed as high threat weeds in Tasmania. A list of high threat weeds in Tasmania is provided in the TASVEG Vegetation Condition Assessment manual. **If total weed cover is negligible (<1%) and high threat weed species are present then score ‘13’. The Assessor should determine the threat posed by any weed listed in the zone.",
                 "computed": null,
+                "source": "<h4>Lack of Weeds<\/h4>‘High threat’ weed species are defined as introduced species (including non-indigenous ‘natives’) that achieve >5% cover in the zone or those weed species listed as high threat weeds in Tasmania. A list of high threat weeds in Tasmania is provided in the TASVEG Vegetation Condition Assessment manual. **If total weed cover is negligible (<1%) and high threat weed species are present then score ‘13’. The Assessor should determine the threat posed by any weed listed in the zone.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "totalWeedCoverPercent",
-                            "computed": null,
                             "preLabel": "Total weed cover %:",
+                            "computed": null,
+                            "source": "totalWeedCoverPercent",
                             "type": "number"
                         },
                         {
-                            "source": "weedCoverClass",
-                            "computed": null,
                             "preLabel": "Total weed cover category:",
+                            "computed": null,
+                            "source": "weedCoverClass",
                             "type": "selectOne"
                         },
                         {
-                            "source": "highThreatWeedCoverPercent",
-                            "computed": null,
                             "preLabel": "High threat weed cover %:",
+                            "computed": null,
+                            "source": "highThreatWeedCoverPercent",
                             "type": "number"
                         },
                         {
-                            "source": "highThreatWeedClass",
-                            "computed": null,
                             "preLabel": "High threat weed cover category:",
+                            "computed": null,
+                            "source": "highThreatWeedClass",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "weedsScore",
-                        "computed": null,
-                        "preLabel": "Lack of weeds Score",
-                        "noEdit": "true",
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Lack of weeds Score",
+                        "computed": null,
+                        "noEdit": "true",
+                        "source": "weedsScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Recruitment<\/h4>Treat multiple canopy species as a single species. Adequate recruitment of canopy species requires at least 2 cohorts to be present (seedlings <2m and saplings >2m tall) and where canopy cover is less than benchmark, sufficient recruitment to attain benchmark cover over time. Adequate recruitment of other woody species requires observed immature individuals to be at least 10% of number of mature individuals for each species.",
                 "computed": null,
+                "source": "<h4>Recruitment<\/h4>Treat multiple canopy species as a single species. Adequate recruitment of canopy species requires at least 2 cohorts to be present (seedlings <2m and saplings >2m tall) and where canopy cover is less than benchmark, sufficient recruitment to attain benchmark cover over time. Adequate recruitment of other woody species requires observed immature individuals to be at least 10% of number of mature individuals for each species.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [{
+                        "computed": null,
                         "footer": {"rows": [{"columns": [
                             {
-                                "source": "<b>Total recruiting species<\/b>",
                                 "computed": null,
+                                "source": "<b>Total recruiting species<\/b>",
                                 "type": "literal"
                             },
                             {
-                                "source": "recruitmentTotal",
                                 "computed": null,
+                                "source": "recruitmentTotal",
                                 "type": "number"
                             }
                         ]}]},
-                        "source": "recruitmentSpecies",
-                        "computed": null,
                         "columns": [
                             {
-                                "title": "Woody species recorded in habitat zone (S and taller)",
                                 "source": "speciesRecruited",
+                                "title": "Woody species recorded in habitat zone (S and taller)",
                                 "type": "autocomplete"
                             },
                             {
-                                "title": "Adequate Recruitment?",
                                 "source": "recruitmentAdequate",
+                                "title": "Adequate Recruitment?",
                                 "type": "selectOne"
                             }
                         ],
                         "userAddedRows": "true",
+                        "source": "recruitmentSpecies",
                         "type": "table"
-                    }],
-                    "computed": null,
-                    "type": "col"
+                    }]
                 },
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "recruitmentCohorts",
-                            "computed": null,
                             "preLabel": "Recruitment cohort category:",
+                            "computed": null,
+                            "source": "recruitmentCohorts",
                             "type": "selectOne"
                         },
                         {
-                            "source": "recruitmentDiversity",
-                            "computed": null,
                             "preLabel": "Recruitment diversity:",
+                            "computed": null,
+                            "source": "recruitmentDiversity",
                             "type": "selectOne"
                         },
                         {
-                            "source": "recruitmentScore",
-                            "computed": null,
                             "preLabel": "Recruitment Score:",
+                            "computed": null,
                             "noEdit": "true",
+                            "source": "recruitmentScore",
                             "type": "number"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h4>Organic Litter<\/h4>Litter is defined as dead organic material detached from the parent plant, including plant debris, fallen leaves and twigs <10cm.",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "organicLitterBenchmarkPercent",
-                            "computed": null,
                             "preLabel": "Organic litter benchmark %:",
+                            "computed": null,
+                            "source": "organicLitterBenchmarkPercent",
                             "type": "number"
                         },
                         {
-                            "source": "organicLitterObservedPercent",
-                            "computed": null,
                             "preLabel": "Observed cover of organic litter %:",
+                            "computed": null,
+                            "source": "organicLitterObservedPercent",
                             "type": "number"
                         },
                         {
-                            "source": "organicLitterCoverCategory",
-                            "computed": null,
                             "preLabel": "Organic litter cover category:",
+                            "computed": null,
+                            "source": "organicLitterCoverCategory",
                             "type": "selectOne"
                         },
                         {
-                            "source": "organicLitterType",
-                            "computed": null,
                             "preLabel": "Dominant type of organic litter:",
+                            "computed": null,
+                            "source": "organicLitterType",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "organicLitterScore",
-                        "computed": null,
-                        "preLabel": "Organic litter Score:",
-                        "noEdit": "true",
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Organic litter Score:",
+                        "computed": null,
+                        "noEdit": "true",
+                        "source": "organicLitterScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Logs<\/h4>Large logs defined as those with diameter ≥0.5 of benchmark large tree DBH.",
                 "computed": null,
+                "source": "<h4>Logs<\/h4>Large logs defined as those with diameter ≥0.5 of benchmark large tree DBH.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "logLengthBenchmark",
-                            "computed": null,
                             "preLabel": "Benchmark log length (m):",
+                            "computed": null,
+                            "source": "logLengthBenchmark",
                             "type": "number"
                         },
                         {
-                            "source": "logLengthObserved",
-                            "computed": null,
                             "preLabel": "Average length of observed logs (m):",
+                            "computed": null,
+                            "source": "logLengthObserved",
                             "type": "number"
                         },
                         {
-                            "source": "logLengthCategory",
-                            "computed": null,
                             "preLabel": "Log length category:",
+                            "computed": null,
+                            "source": "logLengthCategory",
                             "type": "selectOne"
                         },
                         {
-                            "source": "largeLogsPresent",
-                            "computed": null,
                             "preLabel": "Are large logs present?:",
+                            "computed": null,
+                            "source": "largeLogsPresent",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "logScore",
-                        "computed": null,
-                        "preLabel": "Logs Score:",
-                        "noEdit": "true",
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Logs Score:",
+                        "computed": null,
+                        "noEdit": "true",
+                        "source": "logScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
+                "computed": null,
                 "source": "<h3>Landscape Context Components<\/h3>",
-                "computed": null,
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Patch Size<\/h4>The patch is the area of native vegetation continuous with the assessment area (zone), regardless of EVC, condition or land tenure. Includes adjoining wetlands. It will be 'significantly disturbed' if activities such as grazing, timber harvesting, roading, fuel reduction burning or Phytophthora infestation have occurred. Effectively most patches within fragmented landscapes are significantly disturbed.",
                 "computed": null,
+                "source": "<h4>Patch Size<\/h4>The patch is the area of native vegetation continuous with the assessment area (zone), regardless of EVC, condition or land tenure. Includes adjoining wetlands. It will be 'significantly disturbed' if activities such as grazing, timber harvesting, roading, fuel reduction burning or Phytophthora infestation have occurred. Effectively most patches within fragmented landscapes are significantly disturbed.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
             "title": "Patch Size",
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "patchSize",
-                            "computed": null,
                             "preLabel": "Patch size (Ha):",
+                            "computed": null,
+                            "source": "patchSize",
                             "type": "number"
                         },
                         {
-                            "source": "patchCategory",
-                            "computed": null,
                             "preLabel": "Patch size category:",
+                            "computed": null,
+                            "source": "patchCategory",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "patchSizeScore",
-                        "computed": null,
-                        "preLabel": "Patch Size Score:",
-                        "noEdit": "true",
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Patch Size Score:",
+                        "computed": null,
+                        "noEdit": "true",
+                        "source": "patchSizeScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Neighbourhood<\/h4>The neighbourhood score represents the amount and configuration of native vegetation within proximity of the zone being assessed.",
                 "computed": null,
+                "source": "<h4>Neighbourhood<\/h4>The neighbourhood score represents the amount and configuration of native vegetation within proximity of the zone being assessed.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [{
+                        "allowHeaderWrap": "true",
+                        "computed": null,
                         "footer": {"rows": [{"columns": [
                             {
-                                "source": "Is the neighbourhood of the assessed patch significantly disturbed?:",
                                 "computed": null,
+                                "source": "Is the neighbourhood of the assessed patch significantly disturbed?:",
                                 "type": "literal"
                             },
                             {
-                                "source": "neighbourhoodSignificantlyDisturbed",
                                 "computed": null,
+                                "source": "neighbourhoodSignificantlyDisturbed",
                                 "type": "selectOne"
                             },
                             {
-                                "source": "Total Weighted Score",
                                 "computed": null,
+                                "source": "Total Weighted Score",
                                 "type": "literal"
                             },
                             {
-                                "source": "totalWeightedScore",
                                 "computed": {
-                                    "operation": "sum",
-                                    "dependents": ["weightedScore"]
+                                    "dependents": ["weightedScore"],
+                                    "operation": "sum"
                                 },
                                 "noEdit": true,
+                                "source": "totalWeightedScore",
                                 "type": "number"
                             }
                         ]}]},
-                        "source": "neighbourhood",
-                        "computed": null,
-                        "allowHeaderWrap": "true",
                         "columns": [
                             {
-                                "title": "Radius from site",
-                                "source": "radiusFromSite",
                                 "width": "25%",
                                 "noEdit": true,
+                                "source": "radiusFromSite",
+                                "title": "Radius from site",
                                 "type": "text"
                             },
                             {
-                                "title": "% native vegetation",
+                                "width": "25%",
                                 "source": "nativeVegetationPercent",
-                                "width": "25%",
+                                "title": "% native vegetation",
                                 "type": "number"
                             },
                             {
-                                "title": "Weighting",
+                                "width": "25%",
+                                "noEdit": true,
                                 "source": "neighbourhoodWeighting",
-                                "width": "25%",
-                                "noEdit": true,
+                                "title": "Weighting",
                                 "type": "number"
                             },
                             {
-                                "title": "Weighted Score",
-                                "source": "weightedScore",
                                 "width": "25%",
                                 "noEdit": true,
+                                "source": "weightedScore",
+                                "title": "Weighted Score",
                                 "type": "number"
                             }
                         ],
+                        "source": "neighbourhood",
                         "type": "table"
-                    }],
-                    "computed": null,
-                    "type": "col"
+                    }]
                 },
                 {
-                    "items": [{
-                        "source": "neighbourhoodScore",
-                        "computed": null,
-                        "preLabel": "Neighbourhood Score",
-                        "noEdit": true,
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Neighbourhood Score",
+                        "computed": null,
+                        "noEdit": true,
+                        "source": "neighbourhoodScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h4>Distance to Core Area<\/h4>A ‘core area’ is native vegetation > 50 ha regardless of type, condition or tenure. Includes natural wetlands and lakes, estuaries and rivers. Determine the shortest distance from the edge of the zone being assessed to the edge of the nearest core area and place the vegetation in the appropriate core area distance category.",
                 "computed": null,
+                "source": "<h4>Distance to Core Area<\/h4>A ‘core area’ is native vegetation > 50 ha regardless of type, condition or tenure. Includes natural wetlands and lakes, estuaries and rivers. Determine the shortest distance from the edge of the zone being assessed to the edge of the nearest core area and place the vegetation in the appropriate core area distance category.",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
             "title": "Distance to Core Area",
+            "type": "row",
             "items": [
                 {
+                    "computed": null,
+                    "type": "col",
                     "items": [
                         {
-                            "source": "distanceToCoreArea",
-                            "computed": null,
                             "preLabel": "Distance to core area:",
+                            "computed": null,
+                            "source": "distanceToCoreArea",
                             "type": "selectOne"
                         },
                         {
-                            "source": "coreAreaSignificantlyDisturbed",
-                            "computed": null,
                             "preLabel": "Core area significantly disturbed:",
+                            "computed": null,
+                            "source": "coreAreaSignificantlyDisturbed",
                             "type": "selectOne"
                         }
-                    ],
-                    "computed": null,
-                    "type": "col"
+                    ]
                 },
                 {
-                    "items": [{
-                        "source": "distanceToCoreScore",
-                        "computed": null,
-                        "preLabel": "Distance to Core Area Score:",
-                        "noEdit": true,
-                        "type": "number"
-                    }],
                     "computed": null,
-                    "type": "col"
+                    "type": "col",
+                    "items": [{
+                        "preLabel": "Distance to Core Area Score:",
+                        "computed": null,
+                        "noEdit": true,
+                        "source": "distanceToCoreScore",
+                        "type": "number"
+                    }]
                 }
             ],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         },
         {
+            "type": "row",
             "items": [{
-                "source": "<h3>Final Habitat Score<\/h3>",
                 "computed": null,
+                "source": "<h3>Final Habitat Score<\/h3>",
                 "type": "literal"
-            }],
-            "type": "row"
+            }]
         },
         {
+            "type": "row",
             "items": [{
+                "allowHeaderWrap": "true",
+                "computed": null,
                 "footer": {"rows": [{"columns": [
                     {
-                        "source": "<b>Score<\/b>",
                         "computed": null,
+                        "source": "<b>Score<\/b>",
                         "type": "literal"
                     },
                     {
-                        "source": "largeTreesScore",
                         "computed": "{\"operation\":\"lookup\",\"dependents\":{\"lookupMap\":\"largeTreeScoreLookup\"}}",
                         "noEdit": true,
+                        "source": "largeTreesScore",
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "canopyCoverScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "weedsScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "understoreySummaryScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "recruitmentScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "organicLitterScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "logScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "patchSizeScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "neighbourhoodScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
+                        "computed": null,
+                        "noEdit": true,
                         "source": "distanceToCoreScore",
-                        "computed": null,
-                        "noEdit": true,
                         "type": "number"
                     },
                     {
-                        "source": "totalScore",
                         "computed": null,
                         "noEdit": true,
+                        "source": "totalScore",
                         "type": "number"
                     }
                 ]}]},
-                "source": "finalHabitatScore",
-                "computed": null,
-                "allowHeaderWrap": "true",
                 "columns": [
                     {
-                        "title": " ",
-                        "source": "component",
                         "width": "8%",
                         "noEdit": true,
+                        "source": "component",
+                        "title": " ",
                         "type": "text"
                     },
                     {
-                        "title": "Large Trees",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "largeTreesScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Large Trees",
                         "type": "number"
                     },
                     {
-                        "title": "Tree Canopy Cover",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "canopyCoverScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Tree Canopy Cover",
                         "type": "number"
                     },
                     {
-                        "title": "Lack of Weeds",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "weedsScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Lack of Weeds",
                         "type": "number"
                     },
                     {
-                        "title": "Understorey Summary",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "understoreySummaryScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Understorey Summary",
                         "type": "number"
                     },
                     {
-                        "title": "Recruitment",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "recruitmentScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Recruitment",
                         "type": "number"
                     },
                     {
-                        "title": "Organic Litter",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "organicLitterScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Organic Litter",
                         "type": "number"
                     },
                     {
-                        "title": "Logs",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "logScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Logs",
                         "type": "number"
                     },
                     {
-                        "title": "Patch Size",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "patchSizeScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Patch Size",
                         "type": "number"
                     },
                     {
-                        "title": "Neighbourhood",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "neighbourhoodScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Neighbourhood",
                         "type": "number"
                     },
                     {
-                        "title": "Distance to Core",
+                        "width": "8%",
+                        "noEdit": true,
                         "source": "distanceToCoreScore",
-                        "width": "8%",
-                        "noEdit": true,
+                        "title": "Distance to Core",
                         "type": "number"
                     },
                     {
-                        "title": "Total Score",
-                        "source": "totalScore",
                         "width": "8%",
                         "noEdit": true,
+                        "source": "totalScore",
+                        "title": "Total Score",
                         "type": "number"
                     }
                 ],
+                "source": "finalHabitatScore",
                 "type": "table"
             }],
-            "class": "output-section",
-            "type": "row"
+            "class": "output-section"
         }
     ]
 }

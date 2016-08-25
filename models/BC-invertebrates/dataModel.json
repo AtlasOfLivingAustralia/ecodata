@@ -3,6 +3,41 @@
     "record": "true",
     "dataModel": [
         {
+            "name": "weightFactor",
+            "map": [
+                {
+                    "output": 0,
+                    "inputMax": 0,
+                    "inputMin": 0
+                },
+                {
+                    "output": 1,
+                    "inputMax": 2,
+                    "inputMin": 0
+                },
+                {
+                    "output": 2,
+                    "inputMax": 5,
+                    "inputMin": 2
+                },
+                {
+                    "output": 3,
+                    "inputMax": 10,
+                    "inputMin": 5
+                },
+                {
+                    "output": 4,
+                    "inputMax": 20,
+                    "inputMin": 10
+                },
+                {
+                    "output": 5,
+                    "inputMax": "Number.POSITIVE_INFINITY",
+                    "inputMin": 20
+                }
+            ]
+        },
+        {
             "dataType": "text",
             "dwcAttribute": "samplingProtocol",
             "value": "SIGNAL2 aquatic macroinvertebrates"
@@ -144,6 +179,11 @@
                     "validate": "integer,min[0]"
                 },
                 {
+                    "computed": {
+                        "lookupMap": "weightFactor",
+                        "dependents": ["individualCount"],
+                        "operation": "lookup"
+                    },
                     "dataType": "number",
                     "name": "taxonWeightFactor"
                 },
