@@ -55,8 +55,6 @@ class CSProjectXlsExporter extends ProjectExporter {
     RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
 
-    XlsExporter exporter
-
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet recordSheet
@@ -64,7 +62,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     Map<String, AdditionalSheet> surveySheets = [:]
 
     public CSProjectXlsExporter(XlsExporter exporter) {
-        this.exporter = exporter
+        super(exporter)
     }
 
     @Override

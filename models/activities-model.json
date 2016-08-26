@@ -5440,6 +5440,11 @@
             "template": "flyingFoxSurvey",
             "scores": [],
             "name": "Flying Fox Survey"
+        },
+        {
+            "template": "performanceSelfAssessment",
+            "scores":[],
+            "name": "Performance Self Assessment"
         }
     ],
     "selectedActivity": {
