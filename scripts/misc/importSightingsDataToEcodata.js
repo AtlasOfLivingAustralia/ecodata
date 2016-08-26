@@ -73,7 +73,8 @@ var ecodataProject = ecodataDb.project.find({name: 'ALA species sightings - OzAt
 var ecodataSurvey = ecodataDb.projectActivity.find({$and : [{projectId: ecodataProject.projectId, name:'Individual sighting'}]}).next();
 var count = 0;
 var records = sightingsDb.record.find({});
-var formName = "OzAtlas Sightings";
+var formType = "OzAtlas Sightings";
+var formName = "Single Sighting - Advanced";
 var importedFrom = 'ecodata-sightings';
 
 //while (count < 20) {
@@ -167,7 +168,7 @@ while (records.hasNext()) {
     var activity = record.activityId ? ecodataDb.activity.find({activityId: record.activityId}).next() : '';
     if (!activity) {
         activity = {
-            type: formName,
+            type: formType,
             status: 'active',
             dateCreated: record.dateCreated,
             lastUpdated: record.lastUpdated,
