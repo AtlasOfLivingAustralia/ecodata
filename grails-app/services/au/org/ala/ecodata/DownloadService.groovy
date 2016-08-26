@@ -314,15 +314,15 @@ class DownloadService {
         xlsExporter
     }
 
-    Set<String> getProjectIdsForDownload(Map params, String searchIndexName) {
+    Set<String> getProjectIdsForDownload(Map params, String searchIndexName, String property = 'projectId') {
         long start = System.currentTimeMillis()
 
         SearchResponse res = elasticSearchService.search(params.query, params, searchIndexName)
         Set ids = new HashSet()
 
         for (SearchHit hit : res.hits.hits) {
-            if (hit.source.projectId) {
-                ids << hit.source.projectId
+            if (hit.source[property]) {
+                ids << hit.source[property]
             }
         }
 

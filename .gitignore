@@ -36,4 +36,6 @@
 /*.iml
 /.idea
 
+/.slcache
+
 out

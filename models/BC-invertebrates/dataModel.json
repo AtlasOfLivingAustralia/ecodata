@@ -40,7 +40,8 @@
         {
             "dataType": "text",
             "dwcAttribute": "samplingProtocol",
-            "value": "SIGNAL2 aquatic macroinvertebrates"
+            "value": "SIGNAL2 aquatic macroinvertebrates",
+            "name": "samplingProtocol"
         },
         {
             "dataType": "date",
