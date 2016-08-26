@@ -93,5 +93,5 @@
   "description" : "Default map for SciStarter projects without a predefined region.",
   "name" : "SciStarter Project Area",
   "notes" : "",
-  "type" : "surveyArea"
+  "type" : "projectArea"
 }
