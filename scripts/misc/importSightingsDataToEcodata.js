@@ -1,6 +1,6 @@
 load('/Users/sat01a/All/sat01a_git/merged/ecodata/scripts/misc/uuid.js');
 // cd /Users/sat01a/All/j2ee/mongodb_2.6.2/bin
-// ./mongo /Users/sat01a/All/sat01a_git/merged/ecodata-2/scripts/misc/importSightingsDataToEcodata.js
+// ./mongo /Users/sat01a/All/sat01a_git/merged/ecodata-3/scripts/misc/importSightingsDataToEcodata.js
 /*
  mr = db.runCommand({
  "mapreduce" : "record",
@@ -52,6 +52,8 @@ load('/Users/sat01a/All/sat01a_git/merged/ecodata/scripts/misc/uuid.js');
  */
 
 // IMPORTANT : Make sure to enable "Allow public users to enter data" flag under survey settings.
+// Expects: Project name: ALA species sightings - OzAtlas
+// Project Activity name: Individual sighting
 
 var sightingsConn = new Mongo();
 var sightingsDb = sightingsConn.getDB("ecodata-sightings");
@@ -67,20 +69,20 @@ ecodataDb.document.remove({importedFrom: "ecodata-sightings"});
 ecodataDb.location.remove({importedFrom: "ecodata-sightings"});
 
 print('Importing sightings data...');
-var ecodataProject = ecodataDb.project.find({projectId: '89c78c40-29e5-46f6-8720-d1e3bd2f170a'}).next();
-var ecodataSurvey = ecodataDb.projectActivity.find({projectId: ecodataProject.projectId}).next();
+var ecodataProject = ecodataDb.project.find({name: 'ALA species sightings - OzAtlas'}).next();
+var ecodataSurvey = ecodataDb.projectActivity.find({$and : [{projectId: ecodataProject.projectId, name:'Individual sighting'}]}).next();
 var count = 0;
 var records = sightingsDb.record.find({});
-var formName = "ALA Single Sighting";
+var formName = "OzAtlas Sightings";
 var importedFrom = 'ecodata-sightings';
 
-//while (count < 100) {
+//while (count < 20) {
 while (records.hasNext()) {
     var record = records.next();
 
     // There are around 245 records without common name and scientific name.
     if (!record.scientificName && !record.commonName) {
-        record.scientificName = 'unlisted species'
+        record.scientificName = ''
     }
 
     if (!record.decimalLongitude || !record.decimalLatitude) {
@@ -208,7 +210,7 @@ while (records.hasNext()) {
         var outputId = UUID.generate();
 
         //Multimedia??
-        var sightingPhoto1 = [];
+        var sightingPhoto = [];
         var multimedia = record.multimedia ? record.multimedia : [];
 
         var documents = [];
@@ -268,7 +270,7 @@ while (records.hasNext()) {
             imageDocument.identifier = image.identifier;
             imageDocument.documentId = document.documentId;
             imageDocument.attribution = "";
-            sightingPhoto1.push(imageDocument);
+            sightingPhoto.push(imageDocument);
             documents.push(document);
         }
 
@@ -289,14 +291,14 @@ while (records.hasNext()) {
                 locationAccuracy: record.coordinateUncertaintyInMeters,
                 locationLongitude: record.decimalLongitude,
                 locationLatitude: record.decimalLatitude,
-                species1: species,
-                comments1: record.occurrenceRemarks,
+                species: species,
+                comments: record.occurrenceRemarks,
                 recordedBy: record.recordedBy,
                 locationLocality: record.locality,
-                individualCount1: record.individualCount,
+                individualCount: record.individualCount,
                 surveyDate: record.eventDate,
                 notes: '',
-                sightingPhoto1: sightingPhoto1
+                sightingPhoto: sightingPhoto
 
             }
         };
