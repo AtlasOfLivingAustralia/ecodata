@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.reporting.OrganisationXlsExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
@@ -30,6 +31,7 @@ class SearchController {
     PermissionService permissionService
     SensitiveSpeciesService sensitiveSpeciesService
     ReportingService reportingService
+    OrganisationService organisationService
 
     def index(String query) {
         def list = searchService.findForQuery(query, params)
@@ -425,7 +427,7 @@ class SearchController {
         File file = File.createTempFile("download", "xlsx")
         XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, projectService, xlsExporter, tabsToExport)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport)
 
         Project.withSession { session ->
             int batchSize = 50
@@ -446,6 +448,55 @@ class SearchController {
 
         xlsExporter
     }
+
+    def downloadOrganisationData() {
+        if (!params.email) {
+            params.email = userService.getCurrentUserDetails().userName
+        }
+        params.max = 10000
+        params.offset = 0
+        params.fileExtension = "xlsx"
+
+        Collection<String> orgIds = downloadService.getProjectIdsForDownload(params, DEFAULT_INDEX, 'organisationId')
+        Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
+
+            XlsExporter exporter = exportOrganisationsToXls(orgIds, paramMap.getList('tabs'))
+            exporter.save(outputStream)
+        }
+        downloadService.downloadProjectDataAsync(params, doDownload)
+
+        response.status = 200
+        render "OK"
+    }
+
+    private XlsExporter exportOrganisationsToXls(Collection<String> organisationIds, List<String> tabs) {
+        File file = File.createTempFile("download", "xlsx")
+        XlsExporter xlsExporter = new XlsExporter(file.name)
+
+        OrganisationXlsExporter exporter = new OrganisationXlsExporter(xlsExporter, tabs)
+
+        Organisation.withSession { session ->
+            int batchSize = 50
+
+            for (int i = 0; i < organisationIds.size(); i++) {
+                String organisationId = organisationIds[i]
+                Map organisation = organisationService.get(organisationId)
+                if (organisation) {
+                    organisation.reports = reportingService.findAllByOwner('organisationId', organisationId)
+
+
+                    exporter.export(organisation)
+                    if (i % batchSize == 1) {
+                        session.clear()
+                    }
+
+                    log.info "Exported ${i + 1} of ${organisationIds.size()} organisations..."
+                }
+            }
+        }
+        xlsExporter
+    }
+
 
     @RequireApiKey
     def downloadSummaryData() {

@@ -273,7 +273,7 @@ class SciStarterConverter {
                 "description" : null,
                 "name"        : null,
                 "notes"       : "",
-                "type"        : "surveyArea"
+                "type"        : "projectArea"
         ]
 
         switch (props.geometry.type) {

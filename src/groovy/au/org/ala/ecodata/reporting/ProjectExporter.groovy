@@ -5,9 +5,11 @@ import au.org.ala.ecodata.Project
 import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
 import grails.util.Holders
 
-abstract class ProjectExporter {
-    MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
+abstract class ProjectExporter extends TabbedExporter {
 
+    public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = [], String dateFormat = TabbedExporter.DATE_CELL_FORMAT) {
+        super(exporter, tabsToExport, dateFormat)
+    }
     void export(Map project) {
         // to be overridden if needed
     }
@@ -26,40 +28,5 @@ abstract class ProjectExporter {
                 export(projectId, activityIds)
             }
         }
-    }
-
-    protected Map outputProperties(name) {
-        def model = metadataService.annotatedOutputDataModel(name)
-
-        def headers = []
-        def properties = []
-        model.each {
-            if (it.dataType == 'list') {
-                it.columns.each { col ->
-                    properties << it.name + '.' + col.name
-                    headers << col.label
-                }
-            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail', 'geoMap']) {
-                // not supported, do nothing.
-            } else if (it.dataType == 'stringList') {
-                if (it.constraints) {
-                    it.constraints.each { constraint ->
-                        headers << it.description + ' - ' + constraint
-                        properties << it.name + '['+constraint+']'
-                    }
-
-                }
-                else {
-                    properties << it.name
-                    headers << it.description
-                }
-            }
-            else {
-                properties << it.name
-                headers << it.description
-            }
-        }
-        List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model) }
-        [headers: headers, propertyGetters: propertyGetters]
     }
 }

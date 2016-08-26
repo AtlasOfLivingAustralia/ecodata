@@ -25,6 +25,7 @@ import org.elasticsearch.common.geo.ShapeRelation
 import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.settings.ImmutableSettings
 import org.elasticsearch.index.query.*
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
@@ -42,7 +43,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
+import static org.elasticsearch.index.query.FilterBuilders.termsFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
+import static org.elasticsearch.index.query.QueryBuilders.functionScoreQuery
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
@@ -672,6 +675,9 @@ class ElasticSearchService {
         // get list of users of this organisation
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
+
+        List meritProjects = Project.findAllByOrganisationIdAndIsMERIT(organisation.organisationId, true)
+        organisation.isMERIT = meritProjects.size() > 0
     }
 
     /**
@@ -915,13 +921,13 @@ class ElasticSearchService {
     /**
      * Build the search request object from query and params
      *
-     * @param query
+     * @param queryString
      * @param params
      * @param index index name
      * @param geoSearchCriteria geo search criteria.
      * @return SearchRequest
      */
-    def buildSearchRequest(String query, Map params, String index, Map geoSearchCriteria = [:]) {
+    def buildSearchRequest(String queryString, Map params, String index, Map geoSearchCriteria = [:]) {
         SearchRequest request = new SearchRequest()
         request.searchType SearchType.DFS_QUERY_THEN_FETCH
 
@@ -933,9 +939,9 @@ class ElasticSearchService {
         }
         request.types(types as String[])
 
+        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria)
         // set pagination stuff
-        SearchSourceBuilder source = pagenateQuery(params)
-        source.query(buildQuery(query, params, geoSearchCriteria))
+        SearchSourceBuilder source = pagenateQuery(params).query(query)
 
         // add facets
         addFacets(params.facets, params.fq, params.flimit, params.fsort).each {
@@ -978,7 +984,25 @@ class ElasticSearchService {
         else {
             queryBuilder = queryStringQuery(query)
         }
+
+        if (params.weightResultsByEntity) {
+            queryBuilder = applyWeightingToEntities(queryBuilder)
+        }
         queryBuilder
+    }
+
+    /**
+     * Boosts scores by entity type to give greater relevance to projects & organisations over sites and activities.
+     * @param query
+     * @return
+     */
+    private applyWeightingToEntities(QueryBuilder query) {
+        functionScoreQuery(query)
+                .add(termsFilter('className', 'au.org.ala.ecodata.Organisation'), ScoreFunctionBuilders.weightFactorFunction(1.75))
+                .add(termsFilter('className', 'au.org.ala.ecodata.Project'), ScoreFunctionBuilders.weightFactorFunction(1.5))
+                .add(termsFilter('className', 'au.org.ala.ecodata.Site'), ScoreFunctionBuilders.weightFactorFunction(1))
+                .add(termsFilter('className', 'au.org.ala.ecodata.Activity'), ScoreFunctionBuilders.weightFactorFunction(0.5))
+
     }
 
     private static FilterBuilder buildGeoFilter(Map geographicSearchCriteria) {
