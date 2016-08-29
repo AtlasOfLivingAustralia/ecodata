@@ -34,15 +34,18 @@ import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
+import org.joda.time.DateTime
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 import java.text.SimpleDateFormat
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
 import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
+import static org.elasticsearch.index.query.FilterBuilders.rangeFilter
 import static org.elasticsearch.index.query.FilterBuilders.termsFilter
 import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
 import static org.elasticsearch.index.query.QueryBuilders.functionScoreQuery
@@ -1100,7 +1103,14 @@ class ElasticSearchService {
                 } else if (repeatFacets.find { it == fqs[0] }) {
                     boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
                 } else {
-                    boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                    // Check if the value is a SOLR style range query
+                    Matcher m = (fqs[1] =~ /\[(.*) TO (.*)\]/)
+                    if (m?.matches()) {
+                        boolFilter.must(rangeFilter(fqs[0]).from(m.group(1)).to(m.group(2)))
+                    }
+                    else {
+                        boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                    }
                 }
             } else {
                 boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
