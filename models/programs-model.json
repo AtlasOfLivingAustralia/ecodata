@@ -451,7 +451,8 @@
             "General Weed Sighting",
             "Camera Trap Monitoring",
             "Single Sighting",
-            "Multiple Sightings"
+            "Multiple Sightings",
+            "Aerial fauna survey - distance sampler method"
         ],
         "name": "None",
         "subprograms": [],
@@ -911,21 +912,25 @@
             {
                 "themes": [],
                 "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Discretionary Grants",
+                "optionalProjectContent": [],
                 "startDate": ""
             },
             {
                 "themes": [],
                 "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 4 Investment",
+                "optionalProjectContent": [],
                 "startDate": ""
             }
         ],
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
-        "reportingPeriodAlignedToCalendar": true,
         "isMeritProgramme": true
     },
     {
@@ -939,6 +944,7 @@
         "optionalProjectContent": []
     },
     {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Single Sighting",
             "Multiple Sightings",
@@ -1135,6 +1141,79 @@
         ],
         "name": "General Works Projects",
         "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": null,
+        "activities": [
+            "Single Sighting",
+            "Multiple Sightings",
+            "Weed Mapping & Monitoring v2",
+            "Water Quality Survey v2",
+            "Site Monitoring Plan v2",
+            "Pest Animal Survey v2",
+            "Flying Fox Survey",
+            "2-ha Track Plot Datasheet",
+            "General Weed Sighting",
+            "Floristic survey - plot and transect",
+            "Fauna survey - trap and transect",
+            "General Weed Monitoring",
+            "Aerial fauna survey - distance sampler method"
+        ],
+        "name": "National Environmental Science Programme",
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Clean Air and Urban Landscapes Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Earth Systems and Climate Change Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Marine Biodiversity Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Northern Australia Environmental Resources Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Threatened Species Recovery Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Tropical Water Quality Hub",
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
