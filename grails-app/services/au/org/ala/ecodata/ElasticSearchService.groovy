@@ -693,6 +693,12 @@ class ElasticSearchService {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
         projectMap["className"] = new Project().getClass().name
         projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+        projectMap.sites?.each { site ->
+            // Not useful for the search index and there is a bug right now that can result in invalid POI
+            // data causing the indexing to fail.
+            site.remove('poi')
+
+        }
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
         projectMap.isMobileApp = documentService.isMobileAppForProject(projectMap);
         projectMap.imageUrl = documentService.findImageUrlForProjectId(project.projectId);
