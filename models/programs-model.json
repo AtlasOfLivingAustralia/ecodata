@@ -452,7 +452,8 @@
             "Camera Trap Monitoring",
             "Single Sighting",
             "Multiple Sightings",
-            "Aerial fauna survey - distance sampler method"
+            "Aerial fauna survey - distance sampler method",
+            "2-ha Track Plot Datasheet"
         ],
         "name": "None",
         "subprograms": [],
@@ -831,16 +832,17 @@
                 "startDate": ""
             }
         ],
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
-        "reportingPeriodAlignedToCalendar": true,
         "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
+        "weekDaysToCompleteReport": 0,
         "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -1091,6 +1093,7 @@
         "isMeritProgramme": true
     },
     {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Camera Trap Monitoring",
             "General Weed Sighting",
@@ -1099,13 +1102,15 @@
             "Floristic survey - plot and transect",
             "Multiple Sightings",
             "Single Sighting",
-            "2-ha Track Plot Datasheet"
+            "2-ha Track Plot Datasheet",
+            "Aerial fauna survey - distance sampler method"
         ],
         "name": "Ecological Science Projects",
         "subprograms": [],
         "optionalProjectContent": []
     },
     {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Fauna survey - trap and transect",
             "Floristic survey - plot and transecty",
