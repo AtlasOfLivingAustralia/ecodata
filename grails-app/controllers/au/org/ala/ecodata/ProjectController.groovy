@@ -81,7 +81,7 @@ class ProjectController {
 
         XlsExporter exporter = new XlsExporter(URLEncoder.encode(project.name, 'UTF-8'))
         exporter.setResponseHeaders(response)
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, projectService, exporter, metadataService)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
         projectExporter.export(project)
         exporter.sizeColumns()
 
@@ -131,10 +131,18 @@ class ProjectController {
         }
     }
 
+    /**
+     * @param id the project to delete sites from.
+     * Optional JSON formatted POST body can include:
+     * siteIds - a list of site ids containing the sites to remove.
+     * deleteOrphans - if true, a site with no associated projects or activities will be deleted.
+     *
+     */
     def deleteSites(String id){
-        def status = siteService.deleteSitesFromProject(id)
+        Map payload = request.JSON
+        Map status = siteService.deleteSitesFromProject(id, payload.siteIds, payload.deleteOrphans?:false)
         if(status.status == 'ok'){
-            render (status: 200, text: 'raised from the dead')
+            asJson status
         } else {
             render (status: 500, text: 'No such id')
         }
@@ -217,7 +225,7 @@ class ProjectController {
                 xlsx {
                     XlsExporter exporter = new XlsExporter("results")
                     exporter.setResponseHeaders(response)
-                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(userService, reportingService, projectService, exporter, metadataService)
+                    ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
                     projectExporter.exportAll(projects)

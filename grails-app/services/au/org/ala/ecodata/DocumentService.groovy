@@ -402,8 +402,16 @@ class DocumentService {
     }
 
     void deleteAllForProject(String projectId, boolean destroy = false) {
+        delete("projectId", projectId, destroy)
+    }
+
+    void deleteAllForSite(String siteId, boolean destroy = false) {
+        delete("siteId", siteId, destroy)
+    }
+
+    private void delete(String owner, String ownerId, boolean destroy = false) {
         List<String> documentIds = Document.withCriteria {
-            eq "projectId", projectId
+            eq owner, ownerId
             projections {
                 property("documentId")
             }

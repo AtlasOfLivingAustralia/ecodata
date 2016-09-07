@@ -8,6 +8,11 @@
         },
         {
             "dataType": "number",
+            "description":"The number of unique written materials provided to the public. This could include social media posts, brochures, fliers or emails. Do not double count where multiple copies of the same written material have been distributed to many people.",
+            "name":"numberOfUniqueWrittenMaterials"
+        },
+        {
+            "dataType": "number",
             "description": "The number of individual participants taking materials at an event",
             "name": "numberOfMaterialRecipients"
         },
@@ -21,9 +26,9 @@
         "items": [
             {
                 "items": [{
-                    "source": "numberOfWrittenMaterials",
+                    "source": "numberOfUniqueWrittenMaterials",
                     "computed": null,
-                    "preLabel": "No. of written Materials and brochures:",
+                    "preLabel": "No. of unique materials produced:",
                     "type": "number"
                 }],
                 "computed": null,

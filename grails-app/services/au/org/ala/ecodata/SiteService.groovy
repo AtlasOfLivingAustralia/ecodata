@@ -188,15 +188,82 @@ class SiteService {
                 (site.extent?.geometry?.pid != newProps.extent.geometry.pid)
     }
 
-    def deleteSitesFromProject(String projectId){
-        log.debug("Deleting the sites for projectID : " + projectId)
-        //def siteList = siteService.findAllForProjectId(id, siteService.BRIEF)
-        def siteList = Site.findAllByProjects(projectId)
-        siteList.each { site ->
-            site.projects.remove(projectId)
-            site.save()
+    void delete(String siteId, boolean destroy = false) {
+        if (!destroy) {
+            update([status:DELETED], siteId, false)
         }
-        [status:'ok']
+        else {
+            Site site = Site.findBySiteId(siteId)
+            site.delete()
+
+            // TODO
+            // delete from spatial portal.  Right now this is never used.
+        }
+
+        documentService.deleteAllForSite(siteId, destroy)
+    }
+
+    /**
+     * Breaks the association between a site and a project, optionally deleting the site if it is not longer
+     * used.  Note that a site will not be removed from the project if it has been associated with any project
+     * activities.
+     *
+     * @param projectId the project to remove the site from.
+     * @param siteIds a List of site ids to remove from the project.
+     * @param deleteOrphans set to true to (soft) delete the site if it is no longer associated with any projects
+     * or activities.
+     * @return a Map containing
+     */
+    Map deleteSitesFromProject(String projectId, List siteIds = null, boolean deleteOrphans = false){
+        log.debug("Deleting the sites for projectID : " + projectId)
+        List siteList
+        List warnings = []
+        if (siteIds) {
+            siteList = Site.findAllBySiteIdInListAndProjectsAndStatusNotEqual(siteIds, projectId, DELETED)
+        }
+        else {
+            siteList = Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
+        }
+
+        siteList.each { site ->
+            if (canRemoveProject(site, projectId)) {
+                site.projects.remove(projectId)
+                site.save()
+
+                if (deleteOrphans && canDelete(site)) {
+                    if (deleteOrphans) {
+                        delete(site.siteId)
+                    }
+                }
+            }
+            else {
+                warnings << ["Cannot remove ${site.siteId} it is used by project activities"]
+            }
+        }
+        [status:'ok', warnings:warnings]
+    }
+
+    boolean canRemoveProject(Site site, String projectId) {
+        if (Activity.findAllBySiteIdAndProjectIdAndStatusNotEqual(site.siteId, projectId, DELETED)?.size()) {
+            return false
+        }
+        return !ProjectActivity.findAllBySitesAndProjectIdAndStatusNotEqual(site.siteId, projectId, DELETED)?.size()
+    }
+
+    /**
+     * Returns true if the site is not associated with any activities, projectActivities or projects.
+     * We allow the site to be associated with documents, any documents will be deleted with the site.
+     * @param site the Site to check.
+     * @return true if this site can be deleted.
+     */
+    boolean canDelete(Site site) {
+        if (site.projects?.size()) {
+            return false
+        }
+        if (activityService.findAllForSiteId(site.siteId)?.size()) {
+            return false
+        }
+        return !ProjectActivity.findAllBySitesAndStatusNotEqual(site.siteId, DELETED)?.size()
     }
 
     /**

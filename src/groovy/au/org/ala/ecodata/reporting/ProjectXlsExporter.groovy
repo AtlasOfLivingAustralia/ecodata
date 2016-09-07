@@ -2,25 +2,20 @@ package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
-import au.org.ala.ecodata.ReportingService
-import au.org.ala.ecodata.UserService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 
-import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
 
 
-import java.text.SimpleDateFormat
 
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
  */
 class ProjectXlsExporter extends ProjectExporter {
 
-    static String DATE_CELL_FORMAT = "dd/MM/yyyy"
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
     List<String> stateHeaders = (1..3).collect{'State '+it}
@@ -56,7 +51,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated']
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered', 'Units']
-    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new StringToDoublePropertyGetter('target'), 'delivered', 'units']
+    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'delivered', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
     List<String> risksAndThreatsProperties = commonProjectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
     List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
@@ -83,36 +78,23 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> reportHeaders = commonProjectHeaders + ['Stage', 'From Date', 'To Date', 'Action', 'Action Date', 'Actioned By', 'Weekdays since last action', 'Comment']
     List<String> reportProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'reportStatus', 'dateChanged', 'changedBy', 'delta', 'comment']
     List<String> reportSummaryHeaders = commonProjectHeaders + ['Stage', 'Stage from', 'Stage to', 'Activity Count', 'Current Report Status', 'Date of action', 'No. weekdays since previous action', 'Actioned By: user number', 'Actioned by: user name']
-    List<String> reportSummaryProperties = commonProjectProperties + ['stageName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
+    List<String> reportSummaryProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
 
-    XlsExporter exporter
-
-    Map<String, AdditionalSheet> sheets
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
     AdditionalSheet budgetSheet
 
-
-    List<String> tabsToExport
-
     Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
-    UserService userService
-    ReportingService reportingService
     ProjectService projectService
 
-    public ProjectXlsExporter(UserService userService, ReportingService reportingService, ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
-        this.userService = userService
-        this.reportingService = reportingService
-        this.exporter = exporter
-        this.tabsToExport = tabsToExport
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
+        super(exporter, tabsToExport, dateFormat)
         this.projectService = projectService
-        this.sheets = new HashMap<String, AdditionalSheet>()
-        exporter.setDateCellFormat(dateFormat)
     }
 
     public void export(Map project) {
@@ -423,69 +405,14 @@ class ProjectXlsExporter extends ProjectExporter {
     private void exportReports(Map project) {
         if (shouldExport("Reports")) {
             AdditionalSheet sheet = getSheet("Reports", reportHeaders)
-            int row = sheet.getSheet().lastRowNum
-            SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
-            List data = []
-            project.reports?.each { report ->
-                Map statusCounts = [:].withDefault{1}
-                Map previousChange = null
-                report.statusChangeHistory?.eachWithIndex { change, i ->
-                    String statusChange = change.status
-                    if (change.category) {
-                        statusChange = change.category + ' '+change.status
-                    }
-                    int count = statusCounts[statusChange]
-                    statusCounts[change.status] = count + 1
-                    String noTimeStr = format.format(change.dateChanged)
-                    Date noTime = format.parse(noTimeStr)
-                    int delta = previousChange ? Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged) : 0
-                    previousChange = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate, reportStatus:statusChange+" "+count, changedBy:change.changedBy, dateChanged: noTime, delta:delta, comment:change.comment]
-                    data << previousChange
-                }
-            }
-            sheet.add(data, reportProperties, row + 1)
+            exportReports(sheet, project, reportProperties)
         }
     }
 
     private void exportReportSummary(Map project) {
         if (shouldExport("Report Summary")) {
             AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
-            int row = sheet.getSheet().lastRowNum
-            SimpleDateFormat format = new SimpleDateFormat(DATE_CELL_FORMAT)
-            List data = []
-            project.reports?.each { report ->
-
-                Map reportDetails = project + [stageName:report.name, fromDate:report.fromDate, toDate:report.toDate]
-                reportDetails.activityCount = reportingService.getActivityCountForReport(report)
-                if (report.statusChangeHistory) {
-                    int numChanges = report.statusChangeHistory.size()
-                    def change = report.statusChangeHistory[numChanges-1]
-                    String noTimeStr = format.format(change.dateChanged)
-                    Date noTime = format.parse(noTimeStr)
-                    int delta = 0
-                    if (numChanges > 1) {
-                        def previousChange = report.statusChangeHistory[numChanges-2]
-                        delta = Report.weekDaysBetween(previousChange.dateChanged, change.dateChanged)
-
-                    }
-                    reportDetails.reportStatus = change.status
-                    reportDetails.changedBy = change.changedBy
-                    if (change.changedBy) {
-                        reportDetails.changedByName = userService.lookupUserDetails(change.changedBy).displayName
-                    }
-                    reportDetails.dateChanged = noTime
-                    reportDetails.delta = delta
-
-                    data << reportDetails
-                }
-                else if (report.toDate <= new Date()) {
-                    reportDetails.reportStatus = 'Unpublished (no action – never been submitted)'
-                    reportDetails.delta = 0
-
-                    data << reportDetails
-                }
-            }
-            sheet.add(data, reportSummaryProperties, row + 1)
+            exportReportSummary(sheet, project, reportSummaryProperties)
         }
     }
 
@@ -557,31 +484,5 @@ class ProjectXlsExporter extends ProjectExporter {
         budgetSheet
     }
 
-    boolean shouldExport(String sheetName) {
-        return !tabsToExport || tabsToExport.contains(sheetName)
-    }
 
-    AdditionalSheet getSheet(String name, headers) {
-        if (!sheets[name]) {
-            sheets[name] = exporter.addSheet(name, headers)
-        }
-        sheets[name]
-    }
-
-    class StringToDoublePropertyGetter extends PropertyGetter<Object, Number> {
-
-        StringToDoublePropertyGetter(String propertyName) {
-            super(propertyName)
-        }
-
-        @Override
-        protected format(Object value) {
-            try {
-                return Double.parseDouble(value?.toString())
-            }
-            catch (NumberFormatException e) {
-                return null
-            }
-        }
-    }
 }
