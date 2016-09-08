@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 
+import static au.org.ala.ecodata.Status.DELETED
+
 class OutputController {
 
     def outputService, commonService
@@ -108,4 +110,28 @@ class OutputController {
         Map results = [outputSpeciesId: UUID.randomUUID().toString()]
         render text: results as JSON, contentType: 'application/json'
     }
+
+    /**
+     * Request body should be JSON formatted of the form:
+     * {
+     *     "property1":value1,
+     *     "property2":value2,
+     *     etc
+     * }
+     * where valueN may be a primitive type or array.
+     * The criteria are ANDed together.
+     * If a property is supplied that isn't a property of the project, it will not cause
+     * an error, but no results will be returned.  (this is an effect of mongo allowing
+     * a dynamic schema)
+     *
+     * @return a list of the outputs that match the supplied criteria
+     */
+    @RequireApiKey
+    def search() {
+        def searchCriteria = request.JSON
+
+        def outputList = outputService.search(searchCriteria)
+        asJson outputs:outputList
+    }
+
 }

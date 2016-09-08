@@ -345,4 +345,31 @@ class OutputService {
 
         output
     }
+
+
+    /**
+     * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
+     * Multiple properties will be ANDed together when producing results.
+     *
+     * @return a list of the outputs that match the supplied criteria
+     */
+    List<Map> search(Map searchCriteria) {
+
+        def criteria = Output.createCriteria()
+        def outputs = criteria.list {
+            if (!searchCriteria['status']) {
+                ne("status", DELETED)
+            }
+            searchCriteria.each { prop, value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                } else {
+                    eq(prop, value)
+                }
+            }
+
+        }
+        outputs.collect { toMap(it) }
+    }
 }
