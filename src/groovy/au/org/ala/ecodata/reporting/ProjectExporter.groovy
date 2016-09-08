@@ -1,14 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.Project
-import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
-import grails.util.Holders
 
 abstract class ProjectExporter extends TabbedExporter {
 
-    public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = [], String dateFormat = TabbedExporter.DATE_CELL_FORMAT) {
-        super(exporter, tabsToExport, dateFormat)
+    public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = []) {
+        super(exporter, tabsToExport)
     }
     void export(Map project) {
         // to be overridden if needed

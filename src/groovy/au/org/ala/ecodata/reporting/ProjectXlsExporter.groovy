@@ -92,8 +92,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     ProjectService projectService
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, String dateFormat = DATE_CELL_FORMAT) {
-        super(exporter, tabsToExport, dateFormat)
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport) {
+        super(exporter, tabsToExport)
         this.projectService = projectService
     }
 

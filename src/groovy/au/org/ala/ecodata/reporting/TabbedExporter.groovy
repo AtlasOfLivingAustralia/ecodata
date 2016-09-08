@@ -25,10 +25,14 @@ class TabbedExporter {
     List<String> tabsToExport
     XlsExporter exporter
 
-    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], String dateFormat = DATE_CELL_FORMAT) {
+    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = []) {
         this.exporter = exporter
         this.sheets = new HashMap<String, AdditionalSheet>()
         this.tabsToExport = tabsToExport != null ? tabsToExport : []
+        exporter.setDateCellFormat(DATE_CELL_FORMAT)
+    }
+
+    public setDateFormat(String dateFormat) {
         exporter.setDateCellFormat(dateFormat)
     }
 
