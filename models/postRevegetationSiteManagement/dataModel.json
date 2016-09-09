@@ -1,0 +1,210 @@
+{
+  "dataModel":[
+    {
+      "dataType":"number",
+      "name":"postRevegetationAreaManaged",
+      "description":"",
+      "validate":"required,min[0]"
+
+    },
+    {
+      "dataType":"list",
+      "name":"postRevegManagementActions",
+      "columns":[
+        {
+          "dataType":"text",
+          "name":"action",
+          "constraints":["Mulching", "Watering", "Other"],
+          "validate":"required",
+          "description":""
+        },
+        {
+          "dataType":"number",
+          "name":"areaManagedHa",
+          "validate":"required, min[0]",
+          "description":""
+        },
+        {
+          "dataType":"text",
+          "name":"notes",
+          "description":""
+        }
+      ]
+
+    },
+    {
+      "columns":[
+        {
+          "validate":"required, min[0]",
+          "name":"numberPlanted",
+          "dataType":"number"
+        },
+        {
+          "dataType":"species",
+          "name":"plantedSpecies",
+          "description":""
+        }
+      ],
+      "dataType":"list",
+      "name":"infillPlantings"
+    },
+    {
+      "columns":[
+        {
+          "dataType":"species",
+          "name":"pestAnimalsTargetSpecies",
+          "description":"The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry."
+        }
+      ],
+      "dataType":"list",
+      "name":"pestManagement"
+    },
+    {
+      "columns":[
+        {
+          "dataType":"species",
+          "name":"weedsTargetSpecies",
+          "description":"The species targeted for control. Start typing a scientific or a common name and autofill will complete the entry)."
+        }
+      ],
+      "dataType":"list",
+      "name":"weedManagement"
+    }
+  ],
+  "viewModel":[
+
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"postRevegetationAreaManaged",
+          "type":"number",
+          "preLabel":"Area managed (Ha)"
+        }
+      ],
+      "class":"output-section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h4>Site Management Actions</h4>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "allowHeaderWrap":"true",
+      "computed":null,
+      "columns":[
+
+        {
+          "type":"selectOne",
+          "source":"action",
+          "title":"Activity type"
+        },
+        {
+          "type":"number",
+          "source":"areaManagedHa",
+          "title":"Area managed (Ha)"
+        },
+        {
+          "type":"textarea",
+          "name":"notes",
+          "title":"Comments / notes"
+        }
+
+      ],
+      "userAddedRows":true,
+      "source":"postRevegManagementActions",
+      "title":"Management Actions",
+      "type":"table",
+      "class":"output-section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h4>Infill plantings</h4>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "allowHeaderWrap":"true",
+      "computed":null,
+      "columns":[
+        {
+          "source":"plantedSpecies",
+          "title":"Species planted:",
+          "type":"autocomplete"
+        },
+        {
+          "source":"numberPlanted",
+          "title":"Number planted:",
+          "type":"number"
+        }
+      ],
+      "userAddedRows":true,
+      "source":"infillPlantings",
+      "title":"Infill plantings",
+      "type":"table",
+      "class":"output-section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h4>Pest Management</h4>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "allowHeaderWrap":"true",
+      "computed":null,
+      "columns":[
+        {
+          "source":"pestAnimalsTargetSpecies",
+          "title":"Pest species managed\t(name):",
+          "type":"autocomplete"
+        }
+      ],
+      "userAddedRows":true,
+      "source":"pestManagement",
+      "title":"Pest Animals",
+      "type":"table",
+      "class":"output-section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h4>Weed Management</h4>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "allowHeaderWrap":"true",
+      "computed":null,
+      "columns":[
+        {
+          "source":"weedsTargetSpecies",
+          "title":"Weed species managed\t(name):",
+          "type":"autocomplete"
+        }
+      ],
+      "userAddedRows":true,
+      "source":"weedManagement",
+      "title":"Weeds",
+      "type":"table",
+      "class":"output-section"
+    }
+  ]
+}
