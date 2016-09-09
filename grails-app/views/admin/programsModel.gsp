@@ -115,19 +115,6 @@
 
 </form>
 
-<div class="expandable-debug clearfix">
-    <hr />
-    <h3>Debug</h3>
-    <div>
-        <h4>KO model</h4>
-        <pre data-bind="text:ko.toJSON($root,null,2)"></pre>
-        <h4>Input model</h4>
-        <pre>${programsModel}</pre>
-        <h4>Programs</h4>
-        <pre data-bind="text:ko.toJSON(programs,null,2)"></pre>
-    </div>
-</div>
-
 <r:script>
     $(function(){
 
