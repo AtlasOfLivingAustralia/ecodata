@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
+
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -14,12 +14,13 @@ import java.text.SimpleDateFormat
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 import static groovyx.gpars.actor.Actors.actor
 
+@AlaSecured("ROLE_ADMIN")
 class AdminController {
 
     private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
 
     def outputService, activityService, siteService, projectService, authService,
-        collectoryService, organisationService,
+        collectoryService, organisationService, hubService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
@@ -509,4 +510,67 @@ class AdminController {
         render ([message:' ok'] as JSON)
     }
 
+    def metadata() {
+        [activitiesMetadata: metadataService.activitiesModel()]
+    }
+
+    def activityModel() {
+        [activitiesModel: metadataService.activitiesModel()]
+    }
+
+    def programsModel() {
+        List activityTypesList = metadataService.activitiesList().collect {key, value -> [name:key, list:value]}.sort{it.name}
+
+        [programsModel: metadataService.programsModel(), activityTypes:activityTypesList]
+    }
+
+    def updateActivitiesModel() {
+        def model = request.JSON
+        log.debug model
+        metadataService.updateActivitiesModel(model)
+        flash.message = "Activity model updated."
+        def result = model
+        render result
+    }
+
+    def updateProgramsModel() {
+        def model = request.JSON
+        log.debug model
+        metadataService.updateProgramsModel(model)
+        flash.message = "Programs model updated."
+        def result = model
+        render result
+    }
+
+   def outputModels() {
+        def model = [activitiesModel: metadataService.activitiesModel()]
+        if (params.open) {
+            model.open = params.open
+        }
+        model
+    }
+
+    def rawOutputModels() {
+        def model = [activitiesModel: metadataService.activitiesModel()]
+        if (params.open) {
+            model.open = params.open
+        }
+        model
+    }
+
+    def getOutputDataModel(String id) {
+        log.debug(id)
+        def model = metadataService.getOutputDataModel(id)
+        render model as JSON
+    }
+
+    def updateOutputDataModel(String id) {
+        def model = request.JSON
+        log.debug "template = ${id} model = ${model}"
+        log.debug "model class is ${model.getClass()}"
+        metadataService.updateOutputDataModel(model, id)
+        flash.message = "Output data model updated."
+        def result = model
+        render result
+    }
 }

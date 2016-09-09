@@ -33,6 +33,7 @@
 
 
         </style>
+        <r:require module="admin"/>
     </head>
 
     <body>
@@ -41,7 +42,7 @@
             <table style="width: 100%">
                 <tr>
                     <td><g:link class="discreet" controller="home" action="index">Home</g:link><fc:navSeparator/><g:link class="discreet" action="index">Administration</g:link><fc:navSeparator/><g:pageProperty name="page.pageTitle"/></td>
-                    <td style="text-align: right"><span><g:pageProperty name="page.adminButtonBar"/></span></td>
+
                 </tr>
             </table>
         </legend>
@@ -54,7 +55,13 @@
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'settings')}" title="Settings" />
                     %{--<ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}" title="Metadata" />--}%
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'audit')}" title="Audit" />
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'metadata')}" title="Raw activity model" />
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'activityModel')}" title="Activity model" />
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'rawOutputModels')}" title="Raw output models" />
+                    <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'programsModel')}" title="Programs model" />
+
                 </ul>
+                <div style="text-align: center; margin-top: 30px;"><g:pageProperty name="page.adminButtonBar"/></div>
             </div>
 
             <div class="span9">

@@ -30,4 +30,17 @@ modules = {
         dependsOn 'jquery'
         resource url: 'js/vkbeautify.0.99.00.beta.js'
     }
+
+    admin {
+        dependsOn 'application, vkbeautify, app_bootstrap'
+        resource url: 'vendor/jquery-ui/jquery-ui-1.9.2.custom.min.js'
+        resource url: 'vendor/jquery-validation-engine/jquery.validationEngine.js'
+        resource url: 'vendor/jquery-validation-engine/jquery.validationEngine-en.js'
+        resource url: 'vendor/knockoutjs/knockout-3.3.0.min.js'
+        resource url: 'js/knockout-dates.js'
+        resource url: 'vendor/knockoutjs/knockout-sortable.min.js'
+        resource url: 'js/activityModel.js'
+        resource url: 'js/programModel.js'
+
+    }
 }
