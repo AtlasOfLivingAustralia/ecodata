@@ -44,4 +44,8 @@ class EmailService {
             log.error("Failed to send email: ", e)
         }
     }
+
+    def emailSupport(String subjectLine, String body) {
+        sendEmail(subjectLine, body, [grailsApplication.config.ecodata.support.email.address])
+    }
 }
