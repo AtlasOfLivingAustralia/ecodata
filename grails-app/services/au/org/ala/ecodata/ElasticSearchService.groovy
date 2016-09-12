@@ -78,6 +78,7 @@ class ElasticSearchService {
     RecordService recordService
     MetadataService metadataService
     OrganisationService organisationService
+    EmailService emailService
 
 
     Node node;
@@ -124,6 +125,13 @@ class ElasticSearchService {
 
         } catch (Exception e) {
             log.error "Error indexing document: ${docJson.toString(true)}\nError: ${e}", e
+            String subject = "Indexing failed on server ${grailsApplication.config.grails.serverURL}"
+            String body = "Type: "+getDocType(doc)+"\n"
+            body += "Index: "+index+"\n"
+            body += "Error: "+e.getMessage()+"\n"
+            body += "Document: "+docJson.toString(true)
+
+            emailService.emailSupport(subject, body)
         }
     }
 
@@ -394,7 +402,7 @@ class ElasticSearchService {
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
                 siteMap = prepareSiteForIndexing(siteMap, true)
-                indexDoc(siteMap, DEFAULT_INDEX)
+                    indexDoc(siteMap, DEFAULT_INDEX)
                 break;
 
             case Record.class.name:
@@ -489,6 +497,7 @@ class ElasticSearchService {
         catch (Exception e) {
             log.error("Unable to index documents for site: "+siteMap?.siteId,e)
         }
+
 
         siteMap
     }
@@ -626,8 +635,8 @@ class ElasticSearchService {
                 siteMap["className"] = Site.class.name
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
-                    indexDoc(siteMap, DEFAULT_INDEX)
-                }
+                        indexDoc(siteMap, DEFAULT_INDEX)
+                    }
                 catch (Exception e) {
                     log.error("Unable index site: "+siteMap?.siteId, e)
                 }
