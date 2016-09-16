@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 
 class ApiKeyFilters {
@@ -24,7 +25,6 @@ class ApiKeyFilters {
                 Map result = [error: '', status : 401]
 
                 if (controllerClass?.isAnnotationPresent(PreAuthorise) || method?.isAnnotationPresent(PreAuthorise)) {
-
                     // What rules needs to be satisfied?
                     PreAuthorise pa = method.getAnnotation(PreAuthorise) ?: controllerClass.getAnnotation(PreAuthorise)
 
@@ -69,24 +69,27 @@ class ApiKeyFilters {
 
                 } else {
 
-                    def whiteList = buildWhiteList()
-                    def clientIp = getClientIP(request)
-                    def ipOk = checkClientIp(clientIp, whiteList)
+                    // Allow migration to the AlaSecured annotation.
+                    if (!controllerClass?.isAnnotationPresent(AlaSecured) && !method?.isAnnotationPresent(AlaSecured)) {
+                        def whiteList = buildWhiteList()
+                        def clientIp = getClientIP(request)
+                        def ipOk = checkClientIp(clientIp, whiteList)
 
-                    // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
-                    if (!ipOk) {
-                        log.warn("Non-authorised IP address - ${clientIp}" )
-                        result.status = 403
-                        result.error = "not authorised"
-                    }
-
-                    // Support RequireApiKey on top of ip restriction.
-                    if(controllerClass?.isAnnotationPresent(RequireApiKey) || method?.isAnnotationPresent(RequireApiKey)){
-                        def keyOk = commonService.checkApiKey(request.getHeader('Authorization')).valid
-                        if(!keyOk) {
-                            log.warn("No valid api key for ${controllerName}/${actionName}")
+                        // All request without PreAuthorise annotation needs to be secured by IP for backward compatibility
+                        if (!ipOk) {
+                            log.warn("Non-authorised IP address - ${clientIp}" )
                             result.status = 403
                             result.error = "not authorised"
+                        }
+
+                        // Support RequireApiKey on top of ip restriction.
+                        if(controllerClass?.isAnnotationPresent(RequireApiKey) || method?.isAnnotationPresent(RequireApiKey)){
+                            def keyOk = commonService.checkApiKey(request.getHeader('Authorization')).valid
+                            if(!keyOk) {
+                                log.warn("No valid api key for ${controllerName}/${actionName}")
+                                result.status = 403
+                                result.error = "not authorised"
+                            }
                         }
                     }
                 }
