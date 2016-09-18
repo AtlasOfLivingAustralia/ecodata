@@ -1,8 +1,8 @@
 package au.org.ala.ecodata
+
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
-import groovy.json.JsonParserType
-import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -19,7 +19,7 @@ class AdminController {
     private static int DEFAULT_REPORT_DAYS_TO_COMPLETE = 43
 
     def outputService, activityService, siteService, projectService, authService,
-        collectoryService, organisationService,
+        collectoryService, organisationService, hubService,
         commonService, cacheService, metadataService, elasticSearchService, documentService, recordImportService, speciesReMatchService
     def beforeInterceptor = [action:this.&auth, only:['index','tools','settings','audit']]
 
@@ -40,7 +40,11 @@ class AdminController {
     }
 
     def index() {}
+
+    @AlaSecured("ROLE_ADMIN")
     def tools() {}
+
+    @AlaSecured("ROLE_ADMIN")
     def users() {
         def userList = authService.getAllUserNameList()
         [ userNamesList: userList ]
@@ -55,6 +59,7 @@ class AdminController {
             render (status: 200)
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def settings() {
         def settings = [
                 [key:'app.external.model.dir', value: grailsApplication.config.app.external.model.dir,
@@ -80,6 +85,7 @@ class AdminController {
         model
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def reloadConfig = {
         // clear any cached external config
         cacheService.clear()
@@ -131,6 +137,7 @@ class AdminController {
         }
     }
 
+    @RequireApiKey
     def getBare(String entity, String id) {
         def map = [:]
         switch (entity) {
@@ -143,6 +150,7 @@ class AdminController {
         asJson map
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def showCache() {
         render cacheService.cache
     }
@@ -150,12 +158,14 @@ class AdminController {
     /**
      * Re-index all docs with ElasticSearch
      */
+    @RequireApiKey
     def reIndexAll() {
         def resp = elasticSearchService.indexAll()
         flash.message = "Search index re-indexed - ${resp?.size()} docs"
         render "Indexing done"
     }
 
+    @RequireApiKey
     def clearMetadataCache() {
         // clear any cached external config
         cacheService.clear()
@@ -163,6 +173,7 @@ class AdminController {
         render 'done'
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def count() {
         def res = [
             projects: Project.collection.count(),
@@ -174,6 +185,7 @@ class AdminController {
         render res
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def updateDocumentThumbnails() {
 
         def results = Document.findAllByStatusAndType('active', 'image')
@@ -186,6 +198,7 @@ class AdminController {
      * Refreshes site metadata (geographical facets & geocodes) for every site in the system.
      * @return {"result":"success"} if the operation is successful.
      */
+    @AlaSecured("ROLE_ADMIN")
     def reloadSiteMetadata() {
         String dateStr = params.lastUpdatedBefore
         Date date = null
@@ -198,6 +211,7 @@ class AdminController {
         render result as grails.converters.JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def updateSitesWithoutCentroids() {
         def code = 'success'
 
@@ -243,6 +257,7 @@ class AdminController {
         render result as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def linkWithAuth(){
         actor {
             recordImportService.linkWithAuth()
@@ -251,6 +266,7 @@ class AdminController {
         render model as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def linkWithImages(){
         actor {
             recordImportService.linkWithImages()
@@ -259,6 +275,7 @@ class AdminController {
         render model as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def importFromUrl(){
         def model = [:]
 
@@ -298,6 +315,7 @@ class AdminController {
         render model as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def importFile(){
 
         def model = [:]
@@ -321,10 +339,16 @@ class AdminController {
         render model as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def audit() { }
+
+    @AlaSecured("ROLE_ADMIN")
     def auditMessagesByEntity() { }
+
+    @AlaSecured("ROLE_ADMIN")
     def auditMessagesByProject() { }
 
+    @AlaSecured("ROLE_ADMIN")
     private boolean createStageReportsFromTimeline(project) {
         def timeline = project.timeline
 
@@ -397,6 +421,7 @@ class AdminController {
 
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def populateStageReportStatus(project) {
 
 
@@ -459,6 +484,7 @@ class AdminController {
 
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def createStageReports(String projectId) {
 
         def reports = []
@@ -504,9 +530,82 @@ class AdminController {
     * Initiate species rematch.
     */
 
+    @AlaSecured("ROLE_ADMIN")
     def initiateSpeciesRematch() {
         speciesReMatchService.rematch()
         render ([message:' ok'] as JSON)
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def metadata() {
+        [activitiesMetadata: metadataService.activitiesModel()]
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def activityModel() {
+        [activitiesModel: metadataService.activitiesModel()]
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def programsModel() {
+        List activityTypesList = metadataService.activitiesList().collect {key, value -> [name:key, list:value]}.sort{it.name}
+
+        [programsModel: metadataService.programsModel(), activityTypes:activityTypesList]
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def updateActivitiesModel() {
+        def model = request.JSON
+        log.debug model
+        metadataService.updateActivitiesModel(model)
+        flash.message = "Activity model updated."
+        def result = model
+        render result
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def updateProgramsModel() {
+        def model = request.JSON
+        log.debug model
+        metadataService.updateProgramsModel(model)
+        flash.message = "Programs model updated."
+        def result = model
+        render result
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def outputModels() {
+        def model = [activitiesModel: metadataService.activitiesModel()]
+        if (params.open) {
+            model.open = params.open
+        }
+        model
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def rawOutputModels() {
+        def model = [activitiesModel: metadataService.activitiesModel()]
+        if (params.open) {
+            model.open = params.open
+        }
+        model
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def getOutputDataModel(String id) {
+        log.debug(id)
+        def model = metadataService.getOutputDataModel(id)
+        render model as JSON
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def updateOutputDataModel(String id) {
+        def model = request.JSON
+        log.debug "template = ${id} model = ${model}"
+        log.debug "model class is ${model.getClass()}"
+        metadataService.updateOutputDataModel(model, id)
+        flash.message = "Output data model updated."
+        def result = model
+        render result
+    }
 }

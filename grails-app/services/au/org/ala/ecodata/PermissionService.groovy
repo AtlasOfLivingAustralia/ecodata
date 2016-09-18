@@ -119,6 +119,11 @@ class PermissionService {
         up.collect { it.userId } // return just a list of userIds
     }
 
+    def getUsersForSite(String siteId) {
+        def up = UserPermission.findAllByEntityIdAndEntityType(siteId, Site.class.name)
+        up.collect { it.userId } // return just a list of userIds
+    }
+
     List<String> getProjectsForUser(String userId, AccessLevel... accessLevels) {
         UserPermission.withCriteria {
             eq "userId", userId

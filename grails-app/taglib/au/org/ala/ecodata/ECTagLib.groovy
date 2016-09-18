@@ -142,4 +142,68 @@ class ECTagLib {
             }
         }
     }
+
+    /**
+     * @attr name
+     * @attr targetField
+     * @attr printable
+     * @attr size optionally overrides the bootstrap size class for the input
+     */
+    def datePicker = { attrs ->
+        /**
+         <input data-bind="datepicker:startDate.date" name="startDate" id="startDate" type="text" size="16"
+         data-validation-engine="validate[required]" class="input-xlarge"/>
+         <span class="add-on open-datepicker"><i class="icon-th"></i></span>
+         */
+
+        def mb = new MarkupBuilder(out)
+
+        if (!attrs.printable) {
+            def inputAttrs = [
+                    "data-bind":"datepicker:${attrs.targetField}",
+                    name:"${attrs.name}",
+                    id:"${attrs.id ?: attrs.name}",
+                    type:'text',
+                    size:'16',
+                    class: attrs.size ?: 'input-xlarge'
+            ]
+
+            def ignoreList = ['name', 'id']
+            attrs.each {
+                if (!ignoreList.contains(it.key)) {
+                    inputAttrs[it.key] = it.value
+                }
+            }
+
+            if (attrs.required) {
+                inputAttrs["data-validation-engine"] = "validate[required]"
+            }
+
+            mb.input(inputAttrs) {
+            }
+
+            mb.span(class:'add-on open-datepicker') {
+                mb.i(class:'icon-th') {
+                    mkp.yieldUnescaped("&nbsp;")
+                }
+            }
+        } else {
+            def inputAttrs = [
+                    name:"${attrs.name}",
+                    id:"${attrs.id ?: attrs.name}",
+                    class: (attrs.size ?: 'span6') + ' printed-form-field'
+            ]
+
+            def ignoreList = ['name', 'id']
+            attrs.each {
+                if (!ignoreList.contains(it.key)) {
+                    inputAttrs[it.key] = it.value
+                }
+            }
+            mb.span(inputAttrs) {
+                mkp.yieldUnescaped("&nbsp;")
+            }
+        }
+    }
+
 }

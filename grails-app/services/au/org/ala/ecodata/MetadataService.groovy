@@ -24,7 +24,7 @@ class MetadataService {
 
     private static final int BATCH_LIMIT = 200
 
-    def grailsApplication, webService, cacheService, messageSource, excelImportService
+    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService
 
     def activitiesModel() {
         return cacheService.get('activities-model',{
@@ -109,6 +109,8 @@ class MetadataService {
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
         // make sure it gets reloaded
         cacheService.clear(templateName + '-model')
+        String bodyText = "The output data model ${model} has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
+        emailService.emailSupport("Output model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
     }
 
     def getModelName(output, type) {
@@ -171,12 +173,16 @@ class MetadataService {
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'activities-model', 'json')
         // make sure it gets reloaded
         cacheService.clear('activities-model')
+        String bodyText = "The activities-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
+        emailService.emailSupport("Activities model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
     }
 
     def updateProgramsModel(model) {
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, '', 'programs-model', 'json')
         // make sure it gets reloaded
         cacheService.clear('programs-model')
+        String bodyText = "The programs-model has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
+        emailService.emailSupport("Program model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
     }
 
     // Return the Nvis classes for the supplied location. This is an interim solution until the spatial portal can be fixed to handle

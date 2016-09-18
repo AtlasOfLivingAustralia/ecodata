@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
+import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 
@@ -17,6 +18,7 @@ class MetadataController {
     }
 
     @RequireApiKey
+    @AlaSecured("ROLE_ADMIN")
     def updateActivitiesModel() {
         def model = request.JSON
         //log.debug "Model=${model.getClass()}"
@@ -30,6 +32,7 @@ class MetadataController {
     }
 
     @RequireApiKey
+    @AlaSecured("ROLE_ADMIN")
     def updateProgramsModel() {
         def model = request.JSON
         metadataService.updateProgramsModel(model.model.toString(4))
@@ -52,6 +55,7 @@ class MetadataController {
     }
 
     @RequireApiKey
+    @AlaSecured("ROLE_ADMIN")
     def updateOutputDataModel(String id) {
         //log.debug "id=${id}"
         def model = request.JSON

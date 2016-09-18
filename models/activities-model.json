@@ -1967,6 +1967,19 @@
             "name": "Works Planning and Risk v2",
             "outputs": [],
             "type": "Activity"
+        },
+        {
+            "category": "Implementation actions",
+            "supportsPhotoPoints": true,
+            "supportsSites": true,
+            "name": "Post revegetation site management",
+            "outputs": ["Post revegetation site management"],
+            "outputConfig": [{
+                "outputName": "Post revegetation site management",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "type": "Activity"
         }
     ],
     "outputs": [
@@ -5445,6 +5458,11 @@
             "template": "performanceSelfAssessment",
             "scores":[],
             "name": "Performance Self Assessment"
+        },
+        {
+            "template": "postRevegetationSiteManagement",
+            "scores":[],
+            "name": "Post revegetation site management"
         }
     ],
     "selectedActivity": {
