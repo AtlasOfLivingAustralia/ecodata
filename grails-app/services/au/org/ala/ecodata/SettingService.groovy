@@ -49,7 +49,7 @@ class SettingService {
             // See if the default value is in messages.properties
             defaultValue = messageSource.getMessage(key, null, Locale.default)
         } catch (NoSuchMessageException ex) {
-            log.info "Requested i18n message not found for: ${key}"
+            log.debug "Requested i18n message not found for: ${key}"
         }
 
         defaultValue

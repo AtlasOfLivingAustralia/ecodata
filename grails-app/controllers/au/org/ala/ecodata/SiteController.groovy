@@ -132,16 +132,37 @@ class SiteController {
     }
 
     @RequireApiKey
-    def createPoi(String id) {
+    def createOrUpdatePoi(String id) {
         def props = request.JSON
 
         if (!id) {
             render status:400, text:'Site ID is mandatory'
             return
         }
-        def result = siteService.createPoi(id, props)
+        def result = siteService.updatePoi(id, props)
         if (result.status == 'ok') {
-            def message = [message:'created', poiId: result.poiId]
+            def message = [message:'ok', poiId: result.poiId]
+            asJson(message)
+        }
+        else {
+            render status:400, text:result.error
+        }
+    }
+
+    /**
+     * Deletes a POI associated with a site.
+     * @param id the site id
+     * @param poiId the POI to delete.
+     */
+    @RequireApiKey
+    def deletePoi(String id) {
+        if (!id) {
+            render status:400, text:'Site ID is mandatory'
+            return
+        }
+        def result = siteService.deletePoi(id, params.poiId)
+        if (result.status == 'deleted') {
+            def message = [message:'deleted', poiId: result.poiId]
             asJson(message)
         }
         else {
