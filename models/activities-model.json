@@ -5477,12 +5477,136 @@
         },
         {
             "template": "postRevegetationInfillPlantings",
-            "scores":[],
+            "scores":[
+                {
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total number of seedlings planted.",
+                    "name": "totalNumberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "Number of plants planted",
+                    "gmsId": "RVN",
+                    "units": ""
+                },
+                {
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total number of species occurrence records as an aggregate of the number of species in each revegetation activity. Individual species may be multi-counted if the same species has been planted in multiple activities.",
+                    "name": "species",
+                    "aggregationType": "COUNT",
+                    "label": "Total No. of species occurrence records"
+                },
+                {
+                    "groupBy": "output:species.name",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "barchart",
+                    "description": "The number of seedlings of each species planted to establish native vegetation in revegetation sites.",
+                    "name": "numberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "No. of plants planted by species"
+                },
+                {
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "The total weight of seed sown in revegetation plots.",
+                    "name": "totalSeedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown",
+                    "gmsId": "RVSS",
+                    "units": "Kg"
+                },
+                {
+                    "groupBy": "output:species.name",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "barchart",
+                    "description": "The weight of seed of each species sown to establish native vegetation in revegetation sites.",
+                    "name": "seedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown by species",
+                    "units": ""
+                },
+                {
+                    "groupBy": "output:matureHeight",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "Total number of plants planted which will grow to a mature height of greater than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+                    "name": "numberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "No. of plants planted > 2 metres in height",
+                    "filterBy": "> 2 metres",
+                    "gmsId": "RVT2A"
+                },
+                {
+                    "groupBy": "output:matureHeight",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "Kilograms of seed sown of species expected to grow  > 2 metres in height",
+                    "name": "seedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown of species expected to grow > 2 metres in height",
+                    "filterBy": "> 2 metres",
+                    "gmsId": "RVS2A"
+                },
+                {
+                    "groupBy": "output:matureHeight",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "Total number of plants planted which will grow to a mature height of less than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+                    "name": "numberPlanted",
+                    "aggregationType": "SUM",
+                    "label": "No. of plants planted < 2 metres in height",
+                    "filterBy": "< 2 metres",
+                    "gmsId": "RVT2B"
+                },
+                {
+                    "groupBy": "output:matureHeight",
+                    "listName": "planting",
+                    "category": "Revegetation",
+                    "displayType": "",
+                    "description": "Kilograms of seed sown of species expected to grow  < 2 metres in height",
+                    "name": "seedSownKg",
+                    "aggregationType": "SUM",
+                    "label": "Kilograms of seed sown of species expected to grow < 2 metres in height",
+                    "filterBy": "< 2 metres",
+                    "gmsId": "RVS2B",
+                    "units": "Kg"
+                }
+            ],
             "name": "Post revegetation infill plantings"
         },
         {
             "template": "postRevegetationPestManagement",
-            "scores":[],
+            "scores":[
+                {
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "displayType": "",
+                    "description": "Count of the number of activities which are undertaking pest management actions",
+                    "name": "partnerType",
+                    "aggregationType": "COUNT",
+                    "label": "No. of activities undertaking pest management"
+                },
+                {
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
+                    "displayType": "",
+                    "description": "The total area over which pest treatment activities have been undertaken.",
+                    "name": "totalPestAreaTreatedHa",
+                    "aggregationType": "SUM",
+                    "label": "Area covered (Ha) by pest treatment actions",
+                    "gmsId": "PMA",
+                    "units": "Ha",
+                    "groupBy": "output:treatmentEventType",
+                    "filterBy": "Initial treatment"
+
+                }
+            ],
             "name": "Post revegetation pest management"
         }
     ],
