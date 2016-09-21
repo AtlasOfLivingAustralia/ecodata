@@ -39,16 +39,6 @@
       "type": "row",
       "items": [
         {
-          "computed": null,
-          "source": "<h4>Pest Management</h4>",
-          "type": "literal"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
           "type": "col",
           "items": [
             {

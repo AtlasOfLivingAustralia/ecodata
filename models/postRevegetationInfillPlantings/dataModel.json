@@ -84,16 +84,6 @@
   ],
   "viewModel": [
     {
-      "type": "row",
-      "items": [
-        {
-          "computed": null,
-          "source": "<h4>Infill plantings</h4>",
-          "type": "literal"
-        }
-      ]
-    },
-    {
       "allowHeaderWrap": "true",
       "computed": null,
       "columns": [
