@@ -72,7 +72,13 @@
                         "Other (specify in notes)"
                     ],
                     "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description":"",
+                    "name":"eventNotes"
                 }
+
             ]
         },
         {
@@ -144,45 +150,58 @@
                     "source": "totalEventHrs",
                     "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
                     "type": "number"
+                },
+                {
+                    "source": "",
+                    "computed": null,
+                    "type": null
                 }
             ]}]},
             "title": "Please list the details of each event run as part of this activity:",
             "source": "events",
+            "allowHeaderWrap": "true",
             "columns": [
                 {
                     "title": "Type of event:",
                     "source": "eventType",
-                    "width": "15%",
+                    "width": "10%",
                     "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Purpose of event:",
                     "source": "eventPurpose",
-                    "width": "25%",
+                    "width": "15%",
                     "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Main industry type addressed:",
                     "source": "industryType",
-                    "width": "5%",
+                    "width": "10%",
                     "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "Topics covered:",
                     "source": "eventTopics",
-                    "width": "25%",
+                    "width": "20%",
                     "computed": null,
-                    "type": "text"
+                    "type": "textarea"
                 },
                 {
                     "title": "Event Duration (Hrs):",
                     "source": "eventDurationHrs",
-                    "width": "10%",
+                    "width": "5%",
                     "computed": null,
                     "type": "number"
+                },
+                {
+                    "title": "Notes:",
+                    "source": "eventNotes",
+                    "width": "20%",
+                    "computed": null,
+                    "type": "textarea"
                 }
             ],
             "class": "output-section",
