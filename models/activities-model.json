@@ -1973,12 +1973,23 @@
             "supportsPhotoPoints": true,
             "supportsSites": true,
             "name": "Post revegetation site management",
-            "outputs": ["Post revegetation site management"],
-            "outputConfig": [{
-                "outputName": "Post revegetation site management",
-                "optional": false,
-                "collapsedByDefault": false
-            }],
+            "outputs": ["Post revegetation site management", "Post revegetation infill plantings", "Post revegetation pest management"],
+            "outputConfig": [
+                {
+                    "outputName": "Post revegetation site management",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Post revegetation infill plantings",
+                    "optional": true,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Post revegetation pest management",
+                    "optional": true,
+                    "collapsedByDefault": false
+                }],
             "type": "Activity"
         }
     ],
@@ -5463,6 +5474,16 @@
             "template": "postRevegetationSiteManagement",
             "scores":[],
             "name": "Post revegetation site management"
+        },
+        {
+            "template": "postRevegetationInfillPlantings",
+            "scores":[],
+            "name": "Post revegetation infill plantings"
+        },
+        {
+            "template": "postRevegetationPestManagement",
+            "scores":[],
+            "name": "Post revegetation pest management"
         }
     ],
     "selectedActivity": {
