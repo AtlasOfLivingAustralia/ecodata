@@ -50,7 +50,7 @@ class DownloadService {
         }.onComplete {
             int days = grailsApplication.config.temp.file.cleanup.days as int
             String urlPrefix = params.downloadUrl ?: grailsApplication.config.async.download.url.prefix
-            String url = "${urlPrefix}${downloadId}"
+            String url = "${urlPrefix}${downloadId}?fileExtension=${fileExtension}"
             String body = groovyPageRenderer.render(template: "/email/downloadComplete", model:[url: url, days: days])
             emailService.sendEmail("Your download is ready", body, [params.email], [], params.systemEmail, params.senderEmail)
             if (outputStream) {

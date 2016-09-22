@@ -1,0 +1,95 @@
+{
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "totalPestAreaTreatedHa",
+      "description": "Total area covered by this treatment event (Ha). This area must not be double counted.",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "dwcAttribute": "treatmentType",
+      "name": "pestTreatmentType",
+      "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+      "constraints": [
+        "Initial treatment",
+        "Follow-up treatment"
+      ],
+      "validate": "required"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "species",
+          "name": "pestAnimalsTargetSpecies",
+          "description": "The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry."
+        }
+      ],
+      "dataType": "list",
+      "name": "pestManagement"
+    },
+    {
+      "dataType": "text",
+      "dwcAttribute": "eventRemarks",
+      "name": "pestManagementNotes"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "preLabel": "Total pest treatment area (Ha):",
+              "computed": null,
+              "source": "totalPestAreaTreatedHa",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "col",
+          "items": [
+            {
+              "preLabel": "Type of pest treatment event:",
+              "computed": null,
+              "source": "pestTreatmentType",
+              "type": "selectOne"
+            }
+          ]
+        }
+      ],
+      "class": "output-section"
+    },
+    {
+      "allowHeaderWrap": "true",
+      "computed": null,
+      "columns": [
+        {
+          "source": "pestAnimalsTargetSpecies",
+          "title": "Pest species managed\t(name):",
+          "type": "autocomplete"
+        }
+      ],
+      "userAddedRows": true,
+      "source": "pestManagement",
+      "title": "Pest Animals",
+      "type": "table",
+      "class": "output-section"
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "Pest management notes:",
+          "computed": null,
+          "source": "pestManagementNotes",
+          "type": "textarea"
+        }
+      ],
+      "class": "output-section"
+    }
+  ]
+}
