@@ -3,59 +3,59 @@
     "dataModel": [
         {
             "dataType": "number",
-            "description": "The number of written materials (incl. brochures) taken by participants at an event",
-            "name": "numberOfWrittenMaterials"
+            "name": "numberOfWrittenMaterials",
+            "description": "The number of written materials (incl. brochures) taken by participants at an event"
         },
         {
             "dataType": "number",
-            "description":"The number of unique written materials provided to the public. This could include social media posts, brochures, fliers or emails. Do not double count where multiple copies of the same written material have been distributed to many people.",
-            "name":"numberOfUniqueWrittenMaterials"
+            "name": "numberOfUniqueWrittenMaterials",
+            "description": "The number of unique written materials provided to the public. This could include social media posts, brochures, fliers or emails. Do not double count where multiple copies of the same written material have been distributed to many people."
         },
         {
             "dataType": "number",
-            "description": "The number of individual participants taking materials at an event",
-            "name": "numberOfMaterialRecipients"
+            "name": "numberOfMaterialRecipients",
+            "description": "The number of individual participants taking materials at an event"
         },
         {
             "dataType": "number",
-            "description": "The number of individual displays and presentations given at an event",
-            "name": "numberOfDisplays"
+            "name": "numberOfDisplays",
+            "description": "The number of individual displays and presentations given at an event"
         }
     ],
     "viewModel": [{
+        "type": "row",
         "items": [
             {
+                "computed": null,
+                "type": "col",
                 "items": [{
-                    "source": "numberOfUniqueWrittenMaterials",
-                    "computed": null,
                     "preLabel": "No. of unique materials produced:",
+                    "computed": null,
+                    "source": "numberOfUniqueWrittenMaterials",
                     "type": "number"
-                }],
-                "computed": null,
-                "type": "col"
+                }]
             },
             {
+                "computed": null,
+                "type": "col",
                 "items": [{
-                    "source": "numberOfMaterialRecipients",
-                    "computed": null,
                     "preLabel": "No. of Material Recipients:",
+                    "computed": null,
+                    "source": "numberOfMaterialRecipients",
                     "type": "number"
-                }],
-                "computed": null,
-                "type": "col"
+                }]
             },
             {
-                "items": [{
-                    "source": "numberOfDisplays",
-                    "computed": null,
-                    "preLabel": "No. of Displays at the event:",
-                    "type": "number"
-                }],
                 "computed": null,
-                "type": "col"
+                "type": "col",
+                "items": [{
+                    "preLabel": "No. of Displays at the event:",
+                    "computed": null,
+                    "source": "numberOfDisplays",
+                    "type": "number"
+                }]
             }
         ],
-        "class": "output-section",
-        "type": "row"
+        "class": "output-section"
     }]
 }

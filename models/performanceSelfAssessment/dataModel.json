@@ -1,448 +1,446 @@
-{
-  "dataModel": [
+{"dataModel": [
     {
-      "dataType": "text",
-      "name": "whoCompletedForm",
-      "description": "Who is the authorised person completing this self assessment?",
-      "validate": "required"
+        "dataType": "text",
+        "name": "whoCompletedForm",
+        "description": "Who is the authorised person completing this self assessment?",
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_1",
-      "description": "1.1\tThe regional NRM organisation is complying with governance responsibilities according to its statutory/incorporation or other legal obligations, including Work, Health and Safety obligations.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_1",
+        "description": "1.1\tThe regional NRM organisation is complying with governance responsibilities according to its statutory/incorporation or other legal obligations, including Work, Health and Safety obligations.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_1",
-      "description": "1.1\tThe regional NRM organisation is complying with governance responsibilities according to its statutory/incorporation or other legal obligations, including Work, Health and Safety obligations.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_1",
+        "description": "1.1\tThe regional NRM organisation is complying with governance responsibilities according to its statutory/incorporation or other legal obligations, including Work, Health and Safety obligations.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_2",
-      "description": "1.2\tThe regional NRM organisation has a process in place for formally reviewing the performance and composition of the regional NRM organisation’s board of directors.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_2",
+        "description": "1.2\tThe regional NRM organisation has a process in place for formally reviewing the performance and composition of the regional NRM organisation’s board of directors.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_2",
-      "description": "1.2\tThe regional NRM organisation has a process in place for formally reviewing the performance and composition of the regional NRM organisation’s board of directors.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_2",
+        "description": "1.2\tThe regional NRM organisation has a process in place for formally reviewing the performance and composition of the regional NRM organisation’s board of directors.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_3",
-      "description": "1.3\tThe regional NRM organisation has organisational decision making processes that are transparent and communicated regularly with the local community.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_3",
+        "description": "1.3\tThe regional NRM organisation has organisational decision making processes that are transparent and communicated regularly with the local community.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_3",
-      "description": "1.3\tThe regional NRM organisation has organisational decision making processes that are transparent and communicated regularly with the local community.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_3",
+        "description": "1.3\tThe regional NRM organisation has organisational decision making processes that are transparent and communicated regularly with the local community.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_4",
-      "description": "1.4\tThe regional NRM organisation ensures all staff and board of directors demonstrate Indigenous cultural awareness.",
-      "constraints": [
-        "",
-        "N/A",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_4",
+        "description": "1.4\tThe regional NRM organisation ensures all staff and board of directors demonstrate Indigenous cultural awareness.",
+        "constraints": [
+            "",
+            "N/A",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_4",
-      "description": "1.4\tThe regional NRM organisation ensures all staff and board of directors demonstrate Indigenous cultural awareness.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_4",
+        "description": "1.4\tThe regional NRM organisation ensures all staff and board of directors demonstrate Indigenous cultural awareness.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_5",
-      "description": "1.5\tThe regional NRM organisation has structures and processes in place to regularly communicate organisational and project performance achievements.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_5",
+        "description": "1.5\tThe regional NRM organisation has structures and processes in place to regularly communicate organisational and project performance achievements.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_5",
-      "description": "1.5\tThe regional NRM organisation has structures and processes in place to regularly communicate organisational and project performance achievements.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_5",
+        "description": "1.5\tThe regional NRM organisation has structures and processes in place to regularly communicate organisational and project performance achievements.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation1_6",
-      "description": "1.6\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation1_6",
+        "description": "1.6\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor1_6",
-      "description": "1.6\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor1_6",
+        "description": "1.6\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation2_1",
-      "description": "2.1\tThe regional NRM organisation is complying with financial responsibilities according to its statutory/incorporation or other legal obligations.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation2_1",
+        "description": "2.1\tThe regional NRM organisation is complying with financial responsibilities according to its statutory/incorporation or other legal obligations.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor2_1",
-      "description": "2.1\tThe regional NRM organisation is complying with financial responsibilities according to its statutory/incorporation or other legal obligations.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor2_1",
+        "description": "2.1\tThe regional NRM organisation is complying with financial responsibilities according to its statutory/incorporation or other legal obligations.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation2_2",
-      "description": "2.2\tThe regional NRM organisation is complying with Australian Government NRM contractual obligations for project financial reporting and management, accurately and on time, including acquittal of funding as required.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation2_2",
+        "description": "2.2\tThe regional NRM organisation is complying with Australian Government NRM contractual obligations for project financial reporting and management, accurately and on time, including acquittal of funding as required.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor2_2",
-      "description": "2.2\tThe regional NRM organisation is complying with Australian Government NRM contractual obligations for project financial reporting and management, accurately and on time, including acquittal of funding as required.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor2_2",
+        "description": "2.2\tThe regional NRM organisation is complying with Australian Government NRM contractual obligations for project financial reporting and management, accurately and on time, including acquittal of funding as required.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation2_3",
-      "description": "2.3\tThe regional NRM organisation has annual financial reports that are publicly available.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation2_3",
+        "description": "2.3\tThe regional NRM organisation has annual financial reports that are publicly available.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor2_3",
-      "description": "2.3\tThe regional NRM organisation has annual financial reports that are publicly available.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor2_3",
+        "description": "2.3\tThe regional NRM organisation has annual financial reports that are publicly available.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation2_4",
-      "description": "2.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation2_4",
+        "description": "2.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor2_4",
-      "description": "2.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor2_4",
+        "description": "2.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_1",
-      "description": "3.1\tThe regional NRM organisation has a regional NRM plan that provides the strategic direction to NRM activity within the region based on best available scientific, economic and social information.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_1",
+        "description": "3.1\tThe regional NRM organisation has a regional NRM plan that provides the strategic direction to NRM activity within the region based on best available scientific, economic and social information.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_1",
-      "description": "3.1\tThe regional NRM organisation has a regional NRM plan that provides the strategic direction to NRM activity within the region based on best available scientific, economic and social information.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_1",
+        "description": "3.1\tThe regional NRM organisation has a regional NRM plan that provides the strategic direction to NRM activity within the region based on best available scientific, economic and social information.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_2",
-      "description": "3.2\tThe regional NRM organisation has a regional NRM plan that demonstrates strategic alignment with Australian Government and state/territory NRM policies and priorities.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_2",
+        "description": "3.2\tThe regional NRM organisation has a regional NRM plan that demonstrates strategic alignment with Australian Government and state/territory NRM policies and priorities.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_2",
-      "description": "3.2\tThe regional NRM organisation has a regional NRM plan that demonstrates strategic alignment with Australian Government and state/territory NRM policies and priorities.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_2",
+        "description": "3.2\tThe regional NRM organisation has a regional NRM plan that demonstrates strategic alignment with Australian Government and state/territory NRM policies and priorities.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_3",
-      "description": "3.3\tThe regional NRM organisation has a regional NRM plan that has been developed with comprehensive and documented participation of the local community.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_3",
+        "description": "3.3\tThe regional NRM organisation has a regional NRM plan that has been developed with comprehensive and documented participation of the local community.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_3",
-      "description": "3.3\tThe regional NRM organisation has a regional NRM plan that has been developed with comprehensive and documented participation of the local community.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_3",
+        "description": "3.3\tThe regional NRM organisation has a regional NRM plan that has been developed with comprehensive and documented participation of the local community.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_4",
-      "description": "3.4\tThe regional NRM organisation has a regional NRM plan with clear priorities, outcomes and activities to achieve those outcomes.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_4",
+        "description": "3.4\tThe regional NRM organisation has a regional NRM plan with clear priorities, outcomes and activities to achieve those outcomes.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_4",
-      "description": "3.4\tThe regional NRM organisation has a regional NRM plan with clear priorities, outcomes and activities to achieve those outcomes.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_4",
+        "description": "3.4\tThe regional NRM organisation has a regional NRM plan with clear priorities, outcomes and activities to achieve those outcomes.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_5",
-      "description": "3.5\tThe regional NRM organisation has a regional NRM plan that clearly articulates Indigenous land and sea management aspirations and participation and identifies strategies to implement them.",
-      "constraints": [
-        "",
-        "N/A",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_5",
+        "description": "3.5\tThe regional NRM organisation has a regional NRM plan that clearly articulates Indigenous land and sea management aspirations and participation and identifies strategies to implement them.",
+        "constraints": [
+            "",
+            "N/A",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_5",
-      "description": "3.5\tThe regional NRM organisation has a regional NRM plan that clearly articulates Indigenous land and sea management aspirations and participation and identifies strategies to implement them.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_5",
+        "description": "3.5\tThe regional NRM organisation has a regional NRM plan that clearly articulates Indigenous land and sea management aspirations and participation and identifies strategies to implement them.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation3_6",
-      "description": "3.6\tThe regional NRM organisation has a regional NRM plan that has met all the expected practices and has additional practices in place.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation3_6",
+        "description": "3.6\tThe regional NRM organisation has a regional NRM plan that has met all the expected practices and has additional practices in place.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor3_6",
-      "description": "3.6\tThe regional NRM organisation has a regional NRM plan that has met all the expected practices and has additional practices in place.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor3_6",
+        "description": "3.6\tThe regional NRM organisation has a regional NRM plan that has met all the expected practices and has additional practices in place.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation4_1",
-      "description": "4.1\tThe regional NRM organisation has a current community participation plan and a current Indigenous participation plan.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation4_1",
+        "description": "4.1\tThe regional NRM organisation has a current community participation plan and a current Indigenous participation plan.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor4_1",
-      "description": "4.1\tThe regional NRM organisation has a current community participation plan and a current Indigenous participation plan.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor4_1",
+        "description": "4.1\tThe regional NRM organisation has a current community participation plan and a current Indigenous participation plan.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation4_2",
-      "description": "4.2\tThe regional NRM organisation has an established process in place that allows the local community to participate in priority setting and/or decision making.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation4_2",
+        "description": "4.2\tThe regional NRM organisation has an established process in place that allows the local community to participate in priority setting and/or decision making.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor4_2",
-      "description": "4.2\tThe regional NRM organisation has an established process in place that allows the local community to participate in priority setting and/or decision making.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor4_2",
+        "description": "4.2\tThe regional NRM organisation has an established process in place that allows the local community to participate in priority setting and/or decision making.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation4_3",
-      "description": "4.3\tThe regional NRM organisation is actively building the capacity of the local community to participate in NRM through funding support for training, on ground projects and related activities.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation4_3",
+        "description": "4.3\tThe regional NRM organisation is actively building the capacity of the local community to participate in NRM through funding support for training, on ground projects and related activities.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor4_3",
-      "description": "4.3\tThe regional NRM organisation is actively building the capacity of the local community to participate in NRM through funding support for training, on ground projects and related activities.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor4_3",
+        "description": "4.3\tThe regional NRM organisation is actively building the capacity of the local community to participate in NRM through funding support for training, on ground projects and related activities.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation4_4",
-      "description": "4.4\tThe regional NRM organisation is actively supporting increased participation of Indigenous people in the planning and delivery of NRM projects and investment.",
-      "constraints": [
-        "",
-        "N/A",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation4_4",
+        "description": "4.4\tThe regional NRM organisation is actively supporting increased participation of Indigenous people in the planning and delivery of NRM projects and investment.",
+        "constraints": [
+            "",
+            "N/A",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor4_4",
-      "description": "4.4\tThe regional NRM organisation is actively supporting increased participation of Indigenous people in the planning and delivery of NRM projects and investment.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor4_4",
+        "description": "4.4\tThe regional NRM organisation is actively supporting increased participation of Indigenous people in the planning and delivery of NRM projects and investment.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation4_5",
-      "description": "4.5\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation4_5",
+        "description": "4.5\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor4_5",
-      "description": "4.5\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor4_5",
+        "description": "4.5\tThe regional NRM organisation has met all the expected practices and has additional practices in place.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation5_1",
-      "description": "5.1\tThe regional NRM organisation is providing comprehensive, accurate and timely project MERI plans and MERIT reporting.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation5_1",
+        "description": "5.1\tThe regional NRM organisation is providing comprehensive, accurate and timely project MERI plans and MERIT reporting.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor5_1",
-      "description": "5.1\tThe regional NRM organisation is providing comprehensive, accurate and timely project MERI plans and MERIT reporting.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor5_1",
+        "description": "5.1\tThe regional NRM organisation is providing comprehensive, accurate and timely project MERI plans and MERIT reporting.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation5_2",
-      "description": "5.2\tThe regional NRM organisation is implementing processes to ensure that MERI activities are adequately resourced by appropriately skilled and informed staff.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation5_2",
+        "description": "5.2\tThe regional NRM organisation is implementing processes to ensure that MERI activities are adequately resourced by appropriately skilled and informed staff.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor5_2",
-      "description": "5.2\tThe regional NRM organisation is implementing processes to ensure that MERI activities are adequately resourced by appropriately skilled and informed staff.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor5_2",
+        "description": "5.2\tThe regional NRM organisation is implementing processes to ensure that MERI activities are adequately resourced by appropriately skilled and informed staff.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation5_3",
-      "description": "5.3\tThe regional NRM organisation is demonstrating and communicating progress towards NRM project outcomes through regular monitoring, evaluation and reporting of project performance and the use of results to guide improved practice.",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation5_3",
+        "description": "5.3\tThe regional NRM organisation is demonstrating and communicating progress towards NRM project outcomes through regular monitoring, evaluation and reporting of project performance and the use of results to guide improved practice.",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor5_3",
-      "description": "5.3\tThe regional NRM organisation is demonstrating and communicating progress towards NRM project outcomes through regular monitoring, evaluation and reporting of project performance and the use of results to guide improved practice.",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor5_3",
+        "description": "5.3\tThe regional NRM organisation is demonstrating and communicating progress towards NRM project outcomes through regular monitoring, evaluation and reporting of project performance and the use of results to guide improved practice.",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "meetsExpectation5_4",
-      "description": "5.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place. ",
-      "constraints": [
-        "",
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
+        "dataType": "text",
+        "name": "meetsExpectation5_4",
+        "description": "5.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place. ",
+        "constraints": [
+            "",
+            "Yes",
+            "No"
+        ],
+        "validate": "required"
     },
     {
-      "dataType": "text",
-      "name": "evidenceFor5_4",
-      "description": "5.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place. ",
-      "validate": "required,maxSize[2000]"
+        "dataType": "text",
+        "name": "evidenceFor5_4",
+        "description": "5.4\tThe regional NRM organisation has met all the expected practices and has additional practices in place. ",
+        "validate": "required,maxSize[2000]"
     },
     {
-      "dataType": "text",
-      "name": "peerAssistanceRequired",
-      "description": "Are there any areas of the performance expectations your region would like peer assistance in meeting?"
+        "dataType": "text",
+        "name": "peerAssistanceRequired",
+        "description": "Are there any areas of the performance expectations your region would like peer assistance in meeting?"
     },
     {
-      "dataType": "text",
-      "name": "peerAssistanceOffered",
-      "description": "Are there any areas of the performance expectations your region would be able to provide peer assistance on?"
+        "dataType": "text",
+        "name": "peerAssistanceOffered",
+        "description": "Are there any areas of the performance expectations your region would be able to provide peer assistance on?"
     }
-  ]
-}
+]}
