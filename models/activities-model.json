@@ -4979,7 +4979,7 @@
                     "label": "Total new area treated for weeds (Ha)",
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
-                    "filterBy": "Total new area treated for weeds (Ha)"
+                    "filterBy": "Total new area treated (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
