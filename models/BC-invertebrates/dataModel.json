@@ -40,8 +40,8 @@
         {
             "dataType": "text",
             "dwcAttribute": "samplingProtocol",
-            "value": "SIGNAL2 aquatic macroinvertebrates",
-            "name": "samplingProtocol"
+            "name": "samplingProtocol",
+            "value": "SIGNAL2 aquatic macroinvertebrates"
         },
         {
             "dataType": "date",
@@ -573,7 +573,7 @@
                             "preLabel": "Activity time",
                             "computed": null,
                             "source": "activityStartTime",
-                            "type": "text"
+                            "type": "time"
                         },
                         {
                             "preLabel": "Activity duration (hrs)",

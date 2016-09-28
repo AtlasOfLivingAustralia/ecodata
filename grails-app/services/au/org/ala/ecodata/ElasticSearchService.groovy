@@ -1094,6 +1094,17 @@ class ElasticSearchService {
         return facetList
     }
 
+    private List parseFilter(String fq) {
+        List fqs = []
+        int pos = fq.indexOf(":")
+        if (pos > 0) {
+            fqs << fq.substring(0, pos)
+            if (pos < fq.length()) {
+                fqs << fq.substring(pos+1, fq.length())
+            }
+        }
+        return fqs
+    }
     /**
      * Build up the fq filter (builders)
      *
@@ -1109,14 +1120,17 @@ class ElasticSearchService {
         List repeatFacets = getRepeatFacetList(filterList)
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        filterList.each { fq ->
-            def fqs = fq.tokenize(":")
+        filterList.each { String fq ->
+
+            List fqs = parseFilter(fq)
             // support SOLR style filters (-) for exclude
             if (fqs.size() > 1) {
                 if (fqs[0].getAt(0) == "-") {
                     boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
                 } else if (repeatFacets.find { it == fqs[0] }) {
                     boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                } else if (fqs[0] == "_query") {
+                    boolFilter.must(FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(fqs[1])))
                 } else {
                     // Check if the value is a SOLR style range query
                     Matcher m = (fqs[1] =~ /\[(.*) TO (.*)\]/)
