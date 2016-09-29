@@ -110,6 +110,9 @@ class ElasticSearchService {
      * @return IndexResponse
      */
     def indexDoc(doc, index) {
+        if (!canIndex(doc)) {
+            return
+        }
         def docId = getEntityId(doc)
         def docJson = doc as JSON
         index = index ?: DEFAULT_INDEX
@@ -402,7 +405,7 @@ class ElasticSearchService {
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
                 siteMap = prepareSiteForIndexing(siteMap, true)
-                    indexDoc(siteMap, DEFAULT_INDEX)
+                indexDoc(siteMap, DEFAULT_INDEX)
                 break;
 
             case Record.class.name:
@@ -448,6 +451,9 @@ class ElasticSearchService {
         }
     }
 
+    private boolean canIndex(Map doc) {
+        return doc?.visibility != 'private'
+    }
     /**
      * Add additional data to site for indexing purposes. eg. project, photo point, survey name etc.
      * @param siteMap
@@ -635,8 +641,8 @@ class ElasticSearchService {
                 siteMap["className"] = Site.class.name
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
-                        indexDoc(siteMap, DEFAULT_INDEX)
-                    }
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
                 catch (Exception e) {
                     log.error("Unable index site: "+siteMap?.siteId, e)
                 }
