@@ -31,6 +31,12 @@
                         "Environmentally stressed senescent plant",
                         "Felled tree / shrub"
                     ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "noOfSourcePlants",
+                    "description": "The Number of Source Plants",
+                    "validate": "integer"
                 }
             ],
             "dataType": "list",
@@ -123,6 +129,11 @@
                     "source": "sourcePlantHealth",
                     "title": "Health of source plant(s):",
                     "type": "selectOne"
+                },
+                {
+                    "type": "number",
+                    "source": "noOfSourcePlants",
+                    "title": "Number of Source Plants"
                 }
             ],
             "userAddedRows": "true",

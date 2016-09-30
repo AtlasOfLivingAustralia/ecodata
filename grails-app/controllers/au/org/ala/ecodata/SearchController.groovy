@@ -568,6 +568,10 @@ class SearchController {
             params.max = 1000
             params.offset = 0
         }
+        if (!params.email) {
+            params.email = userService.getCurrentUserDetails().userName
+        }
+        params.fileExtension = "zip"
         def query = params.query
         if (!query) {
             query = '*'
@@ -583,19 +587,15 @@ class SearchController {
             }
         }
 
-        if (ids.size() > 0) {
-
+        Closure doDownload = {  OutputStream outputStream, GrailsParameterMap paramMap ->
             SimpleDateFormat format = new SimpleDateFormat('yyyy-MM-dd')
             def name = 'meritSites-' + format.format(new Date())
-            response.setContentType("application/zip")
-            response.setHeader("Content-disposition", "filename=${name}.zip")
-            reportService.exportShapeFile(ids, name, response.outputStream)
-            response.outputStream.flush()
+
+            reportService.exportShapeFile(ids, name, outputStream)
         }
-        else {
-            response.setStatus(400)
-            render "No project sites selected for download"
-        }
+        downloadService.downloadProjectDataAsync(params, doDownload)
+        response.status = 200
+        render "OK"
     }
 
     /**

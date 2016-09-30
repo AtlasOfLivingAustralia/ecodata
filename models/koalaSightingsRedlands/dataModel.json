@@ -1,6 +1,4 @@
 {
-    "modelName": "koalaSightingsRedlands",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "date",
@@ -38,11 +36,12 @@
             "validate": "required"
         },
         {
+            "defaultValue": "1",
             "dataType": "number",
             "name": "individualCount",
             "dwcAttribute": "individualCount",
             "description": "The number of individual koalas observed at this place and time.",
-            "validate": "min[0]"
+            "validate": "min[1]"
         },
         {
             "dataType": "text",
@@ -261,6 +260,8 @@
             "description": "Please provide any additional information about the sighting location which might be useful."
         }
     ],
+    "modelName": "koalaSightingsRedlands",
+    "record": "true",
     "viewModel": [{
         "type": "row",
         "items": [
@@ -387,7 +388,7 @@
                         "type": "geoMap"
                     },
                     {
-                        "preLabel": "Street address",
+                        "preLabel": "Street address of sighting",
                         "computed": null,
                         "source": "locationAddress",
                         "type": "text"
@@ -405,7 +406,7 @@
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "Any additional location comments?",
+                        "preLabel": "Any additional location comments (eg. park/reserve name)?",
                         "computed": null,
                         "source": "locationRemarks",
                         "type": "textarea"

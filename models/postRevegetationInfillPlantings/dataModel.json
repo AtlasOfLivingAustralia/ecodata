@@ -1,0 +1,214 @@
+{
+    "dataModel": [
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesList": "project",
+                    "noTotal": "true",
+                    "name": "species",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "dwcAttribute": "individualCount",
+                    "name": "numberPlanted",
+                    "description": "Number of plants planted",
+                    "validate": "required,integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "seedSownKg",
+                    "description": "Weight of seed direct sown in kilograms",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "name": "stockType",
+                    "description": "The type of plantstock used for plantings",
+                    "constraints": [
+                        "Seed",
+                        "Tube",
+                        "Advanced",
+                        "Cutting",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "name": "structuralLayer",
+                    "description": "The structural layer of vegetation that planted plants will occupy when mature",
+                    "constraints": [
+                        "Overstory",
+                        "Midstory",
+                        "Understory",
+                        "Ground stratum"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "matureHeight",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "locality",
+                    "name": "stockProvenance",
+                    "description": "The name of the locality from which the seedstock was collected"
+                },
+                {
+                    "dataType": "number",
+                    "name": "stockCostPerUnit",
+                    "description": "The average cost per plant or kilogram of seed as applicable"
+                }
+            ],
+            "dataType": "list",
+            "name": "infillPlantings"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "infillPlantings",
+                    "source": "numberPlanted"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalNumberPlanted",
+            "description": "Aggregate total of plants planted"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "infillPlantings",
+                    "source": "seedSownKg"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalSeedSownKg",
+            "description": "Aggregate total of seed sown"
+        },
+        {
+            "dataType": "text",
+            "dwcAttribute": "eventRemarks",
+            "name": "infillPlantingNotes"
+        }
+    ],
+    "viewModel": [
+        {
+            "allowHeaderWrap": "true",
+            "computed": null,
+            "footer": {"rows": [{"columns": [
+                {
+                    "computed": null,
+                    "source": "Total Seedlings Planted:",
+                    "type": "literal"
+                },
+                {
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
+                    "source": "totalNumberPlanted",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "source": "Total Seed Sown (Kg):",
+                    "type": "literal"
+                },
+                {
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
+                    "source": "totalSeedSownKg",
+                    "type": "number"
+                },
+                {
+                    "colspan": 3,
+                    "computed": null,
+                    "source": "",
+                    "type": "literal"
+                }
+            ]}]},
+            "columns": [
+                {
+                    "computed": null,
+                    "width": "20%",
+                    "source": "species",
+                    "title": "Species:",
+                    "type": "autocomplete"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "numberPlanted",
+                    "title": "No. Planted:",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "seedSownKg",
+                    "title": "Seed Sown (Kg):",
+                    "type": "number"
+                },
+                {
+                    "width": "10%",
+                    "source": "stockType",
+                    "title": "Type of stock",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "10%",
+                    "source": "structuralLayer",
+                    "title": "Structural Layer",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "10%",
+                    "source": "matureHeight",
+                    "title": "Mature height",
+                    "type": "selectOne"
+                },
+                {
+                    "width": "10%",
+                    "source": "stockProvenance",
+                    "title": "Stock Provenance",
+                    "type": "text"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "stockCostPerUnit",
+                    "title": "Cost / unit ($)",
+                    "type": "number"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "infillPlantings",
+            "title": "Infill plantings",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Infill planting notes:",
+                "computed": null,
+                "source": "infillPlantingNotes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

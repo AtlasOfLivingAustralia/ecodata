@@ -434,16 +434,8 @@
     {
         "weekDaysToCompleteReport": 0,
         "activities": [
-            "Pest Animal Survey",
-            "Plant Survival Survey",
-            "Site Monitoring Plan",
-            "Water Quality Survey",
-            "Weed Mapping & Monitoring",
-            "Vegetation Assessment - Commonwealth government methodology",
             "Vegetation Assessment - BioCondition (QLD)",
             "Vegetation Assessment - Habitat Hectares v1 (VIC)",
-            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
-            "TasVeg - Native Vegetation Assessment - Forest Vegetation",
             "TasVeg - Native Vegetation Assessment - Non-Forest Vegetation",
             "Vegetation Assessment - Bushland Condition Monitoring (SA)",
             "Fauna survey - trap and transect",
@@ -453,7 +445,9 @@
             "Single Sighting",
             "Multiple Sightings",
             "Aerial fauna survey - distance sampler method",
-            "2-ha Track Plot Datasheet"
+            "2-ha Track Plot Datasheet",
+            "General Weed Monitoring",
+            "Flying Fox Survey"
         ],
         "name": "None",
         "subprograms": [],
@@ -658,7 +652,10 @@
                     "Community Grants"
                 ],
                 "name": "Regional Funding",
-                "optionalProjectContent": ["MERI Plan"],
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
                 "overridesProgramData": true,
                 "reportingPeriodAlignedToCalendar": true,
                 "startDate": ""
@@ -768,7 +765,8 @@
                     "Works Planning and Risk",
                     "Indigenous Knowledge Transfer",
                     "Training and Skills Development",
-                    "Vegetation Assessment - Commonwealth government methodology"
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
                 ],
                 "name": "20 Million Trees Service Providers",
                 "optionalProjectContent": [
@@ -820,7 +818,8 @@
                     "Works Planning and Risk",
                     "Indigenous Knowledge Transfer",
                     "Training and Skills Development",
-                    "Vegetation Assessment - Commonwealth government methodology"
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
                 ],
                 "name": "20 Million Trees Service Providers Tranche 2",
                 "optionalProjectContent": [
@@ -962,7 +961,11 @@
             "Floristic survey - plot and transect",
             "Fauna survey - trap and transect",
             "OzAtlas Sightings",
-            "Flying Fox Survey"
+            "Flying Fox Survey",
+            "Pollinator Sighting",
+            "VNPA ReefWatch Survey",
+            "Post Biodiversity-works Site Monitoring Methodology",
+            "Seagrass Bed Monitoring"
         ],
         "name": "Citizen Science Projects",
         "subprograms": [],
@@ -1152,7 +1155,7 @@
         ]
     },
     {
-        "weekDaysToCompleteReport": null,
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Single Sighting",
             "Multiple Sightings",
@@ -1166,7 +1169,8 @@
             "Floristic survey - plot and transect",
             "Fauna survey - trap and transect",
             "General Weed Monitoring",
-            "Aerial fauna survey - distance sampler method"
+            "Aerial fauna survey - distance sampler method",
+            "Camera Trap Monitoring"
         ],
         "name": "National Environmental Science Programme",
         "subprograms": [

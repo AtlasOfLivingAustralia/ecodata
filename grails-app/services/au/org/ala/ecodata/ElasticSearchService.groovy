@@ -110,6 +110,9 @@ class ElasticSearchService {
      * @return IndexResponse
      */
     def indexDoc(doc, index) {
+        if (!canIndex(doc)) {
+            return
+        }
         def docId = getEntityId(doc)
         def docJson = doc as JSON
         index = index ?: DEFAULT_INDEX
@@ -402,7 +405,7 @@ class ElasticSearchService {
                 def siteMap = siteService.toMap(doc, "flat")
                 siteMap["className"] = docType
                 siteMap = prepareSiteForIndexing(siteMap, true)
-                    indexDoc(siteMap, DEFAULT_INDEX)
+                indexDoc(siteMap, DEFAULT_INDEX)
                 break;
 
             case Record.class.name:
@@ -448,6 +451,9 @@ class ElasticSearchService {
         }
     }
 
+    private boolean canIndex(Map doc) {
+        return doc?.visibility != 'private'
+    }
     /**
      * Add additional data to site for indexing purposes. eg. project, photo point, survey name etc.
      * @param siteMap
@@ -635,8 +641,8 @@ class ElasticSearchService {
                 siteMap["className"] = Site.class.name
                 try {
                     siteMap = prepareSiteForIndexing(siteMap, false)
-                        indexDoc(siteMap, DEFAULT_INDEX)
-                    }
+                    indexDoc(siteMap, DEFAULT_INDEX)
+                }
                 catch (Exception e) {
                     log.error("Unable index site: "+siteMap?.siteId, e)
                 }
@@ -1094,6 +1100,17 @@ class ElasticSearchService {
         return facetList
     }
 
+    private List parseFilter(String fq) {
+        List fqs = []
+        int pos = fq.indexOf(":")
+        if (pos > 0) {
+            fqs << fq.substring(0, pos)
+            if (pos < fq.length()) {
+                fqs << fq.substring(pos+1, fq.length())
+            }
+        }
+        return fqs
+    }
     /**
      * Build up the fq filter (builders)
      *
@@ -1109,14 +1126,17 @@ class ElasticSearchService {
         List repeatFacets = getRepeatFacetList(filterList)
 
         BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        filterList.each { fq ->
-            def fqs = fq.tokenize(":")
+        filterList.each { String fq ->
+
+            List fqs = parseFilter(fq)
             // support SOLR style filters (-) for exclude
             if (fqs.size() > 1) {
                 if (fqs[0].getAt(0) == "-") {
                     boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
                 } else if (repeatFacets.find { it == fqs[0] }) {
                     boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
+                } else if (fqs[0] == "_query") {
+                    boolFilter.must(FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(fqs[1])))
                 } else {
                     // Check if the value is a SOLR style range query
                     Matcher m = (fqs[1] =~ /\[(.*) TO (.*)\]/)

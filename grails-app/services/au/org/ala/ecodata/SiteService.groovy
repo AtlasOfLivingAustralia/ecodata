@@ -299,6 +299,40 @@ class SiteService {
         return [status:'ok', poiId:props.poiId]
     }
 
+    def deletePoi(siteId, poiId) {
+        def site = get(siteId, [FLAT])
+
+        if (!site) {
+            return [status:'error', error:"No site with ID ${siteId}"]
+        }
+        boolean removed = site.poi?.removeAll{it.poiId == poiId}
+        if (!removed) {
+            return [status:'error', error:"No POI exists with id: ${poiId}"]
+        }
+
+        update([poi:site.poi], siteId)
+        return [status:'deleted', poiId:poiId]
+    }
+
+    def updatePoi(siteId, props) {
+        if (!props.poiId) {
+            return createPoi(siteId, props)
+        }
+        def site = get(siteId, [FLAT])
+
+        if (!site) {
+            return [status:'error', error:"No site with ID ${siteId}"]
+        }
+        Map poi = site.poi?.find{it.poiId == props.poiId}
+        if (!poi) {
+            return [status:'error', error:"No POI exists with poiId=${props.poiId}"]
+        }
+        poi.putAll(props)
+
+        update([poi:site.poi], siteId)
+        return [status:'ok', poiId:props.poiId]
+    }
+
     def removeProject(siteId, projectId){
         log.debug("Removing project $projectId from site $siteId" +
                 "")

@@ -85,7 +85,12 @@ class UrlMappings {
 
         "/ws/site/$id/poi" {
             controller = 'site'
-            action = [POST:'createPoi']
+            action = [POST:'createOrUpdatePoi']
+        }
+
+        "/ws/site/$id/poi/$poiId" {
+            controller = 'site'
+            action = [DELETE:'deletePoi']
         }
 
         "/ws/site/lookupLocationMetadataForSite" {
