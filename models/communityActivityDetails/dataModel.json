@@ -1,11 +1,13 @@
 {
     "dataModel": [
         {
+            "dataType": "list",
+            "name": "events",
             "columns": [
                 {
                     "dataType": "text",
-                    "name": "eventType",
                     "description": "The type of event being conducted",
+                    "name": "eventType",
                     "constraints": [
                         "Conference / seminar presentation",
                         "Field day activity",
@@ -24,8 +26,8 @@
                 },
                 {
                     "dataType": "text",
-                    "name": "eventPurpose",
                     "description": "The purpose for which the event is being conducted",
+                    "name": "eventPurpose",
                     "constraints": [
                         "Awareness raising event (eg. demonstration, field day, or study tour)",
                         "Training session, workshop or other skills / training event",
@@ -38,19 +40,19 @@
                 },
                 {
                     "dataType": "text",
-                    "name": "eventTopics",
-                    "description": "The themes or topics covered during the events. Add in notes if more than one."
+                    "description": "The themes or topics covered during the events. Add in notes if more than one.",
+                    "name": "eventTopics"
                 },
                 {
                     "dataType": "number",
-                    "name": "eventDurationHrs",
                     "description": "The duration of the events in whole hours.",
+                    "name": "eventDurationHrs",
                     "validate": "min[0]"
                 },
                 {
                     "dataType": "text",
-                    "name": "industryType",
                     "description": "The main industry type that the event is addressing",
+                    "name": "industryType",
                     "constraints": [
                         "Aquaculture",
                         "Bananas",
@@ -72,30 +74,28 @@
                 },
                 {
                     "dataType": "text",
-                    "name": "eventNotes",
-                    "description": ""
+                    "description": "",
+                    "name": "eventNotes"
                 }
-            ],
-            "dataType": "list",
-            "name": "events"
+            ]
         },
         {
-            "computed": {
-                "dependents": {
-                    "fromList": "events",
-                    "source": "eventDurationHrs"
-                },
-                "operation": "sum"
-            },
-            "primaryResult": "true",
             "dataType": "number",
-            "name": "totalEventHrs",
-            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity."
+            "primaryResult": "true",
+            "description": "Sum of the durations of events in hours for the activity. NB. This will be equal to or greater than the elapsed time for the whole activity.",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "eventDurationHrs",
+                    "fromList": "events"
+                }
+            },
+            "name": "totalEventHrs"
         },
         {
             "dataType": "stringList",
-            "name": "deliveryPartner",
             "description": "Select the type(s) of partners involved in delivering the event",
+            "name": "deliveryPartner",
             "constraints": [
                 "Academic/research institution",
                 "Consultant",
@@ -110,8 +110,8 @@
         },
         {
             "dataType": "number",
-            "name": "groupsSupported",
             "description": "The total number of community groups that have been financially supported to undertake local projects during this period.",
+            "name": "groupsSupported",
             "validate": "min[0]"
         },
         {
@@ -126,123 +126,123 @@
     "modelName": "Community Event Details",
     "viewModel": [
         {
-            "type": "row",
             "items": [{
                 "source": "Note that the target measure for 'No. of events' is calculated as the number of rows in this table. Please enter a separate row for each event.",
                 "type": "literal"
-            }]
+            }],
+            "type": "row"
         },
         {
-            "allowHeaderWrap": "true",
             "footer": {"rows": [{"columns": [
                 {
                     "colspan": "3",
-                    "computed": null,
                     "source": "",
+                    "computed": null,
                     "type": null
                 },
                 {
-                    "computed": null,
                     "source": "Total event hours for this activity:",
+                    "computed": null,
                     "type": "literal"
                 },
                 {
-                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
                     "source": "totalEventHrs",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"eventDurationHrs\",\"fromList\":\"events\"}}",
                     "type": "number"
                 },
                 {
-                    "computed": null,
                     "source": "",
+                    "computed": null,
                     "type": null
                 }
             ]}]},
+            "title": "Please list the details of each event run as part of this activity:",
+            "source": "events",
+            "allowHeaderWrap": "true",
             "columns": [
                 {
-                    "computed": null,
-                    "width": "10%",
-                    "source": "eventType",
                     "title": "Type of event:",
+                    "source": "eventType",
+                    "computed": null,
+                    "width": "15%",
                     "type": "selectOne"
                 },
                 {
-                    "computed": null,
-                    "width": "20%",
-                    "source": "eventPurpose",
                     "title": "Purpose of event:",
-                    "type": "selectOne"
-                },
-                {
-                    "computed": null,
-                    "width": "5%",
-                    "source": "industryType",
-                    "title": "Main industry type addressed:",
-                    "type": "selectOne"
-                },
-                {
+                    "source": "eventPurpose",
                     "computed": null,
                     "width": "20%",
-                    "source": "eventTopics",
-                    "title": "Topics covered:",
-                    "type": "text"
+                    "type": "selectOne"
                 },
                 {
+                    "title": "Main industry type addressed:",
+                    "source": "industryType",
+                    "computed": null,
+                    "width": "20%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Topics covered:",
+                    "source": "eventTopics",
+                    "computed": null,
+                    "width": "20%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Event Duration (Hrs):",
+                    "source": "eventDurationHrs",
                     "computed": null,
                     "width": "5%",
-                    "source": "eventDurationHrs",
-                    "title": "Event Duration (Hrs):",
                     "type": "number"
                 },
                 {
+                    "title": "Notes:",
+                    "source": "eventNotes",
                     "computed": null,
                     "width": "20%",
-                    "source": "eventNotes",
-                    "title": "Notes:",
                     "type": "textarea"
                 }
             ],
             "userAddedRows": true,
-            "source": "events",
-            "title": "Please list the details of each event run as part of this activity:",
-            "type": "table",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "table"
         },
         {
-            "computed": null,
-            "type": "row",
             "items": [
                 {
-                    "computed": null,
-                    "width": "30%",
-                    "type": "col",
                     "items": [{
+                        "source": "deliveryPartner",
                         "preLabel": "Delivery partners:",
                         "computed": null,
-                        "source": "deliveryPartner",
                         "type": "selectMany"
-                    }]
+                    }],
+                    "computed": null,
+                    "width": "30%",
+                    "type": "col"
                 },
                 {
-                    "computed": null,
-                    "width": "70%",
-                    "type": "col",
                     "items": [
                         {
+                            "source": "groupsSupported",
                             "preLabel": "No. of groups supported financially:",
                             "computed": null,
-                            "source": "groupsSupported",
                             "type": "number"
                         },
                         {
+                            "source": "eventNotes",
                             "preLabel": "Comments / Notes:",
                             "computed": null,
-                            "source": "eventNotes",
                             "type": "textarea"
                         }
-                    ]
+                    ],
+                    "computed": null,
+                    "width": "70%",
+                    "type": "col"
                 }
             ],
-            "class": "output-section"
+            "computed": null,
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }
