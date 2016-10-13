@@ -34,6 +34,9 @@ modules = {
     admin {
         dependsOn 'application, vkbeautify, app_bootstrap'
         resource url: 'vendor/jquery-ui/jquery-ui-1.9.2.custom.min.js'
+        resource url: 'vendor/bootstrap-datepicker/js/bootstrap-datepicker.js'
+        resource url: 'vendor/bootstrap-datepicker/css/datepicker.css'
+
         resource url: 'vendor/jquery-validation-engine/jquery.validationEngine.js'
         resource url: 'vendor/jquery-validation-engine/jquery.validationEngine-en.js'
         resource url: 'vendor/knockoutjs/knockout-3.3.0.min.js'
