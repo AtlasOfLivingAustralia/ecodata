@@ -2336,6 +2336,16 @@
                     "units": "",
                     "category": "Farm Management Practices",
                     "isOutputTarget": false
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "name": "numberOfCommunityGroups",
+                    "description": "The total number of community groups who are not delivery partners that are participating in activities and events.",
+                    "label": "Total No. of community groups (non delivery partners) participating",
+                    "units": "",
+                    "category": "Community Engagement and Capacity Building",
+                    "isOutputTarget": false
                 }
             ],
             "name": "Participant Information"
