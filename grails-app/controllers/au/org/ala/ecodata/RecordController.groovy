@@ -247,7 +247,7 @@ class RecordController {
      */
     @RequireApiKey
     def listForProjectActivityAndUser(String id, String userId, Long since) {
-        final pa = ProjectActivity.get(id)
+        final pa = ProjectActivity.findByProjectActivityId(id)
         if (!pa) {
             return notFound(ProjectActivity, id)
         }
