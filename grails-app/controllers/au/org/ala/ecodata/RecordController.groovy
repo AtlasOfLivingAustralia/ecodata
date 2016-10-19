@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import static au.org.ala.ecodata.Status.*
-import static org.apache.http.HttpStatus.*
+import static javax.servlet.http.HttpServletResponse.*
 
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -243,6 +243,34 @@ class RecordController {
     }
 
     /**
+     *Get a list of records for a the given project activity id, user id and last updated after since (if present)
+     */
+    @RequireApiKey
+    def listForProjectActivityAndUser(String id, String userId, Long since) {
+        final pa = ProjectActivity.get(id)
+        if (!pa) {
+            return notFound(ProjectActivity, id)
+        }
+        final List<Record> records
+        if (since) {
+            Date sinceDate = new Date(since)
+            log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId, since: $sinceDate")
+            records = Record.findAllByProjectActivityIdAndUserIdAndLastUpdatedGreaterThan(pa.projectActivityId, userId, sinceDate)
+        } else {
+            log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId")
+            records = Record.findAllByProjectActivityIdAndUserId(pa.projectActivityId, userId)
+        }
+
+        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, lastUpdate: records.collect { it.lastUpdated }.max()?.time ?: 0)
+    }
+
+    static class ProjectActivityRecordsResult {
+        ProjectActivity projectActivity
+        List<Record> records
+        Long lastUpdate
+    }
+
+    /**
      * Delete by occurrence ID
      */
     @RequireApiKey
@@ -391,5 +419,14 @@ class RecordController {
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("entityId", record.id.toString())
+    }
+
+
+    static class Error { String message; }
+
+    void notFound(Class<?> clazz, String id) {
+        response.status = SC_NOT_FOUND
+        Error error = new Error(message: "Can't find ${clazz.simpleName} with id $id.")
+        respond error, status: SC_NOT_FOUND
     }
 }
