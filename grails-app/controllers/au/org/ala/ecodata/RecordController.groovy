@@ -257,11 +257,12 @@ class RecordController {
             log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId, since: $sinceDate")
             records = Record.findAllByProjectActivityIdAndUserIdAndLastUpdatedGreaterThan(pa.projectActivityId, userId, sinceDate)
         } else {
+            since = 0
             log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId")
             records = Record.findAllByProjectActivityIdAndUserId(pa.projectActivityId, userId)
         }
 
-        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, lastUpdate: records.collect { it.lastUpdated }.max()?.time ?: 0)
+        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, lastUpdate: records.collect { it.lastUpdated }.max()?.time ?: since)
     }
 
     static class ProjectActivityRecordsResult {
