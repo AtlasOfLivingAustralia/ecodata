@@ -375,9 +375,9 @@ class OutputService {
 
     List<Map<String, ?>> findAllForIds(ArrayList<String> outputIds) {
         if (outputIds) {
-            outputs = Output.findAllByOutputIdInListAndStatus(outputIds, ACTIVE).collect { toMap(it) }
+            return Output.findAllByOutputIdInListAndStatus(outputIds, ACTIVE).collect { toMap(it) }
         } else {
-            outputs = []
+            return []
         }
     }
 }

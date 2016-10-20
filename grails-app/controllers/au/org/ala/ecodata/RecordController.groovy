@@ -275,7 +275,7 @@ class RecordController {
     static class ProjectActivityRecordsResult {
         ProjectActivity projectActivity
         List<Record> records
-        List<Output> outputs
+        List<Map<String, ?>> outputs
         Long lastUpdate
     }
 
