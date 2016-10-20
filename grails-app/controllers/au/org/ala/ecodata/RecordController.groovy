@@ -262,12 +262,24 @@ class RecordController {
             records = Record.findAllByProjectActivityIdAndUserId(pa.projectActivityId, userId)
         }
 
-        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, lastUpdate: records.collect { it.lastUpdated }.max()?.time ?: since)
+        final outputIds = records*.outputId.findAll { it != null }
+        final outputs
+        if (outputIds) {
+            outputs = Output.findAllByOutputIdInList(outputIds)
+        } else {
+            outputs = []
+        }
+
+        final recordsMax = records.collect { it.lastUpdated }.max()?.time ?: since
+        final outputsMax = records.collect { it.lastUpdated }.max()?.time ?: since
+
+        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, outputs: outputs, lastUpdate: [recordsMax, outputsMax].max())
     }
 
     static class ProjectActivityRecordsResult {
         ProjectActivity projectActivity
         List<Record> records
+        List<Output> outputs
         Long lastUpdate
     }
 
