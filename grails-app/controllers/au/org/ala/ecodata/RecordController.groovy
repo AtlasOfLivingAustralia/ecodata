@@ -19,6 +19,7 @@ class RecordController {
     RecordService recordService
     UserService userService
     ProjectActivityService projectActivityService
+    def outputService
 
     static defaultAction = "list"
 
@@ -263,12 +264,7 @@ class RecordController {
         }
 
         final outputIds = records*.outputId.findAll { it != null }
-        final outputs
-        if (outputIds) {
-            outputs = Output.findAllByOutputIdInList(outputIds)
-        } else {
-            outputs = []
-        }
+        final outputs = outputService.findAllForIds(outputIds)
 
         final recordsMax = records.collect { it.lastUpdated }.max()?.time ?: since
         final outputsMax = records.collect { it.lastUpdated }.max()?.time ?: since
