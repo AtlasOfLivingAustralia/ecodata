@@ -103,8 +103,18 @@ class MetadataController {
      */
     def excelOutputTemplate() {
 
-        def outputName = params.type
-        def listName = params.listName
+        def outputName, listName, data
+        def json = request.getJSON()
+        if (json) {
+            outputName = json.type
+            listName = json.listName
+            data = JSON.parse(json.data)
+        }
+        else {
+            outputName = params.type
+            listName = params.listName
+        }
+
 
         if (!outputName) {
             def result = [status:400, error:'type is a required parameter']
@@ -130,7 +140,7 @@ class MetadataController {
             annotatedModel = listModel?.columns
         }
 
-        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel);
+        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
         builder.build()
         builder.setResponseHeaders(response)
 
