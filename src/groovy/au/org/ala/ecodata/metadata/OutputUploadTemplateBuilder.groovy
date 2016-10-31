@@ -63,6 +63,7 @@ class OutputDataProcessor {
         this.model = model
         this.data = data
         this.rowHeaderStyle = rowHeaderStyle
+
     }
 
     public void process() {
@@ -70,35 +71,33 @@ class OutputDataProcessor {
         data?.eachWithIndex { rowValue, rowCount ->
             Row row = sheet.createRow((rowCount+1))
 
-            for(int i = 0; i < rowValue.size(); i++){
-                def dataType, value, rowHeader
-                model.eachWithIndex { modelVal, modelIndex ->
-                    if(modelIndex == i) {
-                        rowValue?.each{key, val ->
-                            if(key.equals(modelVal.name)){
-                                value = val
-                                dataType = modelVal.dataType
-                                rowHeader = modelVal.rowHeader
-                            }
-                        }
-                    }
+            def dataType, value, rowHeader
+            model.eachWithIndex { modelVal, i ->
+                value = rowValue[modelVal.name] ?: ''
+
+                dataType = modelVal.dataType
+                rowHeader = modelVal.rowHeader
+
+                Cell cell = row.createCell(i)
+                switch(dataType){
+                    case 'number':
+                        cell.setCellValue(value.toInteger())
+                        break
+                    case 'species':
+                        cell.setCellValue(value?value.name:'')
+                        break
+                    case 'stringList':
+                        cell.setCellValue(value?value.join(','):'')
+                    case 'date':
+                    case 'text':
+                    default:
+                        cell.setCellValue(value.toString())
+                        break
                 }
-                if(dataType) {
-                    Cell cell = row.createCell(i)
-                    switch(dataType){
-                        case 'number':
-                            cell.setCellValue(value.toInteger())
-                            break
-                        case 'date':
-                        case 'text':
-                        default:
-                            cell.setCellValue(value.toString())
-                            break
-                    }
-                    if(rowHeader){
-                        cell.setCellStyle(rowHeaderStyle);
-                    }
+                if(rowHeader){
+                    cell.setCellStyle(rowHeaderStyle);
                 }
+
             }
         }
     }

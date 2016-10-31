@@ -372,4 +372,12 @@ class OutputService {
         }
         outputs.collect { toMap(it) }
     }
+
+    List<Map<String, ?>> findAllForIds(ArrayList<String> outputIds) {
+        if (outputIds) {
+            return Output.findAllByOutputIdInListAndStatus(outputIds, ACTIVE).collect { toMap(it) }
+        } else {
+            return []
+        }
+    }
 }
