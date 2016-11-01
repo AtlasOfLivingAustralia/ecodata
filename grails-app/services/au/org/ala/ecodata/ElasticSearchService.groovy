@@ -808,6 +808,9 @@ class ElasticSearchService {
         if (activity.siteId) {
             def site = siteService.get(activity.siteId, SiteService.FLAT, version)
             if (site) {
+                // Not useful for the search index and there is a bug right now that can result in invalid POI
+                // data causing the indexing to fail.
+                site.remove('poi')
                 activity.sites = [site]
             }
         }
