@@ -1,7 +1,7 @@
 package au.org.ala.ecodata
 
 import static au.org.ala.ecodata.Status.*
-import static org.apache.http.HttpStatus.*
+import static javax.servlet.http.HttpServletResponse.*
 
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -19,6 +19,7 @@ class RecordController {
     RecordService recordService
     UserService userService
     ProjectActivityService projectActivityService
+    def outputService
 
     static defaultAction = "list"
 
@@ -243,6 +244,42 @@ class RecordController {
     }
 
     /**
+     *Get a list of records for a the given project activity id, user id and last updated after since (if present)
+     */
+    @RequireApiKey
+    def listForProjectActivityAndUser(String id, String userId, Long since) {
+        final pa = ProjectActivity.findByProjectActivityId(id)
+        if (!pa) {
+            return notFound(ProjectActivity, id)
+        }
+        final List<Record> records
+        if (since) {
+            Date sinceDate = new Date(since)
+            log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId, since: $sinceDate")
+            records = Record.findAllByProjectActivityIdAndUserIdAndLastUpdatedGreaterThan(pa.projectActivityId, userId, sinceDate)
+        } else {
+            since = 0
+            log.debug("Finding all Records for PA: ${pa.projectActivityId}, user: $userId")
+            records = Record.findAllByProjectActivityIdAndUserId(pa.projectActivityId, userId)
+        }
+
+        final outputIds = records*.outputId.findAll { it != null }
+        final outputs = outputService.findAllForIds(outputIds)
+
+        final recordsMax = records.collect { it.lastUpdated }.max()?.time ?: since
+        final outputsMax = records.collect { it.lastUpdated }.max()?.time ?: since
+
+        respond new ProjectActivityRecordsResult(projectActivity: pa, records: records, outputs: outputs, lastUpdate: [recordsMax, outputsMax].max())
+    }
+
+    static class ProjectActivityRecordsResult {
+        ProjectActivity projectActivity
+        List<Record> records
+        List<Map<String, ?>> outputs
+        Long lastUpdate
+    }
+
+    /**
      * Delete by occurrence ID
      */
     @RequireApiKey
@@ -391,5 +428,14 @@ class RecordController {
         response.addHeader("content-location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("location", grailsApplication.config.grails.serverURL + "/record/" + record.occurrenceID)
         response.addHeader("entityId", record.id.toString())
+    }
+
+
+    static class Error { String message; }
+
+    void notFound(Class<?> clazz, String id) {
+        response.status = SC_NOT_FOUND
+        Error error = new Error(message: "Can't find ${clazz.simpleName} with id $id.")
+        respond error, status: SC_NOT_FOUND
     }
 }
