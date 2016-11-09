@@ -103,7 +103,10 @@ class ProjectXlsExporter extends ProjectExporter {
     public void export(Map project) {
 
         commonProjectPropertiesRaw.each {
-            project['project_'+it] = project.remove(it)
+            if (it != 'projectId') {
+                project['project_'+it] = project.remove(it)
+            }
+
         }
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
