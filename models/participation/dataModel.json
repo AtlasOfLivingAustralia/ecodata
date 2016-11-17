@@ -5,7 +5,7 @@
             "primaryResult": "true",
             "dataType": "number",
             "name": "totalParticipantsNotEmployed",
-            "description": "The number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants.",
+            "description": "The total number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants and/or event attendees.",
             "validate": "required,min[0]"
         },
         {
@@ -48,7 +48,7 @@
                 "type": "col",
                 "items": [
                     {
-                        "preLabel": "No. of participants (ie. not employed on project):",
+                        "preLabel": "Total no. of participants (ie. not employed on project)",
                         "computed": null,
                         "source": "totalParticipantsNotEmployed",
                         "type": "number"
