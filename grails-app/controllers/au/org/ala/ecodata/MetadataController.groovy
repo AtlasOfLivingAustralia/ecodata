@@ -103,7 +103,7 @@ class MetadataController {
      */
     def excelOutputTemplate() {
 
-        def outputName, listName, data
+        def outputName, listName, data, expandList
         def json = request.getJSON()
         if (json) {
             outputName = json.type
@@ -113,6 +113,7 @@ class MetadataController {
         else {
             outputName = params.type
             listName = params.listName
+            expandList = params.expandList
         }
 
 
@@ -122,8 +123,12 @@ class MetadataController {
             return null
         }
 
-        def annotatedModel = metadataService.annotatedOutputDataModel(outputName)
-
+        def annotatedModel = null
+        if (expandList && expandList == 'true') {
+            annotatedModel = metadataService.annotatedOutputDataModel(outputName, true)
+        } else {
+            annotatedModel = metadataService.annotatedOutputDataModel(outputName)
+        }
         if (!annotatedModel) {
             def result = [status:404, error:"No output of type ${outputName} exists"]
             render result as JSON
@@ -140,11 +145,34 @@ class MetadataController {
             annotatedModel = listModel?.columns
         }
 
-        OutputUploadTemplateBuilder builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
-        builder.build()
+
+        OutputUploadTemplateBuilder builder
+        if (expandList && expandList == 'true') {
+
+            def listModel = annotatedModel.grep{it.dataType == 'list'}
+
+            listModel.each {
+                def nestedListName = it.name
+                def listColumns = it.columns
+                listColumns.each {
+                    it.header = nestedListName
+                    annotatedModel.add(it)
+                }
+            }
+            annotatedModel = annotatedModel.grep{it.dataType != 'list'}
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
+            builder.buildGroupHeaderList()
+        } else {
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
+            builder.build()
+        }
+
         builder.setResponseHeaders(response)
 
         builder.save(response.outputStream)
+
+     //   response.getOutputStream().flush();
+     //   response.getOutputStream().close();
 
     }
 
