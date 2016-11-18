@@ -85,6 +85,8 @@ class OutputModelProcessor {
                 break
             case 'masterDetail':
                 break // do nothing, not supported yet
+            case 'geoMap':
+                break
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")
         }
