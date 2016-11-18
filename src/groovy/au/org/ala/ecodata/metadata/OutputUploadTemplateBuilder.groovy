@@ -1,6 +1,7 @@
 package au.org.ala.ecodata.metadata
 
 import au.org.ala.ecodata.reporting.XlsExporter
+import org.apache.log4j.Logger
 import org.apache.poi.ss.usermodel.*
 import org.apache.poi.ss.util.CellRangeAddressList
 import org.apache.poi.ss.util.CellReference
@@ -84,6 +85,8 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 }
 
 class OutputDataProcessor {
+    static Logger log = Logger.getLogger(getClass())
+
     private Workbook workbook
     private Sheet sheet
     def model
@@ -114,7 +117,14 @@ class OutputDataProcessor {
                 Cell cell = row.createCell(i)
                 switch(dataType){
                     case 'number':
-                        cell.setCellValue(value.toInteger())
+                        try {
+                            cell.setCellValue(new BigDecimal(value))
+                        }
+                        catch (NumberFormatException e) {
+                            cell.setCellValue(0)
+                            log.warn("Invalid numeric value: "+value)
+                        }
+
                         break
                     case 'species':
                         cell.setCellValue(value?value.name:'')
