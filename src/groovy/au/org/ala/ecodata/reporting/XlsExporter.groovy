@@ -36,7 +36,7 @@ class XlsExporter extends XlsxExporter {
         AdditionalSheet sheet = sheet(sheetName(name))
         if (groupHeaders != null) {
             sheet.fillHeader(groupHeaders)
-            sheet.fillHeader(headers, 1)
+            sheet.fillRow(headers, 1)
 
             def lastHeader = ""
             def groupNumber = 0
