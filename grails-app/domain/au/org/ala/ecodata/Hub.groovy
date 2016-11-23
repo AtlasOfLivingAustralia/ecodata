@@ -30,6 +30,8 @@ class Hub {
     List defaultFacetQuery
     /** Defines the path used as an entry point to this hub */
     String homePagePath
+    /** If configurable template is chosen, then use this config to layout the page **/
+    Map templateConfiguration
 
     String status = 'active'
 
@@ -44,9 +46,10 @@ class Hub {
 
     static constraints = {
         urlPath unique: true
-        skin inList: ['ala2', 'nrm','mdba','ala']
+        skin inList: ['ala2', 'nrm','mdba','ala', 'configurableHubTemplate1']
         title nullable:true
         homePagePath nullable:true
         defaultProgram nullable: true
+        templateConfiguration nullable: true
     }
 }

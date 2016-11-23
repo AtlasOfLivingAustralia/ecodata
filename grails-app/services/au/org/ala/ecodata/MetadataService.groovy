@@ -104,6 +104,14 @@ class MetadataService {
         return getOutputDataModel(outputModel?.template)
     }
 
+    def getOutputDataByActivityName(name) {
+        def outputList = activitiesModel().activities.find{it.name == name}?.outputs
+        if (outputList && outputList.size() > 0) {
+            return activitiesModel().outputs.grep{it.name in outputList}?.collect{getOutputDataModel(it.template)}
+        }
+        return null
+    }
+
     def updateOutputDataModel(model, templateName) {
         log.debug "updating template name = ${templateName}"
         writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
@@ -227,13 +235,22 @@ class MetadataService {
      * specified output.
      * @param outputName identifies the output to annotate.
      */
-    def annotatedOutputDataModel(outputName) {
-        def outputMetadata = getOutputDataModelByName(outputName)
+    def annotatedOutputDataModel(outputName, boolean expandList = false) {
+        def outputMetadata = null
+        def annotatedModel = []
+        if (expandList) {
+            outputMetadata = getOutputDataByActivityName(outputName)
+            outputMetadata?.each { it ->
+                OutputMetadata metadata = new OutputMetadata(it)
+                metadata.annotateDataModel().each {annotatedModel.add(it)}
+            }
 
-        def annotatedModel = null
-        if (outputMetadata) {
-            OutputMetadata metadata = new OutputMetadata(outputMetadata)
-            annotatedModel = metadata.annotateDataModel()
+        } else {
+            outputMetadata = getOutputDataModelByName(outputName)
+            if (outputMetadata) {
+                OutputMetadata metadata = new OutputMetadata(outputMetadata)
+                annotatedModel = metadata.annotateDataModel()
+            }
         }
         annotatedModel
     }

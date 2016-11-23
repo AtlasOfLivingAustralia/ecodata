@@ -189,6 +189,67 @@
       "dataType":"text",
       "name":"otherOutputs",
       "description":"Include here any additional comments you have on your Community Grant projects that do not sit more appropriately elsewhere."
+    },
+    {
+      "dataType": "number",
+      "description": "Weight in tonnes of debris removed during the activity",
+      "name": "debrisWeightTonnes",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "description": "The method used in this activity to manage disease",
+      "name": "diseaseManagementMethod",
+      "constraints": [
+        "Biological control agents",
+        "Fumigation",
+        "Host destruction",
+        "Plant disease management - quarantine",
+        "Plant disease management - treatment",
+        "Plant disease management – hygiene",
+        "Positive competition",
+        "Other (specify in notes)"
+      ]
+    },
+    {
+      "dataType": "number",
+      "description": "Area in hectares covered by quarantine protocols and / or treatment:",
+      "name": "areaTreatedHa"
+    },
+    {
+      "columns":[
+        {
+          "dataType":"species",
+          "name":"diseaseTargetSpecies",
+          "description":"Disease species targeted for treatment (start typing a  scientific or common name for a species)."
+        }
+      ],
+      "dataType":"list",
+      "name":"diseaseManagement"
+    },
+    {
+      "dataType": "number",
+      "description": "The number of access management structures installed during this activity",
+      "name": "numberOfInstallations"
+    },
+    {
+      "dataType": "number",
+      "description": "The area in hectares being protected by installed access control measures.",
+      "name": "accessAreaProtected"
+    },
+    {
+      "dataType": "stringList",
+      "description": "Type of structure(s) installed to manage access on the subject area",
+      "name": "structuresInstalled",
+      "constraints": [
+        "Boardwalks",
+        "Bollards & barriers",
+        "Constructed parking bays",
+        "Fencing, styles, gates & grids",
+        "Formed trafficways",
+        "Signage",
+        "Other (specify in notes)"
+      ]
     }
   ],
   "viewModel":[
@@ -412,6 +473,12 @@
               "type":"number"
             },
             {
+              "source": "debrisWeightTonnes",
+              "computed": null,
+              "preLabel": "Weight of debris removed (Tonnes):",
+              "type": "number"
+            },
+            {
               "preLabel":"Debris removal (volume m3):",
               "computed":null,
               "source":"debrisVolumeM3",
@@ -480,6 +547,105 @@
     },
     {
       "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h5><strong>Disease Management<\/strong><\/h5>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "type":"row",
+      "class":"output-section",
+      "items":[
+        {
+          "type":"col",
+          "items":[
+            {
+              "source": "diseaseManagementMethod",
+              "computed": null,
+              "preLabel": "Disease management method:",
+              "type": "selectMany"
+            }
+          ]
+        },
+        {
+          "type":"col",
+          "items":[
+            {
+              "source": "areaTreatedHa",
+              "computed": null,
+              "preLabel": "Area quarantined / treated (Ha):",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "allowHeaderWrap":"true",
+      "computed":null,
+      "columns":[
+        {
+          "source": "diseaseTargetSpecies",
+          "computed": null,
+          "title": "Target species:",
+          "type": "autocomplete"
+        }
+      ],
+      "userAddedRows":true,
+      "source":"diseaseManagement",
+      "title":"Target species",
+      "type":"table",
+      "class":"output-section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "computed":null,
+          "source":"<h5><strong>Public access and infrastructure<\/strong><\/h5>",
+          "type":"literal"
+        }
+      ]
+    },
+    {
+      "type":"row",
+      "class":"output-section",
+      "items":[
+        {
+          "type":"col",
+          "items":[
+            {
+              "source": "numberOfInstallations",
+              "computed": null,
+              "preLabel": "No. of access management structures installed:",
+              "type": "number"
+            },
+            {
+              "source": "accessAreaProtected",
+              "computed": null,
+              "preLabel": "Area (Ha) protected by access management structure(s):",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type":"col",
+          "items":[
+            {
+              "source": "structuresInstalled",
+              "computed": null,
+              "preLabel": "Structure(s) installed:",
+              "type": "selectMany"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type":"row",
       "class":"output-section",
       "items":[
         {
@@ -490,5 +656,6 @@
         }
       ]
     }
+
   ]
 }

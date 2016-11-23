@@ -32,12 +32,44 @@ class XlsExporter extends XlsxExporter {
         shortName
     }
 
-    public AdditionalSheet addSheet(name, headers) {
+    public AdditionalSheet addSheet(name, headers, groupHeaders = null) {
         AdditionalSheet sheet = sheet(sheetName(name))
-        sheet.fillHeader(headers)
-        styleRow(sheet, 0, headerStyle(getWorkbook()))
+        if (groupHeaders != null) {
+            sheet.fillHeader(groupHeaders)
+            sheet.fillRow(headers, 1)
+
+            def lastHeader = ""
+            def groupNumber = 0
+            int fromCol = 0
+            groupHeaders.eachWithIndex { item, index ->
+                if (item != "" && lastHeader != item) {
+                    styleRowCells(sheet, 0, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
+                    styleRowCells(sheet, 1, fromCol, index-1, customHeaderStyle(getWorkbook(), groupNumber))
+                    groupNumber ++
+                    fromCol = index
+                }
+            }
+
+            styleRowCells(sheet, 0, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
+            styleRowCells(sheet, 1, fromCol, groupHeaders.size()-1, customHeaderStyle(getWorkbook(), groupNumber))
+
+        } else {
+            sheet.fillHeader(headers)
+            styleRow(sheet, 0, headerStyle(getWorkbook()))
+        }
+
+
 
         sheet
+    }
+
+    def styleRowCells(AdditionalSheet sheet, int row, int fromCol, int toCol, CellStyle style) {
+        sheet.sheet.getRow(row).cellIterator().toList().eachWithIndex {item, index ->
+            if (index > toCol) return
+            else if (index >= fromCol && index <= toCol) {
+                item.setCellStyle(style)
+            }
+        }
     }
 
     def styleRow(AdditionalSheet sheet, int row, CellStyle style) {
@@ -45,6 +77,35 @@ class XlsExporter extends XlsxExporter {
             it.setCellStyle(style)
         }
     }
+
+    CellStyle customHeaderStyle(Workbook workbook, int i) {
+
+        def backgroundColorIndex
+        switch (i) {
+            case 0: backgroundColorIndex = IndexedColors.LIGHT_TURQUOISE.index; break;
+            case 1: backgroundColorIndex = IndexedColors.LEMON_CHIFFON.index; break;
+            case 2: backgroundColorIndex = IndexedColors.LIGHT_BLUE.index; break;
+            case 3: backgroundColorIndex = IndexedColors.LIGHT_ORANGE.index; break;
+            case 4: backgroundColorIndex = IndexedColors.LIGHT_GREEN.index; break;
+            case 5: backgroundColorIndex = IndexedColors.LIGHT_CORNFLOWER_BLUE.index; break;
+            case 6: backgroundColorIndex = IndexedColors.LIGHT_YELLOW.index; break;
+            case 7: backgroundColorIndex = IndexedColors.PALE_BLUE.index; break;
+            case 8: backgroundColorIndex = IndexedColors.TAN.index; break;
+            case 9: backgroundColorIndex = IndexedColors.ORCHID.index; break;
+            default: backgroundColorIndex = IndexedColors.GREY_50_PERCENT.index; break;
+        }
+
+        CellStyle headerStyle = workbook.createCellStyle();
+
+        headerStyle.setFillPattern(CellStyle.SOLID_FOREGROUND);
+        headerStyle.setFillForegroundColor(backgroundColorIndex);
+        Font font = workbook.createFont();
+        font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+        font.setColor(HSSFColor.BLACK.index);
+        headerStyle.setFont(font);
+        return headerStyle
+    }
+
 
     CellStyle headerStyle(Workbook workbook) {
         CellStyle headerStyle = workbook.createCellStyle();
