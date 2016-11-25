@@ -6,7 +6,7 @@ import org.apache.http.HttpStatus
 
 class SiteController {
 
-    def siteService, commonService, projectService, webService
+    def siteService, commonService, projectService, webService, projectActivityService
     DocumentService documentService
 
     static final RICH = "rich"
@@ -274,5 +274,11 @@ class SiteController {
             render text:"Site has no geometry"
         }
 
+    }
+
+    def uniqueName(String id) {
+        def name = params.name
+        def result = [ value: !projectActivityService.sitesContainsName(id, name) ]
+        respond result
     }
 }
