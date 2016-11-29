@@ -31,9 +31,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectElectorateProperties = (0..39).collect{'elect'+it}
 
     List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
 
-    List<String> commonProjectPropertiesWithoutSites =  commonProjectPropertiesRaw.collect{'project_'+it}
+    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{'project_'+it}
 
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
@@ -103,10 +103,7 @@ class ProjectXlsExporter extends ProjectExporter {
     public void export(Map project) {
 
         commonProjectPropertiesRaw.each {
-            if (it != 'projectId') {
-                project['project_'+it] = project.remove(it)
-            }
-
+            project['project_'+it] = project.remove(it)
         }
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
