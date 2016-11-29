@@ -80,7 +80,7 @@
     },
     {
       "dataType":"number",
-      "name":"areaTreatedHa",
+      "name":"weedAreaTreatedHa",
       "description":"The total area where weed control has been undertaken. Do not double count (1) the same area for different species or retreatment, e.g 20ha of treatment that targeted Lantana and Camphor laurel at a single site is be reported as 20ha, not 40ha. or (2) follow up treatment. Eg. If the initial 20ha site is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of the 20ha initial treatment and the 20ha follow up treatment.",
       "validate":"min[0]"
     },
@@ -214,7 +214,7 @@
     {
       "dataType": "number",
       "description": "Area in hectares covered by quarantine protocols and / or treatment:",
-      "name": "areaTreatedHa"
+      "name": "quarantineAreaTreatedHa"
     },
     {
       "columns":[
@@ -505,7 +505,7 @@
             {
               "preLabel":"Weed treatment (total new area treated Ha):",
               "computed":null,
-              "source":"areaTreatedHa",
+              "source":"weedAreaTreatedHa",
               "type":"number"
             }
           ]
@@ -574,7 +574,7 @@
           "type":"col",
           "items":[
             {
-              "source": "areaTreatedHa",
+              "source": "quarantineAreaTreatedHa",
               "computed": null,
               "preLabel": "Area quarantined / treated (Ha):",
               "type": "number"
