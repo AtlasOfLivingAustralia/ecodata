@@ -224,7 +224,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
                 List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.score.label, target:it.target, deliveredApproved:it.result]}
                 targets.each { target ->
-                    target.deliveredTotal = totalMetrics.find{it.score.label = target.scoreLabel}?.result
+                    target.deliveredTotal = totalMetrics.find{it.score.label == target.scoreLabel}?.result
                 }
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
