@@ -222,9 +222,9 @@ class ProjectXlsExporter extends ProjectExporter {
             if (project.outputTargets) {
                 List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
                 List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
-                List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.score.label, target:it.target, deliveredApproved:it.result]}
+                List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
                 targets.each { target ->
-                    target.deliveredTotal = totalMetrics.find{it.score.label == target.scoreLabel}?.result
+                    target.deliveredTotal = totalMetrics.find{it.label == target.scoreLabel}?.result?.result
                 }
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
