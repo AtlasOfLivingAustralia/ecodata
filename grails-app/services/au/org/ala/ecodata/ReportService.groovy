@@ -1,6 +1,5 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.reporting.AggregatorFactory
 import au.org.ala.ecodata.reporting.AggregatorIf
 import au.org.ala.ecodata.reporting.Aggregation
@@ -12,7 +11,6 @@ import au.org.ala.ecodata.reporting.GroupingAggregationConfig
 import au.org.ala.ecodata.reporting.GroupingAggregator
 import au.org.ala.ecodata.reporting.GroupingConfig
 import au.org.ala.ecodata.reporting.PropertyAccessor
-import au.org.ala.ecodata.reporting.Score
 import au.org.ala.ecodata.reporting.ShapefileBuilder
 import org.grails.plugins.csv.CSVReaderUtils
 
@@ -26,43 +24,12 @@ class ReportService {
     def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService
 
 
-    /**
-     * Creates an aggregation specification from the Scores defined in the activities model.
-     */
-    def buildReportSpec() {
-        def toAggregate = []
-
-        metadataService.activitiesModel().outputs?.each{
-            Score.outputScores(it).each { score ->
-                def scoreDetails = [score:score]
-                toAggregate << scoreDetails
-            }
-        }
-        toAggregate
-    }
-
     def findScoresByLabel(List labels) {
-        def scores = []
-        metadataService.activitiesModel().outputs?.each{
-            Score.outputScores(it).each { score ->
-                if (score.label in labels) {
-                    scores << [score:score]
-                }
-            }
-        }
-        scores
+        Score.findAllByLabelInList(labels)
     }
 
     def findScoresByCategory(String category) {
-        def scores = []
-        metadataService.activitiesModel().outputs?.each{
-            Score.outputScores(it).each { score ->
-                if (score.category == category) {
-                    scores << [score:score]
-                }
-            }
-        }
-        scores
+        Score.findAllByCategory(category)
     }
 
     def runReport(List filters, String reportName, params) {
@@ -99,10 +66,11 @@ class ReportService {
     }
 
     def aggregate(List filters) {
-        aggregate(filters, null, buildReportSpec())
+        List<Score> scores = Score.findAll()
+        aggregate(filters, null, scores)
     }
 
-    def aggregate(List filters, String searchTerm, List<Map<String, Score>> toAggregate, topLevelGrouping = null) {
+    def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null) {
 
         GroupingAggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
@@ -128,26 +96,35 @@ class ReportService {
     private List postProcessOutputData(List outputData, List scores) {
         List processedOutputData = []
         outputData.each { result ->
-            Map scoreMap = scores.find{it.score.label == result.label}
+            Score score = scores.find{it.label == result.label}
 
-            if (!scoreMap) {
+            if (!score) {
                 println "No score for ${result.label}"
                 return
             }
-            Map resultMap = result.properties
 
-            resultMap.score = scoreMap.score
+            Map resultMap = [scoreId:score.scoreId, label:score.label, description:score.description, displayType:score.displayType, outputType: score.outputType, isOutputTarget: score.isOutputTarget, category: score.category, result: result.properties]
             processedOutputData << resultMap
         }
         processedOutputData
     }
 
-    private GroupingAggregationConfig aggregationConfigFromScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
+    private GroupingAggregationConfig aggregationConfigFromScores(List<Score> scores = null, Map topLevelGrouping = null) {
+        if (!scores) {
+            scores = Score.findAll()
+        }
+
+        List config = scores.collect{it.configuration}
+        GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
+        new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
+    }
+
+    private def generateScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
 
         Map<String, List> groupedScores = toAggregate.groupBy { it.score.label }
 
         AggregationConfig aggregationConfig
-        List<AggregationConfig> config = groupedScores.collect { label, scores ->
+        groupedScores.collect { label, scores ->
 
             List<AggregationConfig> config = scores.collect {configFor(it.score)}
             if (config.size() > 1) {
@@ -156,13 +133,22 @@ class ReportService {
             else {
                 aggregationConfig = config[0]
             }
-            aggregationConfig
+
+            [
+                    label:label,
+                    description:scores[0].score.description,
+                    config:aggregationConfig,
+                    isOutputTarget:scores[0].score.isOutputTarget,
+                    category:scores[0].score.category,
+                    outputType:scores[0].score.outputName,
+                    displayType:scores[0].score.displayType
+
+            ]
         }
-        GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
-        new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
+
     }
 
-    private AggregationConfig configFor(Score score) {
+    private AggregationConfig configFor(au.org.ala.ecodata.reporting.Score score) {
         AggregationConfig aggregationConfig
 
         String property = 'data.'

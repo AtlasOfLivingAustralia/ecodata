@@ -618,4 +618,35 @@ class SearchController {
             render ([status:'error', error:'Invalid query (expected: name, lat and lng)'] as JSON)
         }
     }
+
+
+    /**
+     * Creates an aggregation specification from the Scores defined in the activities model.
+     */
+    def buildReportSpec() {
+        def toAggregate = []
+
+        metadataService.activitiesModel().outputs?.each{
+            au.org.ala.ecodata.reporting.Score.outputScores(it).each { score ->
+                def scoreDetails = [score:score]
+                toAggregate << scoreDetails
+            }
+        }
+        toAggregate
+    }
+    def generateScoresFromConfiguration() {
+        def config = reportService.generateScores(buildReportSpec(), null)
+
+        List summary = []
+        config.each {
+            Score s = new Score(it)
+            String configAsString = (it.config as JSON).toString()
+            s.configuration = new JsonSlurper().parseText(configAsString)
+            s.save()
+
+            summary << [label:s.label, scoreId:s.scoreId]
+        }
+        render summary as JSON
+    }
+
 }

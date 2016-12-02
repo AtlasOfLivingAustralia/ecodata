@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.converter.SciStarterConverter
-import au.org.ala.ecodata.reporting.Score
 import grails.converters.JSON
 import org.codehaus.jackson.map.ObjectMapper
 import org.springframework.context.MessageSource
@@ -348,15 +347,7 @@ class ProjectService {
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
 
-            def toAggregate = []
-
-            metadataService.activitiesModel().outputs?.each {
-                Score.outputScores(it).each { score ->
-                    if (!targetsOnly || score.isOutputTarget) {
-                        toAggregate << [score: score]
-                    }
-                }
-            }
+            def toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
 
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
 
@@ -377,9 +368,9 @@ class ProjectService {
                 } else {
                     // If there are no Outputs recorded containing the score, the results won't be returned, so add
                     // one in containing the target.
-                    def score = toAggregate.find { it.score?.label == target.scoreLabel }
+                    def score = toAggregate.find { it.label == target.scoreLabel }
                     if (score) {
-                        outputSummary << [label: score.label, score: score.score, target: target.target]
+                        outputSummary << [label: score.label, target: target.target]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
