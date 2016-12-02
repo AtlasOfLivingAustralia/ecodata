@@ -238,25 +238,8 @@ class ReportService {
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {
-        def scores = []
+        def scores = Score.findAllByIsOutputTarget(true)
 
-        def labels = []
-        metadataService.activitiesModel().outputs?.each{
-            Score.outputScores(it).each { score ->
-                if (score.isOutputTarget) {
-                    scores << [score: score]
-                    labels << score.label
-                }
-            }
-        }
-        // Add all supplementary scores from bulk loads that match output targets
-        metadataService.activitiesModel().outputs?.each {
-            Score.outputScores(it).each { score ->
-                if (!score.isOutputTarget && labels.contains(score.label)) {
-                    scores << [score:score]
-                }
-            }
-        }
         outputTargetReport(filters, searchTerm, scores)
     }
 
