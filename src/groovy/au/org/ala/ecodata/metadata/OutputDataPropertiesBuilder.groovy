@@ -3,6 +3,8 @@ package au.org.ala.ecodata.metadata
 import pl.touk.excel.export.getters.Getter
 
 class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
+    static DateTimeParser TIME_PARSER = new DateTimeParser(DateTimeParser.Style.TIME)
+    static DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE)
 
     private String[] nameParts
     private String constraint
@@ -42,12 +44,19 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     @Override
     def time(Object node, Value outputValue) {
         def val = outputValue.value
-        return val ? val as String : ""
+        if (!val)
+            return ""
+        def time = TIME_PARSER.parse(val)
+        return time ? TIME_PARSER.format(time) : val
     }
 
     @Override
     def date(Object node, Value outputValue) {
-        return new Value(outputValue ?: "") // dates are UTC formatted strings already
+        def val = outputValue.value
+        if (!val)
+            return ""
+        def date = DATE_PARSER.parse(val)
+        return date ? DATE_PARSER.format(date) : val
     }
 
     @Override
