@@ -24,11 +24,13 @@ class TabbedExporter {
     Map<String, AdditionalSheet> sheets
     List<String> tabsToExport
     XlsExporter exporter
+    Map<String, String> documentMap
 
-    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = []) {
+    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, String> documentMap = [:]) {
         this.exporter = exporter
         this.sheets = new HashMap<String, AdditionalSheet>()
         this.tabsToExport = tabsToExport != null ? tabsToExport : []
+        this.documentMap = documentMap
         exporter.setDateCellFormat(DATE_CELL_FORMAT)
     }
 
@@ -78,7 +80,7 @@ class TabbedExporter {
                 headers << it.description
             }
         }
-        List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model) }
+        List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model, documentMap) }
         [headers: headers, propertyGetters: propertyGetters]
     }
 

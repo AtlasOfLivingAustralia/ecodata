@@ -9,8 +9,9 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     private String[] nameParts
     private String constraint
     private List outputDataModel
+    private Map<String, String> documentMap
 
-    public OutputDataPropertiesBuilder(String name, outputDataModel) {
+    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, String> documentMap) {
         if (!name) {
             throw new IllegalArgumentException("Name cannot be null")
         }
@@ -21,6 +22,7 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         this.nameParts = name.tokenize('.');
 
         this.outputDataModel = outputDataModel;
+        this.documentMap = documentMap
     }
 
     @Override
@@ -61,7 +63,15 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
 
     @Override
     def image(Object node, Value outputValue) {
-        return ""
+        def val = outputValue.value
+        if (!val)
+            return ""
+        def pathMapper = { documentMap[it.documentId] ?: it.identifier ?: it.filename ?: it.documentId }
+        if (val instanceof Iterable) {
+            def result = ((Iterable) val).collect(pathMapper).findAll { it }
+            return result.isEmpty() ? "" : result.size() == 1 ? result[0] : result
+        }
+        return pathMapper.call(val)
     }
 
     @Override
