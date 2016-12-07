@@ -24,9 +24,9 @@ class TabbedExporter {
     Map<String, AdditionalSheet> sheets
     List<String> tabsToExport
     XlsExporter exporter
-    Map<String, String> documentMap
+    Map<String, Object> documentMap
 
-    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, String> documentMap = [:]) {
+    public TabbedExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:]) {
         this.exporter = exporter
         this.sheets = new HashMap<String, AdditionalSheet>()
         this.tabsToExport = tabsToExport != null ? tabsToExport : []

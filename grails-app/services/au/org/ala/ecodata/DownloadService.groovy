@@ -103,7 +103,7 @@ class DownloadService {
         elasticSearchService.buildProjectActivityQuery(params)
 
         Map<String, Set<String>> activitiesByProject = getActivityIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
-        Map<String, String> documentMap = [:] // Accumulates a map of document id to path in zip file
+        Map<String, Object> documentMap = [:] // Accumulates a map of document id to path in zip file
 
 
         new ZipOutputStream(outputStream).withStream { zip ->
@@ -128,8 +128,7 @@ class DownloadService {
 
                 addReadmeToZip(zip)
             } catch (Exception e){
-                log.error(e.message)
-                log.error(e.stackTrace)
+                log.error("Error creating download archive", e)
             } finally {
                 zip.finish()
                 zip.flush()
@@ -163,7 +162,7 @@ class DownloadService {
             |- - - records -> directory structure containing images for individual records not already organised by activty/output
             |- - - - <occurrenceId>
             |- - - - - <image files> -> Images associated with the record
-            |- - - recordmap.csv -> Map of record id onto records
+            |- - - records.csv -> Map of record id onto image locations
 
 
             This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
@@ -199,7 +198,7 @@ class DownloadService {
         log.info "Creating shapefiles took ${System.currentTimeMillis() - start} millis"
     }
 
-    private addImagesToZip(ZipOutputStream zip, Map<String, Set<String>> activitiesByProject, Map<String, String> documentMap) {
+    private addImagesToZip(ZipOutputStream zip, Map<String, Set<String>> activitiesByProject, Map<String, Object> documentMap) {
         long start = System.currentTimeMillis()
         def paths = [] as Set
         zip.putNextEntry(new ZipEntry("images/"))
@@ -229,13 +228,13 @@ class DownloadService {
 
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, outputPath, doc, documentMap, paths)
+                                    addFileToZip(zip, outputPath, doc, documentMap, paths, true)
                                 }
                             }
                         } else {
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, activityPath, doc, documentMap, paths)
+                                    addFileToZip(zip, activityPath, doc, documentMap, paths, true)
                                 }
                             }
                         }
@@ -244,7 +243,7 @@ class DownloadService {
                 } else {
                     documentsMap[null].each { doc ->
                         if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            addFileToZip(zip, projectPath, doc, paths)
+                            addFileToZip(zip, projectPath, doc, paths, true)
                         }
                     }
                 }
@@ -254,60 +253,71 @@ class DownloadService {
 
             // put record images into a separate directory structure
             def recordPath = makePath("${projectPath}records/", paths)
-            zip.putNextEntry(new ZipEntry(recordPath))
+            //zip.putNextEntry(new ZipEntry(recordPath))
 
             groupDocumentsByRecord(projectId).each { recordId, documentList ->
-                boolean addedPath = false
                 def recordIdPath = "${recordPath}${recordId}/"
-                if (documentList) {
-                    documentList.each { doc ->
-                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            if (!documentMap.containsKey(doc.documentId)) {
-                                if (!addedPath) {
-                                    recordIdPath = makePath(recordIdPath, paths)
-                                    zip.putNextEntry(new ZipEntry(recordIdPath))
-                                    addedPath = true
-                                }
-                                addFileToZip(zip, recordIdPath, doc, documentMap, paths)
-                            }
-                            recordMap[recordId] << documentMap[doc.documentId]
+                recordIdPath = makePath(recordIdPath, paths)
+                documentList.each { doc ->
+                    if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                        if (!documentMap.containsKey(doc.documentId)) {
+                            addFileToZip(zip, recordIdPath, doc, documentMap, paths)
                         }
+                        recordMap[recordId] << doc
                     }
-
-                    zip.closeEntry()
                 }
             }
             if (!recordMap.isEmpty()) {
                 zip.putNextEntry(new ZipEntry("${projectPath}records.csv"))
-                writeRecordMap(zip, recordMap)
+                writeRecordMap(zip, recordMap, documentMap)
                 zip.closeEntry()
             }
         }
-
-
         log.info "Zipping images took ${System.currentTimeMillis() - start} millis"
     }
 
-    private writeRecordMap(ZipOutputStream zip, Map<String, List<String>> recordMap) {
-        def maxImage = recordMap.inject(0, { max, key, value -> Math.max( max, value.size()) })
-        zip << "Occurrence Id"
-        (1..maxImage).each {
-            zip << ",Image ${it}"
+    private writeRecordMap(ZipOutputStream zip, Map<String, List<Document>> recordMap, Map<String, Object> documentMap) {
+        def encode = { String str ->
+            if (!str)
+                return ''
+            if (str.contains(',') || str.contains('"')) {
+                str = str.replaceAll('"', '\\' + '"')
+                return '"' + str + '"'
+            }
+            return str
         }
-        zip << "\n"
+        zip << "Occurrence Id,Thumbnail,URL,Identifier,Name,Type,Licence,Attribution\n"
         recordMap.keySet().sort().each { recordId ->
-            zip << recordId
-            recordMap[recordId].each { zip << ",${it}" }
-            zip << "\n"
+            recordMap[recordId].each { doc ->
+                zip << encode.call(recordId)
+                zip << ","
+                zip << encode.call(documentMap[doc.documentId].thumbnail)
+                zip << ","
+                zip << encode.call(doc.externalUrl)
+                zip << ","
+                zip << encode.call(doc.identifier)
+                zip << ","
+                zip << encode.call(doc.licence)
+                zip << ","
+                zip << encode.call(doc.name)
+                zip << ","
+                zip << encode.call(doc.type)
+                zip << ","
+                zip << encode.call(doc.attribution)
+                zip << "\n"
+            }
         }
     }
 
-    private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, String> documentMap, Set<String> existing) {
-        String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${doc.filename}", existing)
+    private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
+        String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
         String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
         File file = new File(path)
 
-        if (file.exists()) {
+        if (thumbnail) {
+            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+        }
+        if (file != null && file.exists()) {
             zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
         } else {
@@ -315,8 +325,7 @@ class DownloadService {
             zip.putNextEntry(new ZipEntry(zipName))
             log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
         }
-
-        documentMap[doc.documentId] = zipName
+        documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
         zip.closeEntry()
     }
 
@@ -346,7 +355,7 @@ class DownloadService {
         documents
     }
 
-    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, String> documentMap, String fileName = "results") {
+    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results") {
         long start = System.currentTimeMillis()
 
         XlsExporter xlsExporter = new XlsExporter(fileName)

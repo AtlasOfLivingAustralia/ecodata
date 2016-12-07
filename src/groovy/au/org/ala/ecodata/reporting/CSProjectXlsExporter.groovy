@@ -28,6 +28,13 @@ import static au.org.ala.ecodata.Status.DELETED
 class CSProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
+    private def imageMapper = {
+        if (it.imageId)
+            return Holders.grailsApplication.config.imagesService.baseURL + "/image/details?imageId=" + it.imageId
+        def doc = documentMap[it.documentId]
+        return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
+    }
+
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
     List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE), 'funding']
 
@@ -36,7 +43,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude']
 
     List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Event Date/Time", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
-    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", { doc -> documentMap[doc.documentId] }) ]
+    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -61,9 +68,9 @@ class CSProjectXlsExporter extends ProjectExporter {
     AdditionalSheet recordSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
-    Map<String, String> documentMap
+    Map<String, Object> documentMap
 
-    public CSProjectXlsExporter(XlsExporter exporter, Map<String, String> documentMap) {
+    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap) {
         super(exporter, [], documentMap)
         this.documentMap = documentMap
     }

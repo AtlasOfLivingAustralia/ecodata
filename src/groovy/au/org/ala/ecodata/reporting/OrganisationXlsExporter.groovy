@@ -28,7 +28,7 @@ class OrganisationXlsExporter extends TabbedExporter {
     List<String> reportDataHeaders = commonOrganisationHeaders + ['Report', 'Stage from', 'Stage to', 'Data Entry Progress', 'Report Status']
     List<String> reportDataProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'publicationStatus']
 
-    public OrganisationXlsExporter(XlsxExporter exporter, List<String> tabsToExport, Map<String, String> documentMap) {
+    public OrganisationXlsExporter(XlsxExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap) {
         super(exporter, tabsToExport, documentMap)
 
     }

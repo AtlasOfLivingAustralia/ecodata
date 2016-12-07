@@ -313,13 +313,18 @@ class DocumentService {
      * Creates a thumbnail of the image stored at the location specified by filepath and filename.
      * @param filepath the path (relative to root document storage) at which the file can be found.
      * @param filename the name of the file.
+     *
+     * @return The thumbnail file or null for no thumbnail
      */
     def makeThumbnail(filepath, filename, overwrite = true) {
+        File sFile = new File(fullPath(filepath, filename))
+        if (!sFile.exists())
+            return null
 
         File tnFile = new File(fullPath(filepath, Document.THUMBNAIL_PREFIX+filename))
         if (tnFile.exists()) {
             if (!overwrite) {
-                return
+                return tnFile
             }
             else {
                 tnFile.delete();
@@ -327,14 +332,15 @@ class DocumentService {
         }
 
         def ext = FilenameUtils.getExtension(filename)
-        BufferedImage img = ImageIO.read(new File(fullPath(filepath, filename)))
+        BufferedImage img = ImageIO.read(sFile)
         BufferedImage tn = Scalr.resize(img, 300, Scalr.OP_ANTIALIAS)
         try {
             def success = ImageIO.write(tn, ext, tnFile)
             log.debug "Thumbnailing: " + success
+            return tnFile
         } catch(IOException e) {
-            e.printStackTrace()
-            log.error "Write error for " + tnFile.getPath() + ": " + e.getMessage()
+            log.error("Write error for " + tnFile.getPath() + ": " + e.getMessage(), e)
+            return null
         }
 
     }

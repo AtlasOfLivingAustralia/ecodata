@@ -4,7 +4,7 @@ import au.org.ala.ecodata.Project
 
 abstract class ProjectExporter extends TabbedExporter {
 
-    public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, String> documentMap = [:]) {
+    public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:]) {
         super(exporter, tabsToExport, documentMap)
     }
     void export(Map project) {

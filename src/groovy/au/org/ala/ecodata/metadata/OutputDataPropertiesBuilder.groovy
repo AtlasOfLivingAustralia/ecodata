@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.metadata
 
+import grails.util.Holders
 import pl.touk.excel.export.getters.Getter
 
 class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
@@ -9,9 +10,16 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     private String[] nameParts
     private String constraint
     private List outputDataModel
-    private Map<String, String> documentMap
+    private Map<String, Object> documentMap
+    private def imageMapper = {
+        if (it.imageId)
+            return Holders.grailsApplication.config.imagesService.baseURL + "/image/details?imageId=" + it.imageId
+        def doc = documentMap[it.documentId]
+        return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
+    }
 
-    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, String> documentMap) {
+
+    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, Object> documentMap) {
         if (!name) {
             throw new IllegalArgumentException("Name cannot be null")
         }
@@ -66,9 +74,8 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         def val = outputValue.value
         if (!val)
             return ""
-        def pathMapper = { documentMap[it.documentId] ?: it.identifier ?: it.filename ?: it.documentId }
         if (val instanceof Iterable) {
-            def result = ((Iterable) val).collect(pathMapper).findAll { it }
+            def result = ((Iterable) val).collect(imageMapper).findAll { it }
             return result.isEmpty() ? "" : result.size() == 1 ? result[0] : result
         }
         return pathMapper.call(val)
