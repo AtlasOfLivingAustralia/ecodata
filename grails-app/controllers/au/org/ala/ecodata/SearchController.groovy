@@ -626,16 +626,19 @@ class SearchController {
     def buildReportSpec() {
         def toAggregate = []
 
-        metadataService.activitiesModel().outputs?.each{
+        Map activitiesModel = metadataService.activitiesModel()
+        activitiesModel.outputs?.each{
             au.org.ala.ecodata.reporting.Score.outputScores(it).each { score ->
-                def scoreDetails = [score:score]
+                def activity = activitiesModel.activities.find{it.outputs.contains(score.outputName)}
+                def scoreDetails = [score:score, activity:activity.name]
                 toAggregate << scoreDetails
             }
         }
         toAggregate
     }
     def generateScoresFromConfiguration() {
-        def config = reportService.generateScores(buildReportSpec(), null)
+        def spec = buildReportSpec()
+        def config = reportService.generateScores(spec, null)
 
         List summary = []
         config.each {
@@ -644,7 +647,11 @@ class SearchController {
             s.configuration = new JsonSlurper().parseText(configAsString)
             s.save()
 
-            summary << [label:s.label, scoreId:s.scoreId]
+            if (s.hasErrors()) {
+                println s.errors.collect{it.toString()}
+            }
+
+            summary << [label:s.label, scoreId:s.scoreId, activities:s.entityTypes]
         }
         render summary as JSON
     }

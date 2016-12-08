@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 class Score {
 
+    String status = 'active'
+    
     String scoreId
 
     /** The label for this score when displayed */
@@ -19,6 +21,13 @@ class Score {
 
     String displayType
 
+    /** The entity this score is derived from (Outputs are treated as a part of an Activity for the purposes of scoring */
+    String entity
+
+    /** In the case that the score is derived from an Activity, this contains the activity types used */
+    List<String> entityTypes
+
+
     /** Embedded document describing how the score should be calculated */
     Map configuration
 
@@ -26,8 +35,11 @@ class Score {
         outputType nullable:true
         category nullable:true
         displayType nullable:true
+        description nullable:true
+        entityTypes nullable:true
         label unique: true
         scoreId unique: true
+
     }
 
     static mapping = {

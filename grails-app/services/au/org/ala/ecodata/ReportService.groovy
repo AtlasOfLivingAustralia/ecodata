@@ -141,7 +141,9 @@ class ReportService {
                     isOutputTarget:scores[0].score.isOutputTarget,
                     category:scores[0].score.category,
                     outputType:scores[0].score.outputName,
-                    displayType:scores[0].score.displayType
+                    displayType:scores[0].score.displayType,
+                    entity:Activity.class.name,
+                    entityTypes:scores.collect{it.activity}
 
             ]
         }
