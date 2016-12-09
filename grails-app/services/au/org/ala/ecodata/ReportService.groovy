@@ -119,6 +119,16 @@ class ReportService {
         new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
     }
 
+    private def outputType(List scores) {
+        def result = scores.find{it.score.outputName != 'Output Details'}?.score?.outputName
+        if (!result) {
+            result = scores[0].score.outputName
+        }
+
+        result
+    }
+
+
     private def generateScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
 
         Map<String, List> groupedScores = toAggregate.groupBy { it.score.label }
@@ -140,10 +150,10 @@ class ReportService {
                     config:aggregationConfig,
                     isOutputTarget:scores[0].score.isOutputTarget,
                     category:scores[0].score.category,
-                    outputType:scores[0].score.outputName,
+                    outputType:outputType(scores),
                     displayType:scores[0].score.displayType,
                     entity:Activity.class.name,
-                    entityTypes:scores.collect{it.activity}
+                    entityTypes:scores.collect{it.activities}.flatten()
 
             ]
         }

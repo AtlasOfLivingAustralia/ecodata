@@ -629,8 +629,8 @@ class SearchController {
         Map activitiesModel = metadataService.activitiesModel()
         activitiesModel.outputs?.each{
             au.org.ala.ecodata.reporting.Score.outputScores(it).each { score ->
-                def activity = activitiesModel.activities.find{it.outputs.contains(score.outputName)}
-                def scoreDetails = [score:score, activity:activity.name]
+                def activities = activitiesModel.activities.findAll{it.outputs.contains(score.outputName)}
+                def scoreDetails = [score:score, activities:activities.collect{it.name}]
                 toAggregate << scoreDetails
             }
         }
