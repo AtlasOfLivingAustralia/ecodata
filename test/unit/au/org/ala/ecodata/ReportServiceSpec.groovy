@@ -47,7 +47,9 @@ class ReportServiceSpec extends Specification {
         given:
         def output = "output"
         def property = "prop"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, label:property]
+
+        Map config = [type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.'+property, label:property]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def values = [1:1,2:2,3:3,4:4,5:5]
         def activities = values.collect{[activityId:it.key]}
@@ -56,10 +58,10 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
-        results.outputData[0].result == values.values().sum()
+        results.outputData[0].result.result == values.values().sum()
         results.metadata.activities == 5
         results.metadata.projects.size() == 1
 
@@ -69,7 +71,8 @@ class ReportServiceSpec extends Specification {
         given:
         def output = "output"
         def property = "prop"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, label:property, groupBy:"activity:mainTheme"]
+        Map config = [label:property, childAggregations:[[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:"data."+property]], groups:[type:'discrete', property:"activity.mainTheme"]]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -80,17 +83,17 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
 
-        results.outputData[0].groups[0].group == "theme1"
-        results.outputData[0].groups[0].count == 3
-        results.outputData[0].groups[0].results[0].result == 1+2+5
+        results.outputData[0].result.groups[0].group == "theme1"
+        results.outputData[0].result.groups[0].count == 3
+        results.outputData[0].result.groups[0].results[0].result == 1+2+5
 
-        results.outputData[0].groups[1].results[0].result == 3+4
-        results.outputData[0].groups[1].group == "theme2"
-        results.outputData[0].groups[1].count == 2
+        results.outputData[0].result.groups[1].results[0].result == 3+4
+        results.outputData[0].result.groups[1].group == "theme2"
+        results.outputData[0].result.groups[1].count == 2
 
         results.metadata.activities == 5
         results.metadata.projects.size() == 1
@@ -101,7 +104,8 @@ class ReportServiceSpec extends Specification {
         given:
         def output = "output"
         def property = "prop"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, label:property, groupBy:"activity:mainTheme", filterBy:'theme1']
+        Map config = [childAggregations: [[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.'+property]], label:property, filter:[type:'discrete', property:"activity.mainTheme", filterValue:'theme1']]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -112,14 +116,14 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
         results.outputData.size() == 1
 
         def expected = 1+2+5
 
-        results.outputData[0].result == expected
+        results.outputData[0].result.result == expected
 
         assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
@@ -130,7 +134,8 @@ class ReportServiceSpec extends Specification {
         setup:
         def output = "output"
         def property = "prop"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, listName:'nested', outputName:output, label:property, groupBy:"output:group"]
+        Map config = [childAggregations: [[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.nested.'+property]], label:property, groups:[property:"data.nested.group", type:'discrete']]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -145,23 +150,23 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
         results.outputData.size() == 1
-        results.outputData[0].groups.size() == 3
+        results.outputData[0].result.groups.size() == 3
 
-        results.outputData[0].groups[0].results[0].result == 11
-        results.outputData[0].groups[0].group == "group1"
-        results.outputData[0].groups[0].count == 2
+        results.outputData[0].result.groups[0].results[0].result == 11
+        results.outputData[0].result.groups[0].group == "group1"
+        results.outputData[0].result.groups[0].count == 2
 
-        results.outputData[0].groups[1].results[0].result == 14
-        results.outputData[0].groups[1].group == "group2"
-        results.outputData[0].groups[1].count == 2
+        results.outputData[0].result.groups[1].results[0].result == 14
+        results.outputData[0].result.groups[1].group == "group2"
+        results.outputData[0].result.groups[1].count == 2
 
-        results.outputData[0].groups[2].results[0].result == 3
-        results.outputData[0].groups[2].group == "group3"
-        results.outputData[0].groups[2].count == 1
+        results.outputData[0].result.groups[2].results[0].result == 3
+        results.outputData[0].result.groups[2].group == "group3"
+        results.outputData[0].result.groups[2].count == 1
 
         assertEquals 5, results.metadata.activities
         assertEquals 1, results.metadata.projects.size()
@@ -174,7 +179,8 @@ class ReportServiceSpec extends Specification {
         def output = "output"
         def property = "prop"
         def list = 'nested'
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group", filterBy:'group1']
+        Map config = [childAggregations: [[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.'+list+'.'+property]], label:property, filter:[property:"data."+list+".group", filterValue:'group1', type:'discrete']]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -189,15 +195,15 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
         results.outputData.size() == 1
 
 
         def expected = 1+3+2+3
-        results.outputData[0].result == expected
-        results.outputData[0].count == 4
+        results.outputData[0].result.result == expected
+        results.outputData[0].result.count == 4
 
         results.metadata.activities == 5
         results.metadata.projects.size() == 1
@@ -207,7 +213,8 @@ class ReportServiceSpec extends Specification {
         setup:
         def output = "output"
         def property = "prop"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, listName:'nested', outputName:output, label:property, groupBy:"output:group"]
+        Map config = [childAggregations: [[ type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.nested.'+property]], label:property, groups:[property:"data.nested.group", type:'discrete']]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -222,23 +229,23 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([])
+        def results = service.aggregate([], null, [score])
 
         then:
         results.outputData.size() == 1
-        results.outputData[0].groups.size() == 3
+        results.outputData[0].result.groups.size() == 3
 
-        results.outputData[0].groups[0].results[0].result == 11
-        results.outputData[0].groups[0].group == "group1"
-        results.outputData[0].groups[0].count == 2
+        results.outputData[0].result.groups[0].results[0].result == 11
+        results.outputData[0].result.groups[0].group == "group1"
+        results.outputData[0].result.groups[0].count == 2
 
-        results.outputData[0].groups[1].results[0].result == 18
-        results.outputData[0].groups[1].group == "group2"
-        results.outputData[0].groups[1].count == 4
+        results.outputData[0].result.groups[1].results[0].result == 18
+        results.outputData[0].result.groups[1].group == "group2"
+        results.outputData[0].result.groups[1].count == 4
 
-        results.outputData[0].groups[2].results[0].result == 5
-        results.outputData[0].groups[2].group == "group3"
-        results.outputData[0].groups[2].count == 2
+        results.outputData[0].result.groups[2].results[0].result == 5
+        results.outputData[0].result.groups[2].group == "group3"
+        results.outputData[0].result.groups[2].count == 2
 
         results.metadata.activities == 5
         results.metadata.projects.size() == 1
@@ -250,7 +257,8 @@ class ReportServiceSpec extends Specification {
         def output = "output"
         def property = "prop"
         def list = 'nested'
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group"]
+        Map config = [childAggregations: [[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.'+list+'.'+property]], label:property, groups:[type:'discrete', property:"data.nested.group"]]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def themes = [1:"theme1", 2:"theme1", 3:"theme2", 4:"theme2", 5:"theme1"]
 
@@ -265,7 +273,7 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([], null, [[score:new au.org.ala.ecodata.reporting.Score(score)]], [type:'discrete', property:'activity.mainTheme'])
+        def results = service.aggregate([], null, [score], [type:'discrete', property:'activity.mainTheme'])
 
         then:
         results.outputData.groups.size() == 2
@@ -292,7 +300,8 @@ class ReportServiceSpec extends Specification {
         def output = "output"
         def property = "prop"
         def list = 'nested'
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, listName: list, label:property, groupBy:"output:group"]
+        Map config = [childAggregations: [[type:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM.name(), property:'data.'+list+'.'+property]], label:property, groups:[property:"data.nested.group", type:'discrete']]
+        Score score = new Score([outputType:output, label:property, configuration:config])
 
         def activityDates = [1:"2013-01-02T00:00:00Z", 2:"2014-01-02T00:00:00Z", 3:"2014-07-02T00:00:00Z", 4:"2015-01-01T00:00:00Z", 5:"2015-01-02T00:00:00Z"]
 
@@ -307,7 +316,7 @@ class ReportServiceSpec extends Specification {
         setupInputs([[name:output, scores:[score]]], activities, outputs)
 
         when:
-        def results = service.aggregate([], null, [[score:new au.org.ala.ecodata.reporting.Score(score)]], [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
+        def results = service.aggregate([], null, [score], [property:'activity.plannedEndDate', type:'date', buckets:['2014-01-01T00:00:00Z', '2015-01-01T00:00:00Z'], format:'MMM yyyy'])
 
         then:
         results.outputData.groups[0].group == 'Before Jan 2014'
@@ -332,32 +341,6 @@ class ReportServiceSpec extends Specification {
             def nestedResult = group3Results.find{it.group == k}
             nestedResult.results[0].result == v
         }
-
-    }
-
-    def "scores with the same label should produce a single result"() {
-        given:
-        def output = "output"
-        def property = "prop"
-        def property2 = "prop2"
-        String label = "label"
-        def score = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property, outputName:output, label:label]
-        def score2 = [aggregationType:au.org.ala.ecodata.reporting.Score.AGGREGATION_TYPE.SUM, name:property2, outputName:output, label:label]
-
-        def values = [1:[(property):1, (property2):6], 2:[(property):2, (property2):7],3:[(property):3, (property2):8],
-                      4:[(property):4, (property2):9],5:[(property):5, (property2):10]]
-
-        def activities = values.collect{[activityId:it.key]}
-        def outputs = values.collectEntries{[(it.key):[createOutput(it.key, output, it.value)]]}
-        setupInputs([[name:output, scores:[score, score2]]], activities, outputs)
-
-        when:
-        def results = service.aggregate([])
-
-        then:
-        results.outputData[0].result == values.values().sum{it[property]+it[property2]}
-        results.metadata.activities == 5
-        results.metadata.projects.size() == 1
 
     }
 
