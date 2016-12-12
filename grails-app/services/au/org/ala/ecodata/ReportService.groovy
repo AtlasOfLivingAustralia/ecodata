@@ -286,7 +286,7 @@ class ReportService {
                         targetsBySubProgram[program] = [projectCount:0]
                     }
                     if (target.scoreLabel && target.target) {
-                        if (!scores || scores.find {it.score.label == target.scoreLabel}) {
+                        if (!scores || scores.find {it.label == target.scoreLabel}) {
                             def value = propertyAccessor.getPropertyAsNumeric(target)
                             if (value == null) {
                                 log.warn project.projectId + ' ' + target.scoreLabel + ' ' + target.target + ':' + value
