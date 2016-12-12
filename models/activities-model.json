@@ -2312,7 +2312,7 @@
                     "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "units": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -3394,7 +3394,7 @@
                     "displayType": "piechart",
                     "name": "conservationActionType",
                     "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
-                    "label": "No. of conservation actions undertaken by species protected. ",
+                    "label": "No. of conservation actions undertaken by species protected.",
                     "groupBy": "output:targetSpecies.name",
                     "listName": "conservationWorks",
                     "category": "Biodiversity Management"
@@ -3574,7 +3574,7 @@
                     "gmsId": "PPRP",
                     "name": "totalNumberGrown",
                     "description": "The total number of plants which have been propagated and nurtured to the point of being ready for planting out.",
-                    "label": "Total No. of plants grown and ready for planting ",
+                    "label": "Total No. of plants grown and ready for planting",
                     "category": "Revegetation",
                     "isOutputTarget": true
                 },
@@ -4736,7 +4736,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -4950,7 +4950,7 @@
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
                     "category": "Natural Resources Management",
-                    "filterBy": "Burnt area (Ha) - may be different to the total area managed"
+                    "filterBy": "Burnt area (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
@@ -5370,7 +5370,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
