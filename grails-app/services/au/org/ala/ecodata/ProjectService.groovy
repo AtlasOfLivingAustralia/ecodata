@@ -368,9 +368,9 @@ class ProjectService {
                 } else {
                     // If there are no Outputs recorded containing the score, the results won't be returned, so add
                     // one in containing the target.
-                    def score = toAggregate.find { it.label == target.scoreLabel }
+                    def score = toAggregate.find { it.scoreId == target.scoreId }
                     if (score) {
-                        outputSummary << [label: score.label, target: target.target]
+                        outputSummary << [label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
