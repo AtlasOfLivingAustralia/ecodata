@@ -2312,7 +2312,7 @@
                     "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "units": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -3394,7 +3394,7 @@
                     "displayType": "piechart",
                     "name": "conservationActionType",
                     "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
-                    "label": "No. of conservation actions undertaken by species protected. ",
+                    "label": "No. of conservation actions undertaken by species protected.",
                     "groupBy": "output:targetSpecies.name",
                     "listName": "conservationWorks",
                     "category": "Biodiversity Management"
@@ -3574,7 +3574,7 @@
                     "gmsId": "PPRP",
                     "name": "totalNumberGrown",
                     "description": "The total number of plants which have been propagated and nurtured to the point of being ready for planting out.",
-                    "label": "Total No. of plants grown and ready for planting ",
+                    "label": "Total No. of plants grown and ready for planting",
                     "category": "Revegetation",
                     "isOutputTarget": true
                 },
@@ -4736,7 +4736,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -4950,7 +4950,7 @@
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
                     "category": "Natural Resources Management",
-                    "filterBy": "Burnt area (Ha) - may be different to the total area managed"
+                    "filterBy": "Burnt area (Ha)"
                 },
                 {
                     "aggregationType": "SUM",
@@ -5290,7 +5290,7 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "gmsId": "WDT25ALG",
-                    "name": "areaTreatedHa",
+                    "name": "weedAreaTreatedHa",
                     "description": "The total area of weeds for which an initial treatment was undertaken.",
                     "label": "Total new area treated for weeds (Ha)",
                     "units": "Ha",
@@ -5370,7 +5370,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events. ",
+                    "label": "No of Indigenous participants at project events.",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -5463,6 +5463,49 @@
                     "units": "kilometres",
                     "listName": "",
                     "category": "Biodiversity Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "APC",
+                    "name": "accessAreaProtected",
+                    "description": "Area in hectares that is being protected as a direct result of installing access control structures.",
+                    "label": "Area protected by access control installations (Ha)",
+                    "listName": "",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "name": "numberOfInstallations",
+                    "description": "Sum of the total number of structures installed for access management.",
+                    "label": "Total No. of structures installed for access management",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "DRW",
+                    "name": "debrisWeightTonnes",
+                    "description": "The total mass of debris removed.",
+                    "label": "Weight of debris removed (Tonnes)",
+                    "units": "Tonnes",
+                    "category": "Natural Resources Management",
+                    "isOutputTarget": true
+                },
+                {
+                    "aggregationType": "SUM",
+                    "displayType": "",
+                    "gmsId": "DMA",
+                    "name": "quarantineAreaTreatedHa",
+                    "description": "Total area treated / quarantined",
+                    "label": "Total area (Ha) treated / quarantined",
+                    "groupBy": "",
+                    "listName": "",
+                    "category": "Invasive Species Management - Pests & Diseases",
                     "isOutputTarget": true
                 }
             ],

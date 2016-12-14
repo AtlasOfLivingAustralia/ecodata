@@ -20,16 +20,18 @@ class OrganisationController {
 
     def get(String id) {
         def includeDeleted = params.boolean('includeDeleted', false)
-        def levelOfDetail = ['documents']
-        if (params.view == 'all') {
-            levelOfDetail << 'projects'
-        }
 
+        // When listing all organisations don't add any level of details as it could slow down the system
+        // It is ok for retrieving individual organisations though.
         if (!id) {
-            def list = organisationService.list(levelOfDetail)
+            def list = organisationService.list([])
             list.sort {it.name}
             asJson([list: list])
         } else {
+            def levelOfDetail = ['documents']
+            if (params.view == 'all') {
+                levelOfDetail << 'projects'
+            }
             def p = organisationService.get(id, levelOfDetail, includeDeleted)
             if (p) {
                 asJson p
