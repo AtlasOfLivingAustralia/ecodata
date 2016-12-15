@@ -95,8 +95,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     ProjectService projectService
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport) {
-        super(exporter, tabsToExport)
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
+        super(exporter, tabsToExport, documentMap)
         this.projectService = projectService
     }
 

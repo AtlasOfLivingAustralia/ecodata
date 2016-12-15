@@ -1,17 +1,7 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.AccessLevel
-import au.org.ala.ecodata.ActivityService
-import au.org.ala.ecodata.Project
-import au.org.ala.ecodata.ProjectActivityService
-import au.org.ala.ecodata.ProjectService
-import au.org.ala.ecodata.RecordService
-import au.org.ala.ecodata.SiteService
-import au.org.ala.ecodata.UserPermission
-import au.org.ala.ecodata.UserService
-import au.org.ala.ecodata.metadata.ConstantGetter
-import au.org.ala.ecodata.metadata.OutputMetadata
-import au.org.ala.ecodata.metadata.OutputModelProcessor
+import au.org.ala.ecodata.*
+import au.org.ala.ecodata.metadata.*
 import com.mongodb.BasicDBObject
 import grails.util.Holders
 import org.apache.commons.logging.Log
@@ -38,15 +28,33 @@ import static au.org.ala.ecodata.Status.DELETED
 class CSProjectXlsExporter extends ProjectExporter {
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
+    private def imageMapper = {
+        if (it.imageId)
+            return Holders.grailsApplication.config.imagesService.baseURL + "/image/details?imageId=" + it.imageId
+        def doc = documentMap[it.documentId]
+        return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
+    }
+
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
-    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding']
+    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE), 'funding']
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude']
 
-    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Location ID", "Location Name", "Locality", "Latitude", "Longitude"]
-    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "locationID", "locationName", "locality"]
+    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Event Date/Time", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
+    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
+
+    DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
+    DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
+    DoublePropertyGetter locationLatitudeGetter = new DoublePropertyGetter("locationLatitude")
+    CompositeGetter<Double> generalLatitudeGetter = new CompositeGetter<Double>(generalisedLatitudeGetter, decimalLatitudeGetter, locationLatitudeGetter)
+    CompositeGetter<Double> accurateLatitudeGetter = new CompositeGetter<Double>(decimalLatitudeGetter, locationLatitudeGetter, generalisedLatitudeGetter)
+    DoublePropertyGetter generalisedLongitudeGetter =  new DoublePropertyGetter("generalisedDecimalLongitude")
+    DoublePropertyGetter decimalLongitudeGetter =  new DoublePropertyGetter("decimalLongitude")
+    DoublePropertyGetter locationLongitudeGetter =  new DoublePropertyGetter("locationLongitude")
+    CompositeGetter<Double> generalLongitudeGetter = new CompositeGetter<Double>(generalisedLongitudeGetter, decimalLongitudeGetter, locationLongitudeGetter)
+    CompositeGetter<Double> accurateLongitudeGetter = new CompositeGetter<Double>(decimalLongitudeGetter, locationLongitudeGetter, generalisedLongitudeGetter)
 
     ProjectActivityService projectActivityService = Holders.grailsApplication.mainContext.getBean("projectActivityService")
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
@@ -60,9 +68,11 @@ class CSProjectXlsExporter extends ProjectExporter {
     AdditionalSheet recordSheet
 
     Map<String, AdditionalSheet> surveySheets = [:]
+    Map<String, Object> documentMap
 
-    public CSProjectXlsExporter(XlsExporter exporter) {
-        super(exporter)
+    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap) {
+        super(exporter, [], documentMap)
+        this.documentMap = documentMap
     }
 
     @Override
@@ -143,17 +153,18 @@ class CSProjectXlsExporter extends ProjectExporter {
                 // need to differentiate between an empty set of activity ids (which means don't export any activities),
                 // and a null value (which means export all activities).
                 if (activityIds == null || activityIds.contains(activity.activityId)) {
-
                     List properties = [
                             new ConstantGetter("projectId", projectActivity.projectId),
                             new ConstantGetter("projectActivityId", projectActivity.projectActivityId),
                             new ConstantGetter("activityId", activity.activityId),
                             new ConstantGetter("sites", projectActivity.sites.collect { it.siteId }.join(", ")),
-                            new ConstantGetter("startDate", projectActivity.startDate),
-                            new ConstantGetter("endDate", projectActivity.endDate),
+                            new DateConstantGetter("startDate", projectActivity.startDate, null, null, DateTimeParser.Style.DATE),
+                            new DateConstantGetter("endDate", projectActivity.endDate, null, null, DateTimeParser.Style.DATE),
                             new ConstantGetter("description", projectActivity.description),
                             new ConstantGetter("status", projectActivity.status),
-                            new ConstantGetter("Attribution", projectActivity.attribution)
+                            new ConstantGetter("attribution", projectActivity.attribution),
+                            generalLatitudeGetter,
+                            generalLongitudeGetter
                     ]
 
                     activity?.outputs?.each { output ->
@@ -210,31 +221,24 @@ class CSProjectXlsExporter extends ProjectExporter {
     private addRecords(Map project, Set<String> activityIds = null) {
         List properties = []
         properties.addAll(recordProperties)
-        properties << ""
-        properties << ""
 
         List<String> restrictedSurveys = projectActivityService.listRestrictedProjectActivityIds(userService.currentUserDetails?.userId, project.projectId)
         def userId = userService.currentUserDetails?.userId
+        def permission = false
+        if (userId) {
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
+            permission = permissions?.find { it.entityId == project.projectId }
+
+        }
+        def latitudeGetter = permission ? accurateLatitudeGetter : generalLatitudeGetter
+        properties[properties.indexOf("latitude")] = latitudeGetter
+        def longitudeGetter = permission ? accurateLongitudeGetter : generalLongitudeGetter
+        properties[properties.indexOf("longitude")] = longitudeGetter
+        properties[properties.indexOf("eventDate")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATETIME, latitudeGetter, longitudeGetter)
         recordService.getAllByProject(project.projectId).each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
             if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
-
-                def lat, lng
-
-                if (userId) {
-                    List<UserPermission> permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqualAndStatusNotEqual(userId, Project.class.name, AccessLevel.starred, DELETED)
-                    def permission = permissions?.find { it.entityId == project.projectId }
-                    lat = !permission ? it.generalizedDecimalLatitude : it.decimalLatitude
-                    lng = !permission ? it.generalizedDecimalLongitude : it.decimalLongitude
-                } else {
-                    lat = it.generalizedDecimalLatitude ?: it.decimalLatitude
-                    lng = it.generalizedDecimalLongitude ?: it.decimalLongitude
-                }
-
-                properties[-2] = new ConstantGetter("Latitude", lat ?: "")
-                properties[-1] = new ConstantGetter("Longitude", lng ?: "")
-
                 recordSheet.add([it], properties, recordSheet.sheet.lastRowNum + 1)
             }
         }

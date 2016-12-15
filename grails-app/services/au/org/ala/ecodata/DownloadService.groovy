@@ -17,9 +17,11 @@ import static grails.async.Promises.task
 class DownloadService {
     ElasticSearchService elasticSearchService
     ProjectService projectService
+    ProjectActivityService projectActivityService
     MetadataService metadataService
     DocumentService documentService
     ActivityService activityService
+    OutputService outputService
     SiteService siteService
     EmailService emailService
 
@@ -101,11 +103,19 @@ class DownloadService {
         elasticSearchService.buildProjectActivityQuery(params)
 
         Map<String, Set<String>> activitiesByProject = getActivityIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
+        Map<String, Object> documentMap = [:] // Accumulates a map of document id to path in zip file
 
-        XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, "data")
 
         new ZipOutputStream(outputStream).withStream { zip ->
             try{
+
+                addShapeFilesToZip(zip, activitiesByProject.keySet())
+                log.debug("Shape files added")
+
+                addImagesToZip(zip, activitiesByProject, documentMap)
+                log.debug("Images added")
+
+                XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data")
                 zip.putNextEntry(new ZipEntry("data.xls"))
                 ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
                 xlsExporter.save(xslFile)
@@ -116,16 +126,9 @@ class DownloadService {
                 zip.closeEntry()
                 log.debug("XLS file added")
 
-                addShapeFilesToZip(zip, activitiesByProject.keySet())
-                log.debug("Shape files added")
-
-                addImagesToZip(zip, activitiesByProject)
-                log.debug("Images added")
-
                 addReadmeToZip(zip)
             } catch (Exception e){
-                log.error(e.message)
-                log.error(e.stackTrace)
+                log.error("Error creating download archive", e)
             } finally {
                 zip.finish()
                 zip.flush()
@@ -145,20 +148,21 @@ class DownloadService {
             |- data.xls -> Excel spreadsheet with one tab per survey type, one tab listing all Records, one tab listing all Projects and one tab listing all Sites.
             |- README.txt -> this file
             |- shapefiles
-            |- - <projectId>
+            |- - <project name>
             |- - - projectExtent.zip -> Shape file for the project extent
             |- - - sites.zip -> Shape file containing all Sites associated with the project
             |- images
-            |- - <projectId>
+            |- - <project name>
             |- - - <image files> -> Images associated with the project itself (e.g. logo)
             |- - - activities -> directory structure containing images for the activities and their outputs
-            |- - - - <activityId>
+            |- - - - <activity name>
             |- - - - - <image files> -> Images associated with the activity itself
-            |- - - - - <outputId>
+            |- - - - - <output name>
             |- - - - - - <image files> -> images associated with an individual Output entity
-            |- - - records -> directory structure containing images for individual records
+            |- - - records -> directory structure containing images for individual records not already organised by activty/output
             |- - - - <occurrenceId>
             |- - - - - <image files> -> Images associated with the record
+            |- - - records.csv -> Map of record id onto image locations
 
 
             This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
@@ -172,11 +176,12 @@ class DownloadService {
         zip.putNextEntry(new ZipEntry("shapefiles/"))
 
         projectIds.each { projectId ->
-            zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/"))
-
             Project project = Project.findByProjectId(projectId)
+            def projectName = project.name ?: projectId
+
+            zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/"))
             if (project.projectSiteId) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/projectExtent.zip"))
+                zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/projectExtent.zip"))
                 ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
                 builder.addSite(project.projectSiteId)
                 builder.writeShapefile(zip)
@@ -184,7 +189,7 @@ class DownloadService {
 
             List<Site> sites = Site.findAllByProjectsAndStatus(projectId, Status.ACTIVE)
             if (sites) {
-                zip.putNextEntry(new ZipEntry("shapefiles/${projectId}/sites.zip"))
+                zip.putNextEntry(new ZipEntry("shapefiles/${projectName}/sites.zip"))
                 ShapefileBuilder builder = new ShapefileBuilder(projectService, siteService)
                 builder.addProject(projectId)
                 builder.writeShapefile(zip)
@@ -193,40 +198,52 @@ class DownloadService {
         log.info "Creating shapefiles took ${System.currentTimeMillis() - start} millis"
     }
 
-    private addImagesToZip(ZipOutputStream zip, Map<String, Set<String>> activitiesByProject) {
+    private addImagesToZip(ZipOutputStream zip, Map<String, Set<String>> activitiesByProject, Map<String, Object> documentMap) {
         long start = System.currentTimeMillis()
+        def paths = [] as Set
         zip.putNextEntry(new ZipEntry("images/"))
 
         activitiesByProject.each { projectId, activityIds ->
-            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/"))
+            def project = projectService.get(projectId, [ ProjectService.BRIEF ])
+            def projectName = project.name ?: projectId
+            def projectPath = makePath("images/${projectName}/", paths)
+            def recordMap = [:].withDefault { [] }
+            def activityPathBase = makePath("${projectPath}activities/", paths)
+            zip.putNextEntry(new ZipEntry(activityPathBase))
 
             groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
-                    zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/"))
+                    def activity = activityService.get(activityId, [ ActivityService.FLAT ])
+                    def projectActivity = projectActivityService.get(activity.projectActivityId)
+                    def activityName = projectActivity.name ?: activityId
+                    def activityPath = makePath("${activityPathBase}${activityName}/", paths)
+                    zip.putNextEntry(new ZipEntry(activityPath))
 
                     documentsMap.each { outputId, documentList ->
                         if (outputId) {
-                            zip.putNextEntry(new ZipEntry("images/${projectId}/activities/${activityId}/${outputId}/"))
+                            def output = outputService.get(outputId)
+                            def outputName = output.name ?: outputId
+                            def outputPath = makePath("${activityPath}${outputName}/", paths)
+                            zip.putNextEntry(new ZipEntry(outputPath))
 
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/${outputId}/", doc)
+                                    addFileToZip(zip, outputPath, doc, documentMap, paths, true)
                                 }
                             }
                         } else {
                             documentList.each { doc ->
                                 if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                                    addFileToZip(zip, "images/${projectId}/activities/${activityId}/", doc)
+                                    addFileToZip(zip, activityPath, doc, documentMap, paths, true)
                                 }
                             }
                         }
                     }
-
                     zip.closeEntry()
                 } else {
                     documentsMap[null].each { doc ->
                         if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            addFileToZip(zip, "images/${projectId}/", doc)
+                            addFileToZip(zip, projectPath, doc, paths, true)
                         }
                     }
                 }
@@ -235,42 +252,80 @@ class DownloadService {
             zip.closeEntry()
 
             // put record images into a separate directory structure
-            zip.putNextEntry(new ZipEntry("images/${projectId}/records/"))
+            def recordPath = makePath("${projectPath}records/", paths)
+            //zip.putNextEntry(new ZipEntry(recordPath))
 
             groupDocumentsByRecord(projectId).each { recordId, documentList ->
-                if (documentList) {
-                    zip.putNextEntry(new ZipEntry("images/${projectId}/records/${recordId}/"))
-
-                    documentList.each { doc ->
-                        if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            addFileToZip(zip, "images/${projectId}/records/${recordId}/", doc)
+                def recordIdPath = "${recordPath}${recordId}/"
+                recordIdPath = makePath(recordIdPath, paths)
+                documentList.each { doc ->
+                    if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
+                        if (!documentMap.containsKey(doc.documentId)) {
+                            addFileToZip(zip, recordIdPath, doc, documentMap, paths)
                         }
+                        recordMap[recordId] << doc
                     }
-
-                    zip.closeEntry()
                 }
             }
-
-            zip.closeEntry()
+            if (!recordMap.isEmpty()) {
+                zip.putNextEntry(new ZipEntry("${projectPath}records.csv"))
+                writeRecordMap(zip, recordMap, documentMap)
+                zip.closeEntry()
+            }
         }
-
-
         log.info "Zipping images took ${System.currentTimeMillis() - start} millis"
     }
 
-    private addFileToZip(ZipOutputStream zip, String zipPath, Document doc) {
-        zip.putNextEntry(new ZipEntry("${zipPath}/${doc.filename}"))
+    private writeRecordMap(ZipOutputStream zip, Map<String, List<Document>> recordMap, Map<String, Object> documentMap) {
+        def encode = { String str ->
+            if (!str)
+                return ''
+            if (str.contains(',') || str.contains('"')) {
+                str = str.replaceAll('"', '\\' + '"')
+                return '"' + str + '"'
+            }
+            return str
+        }
+        zip << "Occurrence Id,Thumbnail,URL,Identifier,Name,Type,Licence,Attribution\n"
+        recordMap.keySet().sort().each { recordId ->
+            recordMap[recordId].each { doc ->
+                zip << encode.call(recordId)
+                zip << ","
+                zip << encode.call(documentMap[doc.documentId].thumbnail)
+                zip << ","
+                zip << encode.call(doc.externalUrl)
+                zip << ","
+                zip << encode.call(doc.identifier)
+                zip << ","
+                zip << encode.call(doc.licence)
+                zip << ","
+                zip << encode.call(doc.name)
+                zip << ","
+                zip << encode.call(doc.type)
+                zip << ","
+                zip << encode.call(doc.attribution)
+                zip << "\n"
+            }
+        }
+    }
 
+    private addFileToZip(ZipOutputStream zip, String zipPath, Document doc, Map<String, Object> documentMap, Set<String> existing, boolean thumbnail = false) {
+        String zipName = makePath("${zipPath}${zipPath.endsWith('/') ? '' : '/'}${thumbnail ? Document.THUMBNAIL_PREFIX : ''}${doc.filename}", existing)
         String path = "${grailsApplication.config.app.file.upload.path}${File.separator}${doc.filepath}${File.separator}${doc.filename}"
-
         File file = new File(path)
 
-        if (file.exists()) {
+        if (thumbnail) {
+            file = documentService.makeThumbnail(doc.filepath, doc.filename, false)
+        }
+        if (file != null && file.exists()) {
+            zip.putNextEntry(new ZipEntry(zipName))
             file.withInputStream { i -> zip << i }
         } else {
+            zipName = zipName + ".notfound"
+            zip.putNextEntry(new ZipEntry(zipName))
             log.error("Document exists with file ${doc.filepath}/${doc.filename}, but the corresponding file at ${path} does not exist!")
         }
-
+        documentMap[doc.documentId] = [thumbnail: zipName, externalUrl: doc.externalUrl, identifier: doc.identifier]
         zip.closeEntry()
     }
 
@@ -300,12 +355,12 @@ class DownloadService {
         documents
     }
 
-    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, String fileName = "results") {
+    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results") {
         long start = System.currentTimeMillis()
 
         XlsExporter xlsExporter = new XlsExporter(fileName)
 
-        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter)
+        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter, documentMap)
 
         projectExporter.exportActivities(activityIdsByProject)
 
@@ -346,5 +401,18 @@ class DownloadService {
         log.info "Query of ${ids.size()} projects took ${System.currentTimeMillis() - start} millis"
 
         ids
+    }
+
+    String makePath(String prototype, Set<String> existing) {
+        def dir = prototype.endsWith('/')
+        prototype = dir ? prototype.substring(0, prototype.length() - 1) : prototype
+        def path = prototype
+        int index = 1
+        while (existing.contains(path)) {
+            path = "${prototype}-${index}"
+            index++
+        }
+        existing << path
+        return dir ? path + '/' : path
     }
 }
