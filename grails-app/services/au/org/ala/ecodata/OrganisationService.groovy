@@ -26,7 +26,12 @@ class OrganisationService {
         else {
             organisation = Organisation.findByOrganisationIdAndStatusNotEqual(id, 'deleted')
         }
-        return organisation?toMap(organisation, levelOfDetail):null
+        return organisation ? toMap(organisation, levelOfDetail):null
+    }
+
+    def findByName(String name) {
+        Organisation organisation =  Organisation.findByNameAndStatusNotEqual(name, 'deleted')
+        organisation ? toMap(organisation) : [:]
     }
 
     def list(levelOfDetail = []) {
@@ -60,7 +65,7 @@ class OrganisationService {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Organisation.withSession { session -> session.clear() }
             def error = "Error creating organisation - ${e.message}"
-            log.error error
+            log.error error, e
 
             def errors = (e instanceof ValidationException)?e.errors:[error]
             return [status:'error',errors:errors]
@@ -81,7 +86,7 @@ class OrganisationService {
             } catch (Exception e) {
                 Organisation.withSession { session -> session.clear() }
                 def error = "Error updating organisation ${id} - ${e.message}"
-                log.error error
+                log.error error, e
                 if (e instanceof ValidationException) {
                     error = messageSource.getMessage(e.errors.fieldError, Locale.getDefault())
                 }

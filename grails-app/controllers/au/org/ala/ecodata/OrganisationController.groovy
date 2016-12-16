@@ -21,12 +21,21 @@ class OrganisationController {
     def get(String id) {
         def includeDeleted = params.boolean('includeDeleted', false)
 
-        // When listing all organisations don't add any level of details as it could slow down the system
-        // It is ok for retrieving individual organisations though.
         if (!id) {
-            def list = organisationService.list([])
-            list.sort {it.name}
-            asJson([list: list])
+            if(params.name) {
+                def p = organisationService.findByName(params.name)
+                if (p) {
+                    asJson p
+                } else {
+                    render (status: 404, text: 'No such organisation name')
+                }
+            } else {
+                // When listing all organisations don't add any level of details as it could slow down the system
+                // It is ok for retrieving individual organisations though.
+                def list = organisationService.list([])
+                list.sort {it.name}
+                asJson([list: list])
+            }
         } else {
             def levelOfDetail = ['documents']
             if (params.view == 'all') {
