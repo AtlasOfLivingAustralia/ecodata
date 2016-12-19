@@ -30,7 +30,7 @@
             "items": [
                 {
                     "source": "progressUpdate",
-                    "preLabel": "Provide an update on progress towards achievement of the MERI plans outcomes for the stage.",
+                    "preLabel": "Provide an update on progress towards achievement of the MERI plan’s outcomes for the stage.",
                     "type": "textarea"
                 },
                 {
