@@ -1,14 +1,25 @@
 package au.org.ala.ecodata.metadata
 
+import grails.util.Holders
 import pl.touk.excel.export.getters.Getter
 
 class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
+    static DateTimeParser TIME_PARSER = new DateTimeParser(DateTimeParser.Style.TIME)
+    static DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE)
 
     private String[] nameParts
     private String constraint
     private List outputDataModel
+    private Map<String, Object> documentMap
+    private def imageMapper = {
+        if (it.imageId)
+            return Holders.grailsApplication.config.imagesService.baseURL + "/image/details?imageId=" + it.imageId
+        def doc = documentMap[it.documentId]
+        return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
+    }
 
-    public OutputDataPropertiesBuilder(String name, outputDataModel) {
+
+    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, Object> documentMap) {
         if (!name) {
             throw new IllegalArgumentException("Name cannot be null")
         }
@@ -19,6 +30,7 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         this.nameParts = name.tokenize('.');
 
         this.outputDataModel = outputDataModel;
+        this.documentMap = documentMap
     }
 
     @Override
@@ -42,17 +54,31 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
     @Override
     def time(Object node, Value outputValue) {
         def val = outputValue.value
-        return val ? val as String : ""
+        if (!val)
+            return ""
+        def time = TIME_PARSER.parse(val)
+        return time ? TIME_PARSER.format(time) : val
     }
 
     @Override
     def date(Object node, Value outputValue) {
-        return new Value(outputValue ?: "") // dates are UTC formatted strings already
+        def val = outputValue.value
+        if (!val)
+            return ""
+        def date = DATE_PARSER.parse(val)
+        return date ? DATE_PARSER.format(date) : val
     }
 
     @Override
     def image(Object node, Value outputValue) {
-        return ""
+        def val = outputValue.value
+        if (!val)
+            return ""
+        if (val instanceof Iterable) {
+            def result = ((Iterable) val).collect(imageMapper).findAll { it }
+            return result.isEmpty() ? "" : result.size() == 1 ? result[0] : result
+        }
+        return pathMapper.call(val)
     }
 
     @Override

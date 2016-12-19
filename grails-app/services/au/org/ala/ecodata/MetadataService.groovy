@@ -589,4 +589,19 @@ class MetadataService {
         excelImportService.convertColumnMapConfigManyRows(workbook, config)
 
     }
+
+    /**
+     * Converts a Score domain object to a Map.
+     * @param score the Score to convert.
+     * @param views specifies the data to include in the Map.  Only current supported value is "configuration",
+     * which will return the score and it's associated configuration.
+     *
+     */
+    Map toMap(Score score, List views) {
+        Map scoreMap = [scoreId:score.scoreId, category:score.category, outputType:score.outputType, isOutputTarget:score.isOutputTarget, label:score.label, description:score.description, displayType:score.displayType, entity:score.entity, entityTypes:score.entityTypes]
+        if (views?.contains("config")) {
+            scoreMap.configuration = score.configuration
+        }
+        scoreMap
+    }
 }

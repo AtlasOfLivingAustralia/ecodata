@@ -1,13 +1,11 @@
 package au.org.ala.ecodata.reporting
 
-import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
 import pl.touk.excel.export.XlsxExporter
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
 /**
  * Exports organisation related information to an Excel spreadsheet
  */
@@ -30,8 +28,8 @@ class OrganisationXlsExporter extends TabbedExporter {
     List<String> reportDataHeaders = commonOrganisationHeaders + ['Report', 'Stage from', 'Stage to', 'Data Entry Progress', 'Report Status']
     List<String> reportDataProperties = commonOrganisationProperties + ['reportName', 'fromDate', 'toDate', 'progress', 'publicationStatus']
 
-    public OrganisationXlsExporter(XlsxExporter exporter, List<String> tabsToExport) {
-        super(exporter, tabsToExport)
+    public OrganisationXlsExporter(XlsxExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap) {
+        super(exporter, tabsToExport, documentMap)
 
     }
 

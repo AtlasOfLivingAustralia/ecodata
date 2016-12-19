@@ -5,6 +5,8 @@ import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import org.springframework.web.multipart.MultipartFile
 
+import static au.org.ala.ecodata.Status.DELETED
+
 class MetadataController {
 
     def metadataService, activityService, commonService, projectService, webService
@@ -276,52 +278,19 @@ class MetadataController {
         render grailsApplication.config.app.facets.geographic as JSON
     }
 
-    def pullOutScores() {
-        List scores = []
+    /**
+     * Returns all Scores.
+     * @param view supports a "configuration" view which will return the score and it's associated configuration.
+     * @return a List of all Scores
+     */
+    def scores() {
+        List views = params.getList("view")
 
-        metadataService.activitiesModel().activities.each { Map activity ->
+        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
+        List<Map> scoreMaps = scores.collect{metadataService.toMap(it, views)}
 
-            activity.outputs?.each { String outputName ->
-
-                Map output = metadataService.getOutputModel(outputName)
-                output?.scores?.each { score ->
-                    Map updatedScore = new HashMap(score)
-
-                    updatedScore.output = outputName
-                    updatedScore.activity = activity.name
-                    updatedScore.category = activity.category
-
-                    scores << updatedScore
-
-                    Score scoreEntity = new Score(updatedScore)
-                    scoreEntity.save()
-
-                }
-            }
-        }
-
-        render scores as JSON
+        render scoreMaps as JSON
     }
 
-    def doSomething() {
 
-        List pids = ['6246097', '5388513']
-
-        def returnValue = [:]
-
-        pids.each { pid ->
-            String url = 'http://spatial.ala.org.au/ws/shape/geojson/' + pid
-
-            Map result = webService.getJson(url)
-
-            int i = 0
-            List<Set> latLons = result.coordinates.flatten().split { i++ % 2 == 0 }
-            def max = latLons[1].max()
-            def min = latLons[1].min()
-
-
-            returnValue[pid] = [max: max, min: min]
-        }
-        render returnValue as JSON
-    }
 }

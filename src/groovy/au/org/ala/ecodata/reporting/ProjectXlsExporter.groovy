@@ -31,9 +31,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectElectorateProperties = (0..39).collect{'elect'+it}
 
     List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified']
-    List<String> commonProjectPropertiesRaw =  ['projectId', 'grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
+    List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
 
-    List<String> commonProjectPropertiesWithoutSites =  commonProjectPropertiesRaw.collect{'project_'+it}
+    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{'project_'+it}
 
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
@@ -52,8 +52,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
     List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{'activity_'+it}
-    List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered', 'Units']
-    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'delivered', 'units']
+    List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
+    List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
     List<String> risksAndThreatsProperties = commonProjectProperties + ['threat', 'description', 'likelihood', 'consequence', 'riskRating', 'currentControl', 'residualRisk']
     List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020']
@@ -95,18 +95,15 @@ class ProjectXlsExporter extends ProjectExporter {
 
     ProjectService projectService
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport) {
-        super(exporter, tabsToExport)
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
+        super(exporter, tabsToExport, documentMap)
         this.projectService = projectService
     }
 
     public void export(Map project) {
 
         commonProjectPropertiesRaw.each {
-            if (it != 'projectId') {
-                project['project_'+it] = project.remove(it)
-            }
-
+            project['project_'+it] = project.remove(it)
         }
         OutputModelProcessor processor = new OutputModelProcessor()
         Map activitiesModel = metadataService.activitiesModel()
@@ -223,8 +220,12 @@ class ProjectXlsExporter extends ProjectExporter {
         if (shouldExport('Output Targets')) {
             outputTargetsSheet()
             if (project.outputTargets) {
-                List metrics = projectService.projectMetrics(project.projectId, true, true)
-                List targets = metrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.score.label, target:it.target, delivered:it.result]}
+                List approvedMetrics = projectService.projectMetrics(project.projectId, true, true)
+                List totalMetrics = projectService.projectMetrics(project.projectId, true, false)
+                List targets = approvedMetrics.findAll{it.target && it.target != "0"}.collect{project + [scoreLabel:it.label, target:it.target, deliveredApproved:it.result?.result, units:it.units?:'']}
+                targets.each { target ->
+                    target.deliveredTotal = totalMetrics.find{it.label == target.scoreLabel}?.result?.result
+                }
                 int row = outputTargetsSheet.getSheet().lastRowNum
                 outputTargetsSheet.add(targets, outputTargetProperties, row + 1)
             }
