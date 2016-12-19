@@ -446,8 +446,8 @@
             "Multiple Sightings",
             "Aerial fauna survey - distance sampler method",
             "2-ha Track Plot Datasheet",
-            "General Weed Monitoring",
-            "Flying Fox Survey"
+            "Site Monitoring Plan",
+            "General Weed Monitoring"
         ],
         "name": "None",
         "subprograms": [],
@@ -492,7 +492,8 @@
             "Works Planning and Risk",
             "Indigenous Knowledge Transfer",
             "Training and Skills Development",
-            "Vegetation Assessment - Commonwealth government methodology"
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Post revegetation site management"
         ],
         "name": "National Landcare Programme",
         "subprograms": [
@@ -717,11 +718,56 @@
                 "startDate": ""
             },
             {
+                "weekDaysToCompleteReport": 0,
                 "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
                 "endDate": "",
-                "activities": [],
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
+                ],
                 "name": "20 Million Trees Service Providers Tranche 1",
-                "optionalProjectContent": [],
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
                 "startDate": ""
             },
             {
@@ -765,8 +811,7 @@
                     "Works Planning and Risk",
                     "Indigenous Knowledge Transfer",
                     "Training and Skills Development",
-                    "Vegetation Assessment - Commonwealth government methodology",
-                    "Post revegetation site management"
+                    "Vegetation Assessment - Commonwealth government methodology"
                 ],
                 "name": "20 Million Trees Service Providers",
                 "optionalProjectContent": [
@@ -965,7 +1010,24 @@
             "Pollinator Sighting",
             "VNPA ReefWatch Survey",
             "Post Biodiversity-works Site Monitoring Methodology",
-            "Seagrass Bed Monitoring"
+            "WarrumbungleSnap",
+            "Steaming to Success",
+            "Seagrass Bed Monitoring",
+            "Koala Count - South Australia",
+            "Sea Search - Seagrass Bed Monitoring",
+            "Sea Search - Intertidal Reef Survey",
+            "General Seed Collection Activity",
+            "General Fauna Sightings v1",
+            "General Flora Sightings v1",
+            "NT Systematic Terrestrial Fauna Survey",
+            "North Sydney Wildlife Watch",
+            "North Sydney Wildlife Watch - Multi-species",
+            "Dunewatch Activity Summary",
+            "Dunewatch Survey - Emery Method",
+            "Dunewatch - Human Impact Survey",
+            "Dunewatch Flora Survey",
+            "Dunewatch Fauna Survey",
+            "Dunewatch - Human Impact Assessment"
         ],
         "name": "Citizen Science Projects",
         "subprograms": [],
@@ -1043,7 +1105,10 @@
             }
         ],
         "reportingPeriodAlignedToCalendar": false,
-        "optionalProjectContent": ["Risks and Threats"],
+        "optionalProjectContent": [
+            "Risks and Threats",
+            "MERI Plan"
+        ],
         "isMeritProgramme": true
     },
     {

@@ -49,21 +49,21 @@
         },
         {
             "dataType": "species",
-            "name": "species",
+            "name": "species1",
             "dwcAttribute": "scientificName",
             "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
             "validate": "required"
         },
         {
             "dataType": "number",
-            "name": "individualCount",
+            "name": "individualCount1",
             "dwcAttribute": "individualCount",
             "description": "The number of individuals or colonies (for certain insects).",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
-            "name": "identificationConfidence",
+            "name": "identificationConfidence1",
             "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
             "constraints": [
                 "Certain",
@@ -72,13 +72,13 @@
         },
         {
             "dataType": "text",
-            "name": "comments",
+            "name": "comments1",
             "dwcAttribute": "notes",
             "description": "Observation notes about the record."
         },
         {
             "dataType": "image",
-            "name": "sightingPhoto",
+            "name": "sightingPhoto1",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
             "validate": "required"
         },
@@ -246,7 +246,7 @@
             "type": "row",
             "items": [{
                 "computed": null,
-                "source": "<h4 class='text-default text-center'><b>Record your individual sightings of species in the project region.<\/b><h4><\/br>",
+                "source": "Record your individual sightings of iconic species in the project region.",
                 "type": "literal"
             }]
         },
@@ -259,7 +259,7 @@
                     "items": [
                         {
                             "computed": null,
-                            "source": "<h4 class='text-default text-left'><b>A. Sightings Information: <\/b><\/h4><\/br>",
+                            "source": "<h1>Survey Information<\/h1>",
                             "type": "literal"
                         },
                         {
@@ -288,25 +288,19 @@
                         },
                         {
                             "computed": null,
-                            "source": "<hr><h4 class='text-default text-left'><b>B. Species Information: <\/b><\/h4><\/br>",
-                            "type": "literal"
-                        },
-                        {
-                            "computed": null,
-                            "source": "<small>Start typing a common or scientific name.<\/small>",
+                            "source": "<h1>Single Species Sighting<\/h1>",
                             "type": "literal"
                         },
                         {
                             "preLabel": "Species name",
                             "computed": null,
-                            "source": "species",
+                            "source": "species1",
                             "type": "autocomplete"
                         },
                         {
-                            "preLabel": "Are you confident of the species identification?",
                             "computed": null,
-                            "source": "identificationConfidence",
-                            "type": "selectOne"
+                            "source": "<i>Start typing a common or scientific name.<\/i>",
+                            "type": "literal"
                         },
                         {
                             "preLabel": "Identification tags",
@@ -315,31 +309,27 @@
                             "type": "selectManyCombo"
                         },
                         {
+                            "preLabel": "Are you confident of the species identification?",
                             "computed": null,
-                            "source": "<\/br>",
-                            "type": "literal"
-                        },
-                        {
-                            "preLabel": "Comments",
-                            "computed": null,
-                            "source": "comments",
-                            "type": "textarea"
+                            "source": "identificationConfidence1",
+                            "type": "selectOne"
                         },
                         {
                             "preLabel": "How many individuals did you see?",
                             "computed": null,
-                            "source": "individualCount",
+                            "source": "individualCount1",
                             "type": "number"
                         },
                         {
+                            "preLabel": "Comments",
                             "computed": null,
-                            "source": "<\/br>",
-                            "type": "literal"
+                            "source": "comments1",
+                            "type": "textarea"
                         },
                         {
                             "preLabel": "Sighting photo",
                             "computed": null,
-                            "source": "sightingPhoto",
+                            "source": "sightingPhoto1",
                             "type": "image"
                         }
                     ]

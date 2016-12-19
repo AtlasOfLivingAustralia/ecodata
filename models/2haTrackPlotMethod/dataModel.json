@@ -1,16 +1,13 @@
 {
+    "modelName": "2-haTrackPlotMethod",
+    "record": "true",
     "dataModel": [
         {
             "dataType": "text",
             "name": "recordedBy",
             "dwcAttribute": "recordedBy",
-            "description": "The name of the person who submitted/created the record in the database.",
+            "description": "The name of the person who is attributed with creating the record.",
             "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "name": "collectedBy",
-            "description": "The name of the person(s) who undertook the field work to create the record."
         },
         {
             "dataType": "date",
@@ -20,40 +17,10 @@
             "validate": "required"
         },
         {
-            "dataType": "text",
-            "name": "plotId",
-            "dwcAttribute": "fieldNumber",
-            "description": "The identifier allocated to the sample plot area.",
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "name": "sampleType",
-            "dwcAttribute": "eventDate",
-            "description": "Indicate the nature of the sampling effort in this survey. If 'Targeted', please indicate the species being targeted in the Comments field.",
-            "constraints": [
-                "Opportunistic",
-                "Systematic",
-                "Targeted (for particular species)"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "name": "sampleSequence",
-            "description": "Indicate whether this record is an initial sample for the site or is a repeat visit to the site.",
-            "constraints": [
-                "Initial sample",
-                "Repeat sample"
-            ],
-            "validate": "required"
-        },
-        {
             "dataType": "time",
             "name": "surveyStartTime",
             "dwcAttribute": "eventTime",
-            "description": "The time at which the survey commenced.",
-            "validate": "required"
+            "description": "The time at which the survey commenced."
         },
         {
             "dataType": "time",
@@ -86,24 +53,29 @@
         },
         {
             "dataType": "text",
+            "name": "mapGrid",
+            "description": ""
+        },
+        {
+            "dataType": "text",
             "name": "relativeLocation",
-            "description": "Indicate the distance from the plot to the nearest named place or locality.",
+            "description": "",
             "validate": "required"
         },
         {
             "dataType": "number",
             "name": "distanceFromWater",
-            "description": "Indicate the distance of the plot from the nearest permanent water source."
+            "description": ""
         },
         {
             "dataType": "number",
             "name": "distanceFromRoad",
-            "description": "Indicate the distance of the plot from the nearest vehicle track or road."
+            "description": ""
         },
         {
             "dataType": "text",
             "name": "habitatType",
-            "description": "What is the main type of habitat being sampled in this plot? If 'Other', please specify.",
+            "description": "",
             "constraints": [
                 "Sand dune",
                 "Sand plain",
@@ -120,65 +92,35 @@
             "columns": [
                 {
                     "dataType": "text",
-                    "name": "vegTypeOverstorey",
+                    "name": "vegType",
                     "description": ""
                 },
                 {
                     "dataType": "text",
-                    "name": "vegDescriptionOverstorey",
+                    "name": "vegDescription",
                     "description": ""
                 },
                 {
                     "dataType": "number",
-                    "name": "percentCoverOverstorey",
+                    "name": "percentCover",
                     "description": "",
-                    "constraints": [
-                        "<1%",
-                        "1-5%",
-                        "6-25%",
-                        ">25%"
-                    ]
+                    "validate": "min[0],max[100]"
                 }
             ],
             "dataType": "list",
-            "name": "vegTypeTableOverstorey",
-            "defaultRows": [{
-                "vegTypeOverstorey": "Main overstorey vegetation type",
-                "percentCoverOverstorey": "",
-                "vegDescriptionOverstorey": ""
-            }]
-        },
-        {
-            "columns": [
+            "name": "vegTypeTable",
+            "defaultRows": [
                 {
-                    "dataType": "text",
-                    "name": "vegTypeUnderstorey",
-                    "description": ""
+                    "vegDescription": "",
+                    "percentCover": "",
+                    "vegType": "Main vegetation overstorey"
                 },
                 {
-                    "dataType": "text",
-                    "name": "vegDescriptionUnderstorey",
-                    "description": ""
-                },
-                {
-                    "dataType": "number",
-                    "name": "percentCoverUnderstorey",
-                    "description": "",
-                    "constraints": [
-                        "<5%",
-                        "5-10%",
-                        "11-30%",
-                        ">30%"
-                    ]
+                    "vegDescription": "",
+                    "percentCover": "",
+                    "vegType": "Main vegetation understorey"
                 }
-            ],
-            "dataType": "list",
-            "name": "vegTypeTableUnderstorey",
-            "defaultRows": [{
-                "percentCoverUnderstorey": "",
-                "vegTypeUnderstorey": "Main understorey vegetation type",
-                "vegDescriptionUnderstorey": ""
-            }]
+            ]
         },
         {
             "dataType": "text",
@@ -192,29 +134,12 @@
         {
             "dataType": "text",
             "name": "timeSinceWeatherEvent",
-            "description": "",
-            "constraints": [
-                "0 h",
-                "<6 h",
-                "6-12 h",
-                "12.01-24 h",
-                ">24 h",
-                "Unknown"
-            ],
-            "validate": "required"
+            "description": ""
         },
         {
             "dataType": "text",
             "name": "timeSinceFire",
-            "description": "",
-            "constraints": [
-                "1-2 years",
-                "3-5 years",
-                "6-10 years",
-                ">10 years",
-                "Unknown"
-            ],
-            "validate": "required"
+            "description": ""
         },
         {
             "dataType": "text",
@@ -224,8 +149,7 @@
                 "Distinct shadow",
                 "Slight shadow",
                 "No shadow"
-            ],
-            "validate": "required"
+            ]
         },
         {
             "dataType": "number",
@@ -248,41 +172,6 @@
             "name": "trackingSurfaceSuitability",
             "description": "",
             "validate": "min[0],max[100]"
-        },
-        {
-            "columns": [
-                {
-                    "dataType": "text",
-                    "name": "trackingSurfaceSuitabilityCategory",
-                    "description": ""
-                },
-                {
-                    "dataType": "number",
-                    "name": "percentOfPlotSuitable",
-                    "description": "",
-                    "validate": "min[0],max[100]"
-                }
-            ],
-            "dataType": "list",
-            "name": "trackingSurfaceSuitabilityTable",
-            "defaultRows": [
-                {
-                    "trackingSurfaceSuitabilityCategory": "Category 1 - could distinguish tracks of category 2 & 3 animals, plus hopping mice, rodents, small birds, insects etc",
-                    "percentOfPlotSuitable": ""
-                },
-                {
-                    "trackingSurfaceSuitabilityCategory": "Category 2 - could distinguish tracks of category 3 animals, plus fox, cat, rabbit, echidna, goannas",
-                    "percentOfPlotSuitable": ""
-                },
-                {
-                    "trackingSurfaceSuitabilityCategory": "Category 3 - could distinguish tracks of camel, dingo, human, emu or kangaroo",
-                    "percentOfPlotSuitable": ""
-                },
-                {
-                    "trackingSurfaceSuitabilityCategory": "Category 4 - no tracks of any animals could be distinguished",
-                    "percentOfPlotSuitable": ""
-                }
-            ]
         },
         {
             "dataType": "text",
@@ -316,20 +205,17 @@
                     "dataType": "species",
                     "name": "species",
                     "dwcAttribute": "scientificName",
-                    "description": "The species name of the animal (or tracks/evidence of) observed.",
-                    "validate": "required"
+                    "description": "The species name of the animal (or tracks/evidence of) observed."
                 },
                 {
                     "dataType": "boolean",
                     "name": "tracksOnPlot",
-                    "description": "",
-                    "validate": "required"
+                    "description": ""
                 },
                 {
                     "dataType": "boolean",
                     "name": "tracksAdjacent",
-                    "description": "",
-                    "validate": "required"
+                    "description": ""
                 },
                 {
                     "dataType": "boolean",
@@ -364,8 +250,7 @@
                         "1 - 1-2 days old",
                         "2 - 3 days to 1 week",
                         "3 - Imprinted in mud or hard substrate, older than 1 week"
-                    ],
-                    "validate": "required"
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -378,8 +263,6 @@
             "name": "sightingEvidenceTable"
         }
     ],
-    "modelName": "2-haTrackPlotMethod",
-    "record": "true",
     "viewModel": [
         {
             "type": "row",
@@ -400,24 +283,19 @@
                             "type": "text"
                         },
                         {
-                            "preLabel": "Observer name(s)",
-                            "source": "collectedBy",
-                            "type": "text"
-                        },
-                        {
-                            "preLabel": "Survey date",
+                            "preLabel": "Survey event date",
                             "computed": null,
                             "source": "surveyDate",
                             "type": "date"
                         },
                         {
-                            "preLabel": "Survey start time",
+                            "preLabel": "Survey event start time",
                             "computed": null,
                             "source": "surveyStartTime",
                             "type": "time"
                         },
                         {
-                            "preLabel": "Survey finish time",
+                            "preLabel": "Survey event finish time",
                             "computed": null,
                             "source": "surveyFinishTime",
                             "type": "time"
@@ -446,6 +324,12 @@
                             "type": "number"
                         },
                         {
+                            "preLabel": "Map grid",
+                            "computed": null,
+                            "source": "mapGrid",
+                            "type": "text"
+                        },
+                        {
                             "preLabel": "Distance and direction from nearest named place",
                             "computed": null,
                             "source": "relativeLocation",
@@ -458,7 +342,7 @@
                             "type": "number"
                         },
                         {
-                            "preLabel": "Distance from vehicle track/road (km)",
+                            "preLabel": "Distance from vehickle track/road (km)",
                             "computed": null,
                             "source": "distanceFromRoad",
                             "type": "number"
@@ -487,51 +371,24 @@
                                 {
                                     "width": "30%",
                                     "noEdit": true,
-                                    "source": "vegTypeOverstorey",
-                                    "title": "Overstorey vegetation",
+                                    "source": "vegType",
+                                    "title": "Main vegetation type",
                                     "type": "text"
                                 },
                                 {
                                     "width": "45%",
-                                    "source": "vegDescriptionOverstorey",
+                                    "source": "vegDescription",
                                     "title": "Description",
                                     "type": "textarea"
                                 },
                                 {
                                     "width": "15%",
-                                    "source": "percentCoverOverstorey",
+                                    "source": "percentCover",
                                     "title": "% Cover",
-                                    "type": "selectOne"
+                                    "type": "number"
                                 }
                             ],
-                            "source": "vegTypeTableOverstorey",
-                            "type": "table"
-                        },
-                        {
-                            "allowHeaderWrap": "true",
-                            "computed": null,
-                            "columns": [
-                                {
-                                    "width": "30%",
-                                    "noEdit": true,
-                                    "source": "vegTypeUnderstorey",
-                                    "title": "Understorey vegetation",
-                                    "type": "text"
-                                },
-                                {
-                                    "width": "45%",
-                                    "source": "vegDescriptionUnderstorey",
-                                    "title": "Description",
-                                    "type": "textarea"
-                                },
-                                {
-                                    "width": "15%",
-                                    "source": "percentCoverUnderstorey",
-                                    "title": "% Cover",
-                                    "type": "selectOne"
-                                }
-                            ],
-                            "source": "vegTypeTableUnderstorey",
+                            "source": "vegTypeTable",
                             "type": "table"
                         },
                         {
@@ -539,30 +396,6 @@
                             "computed": null,
                             "source": "ephemeralVegPresent",
                             "type": "selectOne"
-                        },
-                        {
-                            "preLabel": "Time since strong wind/rain",
-                            "computed": null,
-                            "source": "timeSinceWeatherEvent",
-                            "type": "selectOne"
-                        },
-                        {
-                            "preLabel": "Time since fire (if known)",
-                            "computed": null,
-                            "source": "timeSinceFire",
-                            "type": "selectOne"
-                        },
-                        {
-                            "preLabel": "Visibility",
-                            "computed": null,
-                            "source": "visibility",
-                            "type": "selectOne"
-                        },
-                        {
-                            "preLabel": "Length of shadow as a percentage of your own actual height",
-                            "computed": null,
-                            "source": "shadowLength",
-                            "type": "number"
                         }
                     ]
                 },
@@ -584,41 +417,44 @@
                         },
                         {
                             "computed": null,
-                            "source": "<h3>Tracking Surface Condition<\/h3>",
+                            "source": "<h3>Other information<\/h3>",
                             "type": "literal"
                         },
                         {
-                            "preLabel": "How good is the tracking surface overall?",
+                            "preLabel": "Time since strong wind/rain",
+                            "computed": null,
+                            "source": "timeSinceWeatherEvent",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Time since fire (if known)",
+                            "computed": null,
+                            "source": "timeSinceFire",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Visibility",
+                            "computed": null,
+                            "source": "visibility",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Length of shadow as a percentage of your own actual height",
+                            "computed": null,
+                            "source": "shadowLength",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "How good is the tracking surface?",
                             "computed": null,
                             "source": "trackingSurface",
                             "type": "selectOne"
                         },
                         {
-                            "preLabel": "What percentage of the total plot area is actually suitable for tracking?",
+                            "preLabel": "What percentage of the plot is actually suitable for tracking?",
                             "computed": null,
                             "source": "trackingSurfaceSuitability",
                             "type": "number"
-                        },
-                        {
-                            "allowHeaderWrap": "true",
-                            "computed": null,
-                            "columns": [
-                                {
-                                    "width": "60%",
-                                    "noEdit": true,
-                                    "source": "trackingSurfaceSuitabilityCategory",
-                                    "title": "Tracking Suitability Category",
-                                    "type": "text"
-                                },
-                                {
-                                    "width": "40%",
-                                    "source": "percentOfPlotSuitable",
-                                    "title": "% of plot suitable for tracking along path taken",
-                                    "type": "number"
-                                }
-                            ],
-                            "source": "trackingSurfaceSuitabilityTable",
-                            "type": "table"
                         },
                         {
                             "preLabel": "How continuous is the best tracking surface?",

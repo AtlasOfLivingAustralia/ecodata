@@ -39,8 +39,8 @@
         },
         {
             "dataType": "text",
-            "dwcAttribute": "samplingProtocol",
             "name": "samplingProtocol",
+            "dwcAttribute": "samplingProtocol",
             "value": "SIGNAL2 aquatic macroinvertebrates"
         },
         {
@@ -200,8 +200,8 @@
                     "scientificName": "Megaloptera",
                     "taxonSensitivityClass": "Sensitive",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Alderfly larva (Megaloptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "8"
@@ -211,8 +211,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Backswimmer (Notonectidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -222,8 +222,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Beetle larva (Coleoptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "5"
@@ -233,8 +233,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Biting Midge larva & pupa (Ceratopogonidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -244,8 +244,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Bloodworm, Non-biting Midge (Chironomidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "1"
@@ -255,8 +255,8 @@
                     "taxonSensitivityClass": "Sensitive",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Caddisfly larva (Trichoptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "8"
@@ -266,8 +266,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Damselfly nymph (Odonata - Zygoptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "6"
@@ -277,8 +277,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Diving Beetle & larva (Dytiscidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -288,8 +288,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Dragonfly nymph (Odonata - Epiprocta)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "4"
@@ -299,8 +299,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Fly larva & pupa (Diptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -310,8 +310,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Free-living Flatworm, Flatworms  (Turbellaria)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -321,8 +321,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Hydra (Hydrozoa)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -332,8 +332,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Mussel (Bivalvia)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -343,8 +343,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Sandhopper (Amphipoda)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -354,8 +354,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Segmented worm  (Oligochaeta)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -365,8 +365,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Shrimp (Caridea)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -376,8 +376,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Slater, Isopod  (Isopoda)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -387,8 +387,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Snail (Gastropoda)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "1"
@@ -398,8 +398,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Freshwater Yabby/Crayfish (Decapoda)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "4"
@@ -409,8 +409,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Giant Water Bug  (Belostomatidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -420,8 +420,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Leech (Hirudinea)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "1"
@@ -431,8 +431,8 @@
                     "taxonSensitivityClass": "Very sensitive",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Mayfly nymph (Ephemeroptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "9"
@@ -442,8 +442,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Mosquito larva & pupa (Culicidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "1"
@@ -453,8 +453,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Nematode (Nematoda)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -464,8 +464,8 @@
                     "taxonSensitivityClass": "Sensitive",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Riffle Beetle & larva (Elmidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "7"
@@ -475,8 +475,8 @@
                     "taxonSensitivityClass": "Very sensitive",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Stonefly nymph (Plecoptera)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "10"
@@ -486,8 +486,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Water Boatman (Corixidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -497,8 +497,8 @@
                     "taxonSensitivityClass": "Sensitive",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Water Mites (Arcarina)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "6"
@@ -508,8 +508,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Water Scorpions/Needle Bug  (Nepidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "3"
@@ -519,8 +519,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Water Strider (Gerridae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "4"
@@ -530,8 +530,8 @@
                     "taxonSensitivityClass": "Very tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Water Treader (Mesoveliidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "2"
@@ -541,8 +541,8 @@
                     "taxonSensitivityClass": "Tolerant",
                     "taxonIndexValue": "",
                     "dataType": "species",
-                    "individualCount": "",
                     "taxonWeightFactor": "",
+                    "individualCount": "",
                     "taxonName": "Whirligig Beetle & larva (Gyrinidae)",
                     "dwcAttribute": "scientificName",
                     "taxonSensitivityRating": "4"
@@ -573,7 +573,7 @@
                             "preLabel": "Activity time",
                             "computed": null,
                             "source": "activityStartTime",
-                            "type": "time"
+                            "type": "text"
                         },
                         {
                             "preLabel": "Activity duration (hrs)",

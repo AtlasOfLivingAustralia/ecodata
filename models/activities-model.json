@@ -1605,7 +1605,7 @@
         },
         {
             "outputs": ["Fauna Survey - Trap and Transect"],
-            "supportsPhotoPoints": true,
+            "supportsPhotoPoints": false,
             "outputConfig": [
                 {
                     "outputName": "Survey Fauna - Trap and Transect",
@@ -1624,7 +1624,7 @@
         },
         {
             "outputs": ["Floristic Survey - Plot and Transect"],
-            "supportsPhotoPoints": true,
+            "supportsPhotoPoints": false,
             "outputConfig": [{
                 "outputName": "Floristic Survey - Plot and Transect",
                 "optional": false,
@@ -1761,214 +1761,6 @@
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Community Participation and Engagement v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Debris removal v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Disease Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Erosion Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Fencing v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Conservation Grazing Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Ecological Fire Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Heritage Conservation v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Management Plan Development v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Conservation Actions for Species and Communities v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Outcomes, Evaluation and Learning - General",
-            "type": "Activity",
-            "category": "Administration, management & reporting"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Pest Animal Survey v2",
-            "type": "Assessment",
-            "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Pest Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Plant Propagation v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Plant Survival Survey v2",
-            "type": "Assessment",
-            "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Project Administration v2",
-            "type": "Activity",
-            "category": "Administration, management & reporting"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Public Access and Infrastructure v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Research v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Revegetation v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Seed Collection v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Site Monitoring Plan v2",
-            "type": "Activity",
-            "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Site Preparation v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Training and Skills Development v2",
-            "type": "Activity",
-            "category": "Training"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Water Management v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "outputConfig": [],
-            "name": "Water Quality Survey v2",
-            "type": "Assessment",
-            "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Weed Mapping & Monitoring v2",
-            "type": "Assessment",
-            "category": "Assessment & monitoring"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Weed Treatment v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
-            "outputs": [],
-            "supportsPhotoPoints": true,
-            "outputConfig": [],
-            "name": "Works Planning and Risk v2",
-            "type": "Activity",
-            "category": "Implementation actions"
-        },
-        {
             "outputs": ["Aerial fauna survey - distance sampler method"],
             "outputConfig": [{
                 "outputName": "Aerial fauna survey - distance sampler method",
@@ -1980,8 +1772,12 @@
             "category": "Assessment & monitoring"
         },
         {
-            "outputs": [],
-            "outputConfig": [],
+            "outputs": ["Pollinator Sighting"],
+            "outputConfig": [{
+                "outputName": "Pollinator Sighting",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
             "name": "Pollinator Sighting",
             "type": "Assessment",
             "category": "Assessment & monitoring"
@@ -1994,6 +1790,17 @@
                 "collapsedByDefault": false
             }],
             "name": "VNPA ReefWatch Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Post Biodiversity-works Site Monitoring Methodology"],
+            "outputConfig": [{
+                "outputName": "Post Biodiversity-works Site Monitoring Methodology",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Post Biodiversity-works Site Monitoring Methodology",
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
@@ -2034,13 +1841,35 @@
             "category": "Implementation actions"
         },
         {
-            "outputs": ["Post Biodiversity-works Site Monitoring Methodology"],
+            "outputs": ["Location Photo"],
             "outputConfig": [{
-                "outputName": "Post Biodiversity-works Site Monitoring Methodology",
+                "outputName": "Location Photo",
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Post Biodiversity-works Site Monitoring Methodology",
+            "name": "WarrumbungleSnap",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Steaming to Success"],
+            "outputConfig": [{
+                "outputName": "Steaming to Success",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Steaming to Success",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Koala Count - South Australia"],
+            "outputConfig": [{
+                "outputName": "Koala Count - South Australia",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Koala Count - South Australia",
             "type": "Assessment",
             "category": "Assessment & monitoring"
         },
@@ -2051,7 +1880,139 @@
                 "optional": false,
                 "collapsedByDefault": false
             }],
-            "name": "Seagrass Bed Monitoring",
+            "name": "Sea Search - Seagrass Bed Monitoring",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Intertidal Reef Survey"],
+            "outputConfig": [{
+                "outputName": "Intertidal Reef Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Sea Search - Intertidal Reef Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["General Seed Collection Recording Form"],
+            "outputConfig": [{
+                "outputName": "General Seed Collection Recording Form",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "General Seed Collection Activity",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["General Fauna Sightings v1"],
+            "outputConfig": [{
+                "outputName": "General Fauna Sightings v1",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "General Fauna Sightings v1",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["General Flora Sightings v1"],
+            "outputConfig": [{
+                "outputName": "General Flora Sightings v1",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "General Flora Sightings v1",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["NT Systematic Terrestrial Fauna Survey"],
+            "outputConfig": [{
+                "outputName": "NT Systematic Terrestrial Fauna Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "NT Systematic Terrestrial Fauna Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["North Sydney Wildlife Watch"],
+            "outputConfig": [{
+                "outputName": "North Sydney Wildlife Watch",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "North Sydney Wildlife Watch",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["North Sydney Wildlife Watch - Multi-species"],
+            "outputConfig": [{
+                "outputName": "North Sydney Wildlife Watch - Multi-species",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "North Sydney Wildlife Watch - Multi-species",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Dunewatch Activity Summary"],
+            "outputConfig": [{
+                "outputName": "Dunewatch Activity Summary",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Dunewatch Activity Summary",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Dunewatch Survey - Emery Method"],
+            "outputConfig": [{
+                "outputName": "Dunewatch Survey - Emery Method",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Dunewatch Survey - Emery Method",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Dunewatch Survey - Human Impact Assessment"],
+            "outputConfig": [{
+                "outputName": "Dunewatch Survey - Human Impact Assessment",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Dunewatch - Human Impact Assessment",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Dunewatch Flora Survey"],
+            "outputConfig": [{
+                "outputName": "Dunewatch Flora Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Dunewatch Flora Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring"
+        },
+        {
+            "outputs": ["Dunewatch Fauna Survey"],
+            "outputConfig": [{
+                "outputName": "Dunewatch Fauna Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Dunewatch Fauna Survey",
             "type": "Assessment",
             "category": "Assessment & monitoring"
         }
@@ -2312,7 +2273,7 @@
                     "displayType": "",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events.",
+                    "label": "No of Indigenous participants at project events. ",
                     "units": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -2335,16 +2296,6 @@
                     "label": "Total No. of unique farming entities engaged",
                     "units": "",
                     "category": "Farm Management Practices",
-                    "isOutputTarget": false
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "numberOfCommunityGroups",
-                    "description": "The total number of community groups who are not delivery partners that are participating in activities and events.",
-                    "label": "Total No. of community groups (non delivery partners) participating",
-                    "units": "",
-                    "category": "Community Engagement and Capacity Building",
                     "isOutputTarget": false
                 }
             ],
@@ -3394,7 +3345,7 @@
                     "displayType": "piechart",
                     "name": "conservationActionType",
                     "description": "Breakdown of the number of conservation actions undertaken by species being protected. ",
-                    "label": "No. of conservation actions undertaken by species protected.",
+                    "label": "No. of conservation actions undertaken by species protected. ",
                     "groupBy": "output:targetSpecies.name",
                     "listName": "conservationWorks",
                     "category": "Biodiversity Management"
@@ -3574,7 +3525,7 @@
                     "gmsId": "PPRP",
                     "name": "totalNumberGrown",
                     "description": "The total number of plants which have been propagated and nurtured to the point of being ready for planting out.",
-                    "label": "Total No. of plants grown and ready for planting",
+                    "label": "Total No. of plants grown and ready for planting ",
                     "category": "Revegetation",
                     "isOutputTarget": true
                 },
@@ -4736,7 +4687,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events.",
+                    "label": "No of Indigenous participants at project events. ",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -4950,7 +4901,7 @@
                     "groupBy": "output:scoreLabel",
                     "listName": "scores",
                     "category": "Natural Resources Management",
-                    "filterBy": "Burnt area (Ha)"
+                    "filterBy": "Burnt area (Ha) - may be different to the total area managed"
                 },
                 {
                     "aggregationType": "SUM",
@@ -5290,7 +5241,7 @@
                     "aggregationType": "SUM",
                     "displayType": "",
                     "gmsId": "WDT25ALG",
-                    "name": "weedAreaTreatedHa",
+                    "name": "areaTreatedHa",
                     "description": "The total area of weeds for which an initial treatment was undertaken.",
                     "label": "Total new area treated for weeds (Ha)",
                     "units": "Ha",
@@ -5370,7 +5321,7 @@
                     "gmsId": "IPP25ALG",
                     "name": "numberOfIndigenousParticipants",
                     "description": "The number of Indigenous people attending and/or participating in activities and events. Individuals attending multiple activities will be counted for their attendance at each event.",
-                    "label": "No of Indigenous participants at project events.",
+                    "label": "No of Indigenous participants at project events. ",
                     "listName": "",
                     "category": "Indigenous Capacity",
                     "isOutputTarget": true
@@ -5463,49 +5414,6 @@
                     "units": "kilometres",
                     "listName": "",
                     "category": "Biodiversity Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "gmsId": "APC",
-                    "name": "accessAreaProtected",
-                    "description": "Area in hectares that is being protected as a direct result of installing access control structures.",
-                    "label": "Area protected by access control installations (Ha)",
-                    "listName": "",
-                    "category": "Natural Resources Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "name": "numberOfInstallations",
-                    "description": "Sum of the total number of structures installed for access management.",
-                    "label": "Total No. of structures installed for access management",
-                    "category": "Natural Resources Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "gmsId": "DRW",
-                    "name": "debrisWeightTonnes",
-                    "description": "The total mass of debris removed.",
-                    "label": "Weight of debris removed (Tonnes)",
-                    "units": "Tonnes",
-                    "category": "Natural Resources Management",
-                    "isOutputTarget": true
-                },
-                {
-                    "aggregationType": "SUM",
-                    "displayType": "",
-                    "gmsId": "DMA",
-                    "name": "quarantineAreaTreatedHa",
-                    "description": "Total area treated / quarantined",
-                    "label": "Total area (Ha) treated / quarantined",
-                    "groupBy": "",
-                    "listName": "",
-                    "category": "Invasive Species Management - Pests & Diseases",
                     "isOutputTarget": true
                 }
             ],
@@ -5602,26 +5510,21 @@
             "name": "Great Victorian Fish Count"
         },
         {
-            "template": "postRevegetationSiteManagement",
-            "scores": [],
-            "name": "Post revegetation site management"
-        },
-        {
             "template": "postBiodiversity-worksSiteMonitoringMethodology",
             "scores": [],
             "name": "Post Biodiversity-works Site Monitoring Methodology"
         },
         {
-            "template": "seagrassBedMonitoring",
+            "template": "postRevegetationSiteManagement",
             "scores": [],
-            "name": "Seagrass Bed Monitoring"
+            "name": "Post revegetation site management"
         },
         {
             "template": "postRevegetationInfillPlantings",
             "scores": [
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVN",
                     "name": "totalNumberPlanted",
                     "description": "The total number of seedlings planted.",
@@ -5630,17 +5533,17 @@
                     "category": "Revegetation"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "COUNT",
+                    "displayType": "",
                     "name": "species",
                     "description": "The total number of species occurrence records as an aggregate of the number of species in each revegetation activity. Individual species may be multi-counted if the same species has been planted in multiple activities.",
-                    "listName": "planting",
                     "label": "Total No. of species occurrence records",
+                    "listName": "planting",
                     "category": "Revegetation"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVSS",
                     "name": "totalSeedSownKg",
                     "description": "The total weight of seed sown in revegetation plots.",
@@ -5649,51 +5552,51 @@
                     "category": "Revegetation"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVT2A",
                     "name": "numberPlanted",
                     "description": "Total number of plants planted which will grow to a mature height of greater than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+                    "label": "No. of plants planted > 2 metres in height",
                     "groupBy": "output:matureHeight",
                     "listName": "planting",
-                    "label": "No. of plants planted > 2 metres in height",
                     "category": "Revegetation",
                     "filterBy": "> 2 metres"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVS2A",
                     "name": "seedSownKg",
                     "description": "Kilograms of seed sown of species expected to grow  > 2 metres in height",
+                    "label": "Kilograms of seed sown of species expected to grow > 2 metres in height",
                     "groupBy": "output:matureHeight",
                     "listName": "planting",
-                    "label": "Kilograms of seed sown of species expected to grow > 2 metres in height",
                     "category": "Revegetation",
                     "filterBy": "> 2 metres"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVT2B",
                     "name": "numberPlanted",
                     "description": "Total number of plants planted which will grow to a mature height of less than 2 metres. This does not include natural regeneration or plants established from the sowing of seed.",
+                    "label": "No. of plants planted < 2 metres in height",
                     "groupBy": "output:matureHeight",
                     "listName": "planting",
-                    "label": "No. of plants planted < 2 metres in height",
                     "category": "Revegetation",
                     "filterBy": "< 2 metres"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "RVS2B",
                     "name": "seedSownKg",
                     "description": "Kilograms of seed sown of species expected to grow  < 2 metres in height",
-                    "groupBy": "output:matureHeight",
-                    "listName": "planting",
                     "label": "Kilograms of seed sown of species expected to grow < 2 metres in height",
                     "units": "Kg",
+                    "groupBy": "output:matureHeight",
+                    "listName": "planting",
                     "category": "Revegetation",
                     "filterBy": "< 2 metres"
                 }
@@ -5704,23 +5607,23 @@
             "template": "postRevegetationPestManagement",
             "scores": [
                 {
-                    "displayType": "",
                     "aggregationType": "COUNT",
+                    "displayType": "",
                     "name": "partnerType",
                     "description": "Count of the number of activities which are undertaking pest management actions",
-                    "listName": "",
                     "label": "No. of activities undertaking pest management",
+                    "listName": "",
                     "category": "Invasive Species Management - Pests & Diseases"
                 },
                 {
-                    "displayType": "",
                     "aggregationType": "SUM",
+                    "displayType": "",
                     "gmsId": "PMA",
                     "name": "totalPestAreaTreatedHa",
                     "description": "The total area over which pest treatment activities have been undertaken.",
-                    "listName": "",
                     "label": "Area covered (Ha) by pest treatment actions",
                     "units": "Ha",
+                    "listName": "",
                     "category": "Invasive Species Management - Pests & Diseases"
                 }
             ],
@@ -5730,42 +5633,97 @@
             "template": "postRevegetationAreaManaged",
             "scores": [],
             "name": "Post revegetation area managed"
+        },
+        {
+            "template": "locationPhoto",
+            "scores": [],
+            "name": "Location Photo"
+        },
+        {
+            "template": "steaming2Success",
+            "scores": [],
+            "name": "Steaming to Success"
+        },
+        {
+            "template": "seagrassBedMonitoring",
+            "scores": [],
+            "name": "Seagrass Bed Monitoring"
+        },
+        {
+            "template": "koalaCount-SouthAustralia",
+            "scores": [],
+            "name": "Koala Count - South Australia"
+        },
+        {
+            "template": "intertidalReefSurvey",
+            "scores": [],
+            "name": "Intertidal Reef Survey"
+        },
+        {
+            "template": "generalSeedCollectionEvent",
+            "scores": [],
+            "name": "General Seed Collection Recording Form"
+        },
+        {
+            "template": "generalFaunaSightingsV1",
+            "scores": [],
+            "name": "General Fauna Sightings v1"
+        },
+        {
+            "template": "generalFloraSightingsV1",
+            "scores": [],
+            "name": "General Flora Sightings v1"
+        },
+        {
+            "template": "ntSystematicTerrestrialFaunaSurvey",
+            "scores": [],
+            "name": "NT Systematic Terrestrial Fauna Survey"
+        },
+        {
+            "template": "northSydneyWildlifeWatch",
+            "scores": [],
+            "name": "North Sydney Wildlife Watch"
+        },
+        {
+            "template": "northSydneyWildlifeWatchMulti-species",
+            "scores": [],
+            "name": "North Sydney Wildlife Watch - Multi-species"
+        },
+        {
+            "template": "dunewatchActivitySummary",
+            "scores": [],
+            "name": "Dunewatch Activity Summary"
+        },
+        {
+            "template": "dunewatchSurveyEmeryMethod",
+            "scores": [],
+            "name": "Dunewatch Survey - Emery Method"
+        },
+        {
+            "template": "dunewatchSurveyHumanImpactAssessment",
+            "scores": [],
+            "name": "Dunewatch Survey - Human Impact Assessment"
+        },
+        {
+            "template": "dunewatchFloraSurvey",
+            "scores": [],
+            "name": "Dunewatch Flora Survey"
+        },
+        {
+            "template": "dunewatchFaunaSurvey",
+            "scores": [],
+            "name": "Dunewatch Fauna Survey"
         }
     ],
     "selectedActivity": {
-        "outputs": [
-            "Post revegetation area managed",
-            "Post revegetation site management",
-            "Post revegetation infill plantings",
-            "Post revegetation pest management"
-        ],
-        "supportsPhotoPoints": true,
-        "outputConfig": [
-            {
-                "outputName": "Post revegetation site management",
-                "optional": true,
-                "collapsedByDefault": false
-            },
-            {
-                "outputName": "Post revegetation infill plantings",
-                "optional": true,
-                "collapsedByDefault": false
-            },
-            {
-                "outputName": "Post revegetation pest management",
-                "optional": true,
-                "collapsedByDefault": false
-            },
-            {
-                "outputName": "Post revegetation area managed",
-                "optional": false,
-                "collapsedByDefault": false
-            }
-        ],
-        "gmsId": "",
-        "name": "Post revegetation site management",
-        "supportsSites": true,
-        "type": "Activity",
-        "category": "Implementation actions"
+        "outputs": ["Dunewatch Survey - Human Impact Assessment"],
+        "outputConfig": [{
+            "outputName": "Dunewatch Survey - Human Impact Assessment",
+            "optional": false,
+            "collapsedByDefault": false
+        }],
+        "name": "Dunewatch - Human Impact Assessment",
+        "type": "Assessment",
+        "category": "Assessment & monitoring"
     }
 }

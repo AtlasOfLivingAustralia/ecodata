@@ -1,0 +1,343 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "siteName",
+            "description": "A unique local name for the site. This will allow it to be distinguished from other sites.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "description": "The name of the person who undertook the assessment (change default if required).",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "description": "The date on which the assessment was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "siteType",
+            "description": "Indicate whether the site is a control/reference site or a site which has had management actions.",
+            "constraints": [
+                "Control site",
+                "Conservation site"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "conservationManagementYear",
+            "description": "If it is a conservation site, please indicate the year that conservation management started (format YYYY).",
+            "validate": "min[2003],max[2035]"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "Please provide any notes or comments relevant to the site, condition, recovery rate, unusual or notable observations, etc."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "measuredAttribute"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfTicks",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfSteps",
+                    "validate": "min[0],max[53]"
+                },
+                {
+                    "computed": {
+                        "expression": "numberOfTicks/numberOfSteps*100",
+                        "rounding": 0,
+                        "dependents": [
+                            "numberOfTicks",
+                            "numberOfSteps"
+                        ],
+                        "operation": "divide"
+                    },
+                    "dataType": "number",
+                    "name": "sitePercentageCover"
+                }
+            ],
+            "dataType": "list",
+            "name": "percentageCover",
+            "defaultRows": [
+                {
+                    "measuredAttribute": "Not bare ground",
+                    "numberOfSteps": "",
+                    "sitePercentageCover": "",
+                    "numberOfTicks": ""
+                },
+                {
+                    "measuredAttribute": "Cover of Native Perennials (Butts)",
+                    "numberOfSteps": "",
+                    "sitePercentageCover": "",
+                    "numberOfTicks": ""
+                },
+                {
+                    "measuredAttribute": "Cover of Native Perennials (Foliage)",
+                    "numberOfSteps": "",
+                    "sitePercentageCover": "",
+                    "numberOfTicks": ""
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "measuredAttribute"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sumOfMeasurements",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfMeasurements",
+                    "validate": "min[0],max[53]"
+                },
+                {
+                    "computed": {
+                        "fromList": "averageLitterAndBugs",
+                        "rounding": 2,
+                        "dependents": [
+                            "sumOfMeasurements",
+                            "numberOfMeasurements"
+                        ],
+                        "operation": "divide"
+                    },
+                    "dataType": "number",
+                    "name": "siteAverageValue"
+                }
+            ],
+            "dataType": "list",
+            "name": "averageLitterAndBugs",
+            "defaultRows": [
+                {
+                    "measuredAttribute": "Litter Depth (cm)",
+                    "sumOfMeasurements": "",
+                    "siteAverageValue": "",
+                    "numberOfMeasurements": ""
+                },
+                {
+                    "measuredAttribute": "Litter Break-down",
+                    "sumOfMeasurements": "",
+                    "siteAverageValue": "",
+                    "numberOfMeasurements": ""
+                },
+                {
+                    "measuredAttribute": "Number of Bugs",
+                    "sumOfMeasurements": "",
+                    "siteAverageValue": "",
+                    "numberOfMeasurements": ""
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "sitePlantTypesNativeScore",
+            "description": "Count of the number of native plant types observed.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "sitePlantTypesNonNativeScore",
+            "description": "Count of the number of non-native plant types observed.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "siteBirdTypesScore",
+            "description": "Count of the number of different bird species observed.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "checkingForChangeMethodology",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "preLabel": "Site name",
+                        "computed": null,
+                        "source": "siteName",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Control or Conservation site",
+                        "computed": null,
+                        "source": "siteType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Conservation management year (YYYY)",
+                        "computed": null,
+                        "source": "conservationManagementYear",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Other Notes:",
+                        "computed": null,
+                        "source": "notes",
+                        "type": "textarea"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<hr>Enter the total site scores from the field assessment sheet.",
+                        "type": "literal"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "width": "40%",
+                                "noEdit": true,
+                                "source": "measuredAttribute",
+                                "title": "Item",
+                                "type": "text"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "numberOfTicks",
+                                "title": "Number of Ticks",
+                                "type": "number"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "numberOfSteps",
+                                "title": "Number of Steps",
+                                "type": "number"
+                            },
+                            {
+                                "primaryResult": "true",
+                                "width": "20%",
+                                "noEdit": "true",
+                                "source": "sitePercentageCover",
+                                "title": "Site % Cover",
+                                "type": "number"
+                            }
+                        ],
+                        "source": "percentageCover",
+                        "type": "table"
+                    },
+                    {
+                        "allowHeaderWrap": "true",
+                        "columns": [
+                            {
+                                "width": "40%",
+                                "noEdit": true,
+                                "source": "measuredAttribute",
+                                "title": "item",
+                                "type": "text"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "sumOfMeasurements",
+                                "title": "Sum of Measurements",
+                                "type": "number"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "numberOfMeasurements",
+                                "title": "Number of Measurements",
+                                "type": "number"
+                            },
+                            {
+                                "primaryResult": "true",
+                                "width": "20%",
+                                "noEdit": "true",
+                                "source": "siteAverageValue",
+                                "title": "Site Average",
+                                "type": "number"
+                            }
+                        ],
+                        "source": "averageLitterAndBugs",
+                        "type": "table"
+                    },
+                    {
+                        "preLabel": "Native Plant Types (total No.)",
+                        "computed": null,
+                        "source": "sitePlantTypesNativeScore",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Non-native Plant Types (total No.)",
+                        "computed": null,
+                        "source": "sitePlantTypesNonNativeScore",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Bird Types (total No.)",
+                        "computed": null,
+                        "source": "siteBirdTypesScore",
+                        "type": "number"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<i>Zoom in on the map, select the marker, then click on the location of the assessment site.<br>Also enter the name in the 'Matched locality' field if you'd like to store the location for future use.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}

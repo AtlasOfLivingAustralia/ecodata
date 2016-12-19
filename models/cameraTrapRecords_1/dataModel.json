@@ -1,6 +1,4 @@
 {
-    "modelName": "cameraTrapRecords_1",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "text",
@@ -93,6 +91,7 @@
                 "Fixed tripod/post",
                 "Temporary tripod/post",
                 "Installation on rock face",
+                "Installation on building wall or ledge",
                 "Other"
             ]
         },
@@ -133,25 +132,26 @@
             "dataType": "number",
             "name": "samplingPeriod",
             "dwcAttribute": "samplingEffort",
-            "description": "Enter the number of days that the camera was deployed for the sampling event.",
+            "description": "The number of days that the camera was deployed for the sampling event.",
             "validate": "required,min[0]"
         },
         {
             "dataType": "text",
             "name": "comments1",
-            "description": "Notes about the camera used (including serial number), mounting and baiting information."
+            "dwcAttribute": "locationRemarks",
+            "description": "Notes about the camera used (including serial number), general location description, mounting and baiting information, etc."
         },
         {
             "dataType": "number",
             "name": "cameraOrientation",
-            "description": "Enter the angle of orientation of the camera (degrees). ie. the direction that the camera is pointing.",
+            "description": "The angle of orientation of the camera (degrees). ie. the direction that the camera is pointing.",
             "validate": "min[1],max[360]"
         },
         {
             "dataType": "text",
             "name": "environment",
             "dwcAttribute": "habitat",
-            "description": "Indicate the type of vegetation and environment in which the camera was located.",
+            "description": "The type of vegetation and environment in which the camera was located.",
             "constraints": [
                 "Native open grassland",
                 "Non-native open grassland",
@@ -205,6 +205,7 @@
         {
             "dataType": "number",
             "name": "elevation",
+            "dwcAttribute": "verbatimElevation",
             "description": "Enter the elevation (m) of the camera position above mean sea level.",
             "validate": "min[0]"
         },
@@ -266,6 +267,7 @@
                 {
                     "dataType": "text",
                     "name": "identificationConfidence",
+                    "dwcAttribute": "identificationQualifier",
                     "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
                     "constraints": [
                         "Certain",
@@ -287,6 +289,7 @@
                 {
                     "dataType": "image",
                     "name": "sightingPhoto",
+                    "dwcAttribute": "associatedMedia",
                     "description": "Upload the camera trap image containing the species at the time of the record. This is essential for verification of the record."
                 }
             ],
@@ -294,6 +297,8 @@
             "name": "multiSightingTable"
         }
     ],
+    "modelName": "cameraTrapRecords_1",
+    "record": "true",
     "viewModel": [
         {
             "type": "row",

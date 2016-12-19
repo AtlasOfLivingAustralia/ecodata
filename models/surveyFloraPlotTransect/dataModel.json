@@ -1,0 +1,382 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "surveyId",
+            "description": "An identifier or reference number that may be applicable to the survey event."
+        },
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "description": "The date on which the survey was undertaken."
+        },
+        {
+            "dataType": "text",
+            "name": "surveyTitle",
+            "description": "Short descriptive title of the survey. This provides context for the survey event and enables you to search for it easily."
+        },
+        {
+            "dataType": "text",
+            "name": "surveyObjectives",
+            "description": "Description of the objectives of the survey event"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyLeader",
+            "description": "The name of the person leading the survey event"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyParticipants",
+            "description": "List of people people participating in the survey event."
+        },
+        {
+            "dataType": "number",
+            "name": "surveyArea",
+            "description": "The area in hectares over which the survey is being conducted"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyMethodologyName",
+            "description": "The name of the methodology used. Note this should be the short-form name by which a standard methodology is commonly referred to (eg. 2 Ha 20 min Bird Survey). If it is not a common or standard methodology, please create a short-form name for it.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyMethodologyDescription",
+            "description": "Long description of the methodology used for the survey event"
+        },
+        {
+            "dataType": "image",
+            "name": "photoPointImage",
+            "description": "Upload a photo taken of the location at the time of the survey. This should be set up and taken as a formal photo point."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "plotId",
+                    "description": "The identifier of the transect or plot in which sampling is being done."
+                },
+                {
+                    "dataType": "text",
+                    "name": "sampleSiteId",
+                    "description": "The identifier of the point at which the observational record was made"
+                },
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "species",
+                    "description": "Species recorded at the sample site",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "dwcAttribute": "individualCount",
+                    "name": "numberOfOrganisms",
+                    "description": "The number of plants in the survey at the sample site which share the same set of record attributes.",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "stratum",
+                    "description": "The structural layer occupied by the species",
+                    "constraints": [
+                        "Canopy",
+                        "Sub-canopy",
+                        "Mid-stratum",
+                        "Shrub layer",
+                        "Ground stratum"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "aveHeight",
+                    "description": "The average height of the species in the sample area"
+                },
+                {
+                    "dataType": "number",
+                    "name": "dbh",
+                    "description": "The diameter in centimetres at breast height (1.2m above ground level) of sampled trees."
+                },
+                {
+                    "dataType": "text",
+                    "name": "health",
+                    "description": "The health or condition of the Plant(s) recorded"
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "associatedOccurrences",
+                    "name": "biologicalMaterialTaken",
+                    "description": "Indicator as to whether biological material (either as a sample or whole organism) was taken."
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "occurrenceRemarks",
+                    "name": "speciesNotes",
+                    "description": "Any notes or comments applicable to a record (eg. health/condition indicators, nature of biological material taken, unlisted variants on select lists, other measurements, general observations, etc.)."
+                }
+            ],
+            "dataType": "list",
+            "name": "surveyResultsFlora"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "surveyResultsFlora",
+                    "source": "numberOfOrganisms"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalNumberOfOrganisms",
+            "description": "Aggregate total of the individual organisms recorded in the survey event"
+        },
+        {
+            "dataType": "text",
+            "name": "soilSampleCollected",
+            "description": "The identifier of a soil sample collected in association with this survey event"
+        },
+        {
+            "dataType": "text",
+            "dwcAttribute": "eventRemarks",
+            "name": "notes"
+        }
+    ],
+    "modelName": "generalFaunaSurvey-TrapandTransect",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "This is a generalised form for recording biological survey data and should cover the basic structured data gathering requirements of most surveys.",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Survey Id / Reference No.:",
+                            "computed": null,
+                            "source": "surveyId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey title:",
+                            "computed": null,
+                            "source": "surveyTitle",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey objectives:",
+                            "computed": null,
+                            "source": "surveyObjectives",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Survey date:",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Survey leader:",
+                            "computed": null,
+                            "source": "surveyLeader",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey participants:",
+                            "computed": null,
+                            "source": "surveyParticipants",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Survey area (Ha):",
+                            "computed": null,
+                            "source": "surveyArea",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Photo point images",
+                            "computed": null,
+                            "source": "photoPointImage",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "includeNotes": true,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "includeSource": true,
+                        "includeAccuracy": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "Please list the details of animals observed or collected in each transect/plot and sampling/trap site during this survey event:",
+                "type": "literal"
+            }]
+        },
+        {
+            "allowHeaderWrap": "true",
+            "footer": {"rows": [{"columns": [
+                {
+                    "colspan": 3,
+                    "computed": null,
+                    "source": "Total No. of individual organisms recorded in this survey event:",
+                    "type": "literal"
+                },
+                {
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberOfOrganisms\",\"fromList\":\"surveyResultsFlora\"}}",
+                    "source": "totalNumberOfOrganisms",
+                    "type": "number"
+                },
+                {
+                    "colspan": 6,
+                    "computed": null,
+                    "source": "",
+                    "type": "literal"
+                }
+            ]}]},
+            "columns": [
+                {
+                    "computed": null,
+                    "width": "7%",
+                    "source": "plotId",
+                    "title": "Transect / plot Id:",
+                    "type": "text"
+                },
+                {
+                    "computed": null,
+                    "width": "7%",
+                    "source": "sampleSiteId",
+                    "title": "Sample Site Id:",
+                    "type": "text"
+                },
+                {
+                    "computed": null,
+                    "width": "15%",
+                    "source": "species",
+                    "title": "Species:",
+                    "type": "autocomplete"
+                },
+                {
+                    "computed": null,
+                    "width": "8%",
+                    "source": "numberOfOrganisms",
+                    "title": "No. of individuals:",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "stratum",
+                    "title": "Structural layer:",
+                    "type": "selectOne"
+                },
+                {
+                    "computed": null,
+                    "width": "7%",
+                    "source": "aveHeight",
+                    "title": "Ave. Height (m):",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "7%",
+                    "source": "dbh",
+                    "title": "Tree DBH (cm) if applicable:",
+                    "type": "number"
+                },
+                {
+                    "computed": null,
+                    "width": "10%",
+                    "source": "health",
+                    "title": "Plant health:",
+                    "type": "text"
+                },
+                {
+                    "computed": null,
+                    "width": "7%",
+                    "source": "biologicalMaterialTaken",
+                    "title": "Biological material taken:",
+                    "type": "text"
+                },
+                {
+                    "computed": null,
+                    "width": "15%",
+                    "source": "speciesNotes",
+                    "title": "Notes:",
+                    "type": "textarea"
+                }
+            ],
+            "userAddedRows": true,
+            "source": "surveyResultsFlora",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "If a soil sample was collected as part of this survey event, please indicate the sample Id:",
+                "computed": null,
+                "width": "10%",
+                "source": "soilSampleCollected",
+                "type": "text"
+            }],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Comments / Notes",
+                "computed": null,
+                "width": "90%",
+                "source": "notes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,325 @@
+{
+    "modelName": "steaming2Success",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "plotId",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "areaInSquareMetres",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "date",
+            "name": "eventDate",
+            "description": "",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "treatmentMethod",
+            "description": "The type of treatment method used for treatment",
+            "constraints": [
+                "Environmental management - Native competition",
+                "Environmental management - moisture & nutrient control",
+                "Environmental management - over-planting",
+                "Manual control - Grubbing / chipping",
+                "Manual control - Hand pulling",
+                "Mechanical control - Steam",
+                "Mechanical control - Dozing",
+                "Mechanical control - Felling",
+                "Mechanical control - Mowing",
+                "Mechanical control - Slashing",
+                "Other (specify in notes)"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "coverType",
+                    "description": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "percentCover",
+                    "description": "",
+                    "validate": "min[0],max[100]"
+                }
+            ],
+            "dataType": "list",
+            "name": "percentCoverTable",
+            "defaultRows": [
+                {
+                    "coverType": "Total weeds (% cover)",
+                    "dataType": "text",
+                    "percentCover": ""
+                },
+                {
+                    "coverType": "Total natives (% cover)",
+                    "dataType": "text",
+                    "percentCover": ""
+                },
+                {
+                    "coverType": "Total mulch/litter (% cover)",
+                    "dataType": "text",
+                    "percentCover": ""
+                },
+                {
+                    "coverType": "Total bare ground (% cover)",
+                    "dataType": "text",
+                    "percentCover": ""
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": "General observational notes applicable to the site, treatment, conditions, etc."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                }
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "photo",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "weedSpecies",
+                    "dwcAttribute": "scientificName",
+                    "description": "Name(s) of the weed species observed on the subject site (may be entered as scientific or common names)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "percentCover",
+                    "description": "",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedInfestationDensity",
+                    "description": "Density class for particular weed species over the assessed area",
+                    "constraints": [
+                        "Dense general cover",
+                        "Dense patches",
+                        "Few scattered plants",
+                        "Moderately dense general cover",
+                        "Moderately dense scattered patches",
+                        "Sparse scattered patches",
+                        "Sparse general cover"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedHealth",
+                    "description": "Observed health status of particular weed species as an average across the assessed area",
+                    "constraints": [
+                        "Dead",
+                        "Healthy",
+                        "Stressed"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedReproductiveStatus",
+                    "dwcAttribute": "reproductiveCondition",
+                    "description": "Observed reproductive status of particular weed species as an average across the assessed area",
+                    "constraints": [
+                        "Flowering (FLWG)",
+                        "Immature (IMTR)",
+                        "Not recorded (NRRS)",
+                        "Seeding (SEDG)",
+                        "Vegetative & Mature (VGTV)"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "weedStatus",
+                    "dwcAttribute": "occurrenceStatus",
+                    "description": "Status of the infestation area for particular weed species",
+                    "constraints": [
+                        "Active Infestation",
+                        "Closed",
+                        "New Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Unknown"
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "weedObservationMonitoringDetails",
+            "type": "row",
+            "class": "output-section"
+        },
+        {
+            "dataType": "text",
+            "name": "weedInspectionNotes",
+            "dwcAttribute": "occurrenceRemarks"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Plot name/ID:",
+                            "computed": null,
+                            "source": "plotId",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Area of plot (m2):",
+                            "computed": null,
+                            "source": "areaInSquareMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Date of survey:",
+                            "computed": null,
+                            "source": "eventDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Treatment method:",
+                            "computed": null,
+                            "source": "treatmentMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4 class='text-default text-left'><b>Proportions of total cover<\/b><\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "columns": [
+                                {
+                                    "width": "",
+                                    "noEdit": "true",
+                                    "source": "coverType",
+                                    "title": "Type of cover",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "",
+                                    "source": "percentCover",
+                                    "title": "% cover",
+                                    "type": "number"
+                                }
+                            ],
+                            "source": "percentCoverTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Photo(s)",
+                            "computed": null,
+                            "source": "photo",
+                            "type": "image"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap"
+                    }]
+                }
+            ],
+            "class": "output-section"
+        },
+        {"footer": {"rows": [{"columns": [{
+            "colspan": 6,
+            "source": "",
+            "type": "literal"
+        }]}]}},
+        {
+            "type": "row",
+            "items": [{
+                "computed": null,
+                "source": "<h3>Weed Observation & Monitoring Details<\/h3>",
+                "type": "literal"
+            }]
+        },
+        {
+            "columns": [
+                {
+                    "source": "weedSpecies",
+                    "title": "Weed species",
+                    "type": "autocomplete",
+                    "validate": "required"
+                },
+                {
+                    "source": "percentCover",
+                    "title": "Weed cover (%)",
+                    "type": "number",
+                    "validate": "required"
+                },
+                {
+                    "source": "weedInfestationDensity",
+                    "title": "Infestation Density",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedHealth",
+                    "title": "Health",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedReproductiveStatus",
+                    "title": "Reproductive status",
+                    "type": "selectOne"
+                },
+                {
+                    "source": "weedStatus",
+                    "title": "Weed Status",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": "true",
+            "source": "weedObservationMonitoringDetails",
+            "type": "table",
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Notes",
+                "computed": null,
+                "source": "weedInspectionNotes",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

@@ -1,0 +1,660 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the registered dive operator or friends group."
+        },
+        {
+            "dataType": "stringList",
+            "name": "habitatType",
+            "dwcAttribute": "habitat",
+            "description": "Characteristics of the type of habitat at the dive site. Select all that apply.",
+            "constraints": [
+                "Large rocky reef (>2m face)",
+                "Low rocky reef (<2m face)",
+                "Artificial reef (eg. pier,wrecks)",
+                "Rubble",
+                "Sand/Mud",
+                "Other (please specify)"
+            ]
+        },
+        {
+            "dataType": "stringList",
+            "name": "habitatTypeOfCover",
+            "description": "The types of vegetation present at the dive site. Select all that apply.",
+            "constraints": [
+                "Kelp (long, leathery brown algae)",
+                "Mixed algae",
+                "Seagrass",
+                "Sponges, seasquirts & other",
+                "Other (please specify)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "locationRemarks",
+            "dwcAttribute": "locationRemarks",
+            "description": "If 'Other' selected for Habitat or Type of Cover, please describe here. Also include other notes as appropriate."
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the record was observed.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The start time at which the observation was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The finish time at which the observation was made."
+        },
+        {
+            "dataType": "text",
+            "name": "surveyDuration",
+            "dwcAttribute": "samplingEffort",
+            "description": "The duration of the survey/sampling event. Enter as hh:mm"
+        },
+        {
+            "dataType": "text",
+            "name": "surveyMethod",
+            "dwcAttribute": "samplingProtocol",
+            "constraints": [
+                "SCUBA",
+                "Snorkel",
+                "SCUBA and Snorkel"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "numberInDiveParty",
+            "description": "The number of divers in the dive party.",
+            "validate": "required"
+        },
+        {
+            "dataType": "number",
+            "name": "maximumDepthInMeters",
+            "dwcAttribute": "maximumDepthInMeters",
+            "description": "The depth in meters of the deepest observation in the record set.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "number",
+            "name": "maximumVisibilityInMeters",
+            "description": "The maximum visibility through the water in meters.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "number",
+            "name": "temperatureInDegreesCelcius",
+            "description": "The average temperature of the water at the survey site in degrees celcius."
+        },
+        {
+            "dataType": "text",
+            "name": "tideLevel",
+            "description": "The level of the tide at the time of the survey event.",
+            "constraints": [
+                "High",
+                "Mid",
+                "Low"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "tidalStream",
+            "description": "The behaviour of the tidal stream at the time of the survey event.",
+            "constraints": [
+                "Flood",
+                "Ebb",
+                "Slack"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "swellHeightInMeters",
+            "description": "The height of the swell in meters at the time of the survey event.",
+            "constraints": [
+                "0 m",
+                "0.5 m",
+                "1 m",
+                "1.5 m",
+                "2 m"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "currentStrength",
+            "description": "The strength of the current at the time of the survey event.",
+            "constraints": [
+                "Strong",
+                "Weak",
+                "Nil"
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "commonName"
+                },
+                {
+                    "dataType": "text",
+                    "name": "abundanceClass",
+                    "description": "The number of fish of each species observed during the dive.",
+                    "constraints": [
+                        "Nil",
+                        "1 - 5",
+                        "6 - 20",
+                        "20 +"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "speciesImage",
+                    "description": "Upload images of species observed during the dive, especially unusual, unidentified or unknown species."
+                }
+            ],
+            "dataType": "list",
+            "name": "taxaObservations",
+            "allowRowDelete": false,
+            "defaultRows": [
+                {
+                    "commonName": "Dusky Morwong (Dactylophora nigricans)",
+                    "abundanceClass": "",
+                    "scientificName": "Dactylophora nigricans",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Red Morwong (Cheilodactylus fuscus)",
+                    "abundanceClass": "",
+                    "scientificName": "Cheilodactylus fuscus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Banded Morwong (Cheilodactylus spectabilis)",
+                    "abundanceClass": "",
+                    "scientificName": "Cheilodactylus spectabilis",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Magpie Pearch (Cheilodactylus nigripes)",
+                    "abundanceClass": "",
+                    "scientificName": "Cheilodactylus nigripes",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Bastard Trumpeter (Latridopsis forsteri)",
+                    "abundanceClass": "",
+                    "scientificName": "Latridopsis forsteri",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Herring Cale (Odax cyanomelas)",
+                    "abundanceClass": "",
+                    "scientificName": "Odax cyanomelas",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Horseshoe Leatherjacket (Meuschenia hippocrepis)",
+                    "abundanceClass": "",
+                    "scientificName": "Meuschenia hippocrepis",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Six-spined Leatherjacket (Meuschenia freycineti)",
+                    "abundanceClass": "",
+                    "scientificName": "Meuschenia freycineti",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Zebra Fish (Girella zebra)",
+                    "abundanceClass": "",
+                    "scientificName": "Girella zebra",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Southern Blue Devil (Paraplesiops meleagris)",
+                    "abundanceClass": "",
+                    "scientificName": "Paraplesiops meleagris",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Ornate Cowfish (Aracana ornata)",
+                    "abundanceClass": "",
+                    "scientificName": "Aracana ornata",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Shaw's Cowfish (Aracana aurita)",
+                    "abundanceClass": "",
+                    "scientificName": "Aracana aurita",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Victorian Scalyfin (Parma victoriae)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Parma victoriae",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Long-snouted Boarfish (Paristiopterus labiosus)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Paristiopterus labiosus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Old Wife (Enoplosus armatus)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Enoplosus armatus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Sea Sweep (Scorpis aequipinnis)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Scorpis aequipinnis",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Silver Sweep (Scorpis lineolata)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Scorpis lineolata",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Western Blue Groper (Achoerodus gouldii)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Achoerodus gouldii",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Eastern Blue Groper (Achoerodus viridis)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Achoerodus viridis",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Blue Throat Wrasse (Suezichthys cyanolaemus)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Suezichthys cyanolaemus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Saddled Wrasse (Notolabrus fucicola)",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Notolabrus fucicola",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Senator Wrasse",
+                    "image": "speciesImage",
+                    "abundanceClass": "",
+                    "scientificName": "Pictilabrus laticlavius",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "commonName": "Maori Wrasse (Pictilabrus laticlavius)",
+                    "abundanceClass": "",
+                    "scientificName": "Ophthalmolepis lineolatus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Harlequin fish (Othos dentex)",
+                    "abundanceClass": "",
+                    "scientificName": "Othos dentex",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                },
+                {
+                    "commonName": "Weedy Sea Dragon (Phyllopteryx taeniolatus)",
+                    "abundanceClass": "",
+                    "scientificName": "Phyllopteryx taeniolatus",
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "speciesImage": ""
+                }
+            ],
+            "description": "Fish count data"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "additionalSpecies"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationConfidence",
+                    "dwcAttribute": "identificationQualifier",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "abundanceClass",
+                    "description": "The strength of the current at the time of the survey event.",
+                    "constraints": [
+                        "Nil",
+                        "1 - 5",
+                        "6 - 20",
+                        "20 +"
+                    ]
+                },
+                {
+                    "dataType": "image",
+                    "name": "speciesImage",
+                    "description": "Upload images of species observed during the dive, especially unusual, unidentified or unknown species."
+                }
+            ],
+            "dataType": "list",
+            "name": "additionalSpeciesTable",
+            "description": "Additional species observed"
+        },
+        {
+            "dataType": "text",
+            "name": "siteName",
+            "description": "A local name for the observation site or dive location."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "gvfcReefWatchSurvey",
+    "record": "true",
+    "viewModel": [{
+        "type": "row",
+        "items": [
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h4 class='text-default text-left'><b>Registration Details<\/b><\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Recorded by",
+                        "computed": null,
+                        "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Dive group name",
+                        "computed": null,
+                        "source": "observedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Survey method",
+                        "computed": null,
+                        "source": "surveyMethod",
+                        "type": "selectOne"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<br><h4 class='text-default text-left'><b>Site Description<\/b><\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<i>Zoom in on the map, select the marker, then click on the location of the dive site.<br><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i>",
+                        "type": "literal"
+                    },
+                    {
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    },
+                    {
+                        "preLabel": "Habitat (tick all that apply)",
+                        "computed": null,
+                        "source": "habitatType",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Type of cover (tick all that apply)",
+                        "computed": null,
+                        "source": "habitatTypeOfCover",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Site comments (if 'Other' above, please describe)",
+                        "computed": null,
+                        "source": "locationRemarks",
+                        "type": "textarea"
+                    },
+                    {
+                        "computed": null,
+                        "source": "<h4 class='text-default text-left'><b>Site Conditions<\/b><\/h4><\/br>",
+                        "type": "literal"
+                    },
+                    {
+                        "preLabel": "Survey date",
+                        "computed": null,
+                        "source": "surveyDate",
+                        "type": "date"
+                    },
+                    {
+                        "preLabel": "Time start",
+                        "computed": null,
+                        "source": "surveyStartTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Time finish",
+                        "computed": null,
+                        "source": "surveyFinishTime",
+                        "type": "time"
+                    },
+                    {
+                        "preLabel": "Duration",
+                        "computed": null,
+                        "source": "surveyDuration",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "No. of Divers",
+                        "computed": null,
+                        "source": "numberInDiveParty",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Max. Depth (m)",
+                        "computed": null,
+                        "source": "maximumDepthInMeters",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Visibility (m)",
+                        "computed": null,
+                        "source": "maximumVisibilityInMeters",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Water Temp. (deg C)",
+                        "computed": null,
+                        "source": "temperatureInDegreesCelcius",
+                        "type": "number"
+                    },
+                    {
+                        "preLabel": "Tide",
+                        "computed": null,
+                        "source": "tideLevel",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Tidal stream",
+                        "computed": null,
+                        "source": "tidalStream",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Swell height (m)",
+                        "computed": null,
+                        "source": "swellHeightInMeters",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Current",
+                        "computed": null,
+                        "source": "currentStrength",
+                        "type": "selectOne"
+                    }
+                ]
+            },
+            {
+                "computed": null,
+                "type": "col",
+                "items": [
+                    {
+                        "computed": null,
+                        "source": "<h4 class='text-default text-left'><b>Fish Count Data<\/b><\/h4>",
+                        "type": "literal"
+                    },
+                    {
+                        "computed": null,
+                        "columns": [
+                            {
+                                "width": "35%",
+                                "noEdit": "true",
+                                "source": "commonName",
+                                "title": "Name",
+                                "type": "text"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "abundanceClass",
+                                "title": "Abundance",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "45%",
+                                "source": "speciesImage",
+                                "title": "Photo",
+                                "type": "image"
+                            }
+                        ],
+                        "source": "taxaObservations",
+                        "type": "table",
+                        "class": "output-section"
+                    },
+                    {
+                        "computed": null,
+                        "columns": [
+                            {
+                                "width": "35%",
+                                "source": "additionalSpecies",
+                                "title": "Name",
+                                "type": "autocomplete"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "identificationConfidence",
+                                "title": "Id Confidence",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "abundanceClass",
+                                "title": "Abundance",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "40%",
+                                "source": "speciesImage",
+                                "title": "Photo",
+                                "type": "image"
+                            }
+                        ],
+                        "userAddedRows": "true",
+                        "source": "additionalSpeciesTable",
+                        "type": "table",
+                        "class": "output-section"
+                    }
+                ]
+            }
+        ],
+        "class": "output-section"
+    }]
+}
