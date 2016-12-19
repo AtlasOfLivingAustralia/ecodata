@@ -1,0 +1,226 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "dwcAttribute": "locality",
+            "name": "seedSourceProvenance",
+            "description": "Location from which the source seedstock was collected",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "seedBankRepository",
+            "description": "The name of the seedbank repository in which collected seedstock is stored"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks",
+            "description": "General comments and notes about the seed collection activity and related observations"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "dwcAttribute": "scientificName",
+                    "name": "seedSourceSpecies",
+                    "description": "The species providing source seedstock  (start typing a  scientific or common name for a species)",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "seedCollectedKg",
+                    "description": "The weight of seed collected in kilograms",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "dwcAttribute": "reproductiveCondition",
+                    "name": "sourcePlantHealth",
+                    "description": "The health of the plant(s) providing source seedstock",
+                    "constraints": [
+                        "Healthy young plant",
+                        "Healthy mature plant",
+                        "Healthy senescent plant",
+                        "Environmentally stressed young plant",
+                        "Environmentally stressed mature plant",
+                        "Environmentally stressed senescent plant",
+                        "Felled tree / shrub"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "noOfSourcePlants",
+                    "description": "The Number of Source Plants",
+                    "validate": "integer"
+                },
+                {
+                    "dataType": "text",
+                    "name": "sampleIdentifier",
+                    "description": "The identifier attached to the seed stock/sample collected for each species.",
+                    "validate": "required"
+                }
+            ],
+            "dataType": "list",
+            "name": "seedsList"
+        },
+        {
+            "computed": {
+                "dependents": {
+                    "fromList": "seedsList",
+                    "source": "seedCollectedKg"
+                },
+                "operation": "sum"
+            },
+            "primaryResult": "true",
+            "dataType": "number",
+            "name": "totalSeedCollectedKg",
+            "description": "Aggregate total of seed sown"
+        }
+    ],
+    "modelName": "generalSeedCollectionEvent",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Record submitted by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Collection date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Provenance (locality) of source plant(s):",
+                            "computed": null,
+                            "source": "seedSourceProvenance",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Name of seedbank storing the seed:",
+                            "computed": null,
+                            "source": "seedBankRepository",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Comments / Notes:",
+                            "source": "notes",
+                            "type": "textarea"
+                        }
+                    ],
+                    "class": "output-section"
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }],
+                    "class": "output-section"
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "footer": {"rows": [{"columns": [
+                    {
+                        "computed": null,
+                        "source": "Total seed collected (kg)",
+                        "type": "literal"
+                    },
+                    {
+                        "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
+                        "source": "totalSeedCollectedKg",
+                        "type": "number"
+                    },
+                    {
+                        "colspan": 1,
+                        "computed": null,
+                        "source": "",
+                        "type": "literal"
+                    }
+                ]}]},
+                "columns": [
+                    {
+                        "source": "seedSourceSpecies",
+                        "title": "Species:",
+                        "type": "autocomplete"
+                    },
+                    {
+                        "source": "seedCollectedKg",
+                        "title": "Seed collected (Kg):",
+                        "type": "number"
+                    },
+                    {
+                        "source": "sourcePlantHealth",
+                        "title": "Health of source plant(s):",
+                        "type": "selectOne"
+                    },
+                    {
+                        "source": "noOfSourcePlants",
+                        "type": "number",
+                        "title": "Number of Source Plants"
+                    },
+                    {
+                        "source": "sampleIdentifier",
+                        "type": "text",
+                        "title": "Stock/sample identifier"
+                    }
+                ],
+                "userAddedRows": "true",
+                "source": "seedsList",
+                "type": "table",
+                "class": "output-section"
+            }]
+        }
+    ]
+}

@@ -1,0 +1,716 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the person or party that undertook the survey event."
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The start time at which the survey was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The finish time at which the survey was made."
+        },
+        {
+            "dataType": "text",
+            "name": "intertidalZone",
+            "description": "The intertidal zone sampled",
+            "constraints": [
+                "Low intertidal zone",
+                "Mid intertidal zone"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "seaSearchMethod",
+            "dwcAttribute": "samplingProtocol",
+            "description": "The sampling method used",
+            "constraints": [
+                "2.1 Cover quadrats - algae and invertebrates",
+                "2.2 Catching snails and other mobile creatures"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes",
+            "dwcAttribute": "notes",
+            "description": "Enter any comments for the survey event - eg. trampling, marine pests, other ..."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "noEdit": "true"
+                },
+                {
+                    "scientificName": "Hormosira banksii",
+                    "dataType": "number",
+                    "name": "pointInterceptCountHormosiraBanksii",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "scientificName": "Galeolaria caespitosa",
+                    "dataType": "number",
+                    "name": "pointInterceptCountGaleolariaCaespitosa",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "scientificName": "Ulva",
+                    "dataType": "number",
+                    "name": "pointInterceptCountUlva",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "scientificName": "Limnoperna pulex",
+                    "dataType": "number",
+                    "dwcAttribute": "scientificName",
+                    "name": "pointInterceptCountLimnopernaPulex",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountEncrustingCoralline",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "pointInterceptCountCorallineTurf",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "image",
+                    "description": "Upload images of sampled quadrats."
+                }
+            ],
+            "dataType": "list",
+            "name": "pointInterceptCount",
+            "allowRowDelete": false,
+            "defaultRows": [
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "1",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "2",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "3",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "4",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "5",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "6",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "7",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "8",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "9",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "10",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "11",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "12",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "13",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "14",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "15",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                },
+                {
+                    "pointInterceptCountCorallineTurf": "",
+                    "pointInterceptCountLimnopernaPulex": "",
+                    "pointInterceptCountEncrustingCoralline": "",
+                    "pointInterceptCountUlva": "",
+                    "quadratId": "16",
+                    "pointInterceptCountGaleolariaCaespitosa": "",
+                    "pointInterceptCountHormosiraBanksii": "",
+                    "speciesImage": ""
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "noEdit": "true"
+                },
+                {
+                    "scientificName": "Cellana tramoserica",
+                    "dataType": "number",
+                    "name": "invertebrateCountCellanaTramoserica",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Bembicium nanum",
+                    "dataType": "number",
+                    "name": "invertebrateCountBembiciumNanum",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Bembicium melanastromum",
+                    "dataType": "number",
+                    "name": "invertebrateCountBembiciumMelanastromum",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Nerita atramentosa",
+                    "dataType": "number",
+                    "name": "invertebrateCountNeritaAtramentosa",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Siphonaria zelandica",
+                    "dataType": "number",
+                    "name": "invertebrateCountSiphonariaZelandica",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Austrocochlea constricta",
+                    "dataType": "number",
+                    "name": "invertebrateCountAustrocochleaConstricta",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "scientificName": "Austrocochlea porcata",
+                    "dataType": "number",
+                    "name": "invertebrateCountAustrocochleaPorcata",
+                    "dwcAttribute": "scientificName",
+                    "validate": "min[0],max[49]"
+                }
+            ],
+            "dataType": "list",
+            "name": "invertebrateCount",
+            "allowRowDelete": false,
+            "defaultRows": [
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "1",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "2",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "3",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "4",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "5",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "6",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "7",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "8",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "9",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "10",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "11",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "12",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "13",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "14",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "15",
+                    "invertebrateCountCellanaTramoserica": ""
+                },
+                {
+                    "invertebrateCountBembiciumMelanastromum": "",
+                    "invertebrateCountSiphonariaZelandica": "",
+                    "invertebrateCountAustrocochleaPorcata": "",
+                    "invertebrateCountBembiciumNanum": "",
+                    "invertebrateCountNeritaAtramentosa": "",
+                    "invertebrateCountAustrocochleaConstricta": "",
+                    "quadratId": "16",
+                    "invertebrateCountCellanaTramoserica": ""
+                }
+            ]
+        }
+    ],
+    "modelName": "intertidalReefSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h4 class='text-default text-left'><b>Survey Event Details<\/b><\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Record submitted by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observers (full names)",
+                            "computed": null,
+                            "source": "observedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "End time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Intertidal zone sampled",
+                            "source": "intertidalZone",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sea Search method",
+                            "source": "seaSearchMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "eventNotes",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Mapping Notes:<\/h4><i>Select a Marine Protected Area location from the drop-down list. Zoom in on the map, select the marker, then click on the actual site.<p><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i><p><b>If you are entering GPS coordinates<\/b> for your location, please use WGS84 decimal latitude/longitude to 7 decimal places to ensure accuracy and compatibility with the mapping facility being used in the form.<\/i>",
+                            "type": "literal"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4 class='text-default text-left'><b>Point Intercept Counts (Photquadrats & Rapid method 2.1)<\/b><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "columns": [
+                    {
+                        "noEdit": "true",
+                        "source": "quadratId",
+                        "title": "Quadrat No.",
+                        "type": "number"
+                    },
+                    {
+                        "source": "image",
+                        "title": "Photo",
+                        "type": "image"
+                    },
+                    {
+                        "source": "pointInterceptCountHormosiraBanksii",
+                        "title": "Hormosira banksii",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountGaleolariaCaespitosa",
+                        "title": "Galeolaria caespitosa",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountUlva",
+                        "title": "Ulva spp.",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountLimnopernaPulex",
+                        "title": "Limnoperna pulex",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountEncrustingCoralline",
+                        "title": "Encrusting Coralline",
+                        "type": "number"
+                    },
+                    {
+                        "source": "pointInterceptCountCorallineTurf",
+                        "title": "Coralline Turf",
+                        "type": "number"
+                    }
+                ],
+                "source": "pointInterceptCount",
+                "type": "table"
+            }],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4 class='text-default text-left'><b>Invertebrate Count (Detailed method 2.2)<\/b><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "columns": [
+                    {
+                        "noEdit": "true",
+                        "source": "quadratId",
+                        "title": "Quadrat No.",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountCellanaTramoserica",
+                        "title": "Cellana tramoserica",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountBembiciumNanum",
+                        "title": "Bembicium nanum (open coast)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountBembiciumMelanastromum",
+                        "title": "Bembicium melanastromum (bays)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountNeritaAtramentosa",
+                        "title": "Nerita atramentosa",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountSiphonariaZelandica",
+                        "title": "Siphonaria zelandica",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountAustrocochleaConstricta",
+                        "title": "Austrocochlea constricta",
+                        "type": "number"
+                    },
+                    {
+                        "source": "invertebrateCountAustrocochleaPorcata",
+                        "title": "Austrocochlea porcata",
+                        "type": "number"
+                    }
+                ],
+                "source": "invertebrateCount",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

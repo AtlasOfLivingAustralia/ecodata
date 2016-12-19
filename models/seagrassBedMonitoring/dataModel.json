@@ -1,0 +1,1056 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who is submitting this record.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "observedBy",
+            "description": "The name of the person or party that undertook the survey event."
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the survey was undertaken.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The start time at which the survey was made."
+        },
+        {
+            "dataType": "time",
+            "name": "surveyFinishTime",
+            "description": "The finish time at which the survey was made."
+        },
+        {
+            "dataType": "text",
+            "name": "seagrassZoneNumber",
+            "description": "",
+            "constraints": [
+                "Intertidal seagrass",
+                "Subtidal seagrass"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "seaSearchMethod",
+            "dwcAttribute": "samplingProtocol",
+            "description": "The sampling method used",
+            "constraints": [
+                "2.1 Cover quadrats - algae and invertebrates",
+                "2.2 Catching snails and other mobile creatures"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "dominantSpecies",
+            "dwcAttribute": "scientificName",
+            "description": "The most dominant or abundant species of seagrass occurring within the sample plot.",
+            "constraints": [
+                "Amphibolis antarctica",
+                "Heterozostera nigricaulis",
+                "Posidonia australis",
+                "Zostera muelleri"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "eventNotes",
+            "dwcAttribute": "notes",
+            "description": "Enter any comments for the survey event - eg. flowers of seeds present, physical damage, marine pests, other ..."
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "noEdit": "true"
+                },
+                {
+                    "dataType": "text",
+                    "name": "sedimentType",
+                    "description": "",
+                    "constraints": [
+                        "Mud",
+                        "Fine Sand",
+                        "Sand",
+                        "Coarse Sand",
+                        "Gravel"
+                    ]
+                },
+                {
+                    "scientificName": "Zostera muelleri",
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverZosteraMuelleri",
+                    "dwcAttribute": "scientificName",
+                    "description": "Zostera muelleri",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "scientificName": "Heterozostera nigricaulis",
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverHeterozosteraNigricaulis",
+                    "dwcAttribute": "scientificName",
+                    "description": "Heterozostera nigricaulis",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "scientificName": "Posidonia australis",
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverPosidoniaAustralis",
+                    "dwcAttribute": "scientificName",
+                    "description": "Posidonia australis",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherSpeciesName"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverOtherSpecies",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverBareSediment",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverAlgae",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverEpiphytes",
+                    "validate": "min[0],max[100]"
+                },
+                {
+                    "computed": {
+                        "dependents": [
+                            "percentCoverPosidoniaAustralis",
+                            "percentCoverZosteraMuelleri",
+                            "percentCoverHeterozosteraNigricaulis",
+                            "percentCoverOtherSpecies",
+                            "percentCoverBareSediment",
+                            "percentCoverAlgae"
+                        ],
+                        "operation": "sum"
+                    },
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "percentCoverTotal",
+                    "description": "Aggregate total % cover of main species.",
+                    "validate": "min[0],max[49]"
+                },
+                {
+                    "dataType": "image",
+                    "name": "image",
+                    "description": "Upload images of sampled quadrats."
+                }
+            ],
+            "dataType": "list",
+            "name": "rapidMethods",
+            "defaultRows": [
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "1",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "2",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "3",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "4",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "5",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "6",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "7",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "8",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "9",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "10",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "11",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "12",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "13",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "14",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "15",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "16",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "17",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "18",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "19",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                },
+                {
+                    "sedimentType": "",
+                    "percentCoverOtherSpecies": "",
+                    "percentCoverPosidoniaAustralis": "",
+                    "percentCoverTotal": "",
+                    "percentCoverEpiphytes": "",
+                    "percentCoverBareSediment": "",
+                    "otherSpeciesName": "",
+                    "percentCoverZosteraMuelleri": "",
+                    "quadratId": "20",
+                    "percentCoverHeterozosteraNigricaulis": "",
+                    "percentCoverAlgae": "",
+                    "speciesImage": ""
+                }
+            ]
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "quadratId",
+                    "noEdit": "true"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "canopyHeightInCentimetres",
+                    "description": "",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "noOfShootsPa",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "numberOfSnails",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfBivalves",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "numberOfSeastars",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "numberOfUrchins",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "numberOfSponges",
+                    "validate": "min[0]"
+                },
+                {
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "numberOfOther",
+                    "validate": "min[0]"
+                },
+                {
+                    "computed": {
+                        "dependents": [
+                            "numberOfSnails",
+                            "numberOfBivalves",
+                            "numberOfSeastars",
+                            "numberOfSponges",
+                            "numberOfOther"
+                        ],
+                        "operation": "sum"
+                    },
+                    "primaryResult": "true",
+                    "dataType": "number",
+                    "name": "totalNumberOfOrganisms",
+                    "description": "Aggregate total number of organisms.",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "detailedMethods",
+            "defaultRows": [
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "1",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "2",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "3",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "4",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "5",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "6",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "7",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "8",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "9",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "10",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "11",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "12",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "13",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "14",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "15",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "16",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "17",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "18",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "19",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                },
+                {
+                    "numberOfSponges": "",
+                    "numberOfBivalves": "",
+                    "totalNumberOfOrganisms": "",
+                    "quadratId": "20",
+                    "numberOfOther": "",
+                    "canopyHeightInCentimetres": "",
+                    "numberOfSnails": "",
+                    "numberOfSeastars": "",
+                    "noOfShootsPa": "",
+                    "numberOfUrchins": ""
+                }
+            ]
+        }
+    ],
+    "modelName": "seagrassBedMonitoring",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "computed": null,
+                            "source": "<h4 class='text-default text-left'><b>Survey Event Details<\/b><\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Record submitted by",
+                            "computed": null,
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Observers (full names)",
+                            "computed": null,
+                            "source": "observedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Survey date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Start time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "End time",
+                            "source": "surveyFinishTime",
+                            "type": "time"
+                        },
+                        {
+                            "preLabel": "Seagrass Zone",
+                            "source": "seagrassZoneNumber",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sea Search method",
+                            "source": "seaSearchMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Main seagrass species",
+                            "source": "dominantSpecies",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Comments",
+                            "source": "eventNotes",
+                            "type": "textarea"
+                        },
+                        {
+                            "computed": null,
+                            "source": "<h4>Mapping Notes:<\/h4><i>Select a Marine Protected Area location from the drop-down list. Zoom in on the map, select the marker, then click on the actual site.<p><b>Give the site a name in the 'Matched locality' field, then save<\/b> the location to store it for future use.<\/i><p><b>If you are entering GPS coordinates<\/b> for your location, please use WGS84 decimal latitude/longitude to 7 decimal places to ensure accuracy and compatibility with the mapping facility being used in the form.<\/i>",
+                            "type": "literal"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [{
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4 class='text-default text-left'><b>Rapid methods (small or large sites) - 3.1.1 & 3.2.1<\/b><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "Please enter a value for every column in each of the quadrats that were assessed. <font style='color:red; weight:bold'>Note that 'Total % cover' (excluding epiphytes) must not be greater than 49.<\/font>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "columns": [
+                    {
+                        "width": "4%",
+                        "noEdit": "true",
+                        "source": "quadratId",
+                        "title": "Quadrat No.",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "image",
+                        "title": "Photo",
+                        "type": "image"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "sedimentType",
+                        "title": "Sediment type",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverZosteraMuelleri",
+                        "title": "Zostera muelleri % cover",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverHeterozosteraNigricaulis",
+                        "title": "Heterozostera nigricaulis % cover",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverPosidoniaAustralis",
+                        "title": "Posidonia australis % cover",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "otherSpeciesName",
+                        "title": "Other species name(s)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverOtherSpecies",
+                        "title": "Other species % cover",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverBareSediment",
+                        "title": "Bare sed. % cover",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverAlgae",
+                        "title": "Algal % cover (not epiphytes)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "7%",
+                        "noEdit": "true",
+                        "source": "percentCoverTotal",
+                        "title": "Total % cover",
+                        "type": "number",
+                        "validate": "min[0],max[49]"
+                    },
+                    {
+                        "width": "7%",
+                        "source": "percentCoverEpiphytes",
+                        "title": "Epiphytes % cover",
+                        "type": "number"
+                    }
+                ],
+                "source": "rapidMethods",
+                "type": "table"
+            }],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "source": "<h4 class='text-default text-left'><b>Detailed methods (small or large sites) - 3.1.2 & 3.2.2<\/b><\/h4>",
+                "type": "literal"
+            }]
+        },
+        {
+            "type": "row",
+            "items": [{
+                "allowHeaderWrap": "true",
+                "columns": [
+                    {
+                        "width": "5%",
+                        "noEdit": "true",
+                        "source": "quadratId",
+                        "title": "Quadrat No.",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "canopyHeightInCentimetres",
+                        "title": "Canopy height (cm)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "noOfShootsPa",
+                        "title": "No. of shoots (PA only - 1/2 quadrat)",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfSnails",
+                        "title": "No. of Snails",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfBivalves",
+                        "title": "No. of Bivalves",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfSeastars",
+                        "title": "No. of Seastars",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfUrchins",
+                        "title": "No. of Urchins",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfSponges",
+                        "title": "No. of Sponges",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfOther",
+                        "title": "Other",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "noEdit": "true",
+                        "source": "totalNumberOfOrganisms",
+                        "title": "Total No. of Organisms",
+                        "type": "number"
+                    }
+                ],
+                "source": "detailedMethods",
+                "type": "table"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

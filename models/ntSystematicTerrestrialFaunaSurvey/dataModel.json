@@ -1,0 +1,548 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "observationCode",
+            "dwcAttribute": "",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "date",
+            "name": "surveyStartDate",
+            "dwcAttribute": "",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "date",
+            "name": "surveyEndDate",
+            "description": "",
+            "validate": ""
+        },
+        {
+            "dataType": "image",
+            "name": "eventImage",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "eventSamplingProtocol",
+            "description": "",
+            "constraints": [
+                "Small elliot trapping",
+                "Large elliot trapping",
+                "Cage trapping",
+                "Funnel trapping",
+                "Pitfall trapping",
+                "Mist netting",
+                "Sweep netting",
+                "Harp trapping",
+                "Echolocation recorder",
+                "Bird count",
+                "Active (diurnal) search",
+                "Spotlight (nocturnal) search",
+                "Call playback",
+                "Scat / track / signs",
+                "Incidental"
+            ],
+            "validate": ""
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfDevices",
+            "description": "The total number of trapping devices that were deployed for this trapping event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfNights",
+            "description": "The number of nights that trapping devices were deployed for this trapping event.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfSamplingActivities",
+            "description": "",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "number",
+            "name": "samplingPeriodInMinutes",
+            "dwcAttribute": "samplingEffort",
+            "description": "The total amount of time in minutes that trapping devices were deployed for this trapping event.",
+            "validate": "min[1]"
+        },
+        {
+            "dataType": "text",
+            "name": "deviceType",
+            "description": "",
+            "constraints": [
+                "Drift net",
+                "Mist net",
+                "Harp trap",
+                "Funnel trap",
+                ""
+            ],
+            "validate": ""
+        },
+        {
+            "dataType": "number",
+            "name": "deviceLengthInMetres",
+            "description": "",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "sampleAreaType",
+            "description": "The type of area sampled.",
+            "constraints": [
+                "Quadrat",
+                "Grid",
+                "Transect",
+                "Circle",
+                "Point"
+            ],
+            "validate": ""
+        },
+        {
+            "dataType": "number",
+            "name": "sampleAreaLengthInMetres",
+            "description": "The length or radius of the sample area in metres.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "sampleAreaWidthInMetres",
+            "description": "The width of the sample area in metres.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "interTrapDistanceInMetres",
+            "description": "The distance between trapping points along a transect in metres.",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "interRowDistanceInMetres",
+            "description": "The distance between trapping rows/transect lines in metres.",
+            "validate": "min[0]"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "The name of the bat species observed. Click on the 'i' for information about the selected species.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "recordedBy",
+                    "dwcAttribute": "recordedBy",
+                    "description": "The name of the person who is attributed with making the observation."
+                },
+                {
+                    "dataType": "date",
+                    "name": "eventDate",
+                    "dwcAttribute": "eventDate",
+                    "description": "The date on which the observation was made.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "time",
+                    "name": "sightingTime",
+                    "description": "",
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "sightingSamplingProtocol",
+                    "dwcAttribute": "samplingProtocol",
+                    "description": "",
+                    "constraints": [
+                        "Small elliot trapping",
+                        "Large elliot trapping",
+                        "Cage trapping",
+                        "Funnel trapping",
+                        "Pitfall trapping",
+                        "Mist netting",
+                        "Sweep netting",
+                        "Harp trapping",
+                        "Echolocation recorder",
+                        "Bird count",
+                        "Active (diurnal) search",
+                        "Spotlight (nocturnal) search",
+                        "Call playback",
+                        "Scat / track / signs",
+                        "Incidental"
+                    ],
+                    "validate": ""
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "",
+                    "validate": "min[1]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "identificationQualifier",
+                    "description": "How certain are you that you have correctly identified the species? Only choose 'certain' if you are 100% sure.",
+                    "constraints": [
+                        "Certain",
+                        "Uncertain"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "trapDeath",
+                    "description": "Did the animal recorded die in the trap?",
+                    "constraints": [
+                        "Yes",
+                        "No"
+                    ],
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "specimenId",
+                    "dwcAttribute": "",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "image",
+                    "name": "specimenImage",
+                    "dwcAttribute": "associatedMedia",
+                    "description": "Upload a photo taken of the specimen. This is essential for verification of the record.",
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "occurrenceRemarks",
+                    "dwcAttribute": "",
+                    "description": "General remarks about the specimen."
+                }
+            ],
+            "dataType": "list",
+            "name": "speciesRecordTable"
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "trapId",
+                    "dwcAttribute": "",
+                    "description": "A unique identifier for each trap/trapping point.",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "trapBaitType",
+                    "description": "",
+                    "constraints": [
+                        "",
+                        ""
+                    ],
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "tagId",
+                    "description": "",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "measuredProperty",
+                    "description": "",
+                    "constraints": [
+                        "Specimen weight (grams)",
+                        "Specimen length (mm)",
+                        "Specimen sex",
+                        "Specimen age",
+                        "Specimen DNA",
+                        "Lactation status",
+                        "Trap death reason",
+                        ""
+                    ],
+                    "validate": ""
+                },
+                {
+                    "dataType": "text",
+                    "name": "measuredPropertyValue",
+                    "description": "The measured value of the associated property."
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingMeasuresTable"
+        },
+        {
+            "dataType": "image",
+            "name": "associatedMedia",
+            "description": ""
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        }
+    ],
+    "modelName": "ntTerrestrialFaunaSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "source": "<h3>Observation Information<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Observation code",
+                            "source": "observationCode",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Start date",
+                            "source": "surveyStartDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "End date",
+                            "source": "surveyEndDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Location photo",
+                            "source": "eventImage",
+                            "type": "image"
+                        },
+                        {
+                            "source": "<h3>Sample Method & Area<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Sample method",
+                            "source": "eventSamplingProtocol",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "No. of devices",
+                            "source": "numberOfDevices",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "No. of nights",
+                            "source": "numberOfNights",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "No. of counts / searches",
+                            "source": "numberOfSamplingActivities",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Observation period (minutes)",
+                            "source": "samplingPeriodInMinutes",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Device type",
+                            "source": "deviceType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Device length (m)",
+                            "source": "deviceLengthInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "source": "<hr>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Sample area type",
+                            "source": "sampleAreaType",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Sample area length / radius (m)",
+                            "source": "sampleAreaLengthInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Sample area width (m)",
+                            "source": "sampleAreaWidthInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Distance between traps (m)",
+                            "source": "interTrapDistanceInMetres",
+                            "type": "number"
+                        },
+                        {
+                            "preLabel": "Distance between rows (m)",
+                            "source": "interRowDistanceInMetres",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "type": "col",
+                    "items": [{
+                        "includeNotes": true,
+                        "orientation": "vertical",
+                        "computed": null,
+                        "readonly": true,
+                        "includeSource": true,
+                        "includeAccuracy": true,
+                        "source": "location",
+                        "type": "geoMap",
+                        "includeLocality": true
+                    }]
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [
+                {
+                    "source": "<h3>Species Sightings<\/h3>",
+                    "type": "literal"
+                },
+                {
+                    "columns": [
+                        {
+                            "width": "10%",
+                            "source": "recordedBy",
+                            "title": "Observer",
+                            "type": "text"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "eventDate",
+                            "title": "Date",
+                            "type": "date"
+                        },
+                        {
+                            "width": "15%",
+                            "source": "species",
+                            "title": "Species",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "width": "5%",
+                            "source": "individualCount",
+                            "title": "Count",
+                            "type": "number"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "sightingSamplingProtocol",
+                            "title": "Sample method",
+                            "type": "selectOne"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "identificationQualifier",
+                            "title": "ID accuracy",
+                            "type": "selectOne"
+                        },
+                        {
+                            "width": "5%",
+                            "source": "specimenId",
+                            "title": "Specimen ID",
+                            "type": "text"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "trapDeath",
+                            "title": "Trap death",
+                            "type": "selectOne"
+                        },
+                        {
+                            "width": "15%",
+                            "source": "occurrenceRemarks",
+                            "title": "Notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "width": "10%",
+                            "source": "specimenImage",
+                            "title": "Photo",
+                            "type": "image"
+                        }
+                    ],
+                    "userAddedRows": "true",
+                    "source": "speciesRecordTable",
+                    "type": "table"
+                }
+            ]
+        },
+        {
+            "type": "row",
+            "class": "output-section",
+            "items": [
+                {
+                    "source": "<h3>Sighting Measures<\/h3><i>Select applicable properties and enter measured values as required.<\/i>",
+                    "type": "literal"
+                },
+                {
+                    "columns": [
+                        {
+                            "source": "trapId",
+                            "title": "Trap ID",
+                            "type": "text"
+                        },
+                        {
+                            "source": "trapBaitType",
+                            "title": "Bait type",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "tagId",
+                            "title": "Tag ID",
+                            "type": "text"
+                        },
+                        {
+                            "source": "measuredProperty",
+                            "title": "Property measured/observed",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "measuredPropertyValue",
+                            "title": "Value of the measured property",
+                            "type": "text"
+                        }
+                    ],
+                    "userAddedRows": "true",
+                    "source": "sightingMeasuresTable",
+                    "type": "table"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,279 @@
+{
+    "modelName": "pollinators",
+    "record": "true",
+    "dataModel": [
+        {
+            "dataType": "text",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy",
+            "description": "The name of the person who observed the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "contactConsent",
+            "description": "Please indicate whether you consent for the Atlas of Living Australia to pass your contact details to the survey organiser on their request so that they can contact you to discuss this record if necessary.",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "date",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "description": "The date on which the sighting was made.",
+            "validate": "required"
+        },
+        {
+            "dataType": "time",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime",
+            "description": "The time at which the sighting was made."
+        },
+        {
+            "dataType": "text",
+            "name": "locationPostalCode",
+            "dwcAttribute": "",
+            "description": "Including your postcode is essential so we can contribute records to national biodiversity data. If your postcode applies to multiple localities, please also specify your suburb/town."
+        },
+        {
+            "dataType": "text",
+            "name": "suburb",
+            "dwcAttribute": "locality",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "plantName",
+            "dwcAttribute": "",
+            "description": "Your observation is more useful if we can match the insects to a plant variety."
+        },
+        {
+            "dataType": "text",
+            "name": "nativeStatus",
+            "dwcAttribute": "",
+            "description": "This information helps us to build a picture of the flowers that pollinator insects are visiting. If you aren't sure you may like to take a photo or ask someone.",
+            "constraints": [
+                "native (an Australian plant)",
+                "exotic  (introduced)",
+                "unsure"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "notes",
+            "description": "Eg area/quantity of flowers observed -- a 30cm x 30cm window of flowers OR magnolia tree: 1 flower on a 4m tree that is in full bloom."
+        },
+        {
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "description": "Start typing a scientific or common name, then choose the species or type of pollinator"
+                },
+                {
+                    "dataType": "number",
+                    "name": "individualCount",
+                    "dwcAttribute": "individualCount",
+                    "description": "How many individuals dis you see of each species?",
+                    "validate": "min[0]"
+                }
+            ],
+            "dataType": "list",
+            "name": "sightingTable"
+        },
+        {
+            "dataType": "text",
+            "name": "otherCategoryDescription",
+            "dwcAttribute": "",
+            "description": ""
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "dwcAttribute": "notes",
+            "description": "If you recognised different species/family groups, please give an abundance breakdown for the categories above, or any other wild pollinator category not listed. Be as detailed as you can. Do you want to comment about weather, species typically seen here, or other notes?"
+        },
+        {
+            "columns": [
+                {
+                    "dwcAttribute": "verbatimLatitude",
+                    "source": "locationLatitude"
+                },
+                {
+                    "dwcAttribute": "verbatimLongitude",
+                    "source": "locationLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dataType": "geoMap",
+            "name": "location",
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "comments1",
+            "dwcAttribute": "notes",
+            "description": "If you recognised different species/family groups, please give an abundance breakdown for the categories above, or any other wild pollinator category not listed. Be as detailed as you can. Do you want to comment about weather, species typically seen here, or other notes?"
+        },
+        {
+            "dataType": "image",
+            "name": "sightingPhoto",
+            "description": "Click on the 'Attach Photo' button to You can upload your photos here. This is essential for verification of the record."
+        },
+        {
+            "dataType": "text",
+            "name": "comments2",
+            "dwcAttribute": "notes2",
+            "description": "Anything else you'd like to tell us or suggestions for improving the Wild Pollinator Count ...?"
+        }
+    ],
+    "viewModel": [
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "col",
+                    "items": [
+                        {
+                            "preLabel": "Observer name",
+                            "source": "recordedBy",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Can the survey organiser contact you if they have questions about this record?",
+                            "source": "contactConsent",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Record date",
+                            "source": "surveyDate",
+                            "type": "date"
+                        },
+                        {
+                            "preLabel": "Record time",
+                            "source": "surveyStartTime",
+                            "type": "time"
+                        },
+                        {
+                            "source": "<h3>The location of your observation<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<b>Zoom in on the map, drag and drop the marker at your location, then click on 'Search for locality match'.<\/b>",
+                            "type": "literal"
+                        },
+                        {
+                            "preLabel": "Postcode",
+                            "source": "locationPostalCode",
+                            "type": "number",
+                            "validate": "required"
+                        },
+                        {
+                            "preLabel": "Suburb or town",
+                            "source": "suburb",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "The name of the plant (common or scientific) you observed, if you know it",
+                            "source": "plantName",
+                            "type": "text"
+                        },
+                        {
+                            "preLabel": "Is the plant native or exotic?",
+                            "source": "nativeStatus",
+                            "type": "selectOne"
+                        },
+                        {
+                            "preLabel": "Details of your observation site",
+                            "source": "notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<h3>Sightings<\/h3>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "<i>Add a row for each type of pollinator that you saw during this observation event<\/i>",
+                            "type": "literal"
+                        },
+                        {
+                            "allowHeaderWrap": "true",
+                            "columns": [
+                                {
+                                    "source": "species",
+                                    "title": "Species name",
+                                    "type": "autocomplete"
+                                },
+                                {
+                                    "source": "individualCount",
+                                    "title": "How many individuals did you see?",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": "true",
+                            "source": "sightingTable",
+                            "type": "table"
+                        },
+                        {
+                            "preLabel": "Please describe any insects that you included in the 'Other' category",
+                            "source": "otherCategoryDescription",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Add any other details about your observations",
+                            "source": "comments1",
+                            "type": "textarea"
+                        },
+                        {
+                            "preLabel": "Did you take any photographs of pollinators you would like to share?",
+                            "source": "sightingPhoto",
+                            "type": "image"
+                        },
+                        {
+                            "source": "<i>Please note that images will be shared under a Creative Commons Attribution license (you will be credited for the images)<\/i>",
+                            "type": "literal"
+                        }
+                    ]
+                },
+                {
+                    "computed": null,
+                    "type": "col",
+                    "items": [
+                        {
+                            "includeNotes": true,
+                            "orientation": "vertical",
+                            "computed": null,
+                            "readonly": true,
+                            "source": "location",
+                            "type": "geoMap",
+                            "includeLocality": true
+                        },
+                        {
+                            "source": "Would you like to receive news about the Wild Pollinator Count including the results and reminders for future events via email? Please click <b><a href='target='_blank'>here<\/a><\/b> to register your interest.",
+                            "type": "literal"
+                        }
+                    ]
+                }
+            ],
+            "class": "output-section"
+        },
+        {
+            "type": "row",
+            "items": [{
+                "preLabel": "Other comments or feedback",
+                "source": "comments2",
+                "type": "textarea"
+            }],
+            "class": "output-section"
+        }
+    ]
+}

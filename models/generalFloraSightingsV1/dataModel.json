@@ -8,13 +8,6 @@
             "validate": "required"
         },
         {
-            "dataType": "time",
-            "name": "eventStartTime",
-            "dwcAttribute": "eventTime",
-            "description": "The time at which the sighting was made.",
-            "validate": "required"
-        },
-        {
             "dataType": "text",
             "name": "recordedBy",
             "dwcAttribute": "recordedBy",
@@ -23,101 +16,110 @@
             "validate": "required"
         },
         {
+            "dataType": "text",
+            "name": "observerName",
+            "description": "The name of the person who made the observation, if different from the person who made the record."
+        },
+        {
             "dataType": "image",
             "name": "sightingPhoto",
-            "description": "Upload a photo taken of the koala at the time of your sighting. This is essential for verification of the record."
+            "dwcAttribute": "associatedMedia",
+            "description": "Upload a photo taken of the plant at the time of your sighting. This is essential for verification of the record."
         },
         {
             "dataType": "species",
             "name": "species",
             "dwcAttribute": "scientificName",
-            "description": "The scientific name of the koala",
+            "description": "The scientific name of the plant.",
             "noEdit": "true",
             "validate": "required"
         },
         {
-            "primaryResult": "true",
+            "defaultValue": "1",
             "dataType": "number",
             "name": "individualCount",
             "dwcAttribute": "individualCount",
-            "description": "The number of individual koalas observed at this place and time.",
+            "description": "The number of individual plants observed at this place and time.",
             "validate": "min[1]"
         },
         {
             "dataType": "text",
-            "name": "locationContext",
-            "description": "This describes the type of landuse around where the koala was sighted.",
+            "name": "identificationConfidence",
+            "description": "How confident are you that your identification of the species is correct?",
             "constraints": [
-                "High in tree",
-                "Low in tree",
-                "On ground",
-                "Other"
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "defaultValue": "Observation",
+            "dataType": "text",
+            "name": "basisOfRecord",
+            "dwcAttribute": "basisOfRecord",
+            "description": "The basis of record is the evidence used to make the sighting",
+            "constraints": ["Observation"]
+        },
+        {
+            "dataType": "text",
+            "name": "lifeState",
+            "description": "Was the plant alive or dead when it was observed?",
+            "constraints": [
+                "Alive",
+                "Dead"
             ]
         },
         {
             "dataType": "text",
-            "name": "locationContextOther",
-            "description": "If 'Other', please describe the location and behaviour of the koala when you saw it."
-        },
-        {
-            "dataType": "text",
-            "name": "condition",
-            "description": "Please indicate the general condition of the koala.",
+            "name": "origin",
+            "description": "Is there evidence that the plant is naturally established or planted?",
             "constraints": [
-                "Healthy",
-                "Injured",
-                "Sick",
-                "Dead",
-                "Orphaned",
-                "Unsure"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "conditionObservations",
-            "description": "Please further describe the general condition of the koala, especially if it appeared to be sick or injured."
-        },
-        {
-            "dataType": "text",
-            "name": "sizeOfKoala",
-            "description": "Please indicate how often you have seen koalas at this location.",
-            "constraints": [
-                "Adult (bigger than a soccer ball when curled up)",
-                "Juvenile (smaller than a soccer ball when curled up)"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "sexOfKoala",
-            "dwcAttribute": "sex",
-            "description": "Please indicate the sex of the koala. Select 'Unknown' if you don't know or can't identify it accurately.",
-            "constraints": [
-                "Male",
-                "Female",
+                "Native self-sown",
+                "Native planted",
+                "Exotic (non-native) self-sown",
+                "Exotic (non-native) planted",
                 "Unknown"
             ]
         },
         {
             "dataType": "text",
-            "name": "maternalStatus",
-            "description": "If you sighted a female koala, please indicate her maternal status. Select 'Unknown' if you don't know or can't identify it accurately.",
+            "name": "lifeStage",
+            "dwcAttribute": "lifeStage",
+            "description": "Select the most appropriate stage of development of the plant.",
             "constraints": [
-                "Back young (crawling around on mum's tummy or back)",
-                "Pouch young (a bulge in mum's pouch or a head sticking out)",
-                "No young visible",
+                "Seedling / rosette",
+                "Sapling / immature",
+                "Mature",
+                "Senescent (old)",
                 "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "behavior",
+            "dwcAttribute": "behavior",
+            "description": "Please indicate what the animal was doing when you saw it.",
+            "constraints": [
+                "Flowering",
+                "Fruiting",
+                "Seeding",
+                "Other",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "reportedToOtherParties",
+            "description": "Please indicate if this record has been reported to other agencies. Indicate in the comments what agency.",
+            "constraints": [
+                "Yes",
+                "No"
             ]
         },
         {
             "dataType": "text",
             "name": "eventRemarks",
             "dwcAttribute": "eventRemarks",
-            "description": "Please describe what the koala was doing at the time you observed it. Did the koala have an ear tag? Have you seen this koala or any other koala here in the past? Any other observations that you made."
-        },
-        {
-            "dataType": "text",
-            "name": "observerName",
-            "description": "The name of the person who made the observation, if different from the person who made the record."
+            "description": "General notes about the observation event, including any characteristic site features, conditions, etc."
         },
         {
             "dataType": "text",
@@ -132,7 +134,7 @@
         {
             "dataType": "text",
             "name": "contactAgreement",
-            "description": "A member of the Tweed Shire Council may need to contact you to confirm certain aspects of your sighting. Select 'Yes' if you agree to be contacted for this purpose.",
+            "description": "A member of the project organising team may need to contact you to confirm certain aspects of your sighting. Select 'Yes' if you agree to be contacted by KAG for this purpose.",
             "constraints": [
                 "Yes",
                 "No"
@@ -148,14 +150,7 @@
                 {
                     "dwcAttribute": "verbatimLongitude",
                     "source": "locationLongitude"
-                },
-                {
-                    "description": "Please provide any additional information about the sighting location which might be useful.",
-                    "source": "Locality"
-                },
-                {"source": "Accuracy"},
-                {"source": "Notes"},
-                {"source": "Source"}
+                }
             ],
             "dataType": "geoMap",
             "name": "location",
@@ -164,11 +159,17 @@
         },
         {
             "dataType": "text",
+            "name": "locationAddress",
+            "description": "Please provide the street address of the location where you made the sighting.",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
             "name": "locationRemarks",
             "description": "Please provide any additional information about the sighting location which might be useful."
         }
     ],
-    "modelName": "koalaSightingsRedlands",
+    "modelName": "generalFloraSightingsV1",
     "record": "true",
     "viewModel": [{
         "type": "row",
@@ -179,25 +180,25 @@
                 "items": [
                     {
                         "computed": null,
-                        "source": "<h3>Details of my Koala sighting<\/h3>",
+                        "source": "<h3>Details of my <b>Native Plant<\/b> sighting<\/h3>",
                         "type": "literal"
                     },
                     {
-                        "preLabel": "Date koala sighted *",
+                        "preLabel": "Date sighted",
                         "computed": null,
                         "source": "eventDate",
                         "type": "date"
                     },
                     {
-                        "preLabel": "Time koala sighted *",
-                        "computed": null,
-                        "source": "eventStartTime",
-                        "type": "time"
-                    },
-                    {
                         "preLabel": "Recorded by",
                         "computed": null,
                         "source": "recordedBy",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Your name (optional)",
+                        "computed": null,
+                        "source": "observerName",
                         "type": "text"
                     },
                     {
@@ -207,45 +208,45 @@
                         "type": "autocomplete"
                     },
                     {
-                        "preLabel": "How many individuals did you see here?",
+                        "preLabel": "How many individuals of this species did you see here?",
                         "computed": null,
                         "source": "individualCount",
                         "type": "number"
                     },
                     {
-                        "preLabel": "Where was the koala when you saw it?",
+                        "preLabel": "What is the basis of your sighting?",
                         "computed": null,
-                        "source": "locationContext",
+                        "source": "basisOfRecord",
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "Condition of the koala",
+                        "preLabel": "Was it alive?",
                         "computed": null,
-                        "source": "condition",
+                        "source": "lifeState",
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "Condition observations",
+                        "preLabel": "Native or exotic?",
                         "computed": null,
-                        "source": "conditionObservations",
-                        "type": "textarea"
-                    },
-                    {
-                        "preLabel": "Condition of the koala",
-                        "computed": null,
-                        "source": "sizeOfKoala",
+                        "source": "origin",
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "Sex of the koala?",
+                        "preLabel": "What was the life stage of the plant?",
                         "computed": null,
-                        "source": "sexOfKoala",
+                        "source": "lifeStage",
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "If the koala was female, did she have young?",
+                        "preLabel": "What was the behaviour of the plant when you saw it?",
                         "computed": null,
-                        "source": "maternalStatus",
+                        "source": "behavior",
+                        "type": "selectOne"
+                    },
+                    {
+                        "preLabel": "Have you reported this sighting elsewhere?",
+                        "computed": null,
+                        "source": "reportedToOtherParties",
                         "type": "selectOne"
                     },
                     {
@@ -266,15 +267,15 @@
                         "type": "image"
                     },
                     {
-                        "preLabel": "Can we contact you about this sighting?",
+                        "preLabel": "Do you agree to ALA sharing your contact details with the project organiser for the purpose of record verification?",
                         "computed": null,
-                        "source": "contactAgreement",
+                        "source": "piSaringAgreement",
                         "type": "selectOne"
                     },
                     {
-                        "preLabel": "Do you agree to ALA sharing your details with us for the purpose of record verification?",
+                        "preLabel": "Do you agree to the project organiser contacting you for the purpose of record verification?",
                         "computed": null,
-                        "source": "piSaringAgreement",
+                        "source": "contactAgreement",
                         "type": "selectOne"
                     }
                 ]
@@ -285,7 +286,7 @@
                 "items": [
                     {
                         "computed": null,
-                        "source": "<h4>Sighting location details<\/h4><i>Please zoom in on the map, then select and place the marker on location where you saw the koala and record what details you can below (* details are essential).<\/i>",
+                        "source": "<h4>Sighting location details<\/h4><i>Please zoom in on the map, then select and place the marker on location where you saw the plant and record what details you can below (* details are essential).<\/i>",
                         "type": "literal"
                     },
                     {
@@ -293,8 +294,19 @@
                         "computed": null,
                         "readonly": true,
                         "source": "location",
-                        "type": "geoMap",
-                        "includeLocality": true
+                        "type": "geoMap"
+                    },
+                    {
+                        "preLabel": "Street address of sighting",
+                        "computed": null,
+                        "source": "locationAddress",
+                        "type": "text"
+                    },
+                    {
+                        "preLabel": "Any additional location comments (eg. park/reserve name)?",
+                        "computed": null,
+                        "source": "locationRemarks",
+                        "type": "textarea"
                     }
                 ]
             }

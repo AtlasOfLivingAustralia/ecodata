@@ -1,58 +1,57 @@
 {
-    "modelName": "Upload of stage 1 and 2 reporting data",
     "dataModel": [{
-        "dataType": "list",
-        "name": "scores",
         "columns": [
             {
                 "dataType": "text",
-                "description": "The output the score is collected from",
                 "name": "outputName",
+                "description": "The output the score is collected from",
                 "validate": "required"
             },
             {
                 "dataType": "text",
-                "description": "The label of the score we are collecting",
                 "name": "scoreLabel",
+                "description": "The label of the score we are collecting",
                 "validate": "required"
             },
             {
                 "dataType": "number",
-                "description": "The value of the score",
                 "name": "score",
+                "description": "The value of the score",
                 "validate": "required"
             }
-        ]
+        ],
+        "dataType": "list",
+        "name": "scores"
     }],
+    "modelName": "Upload of stage 1 and 2 reporting data",
     "viewModel": [{
-        "title": "Progress towards targets automatically uploaded for stage 1 and 2:",
-        "source": "scores",
         "columns": [
             {
-                "title": "Output",
+                "width": "30%",
                 "readOnly": true,
                 "source": "outputName",
-                "width": "30%",
+                "title": "Output",
                 "type": "text"
             },
             {
-                "title": "Score",
+                "width": "50%",
                 "readOnly": true,
                 "source": "scoreLabel",
-                "width": "50%",
+                "title": "Score",
                 "type": "text"
             },
             {
-                "title": "Amount",
-                "readOnly": true,
-                "source": "score",
-                "width": "10%",
                 "computed": null,
+                "width": "10%",
+                "source": "score",
+                "title": "Amount",
                 "type": "number"
             }
         ],
         "userAddedRows": false,
-        "class": "output-section",
-        "type": "table"
+        "source": "scores",
+        "title": "Progress towards targets automatically uploaded for stage 1 and 2:",
+        "type": "table",
+        "class": "output-section"
     }]
 }

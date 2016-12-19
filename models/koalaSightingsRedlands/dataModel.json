@@ -1,4 +1,6 @@
 {
+    "modelName": "koalaSightingsRedlands",
+    "record": "true",
     "dataModel": [
         {
             "dataType": "date",
@@ -260,8 +262,6 @@
             "description": "Please provide any additional information about the sighting location which might be useful."
         }
     ],
-    "modelName": "koalaSightingsRedlands",
-    "record": "true",
     "viewModel": [{
         "type": "row",
         "items": [

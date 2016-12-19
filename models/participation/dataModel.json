@@ -1,5 +1,4 @@
 {
-    "modelName": "Participant Information",
     "dataModel": [
         {
             "primaryResult": "true",
@@ -39,6 +38,7 @@
             "validate": "required,min[0]"
         }
     ],
+    "modelName": "Participant Information",
     "viewModel": [{
         "type": "row",
         "items": [
@@ -48,7 +48,7 @@
                 "type": "col",
                 "items": [
                     {
-                        "preLabel": "Total no. of participants (ie. not employed on project)",
+                        "preLabel": "Total no. of participants (ie. not employed on project):",
                         "computed": null,
                         "source": "totalParticipantsNotEmployed",
                         "type": "number"
