@@ -598,7 +598,17 @@ class MetadataService {
      *
      */
     Map toMap(Score score, List views) {
-        Map scoreMap = [scoreId:score.scoreId, category:score.category, outputType:score.outputType, isOutputTarget:score.isOutputTarget, label:score.label, description:score.description, displayType:score.displayType, entity:score.entity, entityTypes:score.entityTypes]
+        Map scoreMap = [
+                scoreId:score.scoreId,
+                category:score.category,
+                outputType:score.outputType,
+                isOutputTarget:score.isOutputTarget,
+                label:score.label,
+                description:score.description,
+                displayType:score.displayType,
+                entity:score.entity,
+                externalId:score.externalId,
+                entityTypes:score.entityTypes]
         if (views?.contains("config")) {
             scoreMap.configuration = score.configuration
         }
