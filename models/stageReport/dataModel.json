@@ -8,7 +8,7 @@
         },
         {
             "dataType": "text",
-            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.  Please contact your grant manager if the MERI plan or project activities require updating in MERIT.",
             "name": "deliveredToMeriPlan",
             "validate": "required"
         },
@@ -37,10 +37,6 @@
                   "source": "deliveredToMeriPlan",
                   "preLabel": "Outline any variations from the MERI plan which have affected delivery of activities.",
                   "type": "textarea"
-                },
-                {
-                    "source": "<b>Please contact your grant manager if the MERI plan or project activities require updating in MERIT.</b>",
-                    "type": "literal"
                 },
                 {
                     "source": "workplaceHeathAndSafetyIncidents",
