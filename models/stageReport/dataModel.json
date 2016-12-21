@@ -8,7 +8,7 @@
         },
         {
             "dataType": "text",
-            "description": "Outline any variations from the MERI plan which have affected delivery of activities.",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.",
             "name": "deliveredToMeriPlan",
             "validate": "required"
         },
@@ -35,7 +35,7 @@
                 },
                 {
                   "source": "deliveredToMeriPlan",
-                  "preLabel": "Briefly describe project delivery including any adaptations to planned activities.",
+                  "preLabel": "Outline any variations from the MERI plan which have affected delivery of activities.",
                   "type": "textarea"
                 },
                 {
