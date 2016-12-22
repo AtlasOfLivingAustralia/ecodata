@@ -4,6 +4,7 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.ProgramsModel
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
+import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
@@ -24,7 +25,7 @@ class MetadataService {
 
     private static final int BATCH_LIMIT = 200
 
-    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService
+    def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService, commonService
 
     def activitiesModel() {
         return cacheService.get('activities-model',{
@@ -613,5 +614,45 @@ class MetadataService {
             scoreMap.configuration = score.configuration
         }
         scoreMap
+    }
+
+    Score createScore(Map properties) {
+
+        properties.scoreId = Identifiers.getNew(true, '')
+        Score score = new Score(scoreId:properties.scoreId)
+        commonService.updateProperties(score, properties)
+        score.save(flush:true)
+        return score
+    }
+
+    Score updateScore(String id, Map properties) {
+        Score score = Score.findByScoreId(id)
+        commonService.updateProperties(score, properties)
+        score.save(flush:true)
+        return score
+    }
+
+    def deleteScore(String id, boolean destroy) {
+        Score score = Score.findByScoreId(id)
+        if (score) {
+            try {
+                if (destroy) {
+                    score.delete()
+                } else {
+                    score.status = DELETED
+                    score.save(flush: true, failOnError: true)
+                }
+                return [status: 'ok']
+
+            } catch (Exception e) {
+                Score.withSession { session -> session.clear() }
+                def error = "Error deleting score ${id} - ${e.message}"
+                log.error error, e
+                def errors = (e instanceof ValidationException)?e.errors:[error]
+                return [status:'error',errors:errors]
+            }
+        } else {
+            return [status: 'error', errors: ['No such id']]
+        }
     }
 }

@@ -114,7 +114,10 @@ class ReportService {
             scores = Score.findAll()
         }
 
-        List config = scores.collect{it.configuration}
+        List config = scores.collect{
+            it.configuration.label = it.label
+            it.configuration
+        }
         GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
         new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
     }
