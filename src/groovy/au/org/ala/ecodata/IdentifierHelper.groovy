@@ -20,6 +20,9 @@ class IdentifierHelper {
             case Document.class.name:
                 entityId = domainObject.documentId
                 break
+            case Score.class.name:
+                entityId = domainObject.scoreId
+                break
             default:
                 // Last chance to find a 'real' entity id, rather than the internal mongo id.
                 // try a synthesized id member user the <class name>Id pattern

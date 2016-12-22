@@ -1,4 +1,5 @@
 {
+    "modelName":"Post revegetation area managed",
     "dataModel": [{
         "dataType": "number",
         "name": "postRevegetationTotalAreaManaged",

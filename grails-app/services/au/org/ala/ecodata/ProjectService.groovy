@@ -358,7 +358,7 @@ class ProjectService {
                 if (target.outcomeTarget != null) {
                     return
                 }
-                def result = outputSummary.find { it.label == target.scoreLabel }
+                def result = outputSummary.find { it.scoreId == target.scoreId }
                 if (result) {
                     if (!result.target || result.target == "0") {
                         // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.

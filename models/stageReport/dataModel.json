@@ -8,33 +8,9 @@
         },
         {
             "dataType": "text",
-            "description": "Has delivery of this stage of the project varied to what was initially planned?",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.  Please contact your grant manager if the MERI plan or project activities require updating in MERIT.",
             "name": "deliveredToMeriPlan",
-            "constraints": [
-              "Y",
-              "N"
-            ],
             "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "deliveredToMeriPlanComments"
-        },
-        {
-            "dataType": "text",
-            "description": "Identify whether any changes are required to the MERI plan to ensure successful delivery of project outcomes.",
-            "name": "meriPlanRequiresRevision",
-            "constraints": [
-                "Y",
-                "N"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "description": "",
-            "name": "meriPlanRequiresRevisionComments"
         },
         {
             "dataType": "text",
@@ -54,29 +30,14 @@
             "items": [
                 {
                     "source": "progressUpdate",
-                    "preLabel": "Provide an update on progress towards achievement of the MERI plans outcomes for the stage.",
+                    "preLabel": "Provide an update on progress towards achievement of the MERI plan’s outcomes for the stage.",
                     "type": "textarea"
                 },
                 {
-                    "source": "deliveredToMeriPlan",
-                    "preLabel": "Has the project been delivered in accordance with the MERI Plan?",
-                    "type": "selectOne"
+                  "source": "deliveredToMeriPlan",
+                  "preLabel": "Outline any variations from the MERI plan which have affected delivery of activities.",
+                  "type": "textarea"
                 },
-              {
-                "source": "deliveredToMeriPlanComments",
-                "preLabel": "If not, describe why the project has not been delivered in accordance with the MERI Plan and provide detail on adaptations to the Plan.",
-                "type": "textarea"
-              },
-                {
-                    "source": "meriPlanRequiresRevision",
-                    "preLabel": "Does the MERI plan require revision based on lessons learned in this stage?",
-                    "type": "selectOne"
-                },
-              {
-                "source": "meriPlanRequiresRevisionComments",
-                "preLabel": "If yes, please describe any changes that need to be made to the Plan.",
-                "type": "textarea"
-              },
                 {
                     "source": "workplaceHeathAndSafetyIncidents",
                     "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
