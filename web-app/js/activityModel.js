@@ -208,6 +208,7 @@ var OutputModel = function (out, model, options) {
     var config = $.extend(defaults, options);
     self.name = ko.observable(out.name);
     self.template = ko.observable(out.template);
+    self.title = ko.observable(out.title);
     self.templateDetail = ko.observable();
 
     self.scores = ko.observableArray($.map(out.scores || [], function (obj, i) {

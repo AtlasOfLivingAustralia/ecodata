@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
 import grails.util.Environment
+import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
@@ -608,4 +609,33 @@ class AdminController {
         def result = model
         render result
     }
+
+    @AlaSecured("ROLE_ADMIN")
+    def editScore(String id) {
+        Score score = Score.findByScoreId(id)
+
+        render view:'editScore', model:[score:score]
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def updateScore(String id) {
+        // Using JsonSluper instead of request.JSON to avoid JSONNull being serialized to the String "null" when
+        // mapped to a Map type in the domain object.
+        def score = request.inputStream.text
+        score = new JsonSlurper().parseText(score)
+
+        if (!id) {
+            respond metadataService.createScore(score)
+        }
+        else {
+            respond metadataService.updateScore(id, score)
+        }
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def deleteScore(String id) {
+        respond metadataService.deleteScore(id, params.getBoolean('destroy', false))
+    }
+
+
 }

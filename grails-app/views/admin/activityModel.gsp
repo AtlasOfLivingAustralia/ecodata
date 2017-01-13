@@ -91,70 +91,18 @@
 </script>
 
 <script id="viewOutputTmpl" type="text/html">
+<div>Name: <span data-bind="text:name"></span></div>
+<div>Title: <span data-bind="text:title"></span></div>
 <div>Template: <span data-bind="text:template"></span></div>
-<div>Scores: <ul data-bind="foreach:scores">
-    <li><span data-bind="text:label"></span> (<span data-bind="text:category"></span>), <span data-bind="text:aggregationType"></span></li>
-</ul></div>
+
 <button data-bind="click:$root.removeOutput" type="button" class="btn btn-mini pull-right">Remove</button>
 <button data-bind="click:edit" type="button" class="btn btn-mini pull-right">Edit</button>
 </script>
 
 <script id="editOutputTmpl" type="text/html">
 <div style="margin-top:4px"><span class="span3">Name:</span> <input type="text" class="input pull-right" data-bind="value:name"></div>
+<div style="margin-top:4px"><span class="span3">Title:</span> <input type="text" class="input pull-right" data-bind="value:title"></div>
 <div class="clearfix"><span class="span3">Template:</span> <input type="text" class="input pull-right" data-bind="value:template"></div>
-<div>Scores: <ul data-bind="sortable:{data:scores}" class="sortableList small">
-    <li>
-        <div style="text-align:left;">
-            Name: <select data-bind="value:compoundName,options:nameOptions"/>
-            <span class="pull-right"><i data-bind="click:$parent.removeScore" class="icon-remove"></i></span>
-        </div>
-        <div style="text-align:left;">
-            Label: <input type="text" data-bind="value:label"/>
-        </div>
-        <div style="text-align: left;">
-            Description: <input type="text" data-bind="value:description"/>
-        </div>
-        <div style="text-align:left;">
-            Category: <input type="text" data-bind="value:category"/>
-        </div>
-        <div style="text-align:left;">
-            Units: <input type="text" data-bind="value:units"/>
-        </div>
-        <div style="text-align:left;">
-            GMS ID: <input type="text" data-bind="value:gmsId"/>
-        </div>
-
-        <div style="text-align:left;">
-            Aggregation:
-            <select data-bind="value:aggregationType, style: { color: aggregationTypeValid() ? 'black':'red' }">
-                <option value="SUM">summed</option>
-                <option value="COUNT">counted</option>
-                <option value="AVERAGE">averaged</option>
-                <option value="HISTOGRAM">count by value</option>
-                <option value="SET">list of distinct values</option>
-            </select>
-        </div>
-        <div style="text-align:left;">
-            Grouping: <input type="text" data-bind="value:groupBy"/>
-        </div>
-        <div style="text-align:left;">
-            Filtering: <input type="text" data-bind="value:filterBy"/>
-        </div>
-
-        <div style="text-align:left;">
-            Display type: <select data-bind="value:displayType">
-            <option value=""></option>
-            <option value="piechart">Pie chart</option>
-            <option value="barchart">Bar chart</option>
-        </select>
-        </div>
-
-        <div style="text-align:left;">
-            Use as output target:
-            <input type="checkbox" data-bind="checked:isOutputTarget"/>
-        </div>
-    </li>
-</ul><span data-bind="click:addScore" class="clickable"><i class="icon-plus"></i> Add new</span>
 </div>
 <button data-bind="click:done" type="button" class="btn btn-mini pull-right">Done</button>
 </script>

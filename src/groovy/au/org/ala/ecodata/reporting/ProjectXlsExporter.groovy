@@ -90,9 +90,15 @@ class ProjectXlsExporter extends ProjectExporter {
     AdditionalSheet risksAndThreatsSheet
     AdditionalSheet budgetSheet
 
+    // These fields map full activity names to shortened names that are compatible with Excel tabs.
     Map<String, String> activitySheetNames = [:]
     Map<String, List<AdditionalSheet>> typedActivitySheets = [:]
 
+    Map<String, String> outputSheetNames = [:]
+    Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
+
+
+    OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
 
     public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
@@ -105,7 +111,7 @@ class ProjectXlsExporter extends ProjectExporter {
         commonProjectPropertiesRaw.each {
             project['project_'+it] = project.remove(it)
         }
-        OutputModelProcessor processor = new OutputModelProcessor()
+
         Map activitiesModel = metadataService.activitiesModel()
 
         addProjectGeo(project)
@@ -114,7 +120,8 @@ class ProjectXlsExporter extends ProjectExporter {
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        exportActivities(project, activitiesModel, processor)
+        exportActivities(project, activitiesModel)
+        exportOutputs(project, activitiesModel)
         exportRisks(project)
         exportMeriPlan(project)
         exportReports(project)
@@ -144,49 +151,87 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
-    private void exportActivities(Map project, activitiesModel, processor) {
+    private Map commonActivityData(Map project, Map activity) {
+        Map activityBaseData = activity.collectEntries{k,v -> ['activity_'+k, v]}
+        Map activityData = project + activityBaseData  + [stage: getStage(activity, project)]
+        activityData
+    }
+
+    private void exportActivities(Map project, Map activitiesModel) {
         if (project.activities) {
             project.activities.each { activity ->
-                Map activityBaseData = activity.collectEntries{k,v -> ['activity_'+k, v]}
                 if (shouldExport('Activity Summary')) {
                     AdditionalSheet sheet = getSheet("Activity Summary", commonActivityHeaders)
-                    Map activityData = project + activityBaseData  + [stage: getStage(activity, project)]
+                    Map activityData = commonActivityData(project, activity)
                     sheet.add(activityData, activityProperties, sheet.getSheet().lastRowNum + 1)
                 }
                 if (shouldExport(activity.type)) {
-                    Map commonData = project + activityBaseData + [stage: getStage(activity, project)]
-                    List activityData = []
-                    List activityGetters = []
+                    exportActivity(project, activitiesModel, activity)
+                }
+            }
+        }
+    }
 
-                    activityGetters += activityProperties
-
-                    Map activityModel = activitiesModel.activities.find { it.name == activity.type }
-                    if (activityModel) {
-                        activityModel.outputs?.each { output ->
-                            if (output != 'Photo Points') {
-                                // This is legacy data which doesn't display in the spreadsheet
-                                Map config = outputProperties(output)
-
-                                activityGetters += config.propertyGetters
-
-                                OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output))
-                                Map outputData = activity.outputs?.find { it.name == output }
-                                if (outputData) {
-                                    List flatData = processor.flatten(outputData, outputModel, false)
-                                    flatData = flatData.collect { commonData + it }
-                                    activityData += flatData
-                                }
-                            }
-                        }
-                        AdditionalSheet activitySheet = getActivitySheet(activityModel)
-                        int activityRow = activitySheet.sheet.lastRowNum
-                        activitySheet.add(activityData, activityGetters, activityRow + 1)
-
-                    } else {
-                        log.error("Found activity not in model: " + activity.type)
+    private void exportOutputs(Map project, Map activitiesModel) {
+        if (project.activities) {
+            activitiesModel.outputs.each { outputConfig ->
+                if (shouldExport(outputConfig.name)) {
+                    project.activities.each { activity ->
+                        exportOutput(outputConfig.name, project, activity)
                     }
                 }
             }
+        }
+    }
+
+    private void exportOutput(String outputName, Map project, Map activity) {
+        Map output = activity.outputs?.find{it.name == outputName}
+        if (output) {
+            List outputGetters = activityProperties + outputProperties(outputName).propertyGetters
+            Map commonData = commonActivityData(project, activity)
+            List outputData = getOutputData(outputName, activity, commonData)
+
+            AdditionalSheet outputSheet = getOutputSheet(outputName)
+            int outputRow = outputSheet.sheet.lastRowNum
+            outputSheet.add(outputData, outputGetters, outputRow + 1)
+        }
+
+    }
+
+    private List getOutputData(String outputName, Map activity, Map commonData) {
+        List flatData = []
+
+        OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(outputName))
+        Map outputData = activity.outputs?.find { it.name == outputName }
+        if (outputData) {
+            flatData = processor.flatten(outputData, outputModel, false)
+            flatData = flatData.collect { commonData + it }
+        }
+        flatData
+    }
+
+    private void exportActivity(Map project, Map activitiesModel, Map activity) {
+
+        Map commonData = commonActivityData(project, activity)
+        List activityData = []
+        List activityGetters = []
+
+        activityGetters += activityProperties
+
+        Map activityModel = activitiesModel.activities.find { it.name == activity.type }
+        if (activityModel) {
+            activityModel.outputs?.each { output ->
+                if (output != 'Photo Points') { // This is legacy data which doesn't display in the spreadsheet
+                    activityGetters += outputProperties(output).propertyGetters
+                    activityData += getOutputData(output, activity, commonData)
+                }
+            }
+            AdditionalSheet activitySheet = getActivitySheet(activityModel)
+            int activityRow = activitySheet.sheet.lastRowNum
+            activitySheet.add(activityData, activityGetters, activityRow + 1)
+
+        } else {
+            log.error("Found activity not in model: " + activity.type)
         }
     }
 
@@ -460,6 +505,26 @@ class ProjectXlsExporter extends ProjectExporter {
         typedActivitySheets[activityType]
     }
 
+    AdditionalSheet getOutputSheet(String outputName) {
+
+        if (!typedOutputSheets[outputName]) {
+            String name = XlsExporter.sheetName(outputName)
+
+            // If the sheets are named similarly, they may end up the same after being changed to excel
+            // tab compatible strings
+            int i = 1
+            while (outputSheetNames[name]) {
+                name = name.substring(0, name.length()-1)
+                name = name + Integer.toString(i)
+            }
+
+            outputSheetNames[name] = outputName
+            List<String> headers = buildOutputHeaders(outputName)
+            typedOutputSheets[outputName] = exporter.addSheet(name, headers)
+        }
+        typedOutputSheets[outputName]
+    }
+
     List<String> buildActivityHeaders(Map activityModel) {
         List<String> activityHeaders = [] + commonActivityHeaders
 
@@ -469,6 +534,12 @@ class ProjectXlsExporter extends ProjectExporter {
         }
 
         activityHeaders
+    }
+
+    List<String> buildOutputHeaders(String outputName) {
+        List<String> outputHeaders = [] + commonActivityHeaders
+        outputHeaders += outputProperties(outputName).headers
+        outputHeaders
     }
 
     AdditionalSheet projectSheet() {
