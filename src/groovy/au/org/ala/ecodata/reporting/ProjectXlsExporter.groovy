@@ -18,6 +18,10 @@ class ProjectXlsExporter extends ProjectExporter {
 
     static Log log = LogFactory.getLog(ProjectXlsExporter.class)
 
+    // Avoids name clashes for fields that appear in activitites and projects (such as name / description)
+    private static final String ACTIVITY_DATA_PREFIX = 'activity_'
+    private static final String PROJECT_DATA_PREFIX = 'project_'
+
     List<String> stateHeaders = (1..3).collect{'State '+it}
     List<String> stateProperties = (0..2).collect{'state'+it}
 
@@ -33,7 +37,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified']
     List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
 
-    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{'project_'+it}
+    List<String> commonProjectPropertiesWithoutSites = ['projectId'] + commonProjectPropertiesRaw.collect{PROJECT_DATA_PREFIX+it}
 
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
@@ -51,7 +55,7 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = commonProjectProperties + ['siteId', 'siteName', 'siteDescription', 'lat', 'lon', 'lastUpdated', 'nrm0-site'] + siteStateProperties + siteElectorateProperties
 
     List<String> commonActivityHeaders = commonProjectHeaders + ['Activity ID', 'Site ID', 'Planned Start date', 'Planned End date', 'Stage', 'Description', 'Activity Type', 'Theme', 'Status', 'Report Status', 'Last Modified']
-    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{'activity_'+it}
+    List<String> activityProperties = commonProjectProperties+ ['activityId', 'siteId', 'plannedStartDate', 'plannedEndDate', 'stage', 'description', 'type', 'mainTheme', 'progress', 'publicationStatus', 'lastUpdated'].collect{ACTIVITY_DATA_PREFIX+it}
     List<String> outputTargetHeaders = commonProjectHeaders + ['Output Target Measure', 'Target', 'Delivered - approved', 'Delivered - total', 'Units']
     List<String> outputTargetProperties = commonProjectProperties + ['scoreLabel', new TabbedExporter.StringToDoublePropertyGetter('target'), 'deliveredApproved', 'deliveredTotal', 'units']
     List<String> risksAndThreatsHeaders = commonProjectHeaders + ['Type of threat / risk', 'Description', 'Likelihood', 'Consequence', 'Risk rating', 'Current control', 'Residual risk']
@@ -109,7 +113,7 @@ class ProjectXlsExporter extends ProjectExporter {
     public void export(Map project) {
 
         commonProjectPropertiesRaw.each {
-            project['project_'+it] = project.remove(it)
+            project[PROJECT_DATA_PREFIX+it] = project.remove(it)
         }
 
         Map activitiesModel = metadataService.activitiesModel()
@@ -152,8 +156,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private Map commonActivityData(Map project, Map activity) {
-        Map activityBaseData = activity.collectEntries{k,v -> ['activity_'+k, v]}
-        Map activityData = project + activityBaseData  + [stage: getStage(activity, project)]
+        String activityDataPrefix = ACTIVITY_DATA_PREFIX
+        Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
+        Map activityData = project + activityBaseData  + [(activityDataPrefix+'stage'): getStage(activity, project)]
         activityData
     }
 
@@ -221,7 +226,7 @@ class ProjectXlsExporter extends ProjectExporter {
         Map activityModel = activitiesModel.activities.find { it.name == activity.type }
         if (activityModel) {
             activityModel.outputs?.each { output ->
-                if (output != 'Photo Points') { // This is legacy data which doesn't display in the spreadsheet
+                if (activityModel.outputs.contains(output)) {
                     activityGetters += outputProperties(output).propertyGetters
                     activityData += getOutputData(output, activity, commonData)
                 }
