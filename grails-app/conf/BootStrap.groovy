@@ -10,6 +10,8 @@ import org.codehaus.groovy.grails.commons.ApplicationAttributes
 import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.datastore.mapping.core.Datastore
 
+import javax.imageio.ImageIO
+
 class BootStrap {
 
     def elasticSearchService
@@ -78,6 +80,8 @@ class BootStrap {
             )
             project.save(flush: true)
         }
+
+        ImageIO.scanForPlugins()
     }
 
     def destroy = {
