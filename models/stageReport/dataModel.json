@@ -35,7 +35,7 @@
                 },
                 {
                   "source": "deliveredToMeriPlan",
-                  "preLabel": "Outline any variations from the MERI plan which have affected delivery of activities.",
+                  "preLabel": "Outline any deviations from the MERI plan which have affected delivery of activities.",
                   "type": "textarea"
                 },
                 {
