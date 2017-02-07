@@ -6,10 +6,7 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
-
 
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
@@ -87,6 +84,9 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> reportSummaryProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
+    List<String> blogHeaders = commonProjectHeaders + ['Type', 'Date', 'Title', 'Content', "See more URL"]
+    List<String> blogProperties = commonProjectProperties + ['type', 'date', 'title', 'content', 'viewMoreUrl']
+
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -130,6 +130,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportMeriPlan(project)
         exportReports(project)
         exportReportSummary(project)
+        exportBlog(project)
     }
 
     private addProjectGeo(Map project) {
@@ -476,6 +477,10 @@ class ProjectXlsExporter extends ProjectExporter {
         }
     }
 
+    private void exportBlog(Map project) {
+        exportList("Blog", project, project.blog, blogHeaders, blogProperties)
+    }
+
     String getStage(Map activity, project) {
         Date activityEndDate = activity.plannedEndDate
 
@@ -581,6 +586,4 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         budgetSheet
     }
-
-
 }
