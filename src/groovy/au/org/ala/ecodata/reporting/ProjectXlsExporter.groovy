@@ -6,10 +6,7 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-import org.opengis.filter.expression.Add
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
-
 
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
