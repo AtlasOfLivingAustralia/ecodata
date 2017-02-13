@@ -42,8 +42,8 @@ class CSProjectXlsExporter extends ProjectExporter {
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
     List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude']
 
-    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Event Date/Time", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
-    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
+    List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
+    List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
 
     DoublePropertyGetter generalisedLatitudeGetter =  new DoublePropertyGetter("generalisedDecimalLatitude")
     DoublePropertyGetter decimalLatitudeGetter =  new DoublePropertyGetter("decimalLatitude")
@@ -234,7 +234,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         properties[properties.indexOf("latitude")] = latitudeGetter
         def longitudeGetter = permission ? accurateLongitudeGetter : generalLongitudeGetter
         properties[properties.indexOf("longitude")] = longitudeGetter
-        properties[properties.indexOf("eventDate")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATETIME, latitudeGetter, longitudeGetter)
+        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter)
         recordService.getAllByProject(project.projectId).each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
