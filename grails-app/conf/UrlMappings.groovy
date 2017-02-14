@@ -144,6 +144,7 @@ class UrlMappings {
         "/ws/project/getCountries"(controller: "project"){ action = [GET:"getCountries"] }
         "/ws/project/getUNRegions"(controller: "project"){ action = [GET:"getUNRegions"] }
         "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
+        "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
 

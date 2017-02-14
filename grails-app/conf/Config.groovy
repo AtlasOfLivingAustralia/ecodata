@@ -465,6 +465,24 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
+if(!biocollect.facets.project){
+    biocollect.facets.project = [
+        "organisationFacet",
+        "uNRegions",
+        "countries",
+        "origin",
+        "scienceType",
+        "tags",
+        "difficulty",
+        "status",
+        "typeOfProject",
+        "ecoScienceType",
+        "associatedProgramFacet",
+        "siteNameFacet",
+        "associatedSubProgramFacet"
+    ]
+}
+
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
 // Each gridded facet becomes a search facet.
