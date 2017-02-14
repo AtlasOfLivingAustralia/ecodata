@@ -6,10 +6,7 @@ import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputModelProcessor
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
-
 import pl.touk.excel.export.multisheet.AdditionalSheet
-
-
 
 /**
  * Exports project, site, activity and output data to a Excel spreadsheet.
@@ -87,12 +84,14 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> reportSummaryProperties = commonProjectProperties + ['reportName', 'fromDate', 'toDate', 'activityCount', 'reportStatus', 'dateChanged', 'delta', 'changedBy', 'changedByName']
     List<String> documentHeaders = commonProjectHeaders + ['Title', 'Attribution', 'File name', 'Purpose']
     List<String> documentProperties = commonProjectProperties + ['name', 'attribution', 'filename', 'role']
+    List<String> blogHeaders = commonProjectHeaders + ['Type', 'Date', 'Title', 'Content', "See more URL"]
+    List<String> blogProperties = commonProjectProperties + ['type', 'date', 'title', 'content', 'viewMoreUrl']
+
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
     AdditionalSheet outputTargetsSheet
     AdditionalSheet risksAndThreatsSheet
-    AdditionalSheet budgetSheet
 
     // These fields map full activity names to shortened names that are compatible with Excel tabs.
     Map<String, String> activitySheetNames = [:]
@@ -130,6 +129,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportMeriPlan(project)
         exportReports(project)
         exportReportSummary(project)
+        exportBlog(project)
     }
 
     private addProjectGeo(Map project) {
@@ -308,9 +308,9 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportBudget(Map project) {
-        if (shouldExport("Budget")) {
-            budgetSheet()
-            int row = budgetSheet.getSheet().lastRowNum
+        if (shouldExport("MERI_Budget")) {
+            AdditionalSheet sheet = getSheet("MERI_Budget", budgetHeaders)
+            int row = sheet.getSheet().lastRowNum
 
             List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
             List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
@@ -327,7 +327,7 @@ class ProjectXlsExporter extends ProjectExporter {
                 budgetLineItem
             }
 
-            budgetSheet.add(data?:[], budgetProperties, row+1)
+            sheet.add(data?:[], budgetProperties, row+1)
         }
 
     }
@@ -335,8 +335,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
 
     private void exportOutcomes(Map project) {
-        if (shouldExport("Outcomes")) {
-            AdditionalSheet sheet = getSheet("Outcomes", outcomesHeaders)
+        if (shouldExport("MERI_Outcomes")) {
+            AdditionalSheet sheet = getSheet("MERI_Outcomes", outcomesHeaders)
             int row = sheet.getSheet().lastRowNum
 
 
@@ -364,8 +364,8 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportMonitoring(Map project) {
-        if (shouldExport("Monitoring")) {
-            AdditionalSheet sheet = getSheet("Monitoring", monitoringHeaders)
+        if (shouldExport("MERI_Monitoring")) {
+            AdditionalSheet sheet = getSheet("MERI_Monitoring", monitoringHeaders)
             int row = sheet.getSheet().lastRowNum
 
 
@@ -398,13 +398,13 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportProjectPartnerships(Map project) {
 
-        exportList("Project Partnerships", project, project?.custom?.details?.partnership?.rows,
+        exportList("MERI_Project Partnerships", project, project?.custom?.details?.partnership?.rows,
                 projectPartnershipHeaders, projectPartnershipProperties)
     }
 
     private void exportProjectImplementation(Map project) {
-        if (shouldExport("Project Implementation")) {
-            AdditionalSheet sheet = getSheet("Project Implementation", projectImplementationHeaders)
+        if (shouldExport("MERI_Project Implementation")) {
+            AdditionalSheet sheet = getSheet("MERI_Project Implementation", projectImplementationHeaders)
             int row = sheet.getSheet().lastRowNum
 
             if (project?.custom?.details?.implementation) {
@@ -418,18 +418,18 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportKeyEvaluationQuestion(Map project) {
-        exportList("Key Evaluation Question", project, project?.custom?.details?.keq?.rows,
+        exportList("MERI_Key Evaluation Question", project, project?.custom?.details?.keq?.rows,
                 keyEvaluationQuestionHeaders, keyEvaluationQuestionProperties)
     }
 
     private void exportPriorities(Map project) {
-        exportList("Priorities", project, project?.custom?.details?.priorities?.rows,
+        exportList("MERI_Priorities", project, project?.custom?.details?.priorities?.rows,
             prioritiesHeaders, prioritiesProperties)
     }
 
     private void exportWHSAndCaseStudy(Map project) {
-        if (shouldExport("WHS and Case Study")) {
-            AdditionalSheet sheet = getSheet("WHS and Case Study", whsAndCaseStudyHeaders)
+        if (shouldExport("MERI_WHS and Case Study")) {
+            AdditionalSheet sheet = getSheet("MERI_WHS and Case Study", whsAndCaseStudyHeaders)
             int row = sheet.getSheet().lastRowNum
 
             if (project?.custom?.details) {
@@ -442,7 +442,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportRisks(Map project) {
-        if (tabsToExport && tabsToExport.contains('Risks and Threats')) {
+        if (tabsToExport && tabsToExport.contains('MERI_Risks and Threats')) {
             risksAndThreatsSheet()
             int row = risksAndThreatsSheet.getSheet().lastRowNum
             if (project.risks && project.risks.rows) {
@@ -455,7 +455,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportAttachments(Map project) {
         List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
-        exportList("Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
+        exportList("MERI_Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
     }
 
     private void exportDocuments(Map project) {
@@ -474,6 +474,10 @@ class ProjectXlsExporter extends ProjectExporter {
             AdditionalSheet sheet = getSheet("Report Summary", reportSummaryHeaders)
             exportReportSummary(sheet, project, reportSummaryProperties)
         }
+    }
+
+    private void exportBlog(Map project) {
+        exportList("Blog", project, project.blog, blogHeaders, blogProperties)
     }
 
     String getStage(Map activity, project) {
@@ -574,13 +578,4 @@ class ProjectXlsExporter extends ProjectExporter {
         }
         risksAndThreatsSheet
     }
-
-    AdditionalSheet budgetSheet() {
-        if (!budgetSheet) {
-            budgetSheet = exporter.addSheet('Budget', budgetHeaders)
-        }
-        budgetSheet
-    }
-
-
 }
