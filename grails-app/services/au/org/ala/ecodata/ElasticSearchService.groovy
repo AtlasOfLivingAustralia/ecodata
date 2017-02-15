@@ -14,6 +14,7 @@
  */
 
 package au.org.ala.ecodata
+
 import com.vividsolutions.jts.geom.Coordinate
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -34,7 +35,6 @@ import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
 import org.grails.datastore.mapping.engine.event.AbstractPersistenceEvent
 import org.grails.datastore.mapping.engine.event.EventType
-import org.joda.time.DateTime
 
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -44,12 +44,8 @@ import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import static au.org.ala.ecodata.Status.*
-import static org.elasticsearch.index.query.FilterBuilders.geoShapeFilter
-import static org.elasticsearch.index.query.FilterBuilders.rangeFilter
-import static org.elasticsearch.index.query.FilterBuilders.termsFilter
-import static org.elasticsearch.index.query.QueryBuilders.filteredQuery
-import static org.elasticsearch.index.query.QueryBuilders.functionScoreQuery
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery
+import static org.elasticsearch.index.query.FilterBuilders.*
+import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
 /**
  * ElasticSearch service. This service is responsible for indexing documents as well as handling searches (queries).
@@ -87,6 +83,7 @@ class ElasticSearchService {
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
     def DEFAULT_TYPE = "doc"
     def MAX_FACETS = 10
+    def MAX_FACET_TERMS = 500
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
     private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
     /**
@@ -1081,6 +1078,9 @@ class ElasticSearchService {
         log.debug "filters = $filters; flimit = ${flimit}"
         try {
             flimit = (flimit) ? flimit as int : MAX_FACETS
+            if(flimit == -1){
+                flimit = MAX_FACET_TERMS
+            }
         } catch (Exception e) {
             log.warn "addFacets error: ${e.message}"
             flimit = MAX_FACETS
