@@ -82,7 +82,7 @@ class ElasticSearchService {
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
     def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
     def DEFAULT_TYPE = "doc"
-    def MAX_FACETS = 10
+    def DEFAULT_FACETS = 10
     def MAX_FACET_TERMS = 500
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
     private static List<Class> EXCLUDED_OBJECT_TYPES = [AuditMessage.class, Setting]
@@ -1077,13 +1077,13 @@ class ElasticSearchService {
         // e.g. FacetBuilders.termsFacet("f1").field("field")
         log.debug "filters = $filters; flimit = ${flimit}"
         try {
-            flimit = (flimit) ? flimit as int : MAX_FACETS
+            flimit = (flimit) ? flimit as int : DEFAULT_FACETS
             if(flimit == -1){
                 flimit = MAX_FACET_TERMS
             }
         } catch (Exception e) {
             log.warn "addFacets error: ${e.message}"
-            flimit = MAX_FACETS
+            flimit = DEFAULT_FACETS
         }
         try {
             fsort = (fsort) ? TermsFacet.ComparatorType.fromString(fsort) : TermsFacet.ComparatorType.COUNT
