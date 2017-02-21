@@ -479,7 +479,8 @@ if(!biocollect.facets.project){
         "ecoScienceType",
         "associatedProgramFacet",
         "siteNameFacet",
-        "associatedSubProgramFacet"
+        "associatedSubProgramFacet",
+        "plannedStartDate"
     ]
 }
 
