@@ -297,11 +297,11 @@ class DownloadService {
                 zip << ","
                 zip << encode.call(doc.identifier)
                 zip << ","
-                zip << encode.call(doc.licence)
-                zip << ","
                 zip << encode.call(doc.name)
                 zip << ","
                 zip << encode.call(doc.type)
+                zip << ","
+                zip << encode.call(doc.licence)
                 zip << ","
                 zip << encode.call(doc.attribution)
                 zip << "\n"

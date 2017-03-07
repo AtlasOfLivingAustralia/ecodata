@@ -14,7 +14,7 @@
  * 
  * Created by Temi on 14/11/16.
  */
-var hubs = db.hub.find({urlPath: 'mdba'})
+var hubs = db.hub.find({});
 while (hubs.hasNext()) {
     var templateConfiguration = {
         "footer": undefined,
@@ -29,11 +29,14 @@ while (hubs.hasNext()) {
 
     var hub = hubs.next();
     if(!hub.templateConfiguration){
-        if(!hub.bannerUrl){
+        if(hub.bannerUrl){
             templateConfiguration.banner.images = [{url: hub.bannerUrl, caption: ''}];
+            print("Added banner image");
         }
 
         db.hub.update({hubId:hub.hubId},{$set:{templateConfiguration:templateConfiguration}});
         print("Updated - " + hub.urlPath);
     }
 }
+
+print("Script run is successful!")
