@@ -936,26 +936,26 @@ class ElasticSearchService {
                                 forcedQuery = forcedQuery + ' OR '
                             }
 
-                            forcedQuery = forcedQuery + 'projectId:' + item
+                            forcedQuery = forcedQuery + 'projectActivity.projectId:' + item
                         }
                         if (projectsTheUserIsAMemberOf) {
-                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR projectActivity.projectType:works OR userId:' + userId + ')))'
+                            forcedQuery = forcedQuery + ') OR (projectActivity.embargoed:false OR userId:' + userId + ')))'
                         } else {
-                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR projectActivity.projectType:works OR userId:' + userId + '))'
+                            forcedQuery = forcedQuery + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
                         }
                     } else if (!userId) {
-                        forcedQuery = '(docType:activity AND (projectActivity.embargoed:false OR projectActivity.projectType:works))'
+                        forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
                 }
                 break
 
             default:
-                forcedQuery = '(docType:activity AND (projectActivity.embargoed:false OR projectActivity.projectType:works))'
+                forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                 break
         }
 
         if (!forcedQuery) {
-            forcedQuery = '(docType:activity AND (projectActivity.embargoed:false OR projectActivity.projectType:works))'
+            forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
         params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
