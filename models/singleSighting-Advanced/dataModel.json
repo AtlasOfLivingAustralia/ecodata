@@ -59,11 +59,30 @@
     {
       "dataType": "image",
       "name": "sightingPhoto",
-      "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+      "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
+    },
+    {
+      "columns": [
+        {
+          "dwcAttribute": "verbatimLatitude",
+          "source": "locationLatitude"
+        },
+        {
+          "dwcAttribute": "verbatimLongitude",
+          "source": "locationLongitude"
+        },
+        {"source": "Locality"},
+        {"source": "Accuracy"},
+        {"source": "Notes"},
+        {"source": "Source"}
+      ],
+      "dataType": "geoMap",
+      "name": "location",
+      "dwcAttribute": "verbatimCoordinates",
       "validate": "required"
     },
     {
-      "dataType": "stringList",
+      "dataType": "set",
       "name": "tags",
       "description": "Tag this sighting with species group and/or sub-group",
       "constraints": [
@@ -223,17 +242,9 @@
   ],
   "viewModel": [
     {
-      "type": "row",
-      "items": [
-        {
-          "computed": null,
-          "source": "<h4 class='text-default text-center'>Record a Sighting<h4><\/br>",
-          "type": "literal"
-        }
-      ]
-    },
-    {
       "type": "section",
+      "title": "Species",
+      "boxed": true,
       "items": [
         {
           "computed": null,
@@ -241,9 +252,27 @@
           "items": [
             {
               "preLabel": "Species name",
+              "preLabelClass": "span4",
+              "dataClass": "span8",
+              "inline": true,
               "computed": null,
               "source": "species",
-              "type": "autocomplete"
+              "type": "speciesSearchWithImagePreview"
+            }
+          ]
+        },
+        {
+          "computed": null,
+          "type": "row",
+          "items": [
+            {
+              "preLabel": "Identification tags",
+              "preLabelClass": "span4",
+              "dataClass": "span8",
+              "inline": true,
+              "computed": null,
+              "source": "tags",
+              "type": "wordCloud"
             }
           ]
         },
@@ -253,6 +282,9 @@
           "items": [
             {
               "preLabel": "Are you confident of the species identification?",
+              "preLabelClass": "span4",
+              "dataClass": "span8",
+              "inline": true,
               "computed": null,
               "source": "identificationConfidence",
               "type": "selectOne"
@@ -264,13 +296,15 @@
     },
     {
       "type": "section",
+      "title": "Images",
+      "boxed": true,
       "items": [
         {
           "computed": null,
           "type": "row",
           "items": [
             {
-              "preLabel": "Sighting photo",
+              "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
               "computed": null,
               "source": "sightingPhoto",
               "type": "image"
@@ -282,53 +316,113 @@
     },
     {
       "type": "section",
+      "title": "Location",
+      "boxed": true,
+      "items": [
+        {
+          "computed": null,
+          "type": "row",
+          "items": [
+            {
+              "includeNotes": true,
+              "orientation": "horizontal",
+              "computed": null,
+              "readonly": false,
+              "includeSource": true,
+              "includeAccuracy": true,
+              "source": "location",
+              "type": "geoMap",
+              "includeLocality": true
+            }
+          ]
+        }
+      ],
+      "class": ""
+    },
+    {
+      "type": "section",
+      "title": "Details",
+      "boxed": true,
       "items": [
         {
           "type": "row",
           "items": [
             {
-              "type": "row",
+              "type": "col",
               "items": [
                 {
-                  "preLabel": "Date",
-                  "computed": null,
-                  "source": "surveyDate",
-                  "type": "date"
+                  "type": "row",
+                  "items": [
+                    {
+                      "type": "col",
+                      "items": [
+                        {
+                          "preLabel": "Date",
+                          "preLabelClass": "span4",
+                          "dataClass": "span8",
+                          "inline": true,
+                          "computed": null,
+                          "source": "surveyDate",
+                          "type": "date"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "type": "col",
+                      "items": [
+                        {
+                          "preLabel": "Time",
+                          "preLabelClass": "span4",
+                          "dataClass": "span8",
+                          "inline": true,
+                          "computed": null,
+                          "source": "surveyStartTime",
+                          "type": "time"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "type": "col",
+                      "items": [
+                        {
+                          "preLabel": "Individuals",
+                          "preLabelClass": "span4",
+                          "dataClass": "span8",
+                          "inline": true,
+                          "computed": null,
+                          "source": "individualCount",
+                          "type": "number"
+                        }
+                      ]
+                    }
+                  ]
                 }
               ]
-            }
-          ]
-        },
-        {
-          "type": "row",
-          "items": [
+            },
             {
-              "preLabel": "Time",
-              "computed": null,
-              "source": "surveyStartTime",
-              "type": "time"
-            }
-          ]
-        },
-        {
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Individuals",
-              "computed": null,
-              "source": "individualCount",
-              "type": "number"
-            }
-          ]
-        },
-        {
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Notes",
-              "computed": null,
-              "source": "notes",
-              "type": "textarea"
+              "type": "col",
+              "items": [
+                {
+                  "preLabel": "Notes",
+                  "preLabelClass": "span4",
+                  "dataClass": "span8",
+                  "inline": true,
+                  "computed": null,
+                  "source": "notes",
+                  "rows": 5,
+                  "type": "textarea"
+                }
+              ]
             }
           ]
         }
@@ -336,6 +430,4 @@
     }
   ],
   "class": ""
-}
-]
 }

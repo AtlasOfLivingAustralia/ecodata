@@ -755,7 +755,11 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
+                values.commonName = it.commonName
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+                values.multimedia = it.multimedia
+                values.eventDate = it.eventDate
+                values.eventTime = it.eventTime
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
@@ -924,6 +928,22 @@ class ElasticSearchService {
                         }
                     } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                    }
+                }
+                break
+
+            case 'myprojectrecords':
+                if (userId) {
+                    forcedQuery = '(docType:activity AND userId:' + userId + ')'
+                }
+
+                if (projectId) {
+                    if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
+                    } else if (userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
+                    } else if (!userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
                     }
                 }
                 break
