@@ -964,17 +964,9 @@ class ElasticSearchService {
                 break
 
             case 'myprojectrecords':
-                if (userId) {
-                    forcedQuery = '(docType:activity AND userId:' + userId + ')'
-                }
-
                 if (projectId) {
-                    if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
-                    } else if (userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
-                    } else if (!userId) {
-                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    if (userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND  userId:' + userId + ')'
                     }
                 }
                 break
