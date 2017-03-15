@@ -76,6 +76,7 @@
         {"source": "Notes"},
         {"source": "Source"}
       ],
+      "defaultAccuracy": 50,
       "dataType": "geoMap",
       "name": "location",
       "dwcAttribute": "verbatimCoordinates",
@@ -332,7 +333,8 @@
               "includeAccuracy": true,
               "source": "location",
               "type": "geoMap",
-              "includeLocality": true
+              "includeLocality": true,
+              "hideSiteSelection": true
             }
           ]
         }
