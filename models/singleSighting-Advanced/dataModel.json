@@ -80,7 +80,8 @@
       "dataType": "geoMap",
       "name": "location",
       "dwcAttribute": "verbatimCoordinates",
-      "validate": "required"
+      "validate": "required",
+      "zoomToProjectArea": true
     },
     {
       "dataType": "set",
@@ -334,7 +335,8 @@
               "source": "location",
               "type": "geoMap",
               "includeLocality": true,
-              "hideSiteSelection": true
+              "hideSiteSelection": true,
+              "autoLocalitySearch": true
             }
           ]
         }
