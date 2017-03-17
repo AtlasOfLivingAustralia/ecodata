@@ -415,7 +415,7 @@ class ElasticSearchService {
                     Activity activity = Activity.findByActivityId(record.activityId)
                     def doc = activityService.toMap(activity, ActivityService.FLAT)
                     doc = prepareActivityForIndexing(doc)
-                    indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    indexDoc(doc, (doc?.projectActivityId || doc?.projectActivity?.projectType=="works") ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 }
                 break
 
@@ -665,7 +665,7 @@ class ElasticSearchService {
         activityService.doWithAllActivities { Map activity ->
             try {
                 prepareActivityForIndexing(activity)
-                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                indexDoc(activity, activity?.projectActivityId || doc?.projectActivity?.projectType=="works"? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
             }
             catch (Exception e) {
                 log.error("Unable to index activity: "+activity?.activityId, e)
