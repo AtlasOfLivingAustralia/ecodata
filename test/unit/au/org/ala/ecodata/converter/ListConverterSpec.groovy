@@ -14,12 +14,17 @@ class ListConverterSpec extends Specification {
                         [
                                 name    : "col1",
                                 dataType: "text"
+                        ],
+                        [
+                                dataType: "species",
+                                name: "col2"
                         ]
                 ]
         ]
 
-        String col1 = """{"col1": "action1"}"""
-        String col2 = """{"col1": "action2"}"""
+        String col1 = """{"col1": "action1", "col2": {"outputSpeciesId": "species1"}}"""
+        String col2 = """{"col1": "action2", "col2": {"outputSpeciesId": "species2"}}"""
+
         String data = """{
             "activityId": "activity1",
             "name": "a",
@@ -66,12 +71,17 @@ class ListConverterSpec extends Specification {
                                 name        : "col4",
                                 dwcAttribute: "somethingElse",
                                 dataType    : "text"
+                        ],
+                        [
+                                name        : "col5",
+                                dataType    : "species"
                         ]
+
                 ]
         ]
 
-        String col1 = """{"col1": "1", "col2": "1.1", "col3": "1.11", "col4": "foo"}"""
-        String col2 = """{"col1": "2", "col2": "2.1", "col3": "2.11", "col4": "bar"}"""
+        String col1 = """{"col1": "1", "col2": "1.1", "col3": "1.11", "col4": "foo", "col5": {"outputSpeciesId": "species1"}}"""
+        String col2 = """{"col1": "2", "col2": "2.1", "col3": "2.11", "col4": "bar", "col5": {"outputSpeciesId": "species2"}}"""
         String data = """{
             "activityId": "activity1",
             "name": "a",

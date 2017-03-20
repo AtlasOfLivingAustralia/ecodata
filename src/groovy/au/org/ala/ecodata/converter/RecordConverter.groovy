@@ -74,18 +74,39 @@ class RecordConverter {
             !MULTI_ITEM_DATA_TYPES.contains(it.dataType.toLowerCase())
         }
 
+
+        // Split data in fields that constitute the base record and the different species field
+        // Each species field will end up generating a record entry.
+        // All records will share the same base record data
+        List baseRecordModels
+        List speciesModels
+        (baseRecordModels, speciesModels) = singleItemModels?.split {
+            it.dataType.toLowerCase() != "species"
+        }
+
+
         // For each singleItemModel, get the appropriate field converter for the data type, generate the individual
         // Record fields and add them to the skeleton Record
-        singleItemModels?.each { Map dataModel ->
+        baseRecordModels?.each { Map dataModel ->
             RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
             List<Map> recordFieldSets = converter.convert(data, dataModel)
             baseRecord << recordFieldSets[0]
         }
 
         List<Map> records = []
-        // We want to create a record in the DB only if species information is present
-        if(baseRecord.outputSpeciesId) {
-            records << baseRecord
+        // For each species dataType, where present we will generate a new record
+        speciesModels?.each { Map dataModel ->
+            RecordFieldConverter converter = getFieldConverter(dataModel.dataType)
+            List<Map> recordFieldSets = converter.convert(data, dataModel)
+            Map speciesRecord = overrideFieldValues(baseRecord, recordFieldSets[0])
+
+            // We want to create a record in the DB only if species information is present
+            if(speciesRecord.outputSpeciesId) {
+                records << speciesRecord
+            } else {
+                log.warn("Record [${speciesRecord}] does not contain full species information. " +
+                        "This is most likely a bug.")
+            }
         }
 
         if (multiItemModels) {
@@ -121,7 +142,7 @@ class RecordConverter {
      * @param additional Entries with precedence
      * @return
      */
-    private static Map overrideFieldValues(Map source, Map additional) {
+    public static Map overrideFieldValues(Map source, Map additional) {
 
         Map result = [:]
         result << source
