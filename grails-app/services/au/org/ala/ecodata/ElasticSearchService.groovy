@@ -979,7 +979,7 @@ class ElasticSearchService {
         if (!forcedQuery) {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
-
+//        params.facets = params.facets?:"activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
