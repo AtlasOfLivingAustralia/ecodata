@@ -622,7 +622,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50]
+            def batchParams = [offset: 0, max: 50, limit: 200]
             def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
 
             while (projects) {
@@ -979,8 +979,7 @@ class ElasticSearchService {
         if (!forcedQuery) {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
-//        params.facets = params.facets?:"activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
-        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
+        params.facets = params.facets?:"activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 
