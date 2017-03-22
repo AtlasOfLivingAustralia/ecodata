@@ -1,0 +1,134 @@
+{
+  "modelName":"ESP Feral Animal Management",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "undertakeFeralAnimalManagement",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "list",
+      "name": "feralAnimalManagement",
+      "columns": [
+        {
+          "dataType": "species",
+          "name": "species",
+          "description": "",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "season",
+          "constraints": [
+            "Spring",
+            "Summary",
+            "Autumn",
+            "Winter"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "stringList",
+          "name": "managementActions",
+          "constraints": [
+            "Action 1",
+            "Action 2",
+            "Action 3",
+            "Action 4"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "managementReason"
+        },
+        {
+          "dataType": "number",
+          "name": "noCulled",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "cost",
+          "validate": "min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure” and “Monitor and manage feral animals”.</i>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "undertakeFeralAnimalManagement",
+          "preLabel": "Did you undertake actions to monitor and manage feral species this season? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "title": "If “Yes”, please complete the following:",
+          "source": "feralAnimalManagement",
+          "columns": [
+            {
+              "title": "Species",
+              "source": "species",
+              "type": "autocomplete"
+            },
+            {
+              "title": "Season observed / managed",
+              "source": "season",
+              "type": "selectOne"
+            },
+            {
+              "title": "Management Action(s)",
+              "source": "managementActions",
+              "type": "selectMany"
+            },
+            {
+              "title": "Reason for management",
+              "source": "managementReason",
+              "type": "textarea"
+            },
+            {
+              "title": "If applicable, no. culled (if known)",
+              "source": "noCulled",
+              "type": "number"
+            },
+            {
+              "title": "Cost",
+              "source": "cost",
+              "type": "number"
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.</i>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

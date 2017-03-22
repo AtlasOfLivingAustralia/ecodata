@@ -1,0 +1,90 @@
+{
+  "modelName":"ESP Biomass Control Measures",
+  "dataModel":[
+    {
+      "name":"undertakeBiomassControl",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"biomassControl",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "The type of biomass control",
+          "name": "controlType",
+          "constraints": [
+            "Type 1",
+            "Type 2",
+            "type 3"
+          ]
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "controlPurpose",
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"areaTreatedHa",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeBiomassControl",
+          "preLabel": "Did you undertake any biomass control measures this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "biomassControl",
+          "title": "",
+          "type": "table",
+          "columns":[
+            {
+              "source":"controlType",
+              "title":"Biomass control activity",
+              "type":"selectOne"
+            },
+            {
+              "source":"controlPurpose",
+              "title":"Purpose",
+              "type":"textarea"
+            },
+            {
+              "source":"areaTreatedHa",
+              "title":"Area treated (Ha)",
+              "type":"number"
+            },
+            {
+              "source":"cost",
+              "title":"Cost",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

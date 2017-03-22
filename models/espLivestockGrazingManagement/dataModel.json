@@ -1,0 +1,200 @@
+{
+  "modelName":"ESP Livestock Grazing Management",
+  "dataModel":[
+    {
+      "name":"isManagementAction",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "name":"undertakeLiveStockGrazing",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"grazingPeriods",
+      "columns": [
+        {
+          "name":"startDate",
+          "dataType":"date",
+          "description":"",
+          "validate":"required"
+        },
+        {
+          "name":"endDate",
+          "dataType":"date",
+          "description":"",
+          "validate":"required"
+        },
+        {
+          "name":"swardHeight",
+          "dataType":"text",
+          "description":"",
+          "validate":"required",
+          "constraints":[]
+        },
+        {
+          "name":"typeOfStock",
+          "dataType":"text",
+          "description":"",
+          "constraints":[],
+          "validate":"required"
+        },
+        {
+          "name":"productionType",
+          "dataType":"text",
+          "description":"",
+          "constraints":[],
+          "validate":"required"
+        },
+        {
+          "name":"growthStage",
+          "dataType":"text",
+          "description":"",
+          "constraints":[],
+          "validate":"required"
+        },
+        {
+          "name":"individualCount",
+          "dataType":"number",
+          "description":"",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"breed",
+          "dataType":"text",
+          "description":""
+        }
+      ]
+    },
+    {
+      "dataType":"text",
+      "name":"foregoneProductionCost",
+      "description":"",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"number",
+      "name":"foregoneProductionAmountEstimate",
+      "description":""
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "isManagementAction",
+          "preLabel": "Is strategic or conservation grazing a Management Action for this site? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "undertakeLiveStockGrazing",
+          "preLabel": "Did you undertake any livestock grazing activities on this site this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "grazingPeriods",
+          "title": "Please record all grazing periods for this site:",
+          "type": "table",
+          "allowHeaderWrap":true,
+          "columns":[
+            {
+              "source":"startDate",
+              "title":"Start Date",
+              "type":"simpleDate"
+            },
+            {
+              "source":"endDate",
+              "title":"End Date",
+              "type":"simpleDate"
+            },
+            {
+              "source":"swardHeight",
+              "type":"text",
+              "title":"Sward Height at end of grazing period:"
+            },
+            {
+              "source":"typeOfStock",
+              "type":"selectOne",
+              "title":"Type of Stock"
+            },
+            {
+              "source":"productionType",
+              "type":"selectOne",
+              "title":"Production Type"
+            },
+            {
+              "source":"growthStage",
+              "type":"selectOne",
+              "title":"Growth Stage"
+            },
+            {
+              "source":"individualCount",
+              "type":"number",
+              "title":"No. Individuals"
+            },
+            {
+              "source":"breed",
+              "type":"text",
+              "title":"Breed"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<b>Forgone production cost:</b>"
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "source": "foregoneProductionCost",
+          "preLabel": "Did you experience any loss of production due to ESP grazing restrictions? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "foregoneProductionAmountEstimate",
+          "preLabel": "If yes, please provide an estimate of production forgone from any removal of stock during grazing exclusion periods:",
+          "type": "number",
+          "validate":"min[0]"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

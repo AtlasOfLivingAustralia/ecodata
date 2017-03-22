@@ -1,0 +1,134 @@
+{
+  "modelName":"ESP Native Herbivore Management",
+  "dataModel":[
+    {
+      "name":"undertakeNativeSpeciesMonitoring",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"nativeSpeciesMonitoring",
+      "columns": [
+        {
+          "name":"species",
+          "description":"",
+          "dataType":"species",
+          "validate":"required"
+        },
+        {
+          "name":"season",
+          "dataType":"text",
+          "constraints": [
+            "Spring",
+            "Summary",
+            "Autumn",
+            "Winter"
+          ],
+          "validate": "required"
+        },
+        {
+          "name":"managementActions",
+          "dataType":"stringList",
+          "constraints": [
+            "Action 1",
+            "Action 2",
+            "Action 3",
+            "Action 4"
+          ],
+          "validate": "required"
+        },
+        {
+          "name":"managementReason",
+          "dataType":"text"
+        },
+        {
+          "name":"noCulled",
+          "dataType":"number",
+          "validate":"min[0]"
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.</i>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "undertakeNativeSpeciesMonitoring",
+          "preLabel": "Did you undertake actions to monitor and manage native grazing species in this past year?  (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "nativeSpeciesMonitoring",
+          "title": "If “Yes”, please complete the following:",
+          "type": "table",
+          "columns":[
+            {
+              "source":"species",
+              "title":"Species",
+              "type":"autocomplete"
+            },
+            {
+              "source":"season",
+              "title":"Season observed / managed",
+              "type":"selectOne"
+            },
+            {
+              "source":"managementActions",
+              "type":"selectMany",
+              "title":"Management Action(s)"
+            },
+            {
+              "source":"managementReason",
+              "type":"textarea",
+              "title":"Reason for management"
+            },
+            {
+              "source":"noCulled",
+              "title":"If applicable, no. culled (if known)",
+              "type":"number"
+            },
+            {
+              "source":"cost",
+              "title":"Cost",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.</i>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}
