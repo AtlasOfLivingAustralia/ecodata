@@ -74,6 +74,7 @@ class ElasticSearchService {
     RecordService recordService
     MetadataService metadataService
     OrganisationService organisationService
+    OutputService outputService
     EmailService emailService
 
 
@@ -113,8 +114,12 @@ class ElasticSearchService {
         def docJson = doc as JSON
         index = index ?: DEFAULT_INDEX
 
-        if (checkForDelete(doc, docId, index)) {
-            return null
+        // Delete index if it exists and doc.status == 'deleted'
+        checkForDelete(doc, docId, index)
+
+        // Prevent deleted document from been indexed regardless of whether it has a previous index entry
+        if(doc.status?.toLowerCase() == DELETED) {
+            return null;
         }
 
         try {
@@ -375,7 +380,7 @@ class ElasticSearchService {
      *
      * @param doc (domain object)
      */
-    def indexDocType(docId, docType) {
+    def indexDocType(String docId, String docType) {
 
         // skip indexing
         if (indexingTempInactive
@@ -410,7 +415,7 @@ class ElasticSearchService {
                     Activity activity = Activity.findByActivityId(record.activityId)
                     def doc = activityService.toMap(activity, ActivityService.FLAT)
                     doc = prepareActivityForIndexing(doc)
-                    indexDoc(doc, doc?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    indexDoc(doc, (doc?.projectActivityId || doc?.projectActivity?.projectType=="works") ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 }
                 break
 
@@ -418,7 +423,8 @@ class ElasticSearchService {
                 Activity activity = Activity.findByActivityId(docId)
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
-                indexDoc(doc, doc?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                // Works project activities are created before a survey is filled in
+                indexDoc(doc, (doc?.projectActivityId || doc?.projectActivity?.projectType=="works") ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
@@ -514,8 +520,13 @@ class ElasticSearchService {
         // homepage index - turned off due to triggering recursive POST INSERT events for some reason
         try {
             def docId = getEntityId(doc)
-            if (checkForDelete(doc, docId, HOMEPAGE_INDEX)) {
-                return null
+
+            // Delete index if it exists and doc.status == 'deleted'
+            checkForDelete(doc, docId, HOMEPAGE_INDEX)
+
+            // Prevent deleted document from been indexed regardless of whether it has a previous index entry
+            if(doc.status?.toLowerCase() == DELETED) {
+                return null;
             }
 
             def projectMapDeep = prepareProjectForHomePageIndex(doc)
@@ -611,7 +622,7 @@ class ElasticSearchService {
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
-            def batchParams = [offset: 0, max: 50]
+            def batchParams = [offset: 0, max: 50, limit: 200]
             def projects = Project.findAllByStatusInList([ACTIVE, COMPLETED], batchParams)
 
             while (projects) {
@@ -654,7 +665,7 @@ class ElasticSearchService {
         activityService.doWithAllActivities { Map activity ->
             try {
                 prepareActivityForIndexing(activity)
-                indexDoc(activity, activity?.projectActivityId ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                indexDoc(activity, activity?.projectActivityId || doc?.projectActivity?.projectType=="works"? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
             }
             catch (Exception e) {
                 log.error("Unable to index activity: "+activity?.activityId, e)
@@ -732,17 +743,27 @@ class ElasticSearchService {
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
         def organisation = organisationService.get(project?.organisationId)
-        // Include project activity only for survey based projects.
-        def pActivity = version ? activity : projectActivityService.get(activity.projectActivityId)
+
+        def outputs
+
+        if(project?.isWorks) {
+            outputs = outputService.findAllForActivityId(activity.activityId)
+        }
+
+        def isWorksActivity = outputs || activity.status?.toLowerCase() == DELETED && project?.isWorks
+
+        // Include project activity only for survey or works projects.
+        // For works projects we need to wait for a user to actually fill in the survey (outputs not empty)
+        def pActivity = version || isWorksActivity ? activity : projectActivityService.get(activity.projectActivityId)
         if (pActivity) {
             Map projectActivity = [:]
             List records = []
 
-            projectActivity.name = pActivity.name
+            projectActivity.name = pActivity?.name ?: pActivity?.description
             projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
             projectActivity.embargoed = pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date())
-            projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: ''
+            projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
             projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
             projectActivity.projectName = project?.name
             projectActivity.projectId = project?.projectId
@@ -755,7 +776,11 @@ class ElasticSearchService {
                 values.name = it.name
                 values.guid = it.guid
                 values.occurrenceID = it.occurrenceID
+                values.commonName = it.commonName
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
+                values.multimedia = it.multimedia
+                values.eventDate = it.eventDate
+                values.eventTime = it.eventTime
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
@@ -890,7 +915,7 @@ class ElasticSearchService {
 
             case 'project':
                 if (projectId) {
-                    if (userId && permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId)) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
                     } else if (userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND (projectActivity.embargoed:false OR userId:' + userId + '))'
@@ -928,6 +953,24 @@ class ElasticSearchService {
                 }
                 break
 
+            case 'projectrecords':
+                if (projectId) {
+                    if (userId && (permissionService.isUserAlaAdmin(userId) || permissionService.isUserAdminForProject(userId, projectId) || permissionService.isUserEditorForProject(userId, projectId))) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ')'
+                    } else {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND projectActivity.embargoed:false)'
+                    }
+                }
+                break
+
+            case 'myprojectrecords':
+                if (projectId) {
+                    if (userId) {
+                        forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND  userId:' + userId + ')'
+                    }
+                }
+                break
+
             default:
                 forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                 break
@@ -937,7 +980,6 @@ class ElasticSearchService {
             forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
         }
 
-        params.facets = "activityLastUpdatedYearFacet,activityLastUpdatedMonthFacet,projectNameFacet,projectActivityNameFacet,recordNameFacet,activityOwnerNameFacet,organisationNameFacet"
         params.query = query ? query + ' AND ' + forcedQuery : forcedQuery
     }
 

@@ -201,13 +201,14 @@ while (records.hasNext()) {
         }
 
         //Used in pasearch indexing
-        record.guid = record.occurrenceID;
+        record.guid = record.taxonConceptID;
 
         // Build species info
         var species = {};
-        species.guid = record.occurrenceID;
+        species.guid = record.taxonConceptID;
         species.outputSpeciesId = UUID.generate();
         species.name = record.scientificName;
+        species.commonName = record.commonName
         var outputId = UUID.generate();
 
         //Multimedia??

@@ -32,6 +32,10 @@ class Hub {
     String homePagePath
     /** If configurable template is chosen, then use this config to layout the page **/
     Map templateConfiguration
+    /** hide bread crumbs **/
+    Boolean hideBreadCrumbs = false
+    /** quick links to Biocollect pages that appeared on certain pages like create record, view record etc. */
+    List quickLinks
 
     String status = 'active'
 
@@ -51,5 +55,6 @@ class Hub {
         homePagePath nullable:true
         defaultProgram nullable: true
         templateConfiguration nullable: true
+        hideBreadCrumbs nullable: true
     }
 }

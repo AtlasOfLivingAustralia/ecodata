@@ -1,5 +1,10 @@
 package au.org.ala.ecodata
 
+import org.joda.time.DateTimeZone
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.DateTime
+import org.joda.time.format.ISODateTimeFormat
+
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -321,6 +326,11 @@ class RecordService {
                 record[it.key] = it.value.toString().toDouble()
             } else if (it.key in ["coordinateUncertaintyInMeters", "individualCount"] && it.value) {
                 record[it.key] = it.value.toString().toInteger()
+            } else if (it.key in ["eventDate"] && it.value) {
+                String parsedDate = toStringIsoDateTime(it.value)
+                if(parsedDate) {
+                    record[it.key] = parsedDate
+                }
             } else if (it.key in ["dateCreated", "lastUpdated"] && it.value) {
                 //do nothing we these values...
             } else if (!ignores.contains(it.key) && it.value) {
@@ -420,6 +430,25 @@ class RecordService {
         }
         record.save(flush: true)
         recordAlertService.alertSubscribers(record)
+    }
+
+    String toStringIsoDateTime(def date) {
+
+        if(date instanceof Date) {
+            return new DateTime(date, DateTimeZone.UTC).toDateTimeISO().toString()
+        } else {
+            String dateString = date.toString()
+
+            try {
+                DateTimeFormatter parser = ISODateTimeFormat.dateOptionalTimeParser()
+                parser.parseDateTime(dateString)
+                // No exceptions, the string is an ISO date
+                return dateString
+
+            } catch (IllegalArgumentException e) { // input parameter is not parsable to an iso Date with optional time, let's ignore it
+                return null
+            }
+        }
     }
 
     private setDCTerms(image, multimediaElement){

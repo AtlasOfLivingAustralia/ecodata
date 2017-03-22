@@ -54,6 +54,37 @@ class RecordConverterSpec extends Specification {
         fieldsets[0].outputSpeciesId == "anotherid"
     }
 
+    def "convert should create a two record field sets with all fields from an output model with 1 single-item data model and two species fields"() {
+        setup:
+        Project project = new Project()
+        Site site = new Site()
+        ProjectActivity projectActivity = new ProjectActivity()
+        Activity activity = new Activity()
+        Output output = new Output()
+        Map outputMetadata = [record: true, dataModel: [
+                [dataType: "text", dwcAttribute: "attribute1", name: "field1"],
+                [dataType: "text", dwcAttribute: "attribute2", name: "field2"],
+                [dataType: "species", dwcAttribute: "attribute3", name: "field3"],
+                [dataType: "species", dwcAttribute: "attribute4", name: "field4"]
+        ]]
+        Map submittedData = [field1: "fieldValue1", field2: "fieldValue2", field3: ["outputSpeciesId": "anotheridField3"], field4: ["outputSpeciesId": "anotheridField4"]]
+
+        when:
+        List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
+
+        then:
+        fieldsets.size() == 2
+        fieldsets[0].attribute1 == "fieldValue1"
+        fieldsets[0].attribute2 == "fieldValue2"
+        fieldsets[0].outputSpeciesId == "anotheridField3"
+
+        fieldsets[1].attribute1 == "fieldValue1"
+        fieldsets[1].attribute2 == "fieldValue2"
+        fieldsets[1].outputSpeciesId == "anotheridField4"
+
+    }
+
+
     def "convert should create a record field set with multiple fields for each item in an output model with a 'list' data model"() {
         setup:
         Project project = new Project()
@@ -113,6 +144,82 @@ class RecordConverterSpec extends Specification {
         fieldsets[1].attribute1 == "row2col1"
         fieldsets[1].outputSpeciesId == "anotherid2"
     }
+
+    def "convert should create a record field set with multiple fields for each species per item in an output model with a 'list' data model"() {
+        setup:
+        Project project = new Project()
+        Site site = new Site()
+        ProjectActivity projectActivity = new ProjectActivity()
+        Activity activity = new Activity()
+        Output output = new Output()
+
+        String metadataJson = """
+                            {
+                              "record": "true",
+                              "dataModel": [
+                                {
+                                  "dataType": "list",
+                                  "name": "mylist",
+                                  "columns": [
+                                    {
+                                      "dataType": "text",
+                                      "name": "col1",
+                                      "dwcAttribute": "attribute1"
+                                    },
+                                    {
+                                      "dataType": "species",
+                                      "name": "col2",
+                                      "dwcAttribute": "attribute2"
+                                    },
+                                    {
+                                      "dataType": "species",
+                                      "name": "col3",
+                                      "dwcAttribute": "attribute3"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                            """
+        String submittedDataJson = """
+                            {
+                              "mylist": [
+                                {
+                                  "col1": "row1col1",
+                                  "col2": {"outputSpeciesId": "anotheridRow1col2"},
+                                  "col3": {"outputSpeciesId": "anotheridRow1col3"}
+                                },
+                                {
+                                  "col1": "row2col1",
+                                  "col2": {"outputSpeciesId": "anotheridRow2col2"},
+                                  "col3": {"outputSpeciesId": "anotheridRow2col3"}
+                                }
+                              ]
+                            }
+                            """
+
+        Map outputMetadata = json.parseText(metadataJson) as Map
+        Map submittedData = json.parseText(submittedDataJson) as Map
+
+        when:
+        List<Map> fieldsets = RecordConverter.convertRecords(project, site, projectActivity, activity, output, submittedData, outputMetadata)
+
+        then:
+        fieldsets.size() == 4
+        fieldsets[0].attribute1 == "row1col1"
+        fieldsets[0].outputSpeciesId == "anotheridRow1col2"
+        fieldsets[0].outputItemId == 0
+        fieldsets[1].attribute1 == "row1col1"
+        fieldsets[1].outputSpeciesId == "anotheridRow1col3"
+        fieldsets[1].outputItemId == 1
+        fieldsets[2].attribute1 == "row2col1"
+        fieldsets[2].outputSpeciesId == "anotheridRow2col2"
+        fieldsets[2].outputItemId == 2
+        fieldsets[3].attribute1 == "row2col1"
+        fieldsets[3].outputSpeciesId == "anotheridRow2col3"
+        fieldsets[3].outputItemId == 3
+    }
+
 
     def "convert should add all single-item dataModel values to each record field set in an output model with a 'list' data model"() {
         setup:
@@ -237,6 +344,10 @@ class RecordConverterSpec extends Specification {
                                       "dataType": "text",
                                       "name": "field1",
                                       "dwcAttribute": "dwc"
+                                    },
+                                    {
+                                      "dataType": "species",
+                                      "name" : "innerSpeciesField"
                                     }
                                   ]
                                 },
@@ -245,7 +356,7 @@ class RecordConverterSpec extends Specification {
                                   "name": "field2",
                                   "dwcAttribute": "dwc"
                                 },
-                                                                {
+                                {
                                   "dataType": "species",
                                   "name" : "speciesField"
                                 }
@@ -257,11 +368,12 @@ class RecordConverterSpec extends Specification {
                             {
                               "mylist": [
                                 {
-                                  "field1": "secondValue"
+                                  "field1": "secondValue",
+                                  "innerSpeciesField" : {"outputSpeciesId": "InnerspeciesFieldIdValue"}
                                 }
                               ],
                               "field2": "firstValue",
-                              "speciesField" : {"outputSpeciesId": "speciesFieldId"}
+                              "speciesField" : {"outputSpeciesId": "speciesFieldIdValue"}
                             }
                             """
 
