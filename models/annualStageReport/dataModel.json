@@ -1,0 +1,128 @@
+{
+    "title": "Overview of Project Progress",
+    "modelName": "Overview of Project Progress",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "description": "Progress against outcomes",
+            "name": "outcomes",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "the outcome being reported against",
+                    "name": "outcome"
+                },
+                {
+                    "dataType": "stringList",
+                    "description":"assets addressed by the outcome",
+                    "name":"assets"
+                },
+                {
+                    "dataType": "text",
+                    "description": "progress against the outcome",
+                    "name": "progressAgainstOutcome",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "If the project has progressed as per the MERI plan, please enter “Not applicable”.  Please contact your grant manager if the MERI plan or project activities require updating in MERIT.",
+            "name": "deliveredToMeriPlan",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Refer to the Work, Health and Safety section of your funding agreement for further information.",
+            "name": "workplaceHeathAndSafetyIncidents",
+            "constraints": [
+                "Y",
+                "N"
+            ],
+            "validate": "required"
+        }
+    ],
+    "viewModel": [
+        {
+            "source": "outcomes",
+            "items": [
+                {
+                    "items": [
+                        {
+                            "items": [
+
+                                {
+                                    "source": "outcome",
+                                    "preLabel": {"computed":"\\'Outcome \\' || (index + 1)"},
+                                    "type": "text",
+                                    "readonly": true
+                                },
+                                {
+                                    "source": "assets",
+                                    "preLabel": "Assets addressed",
+                                    "type": "selectMany",
+                                    "readonly": true
+                                },
+                                {
+                                    "source": "progressAgainstOutcome",
+                                    "preLabel": "Progress against the outcome",
+                                    "type": "textarea"
+                                }
+                            ],
+                            "type": "col"
+                        }
+                    ],
+                    "class": "output-section",
+                    "type": "row"
+                }
+            ],
+            "type": "repeat"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "deliveredToMeriPlan",
+                            "computedLabel": "\\'Outline any deviations from the MERI plan which have affected delivery of activities.\\'",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "workplaceHeathAndSafetyIncidents",
+                            "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ],
+    "pre-populate": [
+        {
+            "source": {
+                "context-path": ""
+            },
+            "merge":true,
+            "mapping": [
+                {
+                    "target": "outcomes",
+                    "mapping": [
+                        {
+                            "target": "outcome",
+                            "source-path": "description"
+                        },
+                        {
+                            "target": "assets",
+                            "source-path": "assets"
+                        }
+
+                    ],
+                    "source-path": "custom.details.objectives.rows1"
+                }
+            ]
+        }
+    ]
+}

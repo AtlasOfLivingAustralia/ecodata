@@ -380,7 +380,7 @@
           "type":"col",
           "items":[
             {
-              "preLabel":"Management practice change (area implemented, Ha):",
+              "preLabel":"Management practice change (area benefiting from practice change, Ha):",
               "computed":null,
               "source":"totalChangePracticeTreatedArea",
               "type":"number"
