@@ -57,6 +57,21 @@ class ReportGroups {
 
     }
 
+    static class ExcludingFilteredGroup extends FilteredGroup {
+
+        public ExcludingFilteredGroup(nestedProperty, String filterValue) {
+            super(nestedProperty, filterValue)
+            this.filterValue = filterValue
+        }
+
+        def group(data) {
+            def group = super.group(data)
+
+            // Return the opposite of the normal filter
+            return group == null ? Aggregator.DEFAULT_GROUP : null
+        }
+    }
+
     static class HistogramGroup extends SinglePropertyGroupingStrategy {
 
         def buckets

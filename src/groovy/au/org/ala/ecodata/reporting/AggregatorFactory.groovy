@@ -148,7 +148,13 @@ class AggregatorFactory {
                 strategy = new ReportGroups.DateGroup(nestedProperty, groupingSpec.buckets, groupingSpec.format)
                 break
             case 'filter':
-                strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterValue)
+                if (groupingSpec.filterValue?.startsWith('!')) {
+                    strategy = new ReportGroups.ExcludingFilteredGroup(nestedProperty, groupingSpec.filterValue.substring(1))
+                }
+                else {
+                    strategy = new ReportGroups.FilteredGroup(nestedProperty, groupingSpec.filterValue)
+                }
+
                 break
             case 'discrete':
             default:

@@ -69,4 +69,31 @@ class FilteredAggregatorSpec extends Specification {
         groups[0].results[0].result == 10
         groups[0].results[1].result == 10/4
     }
+
+    def "filters can be configured to exclude a value rather than select a value"() {
+        given:
+        Aggregation score = new Aggregation(property:"property", type:"SUM")
+
+        GroupingConfig filter = new GroupingConfig(property:"group", filterValue: "!group1", type:"filter")
+        FilteredAggregationConfig aggregationConfig = new FilteredAggregationConfig(label:"test", childAggregations: [score], filter:filter)
+
+        FilteredAggregator filteredAggregator = new FilteredAggregator(aggregationConfig)
+
+        List<Map> data = [
+                [property:1, group:"group1"], [property:2, group:"group1"], [property:3, group:"group1"], [property:4, group:"group1"],
+                [property:5, group:"group2"], [property:6, group:"group2"], [property:7, group:"group2"], [property:8, group:"group3"]
+        ]
+
+        when:
+        data.each {
+            filteredAggregator.aggregate(it)
+        }
+        SingleResult result = filteredAggregator.result()
+
+        then: "group1 values are excluded from the result"
+        result.label == aggregationConfig.label
+        result.count == 4
+
+        result.result == 5+6+7+8
+    }
 }
