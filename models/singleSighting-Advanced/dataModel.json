@@ -39,7 +39,8 @@
       "name": "individualCount",
       "dwcAttribute": "individualCount",
       "description": "The number of individuals or colonies (for certain insects).",
-      "validate": "min[0]"
+      "defaultValue": "1",
+      "validate": "min[1]"
     },
     {
       "dataType": "text",
