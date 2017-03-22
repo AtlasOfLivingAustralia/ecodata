@@ -1,0 +1,226 @@
+{
+  "modelName":"ESP Revegetation",
+  "dataModel":[
+    {
+      "name":"undertakeRevegetationActivities",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"revegetation",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "revegetationMethod",
+          "dwcAttribute": "establishmentMeans",
+          "description": "The method used for planting",
+          "constraints": [
+            "Direct drill seeding",
+            "Hand broadcast seeding",
+            "Hand planting",
+            "Machine planting",
+            "Natural regeneration from threat exclusion / removal",
+            "Infill plantings",
+            "Combination of methods"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "species",
+          "dwcAttribute": "scientificName",
+          "speciesList": "project",
+          "noTotal": "true",
+          "name": "species",
+          "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"areaTreatedHa",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    },
+    {
+      "dataType":"list",
+      "name":"survival",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "revegetationMethod",
+          "dwcAttribute": "establishmentMeans",
+          "description": "The method used for planting",
+          "constraints": [
+            "Direct drill seeding",
+            "Hand broadcast seeding",
+            "Hand planting",
+            "Machine planting",
+            "Natural regeneration from threat exclusion / removal",
+            "Infill plantings",
+            "Combination of methods"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "species",
+          "dwcAttribute": "scientificName",
+          "speciesList": "project",
+          "noTotal": "true",
+          "name": "species",
+          "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"areaTreatedHa",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"percentSurvival",
+          "dataType":"number",
+          "validate":"required,min[0],max[100]"
+        }
+      ]
+    },
+    {
+      "dataType":"list",
+      "name":"groundCover",
+      "columns": [
+        {
+          "name":"season",
+          "dataType":"text",
+          "constraints": [
+            "Spring",
+            "Summary",
+            "Autumn",
+            "Winter"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"groundCoverPercent",
+          "validate":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeRevegetationActivities",
+          "preLabel": "Did you undertake any revegetation activities on this site this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "revegetation",
+          "title": "If 'Yes', please complete the following:",
+          "type": "table",
+          "columns":[
+            {
+              "type": "selectOne",
+              "source": "revegetationMethod",
+              "title":"Revegetation Activity"
+            },
+            {
+              "type": "autocomplete",
+              "source": "species",
+              "title": "Species planted (if known)"
+            },
+            {
+              "type":"number",
+              "title":"Area treated (Ha)",
+              "validate":"required,min[0]"
+            },
+            {
+              "source":"cost",
+              "type":"number",
+              "title":"Cost"
+            }
+
+          ]
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "survival",
+          "title": "If you have recorded revegetation in previous years, please fill in survival %:",
+          "type": "table",
+          "columns":[
+            {
+              "type": "selectOne",
+              "source": "revegetationMethod",
+              "title":"Revegetation Activity"
+            },
+            {
+              "type": "autocomplete",
+              "source": "species",
+              "title": "Species planted (if known)"
+            },
+            {
+              "type":"number",
+              "title":"Area treated (Ha)",
+              "validate":"required,min[0]"
+            },
+            {
+              "source":"percentSurvival",
+              "type":"number",
+              "title":"% survival"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "<b>Ground cover %</b>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "groundCover",
+          "title": "Please fill out details for ground cover on your Environmental Stewardship site(s).",
+          "type": "table",
+          "columns":[
+            {
+              "type": "selectOne",
+              "source": "season",
+              "title":"Season"
+            },
+            {
+              "type": "number",
+              "source": "groundCoverPercent",
+              "title": "Ground Cover %"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

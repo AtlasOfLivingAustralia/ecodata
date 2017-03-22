@@ -1,0 +1,45 @@
+{
+  "modelName":"ESP Control of Agrochemicals",
+  "dataModel":[
+    {
+      "name":"undertakeWindborneChemicalControl",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "name":"undertakeWaterborneChemicalControl",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeWindborneChemicalControl",
+          "preLabel": "Did you undertake actions to reduce the movement of wind-borne agrochemicals across your sites this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "undertakeWaterborneChemicalControl",
+          "preLabel": "Did you undertake actions to reduce the movement of water-borne agrochemicals across your sites this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

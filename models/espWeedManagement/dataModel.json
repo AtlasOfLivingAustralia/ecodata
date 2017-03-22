@@ -1,0 +1,135 @@
+{
+  "modelName":"ESP Weed Management",
+  "dataModel":[
+    {
+      "name":"undertakeWeedManagement",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"weedManagement",
+      "columns": [
+        {
+          "name":"species",
+          "description":"",
+          "dataType":"species",
+          "validate":"required"
+        },
+        {
+          "dataType": "text",
+          "description": "The primary method used to treat the patch of the target species",
+          "name": "treatmentMethod",
+          "constraints": [
+            "Environmental management - Fire",
+            "Environmental management - moisture & nutrient control",
+            "Environmental management - over-planting",
+            "Chemical control - Foliar spraying",
+            "Chemical control - Basal bark spraying",
+            "Chemical control - Stem injection",
+            "Chemical control - Cut stump",
+            "Chemical control - Cut and swab",
+            "Chemical control - Splatter gun",
+            "Chemical control - Stem scraper",
+            "Chemical control - Wick applicators",
+            "Mechanical control - Slashing",
+            "Mechanical control - Mowing",
+            "Mechanical control - Dozing",
+            "Mechanical control - Pushing",
+            "Mechanical control - Felling",
+            "Manual control - Hand pulling",
+            "Manual control - Grubbing/chipping",
+            "Biological control - Biological agents (specify in notes)",
+            "Other (specify in notes)"
+          ],
+          "validate": "required"
+        },
+        {
+          "name":"weedAreaTreatedHa",
+          "dataType":"number",
+          "validate": "required,min[0]"
+        },
+        {
+          "name":"plantDensity",
+          "dataType":"number"
+        },
+        {
+          "dataType": "text",
+          "description": "The control status of the patch of the target species being treated",
+          "name": "controlStatus",
+          "constraints": [
+            "New Infestation",
+            "Active Infestation",
+            "Under control",
+            "Under monitoring",
+            "Closed",
+            "Unknown"
+          ]
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeWeedManagement",
+          "preLabel": "Did you undertake actions to monitor and manage exotic plant species this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "weedManagement",
+          "title": "If “Yes”, please complete the following:",
+          "type": "table",
+          "columns":[
+            {
+              "source":"species",
+              "title":"Species",
+              "type":"autocomplete"
+            },
+            {
+              "source":"treatmentMethod",
+              "title":"Treatment Method",
+              "type":"selectOne"
+            },
+            {
+              "source":"weedAreaTreatedHa",
+              "type":"number",
+              "title":"Approximate area treated (Ha)"
+            },
+            {
+              "source":"plantDensity",
+              "type":"number",
+              "title":"Plant Density"
+            },
+            {
+              "source":"controlStatus",
+              "title":"Control Status",
+              "type":"number"
+            },
+            {
+              "source":"cost",
+              "title":"Cost",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "modelName":"ESP Fencing",
+  "dataModel":[
+    {
+      "name":"undertakeFencing",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"fencing",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "The type of fence erected",
+          "name": "fenceType",
+          "constraints": [
+            "Cyclone",
+            "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
+            "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
+            "Post & Netting (net or ringlock) - electified",
+            "Post & Netting (net or ringlock) - non-electified",
+            "Post & Rail",
+            "Solid Sheet (pailing, pickets, sheet metal, etc.)",
+            "None",
+            "Other (specify in notes)"
+          ]
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "fencePurpose",
+          "validate": "required"
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeFencing",
+          "preLabel": "Did you undertake any activities relating to fencing on this site this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "fencing",
+          "title": "<i>Please note that this section also applies to repairs made to existing fencing.</i>",
+          "type": "table",
+          "columns":[
+            {
+              "source":"fenceType",
+              "title":"Type of Fencing",
+              "type":"selectOne"
+            },
+            {
+              "source":"fencePurpose",
+              "title":"Reason for Fencing",
+              "type":"textarea"
+            },
+            {
+              "source":"cost",
+              "title":"Cost",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

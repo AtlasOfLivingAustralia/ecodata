@@ -1,0 +1,79 @@
+{
+  "modelName":"ESP Restoration of Habitat",
+  "dataModel":[
+    {
+      "name":"undertakeHabitatRestoration",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType":"list",
+      "name":"habitatRestoration",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "habitatFeature",
+          "constraints": [
+            "Feature 1",
+            "Features 2"
+          ]
+        },
+        {
+          "dataType": "number",
+          "description": "",
+          "name": "areaTreatedHa",
+          "validate": "required"
+        },
+        {
+          "name":"cost",
+          "dataType":"number",
+          "validate":"min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeHabitatRestoration",
+          "preLabel": "Did you undertake any activities to restore habitat features on this site this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "habitatRestoration",
+          "title": "If “Yes”, pleased complete the following:",
+          "type": "table",
+          "columns":[
+            {
+              "source":"habitatFeature",
+              "title":"Habitat Feature",
+              "type":"selectOne"
+            },
+            {
+              "source":"areaTreatedHa",
+              "title":"Area treated (Ha)",
+              "type":"textarea"
+            },
+            {
+              "source":"cost",
+              "title":"Cost of Management Action?",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}
