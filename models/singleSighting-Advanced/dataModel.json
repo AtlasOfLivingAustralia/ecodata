@@ -1,438 +1,409 @@
 {
-  "modelName": "ALA Single Sighting",
-  "record": "true",
-  "dataModel": [
-    {
-      "dataType": "date",
-      "name": "surveyDate",
-      "dwcAttribute": "eventDate",
-      "description": "The date on which the sighting was made.",
-      "validate": "required"
-    },
-    {
-      "dataType": "time",
-      "name": "surveyStartTime",
-      "dwcAttribute": "eventTime",
-      "description": "The time at which the sighting was made."
-    },
-    {
-      "dataType": "text",
-      "name": "notes",
-      "dwcAttribute": "eventRemarks",
-      "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
-    },
-    {
-      "dataType": "text",
-      "name": "recordedBy",
-      "dwcAttribute": "recordedBy",
-      "description": "The name of the person who is attributed with making the sighting."
-    },
-    {
-      "dataType": "species",
-      "name": "species",
-      "dwcAttribute": "scientificName",
-      "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "name": "individualCount",
-      "dwcAttribute": "individualCount",
-      "description": "The number of individuals or colonies (for certain insects).",
-      "defaultValue": "1",
-      "validate": "min[1]"
-    },
-    {
-      "dataType": "text",
-      "name": "identificationConfidence",
-      "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
-      "constraints": [
-        "Certain",
-        "Uncertain"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "comments",
-      "dwcAttribute": "notes",
-      "description": "Observation notes about the record."
-    },
-    {
-      "dataType": "image",
-      "name": "sightingPhoto",
-      "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record."
-    },
-    {
-      "columns": [
+    "class": "",
+    "dataModel": [
         {
-          "dwcAttribute": "verbatimLatitude",
-          "source": "locationLatitude"
+            "dataType": "date",
+            "description": "The date on which the sighting was made.",
+            "name": "surveyDate",
+            "dwcAttribute": "eventDate",
+            "validate": "required"
         },
         {
-          "dwcAttribute": "verbatimLongitude",
-          "source": "locationLongitude"
-        },
-        {"source": "Locality"},
-        {"source": "Accuracy"},
-        {"source": "Notes"},
-        {"source": "Source"}
-      ],
-      "defaultAccuracy": 50,
-      "dataType": "geoMap",
-      "name": "location",
-      "dwcAttribute": "verbatimCoordinates",
-      "validate": "required",
-      "zoomToProjectArea": true
-    },
-    {
-      "dataType": "set",
-      "name": "tags",
-      "description": "Tag this sighting with species group and/or sub-group",
-      "constraints": [
-        "Amphibians",
-        "Amphibians, Australian Ground Frogs",
-        "Amphibians, Narrow-Mouthed Frogs",
-        "Amphibians, Tree Frogs",
-        "Amphibians, True Frogs",
-        "Amphibians, True Toads",
-        "Birds",
-        "Birds, Bitterns, Ibises",
-        "Birds, Buttonquails",
-        "Birds, Cranes",
-        "Birds, Cuckoos",
-        "Birds, Doves",
-        "Birds, Ducks, Geese, Swans",
-        "Birds, Falcons",
-        "Birds, Flamingos",
-        "Birds, Fowls",
-        "Birds, Grebes",
-        "Birds, Hummingbirds, Swifts",
-        "Birds, Kingfishers",
-        "Birds, Large waterbirds",
-        "Birds, Nightjars, Frogmouths, Potoos",
-        "Birds, Ostriches",
-        "Birds, Owls",
-        "Birds, Parrots",
-        "Birds, Penguins",
-        "Birds, Perching Birds",
-        "Birds, Petrels, Fulmars",
-        "Birds, Waders, Gulls, Auks",
-        "Crustaceans",
-        "Crustaceans, Barnacles, Copepods",
-        "Crustaceans, Crabs, Lobsters",
-        "Crustaceans, Fairy shrimp, Clam shrimp",
-        "Crustaceans, Seed shrimp",
-        "Fish",
-        "Fish, Anchovies ",
-        "Fish, Angel Sharks",
-        "Fish, Anglerfishes",
-        "Fish, Baldfishes,Tubeshoulders",
-        "Fish, Batoids",
-        "Fish, Batrachoidiforms",
-        "Fish, Beardfishes",
-        "Fish, Boarfishes",
-        "Fish, Bonefishes",
-        "Fish, Bonytongues",
-        "Fish, Bullhead Sharks",
-        "Fish, Carpet Sharks",
-        "Fish, Catfishes",
-        "Fish, Chimaeras",
-        "Fish, Cods",
-        "Fish, Cow Sharks",
-        "Fish, Cowfishes",
-        "Fish, Deep-sea ray-finned fishes",
-        "Fish, Deep-sea ray-finned fishes",
-        "Fish, Dogfish Sharks",
-        "Fish, Dragonfishes",
-        "Fish, Eels",
-        "Fish, Electric Rays",
-        "Fish, Flatfishes",
-        "Fish, Ground Sharks",
-        "Fish, Guitarfish",
-        "Fish, Hagfishes",
-        "Fish, Halfbeeks",
-        "Fish, Jellynose Fishes",
-        "Fish, Killifishes",
-        "Fish, Latern Fishes, Neoscopelids",
-        "Fish, Lungfish",
-        "Fish, Mackerel Sharks",
-        "Fish, Marine ray-finned fish",
-        "Fish, Milkfishes",
-        "Fish, Minnows",
-        "Fish, Mullet fish",
-        "Fish, Opahs",
-        "Fish, Ophidiiforms",
-        "Fish, Perch-like Fishes",
-        "Fish, Rainbow Fishes",
-        "Fish, Ray-finned fishes",
-        "Fish, Sackpharynx Fishes",
-        "Fish, Salmons",
-        "Fish, Saw Sharks",
-        "Fish, Sawfish",
-        "Fish, Scorpion Fishes, Sculpins",
-        "Fish, Softnose Skates",
-        "Fish, Spiny Eels",
-        "Fish, Swamp Eels",
-        "Fish, Tarpons",
-        "Fungi",
-        "Fungi, Asco's",
-        "Fungi, Basidio's",
-        "Fungi, Chytrids",
-        "Fungi, Glomeromycota",
-        "Fungi, Zygomycetes",
-        "Insects and Spiders",
-        "Insects and Spiders, Alderflies, Dobsonflies, Fishflies",
-        "Insects and Spiders, Beetles",
-        "Insects and Spiders, Booklice, Barklice, Barkflies",
-        "Insects and Spiders, Bristletails",
-        "Insects and Spiders, Butterflies, Moths",
-        "Insects and Spiders, Caddisflies, Sedge-flies or Rail-flies",
-        "Insects and Spiders, Cicadas, Aphids, Planthoppers, Leafhoppers, Shield Bugs",
-        "Insects and Spiders, Cockroaches, Termites",
-        "Insects and Spiders, Dragonflies, Damselflies",
-        "Insects and Spiders, Earwigs",
-        "Insects and Spiders, Fleas",
-        "Insects and Spiders, Flies, Mosquitoes",
-        "Insects and Spiders, Grasshoppers, Crickets, Locusts, Katydids, Weta, Lubber",
-        "Insects and Spiders, Lacewings, Mantidflies, Antlions",
-        "Insects and Spiders, Lice",
-        "Insects and Spiders, Mantises",
-        "Insects and Spiders, Mayflies, Shadlfies",
-        "Insects and Spiders, Scorpionflies, Hangingflies",
-        "Insects and Spiders, Silverfish",
-        "Insects and Spiders, Spiders",
-        "Insects and Spiders, Stick Insects, Phasmids",
-        "Insects and Spiders, Stoneflies",
-        "Insects and Spiders, Thrips",
-        "Insects and Spiders, Twisted-Wing Parasites",
-        "Insects and Spiders, Wasps, Ants, Bees, Sawflies",
-        "Insects and Spiders, Webspinners",
-        "Insects and Spiders, Zorapterans",
-        "Mammals",
-        "Mammals, Bandicoots, Bilbies",
-        "Mammals, Bats",
-        "Mammals, Carnivores",
-        "Mammals, Carnivorous Marsupials",
-        "Mammals, Dolphins, Porpoises, Whales",
-        "Mammals, Dugongs, Manatees, Sea Cows",
-        "Mammals, Even-toed hoofed",
-        "Mammals, Hares, Pikas, Rabbits",
-        "Mammals, Herbivorous Marsupials",
-        "Mammals, Marsupial Moles",
-        "Mammals, Monotremes",
-        "Mammals, Odd-toed hoofed",
-        "Mammals, Rodents",
-        "Mammals, Shrews, Hedgehogs",
-        "Molluscs",
-        "Molluscs, Chitons",
-        "Molluscs, Cuttlefish",
-        "Molluscs, Gastropods, Slugs, Snails",
-        "Molluscs, Mussels, Clams",
-        "Molluscs, Solenogasters",
-        "Molluscs, Tooth Shells",
-        "Plants",
-        "Plants, Conifers, Cycads",
-        "Plants, Dicots",
-        "Plants, Ferns and Allies",
-        "Plants, Flowering plants",
-        "Plants, Monocots",
-        "Reptiles",
-        "Reptiles, Crocodiles",
-        "Reptiles, Lizards, Snakes",
-        "Reptiles, Tortoises, Turtles, Terrapins"
-      ]
-    }
-  ],
-  "viewModel": [
-    {
-      "type": "section",
-      "title": "Species",
-      "boxed": true,
-      "items": [
-        {
-          "computed": null,
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Species name",
-              "preLabelClass": "span4",
-              "dataClass": "span8",
-              "inline": true,
-              "computed": null,
-              "source": "species",
-              "type": "speciesSearchWithImagePreview"
-            }
-          ]
+            "dataType": "time",
+            "description": "The time at which the sighting was made.",
+            "name": "surveyStartTime",
+            "dwcAttribute": "eventTime"
         },
         {
-          "computed": null,
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Identification tags",
-              "preLabelClass": "span4",
-              "dataClass": "span8",
-              "inline": true,
-              "computed": null,
-              "source": "tags",
-              "type": "wordCloud"
-            }
-          ]
+            "dataType": "text",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc.",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks"
         },
         {
-          "computed": null,
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Are you confident of the species identification?",
-              "preLabelClass": "span4",
-              "dataClass": "span8",
-              "inline": true,
-              "computed": null,
-              "source": "identificationConfidence",
-              "type": "selectOne"
-            }
-          ]
-        }
-      ],
-      "class": ""
-    },
-    {
-      "type": "section",
-      "title": "Images",
-      "boxed": true,
-      "items": [
+            "dataType": "text",
+            "description": "The name of the person who is attributed with making the sighting.",
+            "name": "recordedBy",
+            "dwcAttribute": "recordedBy"
+        },
         {
-          "computed": null,
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
-              "computed": null,
-              "source": "sightingPhoto",
-              "type": "image"
-            }
-          ]
-        }
-      ],
-      "class": ""
-    },
-    {
-      "type": "section",
-      "title": "Location",
-      "boxed": true,
-      "items": [
+            "dataType": "species",
+            "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
+            "name": "species",
+            "dwcAttribute": "scientificName",
+            "validate": "required"
+        },
         {
-          "computed": null,
-          "type": "row",
-          "items": [
-            {
-              "includeNotes": true,
-              "orientation": "horizontal",
-              "computed": null,
-              "readonly": false,
-              "includeSource": true,
-              "includeAccuracy": true,
-              "source": "location",
-              "type": "geoMap",
-              "includeLocality": true,
-              "hideSiteSelection": true,
-              "autoLocalitySearch": true
-            }
-          ]
-        }
-      ],
-      "class": ""
-    },
-    {
-      "type": "section",
-      "title": "Details",
-      "boxed": true,
-      "items": [
+            "dataType": "number",
+            "description": "The number of individuals or colonies (for certain insects).",
+            "name": "individualCount",
+            "dwcAttribute": "individualCount",
+            "defaultValue": "1",
+            "validate": "min[1]"
+        },
         {
-          "type": "row",
-          "items": [
-            {
-              "type": "col",
-              "items": [
+            "dataType": "text",
+            "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "name": "identificationConfidence",
+            "constraints": [
+                "Certain",
+                "Uncertain"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Observation notes about the record.",
+            "name": "comments",
+            "dwcAttribute": "notes"
+        },
+        {
+            "dataType": "image",
+            "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "name": "sightingPhoto",
+            "validate": "required"
+        },
+        {
+            "dataType": "geoMap",
+            "zoomToProjectArea": true,
+            "defaultAccuracy": 50,
+            "name": "location",
+            "columns": [
                 {
-                  "type": "row",
-                  "items": [
-                    {
-                      "type": "col",
-                      "items": [
-                        {
-                          "preLabel": "Date",
-                          "preLabelClass": "span4",
-                          "dataClass": "span8",
-                          "inline": true,
-                          "computed": null,
-                          "source": "surveyDate",
-                          "type": "date"
-                        }
-                      ]
-                    }
-                  ]
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
                 },
                 {
-                  "type": "row",
-                  "items": [
-                    {
-                      "type": "col",
-                      "items": [
-                        {
-                          "preLabel": "Time",
-                          "preLabelClass": "span4",
-                          "dataClass": "span8",
-                          "inline": true,
-                          "computed": null,
-                          "source": "surveyStartTime",
-                          "type": "time"
-                        }
-                      ]
-                    }
-                  ]
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                },
+                {"source": "Locality"},
+                {"source": "Accuracy"},
+                {"source": "Notes"},
+                {"source": "Source"}
+            ],
+            "dwcAttribute": "verbatimCoordinates",
+            "validate": "required"
+        },
+        {
+            "dataType": "set",
+            "description": "Tag this sighting with species group and/or sub-group",
+            "name": "tags",
+            "constraints": [
+                "Amphibians",
+                "Amphibians, Australian Ground Frogs",
+                "Amphibians, Narrow-Mouthed Frogs",
+                "Amphibians, Tree Frogs",
+                "Amphibians, True Frogs",
+                "Amphibians, True Toads",
+                "Birds",
+                "Birds, Bitterns, Ibises",
+                "Birds, Buttonquails",
+                "Birds, Cranes",
+                "Birds, Cuckoos",
+                "Birds, Doves",
+                "Birds, Ducks, Geese, Swans",
+                "Birds, Falcons",
+                "Birds, Flamingos",
+                "Birds, Fowls",
+                "Birds, Grebes",
+                "Birds, Hummingbirds, Swifts",
+                "Birds, Kingfishers",
+                "Birds, Large waterbirds",
+                "Birds, Nightjars, Frogmouths, Potoos",
+                "Birds, Ostriches",
+                "Birds, Owls",
+                "Birds, Parrots",
+                "Birds, Penguins",
+                "Birds, Perching Birds",
+                "Birds, Petrels, Fulmars",
+                "Birds, Waders, Gulls, Auks",
+                "Crustaceans",
+                "Crustaceans, Barnacles, Copepods",
+                "Crustaceans, Crabs, Lobsters",
+                "Crustaceans, Fairy shrimp, Clam shrimp",
+                "Crustaceans, Seed shrimp",
+                "Fish",
+                "Fish, Anchovies ",
+                "Fish, Angel Sharks",
+                "Fish, Anglerfishes",
+                "Fish, Baldfishes,Tubeshoulders",
+                "Fish, Batoids",
+                "Fish, Batrachoidiforms",
+                "Fish, Beardfishes",
+                "Fish, Boarfishes",
+                "Fish, Bonefishes",
+                "Fish, Bonytongues",
+                "Fish, Bullhead Sharks",
+                "Fish, Carpet Sharks",
+                "Fish, Catfishes",
+                "Fish, Chimaeras",
+                "Fish, Cods",
+                "Fish, Cow Sharks",
+                "Fish, Cowfishes",
+                "Fish, Deep-sea ray-finned fishes",
+                "Fish, Deep-sea ray-finned fishes",
+                "Fish, Dogfish Sharks",
+                "Fish, Dragonfishes",
+                "Fish, Eels",
+                "Fish, Electric Rays",
+                "Fish, Flatfishes",
+                "Fish, Ground Sharks",
+                "Fish, Guitarfish",
+                "Fish, Hagfishes",
+                "Fish, Halfbeeks",
+                "Fish, Jellynose Fishes",
+                "Fish, Killifishes",
+                "Fish, Latern Fishes, Neoscopelids",
+                "Fish, Lungfish",
+                "Fish, Mackerel Sharks",
+                "Fish, Marine ray-finned fish",
+                "Fish, Milkfishes",
+                "Fish, Minnows",
+                "Fish, Mullet fish",
+                "Fish, Opahs",
+                "Fish, Ophidiiforms",
+                "Fish, Perch-like Fishes",
+                "Fish, Rainbow Fishes",
+                "Fish, Ray-finned fishes",
+                "Fish, Sackpharynx Fishes",
+                "Fish, Salmons",
+                "Fish, Saw Sharks",
+                "Fish, Sawfish",
+                "Fish, Scorpion Fishes, Sculpins",
+                "Fish, Softnose Skates",
+                "Fish, Spiny Eels",
+                "Fish, Swamp Eels",
+                "Fish, Tarpons",
+                "Fungi",
+                "Fungi, Asco's",
+                "Fungi, Basidio's",
+                "Fungi, Chytrids",
+                "Fungi, Glomeromycota",
+                "Fungi, Zygomycetes",
+                "Insects and Spiders",
+                "Insects and Spiders, Alderflies, Dobsonflies, Fishflies",
+                "Insects and Spiders, Beetles",
+                "Insects and Spiders, Booklice, Barklice, Barkflies",
+                "Insects and Spiders, Bristletails",
+                "Insects and Spiders, Butterflies, Moths",
+                "Insects and Spiders, Caddisflies, Sedge-flies or Rail-flies",
+                "Insects and Spiders, Cicadas, Aphids, Planthoppers, Leafhoppers, Shield Bugs",
+                "Insects and Spiders, Cockroaches, Termites",
+                "Insects and Spiders, Dragonflies, Damselflies",
+                "Insects and Spiders, Earwigs",
+                "Insects and Spiders, Fleas",
+                "Insects and Spiders, Flies, Mosquitoes",
+                "Insects and Spiders, Grasshoppers, Crickets, Locusts, Katydids, Weta, Lubber",
+                "Insects and Spiders, Lacewings, Mantidflies, Antlions",
+                "Insects and Spiders, Lice",
+                "Insects and Spiders, Mantises",
+                "Insects and Spiders, Mayflies, Shadlfies",
+                "Insects and Spiders, Scorpionflies, Hangingflies",
+                "Insects and Spiders, Silverfish",
+                "Insects and Spiders, Spiders",
+                "Insects and Spiders, Stick Insects, Phasmids",
+                "Insects and Spiders, Stoneflies",
+                "Insects and Spiders, Thrips",
+                "Insects and Spiders, Twisted-Wing Parasites",
+                "Insects and Spiders, Wasps, Ants, Bees, Sawflies",
+                "Insects and Spiders, Webspinners",
+                "Insects and Spiders, Zorapterans",
+                "Mammals",
+                "Mammals, Bandicoots, Bilbies",
+                "Mammals, Bats",
+                "Mammals, Carnivores",
+                "Mammals, Carnivorous Marsupials",
+                "Mammals, Dolphins, Porpoises, Whales",
+                "Mammals, Dugongs, Manatees, Sea Cows",
+                "Mammals, Even-toed hoofed",
+                "Mammals, Hares, Pikas, Rabbits",
+                "Mammals, Herbivorous Marsupials",
+                "Mammals, Marsupial Moles",
+                "Mammals, Monotremes",
+                "Mammals, Odd-toed hoofed",
+                "Mammals, Rodents",
+                "Mammals, Shrews, Hedgehogs",
+                "Molluscs",
+                "Molluscs, Chitons",
+                "Molluscs, Cuttlefish",
+                "Molluscs, Gastropods, Slugs, Snails",
+                "Molluscs, Mussels, Clams",
+                "Molluscs, Solenogasters",
+                "Molluscs, Tooth Shells",
+                "Plants",
+                "Plants, Conifers, Cycads",
+                "Plants, Dicots",
+                "Plants, Ferns and Allies",
+                "Plants, Flowering plants",
+                "Plants, Monocots",
+                "Reptiles",
+                "Reptiles, Crocodiles",
+                "Reptiles, Lizards, Snakes",
+                "Reptiles, Tortoises, Turtles, Terrapins"
+            ]
+        }
+    ],
+    "modelName": "ALA Single Sighting",
+    "record": "true",
+    "viewModel": [
+        {
+            "title": "Species",
+            "items": [
+                {
+                    "items": [{
+                        "source": "species",
+                        "computed": null,
+                        "inline": true,
+                        "preLabel": "Species name",
+                        "preLabelClass": "span4",
+                        "type": "speciesSearchWithImagePreview",
+                        "dataClass": "span8"
+                    }],
+                    "computed": null,
+                    "type": "row"
                 },
                 {
-                  "type": "row",
-                  "items": [
-                    {
-                      "type": "col",
-                      "items": [
-                        {
-                          "preLabel": "Individuals",
-                          "preLabelClass": "span4",
-                          "dataClass": "span8",
-                          "inline": true,
-                          "computed": null,
-                          "source": "individualCount",
-                          "type": "number"
-                        }
-                      ]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "type": "col",
-              "items": [
+                    "items": [{
+                        "source": "tags",
+                        "computed": null,
+                        "inline": true,
+                        "preLabel": "Identification tags",
+                        "preLabelClass": "span4",
+                        "type": "wordCloud",
+                        "dataClass": "span8"
+                    }],
+                    "computed": null,
+                    "type": "row"
+                },
                 {
-                  "preLabel": "Notes",
-                  "preLabelClass": "span4",
-                  "dataClass": "span8",
-                  "inline": true,
-                  "computed": null,
-                  "source": "notes",
-                  "rows": 5,
-                  "type": "textarea"
+                    "items": [{
+                        "source": "identificationConfidence",
+                        "computed": null,
+                        "inline": true,
+                        "preLabel": "Are you confident of the species identification?",
+                        "preLabelClass": "span4",
+                        "type": "selectOne",
+                        "dataClass": "span8"
+                    }],
+                    "computed": null,
+                    "type": "row"
                 }
-              ]
-            }
-          ]
+            ],
+            "boxed": true,
+            "class": "",
+            "type": "section"
+        },
+        {
+            "title": "Images",
+            "items": [{
+                "items": [{
+                    "source": "sightingPhoto",
+                    "computed": null,
+                    "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
+                    "type": "image"
+                }],
+                "computed": null,
+                "type": "row"
+            }],
+            "boxed": true,
+            "class": "",
+            "type": "section"
+        },
+        {
+            "title": "Location",
+            "items": [{
+                "items": [{
+                    "includeSource": true,
+                    "orientation": "horizontal",
+                    "includeNotes": true,
+                    "hideSiteSelection": true,
+                    "source": "location",
+                    "computed": null,
+                    "autoLocalitySearch": true,
+                    "type": "geoMap",
+                    "includeAccuracy": true,
+                    "readonly": false,
+                    "includeLocality": true
+                }],
+                "computed": null,
+                "type": "row"
+            }],
+            "boxed": true,
+            "class": "",
+            "type": "section"
+        },
+        {
+            "title": "Details",
+            "items": [{
+                "items": [
+                    {
+                        "items": [
+                            {
+                                "items": [{
+                                    "items": [{
+                                        "source": "surveyDate",
+                                        "computed": null,
+                                        "inline": true,
+                                        "preLabel": "Date",
+                                        "preLabelClass": "span4",
+                                        "type": "date",
+                                        "dataClass": "span8"
+                                    }],
+                                    "type": "col"
+                                }],
+                                "type": "row"
+                            },
+                            {
+                                "items": [{
+                                    "items": [{
+                                        "source": "surveyStartTime",
+                                        "computed": null,
+                                        "inline": true,
+                                        "preLabel": "Time",
+                                        "preLabelClass": "span4",
+                                        "type": "time",
+                                        "dataClass": "span8"
+                                    }],
+                                    "type": "col"
+                                }],
+                                "type": "row"
+                            },
+                            {
+                                "items": [{
+                                    "items": [{
+                                        "source": "individualCount",
+                                        "computed": null,
+                                        "inline": true,
+                                        "preLabel": "Individuals",
+                                        "preLabelClass": "span4",
+                                        "type": "number",
+                                        "dataClass": "span8"
+                                    }],
+                                    "type": "col"
+                                }],
+                                "type": "row"
+                            }
+                        ],
+                        "type": "col"
+                    },
+                    {
+                        "items": [{
+                            "source": "notes",
+                            "computed": null,
+                            "inline": true,
+                            "preLabel": "Notes",
+                            "preLabelClass": "span4",
+                            "type": "textarea",
+                            "dataClass": "span8",
+                            "rows": 5
+                        }],
+                        "type": "col"
+                    }
+                ],
+                "type": "row"
+            }],
+            "boxed": true,
+            "type": "section"
         }
-      ]
-    }
-  ],
-  "class": ""
+    ]
 }
