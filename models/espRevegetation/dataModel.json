@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Revegetation",
+  "title":"Revegetation",
   "dataModel":[
     {
       "name":"undertakeRevegetationActivities",

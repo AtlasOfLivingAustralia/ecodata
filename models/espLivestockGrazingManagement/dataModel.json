@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Livestock Grazing Management",
+  "title":"ESP Livestock Grazing Management",
   "dataModel":[
     {
       "name":"isManagementAction",

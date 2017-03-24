@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Native Herbivore Management",
+  "title":"Native Herbivore Management",
   "dataModel":[
     {
       "name":"undertakeNativeSpeciesMonitoring",

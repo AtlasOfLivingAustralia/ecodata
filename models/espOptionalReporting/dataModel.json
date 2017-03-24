@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Optional Reporting",
+  "title":"Optional Reporting",
   "dataModel":[
     {
       "dataType": "document",

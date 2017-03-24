@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Biomass Control Measures",
+  "title":"Biomass Control Measures",
   "dataModel":[
     {
       "name":"undertakeBiomassControl",

@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Restoration of Habitat",
+  "title":"Restoration of Habitat",
   "dataModel":[
     {
       "name":"undertakeHabitatRestoration",

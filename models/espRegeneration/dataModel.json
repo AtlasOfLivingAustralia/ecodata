@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Regeneration",
+  "title":"Regeneration",
   "dataModel":[
     {
       "name":"regenerationObserved",

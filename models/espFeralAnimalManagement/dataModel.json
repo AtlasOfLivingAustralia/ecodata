@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Feral Animal Management",
+  "title":"Feral Animal Management",
   "dataModel": [
     {
       "dataType": "text",
