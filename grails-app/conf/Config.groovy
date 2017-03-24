@@ -626,7 +626,13 @@ environments {
         app.elasticsearch.indexOnGormEvents = true
     }
     test {
-        rails.logging.jul.usebridge = true
+        // Override disk store so the travis build doesn't fail.
+        grails.cache.config = {
+            diskStore {
+                path '/tmp'
+            }
+        }
+        grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
@@ -725,7 +731,7 @@ log4j = {
             'grails.app.filters.au.org.ala.ecodata'
     ]
 
-    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata'
+    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
