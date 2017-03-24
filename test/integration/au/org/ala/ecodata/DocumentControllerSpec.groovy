@@ -17,11 +17,11 @@ class DocumentControllerSpec extends IntegrationSpec {
     def cleanup() {
     }
 
-    void "test create xml document"() {
+    void "test create document"() {
 
         setup:
             def doc = [projectId:'TestARoo', name:'Test Document', filename:'ehcache.xml', role:'Information', dynamicProperty:'dynamicProperty']
-            MockMultipartFile file = new MockMultipartFile("files", "ehcache.xml", "application/xml", getClass().getResourceAsStream('/ehcache.xml'))
+            MockMultipartFile file = new MockMultipartFile("files", "alaLogo.jpg", "image/jpg", getClass().getResourceAsStream('/resources/alaLogo.jpg'))
             documentController.request.addFile(file)
             documentController.request.addParameter('document', (doc as JSON).toString())
 
