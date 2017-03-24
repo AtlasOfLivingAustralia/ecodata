@@ -54,6 +54,7 @@
           "source": "habitatRestoration",
           "title": "If “Yes”, pleased complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"habitatFeature",

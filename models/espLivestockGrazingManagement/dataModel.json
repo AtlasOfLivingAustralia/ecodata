@@ -119,6 +119,7 @@
           "source": "grazingPeriods",
           "title": "Please record all grazing periods for this site:",
           "type": "table",
+          "userAddedRows": true,
           "allowHeaderWrap":true,
           "columns":[
             {

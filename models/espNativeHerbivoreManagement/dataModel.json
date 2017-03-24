@@ -85,6 +85,7 @@
           "source": "nativeSpeciesMonitoring",
           "title": "If “Yes”, please complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"species",

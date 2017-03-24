@@ -95,6 +95,7 @@
           "source": "weedManagement",
           "title": "If “Yes”, please complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"species",

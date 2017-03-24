@@ -61,6 +61,7 @@
           "source": "fencing",
           "title": "<i>Please note that this section also applies to repairs made to existing fencing.</i>",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"fenceType",

@@ -60,6 +60,7 @@
           "source": "biomassControl",
           "title": "",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"controlType",

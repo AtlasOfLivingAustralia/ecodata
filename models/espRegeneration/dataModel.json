@@ -40,6 +40,7 @@
           "source": "regeneration",
           "title": "If “Yes”, please complete the following: ",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"species",

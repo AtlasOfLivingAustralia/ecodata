@@ -180,6 +180,7 @@
       "items":[{
         "source": "nativeAnimalsAndInsects",
         "type": "table",
+        "userAddedRows": true,
         "title":"Please check the boxes below for animals or insects observed on your Environmental Stewardship site.",
         "columns": [
           {
@@ -220,6 +221,7 @@
       "items":[{
         "source": "nativePlants",
         "type": "table",
+        "userAddedRows": true,
         "title":"Please check the boxes below for native plants observed on your Environmental Stewardship site.",
         "columns": [
           {

@@ -116,6 +116,7 @@
               "type": "number"
             }
           ],
+          "userAddedRows": true,
           "type": "table"
         }
       ],
