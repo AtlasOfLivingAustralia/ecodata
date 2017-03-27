@@ -20,8 +20,9 @@
           "description": "",
           "name": "habitatFeature",
           "constraints": [
-            "Feature 1",
-            "Features 2"
+            "Course woody debris",
+            "Corrugated tin",
+            "Plantings"
           ]
         },
         {

@@ -36,16 +36,29 @@
           "dataType": "stringList",
           "name": "managementActions",
           "constraints": [
-            "Action 1",
-            "Action 2",
-            "Action 3",
-            "Action 4"
+            "Bait & trap",
+            "Bait only",
+            "Biological control agents",
+            "Exclusion fencing",
+            "Fumigation",
+            "Mustering",
+            "Nil",
+            "Trap & cull",
+            "Trap & remove"
           ],
           "validate": "required"
         },
         {
           "dataType": "text",
-          "name": "managementReason"
+          "name": "managementReason",
+          "constraints":[
+            "Excessive grazing",
+            "Excessive population",
+            "Land degradation",
+            "Nil",
+            "Predation",
+            "Removal of feral animals"
+          ]
         },
         {
           "dataType": "number",
