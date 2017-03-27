@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Native Herbivore Management",
+  "title":"Native Herbivore Management",
   "dataModel":[
     {
       "name":"undertakeNativeSpeciesMonitoring",
@@ -17,8 +18,13 @@
         {
           "name":"species",
           "description":"",
-          "dataType":"species",
-          "validate":"required"
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Grey Kangaroo",
+            "Red Kangaroo",
+            "Wallaby"
+          ]
         },
         {
           "name":"season",
@@ -35,16 +41,22 @@
           "name":"managementActions",
           "dataType":"stringList",
           "constraints": [
-            "Action 1",
-            "Action 2",
-            "Action 3",
-            "Action 4"
+            "Biological control agent",
+            "Exclusion fencing",
+            "Nil",
+            "Spotlight cull"
           ],
           "validate": "required"
         },
         {
           "name":"managementReason",
-          "dataType":"text"
+          "dataType":"text",
+          "constraints": [
+            "Excessive grazing",
+            "Excessive population",
+            "Land degradation",
+            "Nil"
+          ]
         },
         {
           "name":"noCulled",
@@ -85,11 +97,12 @@
           "source": "nativeSpeciesMonitoring",
           "title": "If “Yes”, please complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"species",
               "title":"Species",
-              "type":"autocomplete"
+              "type":"selectOne"
             },
             {
               "source":"season",

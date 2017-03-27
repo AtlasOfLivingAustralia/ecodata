@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Livestock Grazing Management",
+  "title":"ESP Livestock Grazing Management",
   "dataModel":[
     {
       "name":"isManagementAction",
@@ -37,30 +38,67 @@
         },
         {
           "name":"swardHeight",
-          "dataType":"text",
+          "dataType":"number",
           "description":"",
-          "validate":"required",
-          "constraints":[]
+          "validate":"required"
         },
         {
           "name":"typeOfStock",
           "dataType":"text",
           "description":"",
-          "constraints":[],
+          "constraints":[
+            "Cattle",
+            "Sheep",
+            "Goats",
+            "Horses"
+          ],
           "validate":"required"
         },
         {
           "name":"productionType",
           "dataType":"text",
           "description":"",
-          "constraints":[],
+          "constraints":[
+            "Dairy",
+            "Meat",
+            "Wool",
+            "Fibre"
+          ],
           "validate":"required"
         },
         {
           "name":"growthStage",
           "dataType":"text",
           "description":"",
-          "constraints":[],
+          "constraints":[
+            "Bull",
+            "Calf",
+            "Cow",
+            "Cow - Pregnant",
+            "Heifer",
+            "Steer",
+            "Weanling",
+            "Ewe",
+            "Ewe - Pregnant",
+            "Hoggart",
+            "Lamb",
+            "Ram",
+            "Wether",
+            "Buck",
+            "Weaner",
+            "Doe",
+            "Doe - Pregnant",
+            "Kid",
+            "Colt",
+            "Filly",
+            "Foal",
+            "Gelding",
+            "Mare",
+            "Mare - Pregnant",
+            "Stallion",
+            "Yearling"
+
+          ],
           "validate":"required"
         },
         {
@@ -72,7 +110,10 @@
         {
           "name":"breed",
           "dataType":"text",
-          "description":""
+          "description":"",
+          "constraints":[
+
+          ]
         }
       ]
     },
@@ -119,6 +160,7 @@
           "source": "grazingPeriods",
           "title": "Please record all grazing periods for this site:",
           "type": "table",
+          "userAddedRows": true,
           "allowHeaderWrap":true,
           "columns":[
             {
@@ -133,7 +175,7 @@
             },
             {
               "source":"swardHeight",
-              "type":"text",
+              "type":"number",
               "title":"Sward Height at end of grazing period:"
             },
             {

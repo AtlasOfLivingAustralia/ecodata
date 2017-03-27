@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Fencing",
+  "title":"Fencing",
   "dataModel":[
     {
       "name":"undertakeFencing",
@@ -16,25 +17,26 @@
       "columns": [
         {
           "dataType": "text",
-          "description": "The type of fence erected",
-          "name": "fenceType",
+          "description": "The type of fencing activity",
+          "name": "fenceActivityType",
           "constraints": [
-            "Cyclone",
-            "Post & Wire (plain wire, barbed, or plain & barbed) - electrified",
-            "Post & Wire (plain wire, barbed, or plain & barbed) - non-electrified",
-            "Post & Netting (net or ringlock) - electified",
-            "Post & Netting (net or ringlock) - non-electified",
-            "Post & Rail",
-            "Solid Sheet (pailing, pickets, sheet metal, etc.)",
-            "None",
-            "Other (specify in notes)"
+            "Extension of existing fence line",
+            "Repairs to existing fence line",
+            "New fencing"
           ]
         },
         {
           "dataType": "text",
           "description": "",
           "name": "fencePurpose",
-          "validate": "required"
+          "validate": "required",
+          "constraints":[
+            "Exclusion of feral herbivores",
+            "Exclusion of livestock",
+            "Exclusion of native herbivores",
+            "Marking a boundary",
+            "Protection of paddock tree"
+          ]
         },
         {
           "name":"cost",
@@ -61,10 +63,11 @@
           "source": "fencing",
           "title": "<i>Please note that this section also applies to repairs made to existing fencing.</i>",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
-              "source":"fenceType",
-              "title":"Type of Fencing",
+              "source":"fenceActivityType",
+              "title":"Type of Fencing Activity",
               "type":"selectOne"
             },
             {

@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Biomass Control Measures",
+  "title":"Biomass Control Measures",
   "dataModel":[
     {
       "name":"undertakeBiomassControl",
@@ -19,16 +20,23 @@
           "description": "The type of biomass control",
           "name": "controlType",
           "constraints": [
-            "Type 1",
-            "Type 2",
-            "type 3"
+            "Thinning",
+            "Small scale ecological burns",
+            "Slashing / mowing",
+            "Grazing"
           ]
         },
         {
           "dataType": "text",
           "description": "",
           "name": "controlPurpose",
-          "validate": "required"
+          "validate": "required",
+          "constraints":[
+            "Reduction of fire risks",
+            "Reduction of single species dominance",
+            "Removal of feral habitat",
+            "Weed control"
+          ]
         },
         {
           "dataType":"number",
@@ -60,6 +68,7 @@
           "source": "biomassControl",
           "title": "",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"controlType",
