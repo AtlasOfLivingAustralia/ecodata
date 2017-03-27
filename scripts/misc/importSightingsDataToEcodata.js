@@ -297,7 +297,7 @@ while (records.hasNext()) {
                 comments: record.occurrenceRemarks,
                 recordedBy: record.recordedBy,
                 locationLocality: record.locality,
-                individualCount: record.individualCount,
+                individualCount: record.individualCount || 1,
                 surveyDate: record.eventDate,
                 notes: '',
                 sightingPhoto: sightingPhoto

@@ -34,6 +34,8 @@ class Hub {
     Map templateConfiguration
     /** hide bread crumbs **/
     Boolean hideBreadCrumbs = false
+    /** hide project and survey name on record list pages like all records, my records etc. **/
+    Boolean hideProjectAndSurvey = false
     /** quick links to Biocollect pages that appeared on certain pages like create record, view record etc. */
     List quickLinks
 
