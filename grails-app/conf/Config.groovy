@@ -585,14 +585,34 @@ if (!authCheckKeyUrl) {
     authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
 }
 
+
 if (!grails.cache.ehcache) {
     grails {
         cache {
+            enabled = true
             ehcache {
                 cacheManagerName = appName + '-ehcache'
-                reloadable = false
+                reloadable = true
+                diskStore = '/data/${appName}/ehcache'
             }
         }
+    }
+}
+grails.cache.config = {
+
+    provider {
+        name "${appName}-ehcache"
+    }
+    diskStore {
+        path "/data/${appName}/ehcache"
+    }
+    cache {
+        name 'userDetailsCache'
+        timeToLiveSeconds 60 * 60 * 24
+        maxElementsInMemory 2000
+        maxElementsOnDisk 2000
+        overflowToDisk true
+        diskPersistent true
     }
 }
 
@@ -606,7 +626,13 @@ environments {
         app.elasticsearch.indexOnGormEvents = true
     }
     test {
-        rails.logging.jul.usebridge = true
+        // Override disk store so the travis build doesn't fail.
+        grails.cache.config = {
+            diskStore {
+                path '/tmp'
+            }
+        }
+        grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
         app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
@@ -705,7 +731,7 @@ log4j = {
             'grails.app.filters.au.org.ala.ecodata'
     ]
 
-    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata'
+    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
