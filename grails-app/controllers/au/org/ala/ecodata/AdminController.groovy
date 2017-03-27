@@ -5,6 +5,7 @@ import grails.converters.JSON
 import grails.util.Environment
 import groovy.json.JsonSlurper
 import org.apache.http.HttpStatus
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
@@ -13,6 +14,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver
 import java.text.SimpleDateFormat
 
 import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
+import static au.org.ala.ecodata.Status.DELETED
 import static groovyx.gpars.actor.Actors.actor
 
 class AdminController {
@@ -635,6 +637,35 @@ class AdminController {
     @AlaSecured("ROLE_ADMIN")
     def deleteScore(String id) {
         respond metadataService.deleteScore(id, params.getBoolean('destroy', false))
+    }
+
+    @AlaSecured("ROLE_ADMIN")
+    def searchScores() {
+
+        def searchCriteria = request.JSON
+        def max = searchCriteria.remove('max') as Integer
+        def offset = searchCriteria.remove('offset') as Integer
+        String sort = searchCriteria.remove('sort')
+        String order = searchCriteria.remove('order')
+
+        BuildableCriteria criteria = Score.createCriteria()
+        List scores = criteria.list(max:max ?: 1000, offset:offset) {
+            ne("status", DELETED)
+            searchCriteria.each { prop,value ->
+
+                if (value instanceof List) {
+                    inList(prop, value)
+                }
+                else {
+                    eq(prop, value)
+                }
+            }
+            if (sort) {
+                order(sort, orderBy?:'asc')
+            }
+
+        }
+        [scores:scores, count:scores.totalCount]
     }
 
 
