@@ -221,7 +221,7 @@ while (records.hasNext()) {
             var imageDocument = {};
             var licence = "";
             if (image.license == 'Creative Commons Attribution') {
-                licence = "CC BY"
+                licence = "CC BY 3.0"
             } else if (image.licence == 'Creative Commons Attribution-Noncommercial') {
                 licence = "CC BY-NC"
             } else if (image.licence == 'Creative Commons Attribution-Share Alike') {

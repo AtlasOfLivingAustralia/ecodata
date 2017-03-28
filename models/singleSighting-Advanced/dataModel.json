@@ -30,8 +30,7 @@
             "dataType": "species",
             "description": "The species name of the plant, animal or fungus observed. Click on the 'i' for information about the selected species.",
             "name": "species",
-            "dwcAttribute": "scientificName",
-            "validate": "required"
+            "dwcAttribute": "scientificName"
         },
         {
             "dataType": "number",
@@ -59,8 +58,7 @@
         {
             "dataType": "image",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
-            "name": "sightingPhoto",
-            "validate": "required"
+            "name": "sightingPhoto"
         },
         {
             "dataType": "geoMap",
