@@ -27,7 +27,7 @@
         </div>
     </body>
 </html>
-<r:script>
+<asset:script>
 
     $(document).ready(function() {
         $("#btnFindProject").click(function(e) {
@@ -52,4 +52,4 @@
         }
     }
 
-</r:script>
+</asset:script>

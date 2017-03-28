@@ -4,11 +4,11 @@
 <head>
     <meta name="layout" content="adminLayout"/>
     <title>Programs model | Admin</title>
-    <r:script disposition="head">
+    <script type="text/javascript">
         var fcConfig = {
             updateProgramsModelUrl:"${createLink(action: 'updateProgramsModel')}"
         };
-    </r:script>
+    </script>
 </head>
 
 <body>
@@ -115,7 +115,7 @@
 
 </form>
 
-<r:script>
+<asset:script type="text/javascript">
     $(function(){
 
         $('#validationContainer').validationEngine();
@@ -128,6 +128,6 @@
         var viewModel = new ProgramModelViewModel(programsModel, activityTypes, options);
         ko.applyBindings(viewModel);
     });
-</r:script>
+</asset:script>
 </body>
 </html>

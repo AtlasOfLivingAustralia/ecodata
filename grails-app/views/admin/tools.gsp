@@ -7,7 +7,7 @@
     </head>
 
     <body>
-        <script type="text/javascript">
+        <asset:script>
 
             $(document).ready(function() {
 
@@ -55,7 +55,7 @@
                 });
 
             });
-        </script>
+        </asset:script>
         <content tag="pageTitle">Tools</content>
         <table class="table table-bordered table-striped">
             <thead>

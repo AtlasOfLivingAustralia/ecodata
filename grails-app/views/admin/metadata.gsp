@@ -39,7 +39,7 @@
             </tbody>
         </table>
 
-        <r:script>
+        <asset:script>
             $(function(){
                 $('#activitiesMetadata').html(vkbeautify.json(${activitiesMetadata},2));
 
@@ -88,6 +88,6 @@
                     $viewBtns.show();
                 }
             });
-        </r:script>
+        </asset:script>
     </body>
 </html>

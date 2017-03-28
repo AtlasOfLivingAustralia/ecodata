@@ -57,7 +57,7 @@
 
 
 
-<r:script type="text/javascript">
+<asset:script>
 
     var ScoreConfigurationModel = function(configuration) {
 
@@ -109,6 +109,6 @@
     var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl+'.json'});
     ko.applyBindings(model);
 
-</r:script>
+</asset:script>
    </body>
 </html>

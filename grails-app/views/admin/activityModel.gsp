@@ -4,12 +4,12 @@
 <head>
     <meta name="layout" content="adminLayout"/>
     <title>Activity model - Admin - Data capture - Atlas of Living Australia</title>
-    <r:script disposition="head">
+    <script>
         var fcConfig = {
             activityModelUpdateUrl:"${createLink(action: 'updateActivitiesModel')}",
             outputDataModelUrl: "${createLink(action: 'getOutputDataModel')}"
         };
-    </r:script>
+    </script>
 
 </head>
 
@@ -107,8 +107,7 @@
 <button data-bind="click:done" type="button" class="btn btn-mini pull-right">Done</button>
 </script>
 
-
-<r:script>
+<asset:script>
     $(function(){
         var options = {
             outputDataModelUrl: fcConfig.outputDataModelUrl,
@@ -117,6 +116,6 @@
         var viewModel = new ActivityModelViewModel(${activitiesModel}, options);
         ko.applyBindings(viewModel);
     });
-</r:script>
+</asset:script>
 </body>
 </html>

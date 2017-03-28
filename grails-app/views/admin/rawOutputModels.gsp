@@ -55,7 +55,7 @@
         </div>
     </g:if>
 
-<r:script>
+<asset:script>
     $(function(){
 
         var ViewModel = function () {
@@ -148,6 +148,6 @@
             $('#outputSelector').val(startWith).change();
         }
     });
-</r:script>
+</asset:script>
         </body>
 </html>

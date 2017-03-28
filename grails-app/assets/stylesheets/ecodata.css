@@ -1,3 +1,15 @@
+/**
+ * Manifest for the asset pipeline
+ *
+ *= require bootstrap
+ *= require bootstrap-responsive
+ *= require jquery.autocomplete
+ *
+ *= require bootstrap-datepicker/css/datepicker
+ *= require bootstrap-combobox/bootstrap-combobox
+ *-
+ */
+
 /* CSS for the API documentation */
 .property-name {width:15%;}
 .property-type {width:10%;}
