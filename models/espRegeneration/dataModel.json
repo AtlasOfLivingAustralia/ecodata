@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Regeneration",
+  "title":"Regeneration",
   "dataModel":[
     {
       "name":"regenerationObserved",
@@ -40,6 +41,7 @@
           "source": "regeneration",
           "title": "If “Yes”, please complete the following: ",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"species",

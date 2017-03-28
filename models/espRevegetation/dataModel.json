@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Revegetation",
+  "title":"Revegetation",
   "dataModel":[
     {
       "name":"undertakeRevegetationActivities",
@@ -132,6 +133,7 @@
           "source": "revegetation",
           "title": "If 'Yes', please complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "type": "selectOne",
@@ -165,6 +167,7 @@
           "source": "survival",
           "title": "If you have recorded revegetation in previous years, please fill in survival %:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "type": "selectOne",
@@ -206,6 +209,7 @@
           "source": "groundCover",
           "title": "Please fill out details for ground cover on your Environmental Stewardship site(s).",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "type": "selectOne",

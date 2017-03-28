@@ -1,5 +1,6 @@
 {
   "modelName":"ESP Restoration of Habitat",
+  "title":"Restoration of Habitat",
   "dataModel":[
     {
       "name":"undertakeHabitatRestoration",
@@ -19,8 +20,9 @@
           "description": "",
           "name": "habitatFeature",
           "constraints": [
-            "Feature 1",
-            "Features 2"
+            "Course woody debris",
+            "Corrugated tin",
+            "Plantings"
           ]
         },
         {
@@ -54,6 +56,7 @@
           "source": "habitatRestoration",
           "title": "If “Yes”, pleased complete the following:",
           "type": "table",
+          "userAddedRows": true,
           "columns":[
             {
               "source":"habitatFeature",
