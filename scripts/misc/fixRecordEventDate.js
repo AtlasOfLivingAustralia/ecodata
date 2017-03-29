@@ -1,7 +1,7 @@
 
 print ("Fixing record.eventDate with unwanted date format")
 
-use ecodata
+//use ecodata
 
 db.record.find(
     { eventDate: {$regex: /^(mon|tue|wed|thu|fri|sat|sun)/ , $options: "i"} },
