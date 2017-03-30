@@ -47,14 +47,21 @@
                             <li class="text-left"><input type="checkbox" name="optionalProjectContent" data-bind="value:$data, checked:$parent.optionalProjectContent"> <span data-bind="text:$data"></span></li>
                         </ul>
                     </div>
-                    <div><label data-toggle="collapse" data-bind="attr:{'data-target':'#activities-'+$index()}">Activities <span data-bind="text:'(' + activities().length + ' selected)'"></span></label></div>
-                    <div class="program-activities collapse" data-bind="attr:{id:'activities-'+$index()}">
+                    <div><label data-bind="click:toggleActivities">Activities <span data-bind="text:'(' + activities().length + ' selected)'"></span></label></div>
+                    <div class="program-activities" data-bind="visible:transients.showActivities">
                         <div data-bind="foreach:{data: $root.transients.activityTypes}">
                             <strong><span data-bind="text:name"></span></strong>
                             <ul class="unstyled" data-bind="foreach:list">
                                 <li><input type="checkbox" name="activity" data-bind="value:name,attr:{id:'activity'+$index()},checked:$parents[1].activities" data-validation-engine="validate[minCheckbox[1]]"> <span data-bind="text:name"></span></li>
                             </ul>
                         </div>
+                    </div>
+                    <div>
+                        <label data-bind="click:toggleSpeciesSettings">Activity species field settings</label>
+                    </div>
+
+                    <div data-bind="visible:transients.showSpeciesSettings">
+                        <textarea class="species-settings" data-bind="value:speciesFieldsSettings"></textarea>
                     </div>
                 </div>
             </li>
@@ -93,6 +100,13 @@
                                 <li><input type="checkbox" name="activity" data-bind="value:name,attr:{id:'activity'+$index()},checked:$parents[1].activities" data-validation-engine="validate[minCheckbox[1]]"> <span data-bind="text:name"></span></li>
                             </ul>
                         </div>
+                    </div>
+                    <div>
+                        <label data-bind="click:toggleSpeciesSettings">Activity species field settings</label>
+                    </div>
+
+                    <div data-bind="visible:transients.showSpeciesSettings">
+                        <textarea id="subprogram-species" class="species-settings" data-bind="value:speciesFieldsSettings"></textarea>
                     </div>
                 </div>
             </li>

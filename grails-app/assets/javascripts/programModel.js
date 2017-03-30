@@ -13,6 +13,7 @@ var ProgramModel = function (prg, model) {
     self.optionalProjectContent = ko.observableArray(prg.optionalProjectContent || []);
     self.weekDaysToCompleteReport = ko.observable(prg.weekDaysToCompleteReport);
     self.activities = ko.observableArray(prg.activities?prg.activities:[]);
+    self.speciesFieldsSettings = ko.observable(prg.speciesFieldsSettings);
     self.select = function () {
         model.transients.selectedProgram(this);
         model.transients.selectedSubprogram(undefined);
@@ -20,10 +21,22 @@ var ProgramModel = function (prg, model) {
     self.isSelected = ko.computed(function () {
         return self === model.transients.selectedProgram();
     });
+    self.transients = {};
+    self.transients.showActivities = ko.observable(false);
+    self.transients.showSpeciesSettings = ko.observable(false);
+
+    self.toggleSpeciesSettings = function() {
+        self.transients.showSpeciesSettings(!self.transients.showSpeciesSettings());
+    };
+    self.toggleActivities = function() {
+        self.transients.showActivities(!self.transients.showActivities());
+    };
+
     self.toJSON = function() {
         var js = ko.toJS(this);
         js.weekDaysToCompleteReport = Number(js.weekDaysToCompleteReport);
         delete js.isSelected;
+        delete js.transients;
         return js;
     }
 };
@@ -45,6 +58,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
     self.projectDatesContracted = ko.observable(subProgram.projectDatesContracted);
 
     self.activities = ko.observableArray(subProgram.activities || []);
+    self.speciesFieldsSettings = ko.observable(subProgram.speciesFieldsSettings);
 
     self.select = function () {
         model.transients.selectedSubprogram(this);
@@ -55,6 +69,15 @@ var SubprogramModel = function (subProgram, programModel, model) {
 
     self.transients = {};
     self.transients.showActivities = ko.observable(false);
+    self.transients.showSpeciesSettings = ko.observable(false);
+
+    self.transients.showSpeciesSettings = ko.observable(false);
+
+    self.toggleSpeciesSettings = function() {
+        self.transients.showSpeciesSettings(!self.transients.showSpeciesSettings());
+    };
+
+
     self.toggleActivities = function() {
         self.transients.showActivities(!self.transients.showActivities());
     };
