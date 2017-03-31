@@ -1,7 +1,7 @@
 
-print ("Fix record.eventDate ")
+print ("Fixing record.eventDate with unwanted date format")
 
-use ecodata
+//use ecodata
 
 db.record.find(
     { eventDate: {$regex: /^(mon|tue|wed|thu|fri|sat|sun)/ , $options: "i"} },
@@ -20,9 +20,23 @@ db.record.find(
     print ("Before: " + doc.eventDate + " After: " + isoDateString)
 
     // Comment out for a dry run
-
     db.record.update({"_id":doc._id},{$set:{"eventDate":isoDateString}} );
 
 } )
 
-print ("Finish ")
+print ("Fixing record.eventDate with invalid values")
+
+db.record.find(
+    { eventDate: {$regex: /^Invalid/  , $options: "i"} },
+    {eventDate:1}).forEach(function(doc) {
+
+    print ("Doc with invalid  eventDate: " + doc._id)
+
+    // Comment out for a dry run
+    db.record.update({"_id":doc._id},{$set:{"eventDate":null}} );
+
+} )
+
+
+
+print ("Finish")
