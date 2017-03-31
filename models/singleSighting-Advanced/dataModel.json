@@ -62,6 +62,7 @@
         },
         {
             "dataType": "geoMap",
+            "hideSiteSelection": true,
             "zoomToProjectArea": true,
             "defaultAccuracy": 50,
             "name": "location",
@@ -80,7 +81,8 @@
                 {"source": "Source"}
             ],
             "dwcAttribute": "verbatimCoordinates",
-            "validate": "required"
+            "validate": "required",
+            "hideMyLocation": true
         },
         {
             "dataType": "set",
@@ -246,13 +248,14 @@
     "viewModel": [
         {
             "title": "Species",
+            "boxed": true,
             "items": [
                 {
                     "items": [{
                         "source": "species",
-                        "computed": null,
-                        "inline": true,
                         "preLabel": "Species name",
+                        "inline": true,
+                        "computed": null,
                         "preLabelClass": "span4",
                         "type": "speciesSearchWithImagePreview",
                         "dataClass": "span8"
@@ -263,9 +266,9 @@
                 {
                     "items": [{
                         "source": "tags",
-                        "computed": null,
-                        "inline": true,
                         "preLabel": "Identification tags",
+                        "inline": true,
+                        "computed": null,
                         "preLabelClass": "span4",
                         "type": "wordCloud",
                         "dataClass": "span8"
@@ -276,9 +279,9 @@
                 {
                     "items": [{
                         "source": "identificationConfidence",
-                        "computed": null,
-                        "inline": true,
                         "preLabel": "Are you confident of the species identification?",
+                        "inline": true,
+                        "computed": null,
                         "preLabelClass": "span4",
                         "type": "selectOne",
                         "dataClass": "span8"
@@ -287,51 +290,51 @@
                     "type": "row"
                 }
             ],
-            "boxed": true,
             "class": "",
             "type": "section"
         },
         {
             "title": "Images",
+            "boxed": true,
             "items": [{
                 "items": [{
                     "source": "sightingPhoto",
-                    "computed": null,
                     "preLabel": "Optional. Add one or more images. Image metadata will be used to automatically set date and location fields (where available)",
+                    "computed": null,
                     "type": "image"
                 }],
                 "computed": null,
                 "type": "row"
             }],
-            "boxed": true,
             "class": "",
             "type": "section"
         },
         {
             "title": "Location",
+            "boxed": true,
             "items": [{
                 "items": [{
                     "includeSource": true,
-                    "orientation": "horizontal",
                     "includeNotes": true,
+                    "orientation": "horizontal",
                     "hideSiteSelection": true,
                     "source": "location",
                     "computed": null,
                     "autoLocalitySearch": true,
-                    "type": "geoMap",
                     "includeAccuracy": true,
+                    "type": "geoMap",
                     "readonly": false,
                     "includeLocality": true
                 }],
                 "computed": null,
                 "type": "row"
             }],
-            "boxed": true,
             "class": "",
             "type": "section"
         },
         {
             "title": "Details",
+            "boxed": true,
             "items": [{
                 "items": [
                     {
@@ -340,9 +343,9 @@
                                 "items": [{
                                     "items": [{
                                         "source": "surveyDate",
-                                        "computed": null,
-                                        "inline": true,
                                         "preLabel": "Date",
+                                        "inline": true,
+                                        "computed": null,
                                         "preLabelClass": "span4",
                                         "type": "date",
                                         "dataClass": "span8"
@@ -355,9 +358,9 @@
                                 "items": [{
                                     "items": [{
                                         "source": "surveyStartTime",
-                                        "computed": null,
-                                        "inline": true,
                                         "preLabel": "Time",
+                                        "inline": true,
+                                        "computed": null,
                                         "preLabelClass": "span4",
                                         "type": "time",
                                         "dataClass": "span8"
@@ -370,9 +373,9 @@
                                 "items": [{
                                     "items": [{
                                         "source": "individualCount",
-                                        "computed": null,
-                                        "inline": true,
                                         "preLabel": "Individuals",
+                                        "inline": true,
+                                        "computed": null,
                                         "preLabelClass": "span4",
                                         "type": "number",
                                         "dataClass": "span8"
@@ -387,9 +390,9 @@
                     {
                         "items": [{
                             "source": "notes",
-                            "computed": null,
-                            "inline": true,
                             "preLabel": "Notes",
+                            "inline": true,
+                            "computed": null,
                             "preLabelClass": "span4",
                             "type": "textarea",
                             "dataClass": "span8",
@@ -400,7 +403,6 @@
                 ],
                 "type": "row"
             }],
-            "boxed": true,
             "type": "section"
         }
     ]
