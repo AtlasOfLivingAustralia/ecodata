@@ -82,7 +82,7 @@
             ],
             "dwcAttribute": "verbatimCoordinates",
             "validate": "required",
-            "hideMyLocation": true
+            "hideMyLocation": false
         },
         {
             "dataType": "set",
