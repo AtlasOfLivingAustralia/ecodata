@@ -132,23 +132,6 @@
     </div>
 </div>
 
-<asset:javascript src="asset.js"/>
-
-<script type="text/javascript">
-    var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-    document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-</script>
-<asset:script>
-    var pageTracker = _gat._getTracker("UA-4355440-1");
-    pageTracker._initData();
-    pageTracker._trackPageview();
-
-    // show warning if using IE6
-    if ($.browser.msie && $.browser.version.slice(0,1) == '6') {
-        $('#header').prepend($('<div style="text-align:center;color:red;">WARNING: This page is not compatible with IE6.' +
-' Many functions will still work but layout and image transparency will be disrupted.</div>'));
-    }
-</asset:script>
 <asset:script type="text/javascript">
 
     $(document).ready(function (e) {
@@ -174,6 +157,19 @@
 <!-- JS resources-->
 <asset:javascript src="admin.js"/>
 <asset:deferredScripts/>
+
+
+<!-- Google Analytics -->
+<script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-4355440-1', 'auto');
+    ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
 
 </body>
 </html>
