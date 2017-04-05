@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
@@ -157,6 +158,30 @@ class ActivityService {
      */
     def countByProjectActivityId(pActivityId){
         Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    /**
+     * Count activity by project activity
+     * @param pActivityId Project Activity identifier
+     * @return activity count.
+     */
+    List getDistinctSitesForProjectActivity(pActivityId, status = ACTIVE) {
+
+        BuildableCriteria c = Activity.createCriteria()
+        def results = c.listDistinct {
+            projections {
+                property 'siteId'
+            }
+            eq("projectActivityId", pActivityId)
+            eq("status", status)
+            and{
+                ne("siteId", null)
+                ne("siteId", "")
+            }
+
+        }
+
+        results
     }
 
     /**

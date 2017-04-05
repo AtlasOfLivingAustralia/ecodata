@@ -174,9 +174,11 @@ class ProjectService {
             result.associatedOrgs?.each {
                 if (it.organisationId) {
                     Organisation org = Organisation.findByOrganisationId(it.organisationId)
-                    it.name = org.name
-                    it.url = org.url
-                    it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
+                    if(org){
+                        it.name = org.name
+                        it.url = org.url
+                        it.logo = Document.findByOrganisationIdAndRoleAndStatus(it.organisationId, "logo", ACTIVE)?.thumbnailUrl
+                    }
                 }
             }
         }
