@@ -1,3 +1,5 @@
+
+
 var ProgramModel = function (prg, model) {
     var self = this;
     self.name = ko.observable(prg.name);
@@ -13,7 +15,7 @@ var ProgramModel = function (prg, model) {
     self.optionalProjectContent = ko.observableArray(prg.optionalProjectContent || []);
     self.weekDaysToCompleteReport = ko.observable(prg.weekDaysToCompleteReport);
     self.activities = ko.observableArray(prg.activities?prg.activities:[]);
-    self.speciesFieldsSettings = ko.observable(prg.speciesFieldsSettings);
+    self.speciesFieldsSettings = ko.observable().extend({jsonText:prg.speciesFieldsSettings});
     self.select = function () {
         model.transients.selectedProgram(this);
         model.transients.selectedSubprogram(undefined);
@@ -35,6 +37,7 @@ var ProgramModel = function (prg, model) {
     self.toJSON = function() {
         var js = ko.toJS(this);
         js.weekDaysToCompleteReport = Number(js.weekDaysToCompleteReport);
+        js.speciesFieldsSettings = self.speciesFieldsSettings.toJSON();
         delete js.isSelected;
         delete js.transients;
         return js;
@@ -58,7 +61,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
     self.projectDatesContracted = ko.observable(subProgram.projectDatesContracted);
 
     self.activities = ko.observableArray(subProgram.activities || []);
-    self.speciesFieldsSettings = ko.observable(subProgram.speciesFieldsSettings);
+    self.speciesFieldsSettings = ko.observable().extend({jsonText:subProgram.speciesFieldsSettings});
 
     self.select = function () {
         model.transients.selectedSubprogram(this);
@@ -104,6 +107,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
         if (js.weekDaysToCompleteReport) {
             js.weekDaysToCompleteReport = Number(js.weekDaysToCompleteReport);
         }
+        js.speciesFieldsSettings = self.speciesFieldsSettings.toJSON();
         delete js.isSelected;
         delete js.transients;
         return js;
