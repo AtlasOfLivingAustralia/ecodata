@@ -3,7 +3,6 @@
 <head>
     <meta name="layout" content="api"/>
     <title>MERIT API - POST /ws/external/draft/getProjectDetails</title>
-    <r:require modules="application, app_bootstrap, vkbeautify"/>
 </head>
 
 <body>

@@ -1,5 +1,4 @@
 
-<r:require module="vkbeautify"/>
 <g:if test="${!omitDescription}">
 <strong>Description</strong>
 <p>
@@ -22,10 +21,10 @@
                 </pre>
                 <g:if test="${overview}">
 
-                    <script>
+                    <asset:script>
                         $(function(){$('#overview pre').text(vkbeautify.json('${overview as grails.converters.JSON}'));});
 
-                    </script>
+                    </asset:script>
                 </g:if>
             </div>
         </div>
@@ -51,13 +50,13 @@
             ${(object as grails.converters.JSON).toString(true)}
         </pre>
 
-        <script>
+        <asset:script>
 
             $(function(){
                 var schema = ${object as grails.converters.JSON};
                 $('#schema pre').text(vkbeautify.json(schema));});
 
-        </script>
+        </asset:script>
     </div>
     <div class="tab-pane" id="example">
         <pre>
@@ -65,12 +64,12 @@
         </pre>
 
         <g:if test="${example}">
-            <script>
+            <asset:script>
                 $(function(){
                     var example = ${example as grails.converters.JSON};
                     $('#example pre').text(vkbeautify.json(example));
                 });
-            </script>
+            </asset:script>
         </g:if>
 
     </div>

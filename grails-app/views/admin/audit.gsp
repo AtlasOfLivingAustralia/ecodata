@@ -12,5 +12,3 @@
         <a class="btn" href="${createLink(controller:'admin', action:'auditMessagesByProject')}">Messages by Project</a>
     </body>
 </html>
-<r:script>
-</r:script>

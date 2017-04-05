@@ -18,6 +18,3 @@
         <g:render template="auditMessageTable" />
     </body>
 </html>
-
-<r:script>
-</r:script>

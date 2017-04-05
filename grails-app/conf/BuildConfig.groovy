@@ -49,6 +49,7 @@ grails.project.dependency.resolution = {
         compile "org.geotools:gt-epsg-hsql:${geoToolsVersion}"
 
         compile "org.imgscalr:imgscalr-lib:${imgscalrVersion}"
+        compile "com.drewnoakes:metadata-extractor:2.10.1"
         compile "org.apache.poi:ooxml-schemas:1.0"
 
         compile 'org.codehaus.jackson:jackson-core-asl:1.9.13'
@@ -66,7 +67,12 @@ grails.project.dependency.resolution = {
 
     plugins {
         runtime ":jquery:1.11.1"
-        runtime ":resources:1.2.8"
+        compile ":asset-pipeline:2.13.1"
+        // Uncomment these to enable additional asset-pipeline capabilities
+        //compile ":sass-asset-pipeline:2.13.1"
+        //compile ":less-asset-pipeline:2.13.1"
+        //compile ":coffee-asset-pipeline:2.13.1"
+        //compile ":handlebars-asset-pipeline:2.13.1"
         runtime ":csv:0.3.1"
         runtime ":ala-auth:1.3.1"
         runtime ":ala-bootstrap2:1.2"
