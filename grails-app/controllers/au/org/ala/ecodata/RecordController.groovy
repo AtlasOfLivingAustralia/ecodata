@@ -40,6 +40,7 @@ class RecordController {
      * @param sort = asc | desc
      *
      */
+    @PreAuthorise
     def listHarvestDataResource() {
         def result, error
         try {
@@ -89,6 +90,7 @@ class RecordController {
      * @param status = active | deleted | default:active
      *
      */
+    @PreAuthorise
     def listRecordsForDataResourceId (){
         def result = [], error, project
         Date lastUpdated = null
