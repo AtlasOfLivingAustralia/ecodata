@@ -44,7 +44,7 @@ class RecordController {
     def listHarvestDataResource() {
         def result, error
         try {
-            if (params.max && params.max?.isNumber()) {
+            if (params.max && !params.max?.isNumber()) {
                 error = "Invalid parameter max"
             } else if (params.offset && !params.offset?.isNumber()) {
                 error = "Invalid parameter offset"
