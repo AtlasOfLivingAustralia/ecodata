@@ -102,7 +102,7 @@
             {
               "title": "Species",
               "source": "species",
-              "type": "autocomplete"
+              "type": "speciesSelect"
             },
             {
               "title": "Season observed / managed",

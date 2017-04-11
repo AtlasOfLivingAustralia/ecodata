@@ -70,35 +70,67 @@
           "name":"growthStage",
           "dataType":"text",
           "description":"",
-          "constraints":[
-            "Bull",
-            "Calf",
-            "Cow",
-            "Cow - Pregnant",
-            "Heifer",
-            "Steer",
-            "Weanling",
-            "Ewe",
-            "Ewe - Pregnant",
-            "Hoggart",
-            "Lamb",
-            "Ram",
-            "Wether",
-            "Buck",
-            "Weaner",
-            "Doe",
-            "Doe - Pregnant",
-            "Kid",
-            "Colt",
-            "Filly",
-            "Foal",
-            "Gelding",
-            "Mare",
-            "Mare - Pregnant",
-            "Stallion",
-            "Yearling"
+          "constraints": {
+            "type": "computed",
+            "options":[{
+              "expression":"typeOfStock == \"Cattle\"",
+              "constraints":[
+                "Bull",
+                "Calf",
+                "Cow",
+                "Cow - Pregnant",
+                "Heifer",
+                "Steer",
+                "Weanling"]
+              },
+              {
+                "expression":"typeOfStock == \"Sheep\"",
+                "constraints":[
+                  "Ewe",
+                  "Ewe - Pregnant",
+                  "Hoggart",
+                  "Lamb",
+                  "Ram",
+                  "Wether"]
+              },
+              {
+                "expression":"typeOfStock == \"Goats\"",
+                "constraints":[
+                  "Buck",
+                  "Weaner",
+                  "Doe",
+                  "Doe - Pregnant",
+                  "Kid"]
+              },
+              {
+                "expression":"typeOfStock == \"Horses\"",
+                "constraints":[
+                  "Colt",
+                  "Filly",
+                  "Foal",
+                  "Gelding",
+                  "Mare",
+                  "Mare - Pregnant",
+                  "Stallion",
+                  "Yearling"]
+              }
+            ],
+            "default":[]
+          },
+          "behaviour":[
+            {
+              "type":"enable",
+              "condition":"isManagementAction == \"Yes\""
+            },
+            {
+              "type":"options",
+              "condition":"",
+              "options":[]
+            }
 
           ],
+
+
           "validate":"required"
         },
         {
