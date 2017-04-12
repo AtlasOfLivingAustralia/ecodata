@@ -101,7 +101,7 @@
             {
               "source":"species",
               "title":"Species",
-              "type":"autocomplete"
+              "type":"speciesSelect"
             },
             {
               "source":"treatmentMethod",
