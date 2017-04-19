@@ -96,37 +96,45 @@
           "source": "weedManagement",
           "title": "If “Yes”, please complete the following:",
           "type": "table",
+          "fixedWidth":true,
           "userAddedRows": true,
           "columns":[
             {
               "source":"species",
               "title":"Species",
-              "type":"speciesSelect"
+              "type":"speciesSelect",
+              "width":"30%"
+
             },
             {
               "source":"treatmentMethod",
               "title":"Treatment Method",
-              "type":"selectOne"
+              "type":"select2",
+              "width":"30%"
             },
             {
               "source":"weedAreaTreatedHa",
               "type":"number",
-              "title":"Approximate area treated (Ha)"
+              "title":"Approximate area treated (Ha)",
+              "width":"10%"
             },
             {
               "source":"plantDensity",
               "type":"number",
-              "title":"Plant Density"
+              "title":"Plant Density",
+              "width":"10%"
             },
             {
               "source":"controlStatus",
               "title":"Control Status",
-              "type":"number"
+              "type":"number",
+              "width":"10%"
             },
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number"
+              "type":"number",
+              "width":"10%"
             }
           ]
         }

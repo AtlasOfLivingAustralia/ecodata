@@ -102,36 +102,43 @@
             {
               "title": "Species",
               "source": "species",
-              "type": "speciesSelect"
+              "type": "speciesSelect",
+              "width":"30%"
             },
             {
               "title": "Season observed / managed",
               "source": "season",
-              "type": "selectOne"
+              "type": "selectOne",
+              "width":"10%"
             },
             {
               "title": "Management Action(s)",
               "source": "managementActions",
-              "type": "selectMany"
+              "type": "selectMany",
+              "wdith":"20%"
             },
             {
               "title": "Reason for management",
               "source": "managementReason",
-              "type": "textarea"
+              "type": "textarea",
+              "width":"20%"
             },
             {
               "title": "If applicable, no. culled (if known)",
               "source": "noCulled",
-              "type": "number"
+              "type": "number",
+              "width":"10%"
             },
             {
               "title": "Cost",
               "source": "cost",
-              "type": "number"
+              "type": "number",
+              "width":"10%"
             }
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "table",
+          "fixedWidth":true
         }
       ],
       "type": "row"
