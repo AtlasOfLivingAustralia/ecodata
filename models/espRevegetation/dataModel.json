@@ -47,7 +47,7 @@
         {
           "dataType": "number",
           "name": "cost",
-          "validate": "min[0]"
+          "validate": "integer,min[0]"
         }
       ]
     },
@@ -101,7 +101,7 @@
           "name": "season",
           "constraints": [
             "Spring",
-            "Summary",
+            "Summer",
             "Autumn",
             "Winter"
           ],
@@ -154,7 +154,7 @@
               "title": "Cost",
               "source": "cost",
               "width": "15%",
-              "type": "number"
+              "type": "currency"
             }
           ],
           "userAddedRows": true,

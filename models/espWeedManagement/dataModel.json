@@ -23,6 +23,17 @@
         },
         {
           "dataType": "text",
+          "name": "season",
+          "constraints": [
+            "Spring",
+            "Summer",
+            "Autumn",
+            "Winter"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
           "description": "The primary method used to treat the patch of the target species",
           "name": "treatmentMethod",
           "constraints": [
@@ -56,7 +67,12 @@
         },
         {
           "name":"plantDensity",
-          "dataType":"number"
+          "dataType":"text",
+          "constraints":[
+            "Dense infestation",
+            "Isolated plant",
+            "Scattered plants"
+          ]
         },
         {
           "dataType": "text",
@@ -74,7 +90,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -84,7 +100,7 @@
       "items": [
         {
           "source": "undertakeWeedManagement",
-          "preLabel": "Did you undertake actions to monitor and manage exotic plant species this year? (Yes / No)",
+          "preLabel": "Did you undertake actions to manage exotic plant species this year? (Yes / No)",
           "type": "selectOne"
         }
       ],
@@ -107,10 +123,16 @@
 
             },
             {
+              "title": "Season treated",
+              "source": "season",
+              "type": "selectOne",
+              "width":"10%"
+            },
+            {
               "source":"treatmentMethod",
               "title":"Treatment Method",
               "type":"select2",
-              "width":"30%"
+              "width":"20%"
             },
             {
               "source":"weedAreaTreatedHa",
@@ -120,20 +142,20 @@
             },
             {
               "source":"plantDensity",
-              "type":"number",
-              "title":"Plant Density",
-              "width":"10%"
+              "type":"selectOne",
+              "title":"Density",
+              "width":"15%"
             },
             {
               "source":"controlStatus",
               "title":"Control Status",
-              "type":"number",
-              "width":"10%"
+              "type":"selectOne",
+              "width":"15%"
             },
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number",
+              "type":"currency",
               "width":"10%"
             }
           ]

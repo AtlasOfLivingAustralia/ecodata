@@ -46,7 +46,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -88,7 +88,7 @@
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }

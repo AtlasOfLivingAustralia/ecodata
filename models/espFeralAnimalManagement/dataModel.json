@@ -26,7 +26,7 @@
           "name": "season",
           "constraints": [
             "Spring",
-            "Summary",
+            "Summer",
             "Autumn",
             "Winter"
           ],
@@ -68,7 +68,7 @@
         {
           "dataType": "number",
           "name": "cost",
-          "validate": "min[0]"
+          "validate": "integer,min[0]"
         }
       ]
     }
@@ -120,7 +120,7 @@
             {
               "title": "Reason for management",
               "source": "managementReason",
-              "type": "textarea",
+              "type": "selectOne",
               "width":"20%"
             },
             {
@@ -132,7 +132,7 @@
             {
               "title": "Cost",
               "source": "cost",
-              "type": "number",
+              "type": "currency",
               "width":"10%"
             }
           ],
