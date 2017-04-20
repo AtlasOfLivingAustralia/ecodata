@@ -1,0 +1,233 @@
+{
+  "modelName": "Vegetation Monitoring Results",
+  "title":"Plant Survival Survey",
+  "record": "true",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "dwcAttribute": "establishmentMeans",
+      "name": "revegetationType",
+      "description": "The type of revegetation method used",
+      "constraints": [
+        "Direct drill seeding",
+        "Hand broardcast seeding",
+        "Hand planting",
+        "Machine planting",
+        "Natural regeneration from threat exclusion / removal"
+      ]
+    },
+    {
+      "dataType": "text",
+      "dwcAttribute": "assessmentMethod",
+      "name": "countingMethod",
+      "description": "The method used to determine the number of surviving plants",
+      "constraints": [
+        "Direct count",
+        "Estimated count"
+      ],
+      "validate": "required"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "species",
+          "speciesList": "project",
+          "noTotal": "true",
+          "dwcAttribute": "scientificName",
+          "name": "species",
+          "description": "Species planted on the revegetation site and/or represented in the survival count",
+          "validate": "required"
+        },
+        {
+          "primaryResult": "true",
+          "dataType": "number",
+          "name": "numberPlanted",
+          "description": "The number of individual plants planted on the site during the revegetation works activity",
+          "validate": "required, min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "seedSown",
+          "description": "The quantity in kilograms of seed sown on the site during the revegetation works activity",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "dwcAttribute": "individualCount",
+          "name": "numberSurviving",
+          "description": "The number of individual seedlings surviving at the time of this survey",
+          "validate": "required,integer,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "survivalRate",
+          "description": "The percentage of individual seedlings surviving at the time of this survey as a proportion of numbers planted",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "matureHeight",
+          "description": "The expected height class of mature plants of this species in the planted location.",
+          "constraints": [
+            "> 2 metres",
+            "< 2 metres"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "dwcAttribute": "occurrenceRemarks",
+          "name": "notes"
+        }
+      ],
+      "dataType": "list",
+      "name": "revegetationMonitoring"
+    },
+    {
+      "computed": {
+        "dependents": {
+          "fromList": "revegetationMonitoring",
+          "source": "numberPlanted"
+        },
+        "operation": "sum"
+      },
+      "primaryResult": "true",
+      "dataType": "number",
+      "name": "totalNumberPlanted"
+    },
+    {
+      "computed": {
+        "dependents": {
+          "fromList": "revegetationMonitoring",
+          "source": "numberSurviving"
+        },
+        "operation": "sum"
+      },
+      "primaryResult": "true",
+      "dataType": "number",
+      "name": "totalNumberSurviving"
+    },
+    {
+      "computed": {
+        "dependents": {
+          "fromList": "revegetationMonitoring",
+          "source": "survivalRate"
+        },
+        "operation": "average"
+      },
+      "primaryResult": "true",
+      "dataType": "number",
+      "name": "aveSurvivalRate"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "computed": null,
+          "type": "col",
+          "items": [{
+            "preLabel": "Type of revegetation method:",
+            "computed": null,
+            "source": "revegetationType",
+            "type": "selectOne"
+          }]
+        },
+        {
+          "computed": null,
+          "type": "col",
+          "items": [{
+            "preLabel": "Counting Method:",
+            "computed": null,
+            "source": "countingMethod",
+            "type": "selectOne"
+          }]
+        }
+      ],
+      "class": "output-section"
+    },
+    {
+      "footer": {"rows": [{"columns": [
+        {
+          "computed": null,
+          "source": "Total number planted",
+          "type": "literal"
+        },
+        {
+          "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"revegetationMonitoring\"}}",
+          "source": "totalNumberPlanted",
+          "type": "number"
+        },
+        {
+          "computed": null,
+          "source": "Total number surviving",
+          "type": "literal"
+        },
+        {
+          "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberSurviving\",\"fromList\":\"revegetationMonitoring\"}}",
+          "source": "totalNumberSurviving",
+          "type": "number"
+        },
+        {
+          "computed": "{\"operation\":\"average\",\"dependents\":{\"source\":\"survivalRate\",\"fromList\":\"revegetationMonitoring\"}}",
+          "source": "aveSurvivalRate",
+          "type": "number"
+        },
+        {
+          "computed": null,
+          "source": "Average survival rate (%)",
+          "type": "literal"
+        }
+      ]}]},
+      "columns": [
+        {
+          "width": "20%",
+          "source": "species",
+          "title": "Species",
+          "type": "autocomplete"
+        },
+        {
+          "width": "9%",
+          "source": "numberPlanted",
+          "title": "No. Planted",
+          "type": "number"
+        },
+        {
+          "width": "9%",
+          "source": "seedSown",
+          "title": "Seed Sown (Kg)",
+          "type": "number"
+        },
+        {
+          "width": "9%",
+          "source": "numberSurviving",
+          "title": "No. Surviving",
+          "type": "number"
+        },
+        {
+          "width": "9%",
+          "source": "survivalRate",
+          "title": "Survival rate (%)",
+          "type": "number"
+        },
+        {
+          "width": "9%",
+          "source": "matureHeight",
+          "title": "Mature height",
+          "type": "selectOne"
+        },
+        {
+          "width": "35%",
+          "source": "notes",
+          "title": "Notes / Comments",
+          "type": "textarea"
+        }
+      ],
+      "userAddedRows": true,
+      "source": "revegetationMonitoring",
+      "type": "table",
+      "class": "output-section"
+    }
+  ]
+}

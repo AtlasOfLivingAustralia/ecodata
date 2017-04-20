@@ -3,15 +3,6 @@
   "title":"Biomass Control Measures",
   "dataModel":[
     {
-      "name":"undertakeBiomassControl",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"biomassControl",
       "columns": [
@@ -52,16 +43,6 @@
     }
   ],
   "viewModel":[
-    {
-      "items": [
-        {
-          "source": "undertakeBiomassControl",
-          "preLabel": "Did you undertake any biomass control measures this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
     {
       "items": [
         {

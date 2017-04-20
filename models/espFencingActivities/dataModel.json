@@ -3,15 +3,6 @@
   "title":"Fencing",
   "dataModel":[
     {
-      "name":"undertakeFencing",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"fencing",
       "columns": [
@@ -53,16 +44,6 @@
     }
   ],
   "viewModel":[
-    {
-      "items": [
-        {
-          "source": "undertakeFencing",
-          "preLabel": "Did you undertake any activities relating to fencing on this site this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
     {
       "items": [
         {

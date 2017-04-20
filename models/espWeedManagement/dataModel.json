@@ -3,15 +3,6 @@
   "title":"Weed Management",
   "dataModel":[
     {
-      "name":"undertakeWeedManagement",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"weedManagement",
       "columns": [
@@ -99,18 +90,8 @@
     {
       "items": [
         {
-          "source": "undertakeWeedManagement",
-          "preLabel": "Did you undertake actions to manage exotic plant species this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
           "source": "weedManagement",
-          "title": "If “Yes”, please complete the following:",
+          "title": "Please complete the following:",
           "type": "table",
           "fixedWidth":true,
           "userAddedRows": true,
