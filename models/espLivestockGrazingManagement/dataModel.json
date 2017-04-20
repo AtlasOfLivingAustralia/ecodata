@@ -4,15 +4,6 @@
   "dataModel": [
     {
       "dataType": "text",
-      "name": "isManagementAction",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
       "name": "undertakeLiveStockGrazing",
       "constraints": [
         "Yes",
@@ -155,16 +146,6 @@
     }
   ],
   "viewModel": [
-    {
-      "items": [
-        {
-          "source": "isManagementAction",
-          "preLabel": "Is strategic or conservation grazing a Management Action for this site? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
     {
       "items": [
         {

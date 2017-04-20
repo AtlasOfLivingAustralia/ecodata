@@ -119,7 +119,7 @@
               "source":"species",
               "title":"Species",
               "type":"speciesSelect",
-              "width":"30%"
+              "width":"25%"
 
             },
             {
@@ -156,7 +156,7 @@
               "source":"cost",
               "title":"Cost",
               "type":"currency",
-              "width":"10%"
+              "width":"15%"
             }
           ]
         }

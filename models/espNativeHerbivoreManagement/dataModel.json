@@ -115,7 +115,7 @@
             },
             {
               "source":"managementReason",
-              "type":"textarea",
+              "type":"selectOne",
               "title":"Reason for management"
             },
             {

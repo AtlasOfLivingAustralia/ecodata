@@ -78,7 +78,7 @@
             {
               "source":"controlPurpose",
               "title":"Purpose",
-              "type":"textarea"
+              "type":"selectOne"
             },
             {
               "source":"areaTreatedHa",

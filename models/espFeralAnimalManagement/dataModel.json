@@ -103,7 +103,7 @@
               "title": "Species",
               "source": "species",
               "type": "speciesSelect",
-              "width":"30%"
+              "width":"25%"
             },
             {
               "title": "Season observed / managed",
@@ -133,7 +133,7 @@
               "title": "Cost",
               "source": "cost",
               "type": "currency",
-              "width":"10%"
+              "width":"15%"
             }
           ],
           "userAddedRows": true,
