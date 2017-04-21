@@ -46,7 +46,7 @@
             {
               "source":"species",
               "title":"Species Observed Regenerating (if known)",
-              "type":"autocomplete"
+              "type":"speciesSelect"
             }
           ]
         }

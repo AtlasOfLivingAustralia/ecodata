@@ -1,10 +1,10 @@
 {
-  "modelName":"ESP Revegetation",
-  "title":"Revegetation",
-  "dataModel":[
+  "title": "Revegetation",
+  "modelName": "ESP Revegetation",
+  "dataModel": [
     {
-      "name":"undertakeRevegetationActivities",
-      "dataType":"text",
+      "dataType": "text",
+      "name": "undertakeRevegetationActivities",
       "constraints": [
         "Yes",
         "No"
@@ -12,14 +12,13 @@
       "validate": "required"
     },
     {
-      "dataType":"list",
-      "name":"revegetation",
+      "dataType": "list",
+      "name": "revegetation",
       "columns": [
         {
           "dataType": "text",
-          "name": "revegetationMethod",
-          "dwcAttribute": "establishmentMeans",
           "description": "The method used for planting",
+          "name": "revegetationMethod",
           "constraints": [
             "Direct drill seeding",
             "Hand broadcast seeding",
@@ -29,38 +28,37 @@
             "Infill plantings",
             "Combination of methods"
           ],
+          "dwcAttribute": "establishmentMeans",
           "validate": "required"
         },
         {
           "dataType": "species",
-          "dwcAttribute": "scientificName",
-          "speciesList": "project",
           "noTotal": "true",
-          "name": "species",
           "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+          "name": "species",
+          "dwcAttribute": "scientificName",
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"areaTreatedHa",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "areaTreatedHa",
+          "validate": "required,min[0]"
         },
         {
-          "name":"cost",
-          "dataType":"number",
-          "validate":"min[0]"
+          "dataType": "number",
+          "name": "cost",
+          "validate": "integer,min[0]"
         }
       ]
     },
     {
-      "dataType":"list",
-      "name":"survival",
+      "dataType": "list",
+      "name": "survival",
       "columns": [
         {
           "dataType": "text",
-          "name": "revegetationMethod",
-          "dwcAttribute": "establishmentMeans",
           "description": "The method used for planting",
+          "name": "revegetationMethod",
           "constraints": [
             "Direct drill seeding",
             "Hand broadcast seeding",
@@ -70,53 +68,54 @@
             "Infill plantings",
             "Combination of methods"
           ],
+          "dwcAttribute": "establishmentMeans",
           "validate": "required"
         },
         {
           "dataType": "species",
-          "dwcAttribute": "scientificName",
           "speciesList": "project",
           "noTotal": "true",
-          "name": "species",
           "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+          "name": "species",
+          "dwcAttribute": "scientificName",
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"areaTreatedHa",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "areaTreatedHa",
+          "validate": "required,min[0]"
         },
         {
-          "name":"percentSurvival",
-          "dataType":"number",
-          "validate":"required,min[0],max[100]"
+          "dataType": "number",
+          "name": "percentSurvival",
+          "validate": "required,min[0],max[100]"
         }
       ]
     },
     {
-      "dataType":"list",
-      "name":"groundCover",
+      "dataType": "list",
+      "name": "groundCover",
       "columns": [
         {
-          "name":"season",
-          "dataType":"text",
+          "dataType": "text",
+          "name": "season",
           "constraints": [
             "Spring",
-            "Summary",
+            "Summer",
             "Autumn",
             "Winter"
           ],
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"groundCoverPercent",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "groundCoverPercent",
+          "validate": "required,min[0]"
         }
       ]
     }
   ],
-  "viewModel":[
+  "viewModel": [
     {
       "items": [
         {
@@ -130,33 +129,37 @@
     {
       "items": [
         {
-          "source": "revegetation",
           "title": "If 'Yes', please complete the following:",
-          "type": "table",
-          "userAddedRows": true,
-          "columns":[
+          "source": "revegetation",
+          "columns": [
             {
-              "type": "selectOne",
+              "title": "Revegetation Activity",
               "source": "revegetationMethod",
-              "title":"Revegetation Activity"
+              "width": "30%",
+              "type": "selectOne"
             },
             {
-              "type": "autocomplete",
+              "title": "Species planted (if known)",
               "source": "species",
-              "title": "Species planted (if known)"
+              "width": "40%",
+              "type": "speciesSelect"
             },
             {
-              "type":"number",
-              "title":"Area treated (Ha)",
-              "validate":"required,min[0]"
+              "title": "Area treated (Ha)",
+              "width": "15%",
+              "type": "number",
+              "validate": "required,min[0]"
             },
             {
-              "source":"cost",
-              "type":"number",
-              "title":"Cost"
+              "title": "Cost",
+              "source": "cost",
+              "width": "15%",
+              "type": "currency"
             }
-
-          ]
+          ],
+          "userAddedRows": true,
+          "fixedWidth": true,
+          "type": "table"
         }
       ],
       "type": "row"
@@ -164,32 +167,37 @@
     {
       "items": [
         {
-          "source": "survival",
           "title": "If you have recorded revegetation in previous years, please fill in survival %:",
-          "type": "table",
-          "userAddedRows": true,
-          "columns":[
+          "source": "survival",
+          "columns": [
             {
-              "type": "selectOne",
+              "title": "Revegetation Activity",
               "source": "revegetationMethod",
-              "title":"Revegetation Activity"
+              "width": "30%",
+              "type": "selectOne"
             },
             {
-              "type": "autocomplete",
+              "title": "Species planted (if known)",
               "source": "species",
-              "title": "Species planted (if known)"
+              "width": "40%",
+              "type": "speciesSelect"
             },
             {
-              "type":"number",
-              "title":"Area treated (Ha)",
-              "validate":"required,min[0]"
+              "title": "Area treated (Ha)",
+              "width": "15%",
+              "type": "number",
+              "validate": "required,min[0]"
             },
             {
-              "source":"percentSurvival",
-              "type":"number",
-              "title":"% survival"
+              "title": "% survival",
+              "source": "percentSurvival",
+              "width": "15%",
+              "type": "number"
             }
-          ]
+          ],
+          "userAddedRows": true,
+          "fixedWidth": true,
+          "type": "table"
         }
       ],
       "type": "row"
@@ -206,22 +214,22 @@
     {
       "items": [
         {
-          "source": "groundCover",
           "title": "Please fill out details for ground cover on your Environmental Stewardship site(s).",
-          "type": "table",
-          "userAddedRows": true,
-          "columns":[
+          "source": "groundCover",
+          "columns": [
             {
-              "type": "selectOne",
+              "title": "Season",
               "source": "season",
-              "title":"Season"
+              "type": "selectOne"
             },
             {
-              "type": "number",
+              "title": "Ground Cover %",
               "source": "groundCoverPercent",
-              "title": "Ground Cover %"
+              "type": "number"
             }
-          ]
+          ],
+          "userAddedRows": true,
+          "type": "table"
         }
       ],
       "type": "row"

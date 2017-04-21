@@ -1,6 +1,6 @@
 {
   "modelName":"ESP Restoration of Habitat",
-  "title":"Restoration of Habitat",
+  "title":"Restoration of Habitat Features",
   "dataModel":[
     {
       "name":"undertakeHabitatRestoration",
@@ -22,7 +22,7 @@
           "constraints": [
             "Course woody debris",
             "Corrugated tin",
-            "Plantings"
+            "Bush rock"
           ]
         },
         {
@@ -34,7 +34,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -66,12 +66,12 @@
             {
               "source":"areaTreatedHa",
               "title":"Area treated (Ha)",
-              "type":"textarea"
+              "type":"number"
             },
             {
               "source":"cost",
               "title":"Cost of Management Action?",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }

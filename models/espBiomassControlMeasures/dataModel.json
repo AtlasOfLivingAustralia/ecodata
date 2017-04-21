@@ -46,7 +46,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -78,7 +78,7 @@
             {
               "source":"controlPurpose",
               "title":"Purpose",
-              "type":"textarea"
+              "type":"selectOne"
             },
             {
               "source":"areaTreatedHa",
@@ -88,7 +88,7 @@
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }
