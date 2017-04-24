@@ -75,6 +75,8 @@ class Project {
     List<String> countries = []
     String origin = 'atlasoflivingaustralia'
 
+    boolean alaHarvest = false
+
     List<AssociatedOrg> associatedOrganisations
 
     static embedded = ['associatedOrganisations']
@@ -177,5 +179,6 @@ class Project {
         uNRegions nullable: true
         countries nullable: true
         tags nullable: true
+        alaHarvest nullable: true
     }
 }

@@ -14,6 +14,9 @@ class UrlMappings {
         "/ws/record/images"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/images/"(controller: "record"){ action = [GET:"listRecordWithImages"] }
         "/ws/record/getRecordForOutputSpeciesId/"(controller: "record", action: "getRecordForOutputSpeciesId")
+        "/ws/record/listHarvestDataResource" (controller: "record", action: "listHarvestDataResource")
+        "/ws/record/listRecordsForDataResourceId" (controller: "record", action: "listRecordsForDataResourceId") //dataResourceId
+
         "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
 

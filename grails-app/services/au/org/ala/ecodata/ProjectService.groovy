@@ -15,7 +15,7 @@ import static grails.async.Promises.task
 class ProjectService {
 
     static transactional = false
-
+    static final BASIC = 'basic'
     static final BRIEF = 'brief'
     static final FLAT = 'flat'
     static final ALL = 'all'
@@ -76,6 +76,11 @@ class ProjectService {
         return p ? toMap(p, levelOfDetail, version) : null
     }
 
+    def getByDataResourceId(String id, String status = "active", levelOfDetail = []) {
+        def project = Project.findByDataResourceIdAndStatus(id, status)
+        project ? toMap(project, levelOfDetail) : null
+    }
+
     def list(levelOfDetail = [], includeDeleted = false, citizenScienceOnly = false) {
         def list
         if (!citizenScienceOnly)
@@ -103,6 +108,20 @@ class ProjectService {
         list.collect { toMap(it, PROMO) }
     }
 
+    def listProjectForAlaHarvesting (Map params, List status = ['active']){
+
+        def list = Project.createCriteria().list(max: params.max, offset: params.offset) {
+            and {
+                isNotNull('dataResourceId')
+                'eq'("alaHarvest", true)
+            }
+            order(params.sort, params.order)
+        }
+
+        [total: list?.totalCount, list: list?.collect { toMap(it, "basic") }]
+    }
+
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -114,7 +133,16 @@ class ProjectService {
 
         Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
 
-        if (levelOfDetail == BRIEF) {
+        if (levelOfDetail == BASIC) {
+            result = [
+                    projectId           : project.projectId,
+                    name                : project.name,
+                    dataResourceId      : project.dataResourceId,
+                    dataProviderId      : project.dataProviderId,
+                    status              : project.status,
+                    alaHarvest          : project.alaHarvest
+                    ]
+        } else if (levelOfDetail == BRIEF) {
             result = [
                     projectId           : project.projectId,
                     name                : project.name,
