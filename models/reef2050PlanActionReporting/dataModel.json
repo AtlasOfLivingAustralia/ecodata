@@ -200,14 +200,14 @@
           ]
         },
         {
-          "dataType": "text",
+          "dataType": "number",
           "name": "fundsExtendedToDate",
-          "validate": "required,max[100]",
+          "validate": "required,integer"
         },
         {
-          "dataType": "text",
+          "dataType": "number",
           "name": "fteRequiredToDate",
-          "validate": "required,max[100]"
+          "validate": "required"
         },
         {
           "dataType": "stringList",
@@ -298,7 +298,7 @@
               "title": "Supporting Agencies"
             },
             {
-              "type": "selectMany",
+              "type": "select2Many",
               "source": "contributingPartners",
               "title": "Contributing Partners"
             },
@@ -323,17 +323,17 @@
               "title": "Funding Status"
             },
             {
-              "type": "textarea",
+              "type": "currency",
               "source": "fundsExtendedToDate",
               "title": "Funds expended to date for action delivery"
             },
             {
-              "type": "text",
+              "type": "number",
               "source": "fteRequiredToDate",
               "title": "FTE required to date for action delivery"
             },
             {
-              "type": "selectMany",
+              "type": "select2Many",
               "source": "linkedOrRelatedActions",
               "title": "Linked or related actions"
             }
