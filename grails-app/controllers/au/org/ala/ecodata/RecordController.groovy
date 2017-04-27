@@ -138,11 +138,13 @@ class RecordController {
                 }
             } else {
                 response.status = HttpStatus.SC_BAD_REQUEST
+                log.error(error)
                 result = [status: 'error', error: error]
             }
 
         } catch (Exception ex) {
             response.status = HttpStatus.SC_INTERNAL_SERVER_ERROR
+            log.error(ex)
             result << [status: 'error', error: "Unexpected error."]
         }
 
