@@ -99,7 +99,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
             self.reportingPeriod(programModel.reportingPeriod());
             self.reportingPeriodAlignedToCalendar(programModel.reportingPeriodAlignedToCalendar());
             self.projectDatesContracted(programModel.projectDatesContracted());
-            self.activities(programModel.activities() || []);
+            self.activities(programModel.activities() ? programModel.activities().slice() : []);
         }
     });
     self.toJSON = function() {

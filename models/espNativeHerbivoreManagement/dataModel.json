@@ -3,15 +3,6 @@
   "title":"Native Herbivore Management",
   "dataModel":[
     {
-      "name":"undertakeNativeSpeciesMonitoring",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"nativeSpeciesMonitoring",
       "columns": [
@@ -83,18 +74,8 @@
     {
       "items": [
         {
-          "source": "undertakeNativeSpeciesMonitoring",
-          "preLabel": "Did you undertake actions to monitor and manage native grazing species in this past year?  (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
           "source": "nativeSpeciesMonitoring",
-          "title": "If “Yes”, please complete the following:",
+          "title": "Please complete the following:",
           "type": "table",
           "userAddedRows": true,
           "columns":[
@@ -110,7 +91,7 @@
             },
             {
               "source":"managementActions",
-              "type":"selectMany",
+              "type":"selectOne",
               "title":"Management Action(s)"
             },
             {

@@ -3,15 +3,6 @@
   "modelName": "ESP Livestock Grazing Management",
   "dataModel": [
     {
-      "dataType": "text",
-      "name": "undertakeLiveStockGrazing",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType": "list",
       "name": "grazingPeriods",
       "columns": [
@@ -142,24 +133,15 @@
     {
       "dataType": "number",
       "description": "",
-      "name": "foregoneProductionAmountEstimate"
+      "name": "foregoneProductionAmountEstimate",
+      "validate":"integer,min[0]"
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "source": "undertakeLiveStockGrazing",
-          "preLabel": "Did you undertake any livestock grazing activities on this site this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "title": "Please record all grazing periods for this site:",
+          "title": "<b>Please record all grazing periods for this site:</b>",
           "source": "grazingPeriods",
           "allowHeaderWrap": true,
           "columns": [
@@ -234,7 +216,7 @@
         {
           "source": "foregoneProductionAmountEstimate",
           "preLabel": "If yes, please provide an estimate of production forgone from any removal of stock during grazing exclusion periods:",
-          "type": "number",
+          "type": "currency",
           "validate": "min[0]"
         }
       ],

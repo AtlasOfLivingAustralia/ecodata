@@ -3,15 +3,6 @@
   "title":"Feral Animal Management",
   "dataModel": [
     {
-      "dataType": "text",
-      "name": "undertakeFeralAnimalManagement",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType": "list",
       "name": "feralAnimalManagement",
       "columns": [
@@ -33,7 +24,7 @@
           "validate": "required"
         },
         {
-          "dataType": "stringList",
+          "dataType": "text",
           "name": "managementActions",
           "constraints": [
             "Bait & trap",
@@ -86,17 +77,7 @@
     {
       "items": [
         {
-          "source": "undertakeFeralAnimalManagement",
-          "preLabel": "Did you undertake actions to monitor and manage feral species this season? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "title": "If “Yes”, please complete the following:",
+          "title": "Please complete the following:",
           "source": "feralAnimalManagement",
           "columns": [
             {
@@ -114,7 +95,7 @@
             {
               "title": "Management Action(s)",
               "source": "managementActions",
-              "type": "selectMany",
+              "type": "selectOne",
               "wdith":"20%"
             },
             {
