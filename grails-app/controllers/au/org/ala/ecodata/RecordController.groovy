@@ -132,6 +132,7 @@ class RecordController {
                 ]
 
                 List<String> restrictedProjectActivities = projectActivityService.listRestrictedProjectActivityIds(null, params.id)
+                log.debug("Retrieving results...")
                 result = recordService.listByProjectId(args, lastUpdated, restrictedProjectActivities)
                 result?.list?.each {
                     it.projectName = project?.name
