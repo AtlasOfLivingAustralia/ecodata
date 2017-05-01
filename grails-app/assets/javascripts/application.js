@@ -1,3 +1,18 @@
+//= require jquery/jquery-1.11.1.min
+//= require jquery-migrate-1.2.1.min
+//= require jquery.autocomplete
+//= require jquery-ui/jquery-ui-1.9.2.custom.min
+//= require html5
+//= require bootstrap.min
+//= require bootstrap-combobox/bootstrap-combobox
+//= require knockoutjs/knockout-3.3.0.min
+//= require knockoutjs/knockout-sortable.min
+//= require knockoutjs/knockout.mapping-latest
+//= require vkbeautify/0.99/vkbeautify.0.99.00.beta
+//= require jquery-validation-engine/jquery.validationEngine
+//= require knockout-dates
+//= require_self
+
 if (typeof jQuery !== 'undefined') {
 	(function($) {
 		$('#spinner').ajaxStart(function() {

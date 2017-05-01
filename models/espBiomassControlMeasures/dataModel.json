@@ -3,15 +3,6 @@
   "title":"Biomass Control Measures",
   "dataModel":[
     {
-      "name":"undertakeBiomassControl",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"biomassControl",
       "columns": [
@@ -46,22 +37,12 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
   ],
   "viewModel":[
-    {
-      "items": [
-        {
-          "source": "undertakeBiomassControl",
-          "preLabel": "Did you undertake any biomass control measures this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
     {
       "items": [
         {
@@ -78,7 +59,7 @@
             {
               "source":"controlPurpose",
               "title":"Purpose",
-              "type":"textarea"
+              "type":"selectOne"
             },
             {
               "source":"areaTreatedHa",
@@ -88,7 +69,7 @@
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }

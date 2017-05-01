@@ -60,7 +60,7 @@
         </g:each>
     </div>
 
-    <r:script>
+    <asset:script>
         $(document).ready(function() {
 
             $("#addPermissionsButton").click(function(e) {
@@ -105,6 +105,6 @@
                 });
             });
         });
-    </r:script>
+    </asset:script>
 </body>
 </html>

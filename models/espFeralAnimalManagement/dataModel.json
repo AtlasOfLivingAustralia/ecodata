@@ -3,15 +3,6 @@
   "title":"Feral Animal Management",
   "dataModel": [
     {
-      "dataType": "text",
-      "name": "undertakeFeralAnimalManagement",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType": "list",
       "name": "feralAnimalManagement",
       "columns": [
@@ -26,14 +17,14 @@
           "name": "season",
           "constraints": [
             "Spring",
-            "Summary",
+            "Summer",
             "Autumn",
             "Winter"
           ],
           "validate": "required"
         },
         {
-          "dataType": "stringList",
+          "dataType": "text",
           "name": "managementActions",
           "constraints": [
             "Bait & trap",
@@ -68,7 +59,7 @@
         {
           "dataType": "number",
           "name": "cost",
-          "validate": "min[0]"
+          "validate": "integer,min[0]"
         }
       ]
     }
@@ -86,52 +77,49 @@
     {
       "items": [
         {
-          "source": "undertakeFeralAnimalManagement",
-          "preLabel": "Did you undertake actions to monitor and manage feral species this season? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "title": "If “Yes”, please complete the following:",
+          "title": "Please complete the following:",
           "source": "feralAnimalManagement",
           "columns": [
             {
               "title": "Species",
               "source": "species",
-              "type": "autocomplete"
+              "type": "speciesSelect",
+              "width":"25%"
             },
             {
               "title": "Season observed / managed",
               "source": "season",
-              "type": "selectOne"
+              "type": "selectOne",
+              "width":"10%"
             },
             {
               "title": "Management Action(s)",
               "source": "managementActions",
-              "type": "selectMany"
+              "type": "selectOne",
+              "wdith":"20%"
             },
             {
               "title": "Reason for management",
               "source": "managementReason",
-              "type": "textarea"
+              "type": "selectOne",
+              "width":"20%"
             },
             {
               "title": "If applicable, no. culled (if known)",
               "source": "noCulled",
-              "type": "number"
+              "type": "number",
+              "width":"10%"
             },
             {
               "title": "Cost",
               "source": "cost",
-              "type": "number"
+              "type": "currency",
+              "width":"15%"
             }
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "table",
+          "fixedWidth":true
         }
       ],
       "type": "row"

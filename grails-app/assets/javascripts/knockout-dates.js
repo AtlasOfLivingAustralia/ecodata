@@ -1075,3 +1075,23 @@ ko.extenders.url = function(target) {
     return result;
 };
 
+ko.extenders.jsonText = function(target, option) {
+
+    target.fromJSON = function(json) {
+        if (json) {
+            target(vkbeautify.json(JSON.stringify(json),2));
+        }
+
+    };
+    target.toJSON = function() {
+        if (target()) {
+            return JSON.parse(target());
+        }
+        return null;
+    };
+
+    if (option) {
+        target.fromJSON(option);
+    }
+
+};

@@ -3,15 +3,6 @@
   "title":"Native Herbivore Management",
   "dataModel":[
     {
-      "name":"undertakeNativeSpeciesMonitoring",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"nativeSpeciesMonitoring",
       "columns": [
@@ -31,7 +22,7 @@
           "dataType":"text",
           "constraints": [
             "Spring",
-            "Summary",
+            "Summer",
             "Autumn",
             "Winter"
           ],
@@ -41,7 +32,6 @@
           "name":"managementActions",
           "dataType":"stringList",
           "constraints": [
-            "Biological control agent",
             "Exclusion fencing",
             "Nil",
             "Spotlight cull"
@@ -66,7 +56,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -84,18 +74,8 @@
     {
       "items": [
         {
-          "source": "undertakeNativeSpeciesMonitoring",
-          "preLabel": "Did you undertake actions to monitor and manage native grazing species in this past year?  (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
           "source": "nativeSpeciesMonitoring",
-          "title": "If “Yes”, please complete the following:",
+          "title": "Please complete the following:",
           "type": "table",
           "userAddedRows": true,
           "columns":[
@@ -111,12 +91,12 @@
             },
             {
               "source":"managementActions",
-              "type":"selectMany",
+              "type":"selectOne",
               "title":"Management Action(s)"
             },
             {
               "source":"managementReason",
-              "type":"textarea",
+              "type":"selectOne",
               "title":"Reason for management"
             },
             {
@@ -127,7 +107,7 @@
             {
               "source":"cost",
               "title":"Cost",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }

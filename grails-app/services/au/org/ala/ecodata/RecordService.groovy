@@ -494,6 +494,25 @@ class RecordService {
         imageId
     }
 
+
+
+    def listByProjectId (Map params, Date lastUpdated, List restrictedProjectActivities = []){
+        def list = Record.createCriteria().list(max: params.max, offset: params.offset) {
+            and {
+                if(lastUpdated) {
+                    'gt'('lastUpdated', lastUpdated)
+                }
+                eq "projectId", params.projectId
+                eq "status", params.status
+                not { 'in' "projectActivityId", restrictedProjectActivities }
+            }
+            //order(params.sort, params.order)
+        }
+
+        [total: list?.totalCount, list: list?.collect { toMap(it) }]
+   }
+
+
     /**
      * Update the metadata for an imageMetadata in the imageMetadata service.
      * This will include updates to tags and licensing.

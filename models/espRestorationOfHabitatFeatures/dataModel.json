@@ -1,16 +1,7 @@
 {
   "modelName":"ESP Restoration of Habitat",
-  "title":"Restoration of Habitat",
+  "title":"Restoration of Habitat Features",
   "dataModel":[
-    {
-      "name":"undertakeHabitatRestoration",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
     {
       "dataType":"list",
       "name":"habitatRestoration",
@@ -22,7 +13,7 @@
           "constraints": [
             "Course woody debris",
             "Corrugated tin",
-            "Plantings"
+            "Bush rock"
           ]
         },
         {
@@ -34,7 +25,7 @@
         {
           "name":"cost",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"integer,min[0]"
         }
       ]
     }
@@ -43,18 +34,8 @@
     {
       "items": [
         {
-          "source": "undertakeHabitatRestoration",
-          "preLabel": "Did you undertake any activities to restore habitat features on this site this year? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
           "source": "habitatRestoration",
-          "title": "If “Yes”, pleased complete the following:",
+          "title": "Please complete the following:",
           "type": "table",
           "userAddedRows": true,
           "columns":[
@@ -66,12 +47,12 @@
             {
               "source":"areaTreatedHa",
               "title":"Area treated (Ha)",
-              "type":"textarea"
+              "type":"number"
             },
             {
               "source":"cost",
               "title":"Cost of Management Action?",
-              "type":"number"
+              "type":"currency"
             }
           ]
         }

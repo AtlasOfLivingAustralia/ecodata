@@ -3,15 +3,6 @@
   "title":"Regeneration",
   "dataModel":[
     {
-      "name":"regenerationObserved",
-      "dataType":"text",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
       "dataType":"list",
       "name":"regeneration",
       "columns": [
@@ -28,25 +19,15 @@
     {
       "items": [
         {
-          "source": "regenerationObserved",
-          "preLabel": "Have you observed any plant species regenerating on this site? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
           "source": "regeneration",
-          "title": "If “Yes”, please complete the following: ",
+          "title": "Please complete the following: ",
           "type": "table",
           "userAddedRows": true,
           "columns":[
             {
               "source":"species",
               "title":"Species Observed Regenerating (if known)",
-              "type":"autocomplete"
+              "type":"speciesSelect"
             }
           ]
         }

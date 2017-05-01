@@ -27,7 +27,7 @@
         </div>
     </body>
 </html>
-<r:script>
+<asset:script>
 
     $(document).ready(function() {
         $("#btnViewAuditMessages").click(function(e) {
@@ -53,4 +53,4 @@
         }
     }
 
-</r:script>
+</asset:script>
