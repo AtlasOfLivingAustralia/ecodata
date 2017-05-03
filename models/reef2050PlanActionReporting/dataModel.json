@@ -262,84 +262,100 @@
           "source": "actions",
           "columns": [
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "actionId",
               "title": "Action ID"
             },
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "actionDescription",
               "title": "Action description"
             },
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "theme",
 
               "title": "Theme"
             },
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "status",
               "title": "Status"
             },
             {
+              "width":"8%",
               "type": "textarea",
               "source": "description",
               "title": "Description"
             },
             {
+              "width":"8%",
               "type": "textarea",
               "source": "progress",
               "title": "Progress"
             },
             {
+              "width":"8%",
               "type": "select2Many",
               "source": "supportingAgencies",
               "title": "Supporting Agencies"
             },
             {
+              "width":"8%",
               "type": "select2Many",
               "source": "contributingPartners",
               "title": "Contributing Partners"
             },
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "priority",
               "title": "Priority"
             },
             {
+              "width":"8%",
               "type": "text",
               "source": "timeframe",
               "title": "Timeframe"
             },
             {
+              "width":"8%",
               "type": "textarea",
               "source": "tasksAndMilestones",
               "title": "Tasks and milestones / deliverables"
             },
             {
+              "width":"8%",
               "type": "selectOne",
               "source": "fundingStatus",
               "title": "Funding Status"
             },
             {
+              "width":"8%",
               "type": "currency",
               "source": "fundsExtendedToDate",
               "title": "Funds expended to date for action delivery"
             },
             {
+              "width":"8%",
               "type": "number",
               "source": "fteRequiredToDate",
               "title": "FTE required to date for action delivery"
             },
             {
+              "width":"8%",
               "type": "select2Many",
               "source": "linkedOrRelatedActions",
               "title": "Linked or related actions"
             }
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "table",
+          "fixedWidth":false
 
         }
       ],
