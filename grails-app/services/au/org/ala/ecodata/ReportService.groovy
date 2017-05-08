@@ -25,31 +25,36 @@ class ReportService {
         Score.findAllByCategory(category)
     }
 
-    def runReport(List filters, String reportName, params) {
+    def runActivityReport(String searchTerm, List filters, Map reportConfig, boolean approvedActivitiesOnly) {
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(reportConfig)
 
+        Map metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
 
-        //def report = JSON.parse(settingService.getSetting("report.${reportName}"))
+        Closure aggregateActivityWithMetadata =  { AggregatorIf aggregatorIf, Map activity ->
+            aggregateActivity(aggregatorIf, activity)
+            updateMetadata(activity, metadata)
+        }
+        queryPaginated(filters, searchTerm, approvedActivitiesOnly, aggregator, aggregateActivityWithMetadata)
 
-        def report = [:]
-        report.groupingSpec = [entity:'activity', property:'plannedEndDate', type:'date', format:'MMM yyyy', buckets:params.getList("dates")]
-        report.scores = findScoresByCategory("Green Army")
-        aggregate(filters, null, report.scores, report.groupingSpec)
+        GroupedAggregationResult allResults = aggregator.result()
+
+        [results:allResults, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
     def queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {
 
         Map params = [offset:0, max:20, fq:filters]
 
-        SearchResponse results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
+        def results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
         def total = results.hits.totalHits
         while (params.offset < total) {
 
-            results.hits.each { SearchHit hit ->
+            results.hits.hits.each { hit ->
                 Map project = hit.source
 
                 List activities = project.activities
                 if (approvedActivitiesOnly) {
-                    activities = activities?.findAll{it.publicationStatus == 'published'}
+                    activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
                 }
                 if (activities) {
                     List activityIds = activities?.collect{it.activityId}
@@ -203,7 +208,7 @@ class ReportService {
         filteredConfig
     }
 
-    private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
+    private def aggregateActivity (AggregatorIf aggregator, Map activity) {
 
         activity.outputs.each { output ->
             Map outputData = outputService.toMap(output)
