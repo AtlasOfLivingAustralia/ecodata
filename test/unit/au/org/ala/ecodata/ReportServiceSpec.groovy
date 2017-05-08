@@ -19,6 +19,7 @@ class ReportServiceSpec extends Specification {
     OutputService outputService = Stub(OutputService)
 
 
+
     def setupSpec() {
         Output.metaClass.static.withNewSession = {Closure c -> c.call() }
     }
@@ -28,19 +29,27 @@ class ReportServiceSpec extends Specification {
         service.elasticSearchService = elasticSearchService
         service.metadataService = metadataService
         service.outputService = outputService
+        outputService.toMap(_) >> {Map output -> output}
     }
 
     def setupInputs(outputs, activities, outputData) {
         Map model = [outputs:outputs]
         Map dataModel = [dataModel:[[type:'string', name:'test'], [type:'list', name:'nested', columns:[]]]]
 
+        // By default we mostly only deal with published activities.
+        activities = activities.collect {it+[publicationStatus:Report.REPORT_APPROVED]}
+
         metadataService.activitiesModel() >> model
         metadataService.getOutputDataModel(_) >> dataModel
 
-        def activityDocs = activities.collect{[source:it]}
-        elasticSearchService.searchActivities(_, _, _) >> [hits:[totalHits:activityDocs.size(), hits:activityDocs]]
+        Set projectIds = new HashSet(activities.collect { it.projectId ?: 'defaultProjectId' })
+        List projectDocs = projectIds.collect {
+            [source:[projectId:it, activities: activities.findAll{activity -> (it == 'defaultProjectId' && !activity.projectId) || activity.projectId == it}]]
+        }
 
-        outputService.findAllForActivityId(_, _) >> {activityId, levelOfDetail -> outputData[activityId]}
+        elasticSearchService.search(_, _, _) >> [hits:[totalHits:projectDocs.size(), hits:projectDocs]]
+
+        Output.metaClass.static.findAllByActivityIdInListAndStatusNotEqual = {activityIds, status -> activityIds.collect{outputData[it]}.flatten().findAll()}
     }
 
     def "the sum of a single property can be reported"() {
