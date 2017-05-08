@@ -506,7 +506,7 @@ class RecordService {
                 eq "status", params.status
                 not { 'in' "projectActivityId", restrictedProjectActivities }
             }
-            order(params.sort, params.order)
+            //order(params.sort, params.order)
         }
 
         [total: list?.totalCount, list: list?.collect { toMap(it) }]
