@@ -1,11 +1,12 @@
 {
-    "modelName":"Post revegetation site management",
     "dataModel": [{
+        "dataType": "list",
+        "name": "postRevegManagementActions",
         "columns": [
             {
                 "dataType": "text",
-                "name": "action",
                 "description": "",
+                "name": "action",
                 "constraints": [
                     "Mulching",
                     "Watering",
@@ -16,53 +17,52 @@
             },
             {
                 "dataType": "number",
-                "name": "areaManagedHa",
                 "description": "",
+                "name": "areaManagedHa",
                 "validate": "required, min[0]"
             },
             {
                 "dataType": "text",
-                "name": "siteManagementNotes",
-                "description": ""
+                "description": "",
+                "name": "siteManagementNotes"
             }
-        ],
-        "dataType": "list",
-        "name": "postRevegManagementActions"
+        ]
     }],
+    "modelName": "Post revegetation site management",
     "viewModel": [
         {
-            "type": "row",
             "items": [{
-                "computed": null,
                 "source": "<h4>Site Management Actions<\/h4>",
+                "computed": null,
                 "type": "literal"
-            }]
+            }],
+            "type": "row"
         },
         {
+            "title": "Management Actions",
+            "source": "postRevegManagementActions",
             "allowHeaderWrap": "true",
             "computed": null,
             "columns": [
                 {
+                    "title": "Activity type",
                     "source": "action",
-                    "type": "selectOne",
-                    "title": "Activity type"
+                    "type": "selectOne"
                 },
                 {
+                    "title": "Area managed (Ha)",
                     "source": "areaManagedHa",
-                    "type": "number",
-                    "title": "Area managed (Ha)"
+                    "type": "number"
                 },
                 {
+                    "title": "Comments / notes",
                     "source": "siteManagementNotes",
-                    "type": "textarea",
-                    "title": "Comments / notes"
+                    "type": "textarea"
                 }
             ],
             "userAddedRows": true,
-            "source": "postRevegManagementActions",
-            "title": "Management Actions",
-            "type": "table",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "table"
         }
     ]
 }

@@ -1,127 +1,119 @@
 {
-  "modelName":"ESP Native Herbivore Management",
-  "title":"Native Herbivore Management",
-  "dataModel":[
-    {
-      "dataType":"list",
-      "name":"nativeSpeciesMonitoring",
-      "columns": [
-        {
-          "name":"species",
-          "description":"",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Grey Kangaroo",
-            "Red Kangaroo",
-            "Wallaby"
-          ]
-        },
-        {
-          "name":"season",
-          "dataType":"text",
-          "constraints": [
-            "Spring",
-            "Summer",
-            "Autumn",
-            "Winter"
-          ],
-          "validate": "required"
-        },
-        {
-          "name":"managementActions",
-          "dataType":"stringList",
-          "constraints": [
-            "Exclusion fencing",
-            "Nil",
-            "Spotlight cull"
-          ],
-          "validate": "required"
-        },
-        {
-          "name":"managementReason",
-          "dataType":"text",
-          "constraints": [
-            "Excessive grazing",
-            "Excessive population",
-            "Land degradation",
-            "Nil"
-          ]
-        },
-        {
-          "name":"noCulled",
-          "dataType":"number",
-          "validate":"min[0]"
-        },
-        {
-          "name":"cost",
-          "dataType":"number",
-          "validate":"integer,min[0]"
-        }
-      ]
-    }
-  ],
-  "viewModel":[
-    {
-      "items": [
-        {
-          "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.</i>",
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "source": "nativeSpeciesMonitoring",
-          "title": "Please complete the following:",
-          "type": "table",
-          "userAddedRows": true,
-          "columns":[
+    "dataModel": [{
+        "dataType": "list",
+        "name": "nativeSpeciesMonitoring",
+        "columns": [
             {
-              "source":"species",
-              "title":"Species",
-              "type":"selectOne"
+                "dataType": "text",
+                "description": "",
+                "name": "species",
+                "constraints": [
+                    "Grey Kangaroo",
+                    "Red Kangaroo",
+                    "Wallaby"
+                ],
+                "validate": "required"
             },
             {
-              "source":"season",
-              "title":"Season observed / managed",
-              "type":"selectOne"
+                "dataType": "text",
+                "name": "season",
+                "constraints": [
+                    "Spring",
+                    "Summer",
+                    "Autumn",
+                    "Winter"
+                ],
+                "validate": "required"
             },
             {
-              "source":"managementActions",
-              "type":"selectOne",
-              "title":"Management Action(s)"
+                "dataType": "stringList",
+                "name": "managementActions",
+                "constraints": [
+                    "Exclusion fencing",
+                    "Nil",
+                    "Spotlight cull"
+                ],
+                "validate": "required"
             },
             {
-              "source":"managementReason",
-              "type":"selectOne",
-              "title":"Reason for management"
+                "dataType": "text",
+                "name": "managementReason",
+                "constraints": [
+                    "Excessive grazing",
+                    "Excessive population",
+                    "Land degradation",
+                    "Nil"
+                ]
             },
             {
-              "source":"noCulled",
-              "title":"If applicable, no. culled (if known)",
-              "type":"number"
+                "dataType": "number",
+                "name": "noCulled",
+                "validate": "min[0]"
             },
             {
-              "source":"cost",
-              "title":"Cost",
-              "type":"currency"
+                "dataType": "number",
+                "name": "cost",
+                "validate": "integer,min[0]"
             }
-          ]
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
+        ]
+    }],
+    "modelName": "ESP Native Herbivore Management",
+    "title": "Native Herbivore Management",
+    "viewModel": [
         {
-          "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.</i>",
-          "type": "literal"
+            "items": [{
+                "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.<\/i>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "title": "Please complete the following:",
+                "source": "nativeSpeciesMonitoring",
+                "columns": [
+                    {
+                        "title": "Species",
+                        "source": "species",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Season observed / managed",
+                        "source": "season",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Management Action(s)",
+                        "source": "managementActions",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Reason for management",
+                        "source": "managementReason",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "If applicable, no. culled (if known)",
+                        "source": "noCulled",
+                        "type": "number"
+                    },
+                    {
+                        "title": "Cost",
+                        "source": "cost",
+                        "type": "currency"
+                    }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.<\/i>",
+                "type": "literal"
+            }],
+            "type": "row"
         }
-      ],
-      "type": "row"
-    }
-  ]
+    ]
 }

@@ -1,105 +1,105 @@
 {
-    "modelName": "Participant Information",
     "dataModel": [
         {
+            "dataType": "number",
             "primaryResult": "true",
-            "dataType": "number",
-            "name": "totalParticipantsNotEmployed",
             "description": "The total number of people involved in an activity who are not delivery partners or employed in the project. These would typically be the volunteer participants and/or event attendees.",
+            "name": "totalParticipantsNotEmployed",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numberOfIndigenousParticipants",
             "description": "The number of indigenous people participating in an activity who are not delivery partners or employed in the project (ie. Indigenous volunteers)",
+            "name": "numberOfIndigenousParticipants",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numberOnCountryVisits",
             "description": "The number of unique indigenous on-country visits undertaken as part of this activity",
+            "name": "numberOnCountryVisits",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "totalParticipantsNew",
             "description": "The number of people involved in an activity who have not attended other activities associated with the project",
+            "name": "totalParticipantsNew",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numberOfCommunityGroups",
             "description": "The number of different community groups (non delivery partners) participating in this activity",
+            "name": "numberOfCommunityGroups",
             "validate": "required,min[0]"
         },
         {
             "dataType": "number",
-            "name": "numberOfFarmingEntitiesNew",
             "description": "A farming entity is a farm business (whether sole trader, partnership, company, etc.) that would be considered a primary producer for tax purposes.",
+            "name": "numberOfFarmingEntitiesNew",
             "validate": "required,min[0]"
         }
     ],
+    "modelName": "Participant Information",
     "viewModel": [{
-        "type": "row",
         "items": [
             {
-                "computed": null,
-                "width": "30%",
-                "type": "col",
                 "items": [
                     {
-                        "preLabel": "Total no. of participants (ie. not employed on project)",
-                        "computed": null,
                         "source": "totalParticipantsNotEmployed",
+                        "preLabel": "Total no. of participants (ie. not employed on project):",
+                        "computed": null,
                         "type": "number"
                     },
                     {
+                        "source": "numberOfIndigenousParticipants",
                         "preLabel": "No. of Indigenous participants (ie. not employed on project):",
                         "computed": null,
-                        "source": "numberOfIndigenousParticipants",
                         "type": "number"
                     }
-                ]
-            },
-            {
+                ],
                 "computed": null,
                 "width": "30%",
-                "type": "col",
+                "type": "col"
+            },
+            {
                 "items": [
                     {
-                        "preLabel": "No. of new people attending project activities:",
-                        "computed": null,
                         "source": "totalParticipantsNew",
+                        "preLabel": "No. of new people attending project events or activities:",
+                        "computed": null,
                         "type": "number"
                     },
                     {
+                        "source": "numberOfFarmingEntitiesNew",
                         "preLabel": "No. of farming entities participating in project activities for the first time:",
                         "computed": null,
-                        "source": "numberOfFarmingEntitiesNew",
                         "type": "number"
                     }
-                ]
-            },
-            {
+                ],
                 "computed": null,
                 "width": "30%",
-                "type": "col",
+                "type": "col"
+            },
+            {
                 "items": [
                     {
+                        "source": "numberOfCommunityGroups",
                         "preLabel": "No. of community groups (non delivery partners) participating:",
                         "computed": null,
-                        "source": "numberOfCommunityGroups",
                         "type": "number"
                     },
                     {
+                        "source": "numberOnCountryVisits",
                         "preLabel": "No. of Indigenous on-country visits:",
                         "computed": null,
-                        "source": "numberOnCountryVisits",
                         "type": "number"
                     }
-                ]
+                ],
+                "computed": null,
+                "width": "30%",
+                "type": "col"
             }
         ],
-        "class": "output-section"
+        "class": "output-section",
+        "type": "row"
     }]
 }

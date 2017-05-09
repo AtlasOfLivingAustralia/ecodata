@@ -1,417 +1,417 @@
 {
-  "modelName": "Revegetation",
-  "title":"Revegetation",
-  "record": "true",
-  "dataModel": [
-    {
-      "dataType": "text",
-      "name": "revegetationMethod",
-      "dwcAttribute": "establishmentMeans",
-      "description": "The method used for planting",
-      "constraints": [
-        "Direct drill seeding",
-        "Hand broadcast seeding",
-        "Hand planting",
-        "Machine planting",
-        "Natural regeneration from threat exclusion / removal",
-        "Infill plantings",
-        "Combination of methods"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
-      "name": "vegDescriptionAtPlanting",
-      "dwcAttribute": "habitat",
-      "description": "General description of the vegetative cover on the planting site at the time of planting",
-      "constraints": [
-        "Bare substrate",
-        "Exotic grassland/pasture",
-        "Mixed exotic/native grassland/pasture",
-        "Native grassland/pasture",
-        "Sparse/scattered shrubland",
-        "Open grassy woodland",
-        "Other (specify in notes)"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
-      "name": "equipmentUsed",
-      "description": "Simple description of the type of planting equipment used"
-    },
-    {
-      "dataType": "text",
-      "name": "adjacentLanduse",
-      "description": "The predominant land use adjoining the planting site",
-      "constraints": [
-        "Conservation",
-        "Livestock",
-        "Cropping",
-        "Recreational",
-        "Rural",
-        "Residential",
-        "Industrial",
-        "Commercial or Business"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "connectivityIndex",
-      "description": "Estimate of the 'connectedness' of the planting site with other native vegetation around it. Choose the most representative category.",
-      "constraints": [
-        "Patch linked to other vegetation via riparian link",
-        "Patch <1km from a patch of more than 1000ha",
-        "Patch <1km from a patch of 100 to 1000ha",
-        "Patch <1km from a patch of 25 to 100ha",
-        "Patch <1km from a patch of less than 25ha",
-        "Isolated forest or woodland remnant >1km from other remnants",
-        "Isolated grassland >1km from other remnants",
-        "No vegetation within 1km",
-        "Only isolated Paddock trees within 1 km",
-        "Patch surrounded by grazing",
-        "Patch surrounded by cropping"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "stringList",
-      "name": "environmentalBenefits",
-      "description": "Environmental benefits /outcomes expected to be achieved through implementing the activity.",
-      "constraints": [
-        "Groundwater recharge management",
-        "Groundwater discharge or salinity management",
-        "Home range / extent improvement",
-        "Habitat condition improvement",
-        "Improved habitat connectivity",
-        "Improved / increased fauna habitat",
-        "Improved vegetation condition",
-        "Improved vegetation connectivity",
-        "Improved vegetation extent",
-        "Nutrient cycling",
-        "Soil stabilisation",
-        "Riparian rehabilitation"
-      ]
-    },
-    {
-      "dataType": "stringList",
-      "name": "guardType",
-      "description": "Type of guard used to protect planted seedlings",
-      "constraints": [
-        "None",
-        "Carton",
-        "Corflute",
-        "Mesh",
-        "Plastic sleeve",
-        "Other"
-      ]
-    },
-    {
-      "dataType": "number",
-      "name": "areaRevegHa",
-      "description": "The area in hectares of the revegetation works area",
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "name": "lengthReveg",
-      "description": "The length in kilometres of the revegetation works area. This field should only be used for linear sites"
-    },
-    {
-      "dataType": "number",
-      "name": "activityDuration",
-      "dwcAttribute": "samplingEffort",
-      "description": "The duration of the planting activity in hours"
-    },
-    {
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "species",
-          "dwcAttribute": "scientificName",
-          "speciesList": "project",
-          "noTotal": "true",
-          "name": "species",
-          "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
-          "validate": "required"
+            "dataType": "text",
+            "description": "The method used for planting",
+            "name": "revegetationMethod",
+            "constraints": [
+                "Direct drill seeding",
+                "Hand broadcast seeding",
+                "Hand planting",
+                "Machine planting",
+                "Natural regeneration from threat exclusion / removal",
+                "Infill plantings",
+                "Combination of methods"
+            ],
+            "dwcAttribute": "establishmentMeans",
+            "validate": "required"
         },
         {
-          "dataType": "number",
-          "dwcAttribute": "individualCount",
-          "name": "numberPlanted",
-          "description": "Number of plants planted",
-          "validate": "required,integer,min[0]"
+            "dataType": "text",
+            "description": "General description of the vegetative cover on the planting site at the time of planting",
+            "name": "vegDescriptionAtPlanting",
+            "constraints": [
+                "Bare substrate",
+                "Exotic grassland/pasture",
+                "Mixed exotic/native grassland/pasture",
+                "Native grassland/pasture",
+                "Sparse/scattered shrubland",
+                "Open grassy woodland",
+                "Other (specify in notes)"
+            ],
+            "dwcAttribute": "habitat",
+            "validate": "required"
         },
         {
-          "dataType": "number",
-          "name": "seedSownKg",
-          "description": "Weight of seed direct sown in kilograms",
-          "validate": "required"
+            "dataType": "text",
+            "description": "Simple description of the type of planting equipment used",
+            "name": "equipmentUsed"
         },
         {
-          "dataType": "text",
-          "noTotal": "true",
-          "name": "stockType",
-          "description": "The type of plantstock used for plantings",
-          "constraints": [
-            "Seed",
-            "Tube",
-            "Advanced",
-            "Cutting",
-            "Other"
-          ],
-          "validate": "required"
+            "dataType": "text",
+            "description": "The predominant land use adjoining the planting site",
+            "name": "adjacentLanduse",
+            "constraints": [
+                "Conservation",
+                "Livestock",
+                "Cropping",
+                "Recreational",
+                "Rural",
+                "Residential",
+                "Industrial",
+                "Commercial or Business"
+            ]
         },
         {
-          "dataType": "text",
-          "noTotal": "true",
-          "name": "structuralLayer",
-          "description": "The structural layer of vegetation that planted plants will occupy when mature",
-          "constraints": [
-            "Overstory",
-            "Midstory",
-            "Understory",
-            "Ground stratum"
-          ],
-          "validate": "required"
+            "dataType": "text",
+            "description": "Estimate of the 'connectedness' of the planting site with other native vegetation around it. Choose the most representative category.",
+            "name": "connectivityIndex",
+            "constraints": [
+                "Patch linked to other vegetation via riparian link",
+                "Patch <1km from a patch of more than 1000ha",
+                "Patch <1km from a patch of 100 to 1000ha",
+                "Patch <1km from a patch of 25 to 100ha",
+                "Patch <1km from a patch of less than 25ha",
+                "Isolated forest or woodland remnant >1km from other remnants",
+                "Isolated grassland >1km from other remnants",
+                "No vegetation within 1km",
+                "Only isolated Paddock trees within 1 km",
+                "Patch surrounded by grazing",
+                "Patch surrounded by cropping"
+            ],
+            "validate": "required"
         },
         {
-          "dataType": "text",
-          "name": "matureHeight",
-          "description": "The expected height class of mature plants of this species in the planted location.",
-          "constraints": [
-            "> 2 metres",
-            "< 2 metres"
-          ],
-          "validate": "required"
+            "dataType": "stringList",
+            "description": "Environmental benefits /outcomes expected to be achieved through implementing the activity.",
+            "name": "environmentalBenefits",
+            "constraints": [
+                "Groundwater recharge management",
+                "Groundwater discharge or salinity management",
+                "Home range / extent improvement",
+                "Habitat condition improvement",
+                "Improved habitat connectivity",
+                "Improved / increased fauna habitat",
+                "Improved vegetation condition",
+                "Improved vegetation connectivity",
+                "Improved vegetation extent",
+                "Nutrient cycling",
+                "Soil stabilisation",
+                "Riparian rehabilitation"
+            ]
         },
         {
-          "dataType": "text",
-          "dwcAttribute": "locality",
-          "name": "stockProvenance",
-          "description": "The name of the locality from which the seedstock was collected"
+            "dataType": "stringList",
+            "description": "Type of guard used to protect planted seedlings",
+            "name": "guardType",
+            "constraints": [
+                "None",
+                "Carton",
+                "Corflute",
+                "Mesh",
+                "Plastic sleeve",
+                "Other"
+            ]
         },
         {
-          "dataType": "number",
-          "name": "stockCostPerUnit",
-          "description": "The average cost per plant or kilogram of seed as applicable"
-        }
-      ],
-      "dataType": "list",
-      "name": "planting"
-    },
-    {
-      "computed": {
-        "dependents": {
-          "fromList": "planting",
-          "source": "numberPlanted"
-        },
-        "operation": "sum"
-      },
-      "primaryResult": "true",
-      "dataType": "number",
-      "name": "totalNumberPlanted",
-      "description": "Aggregate total of plants planted"
-    },
-    {
-      "computed": {
-        "dependents": {
-          "fromList": "planting",
-          "source": "seedSownKg"
-        },
-        "operation": "sum"
-      },
-      "primaryResult": "true",
-      "dataType": "number",
-      "name": "totalSeedSownKg",
-      "description": "Aggregate total of seed sown"
-    },
-    {
-      "dataType": "text",
-      "name": "notes",
-      "dwcAttribute": "eventRemarks",
-      "description": "Please enter any additional comments or notes about this planting activity"
-    }
-  ],
-  "viewModel": [
-    {
-      "footer": {"rows": [{"columns": [
-        {
-          "computed": null,
-          "source": "Total Seedlings Planted:",
-          "type": "literal"
+            "dataType": "number",
+            "description": "The area in hectares of the revegetation works area",
+            "name": "areaRevegHa",
+            "validate": "required"
         },
         {
-          "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
-          "source": "totalNumberPlanted",
-          "type": "number"
+            "dataType": "number",
+            "description": "The length in kilometres of the revegetation works area. This field should only be used for linear sites",
+            "name": "lengthReveg"
         },
         {
-          "computed": null,
-          "source": "Total Seed Sown (Kg):",
-          "type": "literal"
+            "dataType": "number",
+            "description": "The duration of the planting activity in hours",
+            "name": "activityDuration",
+            "dwcAttribute": "samplingEffort"
         },
         {
-          "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
-          "source": "totalSeedSownKg",
-          "type": "number"
+            "dataType": "list",
+            "name": "planting",
+            "columns": [
+                {
+                    "speciesList": "project",
+                    "dataType": "species",
+                    "noTotal": "true",
+                    "description": "The species planted / sown. (start typing a  scientific or common name for a species)",
+                    "name": "species",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Number of plants planted",
+                    "name": "numberPlanted",
+                    "dwcAttribute": "individualCount",
+                    "validate": "required,integer,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "description": "Weight of seed direct sown in kilograms",
+                    "name": "seedSownKg",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "description": "The type of plantstock used for plantings",
+                    "name": "stockType",
+                    "constraints": [
+                        "Seed",
+                        "Tube",
+                        "Advanced",
+                        "Cutting",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "noTotal": "true",
+                    "description": "The structural layer of vegetation that planted plants will occupy when mature",
+                    "name": "structuralLayer",
+                    "constraints": [
+                        "Overstory",
+                        "Midstory",
+                        "Understory",
+                        "Ground stratum"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The expected height class of mature plants of this species in the planted location.",
+                    "name": "matureHeight",
+                    "constraints": [
+                        "> 2 metres",
+                        "< 2 metres"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The name of the locality from which the seedstock was collected",
+                    "name": "stockProvenance",
+                    "dwcAttribute": "locality"
+                },
+                {
+                    "dataType": "number",
+                    "description": "The average cost per plant or kilogram of seed as applicable",
+                    "name": "stockCostPerUnit"
+                }
+            ]
         },
         {
-          "colspan": 3,
-          "computed": null,
-          "source": "",
-          "type": "literal"
-        }
-      ]}]},
-      "columns": [
-        {
-          "computed": null,
-          "width": "20%",
-          "source": "species",
-          "title": "Species:",
-          "type": "speciesSelect"
-        },
-        {
-          "computed": null,
-          "width": "10%",
-          "source": "numberPlanted",
-          "title": "No. Planted:",
-          "type": "number"
-        },
-        {
-          "computed": null,
-          "width": "10%",
-          "source": "seedSownKg",
-          "title": "Seed Sown (Kg):",
-          "type": "number"
-        },
-        {
-          "width": "10%",
-          "source": "stockType",
-          "title": "Type of stock",
-          "type": "selectOne"
-        },
-        {
-          "width": "10%",
-          "source": "structuralLayer",
-          "title": "Structural Layer",
-          "type": "selectOne"
-        },
-        {
-          "width": "10%",
-          "source": "matureHeight",
-          "title": "Mature height",
-          "type": "selectOne"
-        },
-        {
-          "width": "10%",
-          "source": "stockProvenance",
-          "title": "Stock Provenance",
-          "type": "text"
-        },
-        {
-          "computed": null,
-          "width": "10%",
-          "source": "stockCostPerUnit",
-          "title": "Cost / unit ($)",
-          "type": "number"
-        }
-      ],
-      "userAddedRows": true,
-      "source": "planting",
-      "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
-      "type": "table",
-      "class": "output-section"
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "computed": null,
-          "type": "col",
-          "items": [
-            {
-              "preLabel": "Vegetation at time of planting:",
-              "computed": null,
-              "source": "vegDescriptionAtPlanting",
-              "type": "selectOne"
-            },
-            {
-              "preLabel": "Revegetation method:",
-              "computed": null,
-              "source": "revegetationMethod",
-              "type": "selectOne"
-            },
-            {
-              "preLabel": "Equipment used:",
-              "computed": null,
-              "source": "equipmentUsed",
-              "type": "textarea"
-            },
-            {
-              "preLabel": "Adjacent landuse:",
-              "computed": null,
-              "source": "adjacentLanduse",
-              "type": "selectOne"
-            },
-            {
-              "preLabel": "Landscape connectivity:",
-              "computed": null,
-              "source": "connectivityIndex",
-              "type": "selectOne"
-            },
-            {
-              "preLabel": "Area of revegetation works (Ha):",
-              "computed": null,
-              "source": "areaRevegHa",
-              "type": "number"
-            },
-            {
-              "preLabel": "Length of planting (metres) - if site is linear:",
-              "computed": null,
-              "source": "lengthReveg",
-              "type": "number"
-            },
-            {
-              "preLabel": "Duration of the activity (hours):",
-              "computed": null,
-              "source": "activityDuration",
-              "type": "number"
+            "dataType": "number",
+            "description": "Aggregate total of plants planted",
+            "primaryResult": "true",
+            "name": "totalNumberPlanted",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "numberPlanted",
+                    "fromList": "planting"
+                }
             }
-          ]
         },
         {
-          "computed": null,
-          "type": "col",
-          "items": [{
-            "preLabel": "Environmental benefits / outcomes expected to be achieved:",
-            "computed": null,
-            "source": "environmentalBenefits",
-            "type": "selectMany"
-          }]
+            "dataType": "number",
+            "description": "Aggregate total of seed sown",
+            "primaryResult": "true",
+            "name": "totalSeedSownKg",
+            "computed": {
+                "operation": "sum",
+                "dependents": {
+                    "source": "seedSownKg",
+                    "fromList": "planting"
+                }
+            }
         },
         {
-          "computed": null,
-          "type": "col",
-          "items": [{
-            "preLabel": "Type(s) of guard used",
-            "computed": null,
-            "source": "guardType",
-            "type": "selectMany"
-          }]
+            "dataType": "text",
+            "description": "Please enter any additional comments or notes about this planting activity",
+            "name": "notes",
+            "dwcAttribute": "eventRemarks"
         }
-      ],
-      "class": "output-section"
-    },
-    {
-      "type": "row",
-      "items": [{
-        "preLabel": "Comments / Notes:",
-        "computed": null,
-        "width": "90%",
-        "source": "notes",
-        "type": "textarea"
-      }],
-      "class": "output-section"
-    }
-  ]
+    ],
+    "modelName": "Revegetation",
+    "record": "true",
+    "title": "Revegetation",
+    "viewModel": [
+        {
+            "footer": {"rows": [{"columns": [
+                {
+                    "source": "Total Seedlings Planted:",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalNumberPlanted",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"numberPlanted\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "source": "Total Seed Sown (Kg):",
+                    "computed": null,
+                    "type": "literal"
+                },
+                {
+                    "source": "totalSeedSownKg",
+                    "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedSownKg\",\"fromList\":\"planted\"}}",
+                    "type": "number"
+                },
+                {
+                    "colspan": 3,
+                    "source": "",
+                    "computed": null,
+                    "type": "literal"
+                }
+            ]}]},
+            "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
+            "source": "planting",
+            "columns": [
+                {
+                    "title": "Species:",
+                    "source": "species",
+                    "width": "20%",
+                    "computed": null,
+                    "type": "speciesSelect"
+                },
+                {
+                    "title": "No. Planted:",
+                    "source": "numberPlanted",
+                    "width": "10%",
+                    "computed": null,
+                    "type": "number"
+                },
+                {
+                    "title": "Seed Sown (Kg):",
+                    "source": "seedSownKg",
+                    "width": "10%",
+                    "computed": null,
+                    "type": "number"
+                },
+                {
+                    "title": "Type of stock",
+                    "source": "stockType",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Structural Layer",
+                    "source": "structuralLayer",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Mature height",
+                    "source": "matureHeight",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Stock Provenance",
+                    "source": "stockProvenance",
+                    "width": "10%",
+                    "type": "text"
+                },
+                {
+                    "title": "Cost / unit ($)",
+                    "source": "stockCostPerUnit",
+                    "width": "10%",
+                    "computed": null,
+                    "type": "number"
+                }
+            ],
+            "class": "output-section",
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "vegDescriptionAtPlanting",
+                            "computed": null,
+                            "preLabel": "Vegetation at time of planting:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "revegetationMethod",
+                            "computed": null,
+                            "preLabel": "Revegetation method:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "equipmentUsed",
+                            "computed": null,
+                            "preLabel": "Equipment used:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "adjacentLanduse",
+                            "computed": null,
+                            "preLabel": "Adjacent landuse:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "connectivityIndex",
+                            "computed": null,
+                            "preLabel": "Landscape connectivity:",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "areaRevegHa",
+                            "computed": null,
+                            "preLabel": "Area of revegetation works (Ha):",
+                            "type": "number"
+                        },
+                        {
+                            "source": "lengthReveg",
+                            "computed": null,
+                            "preLabel": "Length of planting (metres) - if site is linear:",
+                            "type": "number"
+                        },
+                        {
+                            "source": "activityDuration",
+                            "computed": null,
+                            "preLabel": "Duration of the activity (hours):",
+                            "type": "number"
+                        }
+                    ],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "environmentalBenefits",
+                        "computed": null,
+                        "preLabel": "Environmental benefits / outcomes expected to be achieved:",
+                        "type": "selectMany"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "guardType",
+                        "computed": null,
+                        "preLabel": "Type(s) of guard used",
+                        "type": "selectMany"
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "notes",
+                "width": "90%",
+                "computed": null,
+                "preLabel": "Comments / Notes:",
+                "type": "textarea"
+            }],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }
