@@ -1,22 +1,22 @@
 {
-    "modelName":"Post revegetation area managed",
     "dataModel": [{
         "dataType": "number",
-        "name": "postRevegetationTotalAreaManaged",
         "description": "",
+        "name": "postRevegetationTotalAreaManaged",
         "validate": "required,min[0]"
     }],
+    "modelName": "Post revegetation area managed",
     "viewModel": [{
-        "type": "row",
         "items": [{
-            "type": "col",
             "items": [{
+                "source": "postRevegetationTotalAreaManaged",
                 "preLabel": "Total area managed (Ha)",
                 "computed": null,
-                "source": "postRevegetationTotalAreaManaged",
                 "type": "number"
-            }]
+            }],
+            "type": "col"
         }],
-        "class": "output-section"
+        "class": "output-section",
+        "type": "row"
     }]
 }

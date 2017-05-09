@@ -1,86 +1,86 @@
 {
-    "modelName":"Post revegetation pest management",
     "dataModel": [
         {
             "dataType": "number",
-            "name": "totalPestAreaTreatedHa",
             "description": "Total area covered by this treatment event (Ha). This area must not be double counted.",
+            "name": "totalPestAreaTreatedHa",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "dwcAttribute": "treatmentType",
-            "name": "pestTreatmentType",
             "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+            "name": "pestTreatmentType",
             "constraints": [
                 "Initial treatment",
                 "Follow-up treatment"
             ],
+            "dwcAttribute": "treatmentType",
             "validate": "required"
         },
         {
+            "dataType": "list",
+            "name": "pestManagement",
             "columns": [{
                 "dataType": "species",
-                "name": "pestAnimalsTargetSpecies",
-                "description": "The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry."
-            }],
-            "dataType": "list",
-            "name": "pestManagement"
+                "description": "The pest species targeted for control. Start typing the scientific or common name and the autofill will complete the entry.",
+                "name": "pestAnimalsTargetSpecies"
+            }]
         },
         {
             "dataType": "text",
-            "dwcAttribute": "eventRemarks",
-            "name": "pestManagementNotes"
+            "name": "pestManagementNotes",
+            "dwcAttribute": "eventRemarks"
         }
     ],
+    "modelName": "Post revegetation pest management",
     "viewModel": [
         {
-            "type": "row",
             "items": [
                 {
-                    "type": "col",
                     "items": [{
+                        "source": "totalPestAreaTreatedHa",
                         "preLabel": "Total pest treatment area (Ha):",
                         "computed": null,
-                        "source": "totalPestAreaTreatedHa",
                         "type": "number"
-                    }]
+                    }],
+                    "type": "col"
                 },
                 {
-                    "type": "col",
                     "items": [{
+                        "source": "pestTreatmentType",
                         "preLabel": "Type of pest treatment event:",
                         "computed": null,
-                        "source": "pestTreatmentType",
                         "type": "selectOne"
-                    }]
+                    }],
+                    "type": "col"
                 }
             ],
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         },
         {
+            "title": "Pest Animals",
+            "source": "pestManagement",
             "allowHeaderWrap": "true",
             "computed": null,
             "columns": [{
-                "source": "pestAnimalsTargetSpecies",
                 "title": "Pest species managed\t(name):",
+                "source": "pestAnimalsTargetSpecies",
                 "type": "autocomplete"
             }],
             "userAddedRows": true,
-            "source": "pestManagement",
-            "title": "Pest Animals",
-            "type": "table",
-            "class": "output-section"
+            "class": "output-section",
+            "type": "table"
         },
         {
-            "type": "row",
             "items": [{
+                "source": "pestManagementNotes",
                 "preLabel": "Pest management notes:",
                 "computed": null,
-                "source": "pestManagementNotes",
                 "type": "textarea"
             }],
-            "class": "output-section"
+            "class": "output-section",
+            "type": "row"
         }
     ]
 }

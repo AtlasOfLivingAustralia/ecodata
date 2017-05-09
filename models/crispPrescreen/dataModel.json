@@ -1,0 +1,113 @@
+{
+    "dataModel": [
+        {
+            "dataType": "stringList",
+            "description": "Select all relevant hazards that apply",
+            "name": "hazards",
+            "constraints": [
+                "Wind",
+                "Fire",
+                "Flood",
+                "Coastal innundation"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Select the appropriate RCP",
+            "name": "rcpType",
+            "constraints": [
+                "RCP 2.6",
+                "RCP 4.5",
+                "RCP 6.0",
+                "RCP 8.5"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Select all relevant information sources used in the assessment",
+            "name": "infoSourcesUsed",
+            "constraints": [
+                "Wind projections 2020",
+                "Flood projections data 2020"
+            ],
+            "validate": "required"
+        }
+    ],
+    "modelName": "CRISP_Prescreen_1",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<strong>Description and rationale.<\/strong> In this step, we will be identifying the relevant <a href='https://biocollect-test.ala.org.au/crisp-project'>climate risks<\/a> for the project.",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h1>STEP 1. HAZARD IDENTIFICATION<\/h1>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h4>A. Select hazards<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "hazards",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>B. Select RCP<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "rcpType",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>C. Select info sources used<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "infoSourcesUsed",
+                            "type": "selectMany"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<h4>Step notes<\/h4>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
+}
