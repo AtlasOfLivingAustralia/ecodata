@@ -380,7 +380,7 @@ class ElasticSearchService {
      *
      * @param doc (domain object)
      */
-    def indexDocType(String docId, String docType) {
+    def indexDocType(Object docId, String docType) {
 
         // skip indexing
         if (indexingTempInactive
@@ -728,6 +728,11 @@ class ElasticSearchService {
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
         };
+
+        projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
+            it.userId
+        }?.unique(false)
+
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
         // Include only for MERIT type projects.
