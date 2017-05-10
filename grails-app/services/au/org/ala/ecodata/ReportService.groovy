@@ -14,7 +14,7 @@ import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
  */
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService
+    def grailsApplication, activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService, webService
 
 
     def findScoresByLabel(List labels) {
@@ -323,13 +323,16 @@ class ReportService {
         targetsBySubProgram
     }
 
-    /** Temporary method to assist running the user report.  Needs work */
-    def userSummary() {
+    /**
+     * Produces a list of users for the matching projects.  Also adds any users containing the extra roles, even
+     * if they don't have any explicit project access
+     */
+    def userSummary(Set projectIds, List roles) {
 
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        def users = UserPermission.findAllByEntityType('au.org.ala.ecodata.Project').groupBy{it.userId}
+        def users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 
@@ -342,32 +345,41 @@ class ReportService {
             }
         }
 
-        // TODO need a web service from auth to support this properly.
-        def fcOfficerList = new File('/Users/god08d/Documents/MERIT/Reports/fc_officer.csv')
-        def fcReadOnlyList = new File('/Users/god08d/Documents/MERIT/Reports/fc_read_only.csv')
-        def fcadminList = new File('/Users/god08d/Documents/MERIT/Reports/fc_admin.csv')
 
-        [fcOfficerList, fcReadOnlyList, fcadminList].each { file ->
-            CSVReaderUtils.eachLine(file, { String[] tokens ->
-                def userIdStr = tokens[0]
-                try {
-                    int userId = Integer.parseInt(userIdStr.replaceAll(',', ''))
-                    userIdStr = Integer.toString(userId)
+        int batchSize = 500
 
-                    def user = userSummary[userIdStr]
-                    if (!user) {
+        String url = grailsApplication.config.userDetails.admin.url
+        url += "/userRole/list?format=json&max=${batchSize}&role="
+        roles.each { role ->
+            int offset = 0
+            Map result = webService.getJson(url+role+'&offset='+offset)
+
+            while (offset < result?.resp?.count && !result?.error) {
+
+                List usersForRole = result?.resp?.users ?: []
+                usersForRole.each { user ->
+                    if (userSummary[user.userId]) {
+                        userSummary[user.userId].role = role
+                    }
+                    else {
                         user = [:]
-                        userSummary[userId] = user
-                        def userDetails = userService.lookupUserDetails(userIdStr)
+                        userSummary[user.userId] = user
+                        def userDetails = userService.lookupUserDetails(user.userId)
                         user.userId = userDetails.userId
                         user.name = userDetails.displayName
                         user.email = userDetails.userName
                         user.projects = []
                     }
-                    user.role = tokens[2]
                 }
-                catch (NumberFormatException e) {}
-            })
+
+                offset += batchSize
+                result = webService.getJson(url+role+'&offset='+offset)
+            }
+
+            if (!result || result.error) {
+                log.error("Error getting user details for role: "+role)
+                return
+            }
         }
 
         userSummary

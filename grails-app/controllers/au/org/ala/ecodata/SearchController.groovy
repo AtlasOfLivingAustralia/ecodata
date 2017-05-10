@@ -521,37 +521,6 @@ class SearchController {
         }
     }
 
-    /** Temporary method to assist generating the user report.  Needs work */
-    def userReport() {
-
-        def users = reportService.userSummary()
-
-        File out = new File('/Users/god08d/Documents/MERIT/users/userReport.csv')
-        out.withWriter { writer ->
-            writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
-
-            users.values().each { user->
-
-                writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                if (user.projects) {
-                    boolean first = true
-                    user.projects.each { project ->
-                        if (!first) {
-                            writer.print(",,,,")
-                        }
-                        writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
-                        first = false
-                    }
-                }
-                else {
-                    writer.println()
-                }
-
-
-            }
-        }
-    }
-
     @RequireApiKey
     def downloadUserList() {
 
@@ -560,35 +529,41 @@ class SearchController {
         }
         params.fileExtension = "csv"
 
+        Map searchParams = [fq:params.fq, query:params.query?:"*:*"]
+
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
             try {
-            List users = reportService.userSummary()
+                Set projectIds = downloadService.getProjectIdsForDownload(searchParams, HOMEPAGE_INDEX)
 
-            outputStream.withWriter { writer ->
-                writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
+                List meritRoles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
+                Map users = reportService.userSummary(projectIds, meritRoles)
 
-                users.values().each { user->
 
-                    writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                    if (user.projects) {
-                        boolean first = true
-                        user.projects.each { project ->
-                            if (!first) {
-                                writer.print(",,,,")
+                outputStream.withWriter { writer ->
+                    writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
+
+                    users.values().each { user->
+
+                        writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
+                        if (user.projects) {
+                            boolean first = true
+                            user.projects.each { project ->
+                                if (!first) {
+                                    writer.print(",,,,")
+                                }
+                                writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
+                                first = false
                             }
-                            writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
-                            first = false
                         }
-                    }
-                    else {
-                        writer.println()
-                    }
+                        else {
+                            writer.println()
+                        }
 
 
+                    }
                 }
             }
-        }
             catch (Exception e) {
                 e.printStackTrace()
             }
