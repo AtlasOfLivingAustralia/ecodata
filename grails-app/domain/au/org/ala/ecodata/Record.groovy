@@ -6,7 +6,12 @@ import org.bson.types.ObjectId
 
 class Record {
 
-    static mapping = { version false }
+    static mapping = {
+        occurrenceID index: true
+        outputSpeciesId index: true
+        status index: true
+        version false
+    }
 
     ObjectId id
     String projectId //ID of the project within ecodata

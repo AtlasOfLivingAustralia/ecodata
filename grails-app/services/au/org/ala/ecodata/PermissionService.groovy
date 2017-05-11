@@ -260,8 +260,11 @@ class PermissionService {
         }
     }
 
-    List getAllUserPermissionForEntity(String id, String type, String accessLevel){
-        UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevel(id, type, accessLevel);
+    List getAllUserPermissionForEntity(String id, String type, String accessLevel = null){
+        accessLevel ?
+                UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevel(id, type, accessLevel) :
+                UserPermission.findAllByEntityIdAndEntityType(id, type)
+
     }
 
     List getAllAdminsForProject(String id){

@@ -21,4 +21,13 @@ class UserPermission {
         userId(unique: ['accessLevel', 'entityId']) // prevent duplicate entries
         status nullable: true
     }
+
+    static mapping = {
+        userId index: true
+        entityId index: true
+        entityType index: true
+        status index: true
+        accessLevel index: true
+        version false
+    }
 }
