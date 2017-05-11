@@ -1,0 +1,149 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "Name of initiative",
+            "name": "name",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Nominator",
+            "name": "nominator"
+        },
+        {
+            "dataType": "text",
+            "description": "Contact",
+            "name": "contact"
+        },
+        {
+            "dataType": "text",
+            "description": "Submission approver",
+            "name": "approver"
+        },
+        {
+            "dataType": "date",
+            "description": "Date of approval",
+            "name": "approvalDate"
+        },
+        {
+            "dataType": "geoMap",
+            "name": "location"
+        },
+        {
+            "dataType": "text",
+            "description": "Describe the problem or opportunity in detail",
+            "name": "problemDescription"
+        },
+        {
+            "dataType": "text",
+            "description": "Is this a problem or opportunity?\nProblem - currently impacts the achievement of a recognised goal or objective\nOpportunity - will enable the delivery of recognised goals or objectives",
+            "name": "problemType",
+            "constraints": [
+                "Problem",
+                "Opportunity"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "Identify the impact of the problem or opportunity",
+            "name": "impact",
+            "constraints": [
+                "Economic",
+                "Social",
+                "Environmental"
+            ]
+        }
+    ],
+    "modelName": "CRISP_AssessInitiative_1",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h2>Step 1. Define initiative & problem<\/h2>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<p><strong>Description and rationale.<\/strong> Focus on assessing climate (and other long-term) risks, and identifying alternative ways of meeting the underlying proposal objectives<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<strong>Initiative information<\/strong>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "name",
+                            "preLabel": "Name of initiative:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "nominator",
+                            "preLabel": "Nominator:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "contact",
+                            "preLabel": "Contact:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "approver",
+                            "preLabel": "Submission approved by:",
+                            "type": "text"
+                        },
+                        {
+                            "source": "approvalDate",
+                            "preLabel": "Date of approval:",
+                            "type": "date"
+                        },
+                        {
+                            "orientation": "vertical",
+                            "source": "location",
+                            "preLabel": "Location:",
+                            "type": "geoMap"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "<strong>1. Problem / opportunity identification<\/strong>",
+                            "type": "literal"
+                        },
+                        {
+                            "source": "problemType",
+                            "preLabel": "Problem or opportunity?",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "impact",
+                            "preLabel": "Define the impact of the problem or opportunity:",
+                            "type": "selectMany"
+                        },
+                        {
+                            "source": "problemDescription",
+                            "preLabel": "Describe the problem or opportunity in detail:",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "Where possible:<ul><li>quantify the economic, social and environmental impacts of the problem or opportunity<\/li><li>include an estimate of the annual monetised impact where possible. outline reports, data, models and key assumptions underpinning these impacts. <\/li><li>Problem / opportunity analysis: What are the root causes of the problem or opportunity? Are these causes expected to change over time?<\/li><\/ul>",
+                            "type": "literal"
+                        }
+                    ],
+                    "type": "col"
+                }
+            ],
+            "type": "row"
+        }
+    ]
+}

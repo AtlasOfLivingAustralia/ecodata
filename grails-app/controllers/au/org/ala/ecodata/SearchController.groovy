@@ -315,11 +315,8 @@ class SearchController {
         def scores = reportService.findScoresByLabel(scoreLabels)
         def filters = params.getList("fq")
         def searchTerm = params.query ?: "*:*"
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-
-        additionalFilters.addAll(filters)
         def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.outputTargetReport(additionalFilters, searchTerm, scores)
+        def scoresReport = reportService.outputTargetReport(filters, searchTerm, scores)
 
         def results = [scores:scoresReport, targets:targets]
         render results as JSON
@@ -328,20 +325,18 @@ class SearchController {
     def targetsReport() {
         def filters = params.getList("fq")
         def searchTerm = params.query ?: "*:*"
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
+
         def targets = reportService.outputTargetsBySubProgram(params)
-        def scores = reportService.outputTargetReport(additionalFilters, searchTerm)
+        def scores = reportService.outputTargetReport(filters, searchTerm)
 
         def results = [scores:scores, targets:targets]
         render results as JSON
     }
 
-    def report() {
-
-        def filters = params.getList("fq")
-
-        def results = reportService.runReport(filters, 'Green Army Monthly Summary', params)
+    @RequireApiKey
+    def activityReport() {
+        Map params = request.JSON
+        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, params.approvedActivitiesOnly?:true)
         render results as JSON
     }
 
@@ -502,9 +497,8 @@ class SearchController {
 
         def defaultCategory = "Not categorized"
         def filters = params.getList("fq")
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER] + filters
 
-        def results = reportService.aggregate(additionalFilters)
+        def results = reportService.aggregate(filters)
         def scores = results.outputData
         def scoresByCategory = scores.groupBy{
             (it.score.category?:defaultCategory)

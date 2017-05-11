@@ -19,6 +19,9 @@ class Project {
         name index: true
         projectId index: true
 		promoteOnHomepage index: true
+        externalId index: true
+        dataResourceId index: true
+        externalId index: true
         version false
     }
 

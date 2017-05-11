@@ -1,148 +1,141 @@
 {
-  "modelName":"ESP Weed Management",
-  "title":"Weed Management",
-  "dataModel":[
-    {
-      "dataType":"list",
-      "name":"weedManagement",
-      "columns": [
-        {
-          "name":"species",
-          "description":"",
-          "dataType":"species",
-          "validate":"required"
-        },
-        {
-          "dataType": "text",
-          "name": "season",
-          "constraints": [
-            "Spring",
-            "Summer",
-            "Autumn",
-            "Winter"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "description": "The primary method used to treat the patch of the target species",
-          "name": "treatmentMethod",
-          "constraints": [
-            "Environmental management - Fire",
-            "Environmental management - moisture & nutrient control",
-            "Environmental management - over-planting",
-            "Chemical control - Foliar spraying",
-            "Chemical control - Basal bark spraying",
-            "Chemical control - Stem injection",
-            "Chemical control - Cut stump",
-            "Chemical control - Cut and swab",
-            "Chemical control - Splatter gun",
-            "Chemical control - Stem scraper",
-            "Chemical control - Wick applicators",
-            "Mechanical control - Slashing",
-            "Mechanical control - Mowing",
-            "Mechanical control - Dozing",
-            "Mechanical control - Pushing",
-            "Mechanical control - Felling",
-            "Manual control - Hand pulling",
-            "Manual control - Grubbing/chipping",
-            "Biological control - Biological agents (specify in notes)",
-            "Other (specify in notes)"
-          ],
-          "validate": "required"
-        },
-        {
-          "name":"weedAreaTreatedHa",
-          "dataType":"number",
-          "validate": "required,min[0]"
-        },
-        {
-          "name":"plantDensity",
-          "dataType":"text",
-          "constraints":[
-            "Dense infestation",
-            "Isolated plant",
-            "Scattered plants"
-          ]
-        },
-        {
-          "dataType": "text",
-          "description": "The control status of the patch of the target species being treated",
-          "name": "controlStatus",
-          "constraints": [
-            "New Infestation",
-            "Active Infestation",
-            "Under control",
-            "Under monitoring",
-            "Closed",
-            "Unknown"
-          ]
-        },
-        {
-          "name":"cost",
-          "dataType":"number",
-          "validate":"integer,min[0]"
-        }
-      ]
-    }
-  ],
-  "viewModel":[
-    {
-      "items": [
-        {
-          "source": "weedManagement",
-          "title": "Please complete the following:",
-          "type": "table",
-          "fixedWidth":true,
-          "userAddedRows": true,
-          "columns":[
+    "dataModel": [{
+        "dataType": "list",
+        "name": "weedManagement",
+        "columns": [
             {
-              "source":"species",
-              "title":"Species",
-              "type":"speciesSelect",
-              "width":"25%"
-
+                "dataType": "species",
+                "description": "",
+                "name": "species",
+                "validate": "required"
             },
             {
-              "title": "Season treated",
-              "source": "season",
-              "type": "selectOne",
-              "width":"10%"
+                "dataType": "text",
+                "name": "season",
+                "constraints": [
+                    "Spring",
+                    "Summer",
+                    "Autumn",
+                    "Winter"
+                ],
+                "validate": "required"
             },
             {
-              "source":"treatmentMethod",
-              "title":"Treatment Method",
-              "type":"select2",
-              "width":"20%"
+                "dataType": "text",
+                "description": "The primary method used to treat the patch of the target species",
+                "name": "treatmentMethod",
+                "constraints": [
+                    "Environmental management - Fire",
+                    "Environmental management - moisture & nutrient control",
+                    "Environmental management - over-planting",
+                    "Chemical control - Foliar spraying",
+                    "Chemical control - Basal bark spraying",
+                    "Chemical control - Stem injection",
+                    "Chemical control - Cut stump",
+                    "Chemical control - Cut and swab",
+                    "Chemical control - Splatter gun",
+                    "Chemical control - Stem scraper",
+                    "Chemical control - Wick applicators",
+                    "Mechanical control - Slashing",
+                    "Mechanical control - Mowing",
+                    "Mechanical control - Dozing",
+                    "Mechanical control - Pushing",
+                    "Mechanical control - Felling",
+                    "Manual control - Hand pulling",
+                    "Manual control - Grubbing/chipping",
+                    "Biological control - Biological agents (specify in notes)",
+                    "Other (specify in notes)"
+                ],
+                "validate": "required"
             },
             {
-              "source":"weedAreaTreatedHa",
-              "type":"number",
-              "title":"Approximate area treated (Ha)",
-              "width":"10%"
+                "dataType": "number",
+                "name": "weedAreaTreatedHa",
+                "validate": "required,min[0]"
             },
             {
-              "source":"plantDensity",
-              "type":"selectOne",
-              "title":"Density",
-              "width":"15%"
+                "dataType": "text",
+                "name": "plantDensity",
+                "constraints": [
+                    "Dense infestation",
+                    "Isolated plant",
+                    "Scattered plants"
+                ]
             },
             {
-              "source":"controlStatus",
-              "title":"Control Status",
-              "type":"selectOne",
-              "width":"15%"
+                "dataType": "text",
+                "description": "The control status of the patch of the target species being treated",
+                "name": "controlStatus",
+                "constraints": [
+                    "New Infestation",
+                    "Active Infestation",
+                    "Under control",
+                    "Under monitoring",
+                    "Closed",
+                    "Unknown"
+                ]
             },
             {
-              "source":"cost",
-              "title":"Cost",
-              "type":"currency",
-              "width":"15%"
+                "dataType": "number",
+                "name": "cost",
+                "validate": "integer,min[0]"
             }
-          ]
-        }
-      ],
-      "type": "row"
-    }
-  ]
+        ]
+    }],
+    "modelName": "ESP Weed Management",
+    "title": "Weed Management",
+    "viewModel": [{
+        "items": [{
+            "title": "Please complete the following:",
+            "source": "weedManagement",
+            "columns": [
+                {
+                    "title": "Species",
+                    "source": "species",
+                    "width": "25%",
+                    "type": "speciesSelect"
+                },
+                {
+                    "title": "Season treated",
+                    "source": "season",
+                    "width": "10%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Treatment Method",
+                    "source": "treatmentMethod",
+                    "width": "20%",
+                    "type": "select2"
+                },
+                {
+                    "title": "Approximate area treated (Ha)",
+                    "source": "weedAreaTreatedHa",
+                    "width": "10%",
+                    "type": "number"
+                },
+                {
+                    "title": "Density",
+                    "source": "plantDensity",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Control Status",
+                    "source": "controlStatus",
+                    "width": "15%",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Cost",
+                    "source": "cost",
+                    "width": "15%",
+                    "type": "currency"
+                }
+            ],
+            "userAddedRows": true,
+            "fixedWidth": true,
+            "type": "table"
+        }],
+        "type": "row"
+    }]
 }
