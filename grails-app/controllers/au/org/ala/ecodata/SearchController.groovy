@@ -295,9 +295,8 @@ class SearchController {
     def dashboardReport() {
 
         def filters = params.getList("fq")
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
-        def results = reportService.aggregate(additionalFilters)
+        List<Score> scores = Score.findAll()
+        def results = reportService.aggregate(filters, params.query ?: "*:*", scores)
         render results as JSON
     }
 
@@ -305,10 +304,9 @@ class SearchController {
         def scores = params.getList("scores")
 
         def filters = params.getList("fq")
-        def searchTerm = params.query
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
-        def results = reportService.aggregate(additionalFilters, searchTerm, reportService.findScoresByLabel(scores))
+        def searchTerm = params.query ?: "*:*"
+
+        def results = reportService.aggregate(filters, searchTerm, reportService.findScoresByLabel(scores))
         render results as JSON
     }
 
@@ -316,7 +314,7 @@ class SearchController {
         def scoreLabels = params.getList("scores")
         def scores = reportService.findScoresByLabel(scoreLabels)
         def filters = params.getList("fq")
-        def searchTerm = params.query
+        def searchTerm = params.query ?: "*:*"
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
 
         additionalFilters.addAll(filters)
@@ -329,10 +327,11 @@ class SearchController {
 
     def targetsReport() {
         def filters = params.getList("fq")
+        def searchTerm = params.query ?: "*:*"
         def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
         additionalFilters.addAll(filters)
         def targets = reportService.outputTargetsBySubProgram(params)
-        def scores = reportService.outputTargetReport(additionalFilters)
+        def scores = reportService.outputTargetReport(additionalFilters, searchTerm)
 
         def results = [scores:scores, targets:targets]
         render results as JSON
