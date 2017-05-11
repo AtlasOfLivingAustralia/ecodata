@@ -129,10 +129,12 @@ class AdminController {
         }
         catch (FileNotFoundException fnf) {
             println "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
+            fnf.printStackTrace()
             render "No external config to reload configuration. Looking for ${grailsApplication.config.reloadable.cfgs[0]}"
         }
         catch (Exception gre) {
             println "Unable to reload configuration. Please correct problem and try again: " + gre.getMessage()
+            gre.printStackTrace()
             render "Unable to reload configuration - " + gre.getMessage()
         }
         finally {
