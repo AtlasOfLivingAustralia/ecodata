@@ -23,7 +23,9 @@ class ReportingService {
             return Report.findByReportId(reportId)
         }
         Report report = Report.findByReportIdAndStatusNotEqual(reportId, DELETED)
-        report.activityCount = getActivityCountForReport(report)
+        if (report.isActivityReport()) {
+            report.activityCount = getActivityCountForReport(report)
+        }
         report
     }
 

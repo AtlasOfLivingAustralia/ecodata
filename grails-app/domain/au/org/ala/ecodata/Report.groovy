@@ -15,6 +15,8 @@ class Report {
     public static final String REPORT_SUBMITTED = 'pendingApproval'
     public static final String REPORT_NOT_APPROVED = 'unpublished'
 
+    public static final String TYPE_ACTIVITY = 'Activity'
+
     public static class StatusChange {
         Date dateChanged
         String changedBy
@@ -98,6 +100,10 @@ class Report {
     public boolean isSubmittedOrApproved() {
         return  publicationStatus == REPORT_SUBMITTED ||
                 publicationStatus == REPORT_APPROVED
+    }
+
+    public boolean isActivityReport() {
+        return type == TYPE_ACTIVITY
     }
 
 
