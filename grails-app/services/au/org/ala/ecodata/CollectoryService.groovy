@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.commons.GrailsApplication
 class CollectoryService {
 
     private static final String DATA_RESOURCE_COLLECTORY_PATH = 'ws/dataResource'
+    private static final String INSTITUTION_COLLECTORY_PATH = 'ws/institution'
 
     WebService webService
     GrailsApplication grailsApplication
@@ -31,22 +32,18 @@ class CollectoryService {
      * @param props the properties for the new institution. (orgType, description, name, url, uid)
      * @return the created institution id or null if the create operation fails.
      */
-    def createInstitution(props) {
+    String createInstitution(props) {
 
-        def institutionId = null
-        try {
-            def collectoryProps = mapOrganisationAttributesToCollectory(props)
-            def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/institution/', collectoryProps)
-            institutionId = webService.extractIdFromLocationHeader(result)
-        }
-        catch (Exception e) {
-            log.error("Error creating collectory institution - ${e.message}", e)
-        }
+        def collectoryProps = mapOrganisationAttributesToCollectory(props)
+        def result = webService.doPost(grailsApplication.config.collectory.baseURL + INSTITUTION_COLLECTORY_PATH, collectoryProps)
+        String institutionId = webService.extractIdFromLocationHeader(result)
+
         return institutionId
     }
 
     private def mapOrganisationAttributesToCollectory(props) {
-        def mapKeyOrganisationDataToCollectory = [
+        Map collectoryProps = [:]
+        Map mapKeyOrganisationDataToCollectory = [
                 orgType: 'institutionType',
                 description: 'pubDescription',
                 acronym: 'acronym',
@@ -109,10 +106,6 @@ class CollectoryService {
         if (ids.dataProviderId) {
             // create a dataResource in collectory to hold project outputs
             collectoryProps.dataProvider = [uid: ids.dataProviderId]
-            if (props.collectoryInstitutionId) {
-                collectoryProps.institution = [uid: props.collectoryInstitutionId]
-            }
-            println grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH
             Map result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
@@ -183,7 +176,6 @@ class CollectoryService {
                 manager: 'email',
                 name: 'name',
                 dataSharingLicense: 'licenseType',
-                organisation: '', // ignore this property
                 urlWeb: 'websiteUrl'
         ]
         def collectoryProps = [:]
@@ -199,6 +191,13 @@ class CollectoryService {
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON
+        if (props.organisationId) {
+
+            Organisation organisation = Organisation.findByOrganisationIdAndStatusNotEqual(props.organisationId, Status.DELETED)
+            if (organisation?.collectoryInstitutionId) {
+                collectoryProps.institution = [uid: organisation.collectoryInstitutionId]
+            }
+        }
         collectoryProps
     }
 

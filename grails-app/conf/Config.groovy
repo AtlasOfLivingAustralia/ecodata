@@ -547,12 +547,14 @@ if (!ala.baseURL) {
     ala.baseURL = "http://www.ala.org.au"
 }
 if (!collectory.baseURL) {
-    collectory.baseURL = "http://collections-dev.ala.org.au/"
+    collectory.baseURL = "http://collectory-dev.ala.org.au/"
+    collectory.dataProviderUid.merit = 'dp245'
+    collectory.dataProviderUid.biocollect = 'dp244'
 }
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
-if (!security.apikey.serviceUrl) {
+    if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
 }
 if (!biocacheService.baseURL) {
