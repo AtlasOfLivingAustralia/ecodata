@@ -277,19 +277,44 @@ class ProjectService {
      */
 
     private establishCollectoryLinkForProject(Project project, Map props) {
-        task {
-            Map collectoryProps = [:]
-            collectoryProps << collectoryService.createDataProviderAndResource(project.projectId, props)
-            getCommonService().updateProperties(project, collectoryProps)
-        }.onComplete {
-            log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
-        }.onError { Throwable error ->
-            if (error instanceof UndeclaredThrowableException) {
-                error = error.undeclaredThrowable
+        if (!project.isExternal) {
+
+            task {
+                Map collectoryProps = [:]
+                collectoryProps << collectoryService.createDataResource(props)
+
+                Project.withSession {
+                    getCommonService().updateProperties(project, collectoryProps)
+                }
+            }.onComplete {
+                log.info("Collectory link established for project ${project.name} (id = ${project.projectId})")
+            }.onError { Throwable error ->
+                if (error instanceof UndeclaredThrowableException) {
+                    error = error.undeclaredThrowable
+                }
+                String message = "Failed to establish collectory link for project ${project.name} (id = ${project.projectId})"
+                log.error(message, error)
+                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
             }
-            String message = "Failed to establish collectory link for project ${project.name} (id = ${project.projectId})"
-            log.error(message, error)
-            emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
+        }
+    }
+
+    private updateCollectoryLinkForProject(Project project, Map props) {
+        if (!project.isExternal) {
+
+            Map projectProps = toMap(project, FLAT)
+            task {
+                collectoryService.updateDataResource(projectProps, props)
+            }.onComplete {
+                log.info("Collectory link updated for project ${project.name} (id = ${project.projectId})")
+            }.onError { Throwable error ->
+                if (error instanceof UndeclaredThrowableException) {
+                    error = error.undeclaredThrowable
+                }
+                String message = "Failed to update collectory link for project ${project.name} (id = ${project.projectId})"
+                log.error(message, error)
+                emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
+            }
         }
     }
 
@@ -298,11 +323,7 @@ class ProjectService {
         if (project) {
             try {
                 getCommonService().updateProperties(project, props)
-                if (project.dataProviderId && project.dataProviderId != "null") {
-                    collectoryService.updateDataProviderAndResource(get(id, FLAT))
-                } else {
-                    establishCollectoryLinkForProject(project, toMap(project, FLAT))
-                }
+                updateCollectoryLinkForProject(project, props)
                 return [status: 'ok']
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
