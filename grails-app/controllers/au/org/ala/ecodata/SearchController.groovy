@@ -232,7 +232,12 @@ class SearchController {
     }
 
     def elasticGeo() {
-        def res = elasticSearchService.search(params.query, params, "homepage")
+        Map geoSearch = null
+        if (params.geoSearchJSON) {
+            geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
+        }
+
+        def res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
         def selectedFacetTerms = []
         def markBy = params.markBy
 
