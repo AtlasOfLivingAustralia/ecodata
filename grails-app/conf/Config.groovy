@@ -550,6 +550,7 @@ if (!collectory.baseURL) {
     collectory.baseURL = "http://collectory-dev.ala.org.au/"
     collectory.dataProviderUid.merit = 'dp245'
     collectory.dataProviderUid.biocollect = 'dp244'
+    collectory.collectoryIntegrationEnabled = false
 }
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"

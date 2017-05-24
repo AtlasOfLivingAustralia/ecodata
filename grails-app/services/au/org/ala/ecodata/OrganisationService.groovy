@@ -70,15 +70,18 @@ class OrganisationService {
     }
 
     private String createCollectoryInstitution(Map organisationProperties) {
+
         String institutionId = null
-        try {
-            institutionId = collectoryService.createInstitution(organisationProperties)
-        }
-        catch (Exception e) {
-            // We don't want this to prevent the organisation from being created.
-            String message = "Failed to establish collectory link for organisation ${organisation.name}"
-            log.error(message, e)
-            emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.ecodata.support.email.address])
+        if (grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+            try {
+                institutionId = collectoryService.createInstitution(organisationProperties)
+            }
+            catch (Exception e) {
+                // We don't want this to prevent the organisation from being created.
+                String message = "Failed to establish collectory link for organisation ${organisation.name}"
+                log.error(message, e)
+                emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.ecodata.support.email.address])
+            }
         }
         return institutionId
     }
