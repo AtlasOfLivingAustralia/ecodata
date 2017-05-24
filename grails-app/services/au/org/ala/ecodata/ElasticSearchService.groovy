@@ -701,7 +701,10 @@ class ElasticSearchService {
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
 
-        List meritProjects = Project.findAllByOrganisationIdAndIsMERIT(organisation.organisationId, true)
+        List meritProjects = Project.findAllByOrganisationIdAndIsMERIT(organisation.organisationId, true, DELETED)
+        if (!meritProjects) {
+            meritProjects = Project.findAllByOrgIdSvcProviderAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
+        }
         organisation.isMERIT = meritProjects.size() > 0
     }
 
