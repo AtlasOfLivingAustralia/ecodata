@@ -7,6 +7,7 @@ import java.text.DecimalFormat
 /**
  * Created by mol109 on 25/5/17.
  */
+
 class DateUtil {
     /**
      * Returns a {@link TimeZone} instance for the given clientTimezoneOffset
@@ -45,4 +46,18 @@ class DateUtil {
         return timeZone
     }
 
+    /**
+     * Return the {@link TimeZone} from the given string for example "America/Los_Angeles" or the default timezone if the string does not represent a valid timezone
+     * @param clientTimezoneStr the timezone as a String
+     * @return The timezone
+     */
+    static TimeZone getTimeZoneFromString(String clientTimezoneStr) {
+        TimeZone timeZone
+        try {
+            timeZone = TimeZone.getTimeZone(clientTimezoneStr)
+        } finally {
+            timeZone = timeZone ?: TimeZone.default
+        }
+        return timeZone
+    }
 }

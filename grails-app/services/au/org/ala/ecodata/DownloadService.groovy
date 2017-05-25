@@ -8,6 +8,7 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
+import java.sql.Time
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
@@ -105,7 +106,7 @@ class DownloadService {
         Map<String, Set<String>> activitiesByProject = getActivityIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
         Map<String, Object> documentMap = [:] // Accumulates a map of document id to path in zip file
 
-        TimeZone timeZone = DateUtil.getTimeZoneFromTimezoneOffset(params.clientTimezoneOffset)
+        TimeZone timeZone = DateUtil.getTimeZoneFromString(params.clientTimezone)
 
         new ZipOutputStream(outputStream).withStream { zip ->
             try{
