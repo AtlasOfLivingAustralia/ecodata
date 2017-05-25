@@ -26,7 +26,7 @@ import static au.org.ala.ecodata.Status.DELETED
  * </ol>
  */
 class CSProjectXlsExporter extends ProjectExporter {
-    static Log log = LogFactory.getLog(ProjectXlsExporter.class)
+    static Log log = LogFactory.getLog(CSProjectXlsExporter.class)
 
     private def imageMapper = {
         if (it.imageId)
@@ -36,7 +36,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     }
 
     List<String> projectHeaders = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding']
-    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE), 'funding']
+    List<String> projectProperties = ['projectId', 'grantId', 'externalId', 'organisationName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'funding']
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
@@ -70,8 +70,8 @@ class CSProjectXlsExporter extends ProjectExporter {
     Map<String, AdditionalSheet> surveySheets = [:]
     Map<String, Object> documentMap
 
-    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap) {
-        super(exporter, [], documentMap)
+    public CSProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap,TimeZone timeZone) {
+        super(exporter, [], documentMap, timeZone)
         this.documentMap = documentMap
     }
 
@@ -158,8 +158,8 @@ class CSProjectXlsExporter extends ProjectExporter {
                             new ConstantGetter("projectActivityId", projectActivity.projectActivityId),
                             new ConstantGetter("activityId", activity.activityId),
                             new ConstantGetter("sites", projectActivity.sites.collect { it.siteId }.join(", ")),
-                            new DateConstantGetter("startDate", projectActivity.startDate, null, null, DateTimeParser.Style.DATE),
-                            new DateConstantGetter("endDate", projectActivity.endDate, null, null, DateTimeParser.Style.DATE),
+                            new DateConstantGetter("startDate", projectActivity.startDate, null, null, DateTimeParser.Style.DATE, timeZone),
+                            new DateConstantGetter("endDate", projectActivity.endDate, null, null, DateTimeParser.Style.DATE, timeZone),
                             new ConstantGetter("description", projectActivity.description),
                             new ConstantGetter("status", projectActivity.status),
                             new ConstantGetter("attribution", projectActivity.attribution),
@@ -234,7 +234,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         properties[properties.indexOf("latitude")] = latitudeGetter
         def longitudeGetter = permission ? accurateLongitudeGetter : generalLongitudeGetter
         properties[properties.indexOf("longitude")] = longitudeGetter
-        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter)
+        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter, timeZone)
         recordService.getAllByProject(project.projectId).each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
