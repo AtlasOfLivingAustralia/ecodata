@@ -680,6 +680,16 @@ class AdminController {
                 Map props = outputService.toMap(output)
                 outputService.createOrUpdateRecordsForOutput(activity, output, props)
 
+                // The createOrUpdateRecordsForOutput method can assign outputSpeciesIds so we need to check if
+                // the output has changed.
+                Map before = null
+                Output.withNewSession {
+                    before = outputService.toMap(Output.findByOutputId(outputId))
+                }
+                if (props != before) {
+                    commonService.updateProperties(output, props)
+                }
+
                 int recordCount = Record.findAllByOutputId(outputId).size()
                 flash.message = "Potentially ${recordCount} records affected"
             } else {
