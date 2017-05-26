@@ -54,9 +54,25 @@
                     });
                 });
 
+                $("#btnRegenerateRecords").click(function(e) {
+                    e.preventDefault();
+                    var outputId = $('#outputId').val();
+                    if (outputId) {
+                        $.ajax("${createLink(controller: 'admin', action:'regenerateRecordsForOutput')}?outputId="+outputId).done(function(result) {
+                            document.location.reload();
+                        }).fail(function (result) {
+                            alert(result);
+                        });
+                    }
+                    else {
+                        alert("Please enter an output ID");
+                    }
+                });
+
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
+
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
@@ -110,6 +126,18 @@
                         Re-index all data. This action re-creates the ElasticSearch index.
                     </td>
                 </tr>
+            <tr>
+                <td>
+                   <button id="btnRegenerateRecords" class="btn btn-small btn-info" title="Regenerates records for a specified output">Regenerate&nbsp;Records</button>
+                </td>
+                <td>
+
+                    Invokes the OutputService.createOrUpdateRecordsForOutput method for the supplied output
+                    <p>
+                    Output id: <input type="text" id="outputId" name="outputId" class="input-xxxlarge">
+                    </p>
+                </td>
+            </tr>
             </tbody>
         </table>
     </body>

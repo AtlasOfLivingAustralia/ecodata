@@ -670,5 +670,40 @@ class AdminController {
         [scores:scores, count:scores.totalCount]
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    /** The synchronization is to prevent a double submit from double creating duplicates */
+    synchronized def regenerateRecordsForOutput(String outputId) {
+        try {
+            Output output = Output.findByOutputId(outputId)
+            if (output) {
+                Activity activity = Activity.findByActivityId(output.activityId)
+                Map props = outputService.toMap(output)
+                outputService.createOrUpdateRecordsForOutput(activity, output, props)
+
+                // The createOrUpdateRecordsForOutput method can assign outputSpeciesIds so we need to check if
+                // the output has changed.
+                Map before = null
+                Output.withNewSession {
+                    before = outputService.toMap(Output.findByOutputId(outputId))
+                }
+                if (props != before) {
+                    commonService.updateProperties(output, props)
+                }
+
+                int recordCount = Record.findAllByOutputId(outputId).size()
+                flash.message = "Potentially ${recordCount} records affected"
+            } else {
+                flash.message = "Output not found with id = ${outputId}"
+            }
+        }
+        catch (Exception e) {
+            log.error(e)
+            flash.message = "An error occurred processing output: ${outputId}, message: ${e.message}"
+        }
+
+        render view:'tools'
+
+    }
+
 
 }
