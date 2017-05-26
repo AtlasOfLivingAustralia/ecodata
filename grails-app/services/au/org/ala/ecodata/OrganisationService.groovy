@@ -16,7 +16,7 @@ class OrganisationService {
 
     static transactional = 'mongo'
 
-    def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource
+    def commonService, projectService, userService, permissionService, documentService, collectoryService, messageSource, emailService, grailsApplication
 
     def get(String id, levelOfDetail = [], includeDeleted = false) {
         Organisation organisation
@@ -38,15 +38,12 @@ class OrganisationService {
         return Organisation.findAllByStatusNotEqual('deleted').collect{toMap(it, levelOfDetail)}
     }
 
-    def create(props, boolean createCollectoryInstitution = true) {
+    def create(Map props, boolean createInCollectory = true) {
 
         def organisation = new Organisation(organisationId: Identifiers.getNew(true, ''), name:props.name)
 
-        if (createCollectoryInstitution) {
-            def institutionId = collectoryService.createInstitution(props)
-            if (institutionId) {
-                organisation.collectoryInstitutionId = institutionId
-            }
+        if (createInCollectory) {
+            organisation.collectoryInstitutionId = createCollectoryInstitution(props)
         }
         try {
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
@@ -70,6 +67,23 @@ class OrganisationService {
             def errors = (e instanceof ValidationException)?e.errors:[error]
             return [status:'error',errors:errors]
         }
+    }
+
+    private String createCollectoryInstitution(Map organisationProperties) {
+
+        String institutionId = null
+        if (grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+            try {
+                institutionId = collectoryService.createInstitution(organisationProperties)
+            }
+            catch (Exception e) {
+                // We don't want this to prevent the organisation from being created.
+                String message = "Failed to establish collectory link for organisation ${organisation.name}"
+                log.error(message, e)
+                emailService.sendEmail(message, "Error: ${e.message}", [grailsApplication.config.ecodata.support.email.address])
+            }
+        }
+        return institutionId
     }
 
     def update(String id, props) {
