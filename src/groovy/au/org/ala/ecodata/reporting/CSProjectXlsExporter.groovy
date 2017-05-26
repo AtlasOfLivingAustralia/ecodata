@@ -234,7 +234,11 @@ class CSProjectXlsExporter extends ProjectExporter {
         properties[properties.indexOf("latitude")] = latitudeGetter
         def longitudeGetter = permission ? accurateLongitudeGetter : generalLongitudeGetter
         properties[properties.indexOf("longitude")] = longitudeGetter
-        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter, timeZone)
+        // location of sighting does not reflect the date/time and timezone that was used to capture the record in Biocollect,
+        // For consistency with the browser we should honour the client timeZone to do the calculations back as with any other date field
+//        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter, timeZone)
+
+        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, null, null, timeZone)
         recordService.getAllByProject(project.projectId).each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
