@@ -329,7 +329,7 @@ class ReportService {
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        def users = UserPermission.findAllByEntityType('au.org.ala.ecodata.Project').groupBy{it.userId}
+        def users = UserPermission.findAllByEntityTypeAndStatusNotEqual('au.org.ala.ecodata.Project', Status.DELETED).groupBy{it.userId}
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 
