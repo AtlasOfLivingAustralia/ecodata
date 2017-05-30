@@ -74,12 +74,12 @@ class TabbedExporter {
                 }
                 else {
                     properties << it.name
-                    headers << it.description
+                    headers << it.label ?: it.description
                 }
             }
             else {
                 properties << it.name
-                headers << it.description
+                headers << it.label ?: it.description
             }
         }
         List propertyGetters = properties.collect { new OutputDataPropertiesBuilder(it, model, documentMap, timeZone) }

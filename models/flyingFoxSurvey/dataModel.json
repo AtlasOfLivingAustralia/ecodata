@@ -1,31 +1,29 @@
 {
-    "modelName": "flyingFoxSurvey",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "date",
+            "description": "The date on which the observation was made.",
             "name": "eventDate",
             "dwcAttribute": "eventDate",
-            "description": "The date on which the observation was made.",
             "validate": "required"
         },
         {
             "dataType": "text",
+            "description": "The name of the person who is attributed with making the observation.",
             "name": "recordedBy",
-            "dwcAttribute": "recordedBy",
-            "description": "The name of the person who is attributed with making the observation."
+            "dwcAttribute": "recordedBy"
         },
         {
             "dataType": "species",
+            "description": "The name of the bat species observed. Click on the 'i' for information about the selected species.",
             "name": "species",
             "dwcAttribute": "scientificName",
-            "description": "The name of the bat species observed. Click on the 'i' for information about the selected species.",
             "validate": "required"
         },
         {
             "dataType": "text",
-            "name": "identificationQualifier",
             "description": "How certain are you that you have correctly identified the species of bat? Only choose 'certain' if you are 100% sure.",
+            "name": "identificationQualifier",
             "constraints": [
                 "Certain",
                 "Uncertain"
@@ -33,16 +31,133 @@
         },
         {
             "dataType": "text",
+            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc.",
             "name": "occurrenceRemarks",
-            "dwcAttribute": "eventRemarks",
-            "description": "General remarks about the survey event, including any characteristic site features, conditions, etc."
+            "dwcAttribute": "eventRemarks"
+        },
+        {
+            "dataType": "text",
+            "description": "Estimated number of bats in the colony at the time of the observation.",
+            "name": "colonySizeCount",
+            "constraints": [
+                "1",
+                "2-5",
+                "6-10",
+                "11-15",
+                "16-20",
+                "20-30",
+                "30-40",
+                "40-50",
+                "50-75",
+                "75-100",
+                "100 – 150",
+                "150-200",
+                "200 – 300",
+                "300 – 500",
+                "500 – 750",
+                "750 – 1000",
+                "1000 – 2000",
+                "2000 – 5000",
+                "5000 – 10000",
+                "10000 – 20000",
+                "20000 – 50000",
+                "50000+"
+            ],
+            "dwcAttribute": "individualCount"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "sex",
+            "constraints": [
+                "Male",
+                "Female",
+                "both",
+                "Unknown"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "The breeding status of the majority of female bats in the colony at the time of the observation.",
+            "name": "colonyBreedingStatus",
+            "constraints": [
+                "Breeding",
+                "Pregnant",
+                "Carrying young",
+                "Weening",
+                "Not breeding",
+                "Uncertain"
+            ]
         },
         {
             "dataType": "number",
-            "name": "individualCount",
-            "dwcAttribute": "individualCount",
-            "description": "Estimated number of bats in the colony at the time of the observation.",
+            "description": "The number of dominant tree species in the immediate surrounding habitat.",
+            "name": "dominantTreeSpeciesCount",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "description": "The dominant tree species in the immediate surrounding habitat that could be identified.",
+            "name": "dominantTreeSpeciesIdentified"
+        },
+        {
+            "dataType": "date",
+            "description": "The date that the bulk of the flying foxes in the colony left the area.",
+            "name": "endDate"
+        },
+        {
+            "dataType": "text",
+            "description": "A brief description of the landscape and/or vegetation structure of the immediate area.",
+            "name": "localHabitatDescription"
+        },
+        {
+            "dataType": "text",
+            "description": "The management action used on the colony.",
+            "name": "siteManagementAction",
             "constraints": [
+                "Monitoring",
+                "BirdFrite",
+                "Noise",
+                "Smoke",
+                "Tree removal",
+                "Tree pruning",
+                "Other (please specify)"
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "If 'Other' is selected for Site management action, please specify the management action here.",
+            "name": "siteManagementTypeOther"
+        },
+        {
+            "dataType": "date",
+            "description": "The date on which the management action commenced.",
+            "name": "siteManagementStartDate"
+        },
+        {
+            "dataType": "date",
+            "description": "The date on which the management action finished.",
+            "name": "siteManagementEndDate",
+            "validate": "future[siteManagementStartDate]"
+        },
+        {
+            "dataType": "number",
+            "description": "The total cost in Australian dollars of untertaking colony management actions at the location, since management cost was last recorded.",
+            "name": "siteManagementCostInAUD",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "description": "The total number of hours spent undertaking colony management actions at the location, since time spent was last recorded.",
+            "name": "siteManagementCostInHours",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "description": "The number of bats left in the colony after management complete.",
+            "name": "postManagementCount",
+            "constraints": [
+                "0",
                 "1",
                 "2-5",
                 "6-10",
@@ -69,94 +184,19 @@
         },
         {
             "dataType": "text",
-            "name": "sex",
-            "description": "",
-            "constraints": [
-                "Male",
-                "Female",
-                "both",
-                "Unknown"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "colonyBreedingStatus",
-            "description": "",
-            "constraints": [
-                "Pregnant",
-                "Carrying young",
-                "Weening",
-                "Not breeding",
-                "Uncertain"
-            ]
+            "description": "Any additional notes about management of the colony.",
+            "name": "siteManagementNotes"
         },
         {
             "dataType": "number",
-            "name": "dominantTreeSpeciesCount",
-            "description": "",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "text",
-            "name": "dominantTreeSpeciesIdentified",
-            "description": ""
-        },
-        {
-            "dataType": "date",
-            "name": "endDate",
-            "description": ""
-        },
-        {
-            "dataType": "text",
-            "name": "localHabitatDescription",
-            "description": ""
-        },
-        {
-            "dataType": "text",
-            "name": "siteManagementType",
-            "description": "",
-            "constraints": [
-                "Monitoring",
-                "BirdFrite",
-                "Noise",
-                "Smoke",
-                "Tree removal",
-                "Tree pruning",
-                "Other (please specify)"
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "siteManagementTypeOther",
-            "description": "If 'Other' is selected for Site management action, please specify the management action here."
-        },
-        {
-            "dataType": "text",
-            "name": "siteManagementCost",
-            "description": "",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "text",
-            "name": "siteManagementCount",
-            "description": "",
-            "validate": "min[0]"
-        },
-        {
-            "dataType": "text",
-            "name": "siteManagementNotes",
-            "description": ""
-        },
-        {
-            "dataType": "text",
+            "description": "Total number of dead bats recorded at the colony.",
             "name": "mortalityCount",
-            "description": "",
             "validate": "min[0]"
         },
         {
             "dataType": "text",
+            "description": "The likely cause of death of any dead bats recorded at the colony.",
             "name": "mortalityCause",
-            "description": "",
             "constraints": [
                 "Heat event",
                 "Starvation",
@@ -166,183 +206,274 @@
         },
         {
             "dataType": "image",
-            "name": "associatedMedia",
-            "description": "Upload a photo taken at the time of the observation. This is essential for verification of the record."
+            "description": "Upload a photo taken at the time of the observation. This is essential for verification of the record.",
+            "name": "associatedMedia"
         },
         {
+            "dataType": "geoMap",
+            "name": "location",
             "columns": [
                 {
-                    "dwcAttribute": "verbatimLatitude",
-                    "source": "locationLatitude"
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
                 },
                 {
-                    "dwcAttribute": "verbatimLongitude",
-                    "source": "locationLongitude"
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
                 },
                 {"source": "Locality"},
                 {"source": "Accuracy"},
                 {"source": "Notes"}
             ],
-            "dataType": "geoMap",
-            "name": "location",
             "dwcAttribute": "verbatimCoordinates",
             "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "speciesSightings",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "species",
+                    "dwcAttribute": "scientificName"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Estimated number of bats of each species in the colony at the time of the observation.",
+                    "name": "speciesEstimatedCount",
+                    "constraints": [
+                        "1",
+                        "2-5",
+                        "6-10",
+                        "11-15",
+                        "16-20",
+                        "20-30",
+                        "30-40",
+                        "40-50",
+                        "50-75",
+                        "75-100",
+                        "100 – 150",
+                        "150-200",
+                        "200 – 300",
+                        "300 – 500",
+                        "500 – 750",
+                        "750 – 1000",
+                        "1000 – 2000",
+                        "2000 – 5000",
+                        "5000 – 10000",
+                        "10000 – 20000",
+                        "20000 – 50000",
+                        "50000+"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "Please provide any comments relating to your observation of this species.",
+                    "name": "occurrenceRemarks"
+                },
+                {
+                    "dataType": "image",
+                    "description": "Attach a photo of an individual of the species. This will assist in verification of the identification.",
+                    "name": "speciesPhoto"
+                }
+            ]
         }
     ],
-    "viewModel": [{
-        "type": "row",
-        "items": [
-            {
-                "computed": null,
-                "type": "col",
-                "items": [
-                    {
-                        "computed": null,
-                        "source": "<h3>Survey Event Information<\/h3>",
-                        "type": "literal"
-                    },
-                    {
-                        "preLabel": "Survey date",
-                        "computed": null,
-                        "source": "eventDate",
-                        "type": "date"
-                    },
-                    {
-                        "preLabel": "Recorded by",
-                        "computed": null,
-                        "source": "recordedBy",
-                        "type": "text"
-                    },
-                    {
-                        "computed": null,
-                        "source": "<hr><h3>Observation Information<\/h3>",
-                        "type": "literal"
-                    },
-                    {
-                        "computed": null,
-                        "source": "<small>Start typing a common or scientific name.<\/small>",
-                        "type": "literal"
-                    },
-                    {
-                        "preLabel": "Species name",
-                        "computed": null,
-                        "source": "species",
-                        "type": "autocomplete"
-                    },
-                    {
-                        "preLabel": "Identification confidence",
-                        "computed": null,
-                        "source": "identificationQualifier",
-                        "type": "selectOne"
-                    },
-                    {
-                        "preLabel": "General comments about the observation",
-                        "computed": null,
-                        "source": "occurrenceRemarks",
-                        "type": "textarea"
-                    },
-                    {
-                        "preLabel": "Sex",
-                        "computed": null,
-                        "source": "sex",
-                        "type": "selectOne"
-                    },
-                    {
-                        "preLabel": "Colony breeding status",
-                        "computed": null,
-                        "source": "colonyBreedingStatus",
-                        "type": "selectOne"
-                    },
-                    {
-                        "preLabel": "Date the colony left the area",
-                        "computed": null,
-                        "source": "endDate",
-                        "type": "date"
-                    },
-                    {
-                        "preLabel": "Number of dominant tree species",
-                        "computed": null,
-                        "source": "dominantTreeSpeciesCount",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Dominant tree species that could be identified",
-                        "computed": null,
-                        "source": "dominantTreeSpeciesIdentified",
-                        "type": "text"
-                    },
-                    {
-                        "preLabel": "Description of immediate habitat",
-                        "computed": null,
-                        "source": "localHabitatDescription",
-                        "type": "textarea"
-                    },
-                    {
-                        "preLabel": "Site management action(s)",
-                        "computed": null,
-                        "source": "siteManagementType",
-                        "type": "selectOne"
-                    },
-                    {
-                        "preLabel": "Site management (other)",
-                        "computed": null,
-                        "source": "siteManagementType",
-                        "type": "text"
-                    },
-                    {
-                        "preLabel": "$ cost of site management (if known)",
-                        "computed": null,
-                        "source": "siteManagementCost",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "No. of bats in the colony post management",
-                        "computed": null,
-                        "source": "siteManagementCount",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Site management notes",
-                        "computed": null,
-                        "source": "siteManagementNotes",
-                        "type": "textarea"
-                    },
-                    {
-                        "preLabel": "No. of dead bats recorded at the colony",
-                        "computed": null,
-                        "source": "mortalityCount",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Cause of bat mortality",
-                        "computed": null,
-                        "source": "mortalityCause",
-                        "type": "selectOne"
-                    },
-                    {
-                        "preLabel": "Sighting photo",
-                        "computed": null,
-                        "source": "associatedMedia",
-                        "type": "image"
-                    }
-                ]
-            },
-            {
-                "computed": null,
-                "type": "col",
-                "items": [{
-                    "includeNotes": true,
-                    "orientation": "vertical",
-                    "readonly": true,
+    "modelName": "flyingFoxSurvey",
+    "record": "true",
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "<h3>Survey Event Information<\/h3>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "eventDate",
+                            "computed": null,
+                            "preLabel": "Survey date",
+                            "type": "date"
+                        },
+                        {
+                            "source": "recordedBy",
+                            "computed": null,
+                            "preLabel": "Recorded by",
+                            "type": "text"
+                        },
+                        {
+                            "source": "<hr><h3>Observation (colony) Information<\/h3>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "colonySizeCount",
+                            "computed": null,
+                            "preLabel": "Estimated No. of individuals in the colony",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "colonyBreedingStatus",
+                            "computed": null,
+                            "preLabel": "Colony breeding status",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "endDate",
+                            "computed": null,
+                            "preLabel": "Date the colony left the area",
+                            "type": "date"
+                        },
+                        {
+                            "source": "dominantTreeSpeciesCount",
+                            "computed": null,
+                            "preLabel": "Number of dominant tree species",
+                            "type": "number"
+                        },
+                        {
+                            "source": "dominantTreeSpeciesIdentified",
+                            "computed": null,
+                            "preLabel": "Dominant tree species that could be identified",
+                            "type": "text"
+                        },
+                        {
+                            "source": "localHabitatDescription",
+                            "computed": null,
+                            "preLabel": "Description of immediate habitat",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "<h3>Management Information<\/h3>",
+                            "computed": null,
+                            "type": "literal"
+                        },
+                        {
+                            "source": "siteManagementAction",
+                            "computed": null,
+                            "preLabel": "Site management action(s)",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "siteManagementActionOther",
+                            "computed": null,
+                            "preLabel": "Site management (other)",
+                            "type": "text"
+                        },
+                        {
+                            "source": "siteManagementStartDate",
+                            "computed": null,
+                            "preLabel": "Date site management was initiated",
+                            "type": "date"
+                        },
+                        {
+                            "source": "siteManagementEndDate",
+                            "computed": null,
+                            "preLabel": "Date site management ended",
+                            "type": "date"
+                        },
+                        {
+                            "source": "siteManagementCostInAUD",
+                            "computed": null,
+                            "preLabel": "Cost of site management ($)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "siteManagementCostInHours",
+                            "computed": null,
+                            "preLabel": "Cost of site management (Hours)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "postManagementCount",
+                            "computed": null,
+                            "preLabel": "Estimated No. of bats in the colony post management",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "siteManagementNotes",
+                            "computed": null,
+                            "preLabel": "Site management notes",
+                            "type": "textarea"
+                        },
+                        {
+                            "source": "mortalityCount",
+                            "computed": null,
+                            "preLabel": "No. of dead bats recorded at the colony",
+                            "type": "number"
+                        },
+                        {
+                            "source": "mortalityCause",
+                            "computed": null,
+                            "preLabel": "Cause of bat mortality",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "associatedMedia",
+                            "computed": null,
+                            "preLabel": "Sighting photo",
+                            "type": "image"
+                        }
+                    ],
                     "computed": null,
-                    "includeSource": true,
-                    "includeAccuracy": true,
-                    "source": "location",
-                    "type": "geoMap",
-                    "includeLocality": true
-                }]
-            }
-        ],
-        "class": "output-section"
-    }]
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "includeSource": true,
+                        "orientation": "vertical",
+                        "includeNotes": true,
+                        "source": "location",
+                        "computed": null,
+                        "type": "geoMap",
+                        "includeAccuracy": true,
+                        "readonly": true,
+                        "includeLocality": true
+                    }],
+                    "computed": null,
+                    "type": "col"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "source": "<h3>Species Sighting<\/h3>",
+                    "type": "literal"
+                },
+                {
+                    "source": "speciesSightings",
+                    "columns": [
+                        {
+                            "title": "Species name",
+                            "source": "species",
+                            "type": "autocomplete"
+                        },
+                        {
+                            "title": "Estimated number",
+                            "source": "speciesEstimatedCount",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Comments",
+                            "source": "occurrenceRemarks",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Photo",
+                            "source": "speciesPhoto",
+                            "type": "image"
+                        }
+                    ],
+                    "class": "output-section",
+                    "userAddedRows": "true",
+                    "type": "table"
+                }
+            ],
+            "class": "output-section",
+            "type": "row"
+        }
+    ]
 }

@@ -1,226 +1,218 @@
 {
-  "title": "Livestock Grazing Management",
-  "modelName": "ESP Livestock Grazing Management",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "grazingPeriods",
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "date",
-          "description": "",
-          "name": "startDate",
-          "validate": "required"
-        },
-        {
-          "dataType": "date",
-          "description": "",
-          "name": "endDate",
-          "validate": "required"
-        },
-        {
-          "dataType": "number",
-          "description": "",
-          "name": "swardHeight",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "typeOfStock",
-          "constraints": [
-            "Cattle",
-            "Sheep",
-            "Goats",
-            "Horses"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "productionType",
-          "constraints": [
-            "Dairy",
-            "Meat",
-            "Wool",
-            "Fibre"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "growthStage",
-          "constraints": {
-            "default": [],
-            "type": "computed",
-            "options": [
-              {
-                "expression": "typeOfStock == \"Cattle\"",
-                "constraints": [
-                  "Bull",
-                  "Calf",
-                  "Cow",
-                  "Cow - Pregnant",
-                  "Heifer",
-                  "Steer",
-                  "Weanling"
-                ]
-              },
-              {
-                "expression": "typeOfStock == \"Sheep\"",
-                "constraints": [
-                  "Ewe",
-                  "Ewe - Pregnant",
-                  "Hoggart",
-                  "Lamb",
-                  "Ram",
-                  "Wether"
-                ]
-              },
-              {
-                "expression": "typeOfStock == \"Goats\"",
-                "constraints": [
-                  "Buck",
-                  "Weaner",
-                  "Doe",
-                  "Doe - Pregnant",
-                  "Kid"
-                ]
-              },
-              {
-                "expression": "typeOfStock == \"Horses\"",
-                "constraints": [
-                  "Colt",
-                  "Filly",
-                  "Foal",
-                  "Gelding",
-                  "Mare",
-                  "Mare - Pregnant",
-                  "Stallion",
-                  "Yearling"
-                ]
-              }
+            "dataType": "list",
+            "name": "grazingPeriods",
+            "columns": [
+                {
+                    "dataType": "date",
+                    "description": "",
+                    "name": "startDate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "date",
+                    "description": "",
+                    "name": "endDate",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "",
+                    "name": "swardHeight",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "typeOfStock",
+                    "constraints": [
+                        "Cattle",
+                        "Sheep",
+                        "Goats",
+                        "Horses"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "productionType",
+                    "constraints": [
+                        "Dairy",
+                        "Meat",
+                        "Wool",
+                        "Fibre"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "growthStage",
+                    "constraints": {
+                        "default": [],
+                        "type": "computed",
+                        "options": [
+                            {
+                                "expression": "typeOfStock == \"Cattle\"",
+                                "constraints": [
+                                    "Bull",
+                                    "Calf",
+                                    "Cow",
+                                    "Cow - Pregnant",
+                                    "Heifer",
+                                    "Steer",
+                                    "Weanling"
+                                ]
+                            },
+                            {
+                                "expression": "typeOfStock == \"Sheep\"",
+                                "constraints": [
+                                    "Ewe",
+                                    "Ewe - Pregnant",
+                                    "Hoggart",
+                                    "Lamb",
+                                    "Ram",
+                                    "Wether"
+                                ]
+                            },
+                            {
+                                "expression": "typeOfStock == \"Goats\"",
+                                "constraints": [
+                                    "Buck",
+                                    "Weaner",
+                                    "Doe",
+                                    "Doe - Pregnant",
+                                    "Kid"
+                                ]
+                            },
+                            {
+                                "expression": "typeOfStock == \"Horses\"",
+                                "constraints": [
+                                    "Colt",
+                                    "Filly",
+                                    "Foal",
+                                    "Gelding",
+                                    "Mare",
+                                    "Mare - Pregnant",
+                                    "Stallion",
+                                    "Yearling"
+                                ]
+                            }
+                        ]
+                    },
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "",
+                    "name": "individualCount",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "description": "",
+                    "name": "breed",
+                    "constraints": []
+                }
             ]
-          },
-          "validate": "required"
         },
         {
-          "dataType": "number",
-          "description": "",
-          "name": "individualCount",
-          "validate": "required,min[0]"
+            "dataType": "text",
+            "description": "",
+            "name": "foregoneProductionCost",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
         },
         {
-          "dataType": "text",
-          "description": "",
-          "name": "breed",
-          "constraints": []
+            "dataType": "number",
+            "description": "",
+            "name": "foregoneProductionAmountEstimate",
+            "validate": "integer,min[0]"
         }
-      ]
-    },
-    {
-      "dataType": "text",
-      "description": "",
-      "name": "foregoneProductionCost",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "description": "",
-      "name": "foregoneProductionAmountEstimate",
-      "validate":"integer,min[0]"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
+    ],
+    "modelName": "ESP Livestock Grazing Management",
+    "title": "Livestock Grazing Management",
+    "viewModel": [
         {
-          "title": "<b>Please record all grazing periods for this site:</b>",
-          "source": "grazingPeriods",
-          "allowHeaderWrap": true,
-          "columns": [
-            {
-              "title": "Start Date",
-              "source": "startDate",
-              "type": "simpleDate"
-            },
-            {
-              "title": "End Date",
-              "source": "endDate",
-              "type": "simpleDate"
-            },
-            {
-              "title": "Sward Height at end of grazing period (cm):",
-              "source": "swardHeight",
-              "type": "number"
-            },
-            {
-              "title": "Type of Stock",
-              "source": "typeOfStock",
-              "type": "selectOne"
-            },
-            {
-              "title": "Production Type",
-              "source": "productionType",
-              "type": "selectOne"
-            },
-            {
-              "title": "Growth Stage",
-              "source": "growthStage",
-              "type": "selectOne"
-            },
-            {
-              "title": "No. Individuals",
-              "source": "individualCount",
-              "type": "number"
-            },
-            {
-              "title": "Breed",
-              "source": "breed",
-              "type": "text"
-            }
-          ],
-          "userAddedRows": true,
-          "type": "table"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
+            "items": [{
+                "title": "<b>Please record all grazing periods for this site:<\/b>",
+                "source": "grazingPeriods",
+                "allowHeaderWrap": true,
+                "columns": [
+                    {
+                        "title": "Start Date",
+                        "source": "startDate",
+                        "type": "simpleDate"
+                    },
+                    {
+                        "title": "End Date",
+                        "source": "endDate",
+                        "type": "simpleDate"
+                    },
+                    {
+                        "title": "Sward Height at end of grazing period (cm):",
+                        "source": "swardHeight",
+                        "type": "number"
+                    },
+                    {
+                        "title": "Type of Stock",
+                        "source": "typeOfStock",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Production Type",
+                        "source": "productionType",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "Growth Stage",
+                        "source": "growthStage",
+                        "type": "selectOne"
+                    },
+                    {
+                        "title": "No. Individuals",
+                        "source": "individualCount",
+                        "type": "number"
+                    },
+                    {
+                        "title": "Breed",
+                        "source": "breed",
+                        "type": "text"
+                    }
+                ],
+                "userAddedRows": true,
+                "type": "table"
+            }],
+            "type": "row"
+        },
         {
-          "source": "<b>Forgone production cost:</b>",
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
+            "items": [{
+                "source": "<b>Forgone production cost:<\/b>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
         {
-          "source": "foregoneProductionCost",
-          "preLabel": "Did you experience any loss of production due to ESP grazing restrictions? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
+            "items": [{
+                "source": "foregoneProductionCost",
+                "preLabel": "Did you experience any loss of production due to ESP grazing restrictions? (Yes / No)",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
         {
-          "source": "foregoneProductionAmountEstimate",
-          "preLabel": "If yes, please provide an estimate of production forgone from any removal of stock during grazing exclusion periods:",
-          "type": "currency",
-          "validate": "min[0]"
+            "items": [{
+                "source": "foregoneProductionAmountEstimate",
+                "preLabel": "If yes, please provide an estimate of production forgone from any removal of stock during grazing exclusion periods:",
+                "type": "currency",
+                "validate": "min[0]"
+            }],
+            "type": "row"
         }
-      ],
-      "type": "row"
-    }
-  ]
+    ]
 }

@@ -1,0 +1,187 @@
+{
+    "dataModel": [{
+        "dataType": "list",
+        "name": "scans",
+        "columns": [
+            {
+                "dataType": "text",
+                "description": "Organisational goal 1",
+                "name": "organisationalGoal1",
+                "validate": "required"
+            },
+            {
+                "dataType": "text",
+                "description": "Organisational goal 2",
+                "name": "organisationalGoal2"
+            },
+            {
+                "dataType": "text",
+                "description": "Organisational goal 3",
+                "name": "organisationalGoal3"
+            },
+            {
+                "dataType": "text",
+                "description": "Approvding individual / body",
+                "name": "stakeholder",
+                "validate": "required"
+            },
+            {
+                "dataType": "date",
+                "description": "Date of submission",
+                "name": "stakeholderDate"
+            },
+            {
+                "dataType": "geoMap",
+                "name": "area"
+            },
+            {
+                "dataType": "stringList",
+                "description": "Objects under consideration",
+                "name": "consideration",
+                "constraints": [
+                    "Policy",
+                    "People",
+                    "Physical assets"
+                ]
+            },
+            {
+                "dataType": "text",
+                "description": "Objects under consideration",
+                "name": "considerationString"
+            },
+            {
+                "dataType": "text",
+                "description": "Time horizon",
+                "name": "timeHorizon",
+                "constraints": [
+                    "1 Year",
+                    "3 Years",
+                    "5 Years",
+                    "10 Years",
+                    "20 Years",
+                    "50 Years",
+                    ">100 Years"
+                ]
+            },
+            {
+                "dataType": "text",
+                "description": "Progress notes",
+                "name": "progressNotes"
+            }
+        ]
+    }],
+    "modelName": "CRISP_FirstPassScan_1",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<p>This first pass scan base on the climate compass workflow will assist in discussion about climate risk and adaptation planning process.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "source": "scans",
+            "items": [
+                {
+                    "items": [{
+                        "source": "<h2>Step 1. What's at stake?<\/h2>",
+                        "type": "literal"
+                    }],
+                    "type": "row"
+                },
+                {
+                    "items": [{
+                        "source": "<h4>In this step the adaptation challenge will be clearly identified<\/h4>",
+                        "type": "literal"
+                    }],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "items": [
+                                {
+                                    "source": "Define organisational goals",
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "organisationalGoal1",
+                                    "preLabel": "Goal 1:",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "organisationalGoal2",
+                                    "preLabel": "Goal 2:",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "organisationalGoal3",
+                                    "preLabel": "Goal 3:",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "Stakeholders to be consulted",
+                                    "type": "literal"
+                                },
+                                {
+                                    "source": "stakeholder",
+                                    "preLabel": "Stakeholder:",
+                                    "type": "text"
+                                },
+                                {
+                                    "source": "stakeholderDate",
+                                    "preLabel": "Date:",
+                                    "type": "date"
+                                }
+                            ],
+                            "type": "col"
+                        },
+                        {
+                            "items": [
+                                {
+                                    "orientation": "vertical",
+                                    "source": "area",
+                                    "preLabel": "Define area of interest:",
+                                    "type": "geoMap"
+                                },
+                                {
+                                    "source": "consideration",
+                                    "preLabel": "Objects under consideration:",
+                                    "type": "selectMany"
+                                },
+                                {
+                                    "source": "considerationString",
+                                    "preLabel": "Other objects",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "source": "timeHorizon",
+                                    "preLabel": "Time horizon:",
+                                    "type": "selectOne"
+                                }
+                            ],
+                            "type": "col"
+                        },
+                        {
+                            "items": [
+                                {
+                                    "source": "progressNotes",
+                                    "preLabel": "Progress notes:",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "source": "Uploaded Documents",
+                                    "type": "literal"
+                                }
+                            ],
+                            "type": "col"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "repeat"
+        }
+    ]
+}

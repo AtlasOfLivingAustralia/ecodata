@@ -1,5 +1,4 @@
 {
-    "modelName": "Administration Activities",
     "dataModel": [
         {
             "dataType": "list",
@@ -51,14 +50,14 @@
                 {
                     "dataType": "number",
                     "description": "The total estimated person hours spent on each administration activity.",
-                    "name": "hoursActionTotal",
                     "computed": {
                         "operation": "times",
                         "dependents": [
                             "numberInvolved",
                             "hoursPerPerson"
                         ]
-                    }
+                    },
+                    "name": "hoursActionTotal"
                 },
                 {
                     "dataType": "text",
@@ -69,16 +68,16 @@
         },
         {
             "dataType": "number",
-            "primaryResult": "true",
             "description": "Aggregate total of hours spent undertaking administration activities.",
-            "name": "hoursAdminTotal",
+            "primaryResult": "true",
             "computed": {
                 "operation": "sum",
                 "dependents": {
                     "source": "hoursActionTotal",
                     "fromList": "adminActions"
                 }
-            }
+            },
+            "name": "hoursAdminTotal"
         },
         {
             "dataType": "text",
@@ -86,6 +85,7 @@
             "name": "notes"
         }
     ],
+    "modelName": "Administration Activities",
     "viewModel": [
         {
             "items": [{
@@ -119,49 +119,49 @@
                 {
                     "title": "Type of administration activity:",
                     "source": "adminActionType",
-                    "computed": null,
                     "width": "25%",
+                    "computed": null,
                     "type": "selectOne"
                 },
                 {
                     "title": "No. of people:",
                     "source": "numberInvolved",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
                     "title": "Ave. time per person (Hrs):",
                     "source": "hoursPerPerson",
-                    "computed": null,
                     "width": "10%",
+                    "computed": null,
                     "type": "number"
                 },
                 {
                     "title": "Ave. total time spent (Hrs):",
                     "source": "hoursActionTotal",
-                    "computed": "{\"operation\":\"product\",\"dependents\":[\"numberInvolved\",\"hoursPerPerson\"]}",
                     "width": "10%",
+                    "computed": "{\"operation\":\"product\",\"dependents\":[\"numberInvolved\",\"hoursPerPerson\"]}",
                     "type": "number"
                 },
                 {
                     "title": "Notes:",
                     "source": "activityNotes",
-                    "computed": null,
                     "width": "40%",
+                    "computed": null,
                     "type": "textarea"
                 }
             ],
-            "class": "output-section",
             "userAddedRows": true,
+            "class": "output-section",
             "type": "table"
         },
         {
             "items": [{
                 "source": "notes",
-                "computed": null,
-                "preLabel": "Comments / Notes:",
                 "width": "90%",
+                "preLabel": "Comments / Notes:",
+                "computed": null,
                 "type": "textarea"
             }],
             "class": "output-section",

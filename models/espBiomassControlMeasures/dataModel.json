@@ -1,80 +1,74 @@
 {
-  "modelName":"ESP Biomass Control Measures",
-  "title":"Biomass Control Measures",
-  "dataModel":[
-    {
-      "dataType":"list",
-      "name":"biomassControl",
-      "columns": [
-        {
-          "dataType": "text",
-          "description": "The type of biomass control",
-          "name": "controlType",
-          "constraints": [
-            "Thinning",
-            "Small scale ecological burns",
-            "Slashing / mowing",
-            "Grazing"
-          ]
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "controlPurpose",
-          "validate": "required",
-          "constraints":[
-            "Reduction of fire risks",
-            "Reduction of single species dominance",
-            "Removal of feral habitat",
-            "Weed control"
-          ]
-        },
-        {
-          "dataType":"number",
-          "name":"areaTreatedHa",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"cost",
-          "dataType":"number",
-          "validate":"integer,min[0]"
-        }
-      ]
-    }
-  ],
-  "viewModel":[
-    {
-      "items": [
-        {
-          "source": "biomassControl",
-          "title": "",
-          "type": "table",
-          "userAddedRows": true,
-          "columns":[
+    "dataModel": [{
+        "dataType": "list",
+        "name": "biomassControl",
+        "columns": [
             {
-              "source":"controlType",
-              "title":"Biomass control activity",
-              "type":"selectOne"
+                "dataType": "text",
+                "description": "The type of biomass control",
+                "name": "controlType",
+                "constraints": [
+                    "Thinning",
+                    "Small scale ecological burns",
+                    "Slashing / mowing",
+                    "Grazing"
+                ]
             },
             {
-              "source":"controlPurpose",
-              "title":"Purpose",
-              "type":"selectOne"
+                "dataType": "text",
+                "description": "",
+                "name": "controlPurpose",
+                "constraints": [
+                    "Reduction of fire risks",
+                    "Reduction of single species dominance",
+                    "Removal of feral habitat",
+                    "Weed control"
+                ],
+                "validate": "required"
             },
             {
-              "source":"areaTreatedHa",
-              "title":"Area treated (Ha)",
-              "type":"number"
+                "dataType": "number",
+                "name": "areaTreatedHa",
+                "validate": "required,min[0]"
             },
             {
-              "source":"cost",
-              "title":"Cost",
-              "type":"currency"
+                "dataType": "number",
+                "name": "cost",
+                "validate": "integer,min[0]"
             }
-          ]
-        }
-      ],
-      "type": "row"
-    }
-  ]
+        ]
+    }],
+    "modelName": "ESP Biomass Control Measures",
+    "title": "Biomass Control Measures",
+    "viewModel": [{
+        "items": [{
+            "title": "",
+            "source": "biomassControl",
+            "columns": [
+                {
+                    "title": "Biomass control activity",
+                    "source": "controlType",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Purpose",
+                    "source": "controlPurpose",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Area treated (Ha)",
+                    "source": "areaTreatedHa",
+                    "type": "number"
+                },
+                {
+                    "title": "Cost",
+                    "source": "cost",
+                    "type": "currency"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        }],
+        "type": "row"
+    }]
 }

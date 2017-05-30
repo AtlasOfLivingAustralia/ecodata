@@ -1,6 +1,4 @@
 {
-    "modelName": "Seed Collection Details",
-    "record": "true",
     "dataModel": [
         {
             "columns": [
@@ -74,6 +72,8 @@
             "description": "Aggregate total of seed sown"
         }
     ],
+    "modelName": "Seed Collection Details",
+    "record": "true",
     "viewModel": [
         {
             "computed": null,
@@ -131,8 +131,8 @@
                     "type": "selectOne"
                 },
                 {
-                    "type": "number",
                     "source": "noOfSourcePlants",
+                    "type": "number",
                     "title": "Number of Source Plants"
                 }
             ],

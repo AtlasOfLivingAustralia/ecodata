@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
 import com.github.fakemongo.Fongo
+import grails.test.mixin.Mock
 import grails.test.mixin.TestMixin
 import grails.test.mixin.mongodb.MongoDbTestMixin
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import spock.lang.Specification
 
 /**
@@ -26,6 +28,7 @@ class OrganisationServiceSpec extends Specification {
         service.collectoryService = stubbedCollectoryService
         service.userService = stubbedUserService
         service.permissionService = mockedPermissionService
+        service.grailsApplication = [config:[collectory:[collectoryIntegrationEnabled:true]]]
     }
 
     def "test create organisation"() {

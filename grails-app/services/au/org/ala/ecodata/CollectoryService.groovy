@@ -1,44 +1,55 @@
 package au.org.ala.ecodata
 
+import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.GrailsApplication
 
 
 /** Provides an interface to the ALA Collectory web services */
 class CollectoryService {
 
+    private static final String DATA_RESOURCE_COLLECTORY_PATH = 'ws/dataResource'
+    private static final String INSTITUTION_COLLECTORY_PATH = 'ws/institution'
+
     WebService webService
     GrailsApplication grailsApplication
+
+    /** These are configuration options used by the Collectory to describe how to import data from MERIT / BioCollect */
+    Map defaultConnectionParameters = [
+            protocol:"DwC",
+            url:"sftp://upload.ala.org.au:{dataProvider}/DRXXX",
+            automation:false,
+            csv_delimiter:',',
+            csv_eol:'\n',
+            csv_escape_char:'\\',
+            csv_text_enclosure:'"',
+            termsForUniqueKey:['occurrenceID'],
+            strip:false,
+            incremental:false
+    ]
 
     /**
      * Creates a new Intitution in the collectory using the supplied properties as input.
      * @param props the properties for the new institution. (orgType, description, name, url, uid)
      * @return the created institution id or null if the create operation fails.
      */
-    def createInstitution(props) {
+    String createInstitution(props) {
 
-        def institutionId = null
-        try {
-            def collectoryProps = mapOrganisationAttributesToCollectory(props)
-            def result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/institution/', collectoryProps)
-            institutionId = webService.extractCollectoryIdFromResult(result)
-        }
-        catch (Exception e) {
-            log.error("Error creating collectory institution - ${e.message}", e)
-        }
+        def collectoryProps = mapOrganisationAttributesToCollectory(props)
+        def result = webService.doPost(grailsApplication.config.collectory.baseURL + INSTITUTION_COLLECTORY_PATH, collectoryProps)
+        String institutionId = webService.extractIdFromLocationHeader(result)
+
         return institutionId
     }
 
     private def mapOrganisationAttributesToCollectory(props) {
-        def mapKeyOrganisationDataToCollectory = [
+        Map collectoryProps = [:]
+        Map mapKeyOrganisationDataToCollectory = [
                 orgType: 'institutionType',
                 description: 'pubDescription',
                 acronym: 'acronym',
                 name: 'name',
                 collectoryInstitutionId: 'uid',
                 url: 'websiteUrl'
-        ]
-        def collectoryProps = [
-                api_key: grailsApplication.config.api_key
         ]
         props.each { k, v ->
             if (v != null) {
@@ -83,74 +94,92 @@ class CollectoryService {
      * Creates a new Data Provider (=~ ecodata project) and Data Resource (=~ ecodata outputs)
      * in the collectory using the supplied properties as input.  Much of project meta data is
      * stored in a 'hiddenJSON' field in collectory.
-     * @param id the project id in ecodata.
      * @param props the properties for the new data provider and resource.
      * @return a map containing the created data provider id and data resource id, or null.
      */
-    Map createDataProviderAndResource(String id, Map props) {
+    Map createDataResource(Map props) {
         Map ids = [:]
 
-        Map collectoryProps = mapProjectAttributesToCollectory(props)
-        Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/', collectoryProps)
-        if (result.error) {
-            throw new Exception("Failed to create Collectory data provider: ${result.error} ${result.detail ?: ""}")
-        }
-        ids.dataProviderId = webService.extractCollectoryIdFromResult(result)
+        Map collectoryProps = mapProjectAttributesToCollectoryDataResource(props)
+        ids.dataProviderId = dataProviderForProject(props)
 
         if (ids.dataProviderId) {
             // create a dataResource in collectory to hold project outputs
-            collectoryProps.remove('hiddenJSON')
             collectoryProps.dataProvider = [uid: ids.dataProviderId]
-            if (props.collectoryInstitutionId) {
-                collectoryProps.institution = [uid: props.collectoryInstitutionId]
-            }
-            result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/', collectoryProps)
+            Map result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH, collectoryProps)
             if (result.error) {
                 throw new Exception("Failed to create Collectory data resource: ${result.error} ${result.detail ?: ""}")
             }
-            ids.dataResourceId = webService.extractCollectoryIdFromResult(result)
+            ids.dataResourceId = webService.extractIdFromLocationHeader(result)
+
+            // Now we have an id we can create the connection properties
+            Map connectionParameters = [connectionParameters:collectoryConnectionParametersForProject(props, ids.dataResourceId)]
+            result = webService.doPost(grailsApplication.config.collectory.baseURL + DATA_RESOURCE_COLLECTORY_PATH+'/'+ids.dataResourceId, connectionParameters)
+            if (result.error) {
+                throw new Exception("Failed to create Collectory data resource connection parameters: ${result.error} ${result.detail ?: ""}")
+            }
+
         }
 
         ids
     }
 
     /**
-     * Updates the Data Provider (=~ ecodata project) and Data Resource (=~ ecodata outputs)
-     * in the collectory using the supplied properties as input.  The 'hiddenJSON' field in
+     * Identifies the data provider to associate with the project data resource.  Right now this is either
+     * MERIT or BioCollect, but this may need to be revisited.
+     */
+    private String dataProviderForProject(Map project) {
+        return project.isMERIT ?  grailsApplication.config.collectory.dataProviderUid.merit : grailsApplication.config.collectory.dataProviderUid.biocollect
+    }
+
+    /** The Collectory expects the upload connection parameters as a JSON encoded String */
+    private String collectoryConnectionParametersForProject(Map project, String dataResourceId) {
+
+        String dataProviderName = project.isMERIT ? "merit" : "biocollect"
+
+        Map properties = defaultConnectionParameters.clone()
+        properties.url = "sftp://upload.ala.org.au:" + dataProviderName + '/' + dataResourceId
+
+        return (properties as JSON).toString()
+    }
+
+    /**
+     * Updates the Data Resource in the collectory using the supplied properties as input.  The 'hiddenJSON' field in
      * collectory is recreated to reflect the latest project properties.
      * @param project the UPDATED project in ecodata.
      * @return void.
      */
-    def updateDataProviderAndResource(Map project) {
+    def updateDataResource(Map project, Map changedProperties = null) {
 
-        def projectId = project.projectId
-        try {
-
-            webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataProvider/' + project.dataProviderId,
-                    mapProjectAttributesToCollectory(project))
-            if (project.dataResourceId)
-                webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId,
-                        [licenseType: project.dataSharingLicense])
-        } catch (Exception e ) {
-            def error = "Error updating collectory info for project ${projectId} - ${e.message}"
-            log.error error
+        if (!project.dataResourceId || project.dataResourceId == "null") {
+           createDataResource(project)
         }
+        else {
+            def projectId = project.projectId
 
+            Map properties = changedProperties ?: project
+            Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
+
+            // Only update if a property other than the "hiddenJSON" attribute has changed.
+            if (collectoryAttributes.size() > 1) {
+                Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
+                if (result.error) {
+                    log.error "Error updating collectory info for project ${projectId} - ${result.error}"
+                }
+            }
+        }
     }
 
-    private def mapProjectAttributesToCollectory(props) {
+    private def mapProjectAttributesToCollectoryDataResource(props) {
         def mapKeyProjectDataToCollectory = [
                 description: 'pubDescription',
                 manager: 'email',
                 name: 'name',
-                dataSharingLicense: '', // ignore this property (mapped to dataResource)
-                organisation: '', // ignore this property
-                projectId: 'uid',
+                dataSharingLicense: 'licenseType',
                 urlWeb: 'websiteUrl'
         ]
-        def collectoryProps = [
-                api_key: grailsApplication.config.api_key
-        ]
+        def collectoryProps = [:]
+
         def hiddenJSON = [:]
         props.each { k, v ->
             if (v != null) {
@@ -162,6 +191,13 @@ class CollectoryService {
             }
         }
         collectoryProps.hiddenJSON = hiddenJSON
+        if (props.organisationId) {
+
+            Organisation organisation = Organisation.findByOrganisationIdAndStatusNotEqual(props.organisationId, Status.DELETED)
+            if (organisation?.collectoryInstitutionId) {
+                collectoryProps.institution = [uid: organisation.collectoryInstitutionId]
+            }
+        }
         collectoryProps
     }
 
