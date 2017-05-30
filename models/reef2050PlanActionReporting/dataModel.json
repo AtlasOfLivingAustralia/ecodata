@@ -19,7 +19,8 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "agencyContact"
+          "name": "agencyContact",
+          "validate":"max[100]"
         }
       ]
     },
@@ -122,16 +123,11 @@
             "Local Government",
             "DPM&C",
             "ACIC",
-            "Industry",
-            "Stewardship programs",
-            "Industry researchers",
-            "Commercial and recreational fishers",
             "James Cook University",
             "BHP Billiton",
             "DoEE – Reef Trust",
             "CSIRO",
             "LGAQ",
-            "NRM organisations",
             "AMPTO",
             "Q-CAS partners",
             "GBRF",
@@ -142,9 +138,6 @@
             "GU",
             "NQBP",
             "River Improvement Trusts",
-            "Community",
-            "Researchers",
-            "Ports Australia",
             "RWQPP Partnership Committee",
             "CANEGROWERS",
             "FBA",
@@ -164,7 +157,8 @@
         {
           "dataType": "text",
           "name": "tasksAndMilestones",
-          "validate": "required"
+          "validate": "required,max[2000]"
+
         },
         {
           "dataType": "number",
@@ -292,7 +286,10 @@
               "title": "Timeframe",
               "source": "timeframe",
               "width": "8%",
-              "type": "date"
+              "type": "date",
+              "displayOptions":{
+                "minViewMode":"months"
+              }
 
             },
             {
