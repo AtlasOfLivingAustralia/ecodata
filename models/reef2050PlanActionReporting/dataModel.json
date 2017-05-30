@@ -283,7 +283,7 @@
               "type": "textarea"
             },
             {
-              "title": "Supporting Agencies",
+              "title": "Supporting Agencies and Partners",
               "source": "supportingAgenciesAndPartners",
               "width": "8%",
               "type": "select2Many"
