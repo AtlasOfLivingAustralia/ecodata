@@ -8,7 +8,6 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
-import java.sql.Time
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 

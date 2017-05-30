@@ -526,37 +526,6 @@ class SearchController {
         }
     }
 
-    /** Temporary method to assist generating the user report.  Needs work */
-    def userReport() {
-
-        def users = reportService.userSummary()
-
-        File out = new File('/Users/god08d/Documents/MERIT/users/userReport.csv')
-        out.withWriter { writer ->
-            writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
-
-            users.values().each { user->
-
-                writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                if (user.projects) {
-                    boolean first = true
-                    user.projects.each { project ->
-                        if (!first) {
-                            writer.print(",,,,")
-                        }
-                        writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
-                        first = false
-                    }
-                }
-                else {
-                    writer.println()
-                }
-
-
-            }
-        }
-    }
-
     @RequireApiKey
     def downloadUserList() {
 
@@ -568,7 +537,7 @@ class SearchController {
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
             try {
-            List users = reportService.userSummary()
+            Map users = reportService.userSummary()
 
             outputStream.withWriter { writer ->
                 writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
