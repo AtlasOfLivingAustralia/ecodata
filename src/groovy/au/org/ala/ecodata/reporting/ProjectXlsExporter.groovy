@@ -105,7 +105,7 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectService projectService
 
     public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
-        super(exporter, tabsToExport, documentMap)
+        super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
     }
 
