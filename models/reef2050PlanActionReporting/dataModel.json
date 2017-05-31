@@ -1,357 +1,381 @@
 {
-    "dataModel": [
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "reportingLeadAgency",
+      "constraints": [
+        "Australian Maritime Safety Authority",
+        "QLD Government Department of Agriculture and Fisheries",
+        "QLD Government Department of Infrastructure, Local Government and Planning",
+        "Queensland Government Department of Natural Resources and Mines",
+        "Australian Government Dept of Environment and Energy",
+        "Queensland Government Department of State Development",
+        "QLD Department of Transport and Min Roads",
+        "Queensland Government Department of Environment and Heritage Protection",
+        "Great Barrier Reef Marine Park Authority",
+        "QLD Government Department of National Parks, Sport and Racing",
+        "Australian Government Department of the Prime Minister and Cabinet"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "webLink",
+      "validate": "custom[url]"
+    },
+    {
+      "dataType": "list",
+      "name": "agencyContacts",
+      "columns": [
         {
-            "dataType": "text",
-            "name": "reportingLeadAgency",
-            "constraints": [
-                "Australian Maritime Safety Authority",
-                "QLD Government Department of Agriculture and Fisheries",
-                "QLD Government Department of Infrastructure, Local Government and Planning",
-                "Queensland Government Department of Natural Resources and Mines",
-                "Australian Government Dept of Environment and Energy",
-                "Queensland Government Department of State Development",
-                "QLD Department of Transport and Min Roads",
-                "Queensland Government Department of Environment and Heritage Protection",
-                "Great Barrier Reef Marine Park Authority",
-                "QLD Government Department of National Parks, Sport and Racing",
-                "Australian Government Department of the Prime Minister and Cabinet"
-            ],
-            "validate": "required"
-        },
-        {
-            "dataType": "text",
-            "name": "webLink"
-        },
-        {
-            "dataType": "text",
-            "name": "agencyContact"
-        },
-        {
-            "dataType": "list",
-            "name": "actions",
-            "columns": [
-                {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "actionId",
-                    "constraints": [
-                        "A",
-                        "B",
-                        "C",
-                        "D",
-                        "E",
-                        "F",
-                        "G"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "description": "",
-                    "name": "actionDescription",
-                    "constraints": [
-                        "A description",
-                        "B description",
-                        "C description",
-                        "D description",
-                        "E description",
-                        "F description",
-                        "G description"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "theme",
-                    "constraints": [
-                        "Water quality",
-                        "Biodiversity",
-                        "Ecosystem health",
-                        "Heritage",
-                        "Community benefits",
-                        "Economic benefits",
-                        "Governance"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "status",
-                    "constraints": [
-                        "Completed",
-                        "In place",
-                        "On track / Underway",
-                        "Delayed or limited progress",
-                        "Significant delays or no progress",
-                        "Not yet due"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "description",
-                    "validate": "max[1500]"
-                },
-                {
-                    "dataType": "text",
-                    "name": "progress",
-                    "validate": "max[1500]"
-                },
-                {
-                    "dataType": "stringList",
-                    "name": "supportingAgencies",
-                    "constraints": [
-                        "NPSR",
-                        "DNRM",
-                        "DATSIP",
-                        "EHP",
-                        "DOEE",
-                        "DAF",
-                        "DTMR",
-                        "AMSA",
-                        "GBRMPA",
-                        "DSITI",
-                        "DILGP",
-                        "TMESBCG",
-                        "OGC",
-                        "DSD",
-                        "DIRD",
-                        "QPS",
-                        "DAFF",
-                        "DPC",
-                        "Ports Australia",
-                        "Queensland Ports Association"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "stringList",
-                    "name": "contributingPartners",
-                    "constraints": [
-                        "Traditional Owners",
-                        "Local Government",
-                        "DPM&C",
-                        "ACIC",
-                        "Industry",
-                        "Stewardship programs",
-                        "Industry researchers",
-                        "Commercial and recreational fishers",
-                        "James Cook University",
-                        "BHP Billiton",
-                        "DoEE – Reef Trust",
-                        "CSIRO",
-                        "LGAQ",
-                        "NRM organisations",
-                        "AMPTO",
-                        "Q-CAS partners",
-                        "GBRF",
-                        "AIMS",
-                        "CQU",
-                        "UQ",
-                        "RRRC",
-                        "GU",
-                        "NQBP",
-                        "River Improvement Trusts",
-                        "Community",
-                        "Researchers",
-                        "Ports Australia",
-                        "RWQPP Partnership Committee",
-                        "CANEGROWERS",
-                        "FBA",
-                        "NQ Dry Tropics",
-                        "Agforce"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "priority",
-                    "constraints": [
-                        "Already prioritised",
-                        "Immediate (December 2016)",
-                        "Medium (June 2018)",
-                        "Future (June 2020)"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "timeframe",
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "tasksAndMilestones",
-                    "validate": "required"
-                },
-                {
-                    "dataType": "text",
-                    "name": "fundingStatus",
-                    "constraints": [
-                        "New – funded",
-                        "New –  partially funded",
-                        "New – unfunded",
-                        "Existing – funded",
-                        "Existing – partially funded",
-                        "Existing – unfunded"
-                    ],
-                    "validate": "required"
-                },
-                {
-                    "dataType": "number",
-                    "name": "fundsExtendedToDate",
-                    "validate": "required,integer"
-                },
-                {
-                    "dataType": "number",
-                    "name": "fteRequiredToDate",
-                    "validate": "required"
-                },
-                {
-                    "dataType": "stringList",
-                    "name": "linkedOrRelatedActions",
-                    "constraints": [
-                        "A",
-                        "B",
-                        "C",
-                        "D",
-                        "E",
-                        "F",
-                        "G"
-                    ]
-                }
-            ]
+          "dataType": "text",
+          "name": "agencyContact"
         }
-    ],
-    "modelName": "Reef 2050 Plan Action Reporting",
-    "title": "Reef 2050 Plan Action Reporting",
-    "viewModel": [
+      ]
+    },
+    {
+      "dataType": "list",
+      "name": "actions",
+      "columns": [
         {
-            "items": [
-                {
-                    "source": "reportingLeadAgency",
-                    "preLabel": "Reporting Lead Agency",
-                    "type": "text"
-                },
-                {
-                    "source": "webLink",
-                    "preLabel": "Link to website",
-                    "type": "text"
-                },
-                {
-                    "source": "agencyContact",
-                    "preLabel": "Agency Contact",
-                    "type": "text"
-                }
-            ],
-            "type": "row"
+          "dataType": "text",
+          "description": "",
+          "name": "actionId",
+          "constraints": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G"
+          ],
+          "validate": "required"
         },
         {
-            "items": [{
-                "source": "<b>Please complete a row for each action you are required to report on.<\/b>",
-                "type": "literal"
-            }],
-            "type": "row"
+          "dataType": "text",
+          "description": "",
+          "name": "actionDescription",
+          "constraints": [
+            "A description",
+            "B description",
+            "C description",
+            "D description",
+            "E description",
+            "F description",
+            "G description"
+          ],
+          "validate": "required"
         },
         {
-            "items": [{
-                "source": "actions",
-                "columns": [
-                    {
-                        "title": "Action ID",
-                        "source": "actionId",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Action description",
-                        "source": "actionDescription",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Theme",
-                        "source": "theme",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Status",
-                        "source": "status",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Description",
-                        "source": "description",
-                        "width": "8%",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Progress",
-                        "source": "progress",
-                        "width": "8%",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Supporting Agencies",
-                        "source": "supportingAgencies",
-                        "width": "8%",
-                        "type": "select2Many"
-                    },
-                    {
-                        "title": "Contributing Partners",
-                        "source": "contributingPartners",
-                        "width": "8%",
-                        "type": "select2Many"
-                    },
-                    {
-                        "title": "Priority",
-                        "source": "priority",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Timeframe",
-                        "source": "timeframe",
-                        "width": "8%",
-                        "type": "text"
-                    },
-                    {
-                        "title": "Tasks and milestones / deliverables",
-                        "source": "tasksAndMilestones",
-                        "width": "8%",
-                        "type": "textarea"
-                    },
-                    {
-                        "title": "Funding Status",
-                        "source": "fundingStatus",
-                        "width": "8%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Funds expended to date for action delivery",
-                        "source": "fundsExtendedToDate",
-                        "width": "8%",
-                        "type": "currency"
-                    },
-                    {
-                        "title": "FTE required to date for action delivery",
-                        "source": "fteRequiredToDate",
-                        "width": "8%",
-                        "type": "number"
-                    },
-                    {
-                        "title": "Linked or related actions",
-                        "source": "linkedOrRelatedActions",
-                        "width": "8%",
-                        "type": "select2Many"
-                    }
-                ],
-                "userAddedRows": true,
-                "type": "table"
-            }],
-            "type": "row"
+          "dataType": "text",
+          "name": "theme",
+          "constraints": [
+            "Water quality",
+            "Biodiversity",
+            "Ecosystem health",
+            "Heritage",
+            "Community benefits",
+            "Economic benefits",
+            "Governance"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "status",
+          "constraints": [
+            "Completed",
+            "In place",
+            "On track / Underway",
+            "Delayed or limited progress",
+            "Significant delays or no progress",
+            "Not yet due"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "description",
+          "validate": "max[1500]"
+        },
+        {
+          "dataType": "text",
+          "name": "progress",
+          "validate": "max[1500]"
+        },
+        {
+          "dataType": "stringList",
+          "name": "supportingAgencies",
+          "constraints": [
+            "NPSR",
+            "DNRM",
+            "DATSIP",
+            "EHP",
+            "DOEE",
+            "DAF",
+            "DTMR",
+            "AMSA",
+            "GBRMPA",
+            "DSITI",
+            "DILGP",
+            "TMESBCG",
+            "OGC",
+            "DSD",
+            "DIRD",
+            "QPS",
+            "DAFF",
+            "DPC",
+            "Ports Australia",
+            "Queensland Ports Association"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "stringList",
+          "name": "contributingPartners",
+          "constraints": [
+            "Traditional Owners",
+            "Local Government",
+            "DPM&C",
+            "ACIC",
+            "Industry",
+            "Stewardship programs",
+            "Industry researchers",
+            "Commercial and recreational fishers",
+            "James Cook University",
+            "BHP Billiton",
+            "DoEE – Reef Trust",
+            "CSIRO",
+            "LGAQ",
+            "NRM organisations",
+            "AMPTO",
+            "Q-CAS partners",
+            "GBRF",
+            "AIMS",
+            "CQU",
+            "UQ",
+            "RRRC",
+            "GU",
+            "NQBP",
+            "River Improvement Trusts",
+            "Community",
+            "Researchers",
+            "Ports Australia",
+            "RWQPP Partnership Committee",
+            "CANEGROWERS",
+            "FBA",
+            "NQ Dry Tropics",
+            "Agforce"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "priority",
+          "constraints": [
+            "Already prioritised",
+            "Immediate (December 2016)",
+            "Medium (June 2018)",
+            "Future (June 2020)"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "timeframe",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "tasksAndMilestones",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "fundingStatus",
+          "constraints": [
+            "New – funded",
+            "New –  partially funded",
+            "New – unfunded",
+            "Existing – funded",
+            "Existing – partially funded",
+            "Existing – unfunded"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "fundsExtendedToDate",
+          "validate": "required,integer"
+        },
+        {
+          "dataType": "number",
+          "name": "fteRequiredToDate",
+          "validate": "required"
+        },
+        {
+          "dataType": "stringList",
+          "name": "linkedOrRelatedActions",
+          "constraints": [
+            "A",
+            "B",
+            "C",
+            "D",
+            "E",
+            "F",
+            "G"
+          ]
         }
-    ]
+      ]
+    }
+  ],
+  "modelName": "Reef 2050 Plan Action Reporting",
+  "title": "Reef 2050 Plan Action Reporting",
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "source": "webLink",
+              "preLabel": "Link to website",
+              "type": "text"
+            },
+            {
+              "type": "table",
+              "userAddedRows": true,
+              "source": "agencyContacts",
+              "columns": [
+                {
+                  "type": "text",
+                  "width": "100%",
+                  "class": "input-xxlarge",
+                  "title": "Agency Contact(s)",
+                  "source": "agencyContact"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "col",
+          "items": []
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "<b>Please complete a row for each action you are required to report on.<\/b>",
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "actions",
+          "columns": [
+            {
+              "title": "Action ID",
+              "source": "actionId",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Action",
+              "source": "actionDescription",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Theme",
+              "source": "theme",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Status",
+              "source": "status",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Description",
+              "source": "description",
+              "width": "8%",
+              "type": "textarea"
+            },
+            {
+              "title": "Progress",
+              "source": "progress",
+              "width": "8%",
+              "type": "textarea"
+            },
+            {
+              "title": "Supporting Agencies",
+              "source": "supportingAgencies",
+              "width": "8%",
+              "type": "select2Many"
+            },
+            {
+              "title": "Contributing Partners",
+              "source": "contributingPartners",
+              "width": "8%",
+              "type": "select2Many"
+            },
+            {
+              "title": "Priority",
+              "source": "priority",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Timeframe",
+              "source": "timeframe",
+              "width": "8%",
+              "type": "text"
+            },
+            {
+              "title": "Tasks and milestones / deliverables",
+              "source": "tasksAndMilestones",
+              "width": "8%",
+              "type": "textarea"
+            },
+            {
+              "title": "Funding Status",
+              "source": "fundingStatus",
+              "width": "8%",
+              "type": "selectOne"
+            },
+            {
+              "title": "Funds expended to date for action delivery",
+              "source": "fundsExtendedToDate",
+              "width": "8%",
+              "type": "currency"
+            },
+            {
+              "title": "FTE required to date for action delivery",
+              "source": "fteRequiredToDate",
+              "width": "8%",
+              "type": "number"
+            },
+            {
+              "title": "Linked or related actions",
+              "source": "linkedOrRelatedActions",
+              "width": "8%",
+              "type": "select2Many"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "row"
+    }
+  ]
 }
