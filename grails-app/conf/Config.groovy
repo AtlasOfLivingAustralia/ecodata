@@ -580,7 +580,7 @@ if (!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
 }
 if (!userDetails.admin.url) {
-    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/admin'
+    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {
