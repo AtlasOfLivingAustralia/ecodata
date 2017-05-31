@@ -332,7 +332,8 @@ class ReportService {
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        def users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
+        List users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
+
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 

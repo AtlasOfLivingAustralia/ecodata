@@ -232,7 +232,12 @@ class SearchController {
     }
 
     def elasticGeo() {
-        def res = elasticSearchService.search(params.query, params, "homepage")
+        Map geoSearch = null
+        if (params.geoSearchJSON) {
+            geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
+        }
+
+        def res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
         def selectedFacetTerms = []
         def markBy = params.markBy
 
@@ -538,7 +543,6 @@ class SearchController {
 
                 List meritRoles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
                 Map users = reportService.userSummary(projectIds, meritRoles)
-
 
                 outputStream.withWriter { writer ->
                     writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")

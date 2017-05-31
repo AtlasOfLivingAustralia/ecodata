@@ -190,7 +190,6 @@ class DocumentService {
 
         BuildableCriteria criteria = Document.createCriteria()
         List documents = criteria.list(max:max, offset:offset) {
-            ne("status", DELETED)
             searchCriteria.each { prop,value ->
 
                 if (value instanceof List) {
@@ -200,6 +199,7 @@ class DocumentService {
                     eq(prop, value)
                 }
             }
+            ne("status", DELETED)
             if (sort) {
                 order(sort, orderBy?:'asc')
             }

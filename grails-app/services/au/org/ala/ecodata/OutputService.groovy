@@ -152,9 +152,9 @@ class OutputService {
                 props.data = saveImages(props.data, props.name, output.outputId, props.activityId);
                 props.data = saveAudio(props.data, props.name, output.outputId, props.activityId);
 
-                getCommonService().updateProperties(output, props)
 
                 createOrUpdateRecordsForOutput(activity, output, props)
+                getCommonService().updateProperties(output, props)
 
                 return [status: 'ok', outputId: output.outputId]
             } catch (Exception e) {
@@ -171,6 +171,14 @@ class OutputService {
         }
     }
 
+    /**
+     * Creates records for the species fields provided in the output/props
+     *
+     * It will add outputSpeciesId to props map for any species field missing a value.
+     * @param activity
+     * @param output
+     * @param props
+     */
     void createOrUpdateRecordsForOutput(Activity activity, Output output, Map props) {
         Map outputMetadata = metadataService.getOutputDataModelByName(props.name) as Map
 
@@ -220,6 +228,7 @@ class OutputService {
                 List statusUpdate = recordService.updateRecordStatusByOutput(outputId, Status.DELETED)
                 if (!statusUpdate) {
                     createOrUpdateRecordsForOutput(activity, output, props)
+                    getCommonService().updateProperties(output, props)
                     result = [status: 'ok']
                 } else {
                     result = [status: 'error', error: "Error updating the record status"]

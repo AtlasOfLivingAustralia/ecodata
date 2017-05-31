@@ -9,8 +9,15 @@ class SpeciesConverter implements RecordFieldConverter {
 
         record.guid = data[metadata.name].guid
         record.name = data[metadata.name].name
-        record.outputSpeciesId = data[metadata.name].outputSpeciesId
+
         record.scientificName = data[metadata.name].name
+
+        // Force outputSpeciesId generation if not coming in the original data
+        if(!data[metadata.name].outputSpeciesId) {
+            data[metadata.name].outputSpeciesId = UUID.randomUUID().toString()
+        }
+
+        record.outputSpeciesId = data[metadata.name].outputSpeciesId
 
         [record]
     }

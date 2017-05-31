@@ -701,7 +701,10 @@ class ElasticSearchService {
         List users = UserPermission.findAllByEntityTypeAndEntityId(Organisation.class.name, organisation.organisationId).collect{ it.userId };
         organisation.users = users;
 
-        List meritProjects = Project.findAllByOrganisationIdAndIsMERIT(organisation.organisationId, true)
+        List meritProjects = Project.findAllByOrganisationIdAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
+        if (!meritProjects) {
+            meritProjects = Project.findAllByOrgIdSvcProviderAndIsMERITAndStatusNotEqual(organisation.organisationId, true, DELETED)
+        }
         organisation.isMERIT = meritProjects.size() > 0
     }
 
@@ -804,12 +807,19 @@ class ElasticSearchService {
             }
             try {
                 // check if activity has images
-                Map images = documentService.search([type: 'image', role: 'surveyImage', activityId: activity.activityId], version);
-                if (images.count > 0)
+                Map images = documentService.search([activityId: activity.activityId, type: 'image', role: 'surveyImage'], version);
+                if (images.count > 0) {
                     projectActivity.surveyImage = true;
+                    activity.thumbnailUrl = images?.documents[0]?.thumbnailUrl
+                }
+
+                if(!activity.thumbnailUrl) {
+                    def projectActivityDocuments = documentService.findAllForProjectActivityId(activity.projectActivityId)
+                    activity.thumbnailUrl = projectActivityDocuments?.find { it.thumbnailUrl }?.thumbnailUrl
+                }
             }
             catch (Exception e) {
-                log.error("unable to index images for projectActivity: " + projectActivity?.projectActivityId)
+                log.error("unable to index images for projectActivity: " + projectActivity?.projectActivityId, e)
             }
 
             projectActivity.organisationName = organisation?.name ?: "Unknown organisation"

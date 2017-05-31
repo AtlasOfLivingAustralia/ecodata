@@ -105,6 +105,7 @@ class DownloadService {
         Map<String, Set<String>> activitiesByProject = getActivityIdsForDownload(params, PROJECT_ACTIVITY_INDEX)
         Map<String, Object> documentMap = [:] // Accumulates a map of document id to path in zip file
 
+        TimeZone timeZone = DateUtil.getTimeZoneFromString(params.clientTimezone)
 
         new ZipOutputStream(outputStream).withStream { zip ->
             try{
@@ -115,7 +116,7 @@ class DownloadService {
                 addImagesToZip(zip, activitiesByProject, documentMap)
                 log.debug("Images added")
 
-                XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data")
+                XlsExporter xlsExporter = exportProjectsToXls(activitiesByProject, documentMap, "data", timeZone)
                 zip.putNextEntry(new ZipEntry("data.xls"))
                 ByteArrayOutputStream xslFile = new ByteArrayOutputStream()
                 xlsExporter.save(xslFile)
@@ -126,7 +127,7 @@ class DownloadService {
                 zip.closeEntry()
                 log.debug("XLS file added")
 
-                addReadmeToZip(zip)
+                addReadmeToZip(zip, timeZone)
             } catch (Exception e){
                 log.error("Error creating download archive", e)
             } finally {
@@ -140,7 +141,7 @@ class DownloadService {
         true
     }
 
-    private static addReadmeToZip(ZipOutputStream zip) {
+    private static addReadmeToZip(ZipOutputStream zip, TimeZone timeZone) {
         zip.putNextEntry(new ZipEntry("README.txt"))
         zip << """\
             File format is as follows:
@@ -165,7 +166,7 @@ class DownloadService {
             |- - - records.csv -> Map of record id onto image locations
 
 
-            This download was produced on ${new Date().format("dd/MM/yyyy HH:mm")}.
+            This download was produced on ${new Date().format("dd/MM/yyyy HH:mm:ss Z z", timeZone)}.
         """.stripIndent()
 
         zip.closeEntry()
@@ -243,7 +244,7 @@ class DownloadService {
                 } else {
                     documentsMap[null].each { doc ->
                         if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                            addFileToZip(zip, projectPath, doc, paths, true)
+                            addFileToZip(zip, projectPath, doc, documentMap, paths, true)
                         }
                     }
                 }
@@ -355,12 +356,12 @@ class DownloadService {
         documents
     }
 
-    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results") {
+    XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results", TimeZone timeZone) {
         long start = System.currentTimeMillis()
 
         XlsExporter xlsExporter = new XlsExporter(fileName)
 
-        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter, documentMap)
+        ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter, documentMap, timeZone)
 
         projectExporter.exportActivities(activityIdsByProject)
 

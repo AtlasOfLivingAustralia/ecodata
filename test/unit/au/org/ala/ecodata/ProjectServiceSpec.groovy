@@ -32,7 +32,7 @@ class ProjectServiceSpec extends Specification {
         def projData = [name:'test proj', description: 'test proj description', dynamicProperty: 'dynamicProperty']
         def dataProviderId = 'dp1'
         def dataResourceId = 'dr1'
-        stubbedCollectoryService.createDataProviderAndResource(_,_) >> [dataProviderId: dataProviderId, dataResourceId: dataResourceId]
+        stubbedCollectoryService.createDataResource(_,_) >> [dataResourceId: dataResourceId]
         def updatedData = projData + [description: 'test proj updated description', origin: 'atlasoflivingaustralia']
 
 
@@ -53,8 +53,6 @@ class ProjectServiceSpec extends Specification {
         then: "ensure the properties are the same as the original"
         savedProj.name == projData.name
         savedProj.description == projData.description
-        savedProj.dataProviderId == dataProviderId
-        savedProj.dataResourceId == dataResourceId
         //savedProj['dynamicProperty'] == projData.dynamicProperty  The dbo property on the domain object appears to be missing during unit tests which prevents dynamic properties from being retreived.
 
         when:
