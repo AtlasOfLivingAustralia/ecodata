@@ -332,7 +332,7 @@ class ReportService {
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        List users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
+        Map users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
 
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
@@ -355,21 +355,18 @@ class ReportService {
             int offset = 0
             Map result = webService.getJson(url+role+'&offset='+offset)
 
-            while (offset < result?.resp?.count && !result?.error) {
+            while (offset < result?.count && !result?.error) {
 
-                List usersForRole = result?.resp?.users ?: []
+                List usersForRole = result?.users ?: []
                 usersForRole.each { user ->
                     if (userSummary[user.userId]) {
                         userSummary[user.userId].role = role
                     }
                     else {
-                        user = [:]
-                        userSummary[user.userId] = user
-                        def userDetails = userService.lookupUserDetails(user.userId)
-                        user.userId = userDetails.userId
-                        user.name = userDetails.displayName
-                        user.email = userDetails.userName
                         user.projects = []
+                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
+                        user.role = role
+                        userSummary[user.userId] = user
                     }
                 }
 

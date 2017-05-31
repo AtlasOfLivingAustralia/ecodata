@@ -532,9 +532,10 @@ class SearchController {
         if (!params.email) {
             params.email = userService.getCurrentUserDetails().userName
         }
+
         params.fileExtension = "csv"
 
-        Map searchParams = [fq:params.fq, query:params.query?:"*:*"]
+        Map searchParams = [fq:params.fq, query:params.query?:"*:*", max:10000, offset:0]
 
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
@@ -556,7 +557,7 @@ class SearchController {
                                 if (!first) {
                                     writer.print(",,,,")
                                 }
-                                writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
+                                writer.println(project.projectId+","+project.grantId+","+project.externalId+",\""+project.name+"\","+project.access)
                                 first = false
                             }
                         }
