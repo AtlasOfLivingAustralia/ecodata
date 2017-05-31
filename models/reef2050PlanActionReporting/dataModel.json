@@ -338,7 +338,10 @@
               "title": "Timeframe",
               "source": "timeframe",
               "width": "8%",
-              "type": "text"
+              "type": "date",
+              "displayOptions":{
+                "minViewMode":"months"
+              }
             },
             {
               "title": "Tasks and milestones / deliverables",
