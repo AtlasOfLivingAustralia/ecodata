@@ -81,7 +81,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_TYPE = "doc"
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
@@ -141,33 +141,12 @@ class ElasticSearchService {
 
     /**
      * Get the doc identifier, which differs for each domain class.
-     * Note this can be called for both the Domain object itself or the
-     * "toMap" representation it. TODO might be better way to do this
      *
      * @param doc
      * @return docId (String)
      */
     def getEntityId(doc) {
-        def docId
-        def className = (doc.className) ? doc.className : doc.class.name;
-
-        switch (className) {
-            case Project.class.name:
-                docId = doc.projectId; break
-            case Site.class.name:
-                docId = doc.siteId; break
-            case Activity.class.name:
-                docId = doc.activityId; break
-            case Organisation.class.name:
-                docId = doc.organisationId; break
-            case Report.class.name:
-                docId = doc.reportId; break
-            case Record.class.name:
-                docId = doc.occurrenceID; break
-            default:
-                docId = doc.id; break
-        }
-        docId
+        IdentifierHelper.getEntityIdentifier(doc)
     }
 
     def getDocType(doc) {
