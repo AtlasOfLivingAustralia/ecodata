@@ -916,7 +916,7 @@ class ElasticSearchService {
     void buildProjectActivityQuery(params) {
 
         String query = params.searchTerm ?: ''
-        String userId = params.userId
+        String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
         String forcedQuery = ''
 
