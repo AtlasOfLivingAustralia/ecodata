@@ -277,7 +277,7 @@ class ProjectService {
      */
 
     private establishCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             task {
                 Map collectoryProps = [:]
@@ -300,7 +300,7 @@ class ProjectService {
     }
 
     private updateCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             Map projectProps = toMap(project, FLAT)
             task {
