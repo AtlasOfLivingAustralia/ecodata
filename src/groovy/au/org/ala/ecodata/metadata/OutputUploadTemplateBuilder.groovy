@@ -130,7 +130,16 @@ class OutputDataProcessor {
                         cell.setCellValue(value?value.name:'')
                         break
                     case 'stringList':
+                        if (value) {
+                            if (value instanceof List) {
+                                value = new ArrayList(value) // Copy the list to avoid JSONArray "join" behaviour
+                            }
+                            else {
+                                value = [value]
+                            }
+                        }
                         cell.setCellValue(value?value.join(','):'')
+                        break
                     case 'date':
                     case 'text':
                     default:

@@ -4,6 +4,7 @@ import grails.converters.JSON
 
 class ProjectActivityController {
 
+    /* Testing merge to grails 3 */
     def projectActivityService
 
     def asJson = { model ->
