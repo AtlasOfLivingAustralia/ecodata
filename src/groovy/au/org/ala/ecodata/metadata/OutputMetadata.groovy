@@ -34,6 +34,7 @@ class OutputMetadata {
                     def label = result.preLabel?:(result.title?:result.postLabel)
                     annotatedNode.label = label
                     annotatedNode.viewType = result.type
+                    annotatedNode.readOnly = result.readOnly
                 }
                 if (!annotatedNode.label) {
                     annotatedNode.label = annotatedNode.name

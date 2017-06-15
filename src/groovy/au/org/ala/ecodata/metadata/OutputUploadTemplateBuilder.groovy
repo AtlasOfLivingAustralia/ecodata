@@ -12,18 +12,23 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     def model
     def outputName
     def data
+    boolean editMode = false
+    boolean extraRowsEditable = true
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
+        this.editMode = false
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
         this.data = data
+        this.editMode = editMode
+        this.extraRowsEditable = extraRowsEditable
     }
 
 
@@ -40,7 +45,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle()).process()
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
         finalise()
     }
@@ -73,7 +78,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle()).process()
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
         finalise()
     }
@@ -92,17 +97,56 @@ class OutputDataProcessor {
     def model
     def data
     def rowHeaderStyle
+    boolean editMode
+    boolean extraRowsEditable
+    CellStyle unlockedCellStyle
 
-    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle){
+    /**
+     *
+     * @param workbook The Excel workbook to populate
+     * @param sheet The sheet/tab to populate
+     * @param model The model describing the data
+     * @param data The data to add to the sheet
+     * @param rowHeaderStyle Cell style for the column headers
+     * @param editMode true if this workbook is being populated for the purposes of uploading data for an activity / table.  If
+     * set to true, the "readOnly" status of model items will be taken into account when writing to cells.
+     * @param extraRowsEditable only used if editMode is true.  If so, extra rows will be able to be added to the data populated in the sheet.
+     * Otherwise the cells in the extra rows will be locked.
+     */
+    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle, boolean editMode = false, boolean extraRowsEditable = true){
         this.workbook = workbook
         this.sheet = sheet
         this.model = model
         this.data = data
         this.rowHeaderStyle = rowHeaderStyle
+        this.editMode = editMode
+        this.extraRowsEditable = extraRowsEditable
 
+        if (editMode) {
+            unlockedCellStyle =  workbook.createCellStyle();
+            unlockedCellStyle.setLocked(false);
+        }
+    }
+
+    private void protectSheet() {
+
+        sheet.protectSheet("")
+
+        // If we allow extra rows to be added, by default make editable columns editable for the whole sheet.
+        if (extraRowsEditable) {
+            model.eachWithIndex { modelVal, i ->
+                if (!modelVal.readOnly)  {
+                    sheet.setDefaultColumnStyle(i, unlockedCellStyle)
+                }
+            }
+        }
     }
 
     public void process() {
+
+        if (editMode) {
+            protectSheet()
+        }
 
         data?.eachWithIndex { rowValue, rowCount ->
             Row row = sheet.createRow((rowCount+1))
@@ -115,6 +159,7 @@ class OutputDataProcessor {
                 rowHeader = modelVal.rowHeader
 
                 Cell cell = row.createCell(i)
+
                 switch(dataType){
                     case 'number':
                         try {
@@ -147,7 +192,12 @@ class OutputDataProcessor {
                         break
                 }
                 if(rowHeader){
-                    cell.setCellStyle(rowHeaderStyle);
+                    cell.setCellStyle(rowHeaderStyle)
+                }
+                if (editMode) {
+                    if (!modelVal.readOnly) {
+                        cell.setCellStyle(unlockedCellStyle)
+                    }
                 }
 
             }
