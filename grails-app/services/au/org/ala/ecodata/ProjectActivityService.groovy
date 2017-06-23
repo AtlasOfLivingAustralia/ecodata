@@ -269,8 +269,4 @@ class ProjectActivityService {
         restrictedProjectActivityIds
     }
 
-    def sitesContainsName(String id, String name) {
-        def pa = ProjectActivity.findByProjectActivityId(id)
-        return Site.countBySiteIdInListAndName(pa.sites, name) > 0
-    }
 }

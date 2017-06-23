@@ -654,4 +654,19 @@ class SiteService {
 
         return true
     }
+
+    def sitesContainsName(String id, String entityType, String name) {
+
+        def sites
+        if(entityType == 'projectActivity') {
+            def projectActivity = ProjectActivity.findByProjectActivityId(id)
+            sites = projectActivity.sites
+        } else if (entityType == 'project') {
+            sites = Site.findAllByProjects(id).findAll({ it.status == ACTIVE }).collect { it.siteId }
+        } else {
+            throw new IllegalArgumentException("No entity type provided")
+        }
+
+        return Site.countBySiteIdInListAndName(sites, name) > 0
+    }
 }

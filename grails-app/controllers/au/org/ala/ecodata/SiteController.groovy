@@ -278,7 +278,8 @@ class SiteController {
 
     def uniqueName(String id) {
         def name = params.name
-        def result = [ value: !projectActivityService.sitesContainsName(id, name) ]
+        def entityType = params.entityType
+        def result = [ value: !siteService.sitesContainsName(id, entityType, name) ]
         respond result
     }
 }
