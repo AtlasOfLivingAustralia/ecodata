@@ -43,6 +43,8 @@ class Report {
     Date fromDate
     Date toDate
     Date dueDate
+    /* The date from which the report can be submitted */
+    Date submissionDate
 
     String progress // For reports that have data (e.g self assessment)
     Map data // report type specific data for this report.
@@ -78,6 +80,10 @@ class Report {
 
     Date dateCreated
     Date lastUpdated
+
+    public Date getSubmissionDate() {
+        return submissionDate ?: toDate
+    }
 
     public boolean isCurrent() {
         def now = new Date()
@@ -170,6 +176,7 @@ class Report {
         activityCount nullable: true
         data nullable: true
         progress nullable: true
+        submissionDate nullable: true
     }
 
     static embedded = ['statusChangeHistory']
