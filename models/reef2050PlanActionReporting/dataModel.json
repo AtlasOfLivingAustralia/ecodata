@@ -45,6 +45,7 @@
         },
         {
           "dataType": "text",
+          "description": "Select the most appropriate progress against an action from the drop-down list",
           "name": "status",
           "constraints": [
             "Completed",
@@ -54,23 +55,23 @@
             "Significant delays or no progress",
             "Not yet due"
           ],
-          "validate": "required",
-          "description":"Select the most appropriate progress against an action from the drop-down list"
+          "validate": "required"
         },
         {
           "dataType": "text",
+          "description": "Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like",
           "name": "description",
-          "validate": "required,max[1500]",
-          "description":"Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like"
+          "validate": "required,max[1500]"
         },
         {
           "dataType": "text",
+          "description": "Provide 2-3 sentences outlining progress in implementing the action",
           "name": "progress",
-          "validate": "required,max[1500]",
-          "description":"Provide 2-3 sentences outlining progress in implementing the action"
+          "validate": "required,max[1500]"
         },
         {
           "dataType": "stringList",
+          "description": "Select organisations that are contributing to implementing the action",
           "name": "deliveryPartners",
           "constraints": [
             "NPSR",
@@ -117,8 +118,7 @@
             "FBA",
             "NQ Dry Tropics",
             "Agforce"
-          ],
-          "description":"Select organisations that are contributing to implementing the action"
+          ]
         },
         {
           "dataType": "date",
@@ -128,26 +128,26 @@
               "type": "enable"
             }
           ],
+          "description": "Provide an indicative timeframe for when the action will be completed",
           "name": "timeframe",
-          "validate": "required",
-          "description":"Provide an indicative timeframe for when the action will be completed"
+          "validate": "required"
         },
         {
           "dataType": "text",
+          "description": "Provide an overview of milestones and deliverables for implementing the action",
           "name": "tasksAndMilestones",
-          "validate": "required,max[2000]",
-          "description":"Provide an overview of milestones and deliverables for implementing the action"
+          "validate": "required,max[2000]"
         },
         {
           "dataType": "number",
+          "description": "Where possible, provide an estimate of funds expended to date on this action",
           "name": "fundsExtendedToDate",
-          "validate": "integer",
-          "description":"Where possible, provide an estimate of funds expended to date on this action"
+          "validate": "integer"
         },
         {
           "dataType": "text",
-          "name": "webLinks",
-          "description": "Please supply a comma separated list of URLs providing information about this action"
+          "description": "Please supply a comma separated list of URLs providing information about this action",
+          "name": "webLinks"
         },
         {
           "dataType": "stringList",
@@ -198,24 +198,24 @@
           "columns": [
             {
               "title": "Action ID",
+              "readOnly": true,
               "source": "actionId",
               "width": "4%",
-              "type": "text",
-              "readOnly": true
+              "type": "text"
             },
             {
               "title": "Action",
+              "readOnly": true,
               "source": "actionDescription",
               "width": "11%",
-              "type": "text",
-              "readOnly": true
+              "type": "text"
             },
             {
               "title": "Theme",
+              "readOnly": true,
               "source": "theme",
               "width": "6%",
-              "type": "text",
-              "readOnly": true
+              "type": "text"
             },
             {
               "title": "Status",
@@ -227,14 +227,15 @@
               "title": "Description",
               "source": "description",
               "width": "11%",
-              "type": "textarea"
-
+              "type": "textarea",
+              "rows":10
             },
             {
               "title": "Progress",
               "source": "progress",
               "width": "11%",
-              "type": "textarea"
+              "type": "textarea",
+              "rows":10
             },
             {
               "title": "Delivery Partners",
@@ -255,7 +256,8 @@
               "title": "Tasks and milestones / deliverables",
               "source": "tasksAndMilestones",
               "width": "11%",
-              "type": "textarea"
+              "type": "textarea",
+              "rows":10
             },
             {
               "title": "Funds expended to date for action delivery",
@@ -271,10 +273,10 @@
             },
             {
               "title": "Linked or related actions",
+              "readOnly": true,
               "source": "linkedOrRelatedActions",
               "width": "6%",
-              "type": "selectMany",
-              "readOnly": true
+              "type": "selectMany"
             }
           ],
           "userAddedRows": true,
