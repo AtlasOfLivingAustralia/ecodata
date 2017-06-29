@@ -124,7 +124,7 @@
           "dataType": "date",
           "behaviour": [
             {
-              "condition": "status != \"Completed\"",
+              "condition": "status != \"Completed\" and status != \"In place\"",
               "type": "enable"
             }
           ],
@@ -145,9 +145,10 @@
           "validate": "integer"
         },
         {
-          "dataType": "text",
+          "dataType": "stringList",
           "description": "Please supply a comma separated list of URLs providing information about this action",
-          "name": "webLinks"
+          "name": "webLinks",
+          "validate": "required,custom[url]"
         },
         {
           "dataType": "stringList",
@@ -269,7 +270,7 @@
               "title": "Web links",
               "source": "webLinks",
               "width": "11%",
-              "type": "textarea"
+              "type": "multiInput"
             },
             {
               "title": "Linked or related actions",
