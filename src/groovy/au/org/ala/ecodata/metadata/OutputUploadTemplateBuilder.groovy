@@ -14,21 +14,24 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     def data
     boolean editMode = false
     boolean extraRowsEditable = true
+    boolean autoSizeColumns = true
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
         this.editMode = false
+        this.autoSizeColumns = true
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
         this.data = data
         this.editMode = editMode
         this.extraRowsEditable = extraRowsEditable
+        this.autoSizeColumns = autoSizeColumns
     }
 
 
@@ -47,7 +50,7 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
-        finalise()
+        finalise(outputSheet)
     }
 
     public void buildGroupHeaderList() {
@@ -83,8 +86,43 @@ class OutputUploadTemplateBuilder extends XlsExporter {
         finalise()
     }
 
-    def finalise() {
-        sizeColumns()
+    private int widthFromString(String widthString, int defaultWidth) {
+        int width = defaultWidth
+
+        // Strip non-numerics to allow for trailing '%' / 'px' / 'em', if the model
+        // mixes units we will get some strange results..
+        widthString = widthString?.replaceAll(/[^\d]/, '')
+        if (widthString) {
+            width = Integer.parseInt(widthString)
+        }
+
+        width
+    }
+
+    def finalise(AdditionalSheet outputSheet) {
+        if (autoSizeColumns) {
+            sizeColumns()
+        }
+        else {
+            // Attempt to give some sensible sizes...
+            // lets say we have 250 chars to work with.
+            // Excel sizes are in 1/256 of a character.
+            int TOTAL_WIDTH_IN_EXCEL_UNITS = 250*256
+
+            List widths = model.collect { widthFromString(it.width, 0) }
+            int sum = widths.sum()
+            List columnSizes = widths.collect { (int)(it / sum * TOTAL_WIDTH_IN_EXCEL_UNITS) }
+
+            columnSizes.eachWithIndex { width, i ->
+                if (width) {
+                    outputSheet.sheet.setColumnWidth(i, width)
+                }
+                else {
+                    outputSheet.sheet.autoSizeColumn(i)
+                }
+            }
+
+        }
     }
 
 }
@@ -131,6 +169,7 @@ class OutputDataProcessor {
     private void protectSheet() {
 
         sheet.protectSheet("")
+        sheet.getCTWorksheet().getSheetProtection().setFormatColumns(false)
 
         // If we allow extra rows to be added, by default make editable columns editable for the whole sheet.
         if (extraRowsEditable) {
