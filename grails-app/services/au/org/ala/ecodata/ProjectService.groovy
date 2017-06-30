@@ -266,7 +266,7 @@ class ProjectService {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Project.withSession { session -> session.clear() }
             def error = "Error creating project - ${e.message}"
-            log.error error
+            log.error error, e
             return [status: 'error', error: error]
         }
     }
@@ -328,7 +328,7 @@ class ProjectService {
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
                 def error = "Error updating project ${id} - ${e.message}"
-                log.error error
+                log.error error, e
                 return [status: 'error', error: error]
             }
         } else {
