@@ -547,12 +547,15 @@ if (!ala.baseURL) {
     ala.baseURL = "http://www.ala.org.au"
 }
 if (!collectory.baseURL) {
-    collectory.baseURL = "http://collections-dev.ala.org.au/"
+    collectory.baseURL = "http://collectory-dev.ala.org.au/"
+    collectory.dataProviderUid.merit = 'dp245'
+    collectory.dataProviderUid.biocollect = 'dp244'
+    collectory.collectoryIntegrationEnabled = false
 }
 if (!headerAndFooter.baseURL) {
     headerAndFooter.baseURL = "http://www2.ala.org.au/commonui"
 }
-if (!security.apikey.serviceUrl) {
+    if (!security.apikey.serviceUrl) {
     security.apikey.serviceUrl = 'https://auth.ala.org.au/apikey/ws/check?apikey='
 }
 if (!biocacheService.baseURL) {
@@ -575,6 +578,9 @@ if (!userDetailsSingleUrl) {
 }
 if (!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+}
+if (!userDetails.admin.url) {
+    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {

@@ -20,6 +20,7 @@ class Document {
         projectId index: true
         siteId index: true
         activityId index: true
+        projectActivityId index: true
         outputId index: true
         organisationId index: true
         status index: true

@@ -289,7 +289,7 @@ class WebService {
         }
     }
 
-    def extractCollectoryIdFromResult(result) {
+    def extractIdFromLocationHeader(Map result) {
         return result?.headers?.location?.first().toString().tokenize('/').last()
     }
 

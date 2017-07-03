@@ -232,7 +232,12 @@ class SearchController {
     }
 
     def elasticGeo() {
-        def res = elasticSearchService.search(params.query, params, "homepage")
+        Map geoSearch = null
+        if (params.geoSearchJSON) {
+            geoSearch = new JsonSlurper().parseText(params.geoSearchJSON)
+        }
+
+        def res = elasticSearchService.search(params.query, params, "homepage", geoSearch)
         def selectedFacetTerms = []
         def markBy = params.markBy
 
@@ -295,9 +300,8 @@ class SearchController {
     def dashboardReport() {
 
         def filters = params.getList("fq")
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
-        def results = reportService.aggregate(additionalFilters)
+        List<Score> scores = Score.findAll()
+        def results = reportService.aggregate(filters, params.query ?: "*:*", scores)
         render results as JSON
     }
 
@@ -305,10 +309,9 @@ class SearchController {
         def scores = params.getList("scores")
 
         def filters = params.getList("fq")
-        def searchTerm = params.query
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
-        def results = reportService.aggregate(additionalFilters, searchTerm, reportService.findScoresByLabel(scores))
+        def searchTerm = params.query ?: "*:*"
+
+        def results = reportService.aggregate(filters, searchTerm, reportService.findScoresByLabel(scores))
         render results as JSON
     }
 
@@ -316,12 +319,9 @@ class SearchController {
         def scoreLabels = params.getList("scores")
         def scores = reportService.findScoresByLabel(scoreLabels)
         def filters = params.getList("fq")
-        def searchTerm = params.query
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-
-        additionalFilters.addAll(filters)
+        def searchTerm = params.query ?: "*:*"
         def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.outputTargetReport(additionalFilters, searchTerm, scores)
+        def scoresReport = reportService.outputTargetReport(filters, searchTerm, scores)
 
         def results = [scores:scoresReport, targets:targets]
         render results as JSON
@@ -329,20 +329,19 @@ class SearchController {
 
     def targetsReport() {
         def filters = params.getList("fq")
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER]
-        additionalFilters.addAll(filters)
+        def searchTerm = params.query ?: "*:*"
+
         def targets = reportService.outputTargetsBySubProgram(params)
-        def scores = reportService.outputTargetReport(additionalFilters)
+        def scores = reportService.outputTargetReport(filters, searchTerm)
 
         def results = [scores:scores, targets:targets]
         render results as JSON
     }
 
-    def report() {
-
-        def filters = params.getList("fq")
-
-        def results = reportService.runReport(filters, 'Green Army Monthly Summary', params)
+    @RequireApiKey
+    def activityReport() {
+        Map params = request.JSON
+        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, params.approvedActivitiesOnly?:true)
         render results as JSON
     }
 
@@ -503,9 +502,8 @@ class SearchController {
 
         def defaultCategory = "Not categorized"
         def filters = params.getList("fq")
-        def additionalFilters = [PUBLISHED_ACTIVITIES_FILTER] + filters
 
-        def results = reportService.aggregate(additionalFilters)
+        def results = reportService.aggregate(filters)
         def scores = results.outputData
         def scoresByCategory = scores.groupBy{
             (it.score.category?:defaultCategory)
@@ -528,74 +526,49 @@ class SearchController {
         }
     }
 
-    /** Temporary method to assist generating the user report.  Needs work */
-    def userReport() {
-
-        def users = reportService.userSummary()
-
-        File out = new File('/Users/god08d/Documents/MERIT/users/userReport.csv')
-        out.withWriter { writer ->
-            writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
-
-            users.values().each { user->
-
-                writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                if (user.projects) {
-                    boolean first = true
-                    user.projects.each { project ->
-                        if (!first) {
-                            writer.print(",,,,")
-                        }
-                        writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
-                        first = false
-                    }
-                }
-                else {
-                    writer.println()
-                }
-
-
-            }
-        }
-    }
-
     @RequireApiKey
     def downloadUserList() {
 
         if (!params.email) {
             params.email = userService.getCurrentUserDetails().userName
         }
+
         params.fileExtension = "csv"
+
+        Map searchParams = [fq:params.fq, query:params.query?:"*:*", max:10000, offset:0]
 
         Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
 
             try {
-            List users = reportService.userSummary()
+                Set projectIds = downloadService.getProjectIdsForDownload(searchParams, HOMEPAGE_INDEX)
 
-            outputStream.withWriter { writer ->
-                writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
+                List meritRoles = ['ROLE_FC_READ_ONLY', 'ROLE_FC_OFFICER', 'ROLE_FC_ADMIN']
+                Map users = reportService.userSummary(projectIds, meritRoles)
 
-                users.values().each { user->
+                outputStream.withWriter { writer ->
+                    writer.println("User Id, Name, Email, Role, Project ID, Grant ID, External ID, Project Name, Project Access Role")
 
-                    writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
-                    if (user.projects) {
-                        boolean first = true
-                        user.projects.each { project ->
-                            if (!first) {
-                                writer.print(",,,,")
+                    users.values().each { user->
+
+                        writer.print(user.userId+","+user.name+","+user.email+","+user.role+",")
+                        if (user.projects) {
+                            boolean first = true
+                            user.projects.each { project ->
+                                if (!first) {
+                                    writer.print(",,,,")
+                                }
+                                writer.println(project.projectId+","+project.grantId+","+project.externalId+",\""+project.name+"\","+project.access)
+                                first = false
                             }
-                            writer.println(project.projectId+","+project.grantId+","+project.externalId+","+project.name+","+project.access)
-                            first = false
                         }
-                    }
-                    else {
-                        writer.println()
-                    }
+                        else {
+                            writer.println()
+                        }
 
 
+                    }
                 }
             }
-        }
             catch (Exception e) {
                 e.printStackTrace()
             }

@@ -35,4 +35,8 @@ class ProjectActivity {
         publicAccess nullable: true
         visibility nullable: true
     }
+
+    static mapping = {
+        projectActivityId index: true
+    }
 }

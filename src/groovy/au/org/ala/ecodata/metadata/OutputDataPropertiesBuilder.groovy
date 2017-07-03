@@ -5,7 +5,7 @@ import pl.touk.excel.export.getters.Getter
 
 class OutputDataPropertiesBuilder extends OutputModelProcessor implements OutputModelProcessor.Processor<Value>, Getter<String> {
     static DateTimeParser TIME_PARSER = new DateTimeParser(DateTimeParser.Style.TIME)
-    static DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE)
+    private DateTimeParser DATE_PARSER = new DateTimeParser(DateTimeParser.Style.DATE, timeZone)
 
     private String[] nameParts
     private String constraint
@@ -18,8 +18,10 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         return doc?.externalUrl ?: doc?.identifier ?: doc?.thumbnail ?: it.identifier ?: it.documentId
     }
 
+    private timeZone
 
-    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, Object> documentMap) {
+
+    public OutputDataPropertiesBuilder(String name, outputDataModel, Map<String, Object> documentMap, TimeZone timeZone) {
         if (!name) {
             throw new IllegalArgumentException("Name cannot be null")
         }
@@ -31,6 +33,7 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
 
         this.outputDataModel = outputDataModel;
         this.documentMap = documentMap
+        this.timeZone = timeZone
     }
 
     @Override

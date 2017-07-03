@@ -1,130 +1,122 @@
 {
-    "modelName": "nestMonitoring",
-    "record": "true",
     "dataModel": [
         {
             "dataType": "text",
+            "description": "The name of the person who observed the sighting.",
             "name": "recordedBy",
-            "dwcAttribute": "recordedBy",
-            "description": "The name of the person who observed the sighting."
+            "dwcAttribute": "recordedBy"
         },
         {
             "dataType": "date",
+            "description": "The date on which the sighting was made.",
             "name": "surveyDate",
             "dwcAttribute": "eventDate",
-            "description": "The date on which the sighting was made.",
             "validate": "required"
         },
         {
             "dataType": "time",
+            "description": "The time at which the sighting was made.",
             "name": "surveyStartTime",
-            "dwcAttribute": "eventTime",
-            "description": "The time at which the sighting was made."
+            "dwcAttribute": "eventTime"
         },
         {
             "dataType": "text",
-            "name": "nestPresent",
-            "dwcAttribute": "",
             "description": "Did you see a raptor nest during your survey?",
+            "name": "nestPresent",
             "constraints": [
                 "Yes",
                 "No"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "text",
-            "name": "nestStructure",
-            "dwcAttribute": "",
             "description": "What type of structure is supporting the nest?",
+            "name": "nestStructure",
             "constraints": [
                 "Tree",
                 "Pole",
                 "Other"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "species",
+            "description": "If the nest is in a tree, what is the species of tree?",
             "name": "nestTreeSpecies",
-            "dwcAttribute": "scientificName",
-            "description": "If the nest is in a tree, what is the species of tree?"
+            "dwcAttribute": "scientificName"
         },
         {
             "dataType": "text",
-            "name": "nestElevation",
-            "dwcAttribute": "",
             "description": "What is the estimated height of the nest above the ground?",
+            "name": "nestElevation",
             "constraints": [
                 "5 - 10 m",
                 "10 - 20 m",
                 "20 - 30 m",
                 "Greater than 30 m"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "text",
-            "name": "nestWidth",
-            "dwcAttribute": "",
             "description": "What is the estimated width/diameter of the nest?",
+            "name": "nestWidth",
             "constraints": [
                 "1 m",
                 "1.5 m",
                 "2 m",
                 "Greater than 2 m"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "text",
-            "name": "ageOfNest",
-            "dwcAttribute": "",
             "description": "How old would you estimate the nest to be?",
+            "name": "ageOfNest",
             "constraints": [
                 "1 - 2 years",
                 "2 - 5 years",
                 "5 - 10 years",
                 "More than 10 years",
                 "Unknown"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "text",
-            "name": "raptorPresent",
-            "dwcAttribute": "",
             "description": "Were raptors present or absent at the time when you observed the nest?",
+            "name": "raptorPresent",
             "constraints": [
                 "Present",
                 "Absent"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
             "dataType": "text",
-            "name": "raptorLastSeen",
-            "dwcAttribute": "",
             "description": "When did you last observe raptors at the nest?",
+            "name": "raptorLastSeen",
             "constraints": [
                 "Today",
                 "Within last week",
                 "Within last 6 months",
                 "Within last 12 months",
                 "No raptors have been observed in the nest"
-            ]
+            ],
+            "dwcAttribute": ""
         },
         {
-            "dataType": "text",
+            "dataType": "species",
+            "description": "The species name of the raptor observed.",
             "name": "species",
             "dwcAttribute": "scientificName",
-            "description": "The species name of the raptor observed.",
-            "constraints": [
-                "Eastern Osprey (Pandion cristatus)",
-                "White-bellied Sea Eagle (Haliaeetus (Pontoaetus) leucogaster)",
-                "Brahminy Kite\t(Haliastur indus)",
-                "Other - list species in comments",
-                "None"
-            ]
+            "validate": "required"
         },
         {
             "dataType": "text",
-            "name": "identificationConfidence",
             "description": "How certain are you that you have correctly identified your sighting? Only choose 'certain' if you are 100% sure.",
+            "name": "identificationConfidence",
             "constraints": [
                 "Certain",
                 "Uncertain"
@@ -132,169 +124,171 @@
         },
         {
             "dataType": "number",
+            "description": "The number of adult individuals observed.",
             "name": "noOfAdults",
             "dwcAttribute": "individualCount",
-            "description": "The number of adult individuals observed.",
             "validate": "min[0]"
         },
         {
             "dataType": "number",
+            "description": "The number of juvenile individuals observed.",
             "name": "noOfJuveniles",
             "dwcAttribute": "",
-            "description": "The number of juvenile individuals observed.",
             "validate": "min[0]"
         },
         {
-            "columns": [
-                {
-                    "dwcAttribute": "verbatimLatitude",
-                    "source": "locationLatitude"
-                },
-                {
-                    "dwcAttribute": "verbatimLongitude",
-                    "source": "locationLongitude"
-                }
-            ],
             "dataType": "geoMap",
             "name": "location",
+            "columns": [
+                {
+                    "source": "locationLatitude",
+                    "dwcAttribute": "verbatimLatitude"
+                },
+                {
+                    "source": "locationLongitude",
+                    "dwcAttribute": "verbatimLongitude"
+                }
+            ],
             "dwcAttribute": "verbatimCoordinates",
             "validate": "required"
         },
         {
             "dataType": "text",
+            "description": "Observation notes about the record.",
             "name": "comments",
-            "dwcAttribute": "notes",
-            "description": "Observation notes about the record."
+            "dwcAttribute": "notes"
         },
         {
             "dataType": "image",
-            "name": "sightingPhoto",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
+            "name": "sightingPhoto",
             "validate": "required"
         }
     ],
+    "modelName": "nestMonitoring",
+    "record": "true",
     "viewModel": [{
-        "type": "row",
         "items": [
             {
-                "computed": null,
-                "type": "col",
                 "items": [
                     {
+                        "source": "recordedBy",
                         "preLabel": "Observer name",
                         "computed": null,
-                        "source": "recordedBy",
                         "type": "text"
                     },
                     {
+                        "source": "surveyDate",
                         "preLabel": "Record date",
                         "computed": null,
-                        "source": "surveyDate",
                         "type": "date"
                     },
                     {
+                        "source": "surveyStartTime",
                         "preLabel": "Record time",
                         "computed": null,
-                        "source": "surveyStartTime",
                         "type": "time"
                     },
                     {
+                        "source": "nestPresent",
                         "preLabel": "Nest observed",
                         "computed": null,
-                        "source": "nestPresent",
                         "type": "selectOne"
                     },
                     {
+                        "source": "nestStructure",
                         "preLabel": "Nest structure",
                         "computed": null,
-                        "source": "nestStructure",
                         "type": "selectOne"
                     },
                     {
-                        "computed": null,
                         "source": "<i>Start typing a common or scientific name.<\/i>",
+                        "computed": null,
                         "type": "literal"
                     },
                     {
+                        "source": "nestTreeSpecies",
                         "preLabel": "Nest tree species",
                         "computed": null,
-                        "source": "nestTreeSpecies",
                         "type": "autocomplete"
                     },
                     {
+                        "source": "nestWidth",
                         "preLabel": "Estimated width of nest",
                         "computed": null,
-                        "source": "nestWidth",
                         "type": "selectOne"
                     },
                     {
+                        "source": "ageOfNest",
                         "preLabel": "Estimated age of nest",
                         "computed": null,
-                        "source": "ageOfNest",
                         "type": "selectOne"
                     },
                     {
+                        "source": "raptorPresent",
                         "preLabel": "Raptor(s) observed at nest",
                         "computed": null,
-                        "source": "raptorPresent",
                         "type": "selectOne"
                     },
                     {
+                        "source": "raptorLastSeen",
                         "preLabel": "Raptor(s) last observed at nest",
                         "computed": null,
-                        "source": "raptorLastSeen",
                         "type": "selectOne"
                     },
                     {
+                        "source": "species",
                         "preLabel": "Species name",
                         "computed": null,
-                        "source": "species",
-                        "type": "selectOne"
+                        "type": "autocomplete"
                     },
                     {
+                        "source": "identificationConfidence",
                         "preLabel": "Are you confident of the species identification?",
                         "computed": null,
-                        "source": "identificationConfidence",
                         "type": "selectOne"
                     },
                     {
+                        "source": "noOfAdults",
                         "preLabel": "Number of adult raptors observed at nest",
                         "computed": null,
-                        "source": "noOfAdults",
                         "type": "number"
                     },
                     {
+                        "source": "noOfJuveniles",
                         "preLabel": "Number of juvenile raptors observed at nest",
                         "computed": null,
-                        "source": "noOfJuveniles",
                         "type": "number"
                     },
                     {
+                        "source": "comments",
                         "preLabel": "Additional Comments",
                         "computed": null,
-                        "source": "comments",
                         "type": "textarea"
                     },
                     {
+                        "source": "sightingPhoto",
                         "preLabel": "Sighting photo",
                         "computed": null,
-                        "source": "sightingPhoto",
                         "type": "image"
                     }
-                ]
+                ],
+                "computed": null,
+                "type": "col"
             },
             {
-                "computed": null,
-                "type": "col",
                 "items": [{
                     "orientation": "vertical",
-                    "computed": null,
-                    "readonly": true,
                     "source": "location",
-                    "type": "geoMap"
-                }]
+                    "computed": null,
+                    "type": "geoMap",
+                    "readonly": true
+                }],
+                "computed": null,
+                "type": "col"
             }
         ],
-        "class": "output-section"
+        "class": "output-section",
+        "type": "row"
     }]
 }

@@ -7,11 +7,14 @@ class OrganisationControllerSpec extends IntegrationTestHelper {
     def userService
     def stubbedCollectoryService = Stub(CollectoryService)
     def stubbedUserService = Stub(UserService)
+    def grailsApplication
 
     def setup() {
         organisationService.collectoryService = stubbedCollectoryService
         organisationService.userService = stubbedUserService
         organisationController.organisationService = organisationService
+
+        grailsApplication.config.collectory.collectoryIntegrationEnabled = true
     }
 
     def cleanup() {

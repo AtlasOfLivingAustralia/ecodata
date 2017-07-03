@@ -1,19 +1,12 @@
 package au.org.ala.ecodata
 
-import au.org.ala.ecodata.reporting.AggregatorFactory
-import au.org.ala.ecodata.reporting.AggregatorIf
-import au.org.ala.ecodata.reporting.Aggregation
-import au.org.ala.ecodata.reporting.AggregationConfig
-import au.org.ala.ecodata.reporting.CompositeAggregationConfig
-import au.org.ala.ecodata.reporting.FilteredAggregationConfig
-import au.org.ala.ecodata.reporting.GroupedAggregationResult
-import au.org.ala.ecodata.reporting.GroupingAggregationConfig
-import au.org.ala.ecodata.reporting.GroupingAggregator
-import au.org.ala.ecodata.reporting.GroupingConfig
-import au.org.ala.ecodata.reporting.PropertyAccessor
-import au.org.ala.ecodata.reporting.ShapefileBuilder
+import au.org.ala.ecodata.Score
+import au.org.ala.ecodata.reporting.*
+import org.elasticsearch.action.search.SearchResponse
+import org.elasticsearch.search.SearchHit
 import org.grails.plugins.csv.CSVReaderUtils
 
+import static au.org.ala.ecodata.ElasticIndex.HOMEPAGE_INDEX
 
 /**
  * The ReportService aggregates and returns output scores.
@@ -21,7 +14,7 @@ import org.grails.plugins.csv.CSVReaderUtils
  */
 class ReportService {
 
-    def activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService
+    def grailsApplication, activityService, elasticSearchService, projectService, siteService, outputService, metadataService, userService, settingService, webService
 
 
     def findScoresByLabel(List labels) {
@@ -32,45 +25,65 @@ class ReportService {
         Score.findAllByCategory(category)
     }
 
-    def runReport(List filters, String reportName, params) {
+    def runActivityReport(String searchTerm, List filters, Map reportConfig, boolean approvedActivitiesOnly) {
+        AggregatorIf aggregator = new AggregatorFactory().createAggregator(reportConfig)
 
+        Map metadata = [distinctActivities:new HashSet() , distinctSites:new HashSet(), distinctProjects:new HashSet(), activitiesByType:[:]]
 
-        //def report = JSON.parse(settingService.getSetting("report.${reportName}"))
+        Closure aggregateActivityWithMetadata =  { AggregatorIf aggregatorIf, Map activity ->
+            aggregateActivity(aggregatorIf, activity)
+            updateMetadata(activity, metadata)
+        }
+        queryPaginated(filters, searchTerm, approvedActivitiesOnly, aggregator, aggregateActivityWithMetadata)
 
-        def report = [:]
-        report.groupingSpec = [entity:'activity', property:'plannedEndDate', type:'date', format:'MMM yyyy', buckets:params.getList("dates")]
-        report.scores = findScoresByCategory("Green Army")
-        aggregate(filters, null, report.scores, report.groupingSpec)
+        GroupedAggregationResult allResults = aggregator.result()
+
+        [results:allResults, metadata:[activities: metadata.distinctActivities.size(), sites:metadata.distinctSites.size(), projects:metadata.distinctProjects, activitiesByType:metadata.activitiesByType]]
     }
 
-    def queryPaginated(List filters, String searchTerm, AggregatorIf aggregator, Closure action) {
+    def queryPaginated(List filters, String searchTerm, boolean approvedActivitiesOnly, AggregatorIf aggregator, Closure action) {
 
-        // Only dealing with approved activities.
+        Map params = [offset:0, max:20, fq:filters]
 
-
-        Map params = [offset:0, max:100]
-
-        def results = elasticSearchService.searchActivities(filters, params, searchTerm)
-
+        def results = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
         def total = results.hits.totalHits
         while (params.offset < total) {
 
-            def hits = results.hits.hits
-            for (def hit : hits) {
-                action(aggregator, hit.source)
+            results.hits.hits.each { hit ->
+                Map project = hit.source
+
+                List activities = project.activities
+                if (approvedActivitiesOnly) {
+                    activities = activities?.findAll{it.publicationStatus == Report.REPORT_APPROVED}
+                }
+                if (activities) {
+                    List activityIds = activities?.collect{it.activityId}
+                    Output.withNewSession {
+                        List outputs = Output.findAllByActivityIdInListAndStatusNotEqual(activityIds, Status.DELETED)
+                        Map<String, List> outputsByActivityId = outputs.groupBy { it.activityId }
+                        activities?.each { activity ->
+                            activity.outputs = outputsByActivityId[activity.activityId] ?: []
+                            action(aggregator, activity)
+                        }
+                    }
+                }
             }
             params.offset += params.max
 
-            results  = elasticSearchService.searchActivities(filters, params, searchTerm)
+            results  = elasticSearchService.search(searchTerm, params, HOMEPAGE_INDEX)
         }
     }
 
-    def aggregate(List filters) {
+    def aggregate(List filters, String searchTerm) {
         List<Score> scores = Score.findAll()
-        aggregate(filters, null, scores)
+        aggregate(filters, searchTerm, scores)
     }
 
-    def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null) {
+    def aggregate(List filters) {
+        aggregate(filters, null)
+    }
+
+    def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null, boolean approvedActivitiesOnly = true) {
 
         GroupingAggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
@@ -82,7 +95,7 @@ class ReportService {
             aggregateActivity(aggregatorIf, activity)
             updateMetadata(activity, metadata)
         }
-        queryPaginated(filters, searchTerm, aggregator, aggregateActivityWithMetadata)
+        queryPaginated(filters, searchTerm, approvedActivitiesOnly, aggregator, aggregateActivityWithMetadata)
 
         GroupedAggregationResult allResults = aggregator.result()
         def outputData = allResults
@@ -195,14 +208,12 @@ class ReportService {
         filteredConfig
     }
 
-    private def aggregateActivity (GroupingAggregator aggregator, Map activity) {
+    private def aggregateActivity (AggregatorIf aggregator, Map activity) {
 
-        Output.withNewSession {
-            def outputs = outputService.findAllForActivityId(activity.activityId, ActivityService.FLAT)
-            outputs.each { output ->
-                output.activity = activity
-                aggregator.aggregate(output)
-            }
+        activity.outputs.each { output ->
+            Map outputData = outputService.toMap(output)
+            outputData.activity = activity
+            aggregator.aggregate(outputData)
         }
     }
 
@@ -312,13 +323,17 @@ class ReportService {
         targetsBySubProgram
     }
 
-    /** Temporary method to assist running the user report.  Needs work */
-    def userSummary() {
+    /**
+     * Produces a list of users for the matching projects.  Also adds any users containing the extra roles, even
+     * if they don't have any explicit project access
+     */
+    def userSummary(Set projectIds, List roles) {
 
         def levels = [100:'admin',60:'caseManager', 40:'editor', 20:'favourite']
 
         def userSummary = [:]
-        def users = UserPermission.findAllByEntityType('au.org.ala.ecodata.Project').groupBy{it.userId}
+        Map users = UserPermission.findAllByEntityIdInList(projectIds).groupBy{it.userId}
+
         users.each { userId, projects ->
             def userDetails = userService.lookupUserDetails(userId)
 
@@ -331,32 +346,38 @@ class ReportService {
             }
         }
 
-        // TODO need a web service from auth to support this properly.
-        def fcOfficerList = new File('/Users/god08d/Documents/MERIT/Reports/fc_officer.csv')
-        def fcReadOnlyList = new File('/Users/god08d/Documents/MERIT/Reports/fc_read_only.csv')
-        def fcadminList = new File('/Users/god08d/Documents/MERIT/Reports/fc_admin.csv')
 
-        [fcOfficerList, fcReadOnlyList, fcadminList].each { file ->
-            CSVReaderUtils.eachLine(file, { String[] tokens ->
-                def userIdStr = tokens[0]
-                try {
-                    int userId = Integer.parseInt(userIdStr.replaceAll(',', ''))
-                    userIdStr = Integer.toString(userId)
+        int batchSize = 500
 
-                    def user = userSummary[userIdStr]
-                    if (!user) {
-                        user = [:]
-                        userSummary[userId] = user
-                        def userDetails = userService.lookupUserDetails(userIdStr)
-                        user.userId = userDetails.userId
-                        user.name = userDetails.displayName
-                        user.email = userDetails.userName
-                        user.projects = []
+        String url = grailsApplication.config.userDetails.admin.url
+        url += "/userRole/list?format=json&max=${batchSize}&role="
+        roles.each { role ->
+            int offset = 0
+            Map result = webService.getJson(url+role+'&offset='+offset)
+
+            while (offset < result?.count && !result?.error) {
+
+                List usersForRole = result?.users ?: []
+                usersForRole.each { user ->
+                    if (userSummary[user.userId]) {
+                        userSummary[user.userId].role = role
                     }
-                    user.role = tokens[2]
+                    else {
+                        user.projects = []
+                        user.name = (user.firstName ?: "" + " " +user.lastName ?: "").trim()
+                        user.role = role
+                        userSummary[user.userId] = user
+                    }
                 }
-                catch (NumberFormatException e) {}
-            })
+
+                offset += batchSize
+                result = webService.getJson(url+role+'&offset='+offset)
+            }
+
+            if (!result || result.error) {
+                log.error("Error getting user details for role: "+role)
+                return
+            }
         }
 
         userSummary

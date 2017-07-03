@@ -2194,19 +2194,25 @@
                 },
                 {
                     "outputName": "CRISP - Project Assessment - Step 2. Determine Exposure",
-                    "optional": false,
+                    "optional": true,
                     "collapsedByDefault": true
                 },
                 {
                     "outputName": "CRISP - Project Assessment - Step 1. Pre-screen",
-                    "optional": false,
-                    "collapsedByDefault": false
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "CRISP - Audit - First Pass Scan",
+                    "optional": true,
+                    "collapsedByDefault": true
                 }
             ],
             "name": "CRISP - Project Assessment",
             "outputs": [
                 "CRISP - Project Assessment - Step 1. Pre-screen",
-                "CRISP - Project Assessment - Step 2. Determine Exposure"
+                "CRISP - Project Assessment - Step 2. Determine Exposure",
+                "CRISP - Audit - First Pass Scan"
             ],
             "type": "Assessment"
         },
@@ -2383,7 +2389,36 @@
             }],
             "name": "Seedbank - Accession of new stock",
             "outputs": ["Seedbank - Accession of new stock"],
-            "type": "Assessment"
+            "type": "Activity"
+        },
+        {
+            "supportsSites": false,
+            "category": "Reporting",
+            "outputConfig": [
+                {
+                    "outputName": "Prescreen - 1. Identify hazards",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "Assess Initiative",
+                    "optional": true,
+                    "collapsedByDefault": true
+                },
+                {
+                    "outputName": "First Pass Scan",
+                    "optional": true,
+                    "collapsedByDefault": true
+                }
+            ],
+            "supportsPhotoPoints": false,
+            "name": "CRISP Case Assessment",
+            "outputs": [
+                "Prescreen - 1. Identify hazards",
+                "Assess Initiative",
+                "First Pass Scan"
+            ],
+            "type": "Report"
         }
     ],
     "outputs": [
@@ -6232,17 +6267,53 @@
             "template": "seedbank-AccessionOfNewStock",
             "scores": [],
             "name": "Seedbank - Accession of new stock"
+        },
+        {
+            "template": "crispPrescreen",
+            "title": "Prescreen - 1. Identify hazards",
+            "scores": [],
+            "name": "Prescreen - 1. Identify hazards"
+        },
+        {
+            "template": "crispAssessInitiative",
+            "title": "Assess Initiative",
+            "scores": [],
+            "name": "Assess Initiative"
+        },
+        {
+            "template": "crispFirstPassScan",
+            "title": "First Pass Scan",
+            "scores": [],
+            "name": "First Pass Scan"
         }
     ],
     "selectedActivity": {
-        "category": "Assessment & monitoring",
-        "outputConfig": [{
-            "outputName": "Seedbank - Accession of new stock",
-            "optional": false,
-            "collapsedByDefault": false
-        }],
-        "name": "Seedbank - Accession of new stock",
-        "outputs": ["Seedbank - Accession of new stock"],
-        "type": "Assessment"
+        "supportsSites": false,
+        "category": "Reporting",
+        "outputConfig": [
+            {
+                "outputName": "Prescreen - 1. Identify hazards",
+                "optional": true,
+                "collapsedByDefault": true
+            },
+            {
+                "outputName": "Assess Initiative",
+                "optional": true,
+                "collapsedByDefault": true
+            },
+            {
+                "outputName": "First Pass Scan",
+                "optional": true,
+                "collapsedByDefault": true
+            }
+        ],
+        "supportsPhotoPoints": false,
+        "name": "CRISP Case Assessment",
+        "outputs": [
+            "Prescreen - 1. Identify hazards",
+            "Assess Initiative",
+            "First Pass Scan"
+        ],
+        "type": "Report"
     }
 }

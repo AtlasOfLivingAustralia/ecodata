@@ -105,7 +105,7 @@ class ProjectXlsExporter extends ProjectExporter {
     ProjectService projectService
 
     public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
-        super(exporter, tabsToExport, documentMap)
+        super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
     }
 
@@ -159,7 +159,30 @@ class ProjectXlsExporter extends ProjectExporter {
         String activityDataPrefix = ACTIVITY_DATA_PREFIX
         Map activityBaseData = activity.collectEntries{k,v -> [activityDataPrefix+k, v]}
         Map activityData = project + activityBaseData  + [(activityDataPrefix+'stage'): getStage(activity, project)]
+        activityData[(activityDataPrefix+'publicationStatus')] = translatePublicationStatus(activity.publicationStatus)
         activityData
+    }
+
+    /** Matches the status string supplied for a Report (which is determined via the status change history) */
+    private String translatePublicationStatus(String status) {
+
+        String translated
+        switch (status) {
+            case Report.REPORT_APPROVED:
+                translated = 'Approved'
+                break
+            case Report.REPORT_NOT_APPROVED:
+                translated = 'Returned'
+                break
+            case Report.REPORT_SUBMITTED:
+                translated = 'Submitted'
+                break
+            default:
+                translated = 'Unpublished (no action – never been submitted)'
+                break
+
+        }
+        translated
     }
 
     private void exportActivities(Map project, Map activitiesModel) {
@@ -178,9 +201,10 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private void exportOutputs(Map project, Map activitiesModel) {
+        List exportableOutputs = ['Participant Information']
         if (project.activities) {
             activitiesModel.outputs.each { outputConfig ->
-                if (shouldExport(outputConfig.name)) {
+                if ((!tabsToExport && outputConfig.name in exportableOutputs) || tabsToExport.contains(outputConfig.name)) {
                     project.activities.each { activity ->
                         exportOutput(outputConfig.name, project, activity)
                     }

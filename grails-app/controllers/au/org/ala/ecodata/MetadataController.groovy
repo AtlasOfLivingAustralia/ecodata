@@ -106,16 +106,25 @@ class MetadataController {
     def excelOutputTemplate() {
 
         def outputName, listName, data, expandList
+        boolean editMode, allowExtraRows, autosizeColumns
         def json = request.getJSON()
         if (json) {
             outputName = json.type
             listName = json.listName
+            editMode = Boolean.valueOf(json.editMode)
+            allowExtraRows = Boolean.valueOf(json.allowExtraRows)
+            autosizeColumns = json.autosizeColumns != null ? Boolean.valueOf(json.autosizeColumns) : true
             data = JSON.parse(json.data)
+
+
         }
         else {
             outputName = params.type
             listName = params.listName
             expandList = params.expandList
+            editMode = params.getBoolean('editMode', false)
+            allowExtraRows = params.getBoolean('allowExtraRows', false)
+            autosizeColumns = params.getBoolean('autosizeColumns', true)
         }
 
 
@@ -162,10 +171,10 @@ class MetadataController {
                 }
             }
             annotatedModel = annotatedModel.grep{it.dataType != 'list'}
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
             builder.buildGroupHeaderList()
         } else {
-            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: []);
+            builder = new OutputUploadTemplateBuilder(fileName, outputName, annotatedModel, data ?: [], editMode, allowExtraRows, autosizeColumns);
             builder.build()
         }
 
