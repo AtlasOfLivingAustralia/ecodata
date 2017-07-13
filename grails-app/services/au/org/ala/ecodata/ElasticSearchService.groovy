@@ -758,6 +758,9 @@ class ElasticSearchService {
             outputs = outputService.findAllForActivityId(activity.activityId)
         }
 
+        // In case the activity record is soft deleted (right side of the boolean condition below) we still
+        // need to make sure projectActivity.projectType is set to works so the call to indexDoc uses
+        // the correct index (pasearch)
         def isWorksActivity = outputs || activity.status?.toLowerCase() == DELETED && project?.isWorks
 
         // Include project activity only for survey or works projects.
