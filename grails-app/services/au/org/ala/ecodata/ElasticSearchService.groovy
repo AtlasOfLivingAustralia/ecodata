@@ -754,10 +754,12 @@ class ElasticSearchService {
         if(project?.isWorks) {
             // only include activities with output. works by default creates activities but without data in them.
             output = Output.findByActivityIdAndStatus(activity.activityId, ACTIVE)
-            // In case the activity record is soft deleted (right side of the boolean condition below) we still
-            // need to make sure projectActivity.projectType is set to works so the call to indexDoc uses
-            // the correct index (pasearch)
-            isWorksActivity = output || activity.status?.toLowerCase() == DELETED && project?.isWorks
+            // changing status to deleted so that works activity with no output is not indexed
+            if(!output){
+                activity.status = DELETED
+            }
+
+            isWorksActivity = !!output
         }
 
         if (activity.projectActivityId || isWorksActivity) {
@@ -847,7 +849,8 @@ class ElasticSearchService {
             project.remove('startDate')
             project.remove('endDate')
             project.remove('description')
-            activity.putAll(project)
+            project.putAll(activity)
+            activity = project
             activity.programSubProgram = project.associatedProgram + ' - ' + project.associatedSubProgram
         }
 
