@@ -277,7 +277,7 @@
               "readOnly": true
             }
           ],
-          "userAddedRows": true,
+          "userAddedRows": false,
           "type": "table"
         }
       ],
