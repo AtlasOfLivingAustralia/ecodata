@@ -39,6 +39,7 @@ class SubmissionService {
 
         Map subPckMap = [:]
         subPckMap.putAll(submissionPackage)
+        subPckMap.remove("submissionRecordId") //do not re-update submissionRecordId
         subPckMap.remove("datasetAuthors")
         subPckMap.remove("datasetContact")
         subPckMap.remove ("version")
