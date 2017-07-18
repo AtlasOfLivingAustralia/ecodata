@@ -4,23 +4,12 @@
   "dataModel": [
     {
       "dataType": "list",
-      "name": "webLinks",
-      "columns": [
-        {
-          "dataType": "text",
-          "name": "webLink",
-          "validate": "custom[url]"
-        }
-      ]
-    },
-    {
-      "dataType": "list",
       "name": "agencyContacts",
       "columns": [
         {
           "dataType": "text",
           "name": "agencyContact",
-          "validate":"max[100]"
+          "validate": "max[100]"
         }
       ]
     },
@@ -32,30 +21,12 @@
           "dataType": "text",
           "description": "",
           "name": "actionId",
-          "constraints": [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G"
-          ],
           "validate": "required"
         },
         {
           "dataType": "text",
           "description": "",
           "name": "actionDescription",
-          "constraints": [
-            "A description",
-            "B description",
-            "C description",
-            "D description",
-            "E description",
-            "F description",
-            "G description"
-          ],
           "validate": "required"
         },
         {
@@ -74,6 +45,7 @@
         },
         {
           "dataType": "text",
+          "description": "Select the most appropriate progress against an action from the drop-down list",
           "name": "status",
           "constraints": [
             "Completed",
@@ -87,17 +59,20 @@
         },
         {
           "dataType": "text",
+          "description": "Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like",
           "name": "description",
-          "validate": "max[1500]"
+          "validate": "required,max[1500]"
         },
         {
           "dataType": "text",
+          "description": "Provide 2-3 sentences outlining progress in implementing the action",
           "name": "progress",
-          "validate": "max[1500]"
+          "validate": "required,max[1500]"
         },
         {
           "dataType": "stringList",
-          "name": "supportingAgenciesAndPartners",
+          "description": "Select organisations that are contributing to implementing the action",
+          "name": "deliveryPartners",
           "constraints": [
             "NPSR",
             "DNRM",
@@ -147,36 +122,38 @@
         },
         {
           "dataType": "date",
+          "behaviour": [
+            {
+              "condition": "status != \"Completed\" and status != \"In place\"",
+              "type": "enable"
+            }
+          ],
+          "description": "Provide an indicative timeframe for when the action will be completed",
           "name": "timeframe",
-          "validate": "required",
-          "behaviour":[{
-            "type":"enable",
-            "condition":"status != \"Completed\""
-          }]
+          "validate": "required"
         },
         {
           "dataType": "text",
+          "description": "Provide an overview of milestones and deliverables for implementing the action",
           "name": "tasksAndMilestones",
           "validate": "required,max[2000]"
-
         },
         {
           "dataType": "number",
+          "description": "Where possible, provide an estimate of funds expended to date on this action",
           "name": "fundsExtendedToDate",
-          "validate": "required,integer"
+          "validate": "integer"
+        },
+        {
+          "dataType": "stringList",
+          "description": "Please supply a comma separated list of URLs providing information about this action",
+          "name": "webLinks",
+          "validate": "required,custom[url]"
         },
         {
           "dataType": "stringList",
           "name": "linkedOrRelatedActions",
-          "constraints": [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G"
-          ]
+          "constraints": []
         }
       ]
     }
@@ -186,32 +163,12 @@
       "items": [
         {
           "items": [
-
             {
               "source": "agencyContacts",
               "columns": [
                 {
                   "title": "Agency Contact(s)",
                   "source": "agencyContact",
-                  "width": "100%",
-                  "class": "input-xxlarge",
-                  "type": "text"
-                }
-              ],
-              "userAddedRows": true,
-              "type": "table"
-            }
-          ],
-          "type": "col"
-        },
-        {
-          "items": [
-            {
-              "source": "webLinks",
-              "columns": [
-                {
-                  "title": "Link to website",
-                  "source": "webLink",
                   "width": "100%",
                   "class": "input-xxlarge",
                   "type": "text"
@@ -242,61 +199,66 @@
           "columns": [
             {
               "title": "Action ID",
+              "readOnly": true,
               "source": "actionId",
-              "width": "8%",
-              "type": "selectOne"
+              "width": "4%",
+              "type": "text"
             },
             {
               "title": "Action",
+              "readOnly": true,
               "source": "actionDescription",
-              "width": "8%",
-              "type": "selectOne"
+              "width": "11%",
+              "type": "text"
             },
             {
               "title": "Theme",
+              "readOnly": true,
               "source": "theme",
-              "width": "8%",
-              "type": "selectOne"
+              "width": "6%",
+              "type": "text"
             },
             {
               "title": "Status",
               "source": "status",
-              "width": "8%",
+              "width": "6%",
               "type": "selectOne"
             },
             {
               "title": "Description",
               "source": "description",
-              "width": "8%",
-              "type": "textarea"
+              "width": "11%",
+              "type": "textarea",
+              "rows":10
             },
             {
               "title": "Progress",
               "source": "progress",
-              "width": "8%",
-              "type": "textarea"
+              "width": "11%",
+              "type": "textarea",
+              "rows":10
             },
             {
-              "title": "Supporting Agencies and Partners",
-              "source": "supportingAgenciesAndPartners",
-              "width": "8%",
+              "title": "Delivery Partners",
+              "source": "deliveryPartners",
+              "width": "6%",
               "type": "select2Many"
             },
             {
               "title": "Timeframe",
               "source": "timeframe",
-              "width": "8%",
+              "width": "6%",
               "type": "date",
-              "displayOptions":{
-                "minViewMode":"months"
+              "displayOptions": {
+                "minViewMode": "months"
               }
-
             },
             {
               "title": "Tasks and milestones / deliverables",
               "source": "tasksAndMilestones",
-              "width": "8%",
-              "type": "textarea"
+              "width": "11%",
+              "type": "textarea",
+              "rows":10
             },
             {
               "title": "Funds expended to date for action delivery",
@@ -305,13 +267,20 @@
               "type": "currency"
             },
             {
+              "title": "Web links",
+              "source": "webLinks",
+              "width": "11%",
+              "type": "multiInput"
+            },
+            {
               "title": "Linked or related actions",
+              "readOnly": true,
               "source": "linkedOrRelatedActions",
-              "width": "8%",
-              "type": "select2Many"
+              "width": "6%",
+              "type": "selectMany"
             }
           ],
-          "userAddedRows": true,
+          "userAddedRows": false,
           "type": "table"
         }
       ],

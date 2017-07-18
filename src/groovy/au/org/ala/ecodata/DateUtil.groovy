@@ -53,9 +53,14 @@ class DateUtil {
      */
     static TimeZone getTimeZoneFromString(String clientTimezoneStr) {
         TimeZone timeZone
-        try {
-            timeZone = TimeZone.getTimeZone(clientTimezoneStr)
-        } finally {
+
+        if (clientTimezoneStr) {
+            try {
+                timeZone = TimeZone.getTimeZone(clientTimezoneStr)
+            } finally {
+                timeZone = timeZone ?: TimeZone.default
+            }
+        } else {
             timeZone = timeZone ?: TimeZone.default
         }
         return timeZone

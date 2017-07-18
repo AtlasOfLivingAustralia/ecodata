@@ -140,7 +140,7 @@ class PermissionService {
         }
     }
 
-    def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor]) {
+    def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInList(projectId, Project.class.name, AccessLevel.starred, roles)
         def out = []
         up.each {
@@ -171,17 +171,21 @@ class PermissionService {
     }
 
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
-        def prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
+        List prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
 
-        def up = new UserPermission(userId: userId, entityId: entityId, entityType:entityType.name, accessLevel: accessLevel)
-        try {
-            up.save(flush: true, failOnError: true)
+        // It's possible that a user could attempt to reassign permission at the same level they already have
+        UserPermission up = prevRoles.find{it.accessLevel == accessLevel}
+        if (!up) {
+            try {
+                up = new UserPermission(userId: userId, entityId: entityId, entityType: entityType.name, accessLevel: accessLevel)
+                up.save(flush: true, failOnError: true)
 
-        } catch (Exception e) {
-            def msg = "Failed to save UserPermission: ${e.message}"
-            log.error msg, e
-            return [status:'error', error: msg]
+            } catch (Exception e) {
+                def msg = "Failed to save UserPermission: ${e.message}"
+                log.error msg, e
+                return [status: 'error', error: msg]
+            }
         }
         if (accessLevel != AccessLevel.starred) {
             // remove any lower roles

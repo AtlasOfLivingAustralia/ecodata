@@ -266,7 +266,7 @@ class ProjectService {
             // clear session to avoid exception when GORM tries to autoflush the changes
             Project.withSession { session -> session.clear() }
             def error = "Error creating project - ${e.message}"
-            log.error error
+            log.error error, e
             return [status: 'error', error: error]
         }
     }
@@ -277,7 +277,7 @@ class ProjectService {
      */
 
     private establishCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             task {
                 Map collectoryProps = [:]
@@ -300,7 +300,7 @@ class ProjectService {
     }
 
     private updateCollectoryLinkForProject(Project project, Map props) {
-        if (!project.isExternal && grailsApplication.config.collectory.collectoryIntegrationEnabled) {
+        if (!project.isExternal && Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
 
             Map projectProps = toMap(project, FLAT)
             task {
@@ -328,7 +328,7 @@ class ProjectService {
             } catch (Exception e) {
                 Project.withSession { session -> session.clear() }
                 def error = "Error updating project ${id} - ${e.message}"
-                log.error error
+                log.error error, e
                 return [status: 'error', error: error]
             }
         } else {

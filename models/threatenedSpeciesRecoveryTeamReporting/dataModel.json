@@ -1,0 +1,174 @@
+{
+  "title": "Threatened Species Recovery Team Reporting",
+  "modelName": "Threatened Species Recovery Team Reporting",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "targetSpeciesOrCommunity",
+      "validate":"required"
+    },
+    {
+      "dataType": "text",
+      "name": "recoveryTeam",
+      "validate":"required"
+    },
+    {
+      "dataType": "text",
+      "name": "condition",
+      "validate":"required",
+      "description":"Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report.",
+      "constraints":[
+        "Very poor", "Poor", "Good", "Very good"
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "conditionConfidence",
+      "validate":"required",
+      "constraints":[
+        "Evidence and consensus too low to make an assessment", "Limited evidence or limited consensus", "Adequate high-quality evidence and high consensus"
+      ]
+    },
+
+    {
+      "dataType": "text",
+      "name": "trajectory",
+      "validate":"required",
+      "constraints":[
+        "Improving", "Deteriorating", "Stable", "Unclear"
+      ],
+      "description":"Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report."
+    },
+    {
+      "dataType": "text",
+      "name": "trajectoryConfidence",
+      "validate":"required",
+      "constraints":[
+        "Evidence and consensus too low to make an assessment", "Limited evidence or limited consensus", "Adequate high-quality evidence and high consensus"
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "keyHighlights",
+      "validate":"required,max[2000]",
+      "description":"What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan."
+    },
+
+    {
+      "dataType": "list",
+      "name": "implementingActions",
+      "description":"What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "action",
+          "validate":"required"
+        },
+        {
+          "dataType": "text",
+          "name": "outcomes",
+          "validate":"required,max[2000]"
+        },
+        {
+          "dataType": "stringList",
+          "description": "Select organisations that are contributing to implementing the action",
+          "name": "deliveryPartners",
+          "constraints": [
+            "Organisation 1",
+            "Organisation 2"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "issues",
+          "validate":"required,max[2000]"
+        },
+        {
+          "dataType": "number",
+          "name": "investment",
+          "validate":"min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "status",
+          "validate":"required",
+          "constraints":[
+            "No / little progress",
+            "Some progress",
+            "Action completed"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "summary",
+          "validate":"required,max[2000]",
+          "description":"Summary paragraph/dot points – provide an overall summary/assessment regarding the implementation of the actions (e.g. what worked or didn’t work, things which impeded or assisted implementation and any other issues encountered)."
+        }
+      ]
+    },
+    {
+      "dataType": "list",
+      "name": "externalImplementingActions",
+      "description":"What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "action",
+          "validate":"required"
+        },
+        {
+          "dataType": "text",
+          "name": "outcomes",
+          "validate":"required,max[2000]"
+        },
+        {
+          "dataType": "stringList",
+          "description": "Select organisations that are contributing to implementing the action",
+          "name": "deliveryPartners",
+          "constraints": [
+            "Organisation 1",
+            "Organisation 2"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "issues",
+          "validate":"required,max[2000]"
+        },
+        {
+          "dataType": "number",
+          "name": "investment",
+          "validate":"min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "status",
+          "validate":"required",
+          "constraints":[
+            "No / little progress",
+            "Some progress",
+            "Action completed"
+          ]
+        }
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "summary",
+      "validate":"required,max[2000]",
+      "description":"Summary paragraph/dot points – provide an overall summary/assessment regarding the implementation of the actions (e.g. what worked or didn’t work, things which impeded or assisted implementation and any other issues encountered)."
+    },
+    {
+      "dataType": "list",
+      "name": "meetingObjectives",
+      "description":"What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "action",
+          "validate":"required"
+        }]
+    }
+  ],
+  "viewModel": []
+}

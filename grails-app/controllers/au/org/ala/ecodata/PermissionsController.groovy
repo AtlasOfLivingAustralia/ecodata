@@ -671,6 +671,52 @@ class PermissionsController {
     }
 
     /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#caseManager caseManager}
+     * level access for a given {@link Project project}
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserEditorForProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+
+        if (userId && projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if (project) {
+                UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.editor)
+                render([userIsEditor: permission != null] as JSON)
+            } else {
+                render status: 404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#caseManager caseManager}
+     * level access for a given {@link Project project}
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserParticipantForProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+
+        if (userId && projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if (project) {
+                UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.projectParticipant)
+                render([userIsParticipant: permission != null] as JSON)
+            } else {
+                render status: 404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    /**
      * Does the request {@link UserDetails#userId userId} have specified level access for a given {@link Project project}
      *
      * @return JSON object with a single property representing a boolean value

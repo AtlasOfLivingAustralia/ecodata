@@ -12,18 +12,26 @@ class OutputUploadTemplateBuilder extends XlsExporter {
     def model
     def outputName
     def data
+    boolean editMode = false
+    boolean extraRowsEditable = true
+    boolean autoSizeColumns = true
 
     public OutputUploadTemplateBuilder(filename, outputName, model) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
+        this.editMode = false
+        this.autoSizeColumns = true
     }
 
-    public OutputUploadTemplateBuilder(filename, outputName, model, data) {
+    public OutputUploadTemplateBuilder(filename, outputName, model, data, boolean editMode = false, boolean extraRowsEditable = true, boolean autoSizeColumns = true) {
         super(filename)
         this.outputName = outputName
         this.model = model.findAll{!it.computed}
         this.data = data
+        this.editMode = editMode
+        this.extraRowsEditable = extraRowsEditable
+        this.autoSizeColumns = autoSizeColumns
     }
 
 
@@ -40,9 +48,9 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle()).process()
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
-        finalise()
+        finalise(outputSheet)
     }
 
     public void buildGroupHeaderList() {
@@ -73,13 +81,48 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
         new ValidationProcessor(getWorkbook(), outputSheet.sheet, model).process()
 
-        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle()).process()
+        new OutputDataProcessor(getWorkbook(), outputSheet.sheet, model, data, getStyle(), editMode, extraRowsEditable).process()
 
         finalise()
     }
 
-    def finalise() {
-        sizeColumns()
+    private int widthFromString(String widthString, int defaultWidth) {
+        int width = defaultWidth
+
+        // Strip non-numerics to allow for trailing '%' / 'px' / 'em', if the model
+        // mixes units we will get some strange results..
+        widthString = widthString?.replaceAll(/[^\d]/, '')
+        if (widthString) {
+            width = Integer.parseInt(widthString)
+        }
+
+        width
+    }
+
+    def finalise(AdditionalSheet outputSheet) {
+        if (autoSizeColumns) {
+            sizeColumns()
+        }
+        else {
+            // Attempt to give some sensible sizes...
+            // lets say we have 250 chars to work with.
+            // Excel sizes are in 1/256 of a character.
+            int TOTAL_WIDTH_IN_EXCEL_UNITS = 250*256
+
+            List widths = model.collect { widthFromString(it.width, 0) }
+            int sum = widths.sum()
+            List columnSizes = widths.collect { (int)(it / sum * TOTAL_WIDTH_IN_EXCEL_UNITS) }
+
+            columnSizes.eachWithIndex { width, i ->
+                if (width) {
+                    outputSheet.sheet.setColumnWidth(i, width)
+                }
+                else {
+                    outputSheet.sheet.autoSizeColumn(i)
+                }
+            }
+
+        }
     }
 
 }
@@ -92,17 +135,57 @@ class OutputDataProcessor {
     def model
     def data
     def rowHeaderStyle
+    boolean editMode
+    boolean extraRowsEditable
+    CellStyle unlockedCellStyle
 
-    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle){
+    /**
+     *
+     * @param workbook The Excel workbook to populate
+     * @param sheet The sheet/tab to populate
+     * @param model The model describing the data
+     * @param data The data to add to the sheet
+     * @param rowHeaderStyle Cell style for the column headers
+     * @param editMode true if this workbook is being populated for the purposes of uploading data for an activity / table.  If
+     * set to true, the "readOnly" status of model items will be taken into account when writing to cells.
+     * @param extraRowsEditable only used if editMode is true.  If so, extra rows will be able to be added to the data populated in the sheet.
+     * Otherwise the cells in the extra rows will be locked.
+     */
+    public OutputDataProcessor(workbook, sheet, model, data, rowHeaderStyle, boolean editMode = false, boolean extraRowsEditable = true){
         this.workbook = workbook
         this.sheet = sheet
         this.model = model
         this.data = data
         this.rowHeaderStyle = rowHeaderStyle
+        this.editMode = editMode
+        this.extraRowsEditable = extraRowsEditable
 
+        if (editMode) {
+            unlockedCellStyle =  workbook.createCellStyle();
+            unlockedCellStyle.setLocked(false);
+        }
+    }
+
+    private void protectSheet() {
+
+        sheet.protectSheet("")
+        sheet.getCTWorksheet().getSheetProtection().setFormatColumns(false)
+
+        // If we allow extra rows to be added, by default make editable columns editable for the whole sheet.
+        if (extraRowsEditable) {
+            model.eachWithIndex { modelVal, i ->
+                if (!modelVal.readOnly)  {
+                    sheet.setDefaultColumnStyle(i, unlockedCellStyle)
+                }
+            }
+        }
     }
 
     public void process() {
+
+        if (editMode) {
+            protectSheet()
+        }
 
         data?.eachWithIndex { rowValue, rowCount ->
             Row row = sheet.createRow((rowCount+1))
@@ -115,6 +198,7 @@ class OutputDataProcessor {
                 rowHeader = modelVal.rowHeader
 
                 Cell cell = row.createCell(i)
+
                 switch(dataType){
                     case 'number':
                         try {
@@ -130,7 +214,16 @@ class OutputDataProcessor {
                         cell.setCellValue(value?value.name:'')
                         break
                     case 'stringList':
+                        if (value) {
+                            if (value instanceof List) {
+                                value = new ArrayList(value) // Copy the list to avoid JSONArray "join" behaviour
+                            }
+                            else {
+                                value = [value]
+                            }
+                        }
                         cell.setCellValue(value?value.join(','):'')
+                        break
                     case 'date':
                     case 'text':
                     default:
@@ -138,7 +231,12 @@ class OutputDataProcessor {
                         break
                 }
                 if(rowHeader){
-                    cell.setCellStyle(rowHeaderStyle);
+                    cell.setCellStyle(rowHeaderStyle)
+                }
+                if (editMode) {
+                    if (!modelVal.readOnly) {
+                        cell.setCellStyle(unlockedCellStyle)
+                    }
                 }
 
             }

@@ -10,6 +10,8 @@ class Record {
         occurrenceID index: true
         outputSpeciesId index: true
         status index: true
+        activityId index: true
+        projectActivityId index: true
         version false
     }
 

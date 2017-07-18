@@ -480,7 +480,23 @@ if(!biocollect.facets.project){
         "associatedProgramFacet",
         "siteNameFacet",
         "associatedSubProgramFacet",
-        "plannedStartDate"
+        "plannedStartDate",
+        "fundingSourceFacet",
+        "reportingThemesFacet",
+        "typeFacet",
+        "assessment",
+        "stateFacet",
+        "lgaFacet",
+        "nrmFacet",
+        "mvgFacet",
+        "mainThemeFacet",
+        "ibraFacet",
+        "imcra4_pbFacet",
+        "otherFacet",
+        "electFacet",
+        "cmzFacet",
+        "meriPlanAssetFacet",
+        "partnerOrganisationTypeFacet"
     ]
 }
 
@@ -578,6 +594,9 @@ if (!userDetailsSingleUrl) {
 }
 if (!userDetailsUrl) {
     userDetailsUrl = "http://auth.ala.org.au/userdetails/userDetails/getUserListFull"
+}
+if (!userDetails.admin.url) {
+    userDetails.admin.url = 'https://auth.ala.org.au/userdetails/ws/admin'
 }
 
 if (!authGetKeyUrl) {

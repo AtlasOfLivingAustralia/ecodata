@@ -21,7 +21,6 @@ class Project {
 		promoteOnHomepage index: true
         externalId index: true
         dataResourceId index: true
-        externalId index: true
         version false
     }
 
