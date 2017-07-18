@@ -15,6 +15,7 @@ class SubmissionRecord {
     String datasetSubmitter
     String datasetVersion
     String submissionRecordId
+    String submissionId
     String projectActivityId
     SubmissionPackage submissionPackage
 
@@ -24,8 +25,9 @@ class SubmissionRecord {
         datasetSubmitter            nullable:true
         datasetVersion              nullable:true
         submissionRecordId          nullable:true
-        submissionPackage           nullable: true
-        projectActivityId           nullable: true
+        submissionPackage           nullable:true
+        projectActivityId           nullable:true
+        submissionId                nullable:true
     }
 
     static belongsTo = ProjectActivity
@@ -39,6 +41,7 @@ class SubmissionRecord {
     static mapping = {
         projectActivityId index: true
         submissionRecordId index: true
+        submissionId  index: true
         version false
     }
 

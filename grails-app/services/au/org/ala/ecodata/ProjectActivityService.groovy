@@ -94,6 +94,7 @@ class ProjectActivityService {
             prop.putAll(it)
 
             if (!it.submissionRecordId) {
+                prop.remove("datasetSubmitterUser")
                 prop.remove("submissionPackage")
 
                 String submissionRecId = Identifiers.getNew(true, '')

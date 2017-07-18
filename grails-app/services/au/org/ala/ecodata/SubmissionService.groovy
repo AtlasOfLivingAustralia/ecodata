@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 class SubmissionService {
 
     def commonService
+    def userService
 
     def get(def submissionRecId) {
         def o = SubmissionRecord.findById(submissionRecId)
@@ -11,6 +12,16 @@ class SubmissionService {
         }
         def map = [:]
         map = commonService.toBareMap(o)
+
+        if (o.datasetSubmitter) {
+            def user = userService.getUserForUserId(o.datasetSubmitter);
+            if (user) {
+                map.datasetSubmitterUser = [:]
+                map.datasetSubmitterUser.userId = user.userId
+                map.datasetSubmitterUser.userName = user.userName
+                map.datasetSubmitterUser.displayName = user.displayName
+            }
+        }
 
         def s = SubmissionPackage.findBySubmissionRecordId(o.submissionRecordId)
         if (!s) {
@@ -25,6 +36,7 @@ class SubmissionService {
         def submissionRec = props
         def submissionPackage = props.submissionPackage
 
+        submissionRec.remove ("datasetSubmitterUser")
         submissionRec.remove ("submissionPackage")
 
         def sr = SubmissionRecord.findBySubmissionRecordId(submissionRecId)
