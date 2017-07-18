@@ -12,6 +12,10 @@ class Program {
     String name
     String description
     String status = 'active'
+<<<<<<< Updated upstream
+=======
+    String url
+>>>>>>> Stashed changes
     Date dateCreated
     Date lastUpdated
     List blog
@@ -35,5 +39,9 @@ class Program {
         subPrograms nullable: true
         startDate nullable: true
         endDate nullable: true
+<<<<<<< Updated upstream
+=======
+        url nullable: true
+>>>>>>> Stashed changes
     }
 }
