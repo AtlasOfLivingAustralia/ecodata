@@ -10,6 +10,7 @@ class ProjectActivityService {
     CommonService commonService
     DocumentService documentService
     SiteService siteService
+    SubmissionService   submissionService
     ActivityService activityService
     CommentService commentService
     PermissionService permissionService
@@ -61,6 +62,10 @@ class ProjectActivityService {
 
                 updateEmbargoDetails(projectActivity, props)
 
+                if (props.submissionRecords) {
+                    updateAekosSubmission(projectActivity, props)
+                }
+
                 commonService.updateProperties(projectActivity, props)
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -77,6 +82,37 @@ class ProjectActivityService {
         }
 
         result
+    }
+
+    private updateAekosSubmission(ProjectActivity projectActivity, Map incomingProperties) {
+        def submissionRecords = incomingProperties.submissionRecords
+
+        incomingProperties.remove("submissionRecords")
+
+        submissionRecords.each {
+            Map prop = [:]
+            prop.putAll(it)
+
+            if (!it.submissionRecordId) {
+                prop.remove("datasetSubmitterUser")
+                prop.remove("submissionPackage")
+
+                String submissionRecId = Identifiers.getNew(true, '')
+
+                prop.put ("submissionRecordId", submissionRecId)
+                prop.put ("projectActivityId", projectActivity.projectActivityId)
+                SubmissionRecord submissionRecord = new SubmissionRecord (prop)
+
+                it.submissionPackage.put ("submissionRecordId", submissionRecId)
+                submissionRecord.submissionPackage = new SubmissionPackage (it.submissionPackage)
+                projectActivity.addToSubmissionRecords(submissionRecord)
+            } else {
+                String submissionRecId = it.submissionRecordId
+                submissionService.update (submissionRecId, prop)
+            }
+
+        }
+
     }
 
     private static updateEmbargoDetails(ProjectActivity projectActivity, Map incomingProperties) {
@@ -200,7 +236,13 @@ class ProjectActivityService {
             mapOfProperties["sites"] = mapOfProperties.sites.collect {
                 siteService.get(it, "brief")
             }
+
         }
+
+        mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
+            submissionService.get(it)
+        }
+
         String id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
@@ -269,8 +311,4 @@ class ProjectActivityService {
         restrictedProjectActivityIds
     }
 
-    def sitesContainsName(String id, String name) {
-        def pa = ProjectActivity.findByProjectActivityId(id)
-        return Site.countBySiteIdInListAndName(pa.sites, name) > 0
-    }
 }

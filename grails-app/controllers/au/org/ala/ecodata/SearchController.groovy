@@ -294,7 +294,7 @@ class SearchController {
     }
 
     def indexAll() {
-        render elasticSearchService.indexAll() as JSON
+        render (elasticSearchService.indexAll()?:[]) as JSON
     }
 
     def dashboardReport() {

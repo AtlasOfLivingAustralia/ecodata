@@ -24,6 +24,7 @@ class Document {
         outputId index: true
         organisationId index: true
         status index: true
+        role index: true
         version false
     }
 

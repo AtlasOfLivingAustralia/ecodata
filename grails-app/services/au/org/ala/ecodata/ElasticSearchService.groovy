@@ -76,6 +76,7 @@ class ElasticSearchService {
     OrganisationService organisationService
     OutputService outputService
     EmailService emailService
+    HubService hubService
 
 
     Node node;
@@ -415,7 +416,7 @@ class ElasticSearchService {
                     Activity activity = Activity.findByActivityId(record.activityId)
                     def doc = activityService.toMap(activity, ActivityService.FLAT)
                     doc = prepareActivityForIndexing(doc)
-                    indexDoc(doc, (doc?.projectActivityId || doc?.projectActivity?.projectType=="works") ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 }
                 break
 
@@ -424,7 +425,7 @@ class ElasticSearchService {
                 def doc = activityService.toMap(activity, ActivityService.FLAT)
                 doc = prepareActivityForIndexing(doc)
                 // Works project activities are created before a survey is filled in
-                indexDoc(doc, (doc?.projectActivityId || doc?.projectActivity?.projectType=="works") ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
                 // update linked project -- index for homepage
                 def pDoc = Project.findByProjectId(doc.projectId)
                 if (pDoc) {
@@ -463,49 +464,37 @@ class ElasticSearchService {
      * @return
      */
     private Map prepareSiteForIndexing(Map siteMap, Boolean indexNestedDocuments) {
-        List projects = [], surveys = [], surveysForProject
-        Map project, photoPoints
-        siteMap.projects.each { // assume list of Strings (ids)
-            def pDoc = Project.findByProjectId(it)
-            if (pDoc) {
+        List projects = [], surveys = []
+        if(siteMap.projects){
+            List allProjects = Project.findAllByProjectIdInList(siteMap.projects)
+            projects.addAll(allProjects.collect { project ->
                 if(indexNestedDocuments){
-                    indexHomePage(pDoc, "au.org.ala.ecodata.Project")
+                    indexHomePage(project, "au.org.ala.ecodata.Project")
                 }
 
-                project = projectService.toMap(pDoc, LevelOfDetail.flat)
-                projects.push([
+                [
                         projectName: project.name,
                         projectId  : project.projectId,
                         projectType: project?.projectType
-                ])
+                ]
+            })
 
-                surveysForProject = projectActivityService.getAllByProject(project.projectId);
-                surveys.addAll(surveysForProject.collect {
-                    [
-                            surveyName       : it.name,
-                            projectActivityId: it.projectActivityId
-                    ]
-                })
-
-            } else {
-                log.warn "Project not found for id: ${it}"
-            }
+            List surveysForProject = ProjectActivity.findAllByProjectIdInList(siteMap.projects);
+            surveys.addAll(surveysForProject.collect {
+                [
+                        surveyName       : it.name,
+                        projectActivityId: it.projectActivityId
+                ]
+            })
         }
 
         siteMap.projectList = projects;
         siteMap.surveyList = surveys
 
-        try {
-            // check for photo points
-            photoPoints = documentService.search([siteId: siteMap.siteId, type: 'image', role: 'photoPoint'])
-            if (photoPoints?.count > 0) {
-                siteMap.photoType = 'photoPoint'
-            }
+        Document doc = Document.findByRoleAndSiteIdAndType('photoPoint', siteMap.siteId, 'image')
+        if (doc) {
+            siteMap.photoType = 'photoPoint'
         }
-        catch (Exception e) {
-            log.error("Unable to index documents for site: "+siteMap?.siteId,e)
-        }
-
 
         siteMap
     }
@@ -662,13 +651,22 @@ class ElasticSearchService {
         }
 
         log.info "Indexing all activities"
-        activityService.doWithAllActivities { Map activity ->
-            try {
-                prepareActivityForIndexing(activity)
-                indexDoc(activity, activity?.projectActivityId || activity?.projectActivity?.projectType=="works"? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
-            }
-            catch (Exception e) {
-                log.error("Unable to index activity: "+activity?.activityId, e)
+        count = 0;
+        Activity.withNewSession { session ->
+            activityService.doWithAllActivities { Map activity ->
+                try {
+                    activity = prepareActivityForIndexing(activity)
+                    indexDoc(activity, activity?.projectActivityId || activity?.isWorks ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                }
+                catch (Exception e) {
+                    log.error("Unable to index activity: " + activity?.activityId, e)
+                }
+
+                count++
+                if (count % 100 == 0) {
+                    session.clear()
+                    log.debug("Indexed " + count + " activities")
+                }
             }
         }
 
@@ -750,20 +748,31 @@ class ElasticSearchService {
         activity["className"] = Activity.class.getName()
 
         def project = projectService.get(activity.projectId, ProjectService.FLAT, version)
-        def organisation = organisationService.get(project?.organisationId)
 
-        def outputs
+        def output, isWorksActivity
 
         if(project?.isWorks) {
-            outputs = outputService.findAllForActivityId(activity.activityId)
+            // only include activities with output. works by default creates activities but without data in them.
+            output = Output.findByActivityIdAndStatus(activity.activityId, ACTIVE)
+            // changing status to deleted so that works activity with no output is not indexed
+            if(!output){
+                activity.status = DELETED
+            }
+
+            isWorksActivity = !!output
         }
 
-        def isWorksActivity = outputs || activity.status?.toLowerCase() == DELETED && project?.isWorks
+        if (activity.projectActivityId || isWorksActivity) {
+            def organisation = organisationService.get(project?.organisationId)
 
-        // Include project activity only for survey or works projects.
-        // For works projects we need to wait for a user to actually fill in the survey (outputs not empty)
-        def pActivity = version || isWorksActivity ? activity : projectActivityService.get(activity.projectActivityId)
-        if (pActivity) {
+            // Include project activity only for survey or works projects.
+            // For works projects we need to wait for a user to actually fill in the survey (outputs not empty)
+            def pActivity = version || isWorksActivity ? activity : projectActivityService.get(activity.projectActivityId)
+            // if project could not be resolved from previous lookup, then try look it up using projectId from projectActivity.
+            if(!project && pActivity.projectId){
+                project = projectService.get(pActivity.projectId, ProjectService.FLAT, version)
+            }
+
             Map projectActivity = [:]
             List records = []
 
@@ -814,8 +823,8 @@ class ElasticSearchService {
                 }
 
                 if(!activity.thumbnailUrl) {
-                    def projectActivityDocuments = documentService.findAllForProjectActivityId(activity.projectActivityId)
-                    activity.thumbnailUrl = projectActivityDocuments?.find { it.thumbnailUrl }?.thumbnailUrl
+                    Document doc = Document.findByProjectActivityIdAndFilenameIsNotNullAndStatus(activity.projectActivityId, ACTIVE)
+                    activity.thumbnailUrl = doc?.thumbnailUrl
                 }
             }
             catch (Exception e) {
@@ -825,6 +834,9 @@ class ElasticSearchService {
             projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
+            // overwrite any project properties that has same name as activity properties.
+            project.putAll(activity)
+            activity = project
 
         } else if (project) {
             // The project data is being flattened to match the existing mapping definition for the facets and to simplify the
@@ -837,7 +849,8 @@ class ElasticSearchService {
             project.remove('startDate')
             project.remove('endDate')
             project.remove('description')
-            activity.putAll(project)
+            project.putAll(activity)
+            activity = project
             activity.programSubProgram = project.associatedProgram + ' - ' + project.associatedSubProgram
         }
 
@@ -964,6 +977,23 @@ class ElasticSearchService {
                         }
                     } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
+                    }
+
+                    // add hub specific default facet query here. This will restrict data shown on all-records page to records from hub projects.
+                    if(params.hub){
+                        Map hub = hubService.findByUrlPath(params.hub)
+                        String defaultQuery = ""
+                        if(hub.defaultFacetQuery){
+                            defaultQuery =  hub.defaultFacetQuery?.join(' OR ');
+                        }
+
+                        if(defaultQuery){
+                            if(forcedQuery){
+                                forcedQuery = "("+ forcedQuery + " AND (" + defaultQuery + "))"
+                            } else {
+                                forcedQuery = defaultQuery
+                            }
+                        }
                     }
                 }
                 break

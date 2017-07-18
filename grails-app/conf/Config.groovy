@@ -480,7 +480,23 @@ if(!biocollect.facets.project){
         "associatedProgramFacet",
         "siteNameFacet",
         "associatedSubProgramFacet",
-        "plannedStartDate"
+        "plannedStartDate",
+        "fundingSourceFacet",
+        "reportingThemesFacet",
+        "typeFacet",
+        "assessment",
+        "stateFacet",
+        "lgaFacet",
+        "nrmFacet",
+        "mvgFacet",
+        "mainThemeFacet",
+        "ibraFacet",
+        "imcra4_pbFacet",
+        "otherFacet",
+        "electFacet",
+        "cmzFacet",
+        "meriPlanAssetFacet",
+        "partnerOrganisationTypeFacet"
     ]
 }
 

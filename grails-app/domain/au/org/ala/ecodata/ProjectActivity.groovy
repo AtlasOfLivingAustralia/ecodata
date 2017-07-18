@@ -21,8 +21,11 @@ class ProjectActivity {
     String baseLayersName
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
     VisibilityConstraint visibility = new VisibilityConstraint(embargoOption: EmbargoOption.NONE)
+    List<SubmissionRecord> submissionRecords
 
     static embedded = ['visibility']
+
+    static hasMany = [submissionRecords: SubmissionRecord]
 
     static constraints = {
         endDate nullable: true
@@ -34,6 +37,7 @@ class ProjectActivity {
         baseLayersName nullable: true
         publicAccess nullable: true
         visibility nullable: true
+        submissionRecords nullable: true
     }
 
     static mapping = {
