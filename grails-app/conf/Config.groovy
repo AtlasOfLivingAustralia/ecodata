@@ -703,6 +703,10 @@ log4j = {
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
                         file: loggingDir + "/ecodata-stacktrace.log"
+                rollingFile name: 'aekosLog',
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/aekosLog.log",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
             }
             test {
                 console name: "stdout",
@@ -716,6 +720,10 @@ log4j = {
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
                         file: loggingDir + "/ecodata-test-stacktrace.log"
+                rollingFile name: 'aekosLog',
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/aekosLog.log",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
             }
             production {
                 rollingFile name: "ecodataLog",
@@ -726,6 +734,10 @@ log4j = {
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
                         file: loggingDir + "/ecodata-stacktrace.log"
+                rollingFile name: 'aekosLog',
+                        maxFileSize: 104857600,
+                        file: loggingDir + "/aekosLog.log",
+                        layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
             }
         }
     }
@@ -751,6 +763,11 @@ log4j = {
             'grails.app.taglib.au.org.ala.ecodata',
             'grails.app.conf.au.org.ala.ecodata',
             'grails.app.filters.au.org.ala.ecodata'
+    ]
+
+    all additivity: false, aekosLog: [
+            'grails.app.jobs.au.org.ala.ecodata.CheckSubmissionResultJob',
+            'grails.app.services.au.org.ala.ecodata.SubmissionService'
     ]
 
     debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata' //, 'grails.plugin.cache'

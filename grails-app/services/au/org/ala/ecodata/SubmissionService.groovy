@@ -4,6 +4,8 @@ class SubmissionService {
 
     def commonService
     def userService
+    def webService
+    def grailsApplication
 
     def get(def submissionRecId) {
         def o = SubmissionRecord.findById(submissionRecId)
@@ -67,8 +69,27 @@ class SubmissionService {
         sp.datasetAuthors = daList
 
         commonService.updateProperties(sp, subPckMap)
+    }
 
+    def checkSubmission () {
 
+        def aekosPollingUrl = grailsApplication.config.aekosPolling?.url //?: "http://shared-uat.aekos.org.au:8080/shared-web/api/doi/submission_id"
+
+        def submissionRecList = SubmissionRecord.findAllBySubmissionDoi('Pending')
+
+        submissionRecList.each {
+            def submissionId = it.submissionId
+            if (submissionId) {
+                def result = webService.getJson("${aekosPollingUrl}/${submissionId}", 10000)
+                if (result && result?.containsKey('message') && result['message'] == 'DOI minted.') {
+                    it.submissionDoi = result['submissionDoi']
+                    it.save()
+                    log.info("Submission record for submissionId: ${it.submissionId} status is updated to ${result['submissionDoi']}")
+                } else {
+                    log.info("Nothing to update for Submission record: ${it.submissionId}, StatusCode: ${result.statusCode} - ${result.detail}");
+                }
+            }
+        }
     }
 
 }
