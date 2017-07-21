@@ -38,6 +38,8 @@ class Hub {
     Map content
     /** quick links to Biocollect pages that appeared on certain pages like create record, view record etc. */
     List quickLinks
+    /** provide breadcrumb overrides for a controller action */
+    List customBreadCrumbs = []
 
     String status = 'active'
 
@@ -58,5 +60,6 @@ class Hub {
         defaultProgram nullable: true
         templateConfiguration nullable: true
         content nullable: true
+        customBreadCrumbs nullable: true
     }
 }
