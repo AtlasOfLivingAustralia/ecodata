@@ -10,6 +10,7 @@ import org.apache.log4j.Logger
 class CheckSubmissionResultJob {
 
     SubmissionService submissionService
+    def grailsApplication
 
     static triggers = {
         cron name:'hourly', startDelay:1000, cronExpression: '0 0 * * * ?'
