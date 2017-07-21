@@ -816,10 +816,10 @@ class ElasticSearchService {
             }
             try {
                 // check if activity has images
-                Map images = documentService.search([activityId: activity.activityId, type: 'image', role: 'surveyImage'], version);
-                if (images.count > 0) {
+                Document image = Document.findByActivityIdAndRoleAndTypeAndFilenameIsNotNull(activity.activityId,'surveyImage', 'image')
+                if (image) {
                     projectActivity.surveyImage = true;
-                    activity.thumbnailUrl = images?.documents[0]?.thumbnailUrl
+                    activity.thumbnailUrl = image?.thumbnailUrl
                 }
 
                 if(!activity.thumbnailUrl) {
