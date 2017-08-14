@@ -1,128 +1,138 @@
 {
-    "dataModel": [{
-        "dataType": "list",
-        "name": "feralAnimalManagement",
-        "columns": [
-            {
-                "dataType": "species",
-                "description": "",
-                "name": "species",
-                "validate": "required"
-            },
-            {
-                "dataType": "text",
-                "name": "season",
-                "constraints": [
-                    "Spring",
-                    "Summer",
-                    "Autumn",
-                    "Winter"
-                ],
-                "validate": "required"
-            },
-            {
-                "dataType": "text",
-                "name": "managementActions",
-                "constraints": [
-                    "Bait & trap",
-                    "Bait only",
-                    "Biological control agents",
-                    "Exclusion fencing",
-                    "Fumigation",
-                    "Mustering",
-                    "Nil",
-                    "Trap & cull",
-                    "Trap & remove"
-                ],
-                "validate": "required"
-            },
-            {
-                "dataType": "text",
-                "name": "managementReason",
-                "constraints": [
-                    "Excessive grazing",
-                    "Excessive population",
-                    "Land degradation",
-                    "Nil",
-                    "Predation",
-                    "Removal of feral animals"
-                ]
-            },
-            {
-                "dataType": "number",
-                "name": "noCulled",
-                "validate": "min[0]"
-            },
-            {
-                "dataType": "number",
-                "name": "cost",
-                "validate": "integer,min[0]"
-            }
-        ]
-    }],
-    "modelName": "ESP Feral Animal Management",
     "title": "Feral Animal Management",
+    "modelName": "ESP Feral Animal Management",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "feralAnimalManagement",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "",
+                    "name": "species",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "season",
+                    "constraints": [
+                        "Spring",
+                        "Summer",
+                        "Autumn",
+                        "Winter"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "managementActions",
+                    "constraints": [
+                        "Bait & trap",
+                        "Bait only",
+                        "Biological control agents",
+                        "Exclusion fencing",
+                        "Fumigation",
+                        "Mustering",
+                        "Nil",
+                        "Shooting",
+                        "Trap & cull",
+                        "Trap & remove"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "managementReason",
+                    "constraints": [
+                        "Excessive grazing",
+                        "Excessive population",
+                        "Land degradation",
+                        "Nil",
+                        "Predation",
+                        "Removal of feral animals"
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "noCulled",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                }
+            ]
+        }
+    ],
     "viewModel": [
         {
-            "items": [{
-                "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure” and “Monitor and manage feral animals”.<\/i>",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure” and “Monitor and manage feral animals”.</i>",
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "title": "Please complete the following:",
-                "source": "feralAnimalManagement",
-                "columns": [
-                    {
-                        "title": "Species",
-                        "source": "species",
-                        "width": "25%",
-                        "type": "speciesSelect"
-                    },
-                    {
-                        "title": "Season observed / managed",
-                        "source": "season",
-                        "width": "10%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "wdith": "20%",
-                        "title": "Management Action(s)",
-                        "source": "managementActions",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "Reason for management",
-                        "source": "managementReason",
-                        "width": "20%",
-                        "type": "selectOne"
-                    },
-                    {
-                        "title": "If applicable, no. culled (if known)",
-                        "source": "noCulled",
-                        "width": "10%",
-                        "type": "number"
-                    },
-                    {
-                        "title": "Cost",
-                        "source": "cost",
-                        "width": "15%",
-                        "type": "currency"
-                    }
-                ],
-                "fixedWidth": true,
-                "userAddedRows": true,
-                "type": "table"
-            }],
+            "items": [
+                {
+                    "title": "Please complete the following:",
+                    "source": "feralAnimalManagement",
+                    "columns": [
+                        {
+                            "title": "Species",
+                            "source": "species",
+                            "width": "25%",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Season observed / managed",
+                            "source": "season",
+                            "width": "10%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "wdith": "20%",
+                            "title": "Management Action(s)",
+                            "source": "managementActions",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Reason for management",
+                            "source": "managementReason",
+                            "width": "20%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "If applicable, no. culled (if known)",
+                            "source": "noCulled",
+                            "width": "10%",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Cost",
+                            "source": "cost",
+                            "width": "15%",
+                            "type": "currency"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "fixedWidth": true,
+                    "disableTableUpload":true,
+                    "type": "table"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.<\/i>",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.</i>",
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         }
     ]

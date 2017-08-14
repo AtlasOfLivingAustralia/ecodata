@@ -1,36 +1,47 @@
 {
-    "dataModel": [{
-        "dataType": "list",
-        "name": "regeneration",
-        "columns": [{
-            "dataType": "species",
-            "description": "",
-            "name": "species",
-            "validate": "required"
-        }]
-    }],
-    "modelName": "ESP Regeneration",
     "title": "Regeneration",
+    "modelName": "ESP Regeneration",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "regeneration",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "",
+                    "name": "species",
+                    "validate": "required"
+                }
+            ]
+        }
+    ],
     "viewModel": [
         {
-            "items": [{
-                "title": "Please complete the following: ",
-                "source": "regeneration",
-                "columns": [{
-                    "title": "Species Observed Regenerating (if known)",
-                    "source": "species",
-                    "type": "speciesSelect"
-                }],
-                "userAddedRows": true,
-                "type": "table"
-            }],
+            "items": [
+                {
+                    "title": "Please complete the following: ",
+                    "source": "regeneration",
+                    "columns": [
+                        {
+                            "title": "Species Observed Regenerating (if known)",
+                            "source": "species",
+                            "type": "speciesSelect"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "disableTableUpload":true,
+                    "type": "table"
+                }
+            ],
             "type": "row"
         },
         {
-            "items": [{
-                "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
-                "type": "literal"
-            }],
+            "items": [
+                {
+                    "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
+                    "type": "literal"
+                }
+            ],
             "type": "row"
         }
     ]

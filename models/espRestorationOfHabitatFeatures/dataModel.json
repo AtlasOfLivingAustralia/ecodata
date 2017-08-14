@@ -1,57 +1,87 @@
 {
-    "dataModel": [{
-        "dataType": "list",
-        "name": "habitatRestoration",
-        "columns": [
-            {
-                "dataType": "text",
-                "description": "",
-                "name": "habitatFeature",
-                "constraints": [
-                    "Course woody debris",
-                    "Corrugated tin",
-                    "Bush rock"
-                ]
-            },
-            {
-                "dataType": "number",
-                "description": "",
-                "name": "areaTreatedHa",
-                "validate": "required"
-            },
-            {
-                "dataType": "number",
-                "name": "cost",
-                "validate": "integer,min[0]"
-            }
-        ]
-    }],
-    "modelName": "ESP Restoration of Habitat",
     "title": "Restoration of Habitat Features",
-    "viewModel": [{
-        "items": [{
-            "title": "Please complete the following:",
-            "source": "habitatRestoration",
+    "modelName": "ESP Restoration of Habitat",
+    "dataModel": [
+        {
+            "dataType": "list",
+            "name": "habitatRestoration",
             "columns": [
                 {
-                    "title": "Habitat Feature",
-                    "source": "habitatFeature",
-                    "type": "selectOne"
+                    "dataType": "text",
+                    "description": "",
+                    "name": "habitatFeature",
+                    "constraints": [
+                        "Course woody debris",
+                        "Corrugated tin",
+                        "Nesting boxes",
+                        "Other"
+                    ]
                 },
                 {
-                    "title": "Area treated (Ha)",
-                    "source": "areaTreatedHa",
-                    "type": "number"
+                    "dataType": "number",
+                    "description": "",
+                    "name": "areaTreatedHa",
+                    "validate": "required"
                 },
                 {
-                    "title": "Cost of Management Action?",
-                    "source": "cost",
-                    "type": "currency"
+                    "dataType": "number",
+                    "name": "cost",
+                    "validate": "integer,min[0]"
+                },
+                {
+                    "dataType":"text",
+                    "description":"Please describe the habitat feature if other was selected",
+                    "name":"otherHabitatFeature",
+                    "behaviour":[
+                        {
+                            "type":"enable",
+                            "condition":"habitatFeature == \"Other\""
+                        },
+                        {
+                            "type":"conditional_validation",
+                            "condition":"habitatFeature == \"Other\"",
+                            "value":"required"
+                        }
+                    ]
+
+                }
+            ]
+        }
+    ],
+    "viewModel": [
+        {
+            "items": [
+                {
+                    "title": "Please complete the following:",
+                    "source": "habitatRestoration",
+                    "columns": [
+                        {
+                            "title": "Habitat Feature",
+                            "source": "habitatFeature",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Area treated (Ha)",
+                            "source": "areaTreatedHa",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Cost of Management Action?",
+                            "source": "cost",
+                            "type": "currency"
+                        },
+                        {
+                            "title": "Habitat Feature (if Other)",
+                            "source": "otherHabitatFeature",
+                            "type": "text"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "disableTableUpload":true,
+                    "type": "table"
                 }
             ],
-            "userAddedRows": true,
-            "type": "table"
-        }],
-        "type": "row"
-    }]
+            "type": "row"
+        }
+    ]
 }
