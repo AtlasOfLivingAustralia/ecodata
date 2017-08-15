@@ -36,11 +36,6 @@
                         {
                             "type":"enable",
                             "condition":"habitatFeature == \"Other\""
-                        },
-                        {
-                            "type":"conditional_validation",
-                            "condition":"habitatFeature == \"Other\"",
-                            "value":"required"
                         }
                     ]
 

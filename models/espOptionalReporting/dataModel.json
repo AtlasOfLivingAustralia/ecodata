@@ -1,81 +1,68 @@
 {
     "dataModel": [
         {
-            "dataType": "document",
-            "name": "supportingDocs1"
-        },
-        {
-            "dataType": "document",
-            "name": "supportingDocs2"
-        },
-        {
-            "dataType": "document",
-            "name": "supportingDocs3"
-        },
-        {
-            "dataType": "document",
-            "description": "",
-            "name": "additionalInfo1"
-        },
-        {
-            "dataType": "document",
-            "description": "",
-            "name": "additionalInfo2"
-        },
-        {
-            "dataType": "document",
-            "description": "",
-            "name": "additionalInfo3"
-        },
-        {
-            "defaultRows": [
-                {"classification": "Insects"},
-                {"classification": "Birds"},
-                {"classification": "Reptiles"},
-                {"classification": "Mammals"},
-                {"classification": "Amphibians"}
-            ],
             "dataType": "list",
-            "name": "nativeAnimalsAndInsects",
+            "name": "insects",
             "columns": [
                 {
-                    "dataType": "text",
-                    "name": "classification"
-                },
-                {
-                    "dataType": "boolean",
-                    "name": "present"
+                    "dataType": "species",
+                    "name": "insectSpecies"
                 }
             ]
         },
         {
-            "dataType": "text",
-            "description": "",
-            "name": "nativeAnimalsAndInsectsNotes"
-        },
-        {
-            "defaultRows": [
-                {"classification": "Native trees"},
-                {"classification": "Native shrubs"},
-                {"classification": "Native herbs"}
-            ],
             "dataType": "list",
-            "name": "nativePlants",
+            "name": "nativeBirds",
             "columns": [
                 {
-                    "dataType": "text",
-                    "name": "classification"
-                },
-                {
-                    "dataType": "boolean",
-                    "name": "present"
+                    "dataType": "species",
+                    "name": "nativeBirdSpecies"
                 }
             ]
         },
         {
-            "dataType": "number",
-            "name": "percentCoverOfNativePerennials",
-            "validate": "min[0],max[100]"
+            "dataType": "list",
+            "name": "nativeReptiles",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeReptileSpecies"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "nativeAmphibians",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeAmphibianSpecies"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "nativeMammals",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeMammalSpecies"
+                }
+            ]
+        },
+        {
+            "dataType":"text",
+            "name":"faunaNotes"
+        },
+        {
+            "dataType": "list",
+            "name": "nativeTrees",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "name": "nativeTreeSpecies"
+                }
+            ]
         },
         {
             "dataType": "text",
@@ -88,77 +75,15 @@
     "viewModel": [
         {
             "items": [{
-                "source": "<i>Please note that the activities below are not mandatory, however they do provide a way for you to record plants and animals as they appear on your ESP site. They also provide you with a way to monitor the long-term health and recovery of your ESP site.<\/i>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Supporting Documents<\/h4><i>Please attach relevant supporting documents (e.g. photos, media clips, survey data, information products/publications, etc.) that provide evidence of the project's progress and / or impacts.<\/i>",
-                            "type": "literal"
-                        },
-                        {
-                            "source": "supportingDocs1",
-                            "preLabel": "",
-                            "type": "document"
-                        },
-                        {
-                            "source": "supportingDocs2",
-                            "preLabel": "",
-                            "type": "document"
-                        },
-                        {
-                            "source": "supportingDocs3",
-                            "preLabel": "",
-                            "type": "document"
-                        }
-                    ],
-                    "type": "col"
-                },
-                {
-                    "items": [
-                        {
-                            "source": "<h4>Additional Information (optional)<\/h4><i>You may attach other documents relevant to your project for the Department's information.<\/i>",
-                            "type": "literal"
-                        },
-                        {
-                            "source": "additionalInfo1",
-                            "preLabel": "",
-                            "type": "document"
-                        },
-                        {
-                            "source": "additionalInfo2",
-                            "preLabel": "",
-                            "type": "document"
-                        },
-                        {
-                            "source": "additionalInfo3",
-                            "preLabel": "",
-                            "type": "document"
-                        }
-                    ],
-                    "computed": null,
-                    "type": "col"
-                }
-            ],
-            "class": "output-section",
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "<h4>Native animals and insects observed on your ESP site<\/h4>",
+                "source": "<h3>Fauna observed on your ESP site(s)</h3><i>Please records observations of species found below</i>",
                 "type": "literal"
             }],
             "type": "row"
         },
         {
             "items": [{
-                "title": "Please check the boxes below for animals or insects observed on your Environmental Stewardship site.",
-                "source": "nativeAnimalsAndInsects",
+                "title": "Insets observed",
+                "source": "insects",
                 "columns": [
                     {
                         "title": "Classification",

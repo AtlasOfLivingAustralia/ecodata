@@ -56,11 +56,15 @@
                     "name": "numberSurviving",
                     "description": "The number of individual seedlings surviving at the time of this survey",
                     "validate": "required,integer,min[0]",
+                    "defaultValue":"",
                     "behaviour": [
                         {
-                            "condition": "survivalRate != 0",
-                            "type": "validate",
-                            "validate":"required,integer,min[1]"
+                            "condition": "survivalRate != '0'",
+                            "type": "conditional_validation",
+                            "value": {
+                                "validate":"required,integer,min[1]",
+                                "message":"The number of plants surviving can only be 0 if the survival rate is also zero"
+                            }
                         }
                     ]
                 },
