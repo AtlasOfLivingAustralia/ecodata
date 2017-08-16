@@ -75,6 +75,13 @@
     "viewModel": [
         {
             "items": [{
+                "source": "Please note that the activities below are not mandatory, however they provide a way for you to record plants and animals as they appear and monitor the long-term health and recovery of your ESP site(s).",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
                 "source": "<h3>Fauna observed on your ESP site(s)</h3><i>Please records observations of species found below</i>",
                 "type": "literal"
             }],
@@ -86,25 +93,89 @@
                 "source": "insects",
                 "columns": [
                     {
-                        "title": "Classification",
-                        "readOnly": true,
-                        "source": "classification",
-                        "type": "text"
-                    },
-                    {
-                        "title": "Present?",
-                        "source": "present",
-                        "type": "boolean"
+                        "title": "Insect species",
+                        "source": "insectSpecies",
+                        "type": "speciesSelect"
                     }
                 ],
-                "type": "table"
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
             }],
             "type": "row"
         },
         {
             "items": [{
-                "source": "nativeAnimalsAndInsectsNotes",
-                "preLabel": "Notes: Please include details of the species observed (if known).",
+                "title": "Native birds observed",
+                "source": "nativeBirds",
+                "columns": [
+                    {
+                        "title": "Native bird species",
+                        "source": "nativeBirdSpecies",
+                        "type": "speciesSelect"
+                    }
+                ],
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "title": "Native reptiles observed",
+                "source": "nativeReptiles",
+                "columns": [
+                    {
+                        "title": "Native reptile species",
+                        "source": "nativeReptileSpecies",
+                        "type": "speciesSelect"
+                    }
+                ],
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "title": "Native amphibians observed",
+                "source": "nativeAmphibians",
+                "columns": [
+                    {
+                        "title": "Native amphibian species",
+                        "source": "nativeAmphibianSpecies",
+                        "type": "speciesSelect"
+                    }
+                ],
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "title": "Native mammals observed",
+                "source": "nativeMammals",
+                "columns": [
+                    {
+                        "title": "Native mammal species",
+                        "source": "nativeMammalSpecies",
+                        "type": "speciesSelect"
+                    }
+                ],
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "faunaNotes",
+                "preLabel": "Please include any additional notes and details of the species observed (if known)",
                 "type": "textarea"
             }],
             "type": "row"
@@ -118,33 +189,18 @@
         },
         {
             "items": [{
-                "title": "Please check the boxes below for native plants observed on your Environmental Stewardship site.",
-                "source": "nativePlants",
+                "title": "Native trees observed",
+                "source": "nativeTrees",
                 "columns": [
                     {
-                        "title": "Classification",
-                        "readOnly": true,
-                        "source": "classification",
-                        "type": "text"
-                    },
-                    {
-                        "title": "Present?",
-                        "source": "present",
-                        "type": "boolean"
+                        "title": "Native tree species",
+                        "source": "nativeTreeSpecies",
+                        "type": "speciesSelect"
                     }
                 ],
-                "type": "table"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "items": [{
-                    "source": "percentCoverOfNativePerennials",
-                    "preLabel": "% cover of native perennials:",
-                    "type": "number"
-                }],
-                "type": "col"
+                "type": "table",
+                "disableTableUpload":true,
+                "userAddedRows":true
             }],
             "type": "row"
         },
