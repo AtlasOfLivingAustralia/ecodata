@@ -11,6 +11,10 @@
                     "description": "",
                     "name": "species",
                     "validate": "required"
+                },
+                {
+                    "dataType":"image",
+                    "name":"photo"
                 }
             ]
         }
@@ -26,6 +30,11 @@
                             "title": "Species Observed Regenerating (if known)",
                             "source": "species",
                             "type": "speciesSelect"
+                        },
+                        {
+                            "title":"Photo(s)",
+                            "source":"photo",
+                            "type":"image"
                         }
                     ],
                     "userAddedRows": true,

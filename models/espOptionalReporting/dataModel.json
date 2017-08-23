@@ -7,6 +7,10 @@
                 {
                     "dataType": "species",
                     "name": "insectSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"insectImage"
                 }
             ]
         },
@@ -17,6 +21,10 @@
                 {
                     "dataType": "species",
                     "name": "nativeBirdSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"nativeBirdImage"
                 }
             ]
         },
@@ -27,6 +35,10 @@
                 {
                     "dataType": "species",
                     "name": "nativeReptileSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"nativeReptileImage"
                 }
             ]
         },
@@ -37,6 +49,10 @@
                 {
                     "dataType": "species",
                     "name": "nativeAmphibianSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"nativeAmphibianImage"
                 }
             ]
         },
@@ -47,6 +63,10 @@
                 {
                     "dataType": "species",
                     "name": "nativeMammalSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"nativeMammalImage"
                 }
             ]
         },
@@ -61,6 +81,10 @@
                 {
                     "dataType": "species",
                     "name": "nativeTreeSpecies"
+                },
+                {
+                    "dataType":"image",
+                    "name":"nativeTreeImage"
                 }
             ]
         },
@@ -96,6 +120,11 @@
                         "title": "Insect species",
                         "source": "insectSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "insectImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
@@ -113,6 +142,11 @@
                         "title": "Native bird species",
                         "source": "nativeBirdSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "nativeBirdImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
@@ -130,6 +164,11 @@
                         "title": "Native reptile species",
                         "source": "nativeReptileSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "nativeReptileImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
@@ -147,6 +186,11 @@
                         "title": "Native amphibian species",
                         "source": "nativeAmphibianSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "nativeAmphibianImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
@@ -164,6 +208,11 @@
                         "title": "Native mammal species",
                         "source": "nativeMammalSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "nativeMammalImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
@@ -196,6 +245,11 @@
                         "title": "Native tree species",
                         "source": "nativeTreeSpecies",
                         "type": "speciesSelect"
+                    },
+                    {
+                        "title": "Photo(s)",
+                        "source": "nativeTreeImage",
+                        "type": "image"
                     }
                 ],
                 "type": "table",
