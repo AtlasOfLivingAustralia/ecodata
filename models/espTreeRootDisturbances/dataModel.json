@@ -1,6 +1,6 @@
 {
-  "modelName":"ESP Control of Agrochemicals",
-  "title":"Control of Agrochemicals",
+  "modelName":"ESP Tree Root Disturbances",
+  "title":"Tree Root Disturbance Control",
   "dataModel":[
     {
       "name":"undertakeTreeRootDisturbanceControl",
@@ -10,6 +10,10 @@
         "No"
       ],
       "validate": "required"
+    },
+    {
+      "name":"treeRootDisturbanceControlActions",
+      "type":"text"
     }
   ],
   "viewModel":[
@@ -19,6 +23,16 @@
           "source": "undertakeTreeRootDisturbanceControl",
           "preLabel": "Did you undertake actions to reduce disturbance to tree roots on your sites this year? (Yes / No)",
           "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "treeRootDisturbanceControlActions",
+          "preLabel": "If 'Yes', please describe the actions taken:",
+          "type": "textarea"
         }
       ],
       "type": "row"

@@ -1,0 +1,194 @@
+{
+  "name": "Dieback Observation",
+  "dataModel": [
+    {
+      "name": "observationPhoto",
+      "dataType": "image",
+      "validate": "required"
+    },
+    {
+      "name": "observationDate",
+      "dataType": "date",
+      "validate": "required"
+    },
+    {
+      "name": "previousObservation",
+      "dataType": "text",
+      "constraints": [
+        "First time here",
+        "Have been here before and did not notice these deaths",
+        "Have been here before and noticed some deaths"
+      ],
+      "validate": "required"
+    },
+    {
+      "name": "previousObservationDate",
+      "dataType": "date",
+      "description": "Approximate date of previous visit"
+    },
+    {
+      "name": "treeSpecies",
+      "dataType": "species",
+      "description": "Tree species, if known"
+    },
+    {
+      "name":"landuse",
+      "dataType":"text",
+      "constraints":[
+        "cropping", "grazing (improved paddock)", "grazing (unimproved paddock)", "ungrazed/reserve"
+      ]
+    },
+    {
+      "name":"individualCountByCondition",
+      "dataType":"list",
+      "columns":[
+        {
+          "name":"condition",
+          "dataType":"text"
+        },
+        {
+          "name":"individualCount",
+          "dataType":"number",
+          "validate":"required"
+        }
+      ],
+      "defaultRows":[
+        {
+          "condition":"Healthy tree"
+        },
+        {
+          "condition":"Canopy thinning from edges"
+        },
+        {
+          "condition":"Epicormics growth common"
+        },
+        {
+          "condition":"Extensive dead branches and epicormics growth"
+        },
+        {
+          "condition":"Tree death"
+        }
+      ]
+
+    },
+    {
+      "dataType":"text",
+      "name":"notes"
+    },
+    {
+      "dataType": "geoMap",
+      "hideSiteSelection": true,
+      "zoomToProjectArea": true,
+      "name": "location",
+      "columns": [
+        {
+          "source": "locationLatitude",
+          "dwcAttribute": "verbatimLatitude"
+        },
+        {
+          "source": "locationLongitude",
+          "dwcAttribute": "verbatimLongitude"
+        }
+      ],
+      "dwcAttribute": "verbatimCoordinates",
+      "validate": "required"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+
+            {
+              "source": "observationPhoto",
+              "preLabel": "Photo",
+              "computed": null,
+              "type": "image"
+            },
+            {
+              "source": "observationDate",
+              "preLabel": "Date",
+              "computed": null,
+              "type": "date"
+            },
+            {
+              "source": "previousObservation",
+              "preLabel": "Previous observation of this site",
+              "type": "selectOne"
+            },
+            {
+              "source": "previousObservationDate",
+              "preLabel": "Approximate date of previous observation",
+              "computed": null,
+              "type": "selectOne"
+            },
+            {
+              "source": "treeSpecies",
+              "preLabel": "Tree species, if known",
+              "computed": null,
+              "type": "autocomplete"
+            },
+            {
+              "source":"landuse",
+              "type":"selectOne",
+              "preLabel":"Landuse"
+            },
+            {
+              "type":"table",
+              "source":"individualCountByCondition",
+
+              "userAddedRows":false,
+              "columns":[
+                {
+                  "source":"condition",
+                  "type":"text",
+                  "readonly":true,
+                  "title":"Condition"
+                },
+                {
+                  "source":"individualCount",
+                  "type":"number",
+                  "title":"Number observed"
+                }
+              ]
+            }
+
+          ],
+          "computed": null,
+          "type": "col"
+        },
+        {
+          "items": [
+            {
+              "source": "<font style='color:blue; font-size:0.8em;'><i>Zoom into the map, click on the teardrop pin marker tool and then click on the map to record the location of your observation. Alternatively, select the arrow tool to use your current GPS coordinates (note that location services must be switched on in your browser or device).</i></font>",
+              "type": "literal"
+            },
+            {
+              "orientation": "vertical",
+              "source": "location",
+              "computed": null,
+              "type": "geoMap",
+              "readonly": false
+            }
+          ],
+          "computed": null,
+          "type": "col"
+        }
+      ],
+      "class": "output-section",
+      "type": "row"
+    },
+
+    {
+      "type":"row",
+      "items":[
+        {
+          "source":"notes",
+          "type":"textarea",
+          "preLabel":"Additional notes or comments"
+        }
+              ]
+    }
+  ]
+}

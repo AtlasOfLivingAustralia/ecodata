@@ -55,13 +55,31 @@
                     "dwcAttribute": "individualCount",
                     "name": "numberSurviving",
                     "description": "The number of individual seedlings surviving at the time of this survey",
-                    "validate": "required,integer,min[0]"
+                    "validate": "required,integer,min[0]",
+                    "defaultValue":"",
+                    "behaviour": [
+                        {
+                            "condition": "survivalRate != '0'",
+                            "type": "conditional_validation",
+                            "value": {
+                                "validate":"required,integer,min[1]",
+                                "message":"The number of plants surviving can only be 0 if the survival rate is also zero"
+                            }
+                        }
+                    ]
                 },
                 {
                     "dataType": "number",
                     "name": "survivalRate",
                     "description": "The percentage of individual seedlings surviving at the time of this survey as a proportion of numbers planted",
-                    "validate": "required"
+                    "validate": "required",
+                    "defaultValue":"",
+                    "warning":{
+                        "numericality": {
+                            "greaterThan":0,
+                            "message": "Are you sure no plants survived?"
+                        }
+                    }
                 },
                 {
                     "dataType": "text",
@@ -169,22 +187,18 @@
                     "type": "number"
                 },
                 {
-                    "computed": "{\"operation\":\"average\",\"dependents\":{\"source\":\"survivalRate\",\"fromList\":\"revegetationMonitoring\"}}",
-                    "source": "aveSurvivalRate",
-                    "type": "number"
-                },
-                {
-                    "computed": null,
-                    "source": "Average survival rate (%)",
-                    "type": "literal"
+                    "type":"literal",
+                    "colspan":3,
+                    "source":""
                 }
+
             ]}]},
             "columns": [
                 {
                     "width": "20%",
                     "source": "species",
                     "title": "Species",
-                    "type": "autocomplete"
+                    "type": "speciesSelect"
                 },
                 {
                     "width": "9%",
