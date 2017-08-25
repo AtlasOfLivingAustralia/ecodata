@@ -200,10 +200,6 @@ class ActivityService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
-        Lock lock = lockService.get(act.activityId)
-        if (lock) {
-            mapOfProperties.lock = lock
-        }
         if (levelOfDetail == SITE) {
             if (mapOfProperties.siteId) {
                 mapOfProperties.site = siteService.get(mapOfProperties.siteId, SiteService.FLAT, version)
@@ -213,6 +209,10 @@ class ActivityService {
             mapOfProperties.remove("outputs")
             mapOfProperties.outputs = outputService.findAllForActivityId(act.activityId, levelOfDetail, version)
             mapOfProperties.documents = documentService.findAllForActivityId(act.activityId, version)
+            Lock lock = lockService.get(act.activityId)
+            if (lock) {
+                mapOfProperties.lock = lock
+            }
         }
 
         mapOfProperties.findAll {k,v -> v != null}
