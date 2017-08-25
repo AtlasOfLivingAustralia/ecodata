@@ -4,6 +4,8 @@ import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 
+import javax.persistence.PessimisticLockException
+
 import static au.org.ala.ecodata.Status.ACTIVE
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -20,6 +22,7 @@ class ActivityService {
     SiteService siteService
     CommentService commentService
     UserService userService
+    LockService lockService
 
     def get(id, levelOfDetail = [], version = null) {
         if (version) {
@@ -196,6 +199,11 @@ class ActivityService {
         def id = mapOfProperties["_id"].toString()
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
+
+        Lock lock = lockService.get(act.activityId)
+        if (lock) {
+            mapOfProperties.lock = lock
+        }
         if (levelOfDetail == SITE) {
             if (mapOfProperties.siteId) {
                 mapOfProperties.site = siteService.get(mapOfProperties.siteId, SiteService.FLAT, version)
@@ -330,10 +338,34 @@ class ActivityService {
      *
      * @param props the activity properties and the list of outputs
      * @param id the activity id
-     * @return json status
+     * @param lock if true, a lock will be checked / obtained for the duration of the update.  If the lock is already
+     * held by the user, it will not be released after the update.  If it is held by another user the update will
+     * not occur and an error will be returned
+     * @return Map containing either status:'ok' for a successful result or status:'error' for a failure.
      */
-    def update(props, id) {
-        //log.debug "props = ${props}"
+    Map update(props, String id, boolean lock = false) {
+
+        Map result
+        if (lock) {
+            try {
+                result = lockService.executeWithLock(id) {
+                    doUpdate(props, id)
+                }
+            }
+            catch (PessimisticLockException e) {
+                result = [status:'error', error:"The activity is being updated by another user"]
+            }
+            return result
+
+        }
+        else {
+            result = doUpdate(props, id)
+        }
+
+        result
+    }
+
+    private Map doUpdate(props, String id) {
         def activity = Activity.findByActivityId(id)
         def errors = []
         if (activity) {
@@ -356,7 +388,7 @@ class ActivityService {
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"
-                    log.error ( error, e) //You have to hate exeption hiding
+                    log.error(error, e) //You have to hate exeption hiding
                     errors << [error: error, name: 'activity']
                 }
             }
@@ -384,14 +416,14 @@ class ActivityService {
             }
             // aggregate errors
             if (errors) {
-                return [status:'error', errorList: errors]
+                return [status: 'error', errorList: errors]
             } else {
-                return [status:'ok']
+                return [status: 'ok']
             }
         } else {
             def error = "Error updating Activity - no such id ${id}"
             log.error error
-            return [status:'error',error:error]
+            return [status: 'error', error: error]
         }
     }
 

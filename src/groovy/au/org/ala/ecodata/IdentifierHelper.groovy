@@ -2,9 +2,16 @@ package au.org.ala.ecodata
 
 class IdentifierHelper {
 
-    public static String getEntityIdentifier(Object obj) {
+    static String getEntityIdentifier(Map obj) {
+        getEntityIdentifier(obj, obj['className'])
+    }
+
+    static String getEntityIdentifier(Object obj) {
+        getEntityIdentifier(obj, obj.getClass().name)
+    }
+
+    static String getEntityIdentifier(Object obj, String className) {
         String entityId
-        String className = (obj.className) ? obj.className : obj.class.name;
         switch (className) {
             case Project.class.name:
                 entityId = obj.projectId
@@ -25,7 +32,7 @@ class IdentifierHelper {
                 entityId = obj.scoreId
                 break
             case UserPermission.class.name:
-                entityId = obj.id.toHexString()
+                entityId = obj.id?.toHexString() ?: ''
                 break
             case Program.class.name:
                 entityId = obj.programId
@@ -38,6 +45,9 @@ class IdentifierHelper {
                 break
             case Record.class.name:
                 entityId = obj.occurrenceID
+                break
+            case Lock.class.name:
+                entityId = obj.id
                 break
             default:
                 // Last chance to find a 'real' entity id, rather than the internal mongo id.
