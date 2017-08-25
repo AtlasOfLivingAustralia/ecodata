@@ -2,33 +2,60 @@ package au.org.ala.ecodata
 
 class IdentifierHelper {
 
-    public static String getEntityIdentifier(Object domainObject) {
+    static String getEntityIdentifier(Map obj) {
+        getEntityIdentifier(obj, obj['className'])
+    }
+
+    static String getEntityIdentifier(Object obj) {
+        getEntityIdentifier(obj, obj.getClass().name)
+    }
+
+    static String getEntityIdentifier(Object obj, String className) {
         String entityId
-        switch (domainObject.class.name) {
+        switch (className) {
             case Project.class.name:
-                entityId = domainObject.projectId
+                entityId = obj.projectId
                 break
             case Site.class.name:
-                entityId = domainObject.siteId
+                entityId = obj.siteId
                 break
             case Activity.class.name:
-                entityId = domainObject.activityId
+                entityId = obj.activityId
                 break
             case Output.class.name:
-                entityId = domainObject.outputId
+                entityId = obj.outputId
                 break
             case Document.class.name:
-                entityId = domainObject.documentId
+                entityId = obj.documentId
                 break
             case Score.class.name:
-                entityId = domainObject.scoreId
+                entityId = obj.scoreId
+                break
+            case UserPermission.class.name:
+                entityId = obj.id?.toHexString() ?: ''
+                break
+            case Program.class.name:
+                entityId = obj.programId
+                break
+            case Organisation.class.name:
+                entityId = obj.organisationId
+                break
+            case Report.class.name:
+                entityId = obj.reportId
+                break
+            case Record.class.name:
+                entityId = obj.occurrenceID
+                break
+            case Lock.class.name:
+                entityId = obj.id
                 break
             default:
                 // Last chance to find a 'real' entity id, rather than the internal mongo id.
                 // try a synthesized id member user the <class name>Id pattern
-                entityId = getIdPropertyValue(domainObject)
+                entityId = getIdPropertyValue(obj)
                 if (!entityId) {
-                    entityId = domainObject.id
+                    entityId = obj.id
+
                 }
                 break
         }
@@ -36,10 +63,10 @@ class IdentifierHelper {
     }
 
     /**
-     * If the supplied domainObject is associate with a project, this method will return the projectId of that Project.
+     * If the supplied obj is associate with a project, this method will return the projectId of that Project.
      * Otherwise null will be returned.
      * @param domainObject the domain object
-     * @return the associated projectId or null if the domainObject is not associated with a Project.
+     * @return the associated projectId or null if the obj is not associated with a Project.
      */
     public static String getProjectId(Object domainObject) {
         String projectId = null
