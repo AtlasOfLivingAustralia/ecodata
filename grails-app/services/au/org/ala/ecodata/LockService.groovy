@@ -41,8 +41,10 @@ class LockService {
         }
         if (!lock) {
             tempLock = true
-            lock = this.lock(id)
-            if (lock.hasErrors()) {
+            try {
+                this.lock(id)
+            }
+            catch (Exception e) {
                 throw new PessimisticLockException("Failed to acquire lock for id: "+id)
             }
         }
@@ -71,10 +73,6 @@ class LockService {
     Lock lock(String id) {
         def user = userService.getCurrentUserDetails()
         Lock lock = new Lock(id: id, userId: user.userId)
-        // This shouldn't be necessary, I am not sure if the assigned id generator mapping is wrong or it just
-        // isn't supported to specify the id in the groovy Map constructor.
-        lock.id = id
-
         Lock.withNewSession {
             lock.insert(flush: true, failOnError:true)
         }
