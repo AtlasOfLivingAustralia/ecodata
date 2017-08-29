@@ -53,7 +53,7 @@ class LockService {
         }
         finally {
             if (tempLock) {
-                this.unlock(id)
+                this.unlock(id, false)
             }
         }
 
@@ -79,8 +79,16 @@ class LockService {
         lock
     }
 
-    boolean unlock(String id) {
-        return Lock.get(id)?.delete(flush:true)
+    boolean unlock(String id, Boolean force) {
+        Lock lock = Lock.get(id)
+        def user = userService.getCurrentUserDetails()
+
+        boolean unlocked = false
+        if (force || user.userId == lock.userId) {
+            unlocked = lock.delete(flush:true)
+        }
+
+        unlocked
     }
 
     boolean holdsLock(Lock lock) {
