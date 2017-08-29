@@ -61,7 +61,7 @@ class LockServiceSpec extends Specification {
         lock.id == 'id'
 
         when:
-        service.unlock('id')
+        service.unlock('id', false)
         then:
         Lock.get('id') == null
 
@@ -81,7 +81,7 @@ class LockServiceSpec extends Specification {
 
         when:
         user.userId = "user2"
-        service.unlock('id')
+        service.unlock('id', true)
 
         then:
         Lock.get('id') == null

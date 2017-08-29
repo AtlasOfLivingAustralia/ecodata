@@ -14,7 +14,8 @@ class LockController {
     }
 
     def unlock(String id) {
-        render lockService.unlock(id)
+        Map body = request.getJSON()
+        render lockService.unlock(id, body.force)
     }
 
     def list() {
