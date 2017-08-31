@@ -1188,36 +1188,55 @@ class ElasticSearchService {
 
         List filterList = getFilterList(filters) // allow for multiple fq params
 
-        List repeatFacets = getRepeatFacetList(filterList)
+        Map facets = parseFilterParams(filterList)
 
-        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        filterList.each { String fq ->
+        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter()
+        facets.each { String facetName, List<String> facetValues ->
 
-            List fqs = parseFilter(fq)
-            // support SOLR style filters (-) for exclude
-            if (fqs.size() > 1) {
-                if (fqs[0].getAt(0) == "-") {
-                    boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
-                } else if (repeatFacets.find { it == fqs[0] }) {
-                    boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                } else if (fqs[0] == "_query") {
-                    boolFilter.must(FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(fqs[1])))
-                } else {
-                    // Check if the value is a SOLR style range query
-                    Matcher m = (fqs[1] =~ /\[(.*) TO (.*)\]/)
-                    if (m?.matches()) {
-                        boolFilter.must(rangeFilter(fqs[0]).from(m.group(1)).to(m.group(2)))
-                    }
-                    else {
-                        boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    }
+            if (facetValues.size() == 0) {
+                boolFilter.must(FilterBuilders.missingFilter(facetName).nullValue(true))
+            }
+            else {
+                FilterBuilder value = filterValue(facetName, facetValues)
+                // support SOLR style filters (-) for exclude
+                if (facetName.getAt(0) == "-") {
+                    boolFilter.mustNot(value)
                 }
-            } else {
-                boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
+                else {
+                    boolFilter.must(value)
+                }
+            }
+        }
+        boolFilter
+
+    }
+
+    FilterBuilder filterValue(String filterName, List facetValues) {
+
+        FilterBuilder filter
+        if (facetValues.size() == 1) {
+            String value = facetValues[0]
+            if (filterName == '_query') {
+                filter = FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(value))
+            }
+            else {
+                Matcher m = (value =~ /\[(.*) TO (.*)\]/)
+                if (m?.matches()) {
+                    filter = rangeFilter(filterName).from(m.group(1)).to(m.group(2))
+                }
+                else {
+                    filter = FilterBuilders.termFilter(filterName, value)
+                }
+            }
+        }
+        else {
+            filter = FilterBuilders.boolFilter()
+            facetValues.each { String value ->
+                ((BoolFilterBuilder)filter).should(filterValue(filterName, [value]))
             }
         }
 
-        FilterBuilders.boolFilter().should(boolFilter)
+        filter
     }
 
     /**
@@ -1241,36 +1260,20 @@ class ElasticSearchService {
         filterList
     }
 
-    private getRepeatFacetList(filters) {
-        def allFilters = getFilterList(filters)
-        def facetNames = []
-        def repeatFacets = []
-        Set uniqueFacets
+    /**
+     * Accepts a list of "facetName:facetValue" strings and returns a Map keyed by facetName with
+     * value containing a list of values for that facet.
+     */
+    private Map parseFilterParams(filters) {
+        List allFilters = getFilterList(filters)
 
-        if (allFilters.size() <= 1) {
-            return repeatFacets
+        Map filterMap = [:].withDefault{[]}
+        allFilters.each { String facet ->
+            List tokens = parseFilter(facet)
+            String value = (tokens.size() > 1) ? tokens[1] : null
+            filterMap[(tokens[0])] << value
         }
-        allFilters.collect {
-            def fqs = it.tokenize(":")
-            facetNames.add(fqs[0])
-        }
-        uniqueFacets = facetNames as Set
-        int repeatCount = 0;
-
-        uniqueFacets.each { facet ->
-            allFilters.each { filter ->
-                def fqs = filter.tokenize(":")
-                if (facet.equals(fqs[0])) {
-                    repeatCount++;
-                }
-            }
-            if (repeatCount >= 2) {
-                repeatFacets.add(facet)
-            }
-            repeatCount = 0
-        }
-
-        repeatFacets
+        filterMap
     }
 
     /**
