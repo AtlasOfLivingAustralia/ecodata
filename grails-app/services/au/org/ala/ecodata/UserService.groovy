@@ -59,6 +59,13 @@ class UserService {
         return authService.getUserForUserId(userId)
     }
 
+    synchronized def getUserDetailsFromIdList( List<String> ids) {
+        if (!ids || ids.size() == 0 ) {
+            return null
+        }
+        return authService.getUserDetailsById(ids)
+    }
+
     /**
      * This method gets called by a filter at the beginning of the request (if a userId parameter is on the URL)
      * It sets the user details in a thread local for extraction by the audit service.
