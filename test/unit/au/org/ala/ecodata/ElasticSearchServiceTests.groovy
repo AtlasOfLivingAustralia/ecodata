@@ -95,6 +95,11 @@ class ElasticSearchServiceTests {
         results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
         assert results.hits.totalHits == 1
 
+        activityFilters = ["mainThemeFacet:${THEME1}", "mainThemeFacet:${THEME2}", "stateFacet:ACT", "stateFacet:NSW"]
+        results = service.searchActivities(activityFilters, [offset:0, max:10], null, INDEX_NAME)
+        assert results.hits.totalHits == 4
+
+
     }
 
     /**
