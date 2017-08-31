@@ -1096,11 +1096,9 @@ class ElasticSearchService {
         }
 
         if (filters) {
-            FilterBuilder fb = filters[0]
-            for (int i=1; i<filters.size(); i++) {
-                fb = FilterBuilders.andFilter(filters[i])
-            }
-            queryBuilder = filteredQuery(queryStringQuery(query), fb)
+            BoolFilterBuilder builder = FilterBuilders.boolFilter()
+            builder.must(*filters)
+            queryBuilder = filteredQuery(queryStringQuery(query), builder)
         }
         else {
             queryBuilder = queryStringQuery(query)
