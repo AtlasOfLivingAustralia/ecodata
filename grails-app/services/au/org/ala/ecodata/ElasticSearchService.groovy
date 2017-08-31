@@ -1050,9 +1050,41 @@ class ElasticSearchService {
         return request
     }
 
+    /**
+     * Checks the supplied parameters for hub related parameters.
+     * @param params Accepts either:
+     *     hubFq: A query parameter in the same format as the fq parameter; or
+     *     hub: A String identifying the URL path of the hub.  If specified, the defaultFacetQuery property of the Hub will be returned.
+     * If both parameters are supplied, the hubFq parameter will be used.
+     *
+     * If neither are specified an empty list will be returned.
+     *
+     * @return a List of filters to be applied of the form filterName:filterValue, as per the "fq" parameter passed to the search
+     */
+    private List extractHubFilterParameters(Map params) {
+        List hubFilters = []
+        if (params.hubFq) {
+            hubFilters = getFilterList(params.hubFq)
+        }
+        else if (params.hub) {
+            Hub hub = hubService.findByUrlPath(params.hub)
+            if (hub && hub.defaultFacetQuery) {
+                hubFilters = hub.defaultFacetQuery
+            }
+        }
+
+        hubFilters
+    }
+
     private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null) {
         QueryBuilder queryBuilder
         List filters = []
+
+        List hubFilters = extractHubFilterParameters(params)
+        if (hubFilters) {
+            filters << buildFilters(hubFilters)
+        }
+
         if (params.fq) {
             filters << buildFilters(params.fq)
         }
@@ -1245,7 +1277,7 @@ class ElasticSearchService {
      * @param filters
      * @return filterList
      */
-    private getFilterList(filters) {
+    private List getFilterList(filters) {
         def filterList = []
 
         if (filters instanceof String[]) {
