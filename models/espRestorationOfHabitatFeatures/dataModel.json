@@ -68,7 +68,7 @@
                         {
                             "title": "Habitat Feature (if Other)",
                             "source": "otherHabitatFeature",
-                            "type": "text"
+                            "type": "textarea"
                         }
                     ],
                     "userAddedRows": true,

@@ -1227,13 +1227,12 @@ class ElasticSearchService {
                 boolFilter.must(FilterBuilders.missingFilter(facetName).nullValue(true))
             }
             else {
-                FilterBuilder value = filterValue(facetName, facetValues)
                 // support SOLR style filters (-) for exclude
-                if (facetName.getAt(0) == "-") {
-                    boolFilter.mustNot(value)
+                if (facetName.getAt(0) == "-" && facetName.length() > 1) {
+                    boolFilter.mustNot(filterValue(facetName[1..-1], facetValues))
                 }
                 else {
-                    boolFilter.must(value)
+                    boolFilter.must(filterValue(facetName, facetValues))
                 }
             }
         }

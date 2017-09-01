@@ -13,7 +13,7 @@
     },
     {
       "name":"treeRootDisturbanceControlActions",
-      "type":"text"
+      "dataType":"text"
     }
   ],
   "viewModel":[
