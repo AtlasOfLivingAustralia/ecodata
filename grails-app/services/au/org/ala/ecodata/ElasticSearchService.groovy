@@ -957,23 +957,6 @@ class ElasticSearchService {
                     } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
-
-                    // add hub specific default facet query here. This will restrict data shown on all-records page to records from hub projects.
-                    if(params.hub){
-                        Map hub = hubService.findByUrlPath(params.hub)
-                        String defaultQuery = ""
-                        if(hub.defaultFacetQuery){
-                            defaultQuery =  hub.defaultFacetQuery?.join(' OR ');
-                        }
-
-                        if(defaultQuery){
-                            if(forcedQuery){
-                                forcedQuery = "("+ forcedQuery + " AND (" + defaultQuery + "))"
-                            } else {
-                                forcedQuery = defaultQuery
-                            }
-                        }
-                    }
                 }
                 break
 
