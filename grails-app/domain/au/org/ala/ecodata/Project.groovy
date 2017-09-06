@@ -78,10 +78,12 @@ class Project {
     String origin = 'atlasoflivingaustralia'
 
     boolean alaHarvest = false
+    //For embedded table, needs to conversion in controller
+    List<Funding> fundings
 
     List<AssociatedOrg> associatedOrganisations
 
-    static embedded = ['associatedOrganisations']
+    static embedded = ['associatedOrganisations','fundings']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
 
@@ -184,3 +186,4 @@ class Project {
         alaHarvest nullable: true
     }
 }
+
