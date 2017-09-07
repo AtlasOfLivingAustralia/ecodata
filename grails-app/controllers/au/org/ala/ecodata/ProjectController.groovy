@@ -189,16 +189,6 @@ class ProjectController {
         def props = request.JSON
         log.debug props
         def result
-        //Fundings is an array of JSON objects
-        //it needs to be covnerted to Grail object to use embedded field
-        if(props.fundings){
-            List fundings = []
-            props.fundings.each {
-                fundings.add(new Funding(it));
-            }
-            props.fundings = fundings;
-        }
-
         def message
         if (id) {
             result = projectService.update(props,id)

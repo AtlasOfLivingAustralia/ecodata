@@ -29,6 +29,17 @@ class CommonService {
                 o.getClass().name)
         props.remove('id')
         props.remove('api_key')  // don't ever let this be stored in public data
+
+        //Fundings is an array of JSON objects
+        //it needs to be covnerted to Grail object to use embedded field
+        if(props.fundings){
+            List fundings = []
+            props.fundings.each {
+                fundings.add(new Funding(it));
+            }
+            props.fundings = fundings;
+        }
+
         // Dump data such as projects from SciStarter will want to preserve the original date not the date
         // it was imported, we have another field for it.
         !overrideUpdateDate && props.remove('lastUpdated') // in case we are loading from dumped data
