@@ -27,20 +27,13 @@
                     "dataType": "number",
                     "name": "cost",
                     "validate": "integer,min[0]"
-                },
-                {
-                    "dataType":"text",
-                    "description":"Please describe the habitat feature if other was selected",
-                    "name":"otherHabitatFeature",
-                    "behaviour":[
-                        {
-                            "type":"enable",
-                            "condition":"habitatFeature == \"Other\""
-                        }
-                    ]
-
                 }
             ]
+        },
+        {
+            "dataType":"text",
+            "description":"Please describe the habitat feature if other was selected",
+            "name":"otherHabitatFeature"
         }
     ],
     "viewModel": [
@@ -64,11 +57,6 @@
                             "title": "Cost of Management Action?",
                             "source": "cost",
                             "type": "currency"
-                        },
-                        {
-                            "title": "Habitat Feature (if Other)",
-                            "source": "otherHabitatFeature",
-                            "type": "textarea"
                         }
                     ],
                     "userAddedRows": true,
@@ -77,6 +65,18 @@
                 }
             ],
             "type": "row"
+        },
+        {
+            "type": "row",
+            "items":[
+                {
+
+                    "preLabel": "Habitat Feature (if Other)",
+                    "source": "otherHabitatFeature",
+                    "type": "textarea"
+
+                }
+            ]
         }
     ]
 }
