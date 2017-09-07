@@ -5,6 +5,7 @@ import static au.org.ala.ecodata.Status.ACTIVE
 import org.bson.types.ObjectId
 
 class Record {
+    def grailsApplication
 
     static mapping = {
         occurrenceID index: true
@@ -37,6 +38,8 @@ class Record {
     Integer outputItemId
     String status = ACTIVE
 
+    static transients = ['recordNumber']
+
     def beforeValidate() {
         if (occurrenceID == null) {
             //mint an UUID
@@ -62,5 +65,9 @@ class Record {
         outputItemId nullable: true
         status nullable: true
         outputSpeciesId nullable: true
+    }
+
+    String getRecordNumber(){
+        "${grailsApplication.config.biocollect.activity.hubUrl}${activityId}"
     }
 }

@@ -910,7 +910,9 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String projectActivityId = params.projectActivityId
         String forcedQuery = ''
+        String spotterId = params.spotterId ?: ''
 
         switch (params.view) {
 
@@ -975,6 +977,13 @@ class ElasticSearchService {
                     if (userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND  userId:' + userId + ')'
                     }
+                }
+                break
+
+
+            case 'userprojectactivityrecords':
+                if(projectActivityId && spotterId){
+                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ')'
                 }
                 break
 
