@@ -910,7 +910,9 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String projectActivityId = params.projectActivityId
         String forcedQuery = ''
+        String spotterId = params.spotterId ?: ''
 
         switch (params.view) {
 
@@ -957,23 +959,6 @@ class ElasticSearchService {
                     } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
-
-                    // add hub specific default facet query here. This will restrict data shown on all-records page to records from hub projects.
-                    if(params.hub){
-                        Map hub = hubService.findByUrlPath(params.hub)
-                        String defaultQuery = ""
-                        if(hub.defaultFacetQuery){
-                            defaultQuery =  hub.defaultFacetQuery?.join(' OR ');
-                        }
-
-                        if(defaultQuery){
-                            if(forcedQuery){
-                                forcedQuery = "("+ forcedQuery + " AND (" + defaultQuery + "))"
-                            } else {
-                                forcedQuery = defaultQuery
-                            }
-                        }
-                    }
                 }
                 break
 
@@ -992,6 +977,13 @@ class ElasticSearchService {
                     if (userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND  userId:' + userId + ')'
                     }
+                }
+                break
+
+
+            case 'userprojectactivityrecords':
+                if(projectActivityId && spotterId){
+                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ')'
                 }
                 break
 
