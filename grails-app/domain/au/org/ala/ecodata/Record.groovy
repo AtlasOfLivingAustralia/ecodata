@@ -68,6 +68,6 @@ class Record {
     }
 
     String getRecordNumber(){
-        "${grailsApplication.config.biocollect.activity.hubUrl}${activityId}"
+        "${grailsApplication.config.biocollect.activity.sightingsUrl}/bioActivity/index/${activityId}"
     }
 }
