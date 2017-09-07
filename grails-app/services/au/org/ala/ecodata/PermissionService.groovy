@@ -144,27 +144,28 @@ class PermissionService {
      */
     def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInList(projectId, Project.class.name, AccessLevel.starred, roles)
-        def out = []
-        def userIds = []
+        Map out = [:]
+        List userIds = []
         up.each{
             userIds.add(it.userId)
-            def rec=[:]
+            Map rec=[:]
             rec.userId = it.userId
             rec.role = it.accessLevel?.toString()
-            out.add(rec);
+            out.put(it.userId,rec);
 
         }
         def userList = userService.getUserDetailsFromIdList(userIds)
         def users = userList['users']
 
         users.each { k,v ->
-            def rec = out.find{u -> u.userId == k}
+            Map rec = out.get(k)
             if (rec){
                 rec.displayName = v?.displayName
                 rec.userName = v?.userName
             }
         }
-        out
+        out.values().toList();
+
     }
 
     def getMembersForOrganisation(String organisationId) {
