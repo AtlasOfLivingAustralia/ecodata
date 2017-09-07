@@ -40,7 +40,7 @@
                     <div><label for="reportingPeriodAlignedToCalendar">Reporting period is aligned to calendar dates <input id="reportingPeriodAlignedToCalendar" type="checkbox" data-bind="enabled:isMeritProgramme, checked:reportingPeriodAlignedToCalendar"></label></div>
                     <div><label for="projectDatesContracted">Projects must start and end on contract dates <input id="projectDatesContracted" type="checkbox" data-bind="checked:projectDatesContracted"></label></div>
                     <div><label for="weekDaysToCompleteReport">Number of weekdays to after a stage ends after which the report is due <input id="weekDaysToCompleteReport" type="text" class="input-small" data-bind="value:weekDaysToCompleteReport" data-validation-engine="validate[number]"></label></div>
-
+                    <div><label>Project template (blank for default) <input data-bind="value:projectTemplate"></label></div>
                     <div class="optional-project-content">
                         <label>Optional project content</label>
                         <ul class="unstyled" data-bind="foreach:{data: $root.transients.optionalProjectContent}">
@@ -85,6 +85,7 @@
                     <div><label for="subProgrammeReportingPeriodAlignedToCalendar">Reporting period is aligned to calendar dates <input id="subProgrammeReportingPeriodAlignedToCalendar" type="checkbox" data-bind="enabled:isMeritProgramme, checked:reportingPeriodAlignedToCalendar"></label></div>
                     <div><label for="subProgrammeProjectDatesContracted">Projects must start and end on contract dates <input id="subProgrammeProjectDatesContracted" type="checkbox" data-bind="checked:projectDatesContracted"></label></div>
                     <div><label for="weekDaysToCompleteReport">Number of weekdays to after a stage ends after which the report is due <input id="weekDaysToCompleteReport" type="text" class="input-small" data-bind="value:weekDaysToCompleteReport" data-validation-engine="validate[number]"></label></div>
+                    <div><label>Project template (blank for default) <input data-bind="value:projectTemplate"></label></div>
 
                     <div class="optional-project-content">
                         <label>Optional project content</label>
