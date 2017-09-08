@@ -1,0 +1,253 @@
+{
+  "dataModel": [
+    {
+      "dataType": "list",
+      "description": "",
+      "name": "outcomes",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "SMART outcome being reported against, as per the MERI Plan.",
+          "name": "outcome"
+        },
+        {
+          "dataType": "stringList",
+          "description": "Assets addressed by this outcome, as per the MERI Plan.",
+          "name": "assets"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "status",
+          "constraints": [
+            "Met",
+            "Partially met",
+            "Not met"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "Succinctly summarise your projects success in meeting the outcome using evidence, such as monitoring data, to support your reporting. Consider any environmental, social and economic outcomes achieved.",
+          "name": "outcomeResult",
+          "validate": "required"
+        }
+      ]
+    },
+    {
+      "dataType": "list",
+      "description": "",
+      "name": "keyEvaluationQuestions",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "Key evaluation question as per the MERI plan",
+          "name": "question"
+        },
+        {
+          "dataType": "text",
+          "description": "Monitoring, as per the MERI Plan.",
+          "name": "monitoring"
+        },
+        {
+          "dataType": "text",
+          "description": "Summarise your findings for the KEQ by using data sourced from the monitoring approach.",
+          "name": "evaluation",
+          "validate": "required"
+        }
+      ]
+    },
+    {
+      "dataType": "text",
+      "description": "Refer to the Work, Health and Safety section of your funding agreement for further information.",
+      "name": "workplaceHeathAndSafetyIncidents",
+      "constraints": [
+        "Y",
+        "N"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "description": "Description of lessons learnt from the project and how they may be applied in the future.",
+      "name": "lessonsLearned",
+      "validate": "required"
+    }
+  ],
+  "modelName": "Final Report",
+  "title": "Final Report",
+  "pre-populate": [
+    {
+      "source": {
+        "context-path": "project"
+      },
+      "merge": true,
+      "mapping": [
+        {
+          "target": "outcomes",
+          "mapping": [
+            {
+              "target": "outcome",
+              "source-path": "description"
+            },
+            {
+              "target": "assets",
+              "source-path": "assets"
+            }
+          ],
+          "source-path": "custom.details.objectives.rows1"
+        }
+      ]
+    },
+    {
+      "source": {
+        "context-path": "project"
+      },
+      "merge": true,
+      "mapping": [
+        {
+          "target": "keyEvaluationQuestions",
+          "mapping": [
+            {
+              "target": "question",
+              "source-path": "data1"
+            },
+            {
+              "target": "monitoring",
+              "source-path": "data2"
+            }
+          ],
+          "source-path": "custom.details.keq.rows"
+        }
+      ]
+    }
+  ],
+  "title": "Overview of Project Progress",
+  "viewModel": [
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<h4>Outcomes<h4>"
+        }
+      ]
+    },
+    {
+      "source": "outcomes",
+      "items": [
+        {
+          "items": [
+            {
+              "items": [
+                {
+                  "source": "outcome",
+                  "preLabel": {
+                    "computed": "\\'Outcome \\' || (index + 1)"
+                  },
+                  "type": "text",
+                  "readonly": true
+                },
+                {
+                  "source": "assets",
+                  "preLabel": "Assets addressed",
+                  "type": "selectMany",
+                  "readonly": true
+                },
+                {
+                  "source": "status",
+                  "preLabel": "Status of outcome",
+                  "type": "selectOne"
+                },
+                {
+                  "source": "outcomeResult",
+                  "preLabel": "Outline project progress in meeting the outcome",
+                  "type": "textarea"
+                }
+              ],
+              "type": "col"
+            }
+          ],
+          "class": "output-section",
+          "type": "row"
+        }
+      ],
+      "type": "repeat"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<h4>Key Evaluation Questions<h4>"
+        }
+      ]
+    },
+    {
+      "source": "keyEvaluationQuestions",
+      "items": [
+        {
+          "items": [
+            {
+              "items": [
+                {
+                  "source": "question",
+                  "preLabel": {
+                    "computed": "\\'KEQ \\' || (index + 1)"
+                  },
+                  "type": "textarea",
+                  "readonly": true
+                },
+                {
+                  "source": "monitoring",
+                  "preLabel": "Monitoring approach",
+                  "type": "textarea",
+                  "readonly": true
+                },
+                {
+                  "source": "evaluation",
+                  "preLabel": "Evaluation",
+                  "type": "textarea"
+                }
+              ],
+              "type": "col"
+            }
+          ],
+          "class": "output-section",
+          "type": "row"
+        }
+      ],
+      "type": "repeat"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<h4>Other<h4>"
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "lessonsLearned",
+              "preLabel": "What lessons have you or your organisation learnt while undertaking this project?",
+              "type": "textarea"
+            },
+            {
+              "source": "workplaceHeathAndSafetyIncidents",
+              "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+              "type": "selectOne"
+            }
+          ],
+          "type": "col"
+        }
+      ],
+      "class": "output-section",
+      "type": "row"
+    }
+  ]
+}

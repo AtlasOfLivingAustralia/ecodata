@@ -1,0 +1,98 @@
+{
+  "modelName":"ESP Fencing Paddock Trees",
+  "title":"Fencing Paddock Trees",
+  "dataModel":[
+    {
+      "name":"undertakeFencingPaddockTrees",
+      "dataType":"text",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "name":"fencingPaddockTreesActions",
+      "type":"text"
+    },
+    {
+      "dataType": "list",
+      "name": "fencing",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "The type of fencing activity",
+          "name": "fenceActivityType",
+          "constraints": [
+            "Extension of existing fence line",
+            "Repairs to existing fence line",
+            "New fencing"
+          ]
+        },
+        {
+          "dataType": "number",
+          "description": "Approximate area fenced in m2",
+          "name": "areaFenced",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "cost",
+          "validate": "integer,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "undertakeFencingPaddockTrees",
+          "preLabel": "Did you undertake any activities relating to the fencing of Paddock trees on this site this year? (Yes / No)",
+          "type": "selectOne"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "title": "<i>Please note that this section also applies to repairs made to existing fencing.</i>",
+          "source": "fencing",
+          "columns": [
+            {
+              "title": "Type of Fencing Activity",
+              "source": "fenceActivityType",
+              "type": "selectOne"
+            },
+            {
+              "title": "Area fenced (approximate m2):",
+              "source": "areaFenced",
+              "computed": null,
+              "type": "number"
+            },
+            {
+              "title": "Cost",
+              "source": "cost",
+              "type": "currency"
+            }
+          ],
+          "userAddedRows": true,
+          "disableTableUpload":true,
+          "type": "table"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "fencingPaddockTreesActions",
+          "preLabel": "Please add any additional notes about this management action below:",
+          "type": "textarea"
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

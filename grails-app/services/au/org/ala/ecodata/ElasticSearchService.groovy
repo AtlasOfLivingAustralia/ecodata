@@ -82,7 +82,7 @@ class ElasticSearchService {
     Node node;
     Client client;
     def indexingTempInactive = false // can be set to true for loading of dump files, etc
-    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name]
+    def ALLOWED_DOC_TYPES = [Project.class.name, Site.class.name, Activity.class.name, Record.class.name, Organisation.class.name, UserPermission.class.name, Program.class.name]
     def DEFAULT_TYPE = "doc"
     def DEFAULT_FACETS = 10
     private static Queue<IndexDocMsg> _messageQueue = new ConcurrentLinkedQueue<IndexDocMsg>()
@@ -142,33 +142,12 @@ class ElasticSearchService {
 
     /**
      * Get the doc identifier, which differs for each domain class.
-     * Note this can be called for both the Domain object itself or the
-     * "toMap" representation it. TODO might be better way to do this
      *
      * @param doc
      * @return docId (String)
      */
     def getEntityId(doc) {
-        def docId
-        def className = (doc.className) ? doc.className : doc.class.name;
-
-        switch (className) {
-            case Project.class.name:
-                docId = doc.projectId; break
-            case Site.class.name:
-                docId = doc.siteId; break
-            case Activity.class.name:
-                docId = doc.activityId; break
-            case Organisation.class.name:
-                docId = doc.organisationId; break
-            case Report.class.name:
-                docId = doc.reportId; break
-            case Record.class.name:
-                docId = doc.occurrenceID; break
-            default:
-                docId = doc.id; break
-        }
-        docId
+        IdentifierHelper.getEntityIdentifier(doc)
     }
 
     def getDocType(doc) {
@@ -931,7 +910,9 @@ class ElasticSearchService {
         String query = params.searchTerm ?: ''
         String userId = params.userId ?: '' // JSONNull workaround.
         String projectId = params.projectId
+        String projectActivityId = params.projectActivityId
         String forcedQuery = ''
+        String spotterId = params.spotterId ?: ''
 
         switch (params.view) {
 
@@ -978,23 +959,6 @@ class ElasticSearchService {
                     } else if (!userId) {
                         forcedQuery = '(docType:activity AND projectActivity.embargoed:false)'
                     }
-
-                    // add hub specific default facet query here. This will restrict data shown on all-records page to records from hub projects.
-                    if(params.hub){
-                        Map hub = hubService.findByUrlPath(params.hub)
-                        String defaultQuery = ""
-                        if(hub.defaultFacetQuery){
-                            defaultQuery =  hub.defaultFacetQuery?.join(' OR ');
-                        }
-
-                        if(defaultQuery){
-                            if(forcedQuery){
-                                forcedQuery = "("+ forcedQuery + " AND (" + defaultQuery + "))"
-                            } else {
-                                forcedQuery = defaultQuery
-                            }
-                        }
-                    }
                 }
                 break
 
@@ -1013,6 +977,13 @@ class ElasticSearchService {
                     if (userId) {
                         forcedQuery = '(docType:activity AND projectActivity.projectId:' + projectId + ' AND  userId:' + userId + ')'
                     }
+                }
+                break
+
+
+            case 'userprojectactivityrecords':
+                if(projectActivityId && spotterId){
+                    forcedQuery = '(docType:activity AND projectActivityId:' + projectActivityId + ' AND projectActivity.embargoed:false  AND  userId:' + spotterId + ')'
                 }
                 break
 
@@ -1071,9 +1042,41 @@ class ElasticSearchService {
         return request
     }
 
+    /**
+     * Checks the supplied parameters for hub related parameters.
+     * @param params Accepts either:
+     *     hubFq: A query parameter in the same format as the fq parameter; or
+     *     hub: A String identifying the URL path of the hub.  If specified, the defaultFacetQuery property of the Hub will be returned.
+     * If both parameters are supplied, the hubFq parameter will be used.
+     *
+     * If neither are specified an empty list will be returned.
+     *
+     * @return a List of filters to be applied of the form filterName:filterValue, as per the "fq" parameter passed to the search
+     */
+    private List extractHubFilterParameters(Map params) {
+        List hubFilters = []
+        if (params.hubFq) {
+            hubFilters = getFilterList(params.hubFq)
+        }
+        else if (params.hub) {
+            Hub hub = hubService.findByUrlPath(params.hub)
+            if (hub && hub.defaultFacetQuery) {
+                hubFilters = hub.defaultFacetQuery
+            }
+        }
+
+        hubFilters
+    }
+
     private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null) {
         QueryBuilder queryBuilder
         List filters = []
+
+        List hubFilters = extractHubFilterParameters(params)
+        if (hubFilters) {
+            filters << buildFilters(hubFilters)
+        }
+
         if (params.fq) {
             filters << buildFilters(params.fq)
         }
@@ -1085,11 +1088,9 @@ class ElasticSearchService {
         }
 
         if (filters) {
-            FilterBuilder fb = filters[0]
-            for (int i=1; i<filters.size(); i++) {
-                fb = FilterBuilders.andFilter(filters[i])
-            }
-            queryBuilder = filteredQuery(queryStringQuery(query), fb)
+            BoolFilterBuilder builder = FilterBuilders.boolFilter()
+            builder.must(*filters)
+            queryBuilder = filteredQuery(queryStringQuery(query), builder)
         }
         else {
             queryBuilder = queryStringQuery(query)
@@ -1209,36 +1210,54 @@ class ElasticSearchService {
 
         List filterList = getFilterList(filters) // allow for multiple fq params
 
-        List repeatFacets = getRepeatFacetList(filterList)
+        Map facets = parseFilterParams(filterList)
 
-        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter();
-        filterList.each { String fq ->
+        BoolFilterBuilder boolFilter = FilterBuilders.boolFilter()
+        facets.each { String facetName, List<String> facetValues ->
 
-            List fqs = parseFilter(fq)
-            // support SOLR style filters (-) for exclude
-            if (fqs.size() > 1) {
-                if (fqs[0].getAt(0) == "-") {
-                    boolFilter.mustNot(FilterBuilders.termFilter(fqs[0][1..-1], fqs[1]))
-                } else if (repeatFacets.find { it == fqs[0] }) {
-                    boolFilter.should(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                } else if (fqs[0] == "_query") {
-                    boolFilter.must(FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(fqs[1])))
-                } else {
-                    // Check if the value is a SOLR style range query
-                    Matcher m = (fqs[1] =~ /\[(.*) TO (.*)\]/)
-                    if (m?.matches()) {
-                        boolFilter.must(rangeFilter(fqs[0]).from(m.group(1)).to(m.group(2)))
-                    }
-                    else {
-                        boolFilter.must(FilterBuilders.termFilter(fqs[0], fqs[1]))
-                    }
+            if (facetValues.size() == 0) {
+                boolFilter.must(FilterBuilders.missingFilter(facetName).nullValue(true))
+            }
+            else {
+                // support SOLR style filters (-) for exclude
+                if (facetName.getAt(0) == "-" && facetName.length() > 1) {
+                    boolFilter.mustNot(filterValue(facetName[1..-1], facetValues))
                 }
-            } else {
-                boolFilter.must(FilterBuilders.missingFilter(fqs[0]).nullValue(true))
+                else {
+                    boolFilter.must(filterValue(facetName, facetValues))
+                }
+            }
+        }
+        boolFilter
+
+    }
+
+    FilterBuilder filterValue(String filterName, List facetValues) {
+
+        FilterBuilder filter
+        if (facetValues.size() == 1) {
+            String value = facetValues[0]
+            if (filterName == '_query') {
+                filter = FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(value))
+            }
+            else {
+                Matcher m = (value =~ /\[(.*) TO (.*)\]/)
+                if (m?.matches()) {
+                    filter = rangeFilter(filterName).from(m.group(1)).to(m.group(2))
+                }
+                else {
+                    filter = FilterBuilders.termFilter(filterName, value)
+                }
+            }
+        }
+        else {
+            filter = FilterBuilders.boolFilter()
+            facetValues.each { String value ->
+                ((BoolFilterBuilder)filter).should(filterValue(filterName, [value]))
             }
         }
 
-        FilterBuilders.boolFilter().should(boolFilter)
+        filter
     }
 
     /**
@@ -1247,7 +1266,7 @@ class ElasticSearchService {
      * @param filters
      * @return filterList
      */
-    private getFilterList(filters) {
+    private List getFilterList(filters) {
         def filterList = []
 
         if (filters instanceof String[]) {
@@ -1262,36 +1281,20 @@ class ElasticSearchService {
         filterList
     }
 
-    private getRepeatFacetList(filters) {
-        def allFilters = getFilterList(filters)
-        def facetNames = []
-        def repeatFacets = []
-        Set uniqueFacets
+    /**
+     * Accepts a list of "facetName:facetValue" strings and returns a Map keyed by facetName with
+     * value containing a list of values for that facet.
+     */
+    private Map parseFilterParams(filters) {
+        List allFilters = getFilterList(filters)
 
-        if (allFilters.size() <= 1) {
-            return repeatFacets
+        Map filterMap = [:].withDefault{[]}
+        allFilters.each { String facet ->
+            List tokens = parseFilter(facet)
+            String value = (tokens.size() > 1) ? tokens[1] : null
+            filterMap[(tokens[0])] << value
         }
-        allFilters.collect {
-            def fqs = it.tokenize(":")
-            facetNames.add(fqs[0])
-        }
-        uniqueFacets = facetNames as Set
-        int repeatCount = 0;
-
-        uniqueFacets.each { facet ->
-            allFilters.each { filter ->
-                def fqs = filter.tokenize(":")
-                if (facet.equals(fqs[0])) {
-                    repeatCount++;
-                }
-            }
-            if (repeatCount >= 2) {
-                repeatFacets.add(facet)
-            }
-            repeatCount = 0
-        }
-
-        repeatFacets
+        filterMap
     }
 
     /**

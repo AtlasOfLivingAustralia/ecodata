@@ -1,0 +1,71 @@
+{
+  "modelName":"ESP Ground Cover",
+  "title":"Ground Cover %",
+  "dataModel":[
+    {
+      "name":"groundCoverPercentBySeason",
+      "dataType":"list",
+      "columns": [
+        {
+          "name":"season",
+          "dataType":"text",
+          "validate":"required"
+        },
+        {
+          "name":"groundCoverPercent",
+          "dataType":"number",
+          "validate":"required,min[0],max[100]"
+        }
+      ],
+      "defaultRows":[
+        {
+          "season":"Summer"
+        },
+        {
+          "season":"Autumn"
+        },
+        {
+          "season":"Winter"
+        },
+        {
+          "season":"Spring"
+        }
+      ]
+
+    }
+  ],
+  "viewModel":[
+    {
+      "type": "row",
+      "items": [
+        {
+          "type":"literal",
+          "source":"Please provide a ground cover rating at the end of every season."
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "source": "groundCoverPercentBySeason",
+          "type": "table",
+          "userAddedRows":false,
+          "columns":[
+            {
+              "title":"Season",
+              "source":"season",
+              "readOnly":true,
+              "type":"text"
+            },
+            {
+              "title":"Ground cover % at end of Season",
+              "source":"groundCoverPercent",
+              "type":"number"
+            }
+          ]
+        }
+      ],
+      "type": "row"
+    }
+  ]
+}

@@ -48,7 +48,7 @@
     ],
     "modelName": "Overview of Project Progress",
     "pre-populate": [{
-        "source": {"context-path": ""},
+        "source": {"context-path": "project"},
         "merge": true,
         "mapping": [{
             "target": "outcomes",

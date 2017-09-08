@@ -1,74 +1,90 @@
 {
-    "dataModel": [{
-        "dataType": "list",
-        "name": "biomassControl",
-        "columns": [
+  "title": "Biomass Control Measures",
+  "modelName": "ESP Biomass Control Measures",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "biomassControl",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "The type of biomass control",
+          "name": "controlType",
+          "constraints": [
+            "Thinning",
+            "Small scale ecological burns",
+            "Slashing / mowing",
+            "Grazing"
+          ]
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "controlPurpose",
+          "constraints": [
+            "Reduction of fire risks",
+            "Reduction of single species dominance",
+            "Removal of feral habitat",
+            "Weed control"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaTreatedHa",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "cost",
+          "validate": "integer,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "Please note that the use of grazing as a biomass control activity must occur within and as a part of, your contracted grazing periods."
+        }
+      ]
+    },
+    {
+      "items": [
+        {
+          "title": "",
+          "source": "biomassControl",
+          "columns": [
             {
-                "dataType": "text",
-                "description": "The type of biomass control",
-                "name": "controlType",
-                "constraints": [
-                    "Thinning",
-                    "Small scale ecological burns",
-                    "Slashing / mowing",
-                    "Grazing"
-                ]
+              "title": "Biomass control activity",
+              "source": "controlType",
+              "type": "selectOne"
             },
             {
-                "dataType": "text",
-                "description": "",
-                "name": "controlPurpose",
-                "constraints": [
-                    "Reduction of fire risks",
-                    "Reduction of single species dominance",
-                    "Removal of feral habitat",
-                    "Weed control"
-                ],
-                "validate": "required"
+              "title": "Purpose",
+              "source": "controlPurpose",
+              "type": "selectOne"
             },
             {
-                "dataType": "number",
-                "name": "areaTreatedHa",
-                "validate": "required,min[0]"
+              "title": "Area treated (Ha)",
+              "source": "areaTreatedHa",
+              "type": "number"
             },
             {
-                "dataType": "number",
-                "name": "cost",
-                "validate": "integer,min[0]"
+              "title": "Cost",
+              "source": "cost",
+              "type": "currency"
             }
-        ]
-    }],
-    "modelName": "ESP Biomass Control Measures",
-    "title": "Biomass Control Measures",
-    "viewModel": [{
-        "items": [{
-            "title": "",
-            "source": "biomassControl",
-            "columns": [
-                {
-                    "title": "Biomass control activity",
-                    "source": "controlType",
-                    "type": "selectOne"
-                },
-                {
-                    "title": "Purpose",
-                    "source": "controlPurpose",
-                    "type": "selectOne"
-                },
-                {
-                    "title": "Area treated (Ha)",
-                    "source": "areaTreatedHa",
-                    "type": "number"
-                },
-                {
-                    "title": "Cost",
-                    "source": "cost",
-                    "type": "currency"
-                }
-            ],
-            "userAddedRows": true,
-            "type": "table"
-        }],
-        "type": "row"
-    }]
+          ],
+          "userAddedRows": true,
+          "disableTableUpload":true,
+          "type": "table"
+        }
+      ],
+      "type": "row"
+    }
+  ]
 }

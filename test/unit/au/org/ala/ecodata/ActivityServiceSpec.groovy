@@ -20,9 +20,8 @@ import java.text.SimpleDateFormat
  */
 @TestMixin(MongoDbTestMixin)
 @Domain(Activity)
+@TestFor(ActivityService)
 class ActivityServiceSpec extends Specification {
-
-    ActivityService service
 
     /** Insert some activities into the database to work with */
     def setup() {
@@ -49,22 +48,8 @@ class ActivityServiceSpec extends Specification {
             createActivity(props)
         }
 
-        service = enhanceService(ActivityService)
+        service.lockService = Stub(LockService)
     }
-
-    private def enhanceService(serviceClass) {
-
-        final serviceArtefact = grailsApplication.addArtefact(ServiceArtefactHandler.TYPE, serviceClass)
-
-        defineBeans(true) {
-            "${serviceArtefact.propertyName}"(serviceClass) { bean ->
-                bean.autowire = true
-            }
-        }
-
-        applicationContext.getBean(serviceArtefact.propertyName, serviceClass)
-    }
-
 
     private def createActivity(props) {
         Activity activity = new Activity(props)

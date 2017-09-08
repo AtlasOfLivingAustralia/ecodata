@@ -85,7 +85,7 @@ class ActivityController {
         def result
         def message
         if (id) {
-            result = activityService.update(props,id)
+            result = activityService.update(props,id, Boolean.parseBoolean(params.lock))
             message = [message: 'updated']
         }
         else {

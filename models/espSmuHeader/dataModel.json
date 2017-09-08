@@ -1,0 +1,15 @@
+{
+  "dataModel":[],
+  "title":"ESP SMU Reporting",
+  "viewModel":[
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"Please note that SMU reporting includes management actions relating to \"Buffering\" and \"Connectivity under the Multiple Ecological Communities Project (MEC) Rounds\""
+        }
+      ]
+    }
+  ]
+}

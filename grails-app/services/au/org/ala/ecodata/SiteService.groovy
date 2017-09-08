@@ -393,6 +393,13 @@ class SiteService {
                     result = [type: type, coordinates: geometry.coordinates]
                 }
                 break
+            case 'MultiPolygon':
+                if (!geometry.coordinates) {
+                    log.error("Invalid site: ${site.siteId} missing coordinates")
+                    return
+                }
+                result =  [type:geometry.type, coordinates: geometry.coordinates]
+                break
             case 'pid':
                 result = geometryForPid(geometry.pid)
                 break

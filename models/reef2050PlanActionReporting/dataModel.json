@@ -154,6 +154,11 @@
           "dataType": "stringList",
           "name": "linkedOrRelatedActions",
           "constraints": []
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "midtermReviewNotes"
         }
       ]
     }
@@ -208,7 +213,7 @@
               "title": "Action",
               "readOnly": true,
               "source": "actionDescription",
-              "width": "11%",
+              "width": "10%",
               "type": "text"
             },
             {
@@ -227,16 +232,16 @@
             {
               "title": "Description",
               "source": "description",
-              "width": "11%",
+              "width": "10%",
               "type": "textarea",
-              "rows":10
+              "rows": 10
             },
             {
               "title": "Progress",
               "source": "progress",
-              "width": "11%",
+              "width": "10%",
               "type": "textarea",
-              "rows":10
+              "rows": 10
             },
             {
               "title": "Delivery Partners",
@@ -256,9 +261,9 @@
             {
               "title": "Tasks and milestones / deliverables",
               "source": "tasksAndMilestones",
-              "width": "11%",
+              "width": "10%",
               "type": "textarea",
-              "rows":10
+              "rows": 10
             },
             {
               "title": "Funds expended to date for action delivery",
@@ -269,7 +274,7 @@
             {
               "title": "Web links",
               "source": "webLinks",
-              "width": "11%",
+              "width": "9%",
               "type": "multiInput"
             },
             {
@@ -278,6 +283,13 @@
               "source": "linkedOrRelatedActions",
               "width": "6%",
               "type": "selectMany"
+            },
+            {
+              "title": "Midterm review notes",
+              "source": "midtermReviewNotes",
+              "width": "10%",
+              "type": "textarea",
+              "rows": 10
             }
           ],
           "userAddedRows": false,
