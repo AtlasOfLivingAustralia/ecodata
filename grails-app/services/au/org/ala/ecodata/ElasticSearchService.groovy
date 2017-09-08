@@ -1011,7 +1011,7 @@ class ElasticSearchService {
         }
         request.types(types as String[])
 
-        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria)
+        QueryBuilder query = buildQuery(queryString, params, geoSearchCriteria, index)
         // set pagination stuff
         SearchSourceBuilder source = pagenateQuery(params).query(query)
 
@@ -1059,7 +1059,7 @@ class ElasticSearchService {
         hubFilters
     }
 
-    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null) {
+    private QueryBuilder buildQuery(String query, Map params, Map geoSearchCriteria = null, String index) {
         QueryBuilder queryBuilder
         List filters = []
 
@@ -1078,19 +1078,42 @@ class ElasticSearchService {
             filters << FilterBuilders.termsFilter(params.terms.field, params.terms.values)
         }
 
+        QueryStringQueryBuilder qsQuery = queryStringQuery(query)
+        if (index == ElasticIndex.HOMEPAGE_INDEX) {
+            qsQuery = applyWeightingToFields(qsQuery)
+        }
+
         if (filters) {
             BoolFilterBuilder builder = FilterBuilders.boolFilter()
             builder.must(*filters)
-            queryBuilder = filteredQuery(queryStringQuery(query), builder)
+
+            queryBuilder = filteredQuery(qsQuery, builder)
         }
         else {
-            queryBuilder = queryStringQuery(query)
+            queryBuilder = qsQuery
         }
 
         if (params.weightResultsByEntity) {
             queryBuilder = applyWeightingToEntities(queryBuilder)
         }
+
         queryBuilder
+    }
+
+    /**
+     * Boosts scores to specific fields to boost the wight of matches found in these fields
+     * @param queryStringQueryBuilder
+     * @return
+     */
+    private applyWeightingToFields(QueryStringQueryBuilder queryStringQueryBuilder) {
+        Map fieldsAndBoosts = grailsApplication.config.homepageIdx.elasticsearch.fieldsAndBoosts
+
+        fieldsAndBoosts.each { field, boost ->
+            queryStringQueryBuilder.field(field, boost)
+        }
+        queryStringQueryBuilder.field("_all")
+
+        return queryStringQueryBuilder
     }
 
     /**

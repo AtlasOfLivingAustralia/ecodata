@@ -500,6 +500,16 @@ if(!biocollect.facets.project){
     ]
 }
 
+homepageIdx {
+    elasticsearch   {
+        fieldsAndBoosts {
+            name = 50
+            description = 30
+            organisationName = 30
+        }
+    }
+}
+
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
 // on the home and search pages.
 // Each gridded facet becomes a search facet.
