@@ -33,7 +33,7 @@
                     "name": "managementActions",
                     "constraints": [
                         "Exclusion fencing",
-                        "Nil",
+                        "Observed",
                         "Shooting"
                     ],
                     "validate": "required"

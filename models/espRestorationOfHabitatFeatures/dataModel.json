@@ -11,7 +11,7 @@
                     "description": "",
                     "name": "habitatFeature",
                     "constraints": [
-                        "Course woody debris",
+                        "Woody debris",
                         "Corrugated tin",
                         "Nesting boxes",
                         "Other"
@@ -44,7 +44,7 @@
                     "source": "habitatRestoration",
                     "columns": [
                         {
-                            "title": "Habitat Feature",
+                            "title": "Have you placed any of the following habitat features on your site?",
                             "source": "habitatFeature",
                             "type": "selectOne"
                         },

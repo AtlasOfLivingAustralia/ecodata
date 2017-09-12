@@ -76,11 +76,11 @@
         },
         {
             "dataType": "list",
-            "name": "nativeTrees",
+            "name": "nativePlants",
             "columns": [
                 {
                     "dataType": "species",
-                    "name": "nativeTreeSpecies"
+                    "name": "nativePlantSpecies"
                 },
                 {
                     "dataType":"image",
@@ -238,12 +238,12 @@
         },
         {
             "items": [{
-                "title": "Native trees observed",
-                "source": "nativeTrees",
+                "title": "Native plants observed",
+                "source": "nativePlants",
                 "columns": [
                     {
-                        "title": "Native tree species",
-                        "source": "nativeTreeSpecies",
+                        "title": "Native plant species",
+                        "source": "nativePlantSpecies",
                         "type": "speciesSelect"
                     },
                     {
