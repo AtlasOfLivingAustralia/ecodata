@@ -36,7 +36,7 @@ class ReportingService {
     }
 
     def findAllForProject(String projectId) {
-        Report.findAllByProjectId(projectId)
+        Report.findAllByProjectIdAndStatusNotEqual(projectId, DELETED)
     }
 
     def findAllForUser(String userId) {
