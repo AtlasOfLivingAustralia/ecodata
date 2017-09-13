@@ -40,6 +40,21 @@
           "validate": "integer,min[0]"
         }
       ]
+    },
+    {
+      "dataType":"text",
+      "name":"managementActionNotCompleted",
+      "description":"Was this management action completed this year.",
+      "constraints":[
+        "Yes",
+        "No"
+      ],
+      "validate":"required"
+    },
+    {
+      "dataType": "text",
+      "name": "notes",
+      "description": ""
     }
   ],
   "viewModel": [
@@ -80,11 +95,37 @@
             }
           ],
           "userAddedRows": true,
-          "disableTableUpload":true,
+          "disableTableUpload": true,
           "type": "table"
         }
       ],
       "type": "row"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"col",
+          "items":[
+            {
+              "type":"selectOne",
+              "source":"managementActionNotCompleted",
+              "preLabel":"Did you complete your contracted management actions this year? (Yes / No)"
+            }
+          ]
+        }
+
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "Please provide any further comments about these management actions below, including why you may not have undertaken these actions this year"
+        }
+      ]
     }
   ]
 }

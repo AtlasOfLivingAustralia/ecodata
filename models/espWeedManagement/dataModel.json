@@ -13,7 +13,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "description": "The primary method used to treat the patch of the target species",
                     "name": "treatmentMethod",
                     "constraints": [
@@ -58,13 +58,13 @@
                         "Closed",
                         "Unknown"
                     ]
-                },
-                {
-                    "dataType": "number",
-                    "name": "cost",
-                    "validate": "integer,min[0]"
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
         }
     ],
     "viewModel": [
@@ -84,7 +84,7 @@
                             "title": "Treatment Method",
                             "source": "treatmentMethod",
                             "width": "20%",
-                            "type": "select2"
+                            "type": "select2Many"
                         },
                         {
                             "title": "Approximate area treated (Ha)",
@@ -103,12 +103,6 @@
                             "source": "controlStatus",
                             "width": "15%",
                             "type": "selectOne"
-                        },
-                        {
-                            "title": "Cost",
-                            "source": "cost",
-                            "width": "15%",
-                            "type": "currency"
                         }
                     ],
                     "fixedWidth": true,
@@ -118,6 +112,17 @@
                 }
             ],
             "type": "row"
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "preLabel": "Total cost of management actions",
+                    "source": "cost",
+                    "type": "currency"
+                }
+            ]
         }
+
     ]
 }

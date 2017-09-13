@@ -24,7 +24,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "name": "managementActions",
                     "constraints": [
                         "Bait & trap",
@@ -56,13 +56,13 @@
                     "dataType": "number",
                     "name": "noCulled",
                     "validate": "min[0]"
-                },
-                {
-                    "dataType": "number",
-                    "name": "cost",
-                    "validate": "integer,min[0]"
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
         }
     ],
     "viewModel": [
@@ -97,7 +97,7 @@
                             "wdith": "20%",
                             "title": "Management Action(s)",
                             "source": "managementActions",
-                            "type": "selectOne"
+                            "type": "select2Many"
                         },
                         {
                             "title": "Reason for management",
@@ -110,12 +110,6 @@
                             "source": "noCulled",
                             "width": "10%",
                             "type": "number"
-                        },
-                        {
-                            "title": "Cost",
-                            "source": "cost",
-                            "width": "15%",
-                            "type": "currency"
                         }
                     ],
                     "userAddedRows": true,
@@ -127,13 +121,14 @@
             "type": "row"
         },
         {
-            "items": [
+            "type":"row",
+            "items":[
                 {
-                    "source": "<i>Please note that multiple entries for the same species will need to be made for different management actions.</i>",
-                    "type": "literal"
+                    "preLabel": "Total cost of management actions",
+                    "source": "cost",
+                    "type": "currency"
                 }
-            ],
-            "type": "row"
+            ]
         }
     ]
 }
