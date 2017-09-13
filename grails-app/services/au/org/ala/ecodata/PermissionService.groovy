@@ -139,20 +139,33 @@ class PermissionService {
             }
         }
     }
-
+    /*
+        Bulk load members of Project to improve loading perforamnce of a project which has large number of memebers
+     */
     def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInList(projectId, Project.class.name, AccessLevel.starred, roles)
-        def out = []
-        up.each {
-            def rec = [:]
-            def u = userService.getUserForUserId(it.userId?:"0")
-            rec.role = it.accessLevel?.toString()
+        Map out = [:]
+        List userIds = []
+        up.each{
+            userIds.add(it.userId)
+            Map rec=[:]
             rec.userId = it.userId
-            rec.displayName = u?.displayName
-            rec.userName = u?.userName
-            out.add(rec)
+            rec.role = it.accessLevel?.toString()
+            out.put(it.userId,rec);
+
         }
-        out
+        def userList = authService.getUserDetailsById(userIds)
+        def users = userList['users']
+
+        users.each { k,v ->
+            Map rec = out.get(k)
+            if (rec){
+                rec.displayName = v?.displayName
+                rec.userName = v?.userName
+            }
+        }
+        out.values().toList();
+
     }
 
     def getMembersForOrganisation(String organisationId) {
