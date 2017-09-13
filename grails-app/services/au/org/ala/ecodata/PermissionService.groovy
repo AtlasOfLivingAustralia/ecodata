@@ -154,7 +154,7 @@ class PermissionService {
             out.put(it.userId,rec);
 
         }
-        def userList = userService.getUserDetailsFromIdList(userIds)
+        def userList = authService.getUserDetailsById(userIds)
         def users = userList['users']
 
         users.each { k,v ->
