@@ -247,6 +247,8 @@ class ProjectService {
                 Project.withSession { session -> session.clear() }
                 return [status: 'error', error: 'Duplicate project id for create ' + props.projectId]
             }
+
+            props = prepareProject(props)
             // name is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             Project project = new Project(projectId: props.projectId ?: Identifiers.getNew(true, ''), name: props.name)
             // Not flushing on create was causing that further updates to fields were overriden by old values
@@ -254,7 +256,6 @@ class ProjectService {
 
             props.remove('sites')
             props.remove('id')
-
 
             if (collectoryLink) {
                 establishCollectoryLinkForProject(project, props)
@@ -270,6 +271,24 @@ class ProjectService {
             return [status: 'error', error: error]
         }
     }
+
+    /*Fundings in project passed from POST is an array of JSON objects
+    *it needs to be covnerted to Grail object to use embedded field
+    * Remove unnecceary fields of JSON
+    */
+
+    private prepareProject(Map props){
+        if(props.fundings){
+            List fundings = []
+            props.fundings.each {
+                fundings.add(new Funding(it));
+            }
+            props.fundings = fundings;
+        }
+        return props
+    }
+
+
 
     /*
      * Async task for establishing the Collectory data resource - this is because it could be relatively slow and we do
@@ -321,6 +340,7 @@ class ProjectService {
     def update(Map props, String id) {
         Project project = Project.findByProjectId(id)
         if (project) {
+            props = prepareProject(props)
             try {
                 getCommonService().updateProperties(project, props)
                 updateCollectoryLinkForProject(project, props)

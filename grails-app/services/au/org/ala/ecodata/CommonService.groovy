@@ -29,6 +29,7 @@ class CommonService {
                 o.getClass().name)
         props.remove('id')
         props.remove('api_key')  // don't ever let this be stored in public data
+
         // Dump data such as projects from SciStarter will want to preserve the original date not the date
         // it was imported, we have another field for it.
         !overrideUpdateDate && props.remove('lastUpdated') // in case we are loading from dumped data

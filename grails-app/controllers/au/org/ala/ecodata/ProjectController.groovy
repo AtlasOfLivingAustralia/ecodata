@@ -190,6 +190,8 @@ class ProjectController {
         log.debug props
         def result
         def message
+
+
         if (id) {
             result = projectService.update(props,id)
             message = [message: 'updated']
