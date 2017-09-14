@@ -14,8 +14,7 @@ class Funding {
     // or just a reference to an external body, in which case just the name and an optional logo will be recorded
 
     static constraints = {
-        fundingSource nullable: true
-        fundingType nullable: true
+        fundingSourceAmount min: 0D
     }
 
 }

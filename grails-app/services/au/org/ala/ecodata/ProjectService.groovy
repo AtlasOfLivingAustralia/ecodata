@@ -285,8 +285,6 @@ class ProjectService {
             }
             props.fundings = fundings;
         }
-//        if(props.fundingTypes)
-//            props.remove('fundingTypes')
         return props
     }
 
