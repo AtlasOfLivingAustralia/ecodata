@@ -467,6 +467,7 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
 
 if(!biocollect.facets.project){
     biocollect.facets.project = [
+        "isContributingDataToAla",
         "organisationFacet",
         "uNRegions",
         "countries",
@@ -498,6 +499,16 @@ if(!biocollect.facets.project){
         "meriPlanAssetFacet",
         "partnerOrganisationTypeFacet"
     ]
+}
+
+homepageIdx {
+    elasticsearch   {
+        fieldsAndBoosts {
+            name = 50
+            description = 30
+            organisationName = 30
+        }
+    }
 }
 
 // Specifies the spatial portal layers that will be intersected with sites to provide the geographic faceting
