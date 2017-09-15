@@ -110,7 +110,7 @@
             {
               "type":"selectOne",
               "source":"managementActionNotCompleted",
-              "preLabel":"Did you complete your contracted management actions this year? (Yes / No)"
+              "preLabel":"Have you chosen to not undertake activities under this Management action this year? (Yes / No)"
             }
           ]
         }
@@ -123,7 +123,7 @@
         {
           "type": "textarea",
           "source": "notes",
-          "preLabel": "Please provide any further comments about these management actions below, including why you may not have undertaken these actions this year"
+          "preLabel": "If you have chosen to not undertake activities under this Management action or would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below."
         }
       ]
     }

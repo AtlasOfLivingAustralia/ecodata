@@ -1,10 +1,10 @@
 {
-  "modelName":"ESP Fencing Paddock Trees",
-  "title":"Fencing Paddock Trees",
-  "dataModel":[
+  "modelName": "ESP Fencing Paddock Trees",
+  "title": "Fencing Paddock Trees",
+  "dataModel": [
     {
-      "name":"undertakeFencingPaddockTrees",
-      "dataType":"text",
+      "name": "undertakeFencingPaddockTrees",
+      "dataType": "text",
       "constraints": [
         "Yes",
         "No"
@@ -12,8 +12,8 @@
       "validate": "required"
     },
     {
-      "name":"fencingPaddockTreesActions",
-      "type":"text"
+      "name": "fencingPaddockTreesActions",
+      "type": "text"
     },
     {
       "dataType": "list",
@@ -41,9 +41,24 @@
           "validate": "integer,min[0]"
         }
       ]
+    },
+    {
+      "dataType": "text",
+      "name": "managementActionNotCompleted",
+      "description": "Was this management action completed this year.",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "notes",
+      "description": ""
     }
   ],
-  "viewModel":[
+  "viewModel": [
     {
       "items": [
         {
@@ -78,21 +93,36 @@
             }
           ],
           "userAddedRows": true,
-          "disableTableUpload":true,
+          "disableTableUpload": true,
           "type": "table"
         }
       ],
       "type": "row"
     },
     {
+      "type": "row",
       "items": [
         {
-          "source": "fencingPaddockTreesActions",
-          "preLabel": "Please add any additional notes about this management action below:",
-          "type": "textarea"
+          "type": "col",
+          "items": [
+            {
+              "type": "selectOne",
+              "source": "managementActionNotCompleted",
+              "preLabel": "Have you chosen to not undertake activities under this Management action this year? (Yes / No)"
+            }
+          ]
         }
-      ],
-      "type": "row"
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "notes",
+          "preLabel": "If you have chosen to not undertake activities under this Management action or would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below."
+        }
+      ]
     }
   ]
 }
