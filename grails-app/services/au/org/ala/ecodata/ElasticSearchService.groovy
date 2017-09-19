@@ -783,6 +783,7 @@ class ElasticSearchService {
                 values.multimedia = it.multimedia
                 values.eventDate = it.eventDate
                 values.eventTime = it.eventTime
+                values.individualCount = it.individualCount
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }
