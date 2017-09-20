@@ -16,19 +16,40 @@
           "validate": "required"
         },
         {
-          "dataType": "text",
-          "dwcAttribute": "reproductiveCondition",
-          "name": "sourcePlantHealth",
-          "description": "The health of the plant(s) providing source seedstock",
-          "constraints": [
-            "Healthy young plant",
+          "dataType": "date",
+          "name":"collectionDate",
+          "validate":"required"
+        },
+        {
+          "dataType":"text",
+          "name":"provenanceId"
+
+        },
+        {
+          "dataType":"text",
+          "name":"provenance",
+          "description":"GPS coordinates (include multiple GPS coordinates if relevant.)"
+        },
+        {
+          "dataType":"text",
+          "name":"mappingDescriptionShape",
+          "description":"For example: polygon, transect, radius from point"
+        },
+        {
+          "dataType":"number",
+          "name":"mappingDescriptionSize",
+          "description":"Area of the provenance site in Hectares"
+        },
+        {
+          "dataType":"text",
+          "name":"germinationMethod",
+          "constraints":["Healthy young plant",
             "Healthy mature plant",
             "Healthy senescent plant",
             "Environmentally stressed young plant",
             "Environmentally stressed mature plant",
             "Environmentally stressed senescent plant",
-            "Felled tree / shrub"
-          ]
+            "Felled tree / shrub"]
         },
         {
           "dataType": "number",
@@ -38,126 +59,174 @@
         }
       ],
       "dataType": "list",
-      "name": "seedsList"
+      "name": "seedCollection"
     },
     {
-      "dataType": "text",
-      "dwcAttribute": "locality",
-      "name": "seedSourceProvenance",
-      "description": "Location from which the source seedstock was collected",
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
-      "name": "seedBankRepository",
-      "description": "The name of the seedbank repository in which collected seedstock is stored"
-    },
-    {
-      "dataType": "text",
-      "name": "notes",
-      "dwcAttribute": "eventRemarks",
-      "description": "General comments and notes about the seed collection activity and related observations"
-    },
-    {
-      "computed": {
-        "dependents": {
-          "fromList": "seedsList",
-          "source": "seedCollectedKg"
+      "columns": [
+        {
+          "dataType": "species",
+          "name": "seedSourceSpecies",
+          "description": "The species providing source seedstock  (start typing a  scientific or common name for a species)",
+          "validate": "required"
         },
-        "operation": "sum"
-      },
-      "primaryResult": "true",
-      "dataType": "number",
-      "name": "totalSeedCollectedKg",
-      "description": "Aggregate total of seed sown"
+        {
+          "dataType":"text",
+          "name":"provenanceId"
+        },
+        {
+          "dataType":"text",
+          "name":"plantingSiteLocationCoordinates",
+          "description":"GPS coordinates (include multiple GPS coordinates if relevant.)"
+        },
+        {
+          "dataType":"text",
+          "name":"plantingSiteLocationDescription",
+          "description":"For example: 100m provenance line"
+        },
+        {
+          "dataType":"text",
+          "name":"plantingMix",
+          "constraints":[
+            "Tubestock - local provenance",
+            "Tubestock - mixed provenance",
+            "Direct seeding - local provenance",
+            "Direct seeding -mixed provenance"
+          ]
+        },
+        {
+          "dataType": "date",
+          "name":"datePlanted",
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"percentageOfProvenanceAlongPlantingLine",
+          "validate":"min[0],max[100]"
+        },
+        {
+          "dataType":"text",
+          "name":"siteManagementNotes"
+        },
+        {
+          "dataType":"text",
+          "name":"infillNotes"
+        }
+      ],
+      "dataType": "list",
+      "name": "revegetationDetails"
     }
   ],
   "modelName": "Seed Collection Details",
   "viewModel": [
     {
-      "computed": null,
-      "type": "row",
-      "items": [
-        {
-          "preLabel": "Provenance (locality) of source plant(s):",
-          "computed": null,
-          "source": "seedSourceProvenance",
-          "type": "text"
-        },
-        {
-          "preLabel": "Name of seedbank storing the seed:",
-          "computed": null,
-          "source": "seedBankRepository",
-          "type": "text"
-        }
-      ],
-      "class": "output-section"
-    },
-    {
-      "computed": null,
-      "footer": {
-        "rows": [
-          {
-            "columns": [
-              {
-                "computed": null,
-                "source": "Total seed collected (kg)",
-                "type": "literal"
-              },
-              {
-                "computed": "{\"operation\":\"sum\",\"dependents\":{\"source\":\"seedCollectedKg\",\"fromList\":\"seedsList\"}}",
-                "source": "totalSeedCollectedKg",
-                "type": "number"
-              },
-              {
-                "colspan": 1,
-                "computed": null,
-                "source": "",
-                "type": "literal"
-              }
-            ]
-          }
-        ]
-      },
+      "type":"table",
+      "source":"seedCollection",
+
       "columns": [
         {
           "source": "seedSourceSpecies",
-          "title": "Species:",
-          "type": "autocomplete"
+          "title": "Target species:",
+          "type": "speciesSelect"
         },
         {
-          "source": "seedCollectedKg",
-          "title": "Seed collected (Kg):",
+          "source": "provenanceId",
+          "title": "Provenance ID",
+          "type": "text"
+
+        },
+        {
+          "source": "provenance",
+          "title": "Provenance",
+          "type": "textarea"
+
+        },
+        {
+          "source": "mappingDescriptionShape",
+          "title": "Mapping description - shape",
+          "type": "textarea"
+        },
+        {
+          "source": "mappingDescriptionSize",
+          "title": "Mapping description - size",
           "type": "number"
         },
         {
-          "source": "sourcePlantHealth",
-          "title": "Health of source plant(s):",
-          "type": "selectOne"
+          "source": "seedCollectedKg",
+          "title": "Amount of seed collected (Kg)",
+          "type": "number"
+        },
+        {
+          "source": "collectionDate",
+          "title": "Date of collection",
+          "type": "date"
         },
         {
           "source": "noOfSourcePlants",
           "type": "number",
           "title": "Number of Source Plants"
+        },
+        {
+          "source": "germinationMethod",
+          "title": "Germination method",
+          "type": "selectOne"
         }
+
       ],
-      "userAddedRows": "true",
-      "source": "seedsList",
-      "type": "table",
-      "class": "output-section"
+      "userAddedRows": "true"
+
     },
     {
-      "type": "row",
-      "items": [
+      "type": "table",
+      "source":"revegetationDetails",
+      "columns":[
         {
-          "preLabel": "Comments / Notes:",
-          "computed": null,
-          "width": "60%",
-          "source": "notes",
-          "type": "textarea"
+          "type": "speciesSelect",
+          "source": "seedSourceSpecies",
+          "title":"Target species"
+        },
+        {
+          "type":"text",
+          "source":"provenanceId",
+          "title":"Provenance ID"
+        },
+        {
+          "type":"text",
+          "source":"plantingSiteLocationCoordinates",
+          "title":"Planting site location - GPS coordinates"
+        },
+        {
+          "type":"textarea",
+          "source":"plantingSiteLocationDescription",
+          "title":"Planting site location - description"
+        },
+        {
+          "type":"selectOne",
+          "source":"plantingMix",
+          "title":"Planting mix"
+        },
+        {
+          "type": "date",
+          "source":"datePlanted",
+          "title":"Date of collection"
+        },
+        {
+          "type":"number",
+          "source":"percentageOfProvenanceAlongPlantingLine",
+          "title":"Percentage (%) of provenance along the planting line "
+        },
+        {
+          "type":"textarea",
+          "source":"siteManagementNotes",
+          "title":"Site management notes"
+        },
+        {
+          "type":"textarea",
+          "source":"infillNotes",
+          "title":"Infill notes"
         }
+
       ],
-      "class": "output-section"
+      "userAddedRows": true
     }
   ]
 }

@@ -393,9 +393,15 @@ class ElasticSearchService {
                 Record record = Record.findByOccurrenceID(docId)
                 if(record) {
                     Activity activity = Activity.findByActivityId(record.activityId)
-                    def doc = activityService.toMap(activity, ActivityService.FLAT)
-                    doc = prepareActivityForIndexing(doc)
-                    indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    if (activity) {
+                        def doc = activityService.toMap(activity, ActivityService.FLAT)
+                        doc = prepareActivityForIndexing(doc)
+                        indexDoc(doc, (doc?.projectActivityId || doc?.isWorks) ? PROJECT_ACTIVITY_INDEX : DEFAULT_INDEX)
+                    }
+                    else {
+                        log.warn("No activity found with id ${record.activityId} when indexing record for project ${record.projectId} and survey ${record.projectActivityId}")
+                    }
+
                 }
                 break
 
@@ -777,6 +783,7 @@ class ElasticSearchService {
                 values.multimedia = it.multimedia
                 values.eventDate = it.eventDate
                 values.eventTime = it.eventTime
+                values.individualCount = it.individualCount
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
                     values.generalizedCoordinates = [it.generalizedDecimalLatitude,it.generalizedDecimalLongitude]
                 }

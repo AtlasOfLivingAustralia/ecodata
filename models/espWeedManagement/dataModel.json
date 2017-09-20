@@ -13,7 +13,7 @@
                     "validate": "required"
                 },
                 {
-                    "dataType": "text",
+                    "dataType": "stringList",
                     "description": "The primary method used to treat the patch of the target species",
                     "name": "treatmentMethod",
                     "constraints": [
@@ -58,13 +58,28 @@
                         "Closed",
                         "Unknown"
                     ]
-                },
-                {
-                    "dataType": "number",
-                    "name": "cost",
-                    "validate": "integer,min[0]"
                 }
             ]
+        },
+        {
+            "dataType": "number",
+            "name": "cost",
+            "validate": "integer,min[0]"
+        },
+        {
+            "dataType":"text",
+            "name":"managementActionNotCompleted",
+            "description":"Was this management action completed this year.",
+            "constraints":[
+                "Yes",
+                "No"
+            ],
+            "validate":"required"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
         }
     ],
     "viewModel": [
@@ -84,7 +99,7 @@
                             "title": "Treatment Method",
                             "source": "treatmentMethod",
                             "width": "20%",
-                            "type": "select2"
+                            "type": "select2Many"
                         },
                         {
                             "title": "Approximate area treated (Ha)",
@@ -103,12 +118,6 @@
                             "source": "controlStatus",
                             "width": "15%",
                             "type": "selectOne"
-                        },
-                        {
-                            "title": "Cost",
-                            "source": "cost",
-                            "width": "15%",
-                            "type": "currency"
                         }
                     ],
                     "fixedWidth": true,
@@ -118,6 +127,43 @@
                 }
             ],
             "type": "row"
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "preLabel": "Total cost of management actions",
+                    "source": "cost",
+                    "type": "currency"
+                }
+            ]
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "type":"col",
+                    "items":[
+                        {
+                            "type":"selectOne",
+                            "source":"managementActionNotCompleted",
+                            "preLabel":"Have you chosen to not undertake activities under this Management action this year? (Yes / No)"
+                        }
+                    ]
+                }
+
+            ]
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "textarea",
+                    "source": "notes",
+                    "preLabel": "If you have chosen to not undertake activities under this Management action or would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below."
+                }
+            ]
         }
+
     ]
 }
