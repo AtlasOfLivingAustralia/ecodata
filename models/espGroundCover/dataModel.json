@@ -33,9 +33,10 @@
     {
       "items": [
         {
-          "source": "groundCoverPercentBySeason",
+          "source": "groundCoverPercent",
           "type": "table",
-          "userAddedRows":false,
+          "userAddedRows":true,
+          "disableTableUpload":true,
           "columns":[
 
             {

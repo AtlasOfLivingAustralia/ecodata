@@ -36,6 +36,7 @@
           "source": "swardHeight",
           "type": "table",
           "userAddedRows":true,
+          "disableTableUpload":true,
           "columns":[
             {
               "title":"Sward Height (cm)",
