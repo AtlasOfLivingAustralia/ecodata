@@ -1,23 +1,23 @@
 {
-  "modelName":"ESP Ground Cover",
-  "title":"Ground Cover % Estimate",
+  "modelName":"ESP Sward Height",
+  "title":"Sward Height",
   "dataModel":[
     {
-      "name":"groundCoverPercent",
+      "name":"swardHeight",
       "dataType":"list",
       "columns": [
         {
-          "name":"groundCoverPercent",
+          "name":"swardHeightCm",
           "dataType":"number",
-          "validate":"required,min[0],max[100]"
+          "validate":"required,min[0]"
         },
         {
           "name":"dateMeasured",
           "dataType":"date",
           "validate":"required"
         }
-
       ]
+
     }
   ],
   "viewModel":[
@@ -26,22 +26,21 @@
       "items": [
         {
           "type":"literal",
-          "source":"Please note that this measurement is an estimate only and needs to be recorded only once per year, we recommend doing this at the same time as you take your annual photo-point photograph."
+          "source":"Please note that this measurement needs to be recorded only once per year, we recommend doing this at the same time as you take your annual photo-point photograph."
         }
       ]
     },
     {
       "items": [
         {
-          "source": "groundCoverPercent",
+          "source": "swardHeight",
           "type": "table",
           "userAddedRows":true,
           "disableTableUpload":true,
           "columns":[
-
             {
-              "title":"Ground cover %",
-              "source":"groundCoverPercent",
+              "title":"Sward Height (cm)",
+              "source":"swardHeightCm",
               "type":"number"
             },
             {

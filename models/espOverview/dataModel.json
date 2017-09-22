@@ -1,0 +1,201 @@
+{
+    "dataModel": [
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "experiencedExtremeDisturbanceOrWeatherEvents",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "stringList",
+            "description": "",
+            "name": "typeOfExtremeDisturbanceOrWeatherEvent",
+            "constraints": [
+                "Fire",
+                "Flood",
+                "Unprecedented rainfall",
+                "Prolonged drought",
+                "Extreme wind / cyclone"
+            ],
+            "validate": "required",
+            "behaviour": [
+                {
+                    "type":"enable",
+                    "condition":"experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\""
+                }
+            ]
+        },
+
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "impactOfExtremeDisturbanceOrWeatherEvent",
+            "behaviour": [
+                {
+                    "type":"enable",
+                    "condition":"experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\""
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "undertakenProhibitedActions",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "undertakenProhibitedActionsReason",
+            "validate": "max[500]"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "actionsRequiredByStateOrLocalLegislation",
+            "constraints": [
+                "Yes",
+                "No"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "",
+            "name": "actionsRequiredByStateOrLocalLegislationReason",
+            "validate": "max[500]"
+        },
+        {
+            "dataType": "text",
+            "name": "notes",
+            "description": ""
+        }
+    ],
+    "modelName": "ESP Overview",
+    "title": "Submission",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Extreme disturbance / weather events:<\/h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "experiencedExtremeDisturbanceOrWeatherEvents",
+                "preLabel": "Have you experienced any extreme disturbances or weather events on your Environmental Stewardship site(s) in the last 12 months?",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "typeOfExtremeDisturbanceOrWeatherEvent",
+                "preLabel": "If 'Yes', please select from the following:",
+                "type": "selectMany"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "impactOfExtremeDisturbanceOrWeatherEvent",
+                "preLabel": "Please provide comments on any impact(s) on your Environmental Stewardship site(s) below:",
+                "type": "textarea"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Personal Details:<\/h4> <p>Have any of your contact details changed since you last reported? If “Yes” then please contact the Department to advise us of any change(s).<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Financial Reports:<\/h4> <p>Please note you will only be required to provide audited financial statements if requested by the Department. However, in order for the Department to understand the cost of conservation actions to inform future policy and programs we are requesting that you provide details of the cost of each management action and / or estimates of production forgone through participation in ESP.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "Which financial years does this report apply to?  <br/><i>Please note your records and reports can be added and saved at any time of year, but all reports for the past financial year’s activity must be submitted by the specified reporting date in your contract to ensure prompt payment.</i>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Prohibited Actions:<\/h4><p>Have you undertaken any of the following actions on your ESP site(s)?:<\/p><ul><li>Cultivation<\/li><li>Used fertilizer or inappropriate agrochemicals<\/li><li>Removed standing or fallen timber<\/li><li>Added permanent infrastructure<\/li><li>Removed or disturbed native vegetation (living or dead)<\/li><li>Removed or disturbed bush rocks<\/li><li>Planted non-native species in the ecological community<\/li><li>Intentionally conducted burning outside of a fire management unit<\/li>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "undertakenProhibitedActions",
+                "preLabel": "Yes / No",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "undertakenProhibitedActionsReason",
+                "preLabel": "If \"Yes\" please detail your reasons below",
+                "type": "textarea"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<i>In the last 12 months have you:<\/i> <ul><li>Undertaken, without direction, any activities to meet your obligations under state and/or local government regulations (e.g. Control of noxious weeds)?<\/li><li>Been directed to undertake any activities to meet your obligation under state and/or local government regulations (e.g. Management of invasive species)?<\/li>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "actionsRequiredByStateOrLocalLegislation",
+                "preLabel": "Yes / No",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "actionsRequiredByStateOrLocalLegislationReason",
+                "preLabel": "If \"Yes\" please detail your reasons below",
+                "type": "textarea"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>General Seasonal Observations</h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "textarea",
+                    "source": "notes",
+                    "preLabel": "If you have any additional comments or observations regarding general seasonal conditions please  provide them below:"
+                }
+            ]
+        }
+    ]
+}
