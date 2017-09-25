@@ -628,7 +628,7 @@ class ElasticSearchService {
                     log.error("Unable index site: "+siteMap?.siteId, e)
                 }
                 count++
-                if (count % 100 == 0) {
+                if (count % 1000 == 0) {
                     session.clear()
                     log.debug("Indexed "+count+" sites")
                 }
@@ -648,7 +648,7 @@ class ElasticSearchService {
                 }
 
                 count++
-                if (count % 100 == 0) {
+                if (count % 1000 == 0) {
                     session.clear()
                     log.debug("Indexed " + count + " activities")
                 }
