@@ -35,7 +35,7 @@
                 {
                     "dataType": "number",
                     "name": "weedAreaTreatedHa",
-                    "validate": "required,min[0]"
+                    "validate": "min[0]"
                 },
                 {
                     "dataType": "text",
@@ -65,16 +65,6 @@
             "dataType": "number",
             "name": "cost",
             "validate": "integer,min[0]"
-        },
-        {
-            "dataType":"text",
-            "name":"managementActionNotCompleted",
-            "description":"Was this management action completed this year.",
-            "constraints":[
-                "Yes",
-                "No"
-            ],
-            "validate":"required"
         },
         {
             "dataType": "text",
@@ -139,28 +129,12 @@
             ]
         },
         {
-            "type":"row",
-            "items":[
-                {
-                    "type":"col",
-                    "items":[
-                        {
-                            "type":"selectOne",
-                            "source":"managementActionNotCompleted",
-                            "preLabel":"Have you chosen to not undertake activities under this Management action this year? (Yes / No)"
-                        }
-                    ]
-                }
-
-            ]
-        },
-        {
             "type": "row",
             "items": [
                 {
                     "type": "textarea",
                     "source": "notes",
-                    "preLabel": "If you have chosen to not undertake activities under this Management action or would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below."
+                    "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:"
                 }
             ]
         }

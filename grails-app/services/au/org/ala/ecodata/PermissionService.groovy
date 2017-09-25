@@ -155,13 +155,16 @@ class PermissionService {
 
         }
         def userList = authService.getUserDetailsById(userIds)
-        def users = userList['users']
 
-        users.each { k,v ->
-            Map rec = out.get(k)
-            if (rec){
-                rec.displayName = v?.displayName
-                rec.userName = v?.userName
+        if (userList) {
+            def users = userList['users']
+
+            users.each { k, v ->
+                Map rec = out.get(k)
+                if (rec) {
+                    rec.displayName = v?.displayName
+                    rec.userName = v?.userName
+                }
             }
         }
         out.values().toList();

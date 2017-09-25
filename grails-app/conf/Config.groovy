@@ -467,7 +467,7 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
 
 if(!biocollect.facets.project){
     biocollect.facets.project = [
-        "isContributingDataToAla",
+        "isExternal",
         "organisationFacet",
         "uNRegions",
         "countries",
