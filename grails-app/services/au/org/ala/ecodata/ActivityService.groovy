@@ -122,6 +122,10 @@ class ActivityService {
         Activity.findAllByProjectActivityIdAndStatus(projectActivityId, ACTIVE).collect { toMap(it, levelOfDetail) }
     }
 
+    List<Map> findAllForActivityIds(List activityIdList, levelOfDetail = []) {
+        Activity.findAllByActivityIdInListAndStatus(activityIdList, ACTIVE).collect { toMap(it, levelOfDetail) }
+    }
+
     def findAllForUserId(userId, query, levelOfDetail = []){
          def list = Activity.createCriteria().list(query) {
             and{

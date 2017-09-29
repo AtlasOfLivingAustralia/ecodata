@@ -205,16 +205,27 @@ class DownloadService {
         zip.putNextEntry(new ZipEntry("images/"))
 
         activitiesByProject.each { projectId, activityIds ->
-            def project = projectService.get(projectId, [ ProjectService.BRIEF ])
+            long currentTimeMillis = System.currentTimeMillis()
+            def project = projectService.get(projectId, [ProjectService.BRIEF])
             def projectName = project.name ?: projectId
             def projectPath = makePath("images/${projectName}/", paths)
             def recordMap = [:].withDefault { [] }
             def activityPathBase = makePath("${projectPath}activities/", paths)
             zip.putNextEntry(new ZipEntry(activityPathBase))
 
-            groupDocumentsByActivityAndOutput(projectId).each { activityId, documentsMap ->
+          //  log.info "Time taken before groupDocumentsByActivityAndOutput for project ${projectId} is ${System.currentTimeMillis() - currentTimeMillis} millis"
+            currentTimeMillis = System.currentTimeMillis()
+
+            def docs = []
+            if (activityIds == null || activityIds.isEmpty()) {
+                docs = groupProjectDocumentsByActivityAndOutput(projectId)
+            } else {
+                docs = groupActivityDocumentsByActivityAndOutput (activityIds)
+            }
+
+            docs.each { activityId, documentsMap ->
                 if (activityId && activityIds?.contains(activityId)) {
-                    def activity = activityService.get(activityId, [ ActivityService.FLAT ])
+                    def activity = activityService.get(activityId, [ActivityService.FLAT])
                     def projectActivity = projectActivityService.get(activity.projectActivityId)
                     def activityName = projectActivity.name ?: activityId
                     def activityPath = makePath("${activityPathBase}${activityName}/", paths)
@@ -252,22 +263,28 @@ class DownloadService {
 
             zip.closeEntry()
 
+            log.info "Zipping DocumentsByActivityAndOutput images for project ${projectId} took ${System.currentTimeMillis() - currentTimeMillis} millis"
+
             // put record images into a separate directory structure
             def recordPath = makePath("${projectPath}records/", paths)
             //zip.putNextEntry(new ZipEntry(recordPath))
 
-            groupDocumentsByRecord(projectId).each { recordId, documentList ->
+            currentTimeMillis = System.currentTimeMillis()
+
+            groupDocumentsByRecord(projectId, activityIds).each { recordId, documentList ->
                 def recordIdPath = "${recordPath}${recordId}/"
                 recordIdPath = makePath(recordIdPath, paths)
                 documentList.each { doc ->
                     if (doc.type == Document.DOCUMENT_TYPE_IMAGE) {
-                        if (!documentMap.containsKey(doc.documentId)) {
+                       // if (!documentMap.containsKey(doc.documentId)) {
                             addFileToZip(zip, recordIdPath, doc, documentMap, paths)
-                        }
+                       // }
                         recordMap[recordId] << doc
                     }
                 }
             }
+
+            log.info "Total Zipping groupDocumentsByRecord images for project ${projectId} took ${System.currentTimeMillis() - currentTimeMillis} millis"
             if (!recordMap.isEmpty()) {
                 zip.putNextEntry(new ZipEntry("${projectPath}records.csv"))
                 writeRecordMap(zip, recordMap, documentMap)
@@ -330,7 +347,7 @@ class DownloadService {
         zip.closeEntry()
     }
 
-    private static Map<String, Map<String, List<Document>>> groupDocumentsByActivityAndOutput(String projectId) {
+    private static Map<String, Map<String, List<Document>>> groupProjectDocumentsByActivityAndOutput(String projectId) {
         Map<String, Map<String, List<Document>>> documents = [:].withDefault { [:].withDefault { [] } }
 
         Activity.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { activity ->
@@ -342,18 +359,58 @@ class DownloadService {
         documents
     }
 
-    private static Map<String, List<Document>> groupDocumentsByRecord(String projectId) {
+    private static Map<String, Map<String, List<Document>>> groupActivityDocumentsByActivityAndOutput(Set<String> activityIdsSet) {
+        Map<String, Map<String, List<Document>>> documents = [:].withDefault { [:].withDefault { [] } }
+
+        List activityIds = []
+        activityIds.addAll(activityIdsSet)
+
+        Document.findAllByActivityIdInListAndStatusNotEqual(activityIds, Status.DELETED)?.each {
+            documents[it.activityId ?: null][it.outputId ?: null] << it
+        }
+
+        documents
+    }
+
+    private static Map<String, List<Document>> groupDocumentsByRecord(String projectId, Set<String> activityIdsSet = null) {
         Map<String, List<Document>> documents = [:].withDefault { [] }
 
-        Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
-            record.multimedia?.each { multimedia ->
-                Document.findAllByDocumentId(multimedia.documentId)?.each { doc ->
-                    documents[record.occurrenceID ?: null] << doc
+        List documentIds = []
+        Map<String, String> recordDocumentMap = [:]
+
+        if (activityIdsSet == null || activityIdsSet.isEmpty()) {
+            Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
+                record.multimedia?.each { multimedia ->
+                    if (multimedia.documentId) {
+                        recordDocumentMap.put(multimedia.documentId, record.occurrenceID ?: null)
+                        documentIds.add(multimedia.documentId)
+                    }
+                }
+            }
+
+        } else {
+
+            List activityIds = []
+            activityIds.addAll(activityIdsSet)
+
+            Record.findAllByProjectIdAndActivityIdInListAndStatusNotEqual(projectId, activityIds, Status.DELETED).each { Record record ->
+                record.multimedia?.each { multimedia ->
+                    if (multimedia.documentId) {
+                        recordDocumentMap.put(multimedia.documentId, record.occurrenceID ?: null)
+                        documentIds.add(multimedia.documentId)
+                    }
                 }
             }
         }
 
-        documents
+        List<Document> documentList = Document.findAllByDocumentIdInListAndStatusNotEqual(documentIds, Status.DELETED)
+
+        documentList.each { doc ->
+            String recOccurrentId = recordDocumentMap.get(doc.documentId)
+            documents[recOccurrentId ?: null] << doc
+        }
+
+      documents
     }
 
     XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results", TimeZone timeZone) {
@@ -361,7 +418,12 @@ class DownloadService {
 
         XlsExporter xlsExporter = new XlsExporter(fileName)
 
+        log.info "Exporting activities"
+
         ProjectExporter projectExporter = new CSProjectXlsExporter(xlsExporter, documentMap, timeZone)
+
+        log.info "Before exportActivities projects took ${System.currentTimeMillis() - start} millis"
+        start = System.currentTimeMillis()
 
         projectExporter.exportActivities(activityIdsByProject)
 

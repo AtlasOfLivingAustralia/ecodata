@@ -93,6 +93,9 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     @Override
     void export(String projectId, Set<String> activityIds) {
+
+        long start = System.currentTimeMillis()
+
         projectSheet()
         sitesSheet()
         recordSheet()
@@ -101,9 +104,17 @@ class CSProjectXlsExporter extends ProjectExporter {
 
         addSites(project)
 
+        log.info "Add Sites to spreadsheet took ${System.currentTimeMillis() - start} millis"
+        start = System.currentTimeMillis()
+
         addProjectActivities(project, activityIds)
 
+        log.info "Add Project Activity to spreadsheet took ${System.currentTimeMillis() - start} millis"
+        start = System.currentTimeMillis()
+
         addRecords(project, activityIds)
+
+        log.info "Add Records to spreadsheet took ${System.currentTimeMillis() - start} millis"
 
         int row = projectSheet.getSheet().lastRowNum
         projectSheet.add([project], projectProperties, row + 1)
@@ -139,7 +150,16 @@ class CSProjectXlsExporter extends ProjectExporter {
     private AdditionalSheet createSurveySheet(Map projectActivity, Set<String> activityIds = null) {
         AdditionalSheet sheet = null
 
-        List<Map> activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
+        List activityList = []
+        activityList.addAll(activityIds)
+
+        List<Map> activities = []
+
+        if (activityIds == null || activityIds.isEmpty()) {
+            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
+        } else {
+            activities = activityService.findAllForActivityIds(activityList)
+        }
 
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
             List<String> headers = []
@@ -239,7 +259,19 @@ class CSProjectXlsExporter extends ProjectExporter {
 //        properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, latitudeGetter, longitudeGetter, timeZone)
 
         properties[properties.indexOf("eventDateCorrected")] = new DatePropertyGetter("eventDate", DateTimeParser.Style.DATE, null, null, timeZone)
-        recordService.getAllByProject(project.projectId).each {
+
+        List activityIdList = []
+        activityIdList.addAll(activityIds)
+
+        def records = []
+
+        if (activityIds == null || activityIds.isEmpty()) {
+            records = recordService.getAllByProject(project.projectId)
+        } else {
+            records = recordService.getAllRecordsByActivityList(activityIdList)
+        }
+
+        records.each {
             // need to differentiate between an empty set of activity ids (which means don't export any activities),
             // and a null value (which means export all activities).
             if (!restrictedSurveys.contains(it.projectActivityId) && (activityIds == null || activityIds.contains(it.activityId))) {
