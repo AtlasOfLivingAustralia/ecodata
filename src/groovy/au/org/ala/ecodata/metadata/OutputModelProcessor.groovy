@@ -43,8 +43,9 @@ class OutputModelProcessor {
         def type = node.dataType
         if (type == null) {
             log.warn("Found node with null dataType: "+node)
-            return;
+            return
         }
+
         switch(type) {
             case 'number':
                 processor.number(node, context);
@@ -125,6 +126,21 @@ class OutputModelProcessor {
             }
         }
         rows
+    }
+
+    def hideMemberOnlyAttributes(Map output, OutputMetadata outputMetadata, boolean userIsProjectMember = false) {
+
+        if (userIsProjectMember) {
+            return
+        }
+
+        Map result = output.data?:[:]
+        def memberOnly = outputMetadata.getMemberOnlyPropertyNames()
+        if (memberOnly && !userIsProjectMember) {
+            memberOnly.each { property ->
+                result[property] = "----"
+            }
+        }
     }
 
     Map getRepeatingData(Map data, OutputMetadata outputMetadata) {

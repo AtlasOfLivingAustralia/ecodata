@@ -81,6 +81,19 @@ class OutputMetadata {
         props
     }
 
+    def getMemberOnlyPropertyNames() {
+        def props = []
+
+        metadata.dataModel.each { property ->
+            def viewNode = findViewByName(property.name)
+            if (viewNode.memberOnlyView) {
+                props << property.name
+            }
+        }
+
+        props
+    }
+
     def getNestedViewNodes(node) {
         return (node.type in ['table', 'photoPoints', 'grid'] ) ? node.columns: node.items
     }
