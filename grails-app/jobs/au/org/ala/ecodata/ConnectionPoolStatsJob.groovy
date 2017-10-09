@@ -5,7 +5,7 @@ import java.lang.management.ManagementFactory
 
 class ConnectionPoolStatsJob {
     static triggers = {
-        simple repeatInterval: 5 * 1000l // execute job once per minute
+        simple repeatInterval: 5 * 60 * 1000l // execute job once every five minutes
     }
 
     def execute() {
