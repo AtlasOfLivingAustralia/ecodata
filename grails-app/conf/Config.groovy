@@ -782,6 +782,7 @@ log4j = {
     ]
 
     debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
+    info 'grails.app.jobs.au.org.ala.ecodata'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
