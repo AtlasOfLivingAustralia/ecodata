@@ -86,7 +86,7 @@ class OutputMetadata {
 
         metadata.dataModel.each { property ->
             def viewNode = findViewByName(property.name)
-            if (viewNode.memberOnlyView) {
+            if (viewNode?.memberOnlyView) {
                 props << property.name
             }
         }
