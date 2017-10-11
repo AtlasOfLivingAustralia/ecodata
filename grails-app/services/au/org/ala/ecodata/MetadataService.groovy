@@ -64,7 +64,7 @@ class MetadataService {
                 byCategory[category] = []
             }
             def description = messageSource.getMessage("api.${it.name}.description", null, "", Locale.default)
-            byCategory[category] << [name:it.name, description:description]
+            byCategory[category] << [name:it.name, type:it.type, description:description]
         }
         byCategory
     }
