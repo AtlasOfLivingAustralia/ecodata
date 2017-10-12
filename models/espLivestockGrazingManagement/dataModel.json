@@ -164,6 +164,7 @@
                   "Charbray",
                   "Charolais",
                   "Chianina",
+                  "Crossbreed",
                   "Devon",
                   "Droughtmaster",
                   "Galloway",
@@ -174,7 +175,6 @@
                   "Limousin",
                   "Maine",
                   "Maine Anjou",
-                  "Mixed",
                   "Murray Grey",
                   "Piedmontese",
                   "Poll Hereford",
@@ -203,6 +203,7 @@
                   "Coopworth",
                   "Cormo",
                   "Corriedale",
+                  "Crossbreed",
                   "Damaras",
                   "Dohne",
                   "Dorper",
@@ -215,7 +216,6 @@
                   "Hampshire Down",
                   "Lincoln",
                   "Merino",
-                  "Mixed",
                   "Perendale",
                   "Poll Dorset",
                   "Poll Merino",
@@ -246,8 +246,8 @@
                   "Boer",
                   "British Alpine",
                   "Cashmere",
+                  "Crossbreed",
                   "Kalahari Red",
-                  "Mixed",
                   "Mohair",
                   "Rangeland",
                   "Saanen",
@@ -278,6 +278,11 @@
       "dataType": "number",
       "description": "",
       "name": "foregoneProductionAmountEstimate",
+      "validate": "integer,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "cost",
       "validate": "integer,min[0]"
     },
     {
@@ -357,6 +362,16 @@
         }
       ],
       "type": "row"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "preLabel": "Total cost of management actions",
+          "source": "cost",
+          "type": "currency"
+        }
+      ]
     },
     {
       "type": "row",

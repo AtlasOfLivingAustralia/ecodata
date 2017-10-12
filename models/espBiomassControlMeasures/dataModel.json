@@ -18,7 +18,7 @@
           ]
         },
         {
-          "dataType": "text",
+          "dataType": "stringList",
           "description": "",
           "name": "controlPurpose",
           "constraints": [
@@ -71,7 +71,7 @@
             {
               "title": "Purpose",
               "source": "controlPurpose",
-              "type": "selectOne"
+              "type": "select2Many"
             },
             {
               "title": "Area treated (Ha)",

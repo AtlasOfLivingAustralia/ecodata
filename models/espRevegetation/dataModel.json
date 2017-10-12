@@ -31,8 +31,8 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "The area in hectares of the revegetation works area",
-                    "name": "areaRevegHa",
+                    "description": "The number of plants planted",
+                    "name": "numberPlanted",
                     "validate": "required"
                 },
                 {
@@ -62,8 +62,8 @@
                 },
                 {
                     "dataType": "number",
-                    "description": "The area in hectares of the revegetation works area",
-                    "name": "areaRevegHa",
+                    "description": "The number of plants originally planted",
+                    "name": "numberPlanted",
                     "validate": "required"
                 },
                 {
@@ -86,7 +86,7 @@
     "viewModel": [
         {
 
-            "title": "Please list the numbers of each species planted during this activity and any additional information that you can that is relevant:",
+            "title": "Please list each species planted during this activity and any additional information that you can that is relevant:",
             "source": "planting",
             "columns": [
                 {
@@ -104,8 +104,8 @@
                     "type": "speciesSelect"
                 },
                 {
-                    "title": "Area treated (Ha)",
-                    "source": "areaRevegHa",
+                    "title": "Number planted (if applicable)",
+                    "source": "numberPlanted",
                     "width": "10%",
                     "computed": null,
                     "type": "number"
@@ -125,7 +125,7 @@
         },
         {
 
-            "title": "Survival rates of previous revegetation activities",
+            "title": "Survival rates of previous revegetation activities <br/>Please note that this is voluntary and can be recorded as often as you like.",
             "source": "survival",
             "columns": [
                 {
@@ -145,8 +145,8 @@
                     "type": "speciesSelect"
                 },
                 {
-                    "title": "Area treated (Ha)",
-                    "source": "areaRevegHa",
+                    "title": "Number planted (if applicable)",
+                    "source": "numberPlanted",
                     "width": "10%",
                     "computed": null,
                     "type": "number"

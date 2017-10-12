@@ -12,6 +12,15 @@
                     "name": "species"
                 },
                 {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense infestation",
+                        "Isolated plant",
+                        "Scattered plants"
+                    ]
+                },
+                {
                     "dataType":"image",
                     "name":"photo"
                 }
@@ -27,6 +36,15 @@
         {
             "items": [
                 {
+                    "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
                     "title": "Please complete the following: ",
                     "source": "regeneration",
                     "columns": [
@@ -34,6 +52,12 @@
                             "title": "Species Observed Regenerating (if known)",
                             "source": "species",
                             "type": "speciesSelect"
+                        },
+                        {
+                            "title": "How widespread is the regeneration",
+                            "source": "plantDensity",
+                            "width": "15%",
+                            "type": "selectOne"
                         },
                         {
                             "title":"Photo(s)",
@@ -44,15 +68,6 @@
                     "userAddedRows": true,
                     "disableTableUpload":true,
                     "type": "table"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
-                    "type": "literal"
                 }
             ],
             "type": "row"

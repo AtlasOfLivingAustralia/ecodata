@@ -20,7 +20,7 @@
                 {
                     "dataType": "number",
                     "description": "",
-                    "name": "areaTreatedHa"
+                    "name": "numberAdded"
                 },
                 {
                     "dataType": "number",
@@ -53,8 +53,8 @@
                             "type": "selectOne"
                         },
                         {
-                            "title": "Area treated (Ha)",
-                            "source": "areaTreatedHa",
+                            "title": "Number of habitat features added",
+                            "source": "numberAdded",
                             "type": "number"
                         },
                         {

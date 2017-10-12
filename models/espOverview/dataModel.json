@@ -55,7 +55,13 @@
             "dataType": "text",
             "description": "",
             "name": "undertakenProhibitedActionsReason",
-            "validate": "max[500]"
+            "validate": "max[500],required",
+            "behaviour":[
+                {
+                    "type":"enable",
+                    "condition": "undertakenProhibitedActions == \"Yes\""
+                }
+            ]
         },
         {
             "dataType": "text",
@@ -115,6 +121,23 @@
         },
         {
             "items": [{
+                "source": "<h4>General Seasonal Observations</h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "type": "row",
+            "items": [
+                {
+                    "type": "textarea",
+                    "source": "notes",
+                    "preLabel": "If you have any additional comments or observations regarding general seasonal conditions please  provide them below:"
+                }
+            ]
+        },
+        {
+            "items": [{
                 "source": "<h4>Personal Details:<\/h4> <p>Have any of your contact details changed since you last reported? If “Yes” then please contact the Department to advise us of any change(s).<\/p>",
                 "type": "literal"
             }],
@@ -123,13 +146,6 @@
         {
             "items": [{
                 "source": "<h4>Financial Reports:<\/h4> <p>Please note you will only be required to provide audited financial statements if requested by the Department. However, in order for the Department to understand the cost of conservation actions to inform future policy and programs we are requesting that you provide details of the cost of each management action and / or estimates of production forgone through participation in ESP.<\/p>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "items": [{
-                "source": "Which financial years does this report apply to?  <br/><i>Please note your records and reports can be added and saved at any time of year, but all reports for the past financial year’s activity must be submitted by the specified reporting date in your contract to ensure prompt payment.</i>",
                 "type": "literal"
             }],
             "type": "row"
@@ -179,23 +195,7 @@
                 "type": "textarea"
             }],
             "type": "row"
-        },
-        {
-            "items": [{
-                "source": "<h4>General Seasonal Observations</h4>",
-                "type": "literal"
-            }],
-            "type": "row"
-        },
-        {
-            "type": "row",
-            "items": [
-                {
-                    "type": "textarea",
-                    "source": "notes",
-                    "preLabel": "If you have any additional comments or observations regarding general seasonal conditions please  provide them below:"
-                }
-            ]
         }
+
     ]
 }

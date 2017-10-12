@@ -99,7 +99,7 @@
     "viewModel": [
         {
             "items": [{
-                "source": "Please note that the activities below are not mandatory, however they provide a way for you to record plants and animals as they appear and monitor the long-term health and recovery of your ESP site(s).",
+                "source": "Please note that the activities below are not mandatory, however they provide a way for you to record native plants and animals as they appear and monitor the long-term health and recovery of your ESP site(s).",
                 "type": "literal"
             }],
             "type": "row"
