@@ -15,9 +15,9 @@
                     "dataType": "text",
                     "name": "plantDensity",
                     "constraints": [
-                        "Dense infestation",
-                        "Isolated plant",
-                        "Scattered plants"
+                        "Dense",
+                        "Scattered",
+                        "Isolated"
                     ]
                 },
                 {

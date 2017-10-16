@@ -213,51 +213,6 @@
       "items":[
         {
           "type":"literal",
-          "source":"<h4>Key Evaluation Questions<h4>"
-        }
-      ]
-    },
-    {
-      "source": "keyEvaluationQuestions",
-      "items": [
-        {
-          "items": [
-            {
-              "items": [
-                {
-                  "source": "question",
-                  "preLabel": {
-                    "computed": "\\'KEQ \\' || (index + 1)"
-                  },
-                  "type": "textarea",
-                  "readonly": true
-                },
-                {
-                  "source": "monitoring",
-                  "preLabel": "Monitoring approach",
-                  "type": "textarea",
-                  "readonly": true
-                },
-                {
-                  "source": "evaluation",
-                  "preLabel": "Evaluation",
-                  "type": "textarea"
-                }
-              ],
-              "type": "col"
-            }
-          ],
-          "class": "output-section",
-          "type": "row"
-        }
-      ],
-      "type": "repeat"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"literal",
           "source":"<h4>Project Outputs<h4>"
         }
       ]
