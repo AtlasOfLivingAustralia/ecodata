@@ -62,7 +62,10 @@
                         {
                             "title":"Photo(s)",
                             "source":"photo",
-                            "type":"image"
+                            "type":"image",
+                            "displayOptions":{
+                                "disableDragDrop":true
+                            }
                         }
                     ],
                     "userAddedRows": true,

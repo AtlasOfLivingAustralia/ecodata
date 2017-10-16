@@ -124,7 +124,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "insectImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
@@ -146,7 +149,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "nativeBirdImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
@@ -168,7 +174,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "nativeReptileImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
@@ -190,7 +199,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "nativeAmphibianImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
@@ -212,7 +224,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "nativeMammalImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
@@ -249,7 +264,10 @@
                     {
                         "title": "Photo(s)",
                         "source": "nativeTreeImage",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions":{
+                            "disableDragDrop":true
+                        }
                     }
                 ],
                 "type": "table",
