@@ -42,6 +42,15 @@
     ],
     "viewModel": [
         {
+            "type": "row",
+            "items": [
+                {
+                    "type": "literal",
+                    "source": "<b>Please note</b> Activities to restore habitat features are included under any or all of the following; “Add coarse woody debris” and “Retain fallen timber”."
+                }
+            ]
+        },
+        {
             "items": [
                 {
                     "title": "Please complete the following:",

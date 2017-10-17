@@ -106,7 +106,7 @@
         },
         {
             "items": [{
-                "source": "<h3>Fauna observed on your ESP site(s)</h3><i>Please records observations of species found below</i>",
+                "source": "<h3>Native fauna observed on your ESP site(s)</h3><i>Please records observations of species found below</i>",
                 "type": "literal"
             }],
             "type": "row"

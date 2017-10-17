@@ -85,6 +85,15 @@
     "title": "Revegetation",
     "viewModel": [
         {
+            "type": "row",
+            "items": [
+                {
+                    "type": "literal",
+                    "source": "<b>Please note</b> that revegetation activities are included under any or all of the following; “Re-establish perennial native species”, “Plants overstorey tree species of target community”, “Re-establish understorey shrubs”, “Plant perennial species” and “Planting/direct seeding”. "
+                }
+            ]
+        },
+        {
 
             "title": "Please list each species planted during this activity and any additional information that you can that is relevant:",
             "source": "planting",

@@ -297,6 +297,15 @@
   ],
   "viewModel": [
     {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. "
+        }
+      ]
+    },
+    {
       "items": [
         {
           "title": "<b>Please record all grazing periods for this site:</b>",
