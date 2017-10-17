@@ -20,7 +20,7 @@
                 {
                     "dataType": "number",
                     "description": "",
-                    "name": "areaTreatedHa"
+                    "name": "numberAdded"
                 },
                 {
                     "dataType": "number",
@@ -42,6 +42,15 @@
     ],
     "viewModel": [
         {
+            "type": "row",
+            "items": [
+                {
+                    "type": "literal",
+                    "source": "<b>Please note</b> Activities to restore habitat features are included under any or all of the following; “Add coarse woody debris” and “Retain fallen timber”."
+                }
+            ]
+        },
+        {
             "items": [
                 {
                     "title": "Please complete the following:",
@@ -53,8 +62,8 @@
                             "type": "selectOne"
                         },
                         {
-                            "title": "Area treated (Ha)",
-                            "source": "areaTreatedHa",
+                            "title": "Number of habitat features added",
+                            "source": "numberAdded",
                             "type": "number"
                         },
                         {
