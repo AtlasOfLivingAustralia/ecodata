@@ -124,7 +124,6 @@ class ApiKeyFilters {
         if (config) {
             whiteList.addAll(config.split(',').collect({it.trim()}))
         }
-        log.debug whiteList
         whiteList
     }
 
