@@ -301,5 +301,13 @@ class MetadataController {
         render scoreMaps as JSON
     }
 
+    def getUniqueDataTypes(){
+        List datatypes = metadataService.getUniqueDataTypes()
+        render( text: datatypes as JSON, contentType: 'application/json')
+    }
 
+    def getIndicesForDataModels(){
+        Map indices = metadataService.getIndicesForDataModels()
+        render( text: indices as JSON, contentType: 'application/json')
+    }
 }

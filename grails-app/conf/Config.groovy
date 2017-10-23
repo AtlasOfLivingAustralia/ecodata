@@ -465,42 +465,6 @@ if(!spatial.geoJsonEnvelopeConversionThreshold){
     spatial.geoJsonEnvelopeConversionThreshold = 1_000_000
 }
 
-if(!biocollect.facets.project){
-    biocollect.facets.project = [
-        "isExternal",
-        "organisationFacet",
-        "uNRegions",
-        "countries",
-        "origin",
-        "scienceType",
-        "tags",
-        "difficulty",
-        "status",
-        "typeOfProject",
-        "ecoScienceType",
-        "associatedProgramFacet",
-        "siteNameFacet",
-        "associatedSubProgramFacet",
-        "plannedStartDate",
-        "fundingSourceFacet",
-        "reportingThemesFacet",
-        "typeFacet",
-        "assessment",
-        "stateFacet",
-        "lgaFacet",
-        "nrmFacet",
-        "mvgFacet",
-        "mainThemeFacet",
-        "ibraFacet",
-        "imcra4_pbFacet",
-        "otherFacet",
-        "electFacet",
-        "cmzFacet",
-        "meriPlanAssetFacet",
-        "partnerOrganisationTypeFacet"
-    ]
-}
-
 homepageIdx {
     elasticsearch   {
         fieldsAndBoosts {

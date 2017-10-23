@@ -637,4 +637,12 @@ class SearchController {
             render ([status:'error', error:'Invalid query (expected: name, lat and lng)'] as JSON)
         }
     }
+
+    /**
+     * A test method to get the document mapping used by Elastic Search (or will be used by in the next re-index).
+     * @return
+     */
+    def getMapping(){
+        render(text: elasticSearchService.getMapping() as JSON, contentType: 'application/json')
+    }
 }

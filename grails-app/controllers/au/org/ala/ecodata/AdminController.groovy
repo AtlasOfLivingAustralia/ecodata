@@ -608,10 +608,14 @@ class AdminController {
         def model = request.JSON
         log.debug "template = ${id} model = ${model}"
         log.debug "model class is ${model.getClass()}"
-        metadataService.updateOutputDataModel(model, id)
+        def status = metadataService.updateOutputDataModel(model, id)
         flash.message = "Output data model updated."
-        def result = model
-        render result
+        if(status?.error){
+            render text: status as JSON, contentType: 'application/json'
+        } else {
+            def result = model
+            render text:  result as JSON, contentType: 'application/json'
+        }
     }
 
     @AlaSecured("ROLE_ADMIN")
@@ -705,5 +709,10 @@ class AdminController {
 
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def getIndexNames() {
+        Map model = [indexNames: metadataService.getIndicesForDataModels()]
+        render view: 'indexNames', model: model
+    }
 
 }

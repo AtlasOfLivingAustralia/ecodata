@@ -8,15 +8,14 @@ import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
-import org.codehaus.groovy.grails.web.json.JSONException
-import org.codehaus.groovy.grails.web.json.JSONObject
 import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
-import java.util.zip.ZipInputStream
 import java.util.zip.ZipEntry
+import java.util.zip.ZipInputStream
 
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class MetadataService {
 
@@ -24,6 +23,8 @@ class MetadataService {
     private static final String SPATIAL_PORTAL_NO_MATCH_VALUE = 'n/a'
 
     private static final int BATCH_LIMIT = 200
+
+    private static final List IGNORE_DATA_TYPES = ['lookupByDiscreteValues', 'lookupRange']
 
     def grailsApplication, webService, cacheService, messageSource, excelImportService, emailService, userService, commonService
 
@@ -113,13 +114,29 @@ class MetadataService {
         return null
     }
 
+    Map getOutputNameAndDataModelForAnActivityName(name) {
+        def outputList = activitiesModel().activities.find { it.name == name }?.outputs
+        if (outputList && outputList.size() > 0) {
+            return activitiesModel().outputs.grep { it.name in outputList }?.collectEntries { [(it.name): getOutputDataModel(it.template)] }
+        }
+        return null
+    }
     def updateOutputDataModel(model, templateName) {
-        log.debug "updating template name = ${templateName}"
-        writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
-        // make sure it gets reloaded
-        cacheService.clear(templateName + '-model')
-        String bodyText = "The output data model ${model} has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
-        emailService.emailSupport("Output model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
+        Map isDataModelValid = isDataModelValid(model)
+        if(isDataModelValid.valid){
+            log.debug "updating template name = ${templateName}"
+            writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
+            // make sure it gets reloaded
+            cacheService.clear(templateName + '-model')
+            String bodyText = "The output data model ${model} has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
+            emailService.emailSupport("Output model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
+            [error: false]
+        } else {
+            [
+                    message: "Error! Model is not valid. The following indexes are at fault - ${isDataModelValid?.errorInIndex?.join(',')}"
+                    , error: true
+            ]
+        }
     }
 
     def getModelName(output, type) {
@@ -654,5 +671,133 @@ class MetadataService {
         } else {
             return [status: 'error', errors: ['No such id']]
         }
+    }
+
+    /**
+     * Get a unique list of data types used by all models.
+     * @return
+     */
+    List getUniqueDataTypes(){
+        Set dataTypes = new HashSet()
+        activitiesModel().outputs.each({
+            Map dataModel = getOutputDataModel(it.template)
+            dataModel.dataModel.each({
+                dataTypes.add(it.dataType)
+            })
+        })
+
+        dataTypes.asList()
+    }
+
+    /**
+     * Find custom indices used by data models.
+     * @return
+     */
+    Map getIndicesForDataModels(){
+        Map indices = [:].withDefault { [] }
+        activitiesModel()?.outputs.each({
+            Map dataModel = getOutputDataModel(it.template)
+            Map tempIndices = getIndicesForDataModel(dataModel)
+            tempIndices.each { key, value->
+                indices[key].addAll(value)
+            }
+        })
+
+        indices
+    }
+
+    /**
+     * Find custom indices used in a data model.
+     * @return
+     */
+    Map getIndicesForDataModel(Map model){
+        Map indices = [:].withDefault { [] }
+        model?.dataModel?.each { metadata ->
+            if(IGNORE_DATA_TYPES.contains(metadata.dataType))
+                return
+
+            switch (metadata.dataType){
+                case 'list':
+                    metadata?.columns?.each { column ->
+                        if(column.indexName){
+                            indices[column.indexName].add([
+                                    modelName: model.modelName, indexName: column.indexName, dataType: column.dataType,
+                                    path: ["data", metadata.name, column.name]
+                            ])
+                        }
+                    }
+                    break;
+                case 'matrix':
+                    metadata?.rows?.each { row ->
+                        if(row.indexName){
+                            indices[row.indexName].add([
+                                    modelName: model.modelName, indexName: row.indexName, dataType: row.dataType,
+                                    path: ["data", metadata.name, row.name]
+                            ])
+                        }
+                    }
+                    break
+                default:
+                    if(metadata.indexName){
+                        indices[metadata.indexName].add([
+                            modelName: model.modelName, indexName: metadata.indexName, dataType: metadata.dataType,
+                            path: ["data",metadata.name]
+                        ])
+                    }
+            }
+        }
+
+        indices
+    }
+
+    /**
+     * An index is valid if
+     * 1. all fields using this index has the same data type
+     * @param fields
+     * @return
+     */
+    boolean isIndexValid(List fields){
+        List dataTypes = fields?.collect { it.dataType }
+        dataTypes = dataTypes?.unique()
+        if(dataTypes?.size() > 1){
+            return false
+        }
+
+        true
+    }
+
+    /**
+     * Checks if user added indices to the passed data model is valid.
+     * Conditions to be met by a valid data model
+     * 1. Data type of an index must be the same in all data models using that index i.e. if an index 'individualCount'
+     * of data type 'number' is added to passed data model, then ensure 'individualCount' used in other models also is
+     * of type 'number'. Otherwise, the document is invalid.
+     */
+    Map isDataModelValid(Map model){
+        Map modelIndices = getIndicesForDataModel(model)
+        Map allIndices = getIndicesForDataModels()
+        boolean valid = true;
+        List errorInIndex = []
+        if(modelIndices){
+            modelIndices.each { String indexName,  List details ->
+                List dataType = details?.collect { it.dataType }
+                List existingDataTypes = allIndices?.get(indexName)?.collect { it.dataType }
+                List allDataTypes = []
+                if(dataType){
+                    allDataTypes.addAll(dataType)
+                }
+
+                if(existingDataTypes){
+                    allDataTypes.addAll(existingDataTypes)
+                }
+
+                if(allDataTypes.unique().size() > 1){
+                    valid = false
+                    errorInIndex.add(indexName)
+                }
+            }
+        }
+
+        [valid : valid, errorInIndex: errorInIndex]
     }
 }
