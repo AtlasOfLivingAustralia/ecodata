@@ -18,6 +18,15 @@
   ],
   "viewModel":[
     {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "<b>Please note</b> that this includes “Reduce disturbances to tree roots”."
+        }
+      ]
+    },
+    {
       "items": [
         {
           "source": "undertakeTreeRootDisturbanceControl",

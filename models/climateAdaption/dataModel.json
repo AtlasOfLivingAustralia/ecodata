@@ -22,7 +22,10 @@
         },
         {
           "dataType":"text",
-          "name":"provenanceId"
+          "name":"provenanceId",
+          "computed":{
+            "expression":"\"P\" || (101+index)"
+          }
 
         },
         {
@@ -131,7 +134,8 @@
         {
           "source": "provenanceId",
           "title": "Provenance ID",
-          "type": "text"
+          "type": "text",
+          "readOnly":true
 
         },
         {

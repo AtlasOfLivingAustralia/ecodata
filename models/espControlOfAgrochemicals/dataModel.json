@@ -31,6 +31,15 @@
   "title": "Control of Agrochemicals",
   "viewModel": [
     {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "<b>Please note</b> Activities to reduce the impacts of nutrients and agrochemicals are included under any or all of the following; “Nutrient management”, “Reduce wind-borne agrochemicals” and “Reduce water-borne movement of agrochemicals”. "
+        }
+      ]
+    },
+    {
       "items": [
         {
           "source": "undertakeWaterborneChemicalControl",

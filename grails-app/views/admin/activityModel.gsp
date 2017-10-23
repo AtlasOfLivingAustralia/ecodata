@@ -67,7 +67,7 @@
 
 <script id="editActivityTmpl" type="text/html">
 <div style="margin-top:4px"><span class="span2">Name:</span> <input type="text" class="input-large pull-right" data-bind="value:name"></div>
-<div class="clearfix"><span class="span2">Type:</span> <select data-bind="options:['Activity','Assessment','Report'],value:type" class="pull-right"></select></div>
+<div class="clearfix"><span class="span2">Type:</span> <select data-bind="options:['Activity','Assessment','Report','Milestone'],value:type" class="pull-right"></select></div>
 <div class="clearfix"><span class="span2">Category:</span> <input type="text" class="input-large pull-right" data-bind="value:category"></div>
 <div class="clearfix"><span class="span2">Enabled:</span><input type="checkbox" class="pull-right" data-bind="checked:enabled"></div>
 <div class="clearfix"><span class="span2">GMS ID:</span> <input type="text" class="input-large pull-right" data-bind="value:gmsId"></div>

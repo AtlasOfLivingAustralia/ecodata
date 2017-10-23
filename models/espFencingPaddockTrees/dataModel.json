@@ -50,6 +50,15 @@
   ],
   "viewModel": [
     {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "<b>Please note</b> Activities to Fence paddock trees are included under any or all of the following; “Activities to reduce isolation” and “Activities to improve connectivity”."
+        }
+      ]
+    },
+    {
       "items": [
         {
           "source": "undertakeFencingPaddockTrees",

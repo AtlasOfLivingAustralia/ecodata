@@ -20,15 +20,26 @@
           "description": "",
           "name": "status",
           "constraints": [
-            "Met",
-            "Partially met",
-            "Not met"
+            "Achieved",
+            "Not achieved"
           ],
           "validate": "required"
         },
         {
+          "dataType":"text",
+          "description":"",
+          "name":"outcomeNotAchievedReason",
+          "validate":"required",
+          "behaviour": [
+            {
+              "condition": "status == \"Not achieved\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
           "dataType": "text",
-          "description": "Succinctly summarise your projects success in meeting the outcome using evidence, such as monitoring data, to support your reporting. Consider any environmental, social and economic outcomes achieved.",
+          "description": "Succinctly summarise your projects success in meeting the outcome using evidence, such as KEQ monitoring data, to support your reporting. Consider any environmental, social and economic outcomes achieved.",
           "name": "outcomeResult",
           "validate": "required"
         }
@@ -54,6 +65,23 @@
           "description": "Summarise your findings for the KEQ by using data sourced from the monitoring approach.",
           "name": "evaluation",
           "validate": "required"
+        }
+      ]
+    },
+    {
+      "dataType":"text",
+      "name":"outputTargetsAchieved",
+      "validate":"required",
+      "constraints":["Yes","No"]
+    },
+    {
+      "dataType":"text",
+      "name":"outputTargetsNotAchievedReason",
+      "validate":"required",
+      "behaviour": [
+        {
+          "condition": "outputTargetsAchieved == \"No\"",
+          "type": "enable"
         }
       ]
     },
@@ -160,9 +188,15 @@
                   "type": "selectOne"
                 },
                 {
-                  "source": "outcomeResult",
-                  "preLabel": "Outline project progress in meeting the outcome",
+                  "source": "outcomeNotAchievedReason",
+                  "preLabel": "If outcomes were not achieved, report the reasons why",
                   "type": "textarea"
+                },
+                {
+                  "source": "outcomeResult",
+                  "preLabel": "Report on projects achievement of the outcome",
+                  "type": "textarea",
+                  "placeholder":"Summarise the achievement of the project for the life of the project, not just the most recent stage"
                 }
               ],
               "type": "col"
@@ -179,45 +213,30 @@
       "items":[
         {
           "type":"literal",
-          "source":"<h4>Key Evaluation Questions<h4>"
+          "source":"<h4>Project Outputs<h4>"
         }
       ]
     },
     {
-      "source": "keyEvaluationQuestions",
       "items": [
         {
           "items": [
             {
-              "items": [
-                {
-                  "source": "question",
-                  "preLabel": {
-                    "computed": "\\'KEQ \\' || (index + 1)"
-                  },
-                  "type": "textarea",
-                  "readonly": true
-                },
-                {
-                  "source": "monitoring",
-                  "preLabel": "Monitoring approach",
-                  "type": "textarea",
-                  "readonly": true
-                },
-                {
-                  "source": "evaluation",
-                  "preLabel": "Evaluation",
-                  "type": "textarea"
-                }
-              ],
-              "type": "col"
+              "source": "outputTargetsAchieved",
+              "preLabel": "Did you meet all project output targets?",
+              "type": "selectOne"
+            },
+            {
+              "source": "outputTargetsNotAchievedReason",
+              "preLabel": "If output targets were not met, report the reasons why",
+              "type": "textarea"
             }
           ],
-          "class": "output-section",
-          "type": "row"
+          "type": "col"
         }
       ],
-      "type": "repeat"
+      "class": "output-section",
+      "type": "row"
     },
     {
       "type":"row",
@@ -234,7 +253,7 @@
           "items": [
             {
               "source": "lessonsLearned",
-              "preLabel": "What lessons have you or your organisation learnt while undertaking this project?",
+              "preLabel": "What lessons has the organisation learnt while undertaking this project?",
               "type": "textarea"
             },
             {
