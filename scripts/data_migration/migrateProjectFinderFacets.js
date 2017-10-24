@@ -14,12 +14,12 @@
  * 
  * Created by Temi on 16/10/17.
  */
-var hubs = db.hub.find({});
+var hubs = db.hub.find({facets: {$ne: null}});
 print("updating " +hubs.count()+ " hubs");
 
 while (hubs.hasNext()) {
     var hub = hubs.next();
-    db.hub.update({hubId: hub.hubId}, {"$set": {"pages.projectFinder.facets": hub.facets}, "$unset": {facets: null}});
+    db.hub.update({hubId: hub.hubId}, {"$set": {"pages.projectFinder": {"facets" :hub.facets}}, "$unset": {facets: null}});
 }
 
 print("completed updating hubs");

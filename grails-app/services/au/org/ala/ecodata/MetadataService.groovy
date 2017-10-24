@@ -127,7 +127,7 @@ class MetadataService {
             log.debug "updating template name = ${templateName}"
             writeWithBackup(model, grailsApplication.config.app.external.model.dir, templateName, 'dataModel', 'json')
             // make sure it gets reloaded
-            cacheService.clear(templateName + '-model')
+            clearCacheForTemplate(templateName)
             String bodyText = "The output data model ${model} has been edited by ${userService.currentUserDisplayName?: 'an unknown user'} on the ${grailsApplication.config.grails.serverURL} server"
             emailService.emailSupport("Output model updated in ${grailsApplication.config.grails.serverURL}", bodyText)
             [error: false]
@@ -137,6 +137,11 @@ class MetadataService {
                     , error: true
             ]
         }
+    }
+
+    def clearCacheForTemplate(String templateName){
+        cacheService.clear(templateName + '-model')
+        cacheService.clear("indices-for-data-models")
     }
 
     def getModelName(output, type) {
@@ -694,16 +699,18 @@ class MetadataService {
      * @return
      */
     Map getIndicesForDataModels(){
-        Map indices = [:].withDefault { [] }
-        activitiesModel()?.outputs.each({
-            Map dataModel = getOutputDataModel(it.template)
-            Map tempIndices = getIndicesForDataModel(dataModel)
-            tempIndices.each { key, value->
-                indices[key].addAll(value)
-            }
-        })
+        cacheService.get('indices-for-data-models', {
+            Map indices = [:].withDefault { [] }
+            activitiesModel()?.outputs.each({
+                Map dataModel = getOutputDataModel(it.template)
+                Map tempIndices = getIndicesForDataModel(dataModel)
+                tempIndices.each { key, value->
+                    indices[key].addAll(value)
+                }
+            })
 
-        indices
+            indices
+        })
     }
 
     /**

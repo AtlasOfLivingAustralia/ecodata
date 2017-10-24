@@ -831,6 +831,7 @@ class ElasticSearchService {
             // changing status to deleted so that works activity with no output is not indexed
             if(!output){
                 activity.status = DELETED
+                return
             }
 
             isWorksActivity = !!output
@@ -909,7 +910,10 @@ class ElasticSearchService {
             projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
-            addDataForCustomIndexFields(activity, pActivity)
+
+            String formName = isWorksActivity? pActivity.type : pActivity.pActivityFormName
+            Map activityMetadata = metadataService.getOutputNameAndDataModelForAnActivityName(formName)
+            addDataForCustomIndexFields(activity, activityMetadata)
 
             // overwrite any project properties that has same name as activity properties.
             project.putAll(activity)
@@ -947,15 +951,14 @@ class ElasticSearchService {
     /**
      * Find value for an index and add it to activity object.
      * @param activity
-     * @param pActivity
+     * @param activityMetadata
      * @return
      */
-    Map addDataForCustomIndexFields(Map activity, Map pActivity){
+    Map addDataForCustomIndexFields(Map activity, Map activityMetadata){
         List outputs = outputService.findAllForActivityId(activity.activityId)
-        Map activityMetadata = metadataService.getOutputNameAndDataModelForAnActivityName(pActivity.pActivityFormName)
-        activityMetadata.each{ outputName, dataModel ->
-            Map output = outputs.find{it.name == outputName}
-            if(output){
+        if(outputs){
+            activityMetadata?.each{ outputName, dataModel ->
+                Map output = outputs.find{it.name == outputName}
                 Map indices = metadataService.getIndicesForDataModel(dataModel)
                 indices?.each{ index, fields ->
                     activity[index] = []

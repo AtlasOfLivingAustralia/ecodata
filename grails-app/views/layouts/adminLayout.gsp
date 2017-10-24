@@ -103,7 +103,7 @@
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'searchScores')}"
                                        title="Scores list"/>
                     <ec:breadcrumbItem href="${createLink(controller: 'admin', action: 'getIndexNames')}"
-                                       title="List indices"/>
+                                       title="List custom indices"/>
 
                 </ul>
 
