@@ -5,6 +5,7 @@
             "dataType": "date",
             "description": "The date on which the sighting was made.",
             "name": "surveyDate",
+            "indexName": "surveyDate",
             "dwcAttribute": "eventDate",
             "validate": "required"
         },
@@ -12,6 +13,7 @@
             "dataType": "time",
             "description": "The time at which the sighting was made.",
             "name": "surveyStartTime",
+            "indexName": "eventTime",
             "dwcAttribute": "eventTime"
         },
         {
@@ -36,6 +38,7 @@
             "dataType": "number",
             "description": "The number of individuals or colonies (for certain insects).",
             "name": "individualCount",
+            "indexName": "individualCounter",
             "dwcAttribute": "individualCount",
             "defaultValue": "1",
             "validate": "min[1]"
@@ -58,7 +61,8 @@
         {
             "dataType": "image",
             "description": "Upload a photo taken of the species at the time of the record. This is essential for verification of the record.",
-            "name": "sightingPhoto"
+            "name": "sightingPhoto",
+            "indexName": "multimedia"
         },
         {
             "dataType": "geoMap",
@@ -88,6 +92,7 @@
             "dataType": "set",
             "description": "Tag this sighting with species group and/or sub-group",
             "name": "tags",
+            "indexName": "tags",
             "constraints": [
                 "Amphibians",
                 "Amphibians - Australian Ground Frogs",
@@ -258,6 +263,16 @@
                         "preLabelClass": "span4",
                         "type": "speciesSearchWithImagePreview",
                         "dataClass": "span8"
+                    }],
+                    "computed": null,
+                    "type": "row"
+                },
+                {
+                    "items": [{
+                        "source": "<a href='https://www.ala.org.au/faq/species-identification/' target='_blank'>FAQ<\/a>",
+                        "inline": true,
+                        "preLabelClass": "span4",
+                        "type": "literal"
                     }],
                     "computed": null,
                     "type": "row"

@@ -54,7 +54,8 @@
         {
             "dataType": "text",
             "name": "mapGrid",
-            "description": ""
+            "description": "",
+            "indexName": "mapGrid"
         },
         {
             "dataType": "text",
@@ -113,12 +114,14 @@
                 {
                     "vegDescription": "",
                     "percentCover": "",
-                    "vegType": "Main vegetation overstorey"
+                    "vegType": "Main vegetation overstorey",
+                    "indexName": "vegTypeTableIndex"
                 },
                 {
                     "vegDescription": "",
                     "percentCover": "",
-                    "vegType": "Main vegetation understorey"
+                    "vegType": "Main vegetation understorey",
+                    "indexName": "vegTypeTableIndex"
                 }
             ]
         },

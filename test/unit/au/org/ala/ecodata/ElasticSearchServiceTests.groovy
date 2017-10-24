@@ -1,4 +1,5 @@
 package au.org.ala.ecodata
+
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
 import grails.test.mixin.web.ControllerUnitTestMixin
@@ -8,7 +9,7 @@ import org.junit.Before
  */
 @TestFor(ElasticSearchService)
 @TestMixin(ControllerUnitTestMixin) // Used to register JSON converters.
-class ElasticSearchServiceTests {
+class ElasticSearchServiceTests{
 
     private static final String PROGRAM_1 = "Program1"
     private static final String SUB_PROGRAM_1 = "SubProgram1"
@@ -30,7 +31,11 @@ class ElasticSearchServiceTests {
 
     @Before
     public void indexEntities() {
-
+        CacheService cacheService = new CacheService()
+        MetadataService metadataService = new MetadataService()
+        metadataService.cacheService = cacheService
+        service.cacheService = cacheService
+        service.metadataService = metadataService
         grailsApplication.config.app.facets.geographic.contextual.state='cl927'
         service.initialize()
         service.deleteIndex("search") // The elastic search service relies on the search index, this actually forces it to be created.
