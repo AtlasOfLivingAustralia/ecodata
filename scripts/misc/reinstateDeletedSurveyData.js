@@ -20,7 +20,7 @@ while (activities.hasNext()) {
     while (outputs.hasNext()) {
         var output = outputs.next();
         // Update documents status for fhe given outputId
-        ecodataDb.document.update({outputId: output.outputId},{$set:{status:'active'}},{multi:true});
+        ecodataDb.document.update({outputId: output.outputId},{$set:{status:'active', hosted:'images.ala.org.au'}},{multi:true});
 
         // Update record status
         ecodataDb.record.update({outputId: output.outputId},{$set:{status:'active'}},{multi:true});
