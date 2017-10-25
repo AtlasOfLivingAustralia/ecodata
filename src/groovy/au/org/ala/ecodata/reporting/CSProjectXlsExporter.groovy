@@ -62,6 +62,7 @@ class CSProjectXlsExporter extends ProjectExporter {
     ActivityService activityService = Holders.grailsApplication.mainContext.getBean("activityService")
     RecordService recordService = Holders.grailsApplication.mainContext.getBean("recordService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
+    PermissionService permissionService = Holders.grailsApplication.mainContext.getBean("permissionService")
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -149,6 +150,12 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     private AdditionalSheet createSurveySheet(Map projectActivity, Set<String> activityIds = null) {
         AdditionalSheet sheet = null
+        def userId = userService.currentUserDetails?.userId
+
+        boolean userIsAlaAdmin = false
+        if (userId && permissionService.isUserAlaAdmin(userId)) {
+            userIsAlaAdmin = true
+        }
 
         List activityList = []
         activityList.addAll(activityIds)
@@ -187,6 +194,12 @@ class CSProjectXlsExporter extends ProjectExporter {
                             generalLongitudeGetter
                     ]
 
+                    boolean userIsProjectMember = false
+                    if (userId) {
+                        def members = permissionService.getMembersForProject(activity.projectId)
+                        userIsProjectMember = members.find{it.userId == userId} || userIsAlaAdmin
+                    }
+
                     activity?.outputs?.each { output ->
                         Map outputConfig = outputProperties(output.name)
                         if (!uniqueOutputs.contains(output.name)) {
@@ -198,6 +211,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
                         OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
 
+                        processor.hideMemberOnlyAttributes(output, outputModel, userIsProjectMember)
                         List rowSets = processor.flatten(output, outputModel)
 
                         // some outputs (e.g. with list datatypes) result in multiple rows in the spreadsheet, so make sure that the existing rows are duplicated
