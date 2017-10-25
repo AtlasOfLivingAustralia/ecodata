@@ -714,6 +714,22 @@ class MetadataService {
     }
 
     /**
+     * Remove indices added from template name.
+     * @return
+     */
+    Map getIndicesForDataModelsMinusIndicesForTemplate(String templateName, Map indices){
+        indices?.each { String indexName, List dataTypeDetails ->
+            List removeDataTypeDetails = dataTypeDetails?.grep {
+                it.modelName == templateName
+            }
+
+            dataTypeDetails.removeAll(removeDataTypeDetails)
+        }
+
+        indices
+    }
+
+    /**
      * Find custom indices used in a data model.
      * @return
      */
@@ -783,6 +799,7 @@ class MetadataService {
     Map isDataModelValid(Map model){
         Map modelIndices = getIndicesForDataModel(model)
         Map allIndices = getIndicesForDataModels()
+        allIndices = getIndicesForDataModelsMinusIndicesForTemplate(model.modelName, allIndices)
         boolean valid = true;
         List errorInIndex = []
         if(modelIndices){
