@@ -412,7 +412,11 @@ class SearchController {
                 }
                 params.fileExtension = "xlsx"
                 Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
-                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
+                    String ELECTORATES = 'electFacet'
+                    params.facets = ELECTORATES
+                    SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+                    List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
+                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'), electorates)
                     exporter.save(outputStream)
                 }
                 downloadService.downloadProjectDataAsync(params, doDownload)
@@ -420,13 +424,13 @@ class SearchController {
         }
     }
 
-    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport) {
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport, List<String> electorates) {
         long start = System.currentTimeMillis()
 
         File file = File.createTempFile("download", "xlsx")
         XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
 
         Project.withSession { session ->
             int batchSize = 50
