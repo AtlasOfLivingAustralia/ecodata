@@ -985,17 +985,20 @@ class ElasticSearchService {
                             case 'number':
                                 List number = getDataFromPath(output, field.path)
                                 if(number){
-                                    activity[index] = number.getAt(0)
+                                    activity[index].addAll(number)
                                 }
                                 break;
                             case 'date':
                                 List date = getDataFromPath(output, field.path)
                                 if(date){
-                                    activity[index] = date.getAt(0)
+                                    activity[index].addAll(date)
                                 }
                                 break;
                             default:
-                                activity[index].addAll(getDataFromPath(output, field.path))
+                                List result = getDataFromPath(output, field.path)
+                                if(result){
+                                    activity[index].addAll(result)
+                                }
                                 break;
                         }
                     }

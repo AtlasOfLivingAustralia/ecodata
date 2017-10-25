@@ -14,7 +14,7 @@
  * 
  * Created by Temi on 16/10/17.
  */
-var hubs = db.hub.find({facets: {$ne: null}});
+var hubs = db.hub.find({});
 print("updating " +hubs.count()+ " hubs");
 
 while (hubs.hasNext()) {
