@@ -378,27 +378,20 @@ class DownloadService {
         List documentIds = []
         Map<String, String> recordDocumentMap = [:]
 
+        def recordList
         if (activityIdsSet == null || activityIdsSet.isEmpty()) {
-            Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED).each { Record record ->
-                record.multimedia?.each { multimedia ->
-                    if (multimedia.documentId) {
-                        recordDocumentMap.put(multimedia.documentId, record.occurrenceID ?: null)
-                        documentIds.add(multimedia.documentId)
-                    }
-                }
-            }
-
+            recordList = Record.findAllByProjectIdAndStatusNotEqual(projectId, Status.DELETED)
         } else {
-
             List activityIds = []
             activityIds.addAll(activityIdsSet)
+            recordList = Record.findAllByProjectIdAndActivityIdInListAndStatusNotEqual(projectId, activityIds, Status.DELETED)
+        }
 
-            Record.findAllByProjectIdAndActivityIdInListAndStatusNotEqual(projectId, activityIds, Status.DELETED).each { Record record ->
-                record.multimedia?.each { multimedia ->
-                    if (multimedia.documentId) {
-                        recordDocumentMap.put(multimedia.documentId, record.occurrenceID ?: null)
-                        documentIds.add(multimedia.documentId)
-                    }
+        recordList.each { Record record ->
+            record.multimedia?.each { multimedia ->
+                if (multimedia.documentId) {
+                    recordDocumentMap.put(multimedia.documentId, record.occurrenceID ?: null)
+                    documentIds.add(multimedia.documentId)
                 }
             }
         }
@@ -410,7 +403,7 @@ class DownloadService {
             documents[recOccurrentId ?: null] << doc
         }
 
-      documents
+        documents
     }
 
     XlsExporter exportProjectsToXls(Map<String, Set<String>> activityIdsByProject, Map<String, Object> documentMap, String fileName = "results", TimeZone timeZone) {
