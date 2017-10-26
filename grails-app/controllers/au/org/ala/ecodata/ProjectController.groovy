@@ -364,6 +364,10 @@ class ProjectController {
         render( text: dataCollectionWhiteList as JSON, contentType: 'application/json' )
     }
 
+    def getDefaultFacets(){
+        List facets = grailsApplication.config.facets.project
+        render text: facets as JSON, contentType: 'application/json'
+    }
 
     private Map buildParams(Map params){
         Map values = [:]

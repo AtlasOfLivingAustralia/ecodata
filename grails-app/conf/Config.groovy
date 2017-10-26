@@ -760,3 +760,262 @@ log4j = {
             'org.hibernate',
             'net.sf.ehcache.hibernate'
 }
+
+
+facets.data = [
+        [
+                name: "projectNameFacet",
+                title: 'Project',
+                dataType: 'text',
+                helpText: 'Name of the project'
+        ],
+        [
+                name:  "organisationNameFacet",
+                title: 'Organisation',
+                dataType: 'text',
+                helpText: 'Organisations either running projects or associated with projects (eg. as partners).'
+        ],
+        [
+                name: "projectActivityNameFacet",
+                title: 'Survey name',
+                dataType: 'text',
+                helpText: 'Name of survey'
+        ],
+        [
+                name: "recordNameFacet",
+                title:  'Species name',
+                dataType: 'text',
+                helpText: 'Sighting\'s scientific name'
+        ],
+        [
+                name: "userId",
+                title:  'Owner',
+                dataType: 'text',
+                helpText: 'User who created the record'
+        ],
+        [
+                name: "embargoedFacet",
+                dataType: 'text',
+                title:  'Unpublished records'
+        ],
+        [
+                name:  "activityLastUpdatedMonthFacet",
+                title:  'Month',
+                dataType: 'text',
+                helpText: 'Month the record was last edited'
+        ],
+        [
+                name:  "activityLastUpdatedYearFacet",
+                title:  'Year',
+                dataType: 'text',
+                helpText: 'Year the record was last edited'
+        ],
+        [
+                name:  "surveyMonthFacet",
+                title:  'Month',
+                dataType: 'text',
+                helpText: 'Month the sighting was observed'
+        ],
+        [
+                name:  "surveyYearFacet",
+                title:  'Year',
+                dataType: 'text',
+                helpText: 'Year the sighting was observed'
+        ],
+        [
+                name:  "individualCount",
+                title:  'Presence or Absence',
+                dataType: 'number',
+                helpText: 'Is species present or absent',
+                facetTermType: 'PresenceOrAbsence'
+        ]
+]
+
+facets.project = [
+        [
+                name: "isExternal",
+                title: 'Project',
+                dataType: 'text',
+                helpText: 'Name of the project'
+        ],
+        [
+                name: "organisationFacet",
+                title: 'Organisation',
+                dataType: 'text',
+                helpText: 'Organisations either running projects or associated with projects (eg. as partners).'
+        ],
+        [
+                name: "uNRegions",
+                title: 'UN Regions',
+                dataType: 'text',
+                helpText: 'The continental regions in which projects occur according to the United Nations regional classification scheme.'
+        ],
+        [
+                name: "countries",
+                title: 'Countries',
+                dataType: 'text',
+                helpText: 'Countries in which people can participate in the project.'
+        ],
+        [
+                name: "origin",
+                title: 'Source System',
+                dataType: 'text',
+                helpText: 'The project catalogue system in which the project is registered.'
+        ],
+        [
+                name: "scienceType",
+                title: 'Science Type',
+                dataType: 'text',
+                helpText: 'Categories of science which survey-based projects are addressing.'
+        ],
+        [
+                name: "tags",
+                title: 'Tags',
+                dataType: 'text',
+                helpText: 'Classifications for citizen science projects to assist decision making for participation'
+        ],
+        [
+                name: "difficulty",
+                title: 'Difficulty',
+                dataType: 'text',
+                helpText: 'A general level of difficulty for citizen science participation'
+        ],
+        [
+                name: "status",
+                title: 'Status',
+                dataType: 'text',
+                helpText: 'Active projects are still running, whereas \'completed\' projects have ended and are no longer \'active\''
+        ],
+        [
+                name: "typeOfProject",
+                title: 'Project Types',
+                dataType: 'text',
+                helpText: 'The project type reflects the hub in which projects were created, but will be either \'survey-based\' (Citizen and Ecological science) or \'schedule-based\' (Works and MERIT) formats for recording data.'
+        ],
+        [
+                name: "ecoScienceType",
+                title: 'Science Type',
+                dataType: 'text',
+                helpText: 'Categories of science which survey-based projects are addressing.'
+        ],
+        [
+                name: "associatedProgramFacet",
+                title: 'Program Name',
+                dataType: 'text',
+                helpText: 'The administrative Program under which a project is being run.'
+        ],
+        [
+                name: "siteNameFacet",
+                title: 'Site Name',
+                dataType: 'text',
+                helpText: 'A site at which data has been collected for one or projects.'
+        ],
+        [
+                name: "associatedSubProgramFacet",
+                title: 'Sub Program',
+                dataType: 'text',
+                helpText: 'Titles of sub-programmes under listed programmes.'
+        ],
+        [
+                name: "plannedStartDate",
+                title: 'Project Start Date',
+                dataType: 'date',
+                helpText: 'Selects projects that start between the specified date range.',
+                facetTermType: 'Date'
+        ],
+        [
+                name: "fundingSourceFacet",
+                title: 'Funding source',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "reportingThemesFacet",
+                title: 'Reporting theme',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "typeFacet",
+                title: 'Activity type',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "assessment",
+                title: 'Assessment',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "stateFacet",
+                title: 'State',
+                dataType: 'text',
+                helpText: 'Australian State'
+        ],
+        [
+                name: "lgaFacet",
+                title: 'LGA',
+                dataType: 'text',
+                helpText: 'Local Government Areas'
+        ],
+        [
+                name: "nrmFacet",
+                title: 'Management Areas',
+                dataType: 'text',
+                helpText: 'Natural Resource Management Areas'
+        ],
+        [
+                name: "mvgFacet",
+                title: 'Major Vegetation Group',
+                dataType: 'text',
+                helpText: 'National Vegetation Information System Major Vegetation Group'
+        ],
+        [
+                name: "mainThemeFacet",
+                title: 'Reporting Theme',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "ibraFacet",
+                title: 'Biogeographic Regions',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "imcra4_pbFacet",
+                title: 'Marine Regions',
+                helpText: ''
+        ],
+        [
+                name: "otherFacet",
+                title: 'Other Regions',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "electFacet",
+                title: 'Federal Electorates',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "cmzFacet",
+                title: 'CMZ',
+                dataType: 'text',
+                helpText: 'Conservation Management Zones'
+        ],
+        [
+                name: "meriPlanAssetFacet",
+                title: 'Assets Addressed',
+                dataType: 'text',
+                helpText: 'Assets addressed in the MERI plan'
+        ],
+        [
+                name: "partnerOrganisationTypeFacet",
+                title: 'Partner Organisations',
+                dataType: 'text',
+                helpText: 'Organisation type of partner organisations'
+        ]
+]

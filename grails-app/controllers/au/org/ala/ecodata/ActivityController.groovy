@@ -327,4 +327,9 @@ class ActivityController {
             render status: 403, text: error
         }
     }
+
+    def getDefaultFacets(){
+        List facets = grailsApplication.config.facets.data
+        render text: facets as JSON, contentType: 'application/json'
+    }
 }

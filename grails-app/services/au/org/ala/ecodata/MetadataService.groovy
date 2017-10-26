@@ -806,6 +806,7 @@ class MetadataService {
             modelIndices.each { String indexName,  List details ->
                 List dataType = details?.collect { it.dataType }
                 List existingDataTypes = allIndices?.get(indexName)?.collect { it.dataType }
+                List defaultDataTypes = grailsApplication.config.facets.data?.grep { it.name == indexName }?.collect { it.dataType }
                 List allDataTypes = []
                 if(dataType){
                     allDataTypes.addAll(dataType)
@@ -813,6 +814,10 @@ class MetadataService {
 
                 if(existingDataTypes){
                     allDataTypes.addAll(existingDataTypes)
+                }
+
+                if(defaultDataTypes){
+                    allDataTypes.addAll(defaultDataTypes)
                 }
 
                 if(allDataTypes.unique().size() > 1){
