@@ -44,7 +44,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
+import static au.org.ala.ecodata.Status.COMPLETED
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
@@ -831,13 +833,14 @@ class ElasticSearchService {
             // changing status to deleted so that works activity with no output is not indexed
             if(!output){
                 activity.status = DELETED
-                return
+                return activity
             }
 
             isWorksActivity = !!output
         }
 
         if (activity.projectActivityId || isWorksActivity) {
+            Date eventDate
             def organisation = organisationService.get(project?.organisationId)
 
             // Include project activity only for survey or works projects.
@@ -871,7 +874,11 @@ class ElasticSearchService {
                 values.commonName = it.commonName
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
                 values.multimedia = it.multimedia
-                values.eventDate = it.eventDate
+                if(it.eventDate){
+                    eventDate = recordService.parseDate(it.eventDate)
+                    values.eventDate = recordService.toStringIsoDateTime(eventDate)
+                }
+
                 values.eventTime = it.eventTime
                 values.individualCount = it.individualCount
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
@@ -890,6 +897,12 @@ class ElasticSearchService {
                 projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
                 projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
             }
+
+            if(eventDate){
+                activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
+                activity.surveyYear = new SimpleDateFormat("yyyy").format(eventDate)
+            }
+
             try {
                 // check if activity has images
                 Document image = Document.findByActivityIdAndRoleAndTypeAndFilenameIsNotNull(activity.activityId,'surveyImage', 'image')
@@ -985,13 +998,16 @@ class ElasticSearchService {
                             case 'number':
                                 List number = getDataFromPath(output, field.path)
                                 if(number){
-                                    activity[index].addAll(number)
+                                    activity[index].add(number)
                                 }
                                 break;
                             case 'date':
                                 List date = getDataFromPath(output, field.path)
                                 if(date){
-                                    activity[index].addAll(date)
+                                    Date dateObject = recordService.parseDate(date)
+                                    if(dateObject){
+                                        activity[index].add(recordService.toStringIsoDateTime(dateObject))
+                                    }
                                 }
                                 break;
                             default:

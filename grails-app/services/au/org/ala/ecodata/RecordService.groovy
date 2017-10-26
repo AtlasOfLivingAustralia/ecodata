@@ -1,26 +1,25 @@
 package au.org.ala.ecodata
 
-import org.joda.time.DateTimeZone
-import org.joda.time.format.DateTimeFormatter
-import org.joda.time.DateTime
-import org.joda.time.format.ISODateTimeFormat
-
-import static au.org.ala.ecodata.Status.ACTIVE
-import static au.org.ala.ecodata.Status.DELETED
-
 import au.com.bytecode.opencsv.CSVWriter
 import au.org.ala.web.AuthService
 import grails.converters.JSON
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang.StringEscapeUtils
+import org.apache.commons.lang.time.DateUtils
 import org.apache.http.client.methods.HttpPost
 import org.apache.http.entity.mime.HttpMultipartMode
 import org.apache.http.entity.mime.MultipartEntity
 import org.apache.http.entity.mime.content.FileBody
 import org.apache.http.entity.mime.content.StringBody
 import org.apache.http.impl.client.DefaultHttpClient
+import org.joda.time.DateTime
+import org.joda.time.DateTimeZone
+import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.ISODateTimeFormat
 
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 /**
  * Services for handling the creation of records with images.
  */
@@ -910,5 +909,21 @@ class RecordService {
         }
 
         name
+    }
+
+    /**
+     * Event date has a variety of standards. This will try and convert it into Date object.
+     * @param eventDate
+     * @return
+     */
+    Date parseDate(String eventDate){
+        Date date
+        try {
+            date = DateUtils.parseDate(eventDate, ["yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", "yyyy-MM-dd'T'HH:mm:ssXXX", "yyyy-MM-dd'T'HH:mm:ssXX", "yyyy-MM-dd'T'HH:mm:ssX", "dd-MM-yyyy"] as String[])
+        } catch (Exception pe){
+            log.error("Error parsing date ${eventDate}")
+        }
+
+        date
     }
 }
