@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import au.org.ala.web.AuthService
 import au.org.ala.web.CASRoles
+import org.grails.datastore.mapping.query.api.BuildableCriteria
 
 import static au.org.ala.ecodata.Status.DELETED
 /**
@@ -169,6 +170,49 @@ class PermissionService {
         }
         out.values().toList();
 
+    }
+
+    /**
+     * Return project members, support pagination
+     * @param projectId Project Id
+     * @param offset Page starting position
+     * @param max Page size
+     * @param roles Member roles
+     * @return One page of project member details
+     */
+    def getMembersForProjectPerPage(String projectId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
+        BuildableCriteria criteria = UserPermission.createCriteria()
+        List memebers = criteria.list(max:max, offset:offset) {
+            eq("entityId", projectId)
+            eq("entityType", Project.class.name)
+            ne("accessLevel", AccessLevel.starred)
+            inList("accessLevel", roles)
+        }
+
+        Map out = [:]
+        List userIds = []
+        memebers.each{
+            userIds.add(it.userId)
+            Map rec=[:]
+            rec.userId = it.userId
+            rec.role = it.accessLevel?.toString()
+            out.put(it.userId,rec);
+
+        }
+
+        def userList = authService.getUserDetailsById(userIds)
+        if (userList) {
+            def users = userList['users']
+
+            users.each { k, v ->
+                Map rec = out.get(k)
+                if (rec) {
+                    rec.displayName = v?.displayName
+                    rec.userName = v?.userName
+                }
+            }
+        }
+        [data:out.values(), count:memebers.totalCount]
     }
 
     def getMembersForOrganisation(String organisationId) {

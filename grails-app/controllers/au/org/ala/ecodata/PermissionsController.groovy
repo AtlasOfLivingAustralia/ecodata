@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import static au.org.ala.ecodata.Status.*
+import static org.apache.http.HttpStatus.*
 
 /**
  * Controller for getting and setting user <-> project
@@ -425,6 +426,28 @@ class PermissionsController {
             }
         } else {
             render status: 400, text: 'Required path not provided: projectId.'
+        }
+    }
+
+    /**
+     * Get project members, support pagination.
+     * @return project members one page at a time
+     */
+    def getMembersForProjectPerPage() {
+        String projectId = params.projectId
+        Integer start = params.getInt('offset')?:0
+        Integer size = params.getInt('max')?:10
+
+        if (projectId){
+            Project project = Project.findByProjectId(projectId)
+            if (project) {
+                Map results = permissionService.getMembersForProjectPerPage(projectId,start,size)
+                render(contentType: 'application/json', text: [ data: results.data, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+            } else {
+                response.sendError(SC_NOT_FOUND, 'Project not found.')
+            }
+        } else {
+            response.sendError(SC_BAD_REQUEST, 'Required path not provided: projectId.')
         }
     }
 
