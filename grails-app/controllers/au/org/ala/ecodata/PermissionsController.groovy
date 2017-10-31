@@ -442,7 +442,7 @@ class PermissionsController {
             Project project = Project.findByProjectId(projectId)
             if (project) {
                 Map results = permissionService.getMembersForProjectPerPage(projectId,start,size)
-                render(contentType: 'application/json', text: [ data: results.data, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
+                render(contentType: 'application/json', text: [ data: results.data, totalNbrOfAdmins: results.totalNbrOfAdmins, recordsTotal: results.count, recordsFiltered: results.count] as JSON)
             } else {
                 response.sendError(SC_NOT_FOUND, 'Project not found.')
             }

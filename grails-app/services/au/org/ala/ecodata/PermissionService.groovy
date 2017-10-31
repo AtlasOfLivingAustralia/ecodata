@@ -198,7 +198,6 @@ class PermissionService {
             Map rec=[:]
             rec.userId = it.userId
             rec.role = it.accessLevel?.toString()
-            rec.totalNbrOfAdmins = admins.size()
             out.put(it.userId,rec)
 
         }
@@ -215,7 +214,7 @@ class PermissionService {
                 }
             }
         }
-        [data:out.values(), count:memebers.totalCount]
+        [totalNbrOfAdmins: admins.size(), data:out.values(), count:memebers.totalCount]
     }
 
     def getMembersForOrganisation(String organisationId) {
