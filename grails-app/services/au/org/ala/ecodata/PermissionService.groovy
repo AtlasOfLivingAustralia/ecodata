@@ -181,6 +181,8 @@ class PermissionService {
      * @return One page of project member details
      */
     def getMembersForProjectPerPage(String projectId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
+        List admins = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevel(projectId, Project.class.name, AccessLevel.starred, AccessLevel.admin)
+
         BuildableCriteria criteria = UserPermission.createCriteria()
         List memebers = criteria.list(max:max, offset:offset) {
             eq("entityId", projectId)
@@ -196,7 +198,8 @@ class PermissionService {
             Map rec=[:]
             rec.userId = it.userId
             rec.role = it.accessLevel?.toString()
-            out.put(it.userId,rec);
+            rec.totalNbrOfAdmins = admins.size()
+            out.put(it.userId,rec)
 
         }
 
