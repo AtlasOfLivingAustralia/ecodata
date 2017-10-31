@@ -2,6 +2,7 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.DomainClassArtefactHandler
+import org.springframework.context.MessageSourceResolvable
 
 import java.text.SimpleDateFormat
 
@@ -9,6 +10,7 @@ class CommonService {
 
     //static transactional = false
     def grailsApplication, cacheService
+    def messageSource
 
     static dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
 
@@ -23,7 +25,7 @@ class CommonService {
      * @param o the domain instance
      * @param props the properties to use
      */
-    def updateProperties(o, props, boolean overrideUpdateDate = false) {
+    def updateProperties(o, props, boolean overrideUpdateDate = false) throws Exception{
         assert grailsApplication
         def domainDescriptor = grailsApplication.getArtefact(DomainClassArtefactHandler.TYPE,
                 o.getClass().name)
@@ -53,11 +55,20 @@ class CommonService {
             o[k] = v
         }
         // always flush the update so that that any exceptions are caught before the service returns
-        o.save(flush:true,failOnError:true)
+        o.save(flush:true)
         if (o.hasErrors()) {
             log.error("has errors:")
-            o.errors.each { log.error it }
-            throw new Exception(o.errors[0] as String);
+            List messages = []
+            o.errors?.getAllErrors().each { fieldError ->
+                log.error fieldError;
+                if(fieldError instanceof MessageSourceResolvable) {
+                    messages.add( messageSource.getMessage(fieldError, Locale.getDefault()))
+                } else {
+                    messages.add(fieldError.toString())
+                }
+            }
+
+            throw new Exception( messages.join(', '));
         }
     }
 
