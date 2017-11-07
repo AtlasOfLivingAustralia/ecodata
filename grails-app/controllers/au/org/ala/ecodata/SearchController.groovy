@@ -341,7 +341,8 @@ class SearchController {
     @RequireApiKey
     def activityReport() {
         Map params = request.JSON
-        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, params.approvedActivitiesOnly?:true)
+        def approvedOnly = params.approvedActivitiesOnly
+        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, approvedOnly)
         render results as JSON
     }
 
