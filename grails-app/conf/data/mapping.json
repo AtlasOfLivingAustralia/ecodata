@@ -113,6 +113,13 @@
             "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
           }
         },
+        "industries":{
+          "type":"string",
+          "fields" : {
+            "industryFacet":{"type":"string", "index":"not_analyzed"}
+          }
+
+        },
 
         "name": {
           "type" : "string",
