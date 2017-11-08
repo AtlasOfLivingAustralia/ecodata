@@ -75,6 +75,7 @@ class Project {
     boolean isSciStarter = false
     List<String> uNRegions = []
     List<String> countries = []
+    List<String> industries = []
     String origin = 'atlasoflivingaustralia'
 
     boolean alaHarvest = false
@@ -184,6 +185,7 @@ class Project {
         countries nullable: true
         tags nullable: true
         alaHarvest nullable: true
+        industries nullable: true
     }
 }
 
