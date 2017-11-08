@@ -1017,5 +1017,10 @@ facets.project = [
                 title: 'Partner Organisations',
                 dataType: 'text',
                 helpText: 'Organisation type of partner organisations'
+        ],
+        [
+                name: "industryFacet",
+                title: "Industry",
+                helpText: "The industries relevant to the project"
         ]
 ]
