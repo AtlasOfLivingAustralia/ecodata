@@ -115,6 +115,7 @@
         },
         "industries":{
           "type":"string",
+          "path":"just_name",
           "fields" : {
             "industryFacet":{"type":"string", "index":"not_analyzed"}
           }
