@@ -1,71 +1,109 @@
-//load('uuid.js');
-var projects = db.project.find({associatedSubProgram:'Regional Funding', status:{$ne:'deleted'}});
-var organisations = [];
-var organisationNames = [
-    'Corangamite Catchment Management Authority',
-    'ACT',
-    'Port Phillip and Westernport Catchment Management Authority',
-    'Perth Region NRM',
-    'Western Local Land Services',
-    'Northern Tablelands Local Land Services',
-    'South Australian Murray-Darling Basin Natural Resources Management Board',
-    'Mallee Catchment Management Authority',
-    'South Coast Natural Resource Management Inc.',
-    'West Gippsland CMA'
+load('uuid.js');
+var projects = db.project.find({associatedSubProgram: 'Regional Funding', status: {$ne: 'deleted'}});
+var toReplace = ['Annual Report', 'Stage Report', 'Outcomes, Evaluation and Learning - final report', 'Progress, Outcomes and Learning - stage report'];
+var replaceWith = 'Regional Funding Final Report';
 
-    ];
+var i = 0;
+while (projects.hasNext()) {
+    var project = projects.next();
 
-var orgsuccess = true;
-for (var i=0; i<organisationNames.length; i++) {
-    var organisation = db.organisation.find({name:organisationNames[i]});
-    if (organisation.hasNext()) {
-        organisations.push(organisation.next().organisationId);
-    }
-    else {
-        orgsuccess = false;
-        print("No organisation found for name: "+organisationNames[i]);
-    }
-}
 
-if (orgsuccess) {
-    var toReplace = ['Annual Stage Report', 'Progress, Outcomes and Learning - stage report'];
-    var replaceWith = 'Stage Report';
-    while (projects.hasNext()) {
-        var project = projects.next();
+    var activities = db.activity.find(
+        {
+            projectId: project.projectId,
+            //plannedEndDate:{$gt:ISODate("2017-06-01T00:00:00Z"), $lt:ISODate("2017-08-01T00:00:00Z")},
+            plannedEndDate: {$gt: ISODate("2018-05-01T00:00:00Z")},
+            type: {$in: toReplace},
+            status: {$ne: 'deleted'}
+        });
 
-        if (organisations.indexOf(project.organisationId) >= 0) {
-            print("Matched project "+project.projectId+" for org "+project.organisationName);
-            var activities = db.activity.find(
-                {projectId:project.projectId,
-                    //plannedEndDate:{$gt:ISODate("2017-06-01T00:00:00Z"), $lt:ISODate("2017-08-01T00:00:00Z")},
-                    plannedEndDate:{$gt:ISODate("2017-08-01T00:00:00Z")},
-                    type:{$in:toReplace},
-                    status:{$ne:'deleted'}});
+    if (activities.count() == 0) {
 
-            if (activities.count() == 0) {
-                print("No matching activities for project "+project.projectId)
+        var isDone = db.activity.find({projectId:project.projectId, type:replaceWith});
+        if (isDone.count()== 0) {
+            print("No matching activities for project " + project.projectId);
+
+            activities = db.activity.find({projectId:project.projectId, status:{$ne:'deleted'}}).sort({plannedEndDate:-1});
+            if (activities.count() > 0) {
+                var activity = activities.next();
+                if (activity.plannedEndDate.getTime() > ISODate('2018-05-01T00:00:00Z').getTime()) {
+                    if (activity.plannedEndDate.getTime() < ISODate('2018-07-02T00:00Z')) {
+                        print("Adding new activity for project "+project.projectId);
+
+                        delete activity._id;
+                        activity.activityId = UUID.generate();
+                        activity.type = replaceWith;
+                        activity.description = 'Final Project Report';
+                        activity.progress = 'planned';
+                        db.activity.insert(activity);
+
+                    }
+                    else {
+                        print("Has > stage 7");
+                    }
+
+                }
+                else {
+                    print(activities.next().plannedEndDate);
+                }
+
+
             }
+            else {
+                print("No activities at all for "+project.projectId);
+            }
+        }
+
+
+    }
+    else if (activities.count() > 1) {
+        print(activities.count()+" activities for project " + project.projectId);
+
+        if (activities.count() == 2) {
+            var fixed = false;
             while (activities.hasNext()) {
                 var activity = activities.next();
 
-                if (activity.progress == 'planned') {
-                    print("Changing type of activity: "+activity.activityId);
-                    db.activity.update({activityId:activity.activityId}, {$set:{type:replaceWith}});
-                }
-                else if (activity.progress == 'started' || activity.progress == 'finished') {
-                    print("Adding activity as a clone of "+activity.activityId);
-                    //delete activity._id;
-                    //activity.activityId = UUID.generate();
-                    //activity.type = replaceWith;
-                    //db.activity.insert(activity);
+                if (activity.plannedEndDate.getTime() > ISODate('2018-05-01T00:00:00Z').getTime()
+                    && activity.plannedEndDate.getTime() < ISODate('2018-07-02T00:00Z')
+                    && activity.progress == 'planned') {
+
+                    if (!fixed) {
+                        print("Changing type of activity: " + activity.activityId);
+                        db.activity.update({activityId: activity.activityId}, {$set: {type: replaceWith}});
+
+                        fixed = true;
+                    }
+                    else {
+                        print("Deleting activity: " + activity.activityId);
+                        db.activity.update({activityId: activity.activityId}, {$set: {status: 'deleted'}});
+                    }
                 }
 
             }
-
         }
-        else if (organisationNames.indexOf(project.organisationName) >= 0) {
-            print("Project "+project.projectId+" has org name of "+project.organisationName+" but organisation id: "+project.organisationId);
-        }
-
     }
+    else {
+        i++;
+        while (activities.hasNext()) {
+            var activity = activities.next();
+
+            if (activity.progress == 'planned') {
+                print("Changing type of activity: " + activity.activityId);
+                db.activity.update({activityId: activity.activityId}, {$set: {type: replaceWith}});
+            }
+            else if (activity.progress == 'started' || activity.progress == 'finished') {
+                print("Adding activity as a clone of " + activity.activityId);
+                //delete activity._id;
+                //activity.activityId = UUID.generate();
+                //activity.type = replaceWith;
+                //db.activity.insert(activity);
+            }
+
+        }
+    }
+
+
 }
+
+print(i+ " simple cases");
