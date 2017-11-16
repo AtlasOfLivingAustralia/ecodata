@@ -433,6 +433,7 @@ class PermissionsController {
      * Get project members, support pagination.
      * @return project members one page at a time
      */
+    @RequireApiKey
     def getMembersForProjectPerPage() {
         String projectId = params.projectId
         Integer start = params.getInt('offset')?:0
