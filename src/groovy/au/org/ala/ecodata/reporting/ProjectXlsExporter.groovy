@@ -316,7 +316,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
             List properties = new ArrayList(projectProperties)
 
-            List<String> projectElectorates = project.sites?.collect { site?.extent?.geometry?.elect }?.flatten()?.findAll()
+            List<String> projectElectorates = project.sites?.collect { it?.extent?.geometry?.elect }?.flatten()?.findAll()
 
             distinctElectorates.each{ electorate ->
                 project[electorate] = projectElectorates.contains(electorate)? 'Y' : 'N'
