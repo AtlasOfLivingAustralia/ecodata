@@ -364,13 +364,9 @@ class ProjectController {
         render( text: dataCollectionWhiteList as JSON, contentType: 'application/json' )
     }
 
-    /**
-     * Get list of facets for homepage index i.e. index used to search projects
-     * @return
-     */
-    def getBiocollectFacets(){
-        List projectFacets = grailsApplication.config.biocollect.facets.project
-        render( text: [facets: projectFacets] as JSON, contentType: 'application/json' )
+    def getDefaultFacets(){
+        List facets = grailsApplication.config.facets.project
+        render text: facets as JSON, contentType: 'application/json'
     }
 
     private Map buildParams(Map params){

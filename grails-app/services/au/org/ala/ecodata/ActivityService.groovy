@@ -3,6 +3,7 @@ import com.mongodb.BasicDBObject
 import com.mongodb.DBCursor
 import com.mongodb.DBObject
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import au.org.ala.ecodata.metadata.*
 
 import javax.persistence.PessimisticLockException
 
@@ -23,24 +24,45 @@ class ActivityService {
     CommentService commentService
     UserService userService
     LockService lockService
+    MetadataService metadataService
+    PermissionService permissionService
 
-    def get(id, levelOfDetail = [], version = null) {
+    def get(id, levelOfDetail = [], version = null, userId = null, hideMemberOnlyFlds = false) {
+        def activity = null
+
         if (version) {
             def all = AuditMessage.findAllByEntityIdAndEntityTypeAndDateLessThanEquals(id, Activity.class.name,
                     new Date(version as Long), [sort:'date', order:'desc', max: 1])
-            def activity = null
+
             all?.each {
                 if (it.entity.status == ACTIVE &&
                         (it.eventType == AuditEventType.Insert || it.eventType == AuditEventType.Update)) {
                     activity = toMap(it.entity, levelOfDetail, version)
                 }
             }
-
-            activity
         } else {
             def o = Activity.findByActivityIdAndStatus(id, ACTIVE)
-            o ? toMap(o, levelOfDetail) : null
+            activity = o ? toMap(o, levelOfDetail) : null
         }
+
+        // If field is flagged as visible to project members only, and the caller requested to hide its value
+        if (hideMemberOnlyFlds){
+            boolean userIsAlaAdmin = userId && permissionService.isUserAlaAdmin(userId) ? true : false
+
+            boolean userIsProjectMember = false
+            if (userId) {
+                def members = permissionService.getMembersForProject(activity.projectId)
+                userIsProjectMember = members.find{it.userId == userId} || userIsAlaAdmin
+            }
+
+            OutputModelProcessor processor = new OutputModelProcessor()
+            activity.outputs?.each { output ->
+                OutputMetadata outputModel = new OutputMetadata(metadataService.getOutputDataModelByName(output.name))
+                processor.hideMemberOnlyAttributes(output, outputModel, userIsProjectMember)
+            }
+        }
+
+        activity
     }
 
     def getAll(boolean includeDeleted = false, levelOfDetail = []) {

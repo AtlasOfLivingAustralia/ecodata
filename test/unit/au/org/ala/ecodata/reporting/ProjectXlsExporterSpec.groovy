@@ -41,7 +41,7 @@ class ProjectXlsExporterSpec extends Specification {
     void "project details can be exported"() {
         setup:
         String sheet = 'Projects'
-        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [:])
+        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
         projectXlsExporter.metadataService = Mock(MetadataService)
 
         when:

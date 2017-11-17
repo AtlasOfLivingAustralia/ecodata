@@ -113,6 +113,14 @@
             "associatedSubProgramFacet" : {"type" : "string", "index" : "not_analyzed"}
           }
         },
+        "industries":{
+          "type":"string",
+          "path":"just_name",
+          "fields" : {
+            "industryFacet":{"type":"string", "index":"not_analyzed"}
+          }
+
+        },
 
         "name": {
           "type" : "string",
@@ -319,8 +327,19 @@
               }
             }
           }
+        },
+        "surveyMonth":{
+          "type":"string",
+          "fields": {
+            "surveyMonthFacet":{"type":"string", "index":"not_analyzed"}
+          }
+        },
+        "surveyYear":{
+          "type":"string",
+          "fields": {
+            "surveyYearFacet":{"type":"string", "index":"not_analyzed"}
+          }
         }
-
       },
       "dynamic_templates": [
         {

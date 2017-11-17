@@ -341,7 +341,8 @@ class SearchController {
     @RequireApiKey
     def activityReport() {
         Map params = request.JSON
-        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, params.approvedActivitiesOnly?:true)
+        def approvedOnly = params.approvedActivitiesOnly
+        def results = reportService.runActivityReport(params.query ?: "*:*", params.fq, params.reportConfig, approvedOnly)
         render results as JSON
     }
 
@@ -412,7 +413,11 @@ class SearchController {
                 }
                 params.fileExtension = "xlsx"
                 Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
-                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'))
+                    String ELECTORATES = 'electFacet'
+                    params.facets = ELECTORATES
+                    SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+                    List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
+                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'), electorates)
                     exporter.save(outputStream)
                 }
                 downloadService.downloadProjectDataAsync(params, doDownload)
@@ -420,13 +425,13 @@ class SearchController {
         }
     }
 
-    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport) {
+    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport, List<String> electorates) {
         long start = System.currentTimeMillis()
 
         File file = File.createTempFile("download", "xlsx")
         XlsExporter xlsExporter = new XlsExporter(file.name)
 
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport)
+        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
 
         Project.withSession { session ->
             int batchSize = 50
@@ -636,5 +641,13 @@ class SearchController {
             response.setStatus(400)
             render ([status:'error', error:'Invalid query (expected: name, lat and lng)'] as JSON)
         }
+    }
+
+    /**
+     * A test method to get the document mapping used by Elastic Search (or will be used by in the next re-index).
+     * @return
+     */
+    def getMapping(){
+        render(text: elasticSearchService.getMapping() as JSON, contentType: 'application/json')
     }
 }

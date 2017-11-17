@@ -2,7 +2,10 @@
 var projects = db.project.find({associatedSubProgram:'Regional Funding', status:{$ne:'deleted'}});
 var organisations = [];
 var organisationNames = [
-    'Corangamite Catchment Management Authority','ACT'
+    'Central West Local Land Services',
+    'Murray Local Land Services',
+    'Central Tablelands Local Land Services',
+    'Glenelg - Hopkins Catchment Management Authority'
     ];
 
 var orgsuccess = true;
@@ -18,8 +21,8 @@ for (var i=0; i<organisationNames.length; i++) {
 }
 
 if (orgsuccess) {
-    var toReplace = ['Progress, Outcomes and Learning - stage report', 'Stage Report'];
-    var replaceWith = 'Annual Stage Report';
+    var toReplace = ['Stage Report'];
+    var replaceWith = 'Progress, Outcomes and Learning - stage report';
     while (projects.hasNext()) {
         var project = projects.next();
 

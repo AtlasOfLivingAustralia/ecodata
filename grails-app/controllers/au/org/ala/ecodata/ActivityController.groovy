@@ -37,7 +37,8 @@ class ActivityController {
             //log.debug list
             asJson([list: list])
         } else {
-            def act = activityService.get(id, detail, params?.version)
+            boolean hideMemberOnlyFlds = params?.hideMemberOnlyFlds == null ? false : params.hideMemberOnlyFlds.toBoolean()
+            def act = activityService.get(id, detail, params?.version, params?.userId, hideMemberOnlyFlds)
             if (act) {
                 asJson act
             } else {
@@ -325,5 +326,10 @@ class ActivityController {
         } else {
             render status: 403, text: error
         }
+    }
+
+    def getDefaultFacets(){
+        List facets = grailsApplication.config.facets.data
+        render text: facets as JSON, contentType: 'application/json'
     }
 }

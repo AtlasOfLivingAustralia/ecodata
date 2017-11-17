@@ -74,7 +74,7 @@
         {
             "items": [
                 {
-                    "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure” and “Monitor and manage feral animals”.</i>",
+                    "source": "<b>Please note</b> Activities to monitor and/or manage feral animals are included under any or all of the following; “Monitor and manage total grazing pressure” and “Monitor and manage feral animals”. To enter details of activities undertaken to monitor and/or manage Feral animals please take care to add in a new row for each different species and each different season you have monitored or managed Feral animals.",
                     "type": "literal"
                 }
             ],

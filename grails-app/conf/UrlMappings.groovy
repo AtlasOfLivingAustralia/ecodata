@@ -19,6 +19,8 @@ class UrlMappings {
 
         "/ws/record/$id"(controller: "record"){ action = [GET:"get", PUT:"update", DELETE:"delete", POST:"update"] }
 
+        "/ws/activity/getDefaultFacets"(controller: "activity", action: "getDefaultFacets")
+
 
         "/ws/location"(controller: "location"){ action = [GET:"list", POST:"create"] }
         "/ws/location/"(controller: "location"){ action = [GET:"list", POST:"create"] }
@@ -148,6 +150,7 @@ class UrlMappings {
         "/ws/project/getUNRegions"(controller: "project"){ action = [GET:"getUNRegions"] }
         "/ws/project/getDataCollectionWhiteList"(controller: "project"){ action = [GET:"getDataCollectionWhiteList"] }
         "/ws/project/getBiocollectFacets"(controller: "project"){ action = [GET:"getBiocollectFacets"] }
+        "/ws/project/getDefaultFacets"(controller: "project", action: "getDefaultFacets")
         "/ws/admin/initiateSpeciesRematch"(controller: "admin", action: "initiateSpeciesRematch")
 
         "/ws/$controller/list"() { action = [GET:'list'] }

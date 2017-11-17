@@ -55,7 +55,7 @@
                         "Active Infestation",
                         "Under control",
                         "Under monitoring",
-                        "Closed",
+                        "Cleared",
                         "Unknown"
                     ]
                 }
@@ -68,11 +68,89 @@
         },
         {
             "dataType": "text",
+            "name": "undertakenNoxiousWeedControl",
+            "validate": "required",
+            "constraints":[
+                "Yes",
+                "No"
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "noxiousWeedManagement",
+            "defaultRows":[],
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "",
+                    "name": "species",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "stringList",
+                    "description": "The primary method used to treat the patch of the target species",
+                    "name": "treatmentMethod",
+                    "constraints": [
+                        "Chemical control - Foliar spraying",
+                        "Chemical control - Basal bark spraying",
+                        "Chemical control - Cut stump",
+                        "Chemical control - Cut and swab",
+                        "Mechanical control - Slashing",
+                        "Mechanical control - Mowing",
+                        "Mechanical control - Felling",
+                        "Manual control - Hand pulling",
+                        "Biological control - Biological agents (specify in notes)",
+                        "Biological control – Grazing",
+                        "Environmental management - Fire",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "weedAreaTreatedHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense infestation",
+                        "Isolated plant",
+                        "Scattered plants"
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "description": "The control status of the patch of the target species being treated",
+                    "name": "controlStatus",
+                    "constraints": [
+                        "New Infestation",
+                        "Active Infestation",
+                        "Under control",
+                        "Under monitoring",
+                        "Cleared",
+                        "Unknown"
+                    ]
+                }
+            ]
+        },
+        {
+            "dataType": "text",
             "name": "notes",
             "description": ""
         }
     ],
     "viewModel": [
+        {
+            "items": [
+                {
+                    "source": "<b>Please note</b> Activities to monitor and/or manage weeds are included under any or all of the following; “Monitor and manage herbaceous exotic plants (aggressive)”, “Monitor and manage herbaceous exotic plants (non-aggressive)”, “Monitor and manage exotic shrubs (aggressive)”, “Monitor and manage exotic plants”, “Monitor and manage aggressive exotic plants” and “Monitor and manage non-aggressive exotic plants”.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
         {
             "items": [
                 {
@@ -127,6 +205,61 @@
                     "type": "currency"
                 }
             ]
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "preLabel":"Have you undertaken any activities to manage weeds that are; noxious (NSW) or declared (SA)?",
+                    "source":"undertakenNoxiousWeedControl",
+                    "type":"selectOne"
+                }
+            ]
+        },
+        {
+            "items": [
+                {
+                    "title": "If \"Yes\", please complete the following:",
+                    "source": "noxiousWeedManagement",
+                    "columns": [
+                        {
+                            "title": "Species",
+                            "source": "species",
+                            "width": "25%",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Treatment Method",
+                            "source": "treatmentMethod",
+                            "width": "20%",
+                            "type": "select2Many"
+                        },
+                        {
+                            "title": "Approximate area treated (Ha)",
+                            "source": "weedAreaTreatedHa",
+                            "width": "10%",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Density",
+                            "source": "plantDensity",
+                            "width": "15%",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Control Status",
+                            "source": "controlStatus",
+                            "width": "15%",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "fixedWidth": true,
+                    "userAddedRows": true,
+                    "disableTableUpload":true,
+                    "type": "table"
+                }
+            ],
+            "type": "row"
         },
         {
             "type": "row",

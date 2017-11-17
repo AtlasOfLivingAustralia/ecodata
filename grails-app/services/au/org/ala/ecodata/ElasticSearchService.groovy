@@ -30,6 +30,7 @@ import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders
 import org.elasticsearch.node.Node
 import org.elasticsearch.search.builder.SearchSourceBuilder
 import org.elasticsearch.search.facet.FacetBuilders
+import org.elasticsearch.search.facet.range.RangeFacetBuilder
 import org.elasticsearch.search.facet.terms.TermsFacet
 import org.elasticsearch.search.highlight.HighlightBuilder
 import org.elasticsearch.search.sort.SortOrder
@@ -43,7 +44,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.regex.Matcher
 
 import static au.org.ala.ecodata.ElasticIndex.*
-import static au.org.ala.ecodata.Status.*
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
+import static au.org.ala.ecodata.Status.COMPLETED
 import static org.elasticsearch.index.query.FilterBuilders.*
 import static org.elasticsearch.index.query.QueryBuilders.*
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder
@@ -77,6 +80,7 @@ class ElasticSearchService {
     OutputService outputService
     EmailService emailService
     HubService hubService
+    CacheService cacheService
 
 
     Node node;
@@ -259,11 +263,7 @@ class ElasticSearchService {
      * Add custom mapping for ES index.
      */
     def addMappings(index) {
-        def parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
-        def facetMappings = buildFacetMapping()
-        // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
-        parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
-        parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
+        Map parsedJson = getMapping()
 
         def mappingsDoc = (parsedJson as JSON).toString()
 
@@ -273,6 +273,97 @@ class ElasticSearchService {
         }
 
         client.admin().cluster().prepareHealth().setWaitForYellowStatus().setTimeout('3').execute().actionGet()
+    }
+
+    /**
+     * Get the complete mapping that will be used by Elastic Search i.e. default mapping + custom mapping
+     * @return
+     */
+    Map getMapping() {
+        Map parsedJson = getDefaultMapping()
+        parsedJson = addCustomIndicesToMapping(parsedJson)
+        parsedJson
+    }
+
+    /**
+     * Get default mapping from file.
+     * @return
+     */
+    Map getDefaultMapping() {
+        cacheService.get('default-mapping-json', {
+            Map parsedJson = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/mapping.json").getText())
+            def facetMappings = buildFacetMapping()
+            // Geometries can appear at two different locations inside a doc depending on the type (site, activity or project)
+            parsedJson.mappings.doc["properties"].extent["properties"].geometry.put("properties", facetMappings)
+            parsedJson.mappings.doc["properties"].sites["properties"].extent["properties"].geometry.put("properties", facetMappings)
+            parsedJson
+        })
+    }
+
+    /**
+     * Find custom mapping from data models and add them to passed mapping object.
+     * @param mapping
+     * @return
+     */
+    Map addCustomIndicesToMapping(Map mapping){
+        Map indices = metadataService.getIndicesForDataModels()
+        indices?.each { index, fields ->
+            if(metadataService.isIndexValid(fields)){
+                if(!doesIndexExist(index, mapping)){
+                    addCustomIndex(fields, mapping)
+                } else {
+                    log.warn("Index already exists: ${index}. Ignoring it.")
+                }
+            } else {
+                log.warn("Index is not valid: ${index}. Ignoring it.")
+            }
+        }
+
+        mapping
+    }
+
+    /**
+     * Add an index specific properties to mapping object based on index's data type.
+     * @param fields
+     * @param mapping
+     * @return
+     */
+    Map addCustomIndex(List fields, Map mapping){
+        Map field = fields?.get(0)
+        switch (field.dataType){
+            case 'set':
+            case 'text':
+            case 'boolean':
+            case 'image':
+            case 'Image':
+            case 'document':
+            case 'stringList':
+                mapping?.mappings.doc["properties"].put(field.indexName, [
+                    "type" : "string",
+                    "index" : "not_analyzed"
+                ])
+                break
+            case 'number':
+                mapping?.mappings.doc["properties"].put(field.indexName, [
+                        "type" : "double"
+                ])
+                break
+            case 'date':
+                mapping?.mappings.doc["properties"].put(field.indexName, [
+                        "type" : "date"
+                ])
+                break
+        }
+
+        mapping
+    }
+
+    boolean doesIndexExist(String index, Map mapping){
+        if(mapping?.mappings.doc["properties"].hasProperty(index)){
+            return true
+        }
+
+        false
     }
 
     def buildFacetMapping() {
@@ -742,12 +833,14 @@ class ElasticSearchService {
             // changing status to deleted so that works activity with no output is not indexed
             if(!output){
                 activity.status = DELETED
+                return activity
             }
 
             isWorksActivity = !!output
         }
 
         if (activity.projectActivityId || isWorksActivity) {
+            Date eventDate
             def organisation = organisationService.get(project?.organisationId)
 
             // Include project activity only for survey or works projects.
@@ -781,7 +874,11 @@ class ElasticSearchService {
                 values.commonName = it.commonName
                 values.coordinates = [it.decimalLatitude, it.decimalLongitude]
                 values.multimedia = it.multimedia
-                values.eventDate = it.eventDate
+                if(it.eventDate){
+                    eventDate = recordService.parseDate(it.eventDate)
+                    values.eventDate = recordService.toStringIsoDateTime(eventDate)
+                }
+
                 values.eventTime = it.eventTime
                 values.individualCount = it.individualCount
                 if(it.generalizedDecimalLatitude && it.generalizedDecimalLongitude){
@@ -800,6 +897,12 @@ class ElasticSearchService {
                 projectActivity.lastUpdatedMonth = new SimpleDateFormat("MMMM").format(activity.lastUpdated)
                 projectActivity.lastUpdatedYear = new SimpleDateFormat("yyyy").format(activity.lastUpdated)
             }
+
+            if(eventDate){
+                activity.surveyMonth = new SimpleDateFormat("MMMM").format(eventDate)
+                activity.surveyYear = new SimpleDateFormat("yyyy").format(eventDate)
+            }
+
             try {
                 // check if activity has images
                 Document image = Document.findByActivityIdAndRoleAndTypeAndFilenameIsNotNull(activity.activityId,'surveyImage', 'image')
@@ -820,6 +923,11 @@ class ElasticSearchService {
             projectActivity.organisationName = organisation?.name ?: "Unknown organisation"
 
             activity.projectActivity = projectActivity
+
+            String formName = isWorksActivity? pActivity.type : pActivity.pActivityFormName
+            Map activityMetadata = metadataService.getOutputNameAndDataModelForAnActivityName(formName)
+            addDataForCustomIndexFields(activity, activityMetadata)
+
             // overwrite any project properties that has same name as activity properties.
             project.putAll(activity)
             activity = project
@@ -851,6 +959,105 @@ class ElasticSearchService {
         }
 
         activity
+    }
+
+    /**
+     * Find value for an index and add it to activity object.
+     * @param activity
+     * @param activityMetadata
+     * @return
+     */
+    Map addDataForCustomIndexFields(Map activity, Map activityMetadata){
+        List outputs = outputService.findAllForActivityId(activity.activityId)
+        if(outputs){
+            activityMetadata?.each{ outputName, dataModel ->
+                Map output = outputs.find{it.name == outputName}
+                Map indices = metadataService.getIndicesForDataModel(dataModel)
+                indices?.each{ index, fields ->
+                    activity[index] = []
+                    fields?.each{ field ->
+                        switch (field.dataType){
+                            case 'image':
+                            case 'Image':
+                                if(getDataFromPath(output, field.path)){
+                                    activity[index].add('Image')
+                                }
+                                break
+                            case 'document':
+                                if(getDataFromPath(output, field.path)){
+                                    activity[index].add('Document')
+                                }
+                                break;
+                            case 'boolean':
+                                if(getDataFromPath(output, field.path)){
+                                    activity[index].add('Yes')
+                                } else {
+                                    activity[index].add('No')
+                                }
+                                break;
+                            case 'number':
+                                List number = getDataFromPath(output, field.path)
+                                if(number){
+                                    activity[index].add(number)
+                                }
+                                break;
+                            case 'date':
+                                List date = getDataFromPath(output, field.path)
+                                if(date){
+                                    Date dateObject = recordService.parseDate(date)
+                                    if(dateObject){
+                                        activity[index].add(recordService.toStringIsoDateTime(dateObject))
+                                    }
+                                }
+                                break;
+                            default:
+                                List result = getDataFromPath(output, field.path)
+                                if(result){
+                                    activity[index].addAll(result)
+                                }
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        activity
+    }
+
+    /**
+     * A helper function which will iterate output object to find value for a field. This value is used by
+     * addDataForCustomIndexFields function to update activity object.
+     * @param output
+     * @param path
+     * @return
+     */
+    List getDataFromPath(output, List path){
+        def temp = output
+        List result = []
+        List navigatedPath = []
+        path?.each{ prop ->
+            navigatedPath.add(prop)
+            if(temp instanceof Map){
+                temp = temp[prop]
+            } else if(temp instanceof List){
+                temp.each { map ->
+                    result.addAll(getDataFromPath(map, path - navigatedPath))
+                }
+
+                temp = null
+            }
+        }
+
+        if(temp != null){
+            if(temp instanceof List){
+                result.addAll(temp)
+            } else {
+                result.add(temp)
+            }
+        }
+
+        result
     }
 
     /**
@@ -1036,6 +1243,18 @@ class ElasticSearchService {
             source.facet(it)
         }
 
+        if(params.rangeFacets){
+            addRangeFacets(params.rangeFacets as List).each {
+                source.facet(it)
+            }
+        }
+
+        if(params.histogramFacets){
+            addHistogramFacets(params.histogramFacets).each {
+                source.facet(it)
+            }
+        }
+
         if (params.highlight) {
             source.highlight(new HighlightBuilder().preTags("<b>").postTags("</b>").field("_all", 60, 2))
         }
@@ -1183,6 +1402,70 @@ class ElasticSearchService {
     }
 
     /**
+     * Add range facets. Range facet does not accept all possible range options.
+     * Examples of accepted range format is - [1 TO 3}, [* TO 1}
+     * where from range is inclusive and to range is exclusive.
+     * Therefore, range format must start with [ and end with }.
+     * @param facets
+     * @return
+     */
+    List addRangeFacets(List facets){
+        List facetList = []
+        Map facetGroup = parseRangeFacets(facets)
+
+        if (facetGroup) {
+            facetGroup.each { String facetName, List ranges ->
+                RangeFacetBuilder rangeFacet = FacetBuilders.rangeFacet(facetName).field(facetName);
+                ranges?.each { Map range ->
+                    if(range.gte && range.lt){
+                        rangeFacet.addRange(range.gte, range.lt)
+                    } else if (range.gte) {
+                        rangeFacet.addUnboundedFrom(range.gte)
+                    } else if(range.lt){
+                        rangeFacet.addUnboundedTo(range.lt)
+                    }
+                }
+
+                facetList.add(rangeFacet)
+            }
+        }
+
+        return facetList
+    }
+
+    Map parseRangeFacets(List facets){
+        Map group = [:].withDefault { [] }
+        facets?.each { String facet ->
+            String [] fieldNameAndRange = facet?.split(':')
+            if(fieldNameAndRange.size() == 2){
+                group[fieldNameAndRange[0]].add(parseRangeString(fieldNameAndRange[1]))
+            }
+        }
+
+        group
+    }
+
+    /**
+     * Create histogram facets. Required parameters are field name and interval.
+     * Example usage - 'individualCount:10,count:1'
+     * where 10 and 1 are interval for the histogram.
+     * @param facets
+     * @return
+     */
+    List addHistogramFacets(String facets){
+        List facetList = []
+
+        if (facets) {
+            facets.split(",").each { facet ->
+                List parts = facet.split(':')
+                facetList.add(FacetBuilders.histogramFacet(parts[0]).field(parts[0]).interval(Long.parseLong(parts[1])))
+            }
+        }
+
+        return facetList
+    }
+
+    /**
      * Generate list of facets for search request
      *
      * @param facets
@@ -1271,9 +1554,24 @@ class ElasticSearchService {
                 filter = FilterBuilders.queryFilter(QueryBuilders.queryStringQuery(value))
             }
             else {
-                Matcher m = (value =~ /\[(.*) TO (.*)\]/)
-                if (m?.matches()) {
-                    filter = rangeFilter(filterName).from(m.group(1)).to(m.group(2))
+                Map range = parseRangeString(value)
+                if (range) {
+                    filter = rangeFilter(filterName)
+                    if(range.gte != null){
+                        filter.gte(range.gte)
+                    }
+
+                    if(range.gt != null){
+                        filter.gt(range.gt)
+                    }
+
+                    if (range.lte != null) {
+                        filter.lte(range.lte)
+                    }
+
+                    if (range.lt != null) {
+                        filter.lt(range.lt)
+                    }
                 }
                 else {
                     filter = FilterBuilders.termFilter(filterName, value)
@@ -1288,6 +1586,43 @@ class ElasticSearchService {
         }
 
         filter
+    }
+
+    /**
+     * Parse range strings like
+     * [1 TO 3}, {1 TO 4} etc.
+     * @param value
+     * @return
+     */
+    private Map parseRangeString (String value){
+        Map result = [:]
+        Matcher m = (value =~ /([\[\{])(.*) TO (.*)([\]\}])/)
+        if (m?.matches()) {
+            String from = m.group(2), to = m.group(3), start = m.group(1), end = m.group(4)
+            // If both date and '*' are provided, ES will throw an invalid format exception since it tries to convert '*' to a date. Hence ignoring '*'.
+            if(from != '*'){
+                if(start == '['){
+                    result.gte = from
+                }
+
+                if(start == '{'){
+                    result.gt = from
+                }
+
+            }
+
+            if(to != '*') {
+                if (end == ']') {
+                    result.lte = to
+                }
+
+                if (end == '}') {
+                    result.lt = to
+                }
+            }
+        }
+
+        result
     }
 
     /**

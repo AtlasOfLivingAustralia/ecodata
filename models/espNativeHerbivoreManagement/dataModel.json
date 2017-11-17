@@ -72,7 +72,7 @@
         {
             "items": [
                 {
-                    "source": "<i>Please note that this includes the following management actions: “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.</i>",
+                    "source": "<b>Please note</b> Activities to monitor and/or manage native herbivores are included under any or all of the following; “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.",
                     "type": "literal"
                 }
             ],

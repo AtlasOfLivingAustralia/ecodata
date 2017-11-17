@@ -28,9 +28,6 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> projectStateHeaders = (1..5).collect{'State '+it}
     List<String> projectStateProperties = (0..4).collect{'state'+it}
 
-    List<String> projectElectorateHeaders = (1..40).collect{'Electorate '+it}
-    List<String> projectElectorateProperties = (0..39).collect{'elect'+it}
-
     List<String> commonProjectHeadersWithoutSites = ['Project ID', 'Grant ID', 'External ID', 'Organisation', 'Service Provider', 'Name', 'Description', 'Program', 'Sub-program', 'Start Date', 'End Date', 'Funding', 'Status', 'Last Modified']
     List<String> commonProjectPropertiesRaw =  ['grantId', 'externalId', 'organisationName', 'serviceProviderName', 'name', 'description', 'associatedProgram', 'associatedSubProgram', 'plannedStartDate', 'plannedEndDate', 'funding', 'status', 'lastUpdated']
 
@@ -39,8 +36,8 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = commonProjectHeadersWithoutSites + stateHeaders + electorateHeaders
     List<String> commonProjectProperties = commonProjectPropertiesWithoutSites + stateProperties + electorateProperties
 
-    List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders + projectElectorateHeaders
-    List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties + projectElectorateProperties
+    List<String> projectHeaders = commonProjectHeadersWithoutSites + projectStateHeaders
+    List<String> projectProperties = commonProjectPropertiesWithoutSites + projectStateProperties
 
     List<String> siteStateHeaders = (1..5).collect{'State '+it}
     List<String> siteStateProperties = (0..4).collect{'state'+it+'-site'}
@@ -100,13 +97,19 @@ class ProjectXlsExporter extends ProjectExporter {
     Map<String, String> outputSheetNames = [:]
     Map<String, List<AdditionalSheet>> typedOutputSheets = [:]
 
-
     OutputModelProcessor processor = new OutputModelProcessor()
     ProjectService projectService
 
-    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, Map<String, Object> documentMap = [:]) {
+    /** Enables us to pre-create headers for each electorate that will appear in the result set */
+    List<String> distinctElectorates
+
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, Map<String, Object> documentMap = [:]) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
         this.projectService = projectService
+        distinctElectorates = new ArrayList(electorates?:[])
+        distinctElectorates.sort()
+        projectHeaders += distinctElectorates
+        projectProperties += distinctElectorates
     }
 
     public void export(Map project) {
@@ -312,6 +315,12 @@ class ProjectXlsExporter extends ProjectExporter {
             int row = projectSheet.getSheet().lastRowNum
 
             List properties = new ArrayList(projectProperties)
+
+            List<String> projectElectorates = project.sites?.collect { site?.extent?.geometry?.elect }?.flatten()?.findAll()
+
+            distinctElectorates.each{ electorate ->
+                project[electorate] = projectElectorates.contains(electorate)? 'Y' : 'N'
+            }
 
             projectSheet.add([project], properties, row + 1)
         }

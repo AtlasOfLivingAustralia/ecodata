@@ -80,18 +80,18 @@
                     type: 'POST',
                     data: $('#dataModel').val(), //ko.toJSON(model, null, 2),
                     contentType: 'application/json',
+                    dataType: "json",
                     success: function (data) {
-                        if (data !== 'error') {
+                        if (data.error) {
+                            alert(data.message);
+                        } else {
                             //alert('saved');
                             //document.location.reload();
-                        } else {
-                            alert(data);
                         }
                     },
                     error: function () {
                         alert('failed');
-                    },
-                    dataType: 'text'
+                    }
                 });
             };
         },
@@ -131,14 +131,13 @@
                 data: $textarea.val(),
                 contentType: 'application/json',
                 success: function (data) {
-                    if (data !== 'error') {
+                    if (data.error) {
+                        alert(data.message);
+                    } else {
                         $textarea.html(vkbeautify.json(data,2));
                         document.location.reload();
-                    } else {
-                        alert(data);
                     }
-                },
-                dataType: 'text'
+                }
             });
         });
 

@@ -1,5 +1,4 @@
 {
-    "modelName": "Evidence of Weed Treatment",
     "dataModel": [
         {
             "dataType": "stringList",
@@ -56,6 +55,7 @@
             "name": "notes"
         }
     ],
+    "modelName": "Evidence of Weed Treatment",
     "viewModel": [{
         "items": [
             {

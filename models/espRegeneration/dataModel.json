@@ -12,6 +12,15 @@
                     "name": "species"
                 },
                 {
+                    "dataType": "text",
+                    "name": "plantDensity",
+                    "constraints": [
+                        "Dense",
+                        "Scattered",
+                        "Isolated"
+                    ]
+                },
+                {
                     "dataType":"image",
                     "name":"photo"
                 }
@@ -25,6 +34,24 @@
     ],
     "viewModel": [
         {
+            "type": "row",
+            "items": [
+                {
+                    "type": "literal",
+                    "source": "<b>Please note</b> Activities relating to Regeneration are included under any or all of the following; “Monitor and manage regeneration”, “Buffering”, “Connectivity” and “Reduce isolation”. "
+                }
+            ]
+        },
+        {
+            "items": [
+                {
+                    "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
+                    "type": "literal"
+                }
+            ],
+            "type": "row"
+        },
+        {
             "items": [
                 {
                     "title": "Please complete the following: ",
@@ -36,23 +63,23 @@
                             "type": "speciesSelect"
                         },
                         {
+                            "title": "How widespread is the regeneration",
+                            "source": "plantDensity",
+                            "width": "15%",
+                            "type": "selectOne"
+                        },
+                        {
                             "title":"Photo(s)",
                             "source":"photo",
-                            "type":"image"
+                            "type":"image",
+                            "displayOptions":{
+                                "disableDragDrop":true
+                            }
                         }
                     ],
                     "userAddedRows": true,
                     "disableTableUpload":true,
                     "type": "table"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "Please feel free to upload a photograph(s) of any regenerating plant species from your ESP site.",
-                    "type": "literal"
                 }
             ],
             "type": "row"

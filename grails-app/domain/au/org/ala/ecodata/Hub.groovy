@@ -40,6 +40,8 @@ class Hub {
     List quickLinks
     /** provide breadcrumb overrides for a controller action */
     List customBreadCrumbs = []
+    /** configure facets for different data pages like all records, my records etc. */
+    Map pages
 
     String status = 'active'
 
@@ -61,5 +63,6 @@ class Hub {
         templateConfiguration nullable: true
         content nullable: true
         customBreadCrumbs nullable: true
+        pages nullable: true
     }
 }

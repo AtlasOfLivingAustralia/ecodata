@@ -23,7 +23,8 @@
         },
         {
             "dataType": "text",
-            "name": "activeSignsOtherColumnDetail"
+            "name": "activeSignsOtherColumnDetail",
+            "indexName": "matrixRowIndex"
         },
         {
             "columns": [
@@ -54,7 +55,8 @@
                 {
                     "dataType": "number",
                     "name": "other",
-                    "label": "user-defined"
+                    "label": "user-defined",
+                    "indexName": "matrixColumnIndex"
                 }
             ],
             "dataType": "matrix",
@@ -63,7 +65,8 @@
             "rows": [
                 {
                     "dataType": "number",
-                    "name": "live"
+                    "name": "live",
+                    "indexName": "matrixRowIndex"
                 },
                 {
                     "dataType": "number",

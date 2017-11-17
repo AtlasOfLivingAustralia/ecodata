@@ -117,6 +117,28 @@
             }
         }
     ],
+    "pre-populate": [{
+        "source": {
+            "url": "activity",
+            "params":{
+                "type":"ESP PMU or Zone Reporting"
+            }},
+        "merge": false,
+        "mapping": [{
+            "target": "outcomes",
+            "mapping": [
+                {
+                    "target": "outcome",
+                    "source-path": "description"
+                },
+                {
+                    "target": "assets",
+                    "source-path": "assets"
+                }
+            ],
+            "source-path": "custom.details.objectives.rows1"
+        }]
+    }],
     "modelName": "Vegetation Monitoring Results",
     "record": "true",
     "title": "Plant Survival Survey",

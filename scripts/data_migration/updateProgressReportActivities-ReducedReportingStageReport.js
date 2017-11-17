@@ -2,7 +2,17 @@
 var projects = db.project.find({associatedSubProgram:'Regional Funding', status:{$ne:'deleted'}});
 var organisations = [];
 var organisationNames = [
-    'Corangamite Catchment Management Authority','ACT'
+    'Corangamite Catchment Management Authority',
+    'ACT',
+    'Port Phillip and Westernport Catchment Management Authority',
+    'Perth Region NRM',
+    'Western Local Land Services',
+    'Northern Tablelands Local Land Services',
+    'South Australian Murray-Darling Basin Natural Resources Management Board',
+    'Mallee Catchment Management Authority',
+    'South Coast Natural Resource Management Inc.',
+    'West Gippsland CMA'
+
     ];
 
 var orgsuccess = true;
@@ -18,8 +28,8 @@ for (var i=0; i<organisationNames.length; i++) {
 }
 
 if (orgsuccess) {
-    var toReplace = ['Progress, Outcomes and Learning - stage report', 'Stage Report'];
-    var replaceWith = 'Annual Stage Report';
+    var toReplace = ['Annual Stage Report', 'Progress, Outcomes and Learning - stage report'];
+    var replaceWith = 'Stage Report';
     while (projects.hasNext()) {
         var project = projects.next();
 
