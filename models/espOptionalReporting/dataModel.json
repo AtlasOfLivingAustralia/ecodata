@@ -113,13 +113,14 @@
         },
         {
             "items": [{
-                "title": "Insets observed",
+                "title": "Insects observed",
                 "source": "insects",
                 "columns": [
                     {
                         "title": "Insect species",
                         "source": "insectSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -127,7 +128,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
@@ -144,7 +146,8 @@
                     {
                         "title": "Native bird species",
                         "source": "nativeBirdSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -152,7 +155,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
@@ -169,7 +173,8 @@
                     {
                         "title": "Native reptile species",
                         "source": "nativeReptileSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -177,7 +182,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
@@ -194,7 +200,8 @@
                     {
                         "title": "Native amphibian species",
                         "source": "nativeAmphibianSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -202,7 +209,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
@@ -219,7 +227,8 @@
                     {
                         "title": "Native mammal species",
                         "source": "nativeMammalSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -227,7 +236,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
@@ -259,7 +269,8 @@
                     {
                         "title": "Native plant species",
                         "source": "nativePlantSpecies",
-                        "type": "speciesSelect"
+                        "type": "speciesSelect",
+                        "width":"40%"
                     },
                     {
                         "title": "Photo(s)",
@@ -267,7 +278,8 @@
                         "type": "image",
                         "displayOptions":{
                             "disableDragDrop":true
-                        }
+                        },
+                        "width":"60%"
                     }
                 ],
                 "type": "table",
