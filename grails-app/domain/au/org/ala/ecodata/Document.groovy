@@ -13,6 +13,7 @@ class Document {
 
     static final String DOCUMENT_TYPE_IMAGE = 'image'
     static final String THUMBNAIL_PREFIX = 'thumb_'
+    static final String PROCESSED_PREFIX = 'processed_'
     static final String ALA_IMAGE_SERVER = 'images.ala.org.au'
 
     static mapping = {

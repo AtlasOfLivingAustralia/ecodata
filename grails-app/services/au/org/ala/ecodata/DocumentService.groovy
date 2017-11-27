@@ -230,10 +230,7 @@ class DocumentService {
 					props.filename = saveAsPDF(fileIn, partition, props.filename,false)
 				}
 				else {
-                    props.filename = saveFile(partition, props.filename, fileIn, false)
-                    if (props.type == Document.DOCUMENT_TYPE_IMAGE) {
-                        makeThumbnail(partition, props.filename)
-                    }
+                    props.filename = saveFile(partition, props.filename, fileIn, false, props.type)
                 }
                 props.filepath = partition
             }
@@ -261,7 +258,7 @@ class DocumentService {
         if (d) {
             try {
                 if (fileIn) {
-                    props.filename = saveFile(d.filepath, props.filename, fileIn, true)
+                    props.filename = saveFile(d.filepath, props.filename, fileIn, true, d.type)
                 }
                 props.remove('url')
                 props.remove('thumbnailUrl')
@@ -287,13 +284,14 @@ class DocumentService {
      * @param filename the name to save the file.
      * @param fileIn an InputStream containing the contents of the file to save.
      * @param overwrite true if an existing file should be overwritten.
+     * @param type the type of file being saved (image types will have thumbnails created after saving)
      * @return the filename (not the full path) the file was saved using.  This may not be the same as the supplied
      * filename in the case that overwrite is false.
      */
-    private String saveFile(filepath, filename, fileIn, overwrite) {
+    private String saveFile(String filepath, String filename, InputStream fileIn, boolean overwrite, String type = null) {
         if (fileIn) {
             synchronized (FILE_LOCK) {
-                //create upload dir if it doesnt exist...
+                //create upload dir if it doesn't exist...
                 def uploadDir = new File(fullPath(filepath, ''))
 
                 if(!uploadDir.exists()){
@@ -303,11 +301,26 @@ class DocumentService {
                 if (!overwrite) {
                     filename = nextUniqueFileName(filepath, filename)
                 }
-                new FileOutputStream(fullPath(filepath, filename)).withStream { it << fileIn }
+
+                File destination = new File(fullPath(filepath, filename))
+                new FileOutputStream(destination).withStream { it << fileIn }
+
+                if (type == Document.DOCUMENT_TYPE_IMAGE) {
+
+                    File processed = new File(fullPath(filepath, Document.PROCESSED_PREFIX+filename))
+                    boolean result = ImageUtils.reorientImage(destination, processed)
+                    if (result) {
+                        // If the image was processed, used the processed image when making the thumbnail.
+                        filename = Document.PROCESSED_PREFIX+filename
+                    }
+
+                    makeThumbnail(filepath, filename, overwrite)
+                }
             }
         }
         return filename
     }
+
 
     /**
      * Creates a thumbnail of the image stored at the location specified by filepath and filename.
@@ -316,7 +329,7 @@ class DocumentService {
      *
      * @return The thumbnail file or null for no thumbnail
      */
-    def makeThumbnail(filepath, filename, overwrite = true) {
+    File makeThumbnail(filepath, filename, overwrite = true) {
         File sFile = new File(fullPath(filepath, filename))
         if (!sFile.exists())
             return null
@@ -327,22 +340,11 @@ class DocumentService {
                 return tnFile
             }
             else {
-                tnFile.delete();
+                tnFile.delete()
             }
         }
 
-        def ext = FilenameUtils.getExtension(filename)
-        BufferedImage img = ImageIO.read(sFile)
-        BufferedImage tn = Scalr.resize(img, 300, Scalr.OP_ANTIALIAS)
-        try {
-            def success = ImageIO.write(tn, ext, tnFile)
-            log.debug "Thumbnailing: " + success
-            return tnFile
-        } catch(IOException e) {
-            log.error("Write error for " + tnFile.getPath() + ": " + e.getMessage(), e)
-            return null
-        }
-
+        return ImageUtils.makeThumbnail(sFile, tnFile, 300)
     }
 
 	/**
