@@ -34,6 +34,7 @@ class UrlMappings {
         "/ws/audit/getAuditMessagesForProjectPerPage/$id"(controller: "audit", action: "getAuditMessagesForProjectPerPage")
 
         "/ws/document/listImages"(controller: "document", action: "listImages")
+        "/ws/document/createThumbnail"(controller:"document", action:"createThumbnail")
         "/ws/document/$id/file"(controller: "document", action: "getFile")
 
         "/ws/site/getImages"( controller: 'site', action: 'getImages')
