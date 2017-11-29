@@ -1,7 +1,11 @@
 package au.org.ala.ecodata
+
 import grails.converters.JSON
+import org.apache.commons.io.FilenameUtils
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
+import org.springframework.web.multipart.MultipartFile
+import org.springframework.web.multipart.MultipartHttpServletRequest
 
 import static au.org.ala.ecodata.ElasticIndex.PROJECT_ACTIVITY_INDEX
 import static au.org.ala.ecodata.Status.ACTIVE
@@ -153,21 +157,25 @@ class DocumentController {
      */
     @RequireApiKey
     def update(String id) {
-        def props, file = null
+        def props = null
         def stream = null
-        if (request.respondsTo('getFile')) {
-            Map files = request.getFileMap()
-            if (files.size() > 1) {
-                render status:400, text: 'Only one file can be attached'
-                return
-            }
+        if (request instanceof MultipartHttpServletRequest) {
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request
+            Iterator<String> names = multipartRequest.getFileNames()
+            if (names.hasNext()) {
 
-            file = files.values()[0]
-            props = JSON.parse(params.document)
-            if (!props.contentType && file) {
-               props.contentType = file.contentType
+                MultipartFile file = multipartRequest.getFile(names.next())
+                props = JSON.parse(params.document)
+                if (!props.contentType && file) {
+                    props.contentType = file.contentType
+                }
+                stream = file?.inputStream
+
+                if (names.hasNext()) {
+                    render status:400, text: 'Only one file can be attached'
+                    return
+                }
             }
-            stream = file?.inputStream
         }
         else {
             props = request.JSON
@@ -222,6 +230,45 @@ class DocumentController {
         response.outputStream.flush()
 
         return null
+    }
+
+    /**
+     * Creates and returns a thumbnail of the supplied image.  The image orientation will be automatically corrected if needed.
+     * @param image the image to create a thumbnail of.
+     * @param size (optional) the size in pixels of the thumbnail to create.  Defaults to 300.
+     * @return the thumbnail image
+     */
+    def createThumbnail() {
+        if (!request.respondsTo('getFile')) {
+            render status:400, text:'An image file must be supplied'
+            return
+        }
+        else {
+
+            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest)request
+            MultipartFile file = multipartRequest.getFile('image')
+
+            File tmp = File.createTempFile("tmp", "."+FilenameUtils.getExtension(file.originalFilename))
+            new FileOutputStream(tmp).withStream { it << file.inputStream }
+
+            File processedFile = File.createTempFile("processed", "."+FilenameUtils.getExtension(file.originalFilename))
+            boolean processed = ImageUtils.reorientImage(tmp, processedFile)
+            File source = processed ? processedFile : tmp
+            File thumb = File.createTempFile("thumbnail_"+file.originalFilename, "."+FilenameUtils.getExtension(file.originalFilename))
+            ImageUtils.makeThumbnail(source, thumb, params.size ?: 300)
+
+            response.setContentType(file.contentType)
+            thumb.withInputStream { inputStream ->
+                response.outputStream << inputStream
+                response.outputStream.flush()
+            }
+            tmp.delete()
+            thumb.delete()
+            if (processedFile.exists()) {
+                processedFile.delete()
+            }
+
+        }
     }
 
     /**

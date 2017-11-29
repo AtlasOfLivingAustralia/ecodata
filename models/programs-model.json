@@ -1,12 +1,8 @@
 {"programs": [
     {
-        "projectDatesContracted": false,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Biodiversity Fund",
-        "optionalProjectContent": ["Risks and Threats"],
+        "reportingPeriod": "6",
+        "projectDatesContracted": false,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -47,111 +43,179 @@
             "Training and Skills Development",
             "Fire Management"
         ],
+        "name": "Biodiversity Fund",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [
+                    {"name": "Biodiverse plantings"},
+                    {"name": "Protecting and enhancing existing native vegetation"},
+                    {"name": "Managing invasive species in a connected landscape"},
+                    {"name": "Enabling technologies"}
+                ],
+                "endDate": "",
+                "activities": [],
                 "name": "Round 1",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Round 2 - 2013/14",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Round 2 - Northern Landscape Strategy",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Tasmania's Native Forests 2013/14",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Round 2 - Expression of Interest 2013/14",
-                "themes": [
-                    {"name": "Biodiverse plantings"},
-                    {"name": "Protecting and enhancing existing native vegetation"},
-                    {"name": "Managing invasive species in a connected landscape"},
-                    {"name": "Enabling technologies"}
-                ],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Reef Rescue 2013/14",
                 "themes": [
                     {"name": "Biodiverse plantings"},
                     {"name": "Protecting and enhancing existing native vegetation"},
                     {"name": "Managing invasive species in a connected landscape"},
                     {"name": "Enabling technologies"}
                 ],
-                "optionalProjectContent": ["MERI Plan"],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Reef Rescue 2013/14",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": ["MERI Plan"],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": false,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Vegetation Assessment - Habitat Hectares v2 (VIC)",
+                    "TasVeg - Native Vegetation Assessment - Forest Vegetation",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Ecological Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Site Preparation",
+                    "Seed Collection",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Fire Management"
+                ],
+                "name": "Round 1 ext",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "Risks and Threats",
+                    "MERI Plan"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
             }
         ],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": ["Risks and Threats"],
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Caring for Our Country 2",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [],
+        "name": "Caring for Our Country 2",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [
+                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
+                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
+                    {"name": "Protecting Ramsar sites and values"},
+                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
+                    {"name": "Building natural resource management community skills, knowledge and engagement"},
+                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
+                ],
+                "endDate": "",
+                "activities": [],
                 "name": "Regional Delivery 1318",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
                     {"name": "Restoring and maintaining urban waterways and coastal environments"},
@@ -160,48 +224,32 @@
                     {"name": "Building natural resource management community skills, knowledge and engagement"},
                     {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Target Area Grants - 2013/14",
-                "themes": [
-                    {"name": "Conserving and protecting species and ecosystems (matters of national environmental significance)"},
-                    {"name": "Restoring and maintaining urban waterways and coastal environments"},
-                    {"name": "Protecting Ramsar sites and values"},
-                    {"name": "Protecting World Heritage sites’ outstanding universal value and integrity"},
-                    {"name": "Building natural resource management community skills, knowledge and engagement"},
-                    {"name": "Enhancing Indigenous people’s capacity for natural resource management"}
-                ],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": ["MERI Plan"],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Community Environment Grants 1314",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Community Environment Grants 1314",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Reef Rescue 2013/14",
                 "themes": [{"name": "Protecting the Great Barrier Reef"}],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Reef Rescue 2013/14",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Regional Delivery (sustainable agriculture)",
                 "themes": [
                     {"name": "Increase the adoption of sustainable land management practices"},
                     {"name": "Increase the adoption of sustainable fishing practices"},
@@ -212,39 +260,43 @@
                     {"name": "Increase community awareness of natural resources"},
                     {"name": "Regional Land care Facilitator position"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Regional Delivery (sustainable agriculture)",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Target Area Grants -  Expression of Interest 2013/14",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "0210 1318",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "0210 1318",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             }
         ],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Cumberland Plain",
-        "optionalProjectContent": ["Risks and Threats"],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Project Administration",
@@ -282,23 +334,23 @@
             "Indigenous Knowledge Transfer",
             "Training and Skills Development"
         ],
+        "name": "Cumberland Plain",
+        "speciesFieldsSettings": null,
         "subprograms": [{
-            "startDate": "",
-            "speciesFieldsSettings": null,
-            "name": "Cumberland Plain Projects",
             "themes": [],
-            "optionalProjectContent": [],
             "endDate": "",
-            "activities": []
-        }]
+            "activities": [],
+            "name": "Cumberland Plain Projects",
+            "speciesFieldsSettings": null,
+            "optionalProjectContent": [],
+            "startDate": ""
+        }],
+        "optionalProjectContent": ["Risks and Threats"],
+        "isMeritProgramme": true
     },
     {
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "Green Army",
-        "optionalProjectContent": [],
+        "reportingPeriod": "6",
         "activities": [
             "Green Army - Monthly project status report",
             "Green Army - Quarterly project report",
@@ -338,85 +390,82 @@
             "Outcomes, Evaluation and Learning - final report",
             "Indigenous Employment and Businesses"
         ],
+        "name": "Green Army",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "2014-06-30T14:00:00Z",
-                "speciesFieldsSettings": null,
-                "name": "Green Army Round 1",
                 "themes": [
                     {"name": "Increase the area, linkages between (Connectivity) and condition of Australia's native vegetation"},
                     {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
                     {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
                     {"name": "Protect and conserve Australia's natural, historic and Indigenous heritage"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Green Army Round 1",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": "2014-06-30T14:00:00Z"
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Green Army Round 2",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Green Army Round 2",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Green Army Round 3",
                 "themes": [
                     {"name": "Increase the area , linkages between (Connectivity) and condition of Australia's native vegetation"},
                     {"name": "Protect and enhance aquatic ecosystems, including wetlands and sensitive coastal environments"},
                     {"name": "Protect and conserve threatened species or ecological communities, migratory species, regionally significant species and where they live"},
                     {"name": "Protect and conserve Australia 's natural, historic and Indigenous heritage"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Green Army Round 3",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Green Army Natural Disaster Recovery Round",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Green Army Round 4",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Green Army Election Commitments",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Green Army Election Commitments",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             }
         ],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [],
+        "isMeritProgramme": true
     },
     {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "20 Million Trees (NLP)",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -454,22 +503,26 @@
             "Indigenous Knowledge Transfer",
             "Training and Skills Development"
         ],
+        "name": "20 Million Trees (NLP)",
+        "speciesFieldsSettings": null,
         "subprograms": [{
-            "startDate": "",
-            "speciesFieldsSettings": null,
-            "name": "Round One",
             "themes": [],
-            "optionalProjectContent": [],
             "endDate": "",
-            "activities": []
+            "activities": [],
+            "name": "Round One",
+            "speciesFieldsSettings": null,
+            "optionalProjectContent": [],
+            "startDate": ""
         }],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "None",
-        "optionalProjectContent": [],
         "activities": [
             "Vegetation Assessment - BioCondition (QLD)",
             "Vegetation Assessment - Habitat Hectares v1 (VIC)",
@@ -483,22 +536,18 @@
             "Multiple Sightings",
             "Aerial fauna survey - distance sampler method",
             "2-ha Track Plot Datasheet",
-            "General Weed Monitoring",
-            "Flying Fox Survey"
+            "Site Monitoring Plan",
+            "General Weed Monitoring"
         ],
-        "subprograms": []
+        "name": "None",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
         "weekDaysToCompleteReport": 0,
-        "name": "National Landcare Programme",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -534,52 +583,50 @@
             "Works Planning and Risk",
             "Indigenous Knowledge Transfer",
             "Training and Skills Development",
-            "Vegetation Assessment - Commonwealth government methodology"
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Post revegetation site management"
         ],
+        "name": "National Landcare Programme",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
                 "name": "Regional Delivery",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "activities": [],
                 "name": "Local Programmes",
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "projectDatesContracted": true,
-                "startDate": "2015-01-31T13:00:00Z",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
                 "weekDaysToCompleteReport": 0,
-                "name": "25th Anniversary Landcare Grants 2014-15",
-                "overridesProgramData": true,
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
                 ],
-                "optionalProjectContent": ["MERI Plan"],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
                 "endDate": "2016-06-29T14:00:00Z",
                 "activities": [
                     "Indigenous Employment and Businesses",
@@ -620,52 +667,49 @@
                     "25th Anniversary Landcare Grants - Progress Report",
                     "25th Anniversary Landcare Grants - Final Report"
                 ],
-                "reportingPeriodAlignedToCalendar": true
-            },
-            {
-                "startDate": "",
+                "name": "25th Anniversary Landcare Grants 2014-15",
                 "speciesFieldsSettings": null,
-                "name": "20 Million Trees Grants Round 1",
-                "themes": [
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "World Heritage",
-                "themes": [
-                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
-                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
-                    {"name": "Communities are involved in caring for their environment"},
-                    {"name": "Communities are protecting species and natural assets"}
-                ],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
-            },
-            {
-                "projectDatesContracted": true,
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
-                "weekDaysToCompleteReport": 0,
-                "name": "Regional Funding",
+                "optionalProjectContent": ["MERI Plan"],
                 "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": "2015-01-31T13:00:00Z"
+            },
+            {
+                "themes": [
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Grants Round 1",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
                 "themes": [
                     {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
                     {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
                 ],
-                "optionalProjectContent": [
-                    "MERI Plan",
-                    "Risks and Threats"
+                "endDate": "",
+                "activities": [],
+                "name": "World Heritage",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [
+                    {"name": "Communities are managing landscapes to sustain long-term economic and social benefits from their environment"},
+                    {"name": "Farmers and fishers are increasing their long term returns through better management of the natural resource base"},
+                    {"name": "Communities are involved in caring for their environment"},
+                    {"name": "Communities are protecting species and natural assets"}
                 ],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
                 "endDate": "",
                 "activities": [
                     "Indigenous Employment and Businesses",
@@ -703,148 +747,194 @@
                     "Indigenous Knowledge Transfer",
                     "Training and Skills Development",
                     "Vegetation Assessment - Commonwealth government methodology",
-                    "Community Grants"
+                    "Community Grants",
+                    "Regional Funding Final Report"
                 ],
-                "reportingPeriodAlignedToCalendar": true
+                "name": "Regional Funding",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Landcare Network Grants 2014-16",
                 "themes": [
                     {"name": "Strategic Outcome 1. Maintain and improve ecosystem services through sustainable management of local and regional landscapes."},
                     {"name": "Strategic Outcome 2. Increase in the number of farmers and fishers adopting practices that improve the quality of the natural resource base, and the area of land over which those practices are applied."},
                     {"name": "Strategic Outcome 3. Increase engagement and participation of the community, including landcare, farmers and Indigenous people, in sustainable natural resource management."},
                     {"name": "Strategic Outcome 4. Increase restoration and rehabilitation of the natural environment, including protecting and conserving nationally and internationally significant species, ecosystems, ecological communities, places and values."}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Landcare Network Grants 2014-16",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "20 Million Trees Grants Round 2",
                 "themes": [
                     {"name": "Communities are involved in caring for their environment"},
                     {"name": "Communities are protecting species and natural assets"}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "20 Million Trees Grants Round 2",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "20 Million Trees West Melbourne",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "20 Million Trees Discretionary Grants",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "20 Million Trees Cumberland Conservation Corridor Grants",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "20 Million Trees Cumberland Conservation Corridor Land Management",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
+                ],
                 "name": "20 Million Trees Service Providers Tranche 1",
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
             },
             {
-                "projectDatesContracted": true,
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
                 "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
+                ],
                 "name": "20 Million Trees Service Providers",
-                "overridesProgramData": true,
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [
                     "MERI Plan",
                     "Risks and Threats"
                 ],
-                "endDate": "",
-                "activities": [
-                    "Indigenous Employment and Businesses",
-                    "Outcomes, Evaluation and Learning - final report",
-                    "Project Administration",
-                    "Progress, Outcomes and Learning - stage report",
-                    "Fauna Survey - general",
-                    "Flora Survey - general",
-                    "Pest Animal Survey",
-                    "Plant Survival Survey",
-                    "Site Monitoring Plan",
-                    "Water Quality Survey",
-                    "Weed Mapping & Monitoring",
-                    "Community Participation and Engagement",
-                    "Debris Removal",
-                    "Disease Management",
-                    "Erosion Management",
-                    "Fencing",
-                    "Conservation Grazing Management",
-                    "Fire Management",
-                    "Heritage Conservation",
-                    "Management Plan Development",
-                    "Management Practice Change",
-                    "Conservation Actions for Species and Communities",
-                    "Pest Management",
-                    "Plant Propagation",
-                    "Public Access and Infrastructure",
-                    "Research",
-                    "Revegetation",
-                    "Seed Collection",
-                    "Site Preparation",
-                    "Water Management",
-                    "Weed Treatment",
-                    "Works Planning and Risk",
-                    "Indigenous Knowledge Transfer",
-                    "Training and Skills Development",
-                    "Vegetation Assessment - Commonwealth government methodology",
-                    "Post revegetation site management"
-                ],
-                "reportingPeriodAlignedToCalendar": false
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
             },
             {
-                "projectDatesContracted": true,
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
                 "weekDaysToCompleteReport": 0,
-                "name": "20 Million Trees Service Providers Tranche 2",
-                "overridesProgramData": true,
                 "themes": [],
-                "optionalProjectContent": [
-                    "MERI Plan",
-                    "Risks and Threats"
-                ],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
                 "endDate": "",
                 "activities": [
                     "Indigenous Employment and Businesses",
@@ -884,22 +974,28 @@
                     "Vegetation Assessment - Commonwealth government methodology",
                     "Post revegetation site management"
                 ],
-                "reportingPeriodAlignedToCalendar": false
+                "name": "20 Million Trees Service Providers Tranche 2",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
             }
         ],
-        "reportingPeriodAlignedToCalendar": true
-    },
-    {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Reef Trust",
+        "reportingPeriodAlignedToCalendar": true,
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
         ],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -937,94 +1033,98 @@
             "Indigenous Knowledge Transfer",
             "Training and Skills Development"
         ],
+        "name": "Reef Trust",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Reef Trust Phase 1 Investment",
                 "themes": [
                     {"name": "Outcome 1: Improve the quality of water entering the Great Barrier Reef from broad-scale land use to increase the health and resilience of the Great Barrier Reef."},
                     {"name": "Outcome 2: Improve the health and resilience of coastal habitats."},
                     {"name": "Outcome 3: Improve and protect marine biodiversity, including the reduction of crown-of-thorns starfish and protection of listed threatened and migratory species, such as dugongs and turtles."},
                     {"name": "Outcome 4: Any new development maintains or improves the condition of matters of national and state environmental significance through the strategic delivery of offsets through the Reef Trust."}
                 ],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Reef Trust Phase 1 Investment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 2 Investment",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 3 Investment",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Discretionary Grants",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 4 Investment",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Reef Trust Phase 5 Investment",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Reef Trust Offsets",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Reef Trust Offsets",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             }
         ],
-        "reportingPeriodAlignedToCalendar": true
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Weedwatcher",
-        "optionalProjectContent": [],
         "activities": [
             "Weed Mapping & Monitoring",
             "Weed Treatment"
         ],
-        "subprograms": []
+        "name": "Weedwatcher",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Citizen Science Projects",
-        "optionalProjectContent": [],
         "activities": [
             "Single Sighting",
             "Multiple Sightings",
@@ -1043,122 +1143,79 @@
             "Flying Fox Survey",
             "Pollinator Sighting",
             "VNPA ReefWatch Survey",
+            "Post Biodiversity-works Site Monitoring Methodology",
+            "WarrumbungleSnap",
+            "Steaming to Success",
             "Seagrass Bed Monitoring",
             "Koala Count - South Australia",
-            "Intertidal Reef Survey",
             "Sea Search - Seagrass Bed Monitoring",
             "Sea Search - Intertidal Reef Survey",
-            "Sea Search - Fixed Photo Points",
             "General Seed Collection Activity",
-            "Logan Fauna Sightings",
             "General Fauna Sightings v1",
-            "TasVeg - Native Vegetation Assessment - Forest Vegetation",
-            "Local Species Inventory"
+            "General Flora Sightings v1",
+            "NT Systematic Terrestrial Fauna Survey",
+            "North Sydney Wildlife Watch",
+            "North Sydney Wildlife Watch - Multi-species",
+            "Dunewatch Activity Summary",
+            "Dunewatch Survey - Emery Method",
+            "Dunewatch - Human Impact Survey",
+            "Dunewatch Flora Survey",
+            "Dunewatch Fauna Survey",
+            "Dunewatch - Human Impact Assessment",
+            "Nest Box Monitoring",
+            "EPA Water Quality and Illegal Dumping",
+            "Sea Search - Sea Search Patrol",
+            "Local Species Inventory",
+            "General Multi-species Sightings - Alternate format v2",
+            "Bird Survey - Curl Curl",
+            "Wolli Creek Birdos - Current Surveys",
+            "Wolli Creek Birdos - CBOC Observations",
+            "Wolli Creek Birdos - Neil Rankin observations",
+            "Environmental Assets Register",
+            "Single Species Weed Monitoring Form",
+            "Tropical Butterfly Sightings",
+            "Mapping Butterflies and Host Vines",
+            "Froglet calls",
+            "Echidna CSI",
+            "Redlands Weed Spotter",
+            "Bird Survey - SAMD",
+            "Bat Survey - SAMD",
+            "Cape York Incidental Sightings",
+            "Cape York Terrestrial Fauna Survey",
+            "Dieback Observation",
+            "Echidna CSI - Sample collection",
+            "Sea Search - Fixed Photo Points",
+            "Sea Search - Seagrass Boundary Mapping",
+            "Sea Search - Image Library",
+            "MEGA Bat project - SAMD",
+            "Goanna Watch - Discovery Circle",
+            "Bird Survey - Western Sydney",
+            "Echidna CSI - Other evidence",
+            "Urban Bird Movements Research",
+            "Urban Bird Movements Research - Incidental Sighting",
+            "Urban Bird Movements Research - Systematic Survey"
         ],
-        "subprograms": []
+        "name": "Citizen Science Projects",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Basin Champions",
-        "optionalProjectContent": [],
         "activities": [
             "Water Quality Survey",
             "Single Sighting",
             "Multiple Sightings"
         ],
-        "subprograms": []
-    },
-    {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": {
-            "defaultSpeciesConfig": {
-                "type": "ALL_SPECIES",
-                "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
-            },
-            "surveysConfig": [{
-                "name": "ESP PMU or Zone reporting",
-                "speciesFields": [
-                    {
-                        "context": "",
-                        "config": {
-                            "type": "GROUP_OF_SPECIES",
-                            "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)",
-                            "speciesLists": [{"dataResourceUid": "dr7394"}]
-                        },
-                        "label": "Species:",
-                        "output": "ESP Weed management",
-                        "dataFieldName": "species"
-                    },
-                    {
-                        "context": "",
-                        "config": {
-                            "type": "GROUP_OF_SPECIES",
-                            "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)",
-                            "speciesLists": [{"dataResourceUid": "dr7484"}]
-                        },
-                        "label": "Species:",
-                        "output": "ESP Feral animal management",
-                        "dataFieldName": "species"
-                    }
-                ]
-            }]
-        },
-        "reportingPeriod": "3",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Environmental Stewardship",
-        "optionalProjectContent": ["Risks and Threats"],
-        "activities": [
-            "ESP Overview",
-            "ESP PMU or Zone reporting",
-            "ESP SMU Reporting"
-        ],
-        "subprograms": [
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Environmental Stewardship 1318",
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": [],
-                "reportingPeriodAlignedToCalendar": true
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Environmental Stewardship 1319",
-                "overridesProgramData": false,
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
-            },
-            {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "ESP Test",
-                "overridesProgramData": false,
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
-            }
-        ],
-        "reportingPeriodAlignedToCalendar": false
-    },
-    {
-        "projectDatesContracted": true,
+        "name": "Basin Champions",
         "speciesFieldsSettings": null,
-        "reportingPeriod": "6",
-        "isMeritProgramme": true,
+        "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
         "weekDaysToCompleteReport": 0,
-        "name": "20 Million Trees Service Providers",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
+        "reportingPeriod": "3",
+        "projectDatesContracted": true,
         "activities": [
             "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
@@ -1196,13 +1253,736 @@
             "Indigenous Knowledge Transfer",
             "Training and Skills Development"
         ],
-        "subprograms": []
+        "name": "Environmental Stewardship",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Environmental Stewardship 1318",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "overridesProgramData": false,
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Environmental Stewardship 1319",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "LMCW1",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "LHQS-QLD",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "LM1",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "LM2",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "MEC1",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "MEC 2",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP SMU Reporting",
+                    "ESP Species"
+                ],
+                "name": "LHQS-NSW",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            },
+            {
+                "reportingPeriod": "12",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "speciesFieldsSettings": {
+                    "surveysConfig": [
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP PMU or Zone reporting"
+                        },
+                        {
+                            "speciesFields": [
+                                {
+                                    "output": "ESP Weed management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7394"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                },
+                                {
+                                    "output": "ESP Feral animal management",
+                                    "dataFieldName": "species",
+                                    "context": "",
+                                    "label": "Species:",
+                                    "config": {
+                                        "speciesLists": [{"dataResourceUid": "dr7484"}],
+                                        "type": "GROUP_OF_SPECIES",
+                                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                                    }
+                                }
+                            ],
+                            "name": "ESP SMU Reporting"
+                        }
+                    ],
+                    "defaultSpeciesConfig": {
+                        "type": "ALL_SPECIES",
+                        "speciesDisplayFormat": "SCIENTIFICNAME(COMMONNAME)"
+                    }
+                },
+                "projectTemplate": "esp",
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "activities": [
+                    "ESP SMU Reporting",
+                    "ESP Overview",
+                    "ESP PMU or Zone reporting",
+                    "ESP Species"
+                ],
+                "name": "",
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": false,
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Ecological Science Projects",
-        "optionalProjectContent": [],
+        "reportingPeriod": "6",
+        "projectDatesContracted": true,
+        "activities": [
+            "Indigenous Employment and Businesses",
+            "Outcomes, Evaluation and Learning - final report",
+            "Project Administration",
+            "Progress, Outcomes and Learning - stage report",
+            "Fauna Survey - general",
+            "Flora Survey - general",
+            "Pest Animal Survey",
+            "Plant Survival Survey",
+            "Site Monitoring Plan",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
+        ],
+        "name": "20 Million Trees Service Providers",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Camera Trap Monitoring",
             "General Weed Sighting",
@@ -1212,18 +1992,18 @@
             "Multiple Sightings",
             "Single Sighting",
             "2-ha Track Plot Datasheet",
-            "Aerial fauna survey - distance sampler method"
+            "Aerial fauna survey - distance sampler method",
+            "Cape York Terrestrial Fauna Survey",
+            "Cape York Incidental Sightings",
+            "Urban Bird Movements Research - Systematic Survey"
         ],
-        "subprograms": []
+        "name": "Ecological Science Projects",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "General Works Projects",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
         "activities": [
             "Fauna survey - trap and transect",
             "Floristic survey - plot and transecty",
@@ -1255,18 +2035,59 @@
             "Training and Skills Development v2",
             "Water Management v2",
             "Floristic survey - plot and transect",
-            "Outcomes, Evaluation and Learning - General"
+            "Outcomes, Evaluation and Learning - General",
+            "Project Administration",
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development",
+            "Outcomes, Evaluation and Learning - final report",
+            "Camera Trap Monitoring",
+            "Significant Trees Survey",
+            "2-ha Track Plot Datasheet",
+            "Aerial fauna survey - distance sampler method",
+            "Flying Fox Survey",
+            "Sea Search - Seagrass Bed Monitoring",
+            "Sea Search - Intertidal Reef Survey",
+            "General Seed Collection Activity",
+            "Nest Box Monitoring",
+            "Local Species Inventory",
+            "Pest Animal Survey - with map",
+            "Plant Survival Survey - with map",
+            "Site Monitoring Plan - with map",
+            "Water Quality Survey - with map",
+            "Weed Mapping and Monitoring - with map",
+            "Dieback Observation",
+            "Community Participation and Engagement - with map",
+            "Debris removal - with map",
+            "Disease Management - with map",
+            "Erosion Management - with map",
+            "Fencing - with map",
+            "Conservation Grazing Management - with map",
+            "Ecological Fire Management - with map",
+            "Heritage Conservation - with map",
+            "Management Plan Development - with map",
+            "Conservation Actions for Species and Communities - with map",
+            "Pest Management - with map",
+            "Plant Propagation - with map",
+            "Public Access and Infrastructure - with map",
+            "Research - with map",
+            "Revegetation - with map",
+            "Seed Collection - with map",
+            "Site Preparation - with map",
+            "Water Management - with map",
+            "Weed Treatment - with map",
+            "Works Planning and Risk - with map",
+            "Post Revegetation Site Management - with map"
         ],
-        "subprograms": []
-    },
-    {
+        "name": "General Works Projects",
         "speciesFieldsSettings": null,
-        "weekDaysToCompleteReport": 0,
-        "name": "National Environmental Science Programme",
+        "subprograms": [],
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
-        ],
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
         "activities": [
             "Single Sighting",
             "Multiple Sightings",
@@ -1281,223 +2102,413 @@
             "Fauna survey - trap and transect",
             "General Weed Monitoring",
             "Aerial fauna survey - distance sampler method",
-            "Camera Trap Monitoring"
+            "Camera Trap Monitoring",
+            "Cape York Incidental Sightings",
+            "Cape York Terrestrial Fauna Survey",
+            "Nest Box Monitoring"
         ],
+        "name": "National Environmental Science Programme",
+        "speciesFieldsSettings": null,
         "subprograms": [
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Clean Air and Urban Landscapes Hub",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Earth Systems and Climate Change Hub",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Marine Biodiversity Hub",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Northern Australia Environmental Resources Hub",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
+                "themes": [],
+                "endDate": "",
+                "activities": [],
                 "name": "Threatened Species Recovery Hub",
-                "themes": [],
+                "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
-                "endDate": "",
-                "activities": []
+                "startDate": ""
             },
             {
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "name": "Tropical Water Quality Hub",
                 "themes": [],
-                "optionalProjectContent": [],
                 "endDate": "",
-                "activities": []
+                "activities": [],
+                "name": "Tropical Water Quality Hub",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
         ]
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Habitat Condition Assessment",
-        "optionalProjectContent": [],
-        "activities": ["Habitat Condition Assessment Tool"],
-        "subprograms": []
-    },
-    {
-        "speciesFieldsSettings": null,
-        "weekDaysToCompleteReport": 0,
-        "name": "European Citizen Science Association",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
-        "activities": [],
-        "subprograms": []
-    },
-    {
-        "speciesFieldsSettings": null,
-        "weekDaysToCompleteReport": 0,
-        "name": "CRISP",
-        "optionalProjectContent": [],
-        "activities": [
-            "CRISP - Project Assessment",
-            "CRISP - Audit"
-        ],
-        "subprograms": []
-    },
-    {
-        "projectDatesContracted": true,
-        "speciesFieldsSettings": null,
         "reportingPeriod": "6",
-        "isMeritProgramme": true,
-        "weekDaysToCompleteReport": 0,
-        "name": "Reef 2050 Plan",
-        "optionalProjectContent": [],
+        "projectDatesContracted": true,
         "activities": [
-            "Reef 2050 Plan Action Reporting",
-            "Progress, Outcomes and Learning - stage report",
-            "Outcomes, Evaluation and Learning - General",
-            "Indigenous Employment and Businesses",
             "Outcomes, Evaluation and Learning - final report",
-            "Project Administration"
-        ],
-        "subprograms": [
-            {
-                "projectDatesContracted": true,
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
-                "weekDaysToCompleteReport": 0,
-                "name": "Reef 2050 Implementation",
-                "overridesProgramData": true,
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": [
-                    "Reef 2050 Plan Action Reporting",
-                    "Progress, Outcomes and Learning - stage report",
-                    "Outcomes, Evaluation and Learning - General",
-                    "Indigenous Employment and Businesses",
-                    "Outcomes, Evaluation and Learning - final report",
-                    "Project Administration",
-                    "Flora Survey - general",
-                    "Fauna Survey - general"
-                ],
-                "reportingPeriodAlignedToCalendar": true
-            },
-            {
-                "projectDatesContracted": true,
-                "startDate": "",
-                "speciesFieldsSettings": null,
-                "reportingPeriod": "6",
-                "weekDaysToCompleteReport": 0,
-                "name": "Reef 2050 Plan Action Reporting",
-                "overridesProgramData": true,
-                "themes": [],
-                "optionalProjectContent": [],
-                "endDate": "",
-                "activities": ["Reef 2050 Plan Action Reporting"],
-                "reportingPeriodAlignedToCalendar": true
-            }
-        ],
-        "reportingPeriodAlignedToCalendar": true
-    },
-    {
-        "speciesFieldsSettings": null,
-        "weekDaysToCompleteReport": 0,
-        "name": "Greening Australia Projects",
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ],
-        "activities": [
             "Indigenous Employment and Businesses",
-            "Outcomes, Evaluation and Learning - General",
-            "Project Administration v2",
-            "Pest Animal Survey v2",
-            "Plant Survival Survey v2",
-            "Site Monitoring Plan v2",
-            "Water Quality Survey v2",
-            "Weed Mapping & Monitoring v2",
-            "Weed Mapping & Monitoring",
-            "TasVeg - Native Vegetation Assessment - Forest Vegetation",
-            "Vegetation Assessment - Habitat Hectares v2 (VIC)",
-            "Vegetation Assessment - Commonwealth government methodology",
-            "Water Quality Survey",
-            "Fauna Survey - general",
+            "Project Administration",
             "Flora Survey - general",
+            "Fauna Survey - general",
             "Pest Animal Survey",
             "Plant Survival Survey",
             "Site Monitoring Plan",
-            "Post Biodiversity-works Site Monitoring Methodology",
-            "Community Participation and Engagement v2",
-            "Debris removal v2",
-            "Disease Management v2",
-            "Erosion Management v2",
-            "Fencing v2",
-            "Conservation Grazing Management v2",
-            "Ecological Fire Management v2",
-            "Heritage Conservation v2",
-            "Management Plan Development v2",
-            "Conservation Actions for Species and Communities v2",
-            "Pest Management v2",
-            "Plant Propagation v2",
-            "Public Access and Infrastructure v2",
-            "Research v2",
-            "Revegetation v2",
-            "Seed Collection v2",
-            "Site Preparation v2",
-            "Water Management v2",
-            "Weed Treatment v2",
-            "Works Planning and Risk v2",
+            "Water Quality Survey",
+            "Weed Mapping & Monitoring",
+            "Vegetation Assessment - Commonwealth government methodology",
+            "Community Participation and Engagement",
+            "Debris Removal",
+            "Disease Management",
+            "Erosion Management",
+            "Fencing",
+            "Conservation Grazing Management",
+            "Fire Management",
+            "Heritage Conservation",
+            "Management Plan Development",
+            "Management Practice Change",
+            "Conservation Actions for Species and Communities",
+            "Pest Management",
+            "Plant Propagation",
+            "Public Access and Infrastructure",
+            "Research",
+            "Revegetation",
+            "Seed Collection",
+            "Site Preparation",
+            "Water Management",
+            "Weed Treatment",
+            "Works Planning and Risk",
             "Post revegetation site management",
-            "Training and Skills Development v2",
-            "Indigenous Knowledge Transfer"
+            "Indigenous Knowledge Transfer",
+            "Training and Skills Development"
         ],
-        "subprograms": []
+        "name": "Reef 2050 Plan",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Indigenous Employment and Businesses",
+                    "Project Administration",
+                    "Flora Survey - general",
+                    "Fauna Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Post revegetation site management",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development"
+                ],
+                "name": "Reef 2050 Implementation",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": ["Reef 2050 Plan Action Reporting"],
+                "name": "Reef 2050 Plan Action Reporting",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": true,
+                "startDate": ""
+            }
+        ],
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": ["MERI Plan"],
+        "isMeritProgramme": true
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Threatened Species Hub",
+        "activities": [
+            "General Multi-species Sightings - Alternate format v2",
+            "Martu Wangka Sightings"
+        ],
+        "name": "Schools WA",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Weed Biological Control - Agent Record - Target species with canes",
+            "Weed Biological Control - Agent Record - Insect agents",
+            "Weed Biological Control - Agent Record - Non cane rust and fungi agents"
+        ],
+        "name": "Weed Biological Control",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Fauna survey - trap and transect",
+            "Floristic survey - plot and transect",
+            "General Weed Monitoring",
+            "Camera Trap Monitoring",
+            "Significant Trees Survey",
+            "General Weed Sighting",
+            "OzAtlas Sightings",
+            "2-ha Track Plot Datasheet",
+            "Flying Fox Survey",
+            "Aerial fauna survey - distance sampler method",
+            "Pollinator Sighting",
+            "Sea Search - Seagrass Bed Monitoring",
+            "Sea Search - Intertidal Reef Survey",
+            "General Seed Collection Activity",
+            "Dunewatch Activity Summary",
+            "Dunewatch Survey - Emery Method",
+            "Dunewatch - Human Impact Assessment",
+            "Dunewatch Flora Survey",
+            "Dunewatch Fauna Survey",
+            "Nest Box Monitoring",
+            "Sea Search - Sea Search Patrol",
+            "Local Species Inventory",
+            "General Multi-species Sightings - Alternate format v2",
+            "Single Species Weed Monitoring Form",
+            "Weed Biological Control - Agent Record - Target species with canes",
+            "Weed Biological Control - Agent Record - Insect agents",
+            "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
+            "Mapping Butterflies and Host Vines",
+            "Froglet calls",
+            "Water Quality Survey"
+        ],
+        "name": "WABSI",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [
+                    {"name": "Stakeholder engagement"},
+                    {"name": "Transdisciplinary research"},
+                    {"name": "Social and economic analysis"},
+                    {"name": "Aboriginal knowledge"},
+                    {"name": "Communication and adoption"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Restoration and ex-situ conservation",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Stakeholder engagement"},
+                    {"name": "Transdisciplinary research"},
+                    {"name": "Social and economic analysis"},
+                    {"name": "Aboriginal knowledge"},
+                    {"name": "Communication and adoption"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Information management systems",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Stakeholder engagement"},
+                    {"name": "Transdisciplinary research"},
+                    {"name": "Social and economic analysis"},
+                    {"name": "Aboriginal knowledge"},
+                    {"name": "Communication and adoption"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Biodiversity survey",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [
+                    {"name": "Stakeholder engagement"},
+                    {"name": "Transdisciplinary research"},
+                    {"name": "Social and economic analysis"},
+                    {"name": "Aboriginal knowledge"},
+                    {"name": "Communication and adoption"}
+                ],
+                "endDate": "",
+                "activities": [],
+                "name": "Processes and threat mitigation",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
         "optionalProjectContent": [
             "MERI Plan",
             "Risks and Threats"
-        ],
-        "activities": [],
-        "subprograms": []
+        ]
     },
     {
-        "speciesFieldsSettings": null,
         "weekDaysToCompleteReport": 0,
-        "name": "Seed Banks",
-        "optionalProjectContent": [],
-        "activities": ["Seed Collection v2"],
-        "subprograms": []
+        "reportingPeriod": "12",
+        "projectDatesContracted": true,
+        "activities": [],
+        "name": "Improving Your Local Parks and Environment",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "reportingPeriodAlignedToCalendar": true,
+        "optionalProjectContent": [
+            "Risks and Threats",
+            "MERI Plan"
+        ],
+        "isMeritProgramme": true
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": ["CLC 2Ha Track Plot"],
+        "name": "CLC Tracker Hub",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Weed Mapping & Monitoring",
+            "Fauna survey - trap and transect",
+            "Floristic survey - plot and transect",
+            "Camera Trap Monitoring",
+            "2-ha Track Plot Datasheet",
+            "Flying Fox Survey",
+            "Aerial fauna survey - distance sampler method",
+            "General Seed Collection Activity",
+            "NT Systematic Terrestrial Fauna Survey",
+            "Nest Box Monitoring",
+            "Local Species Inventory",
+            "Cape York Incidental Sightings",
+            "Cape York Terrestrial Fauna Survey",
+            "Mapping Butterflies and Host Vines",
+            "Froglet calls",
+            "Dieback Observation",
+            "Pest Animal Survey - with map",
+            "Site Monitoring Plan - with map",
+            "Water Quality Survey - with map",
+            "Weed Mapping and Monitoring - with map"
+        ],
+        "name": "CSIRO Land & Water",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Progress, Outcomes and Learning - stage report",
+            "Outcomes, Evaluation and Learning - final report",
+            "Project Administration",
+            "Pest Animal Survey - with map",
+            "Plant Survival Survey - with map",
+            "Site Monitoring Plan - with map",
+            "Water Quality Survey - with map",
+            "Weed Mapping and Monitoring - with map",
+            "Community Participation and Engagement - with map",
+            "Debris removal - with map",
+            "Disease Management - with map",
+            "Erosion Management - with map",
+            "Fencing - with map",
+            "Conservation Grazing Management - with map",
+            "Ecological Fire Management - with map",
+            "Heritage Conservation - with map",
+            "Management Plan Development - with map",
+            "Conservation Actions for Species and Communities - with map",
+            "Pest Management - with map",
+            "Plant Propagation - with map",
+            "Public Access and Infrastructure - with map",
+            "Research - with map",
+            "Revegetation - with map",
+            "Seed Collection - with map",
+            "Site Preparation - with map",
+            "Water Management - with map",
+            "Weed Treatment - with map",
+            "Works Planning and Risk - with map",
+            "Post Revegetation Site Management - with map"
+        ],
+        "name": "CSIRO NRM Interventions Programmes",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
     }
 ]}
