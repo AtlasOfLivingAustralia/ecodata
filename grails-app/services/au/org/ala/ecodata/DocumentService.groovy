@@ -307,20 +307,24 @@ class DocumentService {
 
                 if (type == Document.DOCUMENT_TYPE_IMAGE) {
 
-                    File processed = new File(fullPath(filepath, Document.PROCESSED_PREFIX+filename))
-                    boolean result = ImageUtils.reorientImage(destination, processed)
-                    if (result) {
-                        // If the image was processed, used the processed image when making the thumbnail.
-                        filename = Document.PROCESSED_PREFIX+filename
-                    }
-
-                    makeThumbnail(filepath, filename, overwrite)
+                    filename = processImage(filepath, filename, destination, overwrite)
                 }
             }
         }
         return filename
     }
 
+    private String processImage(String filepath, String filename, File destination, boolean overwrite) {
+        File processed = new File(fullPath(filepath, Document.PROCESSED_PREFIX + filename))
+        boolean result = ImageUtils.reorientImage(destination, processed)
+        if (result) {
+            // If the image was processed, used the processed image when making the thumbnail.
+            filename = Document.PROCESSED_PREFIX + filename
+        }
+
+        makeThumbnail(filepath, filename, overwrite)
+        filename
+    }
 
     /**
      * Creates a thumbnail of the image stored at the location specified by filepath and filename.

@@ -2,7 +2,11 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.test.spock.IntegrationSpec
+import org.apache.commons.io.FilenameUtils
 import org.springframework.mock.web.MockMultipartFile
+
+import javax.imageio.ImageIO
+import java.awt.image.BufferedImage
 
 class DocumentControllerSpec extends IntegrationSpec {
 
@@ -49,6 +53,28 @@ class DocumentControllerSpec extends IntegrationSpec {
             def savedFile = new File(documentService.fullPath(savedDoc.filepath, savedDoc.filename))
             savedFile.exists()
 
+    }
+
+    void "ensure thumbnails can be generated"() {
+        setup:
+        int thumbSize = 400
+        InputStream input = getClass().getResourceAsStream('/resources/images/Landscape_2.jpg')
+        MockMultipartFile file = new MockMultipartFile('image', 'Landscape_2.jpg', 'image/jpg', input)
+
+        when:
+        documentController.params.size = thumbSize
+        documentController.request.addFile file
+        documentController.createThumbnail()
+
+        then:
+        documentController.response.contentType == 'image/jpg'
+        File tmp = File.createTempFile("result", "."+FilenameUtils.getExtension(file.originalFilename))
+        new FileOutputStream(tmp).withStream { it << documentController.response.contentAsByteArray }
+
+        BufferedImage img = ImageIO.read(tmp)
+        Math.max(img.width, img.height) == thumbSize
+
+        tmp.delete()
     }
 
 }
