@@ -22,6 +22,7 @@ class ProjectService {
     static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
     static final ENHANCED = 'enhanced'
+    static final PRIVATE_SITES_REMOVED  = 'privatesitesremoved'
 
     def grailsApplication
     MessageSource messageSource
@@ -132,6 +133,9 @@ class ProjectService {
         Map result
 
         Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
+        if(levelOfDetail instanceof  List){
+            levelOfDetail = levelOfDetail[0]
+        }
 
         if (levelOfDetail == BASIC) {
             result = [
@@ -172,7 +176,12 @@ class ProjectService {
 
             if (levelOfDetail != FLAT) {
                 mapOfProperties.remove("sites")
-                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                if(levelOfDetail == PRIVATE_SITES_REMOVED){
+                    mapOfProperties.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, [SiteService.FLAT])
+                } else {
+                    mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                }
+
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
 

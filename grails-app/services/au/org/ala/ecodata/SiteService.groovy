@@ -18,6 +18,7 @@ class SiteService {
     static final BRIEF = 'brief'
     static final RAW = 'raw'
     static final FLAT = 'flat'
+    static final PRIVATE = 'private'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -90,6 +91,14 @@ class SiteService {
         } else {
             Site.findAllByProjects(id).findAll({ it.status == ACTIVE }).collect { toMap(it, levelOfDetail) }
         }
+    }
+
+    def findAllNonPrivateSitesForProjectId(id, levelOfDetail = []){
+        Site.withCriteria {
+            eq('status', ACTIVE)
+            ne('visibility', PRIVATE)
+            inList('projects', [id])
+        }.collect { toMap(it, levelOfDetail) }
     }
 
     /**
