@@ -48,6 +48,7 @@ class ProjectController {
         if (params.view == RICH) { levelOfDetail << RICH }
         if (params.view == ProjectService.ALL) { levelOfDetail = ProjectService.ALL }
         if (params.view == ProjectService.OUTPUT_SUMMARY) {levelOfDetail = ProjectService.OUTPUT_SUMMARY}
+        if (params.view == ProjectService.PRIVATE_SITES_REMOVED) {levelOfDetail << ProjectService.PRIVATE_SITES_REMOVED}
         if (!id) {
             def list = projectService.list(levelOfDetail, includeDeleted, citizenScienceOnly)
             list.sort {it.name}

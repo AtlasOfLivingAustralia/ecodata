@@ -25,6 +25,7 @@ class Site {
     ObjectId id
     String siteId
     String status = 'active'
+    String visibility
     String externalSiteId
     List projects = []
     String name
@@ -43,6 +44,7 @@ class Site {
     Map geoIndex
 
     static constraints = {
+        visibility nullable: true
         name nullable: true
         externalSiteId nullable:true
         type nullable:true
