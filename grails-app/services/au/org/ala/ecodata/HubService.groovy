@@ -10,6 +10,7 @@ class HubService {
     static transactional = 'mongo'
     MessageSource messageSource
     CommonService commonService
+    PermissionService permissionService
 
     Hub get(String id, includeDeleted = false) {
 
@@ -40,7 +41,7 @@ class HubService {
             // urlPath is a mandatory property and hence needs to be set before dynamic properties are used (as they trigger validations)
             hub.save(failOnError: true, flush:true)
 
-            [status:'ok',hubId:hub.hubId]
+            [status :'ok',hubId:hub.hubId]
         }
         catch (Exception e) {
             // clear session to avoid exception when GORM tries to autoflush the changes
@@ -103,6 +104,7 @@ class HubService {
 
     Map toMap(Hub hub) {
         Map properties = commonService.toBareMap(hub)
+        properties.userPermissions = permissionService.getMembersForHub(hub.hubId)
         properties
     }
 
