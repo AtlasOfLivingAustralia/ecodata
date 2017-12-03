@@ -232,6 +232,31 @@ class PermissionService {
         out
     }
 
+    /**
+     * Returns a list of all users who have permissions configured for the specified hub.
+     * @param hubId the hubId of the hub to get permissions for.
+     * @return a List of the users that have roles configured for the hub.
+     */
+    List<Map> getMembersForHub(String hubId) {
+        List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(hubId, Hub.class.name, DELETED)
+        permissions.collect{toMap(it)}
+    }
+
+    /**
+     * Converts a UserPermission into a Map, looking up the user display name from the user details service.
+     */
+    private Map toMap(UserPermission userPermission) {
+        Map mapped = [:]
+        def u = userService.getUserForUserId(userPermission.userId?:"0")
+        mapped.role = userPermission.accessLevel?.toString()
+        mapped.userId = userPermission.userId
+        mapped.displayName = u?.displayName
+        mapped.userName = u?.userName
+
+        mapped
+
+    }
+
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         List prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
