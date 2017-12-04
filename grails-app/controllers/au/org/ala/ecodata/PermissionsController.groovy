@@ -10,7 +10,6 @@ import static org.apache.http.HttpStatus.*
  *
  * @see au.org.ala.ecodata.UserPermission
  */
-@RequireApiKey
 class PermissionsController {
     PermissionService permissionService
     ProjectService projectService
