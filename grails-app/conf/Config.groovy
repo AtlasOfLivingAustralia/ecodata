@@ -704,7 +704,7 @@ log4j = {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
                         file: loggingDir + "/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
+                        threshold: org.apache.log4j.Level.DEBUG,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
