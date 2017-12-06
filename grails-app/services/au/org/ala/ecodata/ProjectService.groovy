@@ -44,14 +44,11 @@ class ProjectService {
         grailsApplication.mainContext.commonService
     }
 
-    List getBrief(listOfIds, version = null) {
-        if (log.isDebugEnabled()) {
-            log.debug("ProjectService::getBrief(${listOfIds}, ${version})")
-        }
-        List projects = []
+    def getBrief(listOfIds, version = null) {
         if (listOfIds) {
             if (version) {
                 def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort: 'date', order: 'desc'])
+                def projects = []
                 def found = []
                 all?.each {
                     if (!found.contains(it.projectId)) {
@@ -63,17 +60,13 @@ class ProjectService {
                     }
                 }
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("No version supplied: ${listOfIds}")
-                }
-                projects = Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
-                    log.debug("Found: ${it}")
-                    log.debug("Found: ${it.projectId}, ${it.name}")
+                Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
                     [projectId: it.projectId, name: it.name]
                 }
             }
+        } else {
+            []
         }
-        projects
     }
 
     def get(String id, levelOfDetail = [], version = null) {
