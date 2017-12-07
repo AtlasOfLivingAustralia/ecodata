@@ -704,7 +704,7 @@ log4j = {
                 rollingFile name: "ecodataLog",
                         maxFileSize: 104857600,
                         file: loggingDir + "/ecodata.log",
-                        threshold: org.apache.log4j.Level.INFO,
+                        threshold: org.apache.log4j.Level.DEBUG,
                         layout: pattern(conversionPattern: "%d %-5p [%c{1}]  %m%n")
                 rollingFile name: "stacktrace",
                         maxFileSize: 104857600,
@@ -745,7 +745,7 @@ log4j = {
             'grails.app.services.au.org.ala.ecodata.SubmissionService'
     ]
 
-    debug 'grails.app.controllers.au.org.ala', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
+    debug 'grails.app.controllers.au.org.ala', 'grails.app.services.au.org.ala.ecodata', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
     info 'grails.app.jobs.au.org.ala.ecodata'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers

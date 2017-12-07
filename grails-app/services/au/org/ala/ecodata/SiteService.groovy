@@ -18,6 +18,7 @@ class SiteService {
     static final BRIEF = 'brief'
     static final RAW = 'raw'
     static final FLAT = 'flat'
+    static final PRIVATE = 'private'
 
     def grailsApplication, activityService, projectService, commonService, webService, documentService, metadataService, cacheService
     PermissionService permissionService
@@ -92,6 +93,14 @@ class SiteService {
         }
     }
 
+    def findAllNonPrivateSitesForProjectId(id, levelOfDetail = []){
+        Site.withCriteria {
+            eq('status', ACTIVE)
+            ne('visibility', PRIVATE)
+            inList('projects', [id])
+        }.collect { toMap(it, levelOfDetail) }
+    }
+
     /**
      * Converts the domain object into a map of properties, including
      * dynamic properties.
@@ -105,15 +114,40 @@ class SiteService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
+        if (log.isDebugEnabled()) {
+            log.debug("SiteService::toMap (${site?.siteId},${levelOfDetail},${version}}")
+            log.debug(site)
+            log.debug(mapOfProperties)
+        }
+
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
+
             mapOfProperties.documents = documentService.findAllForSiteId(site.siteId, version)
+            if (log.isDebugEnabled()) {
+                log.debug("Attaching documents: "+mapOfProperties.documents)
+            }
             if (levelOfDetail.contains(LevelOfDetail.PROJECTS.name())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Attaching projects: "+mapOfProperties.projects)
+                }
                 def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
+                if (log.isDebugEnabled()) {
+                    log.debug("Attaching projects: "+mapOfProperties.projects)
+                }
             } else if (!levelOfDetail.contains(LevelOfDetail.NO_ACTIVITIES.name())) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Attaching projects: "+mapOfProperties.projects)
+                }
                 def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
+                if (log.isDebugEnabled()) {
+                    log.debug("Attaching projects: "+mapOfProperties.projects)
+                }
                 mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail, version)
+                if (log.isDebugEnabled()) {
+                    log.debug("Attaching activities: "+mapOfProperties.activities)
+                }
             }
         }
 
@@ -393,6 +427,7 @@ class SiteService {
                     result = [type: type, coordinates: geometry.coordinates]
                 }
                 break
+            case 'LineString':
             case 'MultiPolygon':
                 if (!geometry.coordinates) {
                     log.error("Invalid site: ${site.siteId} missing coordinates")

@@ -905,4 +905,16 @@ class PermissionsController {
         response.setContentType('application/json; charset="UTF-8"')
         render permissionService.getMembersForOrganisation(id) as JSON
     }
+
+    /**
+     * Returns the users and their roles for a hub.
+     * @param id the hubId of the hub.
+     * @return
+     */
+    def getByHub(String id) {
+        if (!id) {
+            render status:400, text:'The id parameter must be supplied'
+        }
+        render permissionService.getMembersForHub(id) as JSON
+    }
 }

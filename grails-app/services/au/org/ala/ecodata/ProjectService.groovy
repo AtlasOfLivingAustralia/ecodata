@@ -22,6 +22,7 @@ class ProjectService {
     static final PROMO = 'promo'
     static final OUTPUT_SUMMARY = 'outputs'
     static final ENHANCED = 'enhanced'
+    static final PRIVATE_SITES_REMOVED  = 'privatesitesremoved'
 
     def grailsApplication
     MessageSource messageSource
@@ -43,11 +44,14 @@ class ProjectService {
         grailsApplication.mainContext.commonService
     }
 
-    def getBrief(listOfIds, version = null) {
+    List getBrief(listOfIds, version = null) {
+        if (log.isDebugEnabled()) {
+            log.debug("ProjectService::getBrief(${listOfIds}, ${version})")
+        }
+        List projects = []
         if (listOfIds) {
             if (version) {
                 def all = AuditMessage.findAllByProjectIdInListAndEntityTypeAndDateLessThanEquals(listOfIds, Project.class.name, new Date(version as Long), [sort: 'date', order: 'desc'])
-                def projects = []
                 def found = []
                 all?.each {
                     if (!found.contains(it.projectId)) {
@@ -59,13 +63,17 @@ class ProjectService {
                     }
                 }
             } else {
-                Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
+                if (log.isDebugEnabled()) {
+                    log.debug("No version supplied: ${listOfIds}")
+                }
+                projects = Project.findAllByProjectIdInListAndStatusNotEqual(listOfIds, DELETED).collect {
+                    log.debug("Found: ${it}")
+                    log.debug("Found: ${it.projectId}, ${it.name}")
                     [projectId: it.projectId, name: it.name]
                 }
             }
-        } else {
-            []
         }
+        projects
     }
 
     def get(String id, levelOfDetail = [], version = null) {
@@ -132,6 +140,9 @@ class ProjectService {
         Map result
 
         Map mapOfProperties = project instanceof Project ? project.getProperty("dbo").toMap() : project
+        if(levelOfDetail instanceof  List){
+            levelOfDetail = levelOfDetail[0]
+        }
 
         if (levelOfDetail == BASIC) {
             result = [
@@ -172,7 +183,12 @@ class ProjectService {
 
             if (levelOfDetail != FLAT) {
                 mapOfProperties.remove("sites")
-                mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                if(levelOfDetail == PRIVATE_SITES_REMOVED){
+                    mapOfProperties.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, [SiteService.FLAT])
+                } else {
+                    mapOfProperties.sites = siteService.findAllForProjectId(project.projectId, [SiteService.FLAT], version)
+                }
+
                 mapOfProperties.documents = documentService.findAllForProjectId(project.projectId, levelOfDetail, version)
                 mapOfProperties.links = documentService.findAllLinksForProjectId(project.projectId, levelOfDetail, version)
 
