@@ -114,40 +114,15 @@ class SiteService {
         mapOfProperties["id"] = id
         mapOfProperties.remove("_id")
 
-        if (log.isDebugEnabled()) {
-            log.debug("SiteService::toMap (${site?.siteId},${levelOfDetail},${version}}")
-            log.debug(site)
-            log.debug(mapOfProperties)
-        }
-
         if (!levelOfDetail.contains(FLAT) && !levelOfDetail.contains(BRIEF)) {
-
             mapOfProperties.documents = documentService.findAllForSiteId(site.siteId, version)
-            if (log.isDebugEnabled()) {
-                log.debug("Attaching documents: "+mapOfProperties.documents)
-            }
             if (levelOfDetail.contains(LevelOfDetail.PROJECTS.name())) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Attaching projects: "+mapOfProperties.projects)
-                }
                 def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
-                if (log.isDebugEnabled()) {
-                    log.debug("Attaching projects: "+mapOfProperties.projects)
-                }
             } else if (!levelOfDetail.contains(LevelOfDetail.NO_ACTIVITIES.name())) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Attaching projects: "+mapOfProperties.projects)
-                }
                 def projects = projectService.getBrief(mapOfProperties.projects, version)
                 mapOfProperties.projects = projects
-                if (log.isDebugEnabled()) {
-                    log.debug("Attaching projects: "+mapOfProperties.projects)
-                }
                 mapOfProperties.activities = activityService.findAllForSiteId(site.siteId, levelOfDetail, version)
-                if (log.isDebugEnabled()) {
-                    log.debug("Attaching activities: "+mapOfProperties.activities)
-                }
             }
         }
 
