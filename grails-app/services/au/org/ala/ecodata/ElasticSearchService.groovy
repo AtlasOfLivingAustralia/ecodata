@@ -791,7 +791,14 @@ class ElasticSearchService {
     private Map prepareProjectForHomePageIndex(Project project) {
         def projectMap = projectService.toMap(project, ProjectService.FLAT)
         projectMap["className"] = new Project().getClass().name
-        projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+        // MERIT project needs private sites to be indexed for faceting purposes but Biocollect does not require private sites.
+        // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
+        // Hence the if condition.
+        if(projectMap.isMERIT){
+            projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+        } else {
+            projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
+        }
         projectMap.sites?.each { site ->
             // Not useful for the search index and there is a bug right now that can result in invalid POI
             // data causing the indexing to fail.
