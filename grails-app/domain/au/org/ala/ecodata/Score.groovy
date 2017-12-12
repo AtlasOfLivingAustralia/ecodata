@@ -2,6 +2,8 @@ package au.org.ala.ecodata
 
 class Score {
 
+    Long id
+
     String status = 'active'
     
     String scoreId
@@ -46,6 +48,7 @@ class Score {
     }
 
     static mapping = {
+
         scoreId index: true
         version false
     }
