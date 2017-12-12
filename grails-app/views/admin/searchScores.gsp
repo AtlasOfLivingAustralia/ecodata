@@ -7,7 +7,9 @@
 <body>
 
 <h3>Scores</h3>
+    <a href="${createLink(action:'createScore')}" class="btn btn-success">New Score</a>
 
+<h4>Existing Scores</h4>
     <table class="table table-striped">
         <thead>
         <tr>

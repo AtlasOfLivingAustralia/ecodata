@@ -619,6 +619,12 @@ class AdminController {
     }
 
     @AlaSecured("ROLE_ADMIN")
+    def createScore() {
+        Score score = new Score([entity:'Activity', configuration:[:]])
+        render view:'editScore', model:[score:score]
+    }
+
+    @AlaSecured("ROLE_ADMIN")
     def editScore(String id) {
         Score score = Score.findByScoreId(id)
 

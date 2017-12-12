@@ -59,6 +59,7 @@
 
 <asset:script>
 
+
     var ScoreConfigurationModel = function(configuration) {
 
     };
@@ -75,6 +76,7 @@
         self.displayType = ko.observable(score.displayType);
         self.isOutputTarget = ko.observable(score.isOutputTarget);
         self.configurationText = ko.observable(vkbeautify.json(JSON.stringify(score.configuration),2));
+        self.entity = ko.observable(score.entity || 'Activity');
 
 
         self.save = function () {
@@ -92,7 +94,7 @@
                 success: function (data) {
                     if (data !== 'error') {
                         alert('saved');
-                        document.location.reload();
+                        document.location.href = editScoreUrl+'/'+data.scoreId+'.json';
                     } else {
                         alert(data);
                     }
@@ -106,7 +108,8 @@
 
     var score = JSON.parse('${score as grails.converters.JSON}');
     var updateScoreUrl = '${g.createLink(controller: 'admin', action:'updateScore', id:score.scoreId?:'')}';
-    var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl+'.json'});
+    var editScoreUrl = '${g.createLink(action:'editScore')}';
+    var model = new ScoreModel(score, {updateScoreUrl:updateScoreUrl+'.json', editScoreUrl:editScoreUrl});
     ko.applyBindings(model);
 
 </asset:script>
