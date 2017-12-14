@@ -483,7 +483,7 @@
         {
           "type": "textarea",
           "source": "outcomes",
-          "title": "Activities/achievements/outcomes",
+          "title": "Activities / achievements / outcomes",
           "width":"20%"
         },
         {
