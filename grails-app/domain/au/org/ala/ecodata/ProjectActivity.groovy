@@ -18,6 +18,7 @@ class ProjectActivity {
     List sites = [] // list of sites associated to the survey
     boolean restrictRecordToSites
     boolean allowAdditionalSurveySites
+    boolean selectFromSitesOnly
     String baseLayersName
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
     VisibilityConstraint visibility = new VisibilityConstraint(embargoOption: EmbargoOption.NONE)
@@ -34,6 +35,7 @@ class ProjectActivity {
         sites nullable: true
         restrictRecordToSites nullable: true
         allowAdditionalSurveySites nullable: true
+        selectFromSitesOnly nullable: true
         baseLayersName nullable: true
         publicAccess nullable: true
         visibility nullable: true
