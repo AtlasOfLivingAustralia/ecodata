@@ -282,4 +282,20 @@ class SiteController {
         def result = [ value: !siteService.sitesContainsName(id, entityType, name) ]
         respond result
     }
+
+    /**
+     * Associate a project to a site
+     * @param id site id
+     * @param projectId
+     * @return
+     */
+    def addProject(String id){
+        String projectId = params.projectId
+        if(id && projectId){
+            Map result = siteService.addProject(id, projectId)
+            asJson result
+        } else {
+            render status: HttpStatus.SC_BAD_REQUEST, text: "Site id and project id must be provided."
+        }
+    }
 }

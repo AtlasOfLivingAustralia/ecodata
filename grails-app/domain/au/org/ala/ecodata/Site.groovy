@@ -59,7 +59,7 @@ class Site {
         extent nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
-            if(value){
+            if(value && value.type != 'Circle'){
                 Geometry geom = new GeometryJSON().read((value as JSON).toString())
                 IsValidOp isValidOp = new IsValidOp(geom);
                 TopologyValidationError error = isValidOp.getValidationError()
