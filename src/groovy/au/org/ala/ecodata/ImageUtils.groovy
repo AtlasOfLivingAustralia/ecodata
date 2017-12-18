@@ -1,6 +1,7 @@
 package au.org.ala.ecodata
 
 import com.drew.imaging.ImageMetadataReader
+import com.drew.imaging.ImageProcessingException
 import com.drew.metadata.Directory
 import com.drew.metadata.Metadata
 import com.drew.metadata.exif.ExifIFD0Directory
@@ -95,12 +96,18 @@ class ImageUtils {
      * @return the value of the EXIF orientation tag, or 0 if no EXIF data was found.
      */
     private static int getOrientation(File file) {
-        Metadata metadata = ImageMetadataReader.readMetadata(file)
-        Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class)
-
         int orientation = 0
-        if (dir && dir.hasTagName(ExifIFD0Directory.TAG_ORIENTATION)) {
-            orientation = dir.getInt(ExifIFD0Directory.TAG_ORIENTATION)
+
+        try {
+            Metadata metadata = ImageMetadataReader.readMetadata(file)
+            Directory dir = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class)
+
+            if (dir && dir.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+                orientation = dir.getInt(ExifIFD0Directory.TAG_ORIENTATION)
+            }
+        }
+        catch (ImageProcessingException e) {
+            log.info("Unsupported file type encountered when attempting to read image metadata: ${file.name}")
         }
 
         return orientation
