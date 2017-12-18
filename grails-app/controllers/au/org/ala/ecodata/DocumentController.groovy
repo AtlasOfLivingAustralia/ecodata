@@ -180,7 +180,7 @@ class DocumentController {
         else {
             props = request.JSON
             if (props.content) {
-                stream = new StringReader(props.content)
+                stream = new ByteArrayInputStream(props.content.getBytes('UTF-8'))
                 props.remove('content')
             }
         }
