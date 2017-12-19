@@ -126,8 +126,8 @@
         {
           "dataType": "text",
           "name": "objective",
-          "validate": "required",
-          "description":"One or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: * to reduce the impact of threatening processes and prevent further decline of the species \n* to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and * to ensure that threatening processes do not impact on the ongoing viability of the [species name].</li></ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria."
+          "validate": "required"
+
         },
         {
           "dataType": "text",
@@ -202,7 +202,7 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "action",
+          "name": "actions",
           "validate": "required"
         },
         {
@@ -315,6 +315,13 @@
         },
         {
           "dataType": "text",
+          "name": "initialConditionDescription",
+          "validate": "required",
+          "description":"This applies only to the time the recovery plan was published, and only needs to be completed once in the first progress report. Include reference to measures that are relevant to assessing the species’ or ecological communities’ condition and trajectory (e.g. abundance, distribution, habitat condition, threats). Refer to the recovery plan and/or listing assessment. Please note where data are stored or published"
+        },
+
+        {
+          "dataType": "text",
           "name": "currentCondition",
           "validate": "required",
           "constraints": [
@@ -327,7 +334,9 @@
         },
         {
           "dataType": "text",
-          "name": "comments"
+          "name": "currentConditionDescription",
+          "validate":"required",
+          "description":"Reference any changes from initial condition, new information etc. Include only information that will be significant in informing the assessment of the current state/condition of the species or ecological community. Include notes on where data are stored or published."
         }
       ],
       "defaultRows": [
@@ -430,6 +439,15 @@
       ]
     },
     {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "In the table below, please enter one or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: <ul><li>to reduce the impact of threatening processes and prevent further decline of the species</li><li>to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and </li><li>to ensure that threatening processes do not impact on the ongoing viability of the [species name].</li></ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria."
+        }
+      ]
+    },
+    {
       "type": "table",
       "source": "overallObjectives",
       "columns": [
@@ -469,7 +487,16 @@
         }
       ]
     },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "literal",
+          "source": "Actions to enable assessment of each criterion must be included in the plan. For example, the action of monitoring population size will allow assessment of population changes and decline rates."
 
+        }
+      ]
+    },
     {
       "type": "table",
       "source": "implementingActions",
@@ -632,14 +659,19 @@
           "title": "Initial condition"
         },
         {
+          "type": "textarea",
+          "source": "initialConditionDescription",
+          "title": "Description of initial condition"
+        },
+        {
           "type": "select2",
           "source": "currentCondition",
           "title": "Current known state"
         },
         {
           "type": "textarea",
-          "source": "comments",
-          "title": "Comments"
+          "source": "currentConditionDescription",
+          "title": "Description of current condition"
         }
       ]
     },
