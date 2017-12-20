@@ -90,7 +90,7 @@ class ProjectController {
     }
 
     def asShapefile(project) {
-        if (siteService.findAllForProjectId(project.projectId)) {
+        if (siteService.doesProjectHaveSite(project.projectId)) {
             def name = 'projectSites'
             response.setContentType("application/zip")
             response.setHeader("Content-disposition", "filename=${name}.zip")

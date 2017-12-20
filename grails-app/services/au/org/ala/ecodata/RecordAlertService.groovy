@@ -39,7 +39,7 @@ class RecordAlertService {
     void alertSubscribers(Record record) {
 
         def pActivity = projectActivityService.get(record?.projectActivityId)
-        def project = projectService.get(record?.projectId)
+        def project = projectService.get(record?.projectId, ProjectService.PRIVATE_SITES_REMOVED)
 
         if(!project?.isMerit && isAlertRequired(pActivity, record?.guid)) {
             Map values = [:]

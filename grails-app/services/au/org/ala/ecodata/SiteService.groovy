@@ -93,6 +93,10 @@ class SiteService {
         }
     }
 
+    boolean doesProjectHaveSite(id){
+        Site.findAllByProjects(id)?.size() > 0
+    }
+
     def findAllNonPrivateSitesForProjectId(id, levelOfDetail = []){
         Site.withCriteria {
             eq('status', ACTIVE)
