@@ -80,8 +80,12 @@ function ActivitiesModelHelperFunctions(args){
     function getDataModel(name) {
         if(!cache[name]){
             var location = modelLocation + name + '/dataModel.json';
-            var text = cat(location);
-            cache[name] = JSON.parse(text);
+            try {
+                var text = cat(location);
+                cache[name] = JSON.parse(text);
+            } catch (err){
+                print('file not found - ' + location);
+            }
         }
 
         return cache[name];
