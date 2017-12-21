@@ -40,7 +40,7 @@ function createSiteFromPointCoordinates() {
         ]
     );
 
-    groups.forEach(function(group){
+    groups.result.forEach(function(group){
         var activityModelName = group['_id'],
             query = {activityId: {$in: group.activities}},
             lookup = {};
@@ -54,13 +54,17 @@ function createSiteFromPointCoordinates() {
         var fields = helperFunctions.getGeoMapFieldsForActivity(activityModelName);
         if(fields){
             fields.forEach(function (field) {
-                var dataField = 'data.' + field.name;
-                query[dataField] = null;
+                var dataField = 'data.' + field.name,
+                    latField = field.name + 'Latitude',
+                    lonField = field.name + 'Longitude';
+                query["data." + lonField] = {$exists:true};
+                query["data." + latField] = {$exists:true};
                 var outputs = db.output.find(query);
 
                 while(outputs.hasNext()){
                     var output = outputs.next();
-                    if(output.data){
+                    var data = output.data;
+                    if (data && !data[field.name]) {
                         var activityId = output.activityId,
                             activity = lookup[activityId],
                             geoJson = getGeoJson(output, field.name),
@@ -152,12 +156,8 @@ function createSiteForActivity(geoJson, extent, act, output, field) {
     };
 
     var result = db.site.insert(site);
-    if(result.nInserted) {
-        print("Created site - " + site.siteId);
-        return site.siteId;
-    } else {
-        print("Could not create site for project " + act.projectId);
-    }
+    print("Created site - " + site.siteId);
+    return site.siteId
 }
 
 createSiteFromPointCoordinates();

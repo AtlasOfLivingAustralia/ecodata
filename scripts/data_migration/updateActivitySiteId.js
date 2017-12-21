@@ -37,7 +37,7 @@ function updateActivitySiteId() {
         ]
     );
 
-    groups.forEach(function(group) {
+    groups.result.forEach(function(group) {
         var activityModelName = group['_id'],
             query = {activityId: {$in: group.activities}},
             // dictionary of activities
@@ -90,7 +90,7 @@ function updateActivitySiteId() {
                         }
                     }
                 }
-            })
+            });
         }
     });
 
