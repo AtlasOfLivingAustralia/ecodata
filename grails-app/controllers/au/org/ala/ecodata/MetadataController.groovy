@@ -150,9 +150,6 @@ class MetadataController {
 
         if (listName) {
             def listModel = annotatedModel.find { it.name == listName }
-            if (listModel.description) {
-                fileName += " - ${listModel.description}"
-            }
             annotatedModel = listModel?.columns
         }
 
