@@ -423,6 +423,11 @@
               "type": "selectOne",
               "source": "conservationStatus",
               "preLabel": "Conservation status under EPBC Act Advice"
+            },
+            {
+              "type": "selectOne",
+              "source": "recoveryPlanOrConservationAdvice",
+              "preLabel": "Indicate whether using a Recovery Plan or Conservation Advice"
             }
           ]
         },
@@ -443,7 +448,7 @@
       "items": [
         {
           "type": "literal",
-          "source": "In the table below, please enter one or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: <ul><li>to reduce the impact of threatening processes and prevent further decline of the species</li><li>to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and </li><li>to ensure that threatening processes do not impact on the ongoing viability of the [species name].</li></ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria."
+          "source": "<h4>Objectives</h4> In the table below, please enter one or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: <ul><li>to reduce the impact of threatening processes and prevent further decline of the species</li><li>to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and </li><li>to ensure that threatening processes do not impact on the ongoing viability of the [species name].</li></ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria."
         }
       ]
     },
@@ -752,6 +757,16 @@
               "preLabel": "Confidence in trajectory assessment"
             }
           ]
+        }
+      ]
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"literal",
+          "source":"<p><u>Legend</u></p><p><strong>Condition and prospects for long term survival in the wild</strong><br /><em>Based on current information, how do you rate the condition of the species or ecological community and its prospects for long term survival of the in the wild? If there are limited data available, it may be appropriate to make a qualitative assessment based on expert opinion or consensus.</em></p><table><thead><tr><th>Assessment grades</th><th>Criteria</th></tr></thead><tbody><tr><td>Very good</td><td>The species appears to have very good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr><tr><td>Good</td><td>The species appears to have good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</tr><tr><td>Poor</td><td>The species appears to have poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr><tr><td>Very poor</td><td>The species appears to have very poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr></tbody></table><p><strong>Conservation trajectory</strong><br /><em>What is the conservation trajectory of the species or ecological community in terms of whether it is improving, deteriorating, or stable? Refer to the EPBC Act listing criteria for species and ecological communities and make a determination of the conservation trajectory using at least one listing criterion.</em></p><table><thead><tr><th>Recent trajectory</th><th>Criterion</th></thead></tr><tbody><tr><td>  Improving  </td>  <td>Increase in population size (numbers or geographic distribution. by calculating the Area of Occupancy (AOO), or Extent of Occurrence (EOO) (see below for more information on AOO and EOO).  </td>  </tr><tr>  <td>  Deteriorating</td><td>Decrease in population size (numbers or geographic distribution, by calculating the AOO or EOO).</td>  <tr>  <td>Stable</td><td>Population size stable (numbers or geographic distribution, by calculating the AOO or EOO).</td>  </tr>  <tr>  <td>Unclear</td><td>Insufficient information to estimate the conservation trajectory.</td>  </tr>  </tbody></table><p><strong>Level of confidence</strong><br /><em>Your level of confidence in these estimates based on the available evidence and/or the consensus of experts:</em><br />  Evidence and consensus too low to make an assessment <br /><br />  Limited evidence or limited consensus <br /><br />  Adequate high-quality evidence and high consensus</p><p><strong>Calculating Area of Occupancy (AOO) and Extent of Occurrence (EOO)</strong> <br /><strong>Extent of occurrence</strong> <br />Extent of occurrence is defined as the area contained within the shortest continuous imaginary boundary which can be drawn to encompass all the known, inferred or projected sites of present occurrence of a taxon, excluding cases of vagrancy (see Figure 1, below). This measure may exclude discontinuities or disjunctions within the overall distributions of taxa (e.g. large areas of obviously unsuitable habitat, see 'area of occupancy' below). However, such exclusions are not recommended for reasons detailed by IUCN (2014, section 4.9). Extent of occurrence can often be measured by a minimum convex polygon (the smallest polygon in which no internal angle exceeds 180 degrees and which contains all the sites of occurrence).<br /><strong>Area of occupancy</strong> <br />Area of occupancy is defined as the area within its 'extent of occurrence' (see above) which is occupied by a taxon, excluding cases of vagrancy. The measure reflects the fact that a taxon will not usually occur throughout the area of its extent of occurrence, which may contain unsuitable or unoccupied habitats. In some cases (e.g. irreplaceable colonial nesting sites, crucial feeding sites for migratory taxa) the area of occupancy is the smallest area essential at any stage to the survival of existing populations of a taxon. The size of the area of occupancy will be a function of the scale at which it is measured, and should be at a scale appropriate to relevant biological aspects of the taxon, the nature of threats and the available data. To avoid inconsistencies and bias in assessments caused by estimating area of occupancy at different scales, IUCN (2014) recommends standardization of estimates by applying a 2 x 2 km grid to occurrence data. IUCN (2014) give guidance on how standardization should be done, although conversion between different scales is difficult because different types of taxa have different scale-area relationships.</p>"
+
         }
       ]
     },

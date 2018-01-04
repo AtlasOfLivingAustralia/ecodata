@@ -111,16 +111,23 @@ class OutputUploadTemplateBuilder extends XlsExporter {
 
             List widths = model.collect { widthFromString(it.width, 0) }
             int sum = widths.sum()
-            List columnSizes = widths.collect { (int)(it / sum * TOTAL_WIDTH_IN_EXCEL_UNITS) }
 
-            columnSizes.eachWithIndex { width, i ->
-                if (width) {
-                    outputSheet.sheet.setColumnWidth(i, width)
-                }
-                else {
-                    outputSheet.sheet.autoSizeColumn(i)
+            if (sum <= 256*10) { // Just a catch for invalid widths causing problems.  They normally would add up to 100%
+                sizeColumns()
+            }
+            else {
+                List columnSizes = widths.collect { (int)(it / sum * TOTAL_WIDTH_IN_EXCEL_UNITS) }
+
+                columnSizes.eachWithIndex { width, i ->
+                    if (width) {
+                        outputSheet.sheet.setColumnWidth(i, width)
+                    }
+                    else {
+                        outputSheet.sheet.autoSizeColumn(i)
+                    }
                 }
             }
+
 
         }
     }
