@@ -255,7 +255,7 @@ class DocumentController {
             boolean processed = ImageUtils.reorientImage(tmp, processedFile)
             File source = processed ? processedFile : tmp
             File thumb = File.createTempFile("thumbnail_"+file.originalFilename, "."+FilenameUtils.getExtension(file.originalFilename))
-            ImageUtils.makeThumbnail(source, thumb, params.size ?: 300)
+            ImageUtils.makeThumbnail(source, thumb, params.getInt('size', 300))
 
             response.setContentType(file.contentType)
             thumb.withInputStream { inputStream ->
