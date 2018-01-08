@@ -181,11 +181,20 @@ class SiteService {
         props.remove('id')
         props.remove('siteId')
 
+        def asyncUpdate = props['asyncUpdate']?props['asyncUpdate']:false
+        props.remove('asyncUpdate')
+
         assignPOIIds(props)
 
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
-            populateLocationMetadataForSite(props)
+            if (asyncUpdate){
+                Thread.start{
+                    populateLocationMetadataForSite(props)
+                }
+            }
+            else
+                populateLocationMetadataForSite(props)
         }
         getCommonService().updateProperties(site, props)
     }
@@ -447,6 +456,7 @@ class SiteService {
             else {
                 log.error("No geometry for site: ${site.siteId}")
             }
+
             site.extent.geometry += lookupGeographicFacetsForSite(site)
         }
     }
