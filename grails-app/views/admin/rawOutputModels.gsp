@@ -41,6 +41,10 @@
                 <textarea id="viewModel" style="width:97%;min-height:300px;" class="" data-bind="value:viewModel"></textarea>
             </div>
         </div>--}%
+    <span id="fileupload" class="btn fileinput-button"
+          data-url="${createLink(controller: 'admin', action: 'quickStartModel')}">
+        <i class="icon-plus"></i> <input type="file" name="file"><span>Quick start model from spreadsheet</span>
+    </span>
 
     <g:if env="development">
         <div class="expandable-debug clearfix">
@@ -57,7 +61,7 @@
 
 <asset:script>
     $(function(){
-
+        var rawData = ${outputData?:'{}'};
         var ViewModel = function () {
             var self = this;
             this.modelName = ko.observable('No output selected');
@@ -94,32 +98,37 @@
                     }
                 });
             };
+
+            this.displayDataModel = function(data) {
+                $textarea = $('#outputModelEdit');
+                self.modelName(data.modelName);
+
+                self.dataModel(ko.toJSON(data.dataModel, null, 2));
+                self.viewModel(ko.toJSON(data.viewModel, null, 2));
+                self.transients.message('');
+
+                $textarea.html(vkbeautify.json(data,2));
+            };
         },
         // create an empty model so we can bind the message state
         viewModel = new ViewModel();
         ko.applyBindings(viewModel);
 
-        var $pre = $('#outputModel'),
-            $textarea = $('#outputModelEdit');
+        var $pre = $('#outputModel');
 
         $('#outputSelector').change(function () {
             var output = $(this).val();
             $.getJSON("${createLink(action: 'getOutputDataModel')}/" + output, function (data) {
+
+                $('#hiddenOutputName').val(output);
                 if (data.error) {
                     viewModel.modelName(output);
                     viewModel.dataModel("");
                     viewModel.viewModel("");
                     viewModel.transients.message('No existing model was found. You are creating a new model.');
                 } else {
-                    viewModel.modelName(data.modelName);
                     viewModel.templateName(output);
-                    viewModel.dataModel(ko.toJSON(data.dataModel, null, 2));
-                    viewModel.viewModel(ko.toJSON(data.viewModel, null, 2));
-                    viewModel.transients.message('');
-
-                    $textarea.html(vkbeautify.json(data,2));
-                    //$textarea.css('height',$pre.css('height'));
-                    //$textarea.slideDown();
+                    viewModel.displayDataModel(data);
                 }
             });
         });
@@ -140,6 +149,33 @@
                 }
             });
         });
+
+        $('#fileupload').fileupload({
+            autoUpload:true,
+            dataType:'json'
+        }).on('fileuploaddone', function(e, data) {
+
+            var result = data.result;
+
+            if (!result) {
+                result = {};
+                bootbox.alert('No response from server');
+            }
+            else {
+                if (result.error) {
+                    bootbox.alert(result.error);
+
+                }
+                viewModel.displayDataModel(result);
+
+            }
+
+
+        }).on('fileuploadfail', function(e, data) {
+            bootbox.alert(data.errorThrown);
+        });
+
+
 
         // open specified output (?open=<templateName> in url)
         var startWith = "${open}";

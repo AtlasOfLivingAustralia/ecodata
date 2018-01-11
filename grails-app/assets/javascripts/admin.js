@@ -4,4 +4,4 @@
 //= require activityModel
 //= require outputModel
 //= require programModel
-//
+//= require attach-document-no-ui
