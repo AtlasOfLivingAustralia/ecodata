@@ -723,6 +723,7 @@ class AdminController {
         render view: 'indexNames', model: model
     }
 
+    @AlaSecured("ROLE_ADMIN")
     def quickStartModel() {
         MultipartFile file = null
         if (request.respondsTo('getFile')) {

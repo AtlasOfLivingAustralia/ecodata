@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.metadata
 
+import au.com.bytecode.opencsv.CSVReader
 import org.apache.poi.ss.usermodel.FormulaEvaluator
 import org.apache.poi.ss.usermodel.Sheet
 import org.apache.poi.ss.usermodel.Workbook
@@ -32,10 +33,11 @@ class FormQuickStarter {
                         C:'viewType',
                         D:'label',
                         E:'helpText',
-                        F:'validation',
-                        G:'dwc',
-                        H:'parent',
-                        I:'width'
+                        F:'constraints',
+                        G:'validation',
+                        H:'dwc',
+                        I:'parent',
+                        J:'width'
                 ]
         ]
 
@@ -44,16 +46,7 @@ class FormQuickStarter {
         Map outputDescription = [:]
 
         outputDescription.dataModel = data.findAll{it.name && it.dataType}.findAll{!it.parent}.collect{
-            Map dataItem = [
-                    name:it.name,
-                    dataType:it.dataType,
-                    description:it.helpText,
-                    validate:it.validation
-            ]
-            if (it.dwc) {
-                dataItem.dwcAttribute = it.dwc
-            }
-            dataItem
+            dataModelItem(it, errors)
         }
 
         data.findAll{it.parent}.each { child ->
@@ -68,15 +61,7 @@ class FormQuickStarter {
                 if (parent.columns == null) {
                     parent.columns = []
                 }
-                Map childItem = [
-                        name:child.name,
-                        dataType:child.dataType,
-                        description:child.helpText ?:'',
-                        validate:child.validation
-                ]
-                if (child.dwc) {
-                    childItem.dwcAttribute = child.dwc
-                }
+                Map childItem = dataModelItem(child, errors)
 
                 parent.columns << childItem
 
@@ -159,6 +144,31 @@ class FormQuickStarter {
         }
 
         outputDescription
+    }
+
+    private Map dataModelItem(Map config, List errors) {
+        Map dataModelItem = [
+                name:config.name,
+                dataType:config.dataType,
+                description:config.helpText ?:'',
+                validate:config.validation
+        ]
+        if (config.dwc) {
+            dataModelItem.dwcAttribute = config.dwc
+        }
+        if (config.constraints) {
+
+            if (!(config.dataType == 'text' || config.dataType == 'stringList')) {
+                errors << "Constraints will be ignored for ${config.name}.  Only supported for text and stringList data types"
+            }
+            else {
+                CSVReader csvReader = new CSVReader(new StringReader(config.constraints))
+                dataModelItem.constraints = csvReader.readNext()
+            }
+        }
+
+        dataModelItem
+
     }
 
     private Map viewModelItem(String value, List dataModel, List data) {
