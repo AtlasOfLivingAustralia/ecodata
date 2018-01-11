@@ -159,11 +159,11 @@
 
             if (!result) {
                 result = {};
-                bootbox.alert('No response from server');
+                alert('No response from server');
             }
             else {
-                if (result.error) {
-                    bootbox.alert(result.error);
+                if (result.errors) {
+                    alert(result.errors);
 
                 }
                 viewModel.displayDataModel(result);
@@ -172,7 +172,7 @@
 
 
         }).on('fileuploadfail', function(e, data) {
-            bootbox.alert(data.errorThrown);
+            alert(data.errorThrown);
         });
 
 
