@@ -36,8 +36,9 @@ class FormQuickStarter {
                         F:'constraints',
                         G:'validation',
                         H:'dwc',
-                        I:'parent',
-                        J:'width'
+                        I:'defaultValue',
+                        J:'parent',
+                        K:'width'
                 ]
         ]
 
@@ -51,7 +52,10 @@ class FormQuickStarter {
 
         data.findAll{it.parent}.each { child ->
             Map parent = outputDescription.dataModel.find{it.name == child.parent}
-            if (parent.dataType != 'list') {
+            if (!parent) {
+                errors << "Cannot find a matching parent for value: ${child.name}, parent table: ${child.parent}"
+            }
+            else if (parent.dataType != 'list') {
                 errors << "The parent column must match a data item with a data type of list"
             }
             else if (child.dataType == 'list') {
@@ -166,6 +170,9 @@ class FormQuickStarter {
                 dataModelItem.constraints = csvReader.readNext()
             }
         }
+        if (config.defaultValue) {
+            dataModelItem.defaultValue = defaultValue(config.defaultValue as String, dataModelItem)
+        }
 
         dataModelItem
 
@@ -181,9 +188,10 @@ class FormQuickStarter {
             ]
         }
         else {
-            Map dataItem = dataModel.find{it.name == value}
+            Map dataModelItem = dataModel.find{it.name == value}
+            Map spreadsheetRow = data.find{it.name == value}
 
-            if (!dataItem) {
+            if (!dataModelItem) {
                 if (value.startsWith('"')) {
                     errors << "Invalid literal: ${value}"
                 }
@@ -192,7 +200,7 @@ class FormQuickStarter {
                 }
             }
             else {
-                if (dataItem.dataType == 'list') {
+                if (dataModelItem.dataType == 'list') {
                     result = [
                             source:value,
                             type:'table',
@@ -200,7 +208,7 @@ class FormQuickStarter {
                             columns:[]
                     ]
 
-                    dataItem.columns.each { column ->
+                    dataModelItem.columns.each { column ->
                         Map child = data.find{it.name == column.name}
                         Map col = [
                                 source:column.name,
@@ -219,14 +227,28 @@ class FormQuickStarter {
 
                     result = [
                             source  : value,
-                            type    : dataItem.viewType,
-                            preLabel: dataItem.label
+                            type    : spreadsheetRow.viewType,
+                            preLabel: spreadsheetRow.label
                     ]
+
+
                 }
             }
         }
         [errors:errors, result:result]
     }
+
+    private Object defaultValue(String value, Map dataModelItem) {
+        switch (dataModelItem.dataType) {
+            case "number":
+                return value as Number
+            case "boolean":
+                return Boolean.parseBoolean(value)
+            default:
+                return value
+        }
+    }
+
 
     /**
      * The implementation in the plugin ignores blank rows, this is an adaption that does not.
