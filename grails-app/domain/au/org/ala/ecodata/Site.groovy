@@ -83,13 +83,13 @@ class Site {
      * Remove duplicate co-ordinates that appear consecutively. Such co-ordinates causes an exception during indexing.
      */
     def beforeValidate(){
-        geoIndex = siteService.geometryAsGeoJson(this)
+        geoIndex = siteService?.geometryAsGeoJson(this)
 
-        if(geoIndex && geoIndex.type == 'Polygon'){
+        if(geoIndex?.type == 'Polygon'){
             List coordinates = geoIndex.coordinates
             List vettedPolygons = []
 
-            coordinates.each { List polygon ->
+            coordinates?.each { List polygon ->
                 List vettedCoordinates = []
                 List previousPoint
 
