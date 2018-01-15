@@ -107,7 +107,7 @@
                 self.viewModel(ko.toJSON(data.viewModel, null, 2));
                 self.transients.message('');
 
-                $textarea.html(vkbeautify.json(data,2));
+                $textarea.val(vkbeautify.json(data,2));
             };
         },
         // create an empty model so we can bind the message state
