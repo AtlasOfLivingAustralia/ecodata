@@ -9,6 +9,8 @@ import org.geotools.geojson.geom.GeometryJSON
 
 class Site {
 
+    def siteService
+
     /*
     Associations:
         sites may belong to 0..n Projects - a list of projectIds are stored in each site
@@ -59,7 +61,7 @@ class Site {
         extent nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
-            if(value && value.type != 'Circle'){
+            if(value){
                 Geometry geom = new GeometryJSON().read((value as JSON).toString())
                 IsValidOp isValidOp = new IsValidOp(geom);
                 TopologyValidationError error = isValidOp.getValidationError()
@@ -81,6 +83,8 @@ class Site {
      * Remove duplicate co-ordinates that appear consecutively. Such co-ordinates causes an exception during indexing.
      */
     def beforeValidate(){
+        geoIndex = siteService.geometryAsGeoJson(this)
+
         if(geoIndex && geoIndex.type == 'Polygon'){
             List coordinates = geoIndex.coordinates
             List vettedPolygons = []
