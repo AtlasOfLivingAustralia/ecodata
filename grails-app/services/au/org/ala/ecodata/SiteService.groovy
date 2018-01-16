@@ -180,24 +180,26 @@ class SiteService {
     private updateSite(Site site, Map props, boolean forceRefresh = false) {
         props.remove('id')
         props.remove('siteId')
-
+        // Used by BioCollect to improve the performance of site creation
         def asyncUpdate = props['asyncUpdate']?props['asyncUpdate']:false
         props.remove('asyncUpdate')
 
         assignPOIIds(props)
-
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
                 Thread.start{
                     populateLocationMetadataForSite(props)
+                    getCommonService().updateProperties(site, props)
                 }
             }
-            else
+            else {
                 populateLocationMetadataForSite(props)
+            }
         }
         getCommonService().updateProperties(site, props)
     }
+
 
     /** Recomputing geographic facets, centroid and area can be expensive so we only want to do it if we have to */
     private boolean hasGeometryChanged(Map site, Map newProps) {
