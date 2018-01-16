@@ -391,7 +391,7 @@ class SiteService {
             case 'Circle':
                 // We support circles, but they are not valid geojson.
                 Geometry geom = GeometryUtils.geometryForCircle(geometry.coordinates[1], geometry.coordinates[0], geometry.radius)
-                result = [type:'Polygon', coordinates: Arrays.asList(geom.coordinates).collect{[it.x, it.y]}]
+                result = [type:'Polygon', coordinates: [Arrays.asList(geom.coordinates).collect{[it.x, it.y]}]]
 
                 break
             case 'Point':
