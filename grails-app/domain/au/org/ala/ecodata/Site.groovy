@@ -83,35 +83,8 @@ class Site {
      * Remove duplicate co-ordinates that appear consecutively. Such co-ordinates causes an exception during indexing.
      */
     def beforeValidate(){
-        geoIndex = siteService?.geometryAsGeoJson(this)
-
-        if(geoIndex?.type == 'Polygon'){
-            List coordinates = geoIndex.coordinates
-            List vettedPolygons = []
-
-            coordinates?.each { List polygon ->
-                List vettedCoordinates = []
-                List previousPoint
-
-                polygon?.each { List point ->
-                    if(!point.equals(previousPoint)){coordinates
-                        vettedCoordinates.add(point)
-                    } else if(previousPoint == null){
-                        vettedCoordinates.add(point)
-                    } else {
-                        log.debug("Duplicate points identified in site id ${siteId} - ${point}")
-                    }
-
-                    previousPoint = point
-                }
-
-                vettedPolygons.add(vettedCoordinates)
-            }
-
-            if(vettedPolygons){
-                geoIndex.coordinates = vettedPolygons
-                extent?.geometry?.coordinates = vettedPolygons
-            }
+        if(extent?.geometry?.type != 'pid'){
+            geoIndex = siteService?.geometryAsGeoJson(this)
         }
     }
 }

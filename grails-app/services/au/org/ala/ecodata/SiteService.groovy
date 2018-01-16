@@ -409,6 +409,7 @@ class SiteService {
                 // The map drawing tools allow you to draw lines using the "polygon" tool.
                 def coordinateLength = geometry.coordinates.size()
                 if (coordinateLength == 1 && geometry.coordinates[0] instanceof List) {
+                    geometry.coordinates = removeDuplicateCoordinatesFromPolygon(geometry.coordinates)
                     def type = geometry.coordinates[0].size() < 4 ? 'MultiLineString' : 'MultiPolygon'
                     result = [type:type, coordinates: geometry.coordinates]
                 }
@@ -430,6 +431,31 @@ class SiteService {
                 break
         }
         result
+    }
+
+    List removeDuplicateCoordinatesFromPolygon(List coordinates){
+        List vettedPolygons = []
+
+        coordinates?.each { List polygon ->
+            List vettedCoordinates = []
+            List previousPoint
+
+            polygon?.each { List point ->
+                if(!point.equals(previousPoint)){coordinates
+                    vettedCoordinates.add(point)
+                } else if(previousPoint == null){
+                    vettedCoordinates.add(point)
+                } else {
+                    log.debug("Duplicate points identified - ${point}")
+                }
+
+                previousPoint = point
+            }
+
+            vettedPolygons.add(vettedCoordinates)
+        }
+
+        return vettedPolygons
     }
 
     def geometryForPid(pid) {
