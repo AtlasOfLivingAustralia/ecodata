@@ -45,6 +45,10 @@ class ActivityService {
             activity = o ? toMap(o, levelOfDetail) : null
         }
 
+        if (activity == null ){
+            return [status:404 , error: 'Activity cannot be found']
+        }
+
         // If field is flagged as visible to project members only, and the caller requested to hide its value
         if (hideMemberOnlyFlds){
             boolean userIsAlaAdmin = userId && permissionService.isUserAlaAdmin(userId) ? true : false
