@@ -13,13 +13,15 @@ function updateAllowPolygonsForProjectActviity(){
     print('Update allowPolygons  to false, and allowPoints to true, if allowAdditionalSurveySites is not defined')
     var cPA_N =  db.projectActivity.find({allowAdditionalSurveySites:{$exists:false}})
     cPA_N.forEach(function(pa){
-        print('updating project activity without allowAddtionalSurveySites: '+ pa.projectActivityId)
-        })
+        var project = db.project.findOne({projectId:pa.projectId});
+        print('updating project activity without allowAddtionalSurveySites: ' + pa.name +" : " + pa.projectActivityId + " for project:" + project.name +" : " +project.projectId)
+      })
         
     print('Update allowPolygons and allowPoints to true, if allowAdditionalSurveySites is true')
     var cPA_N =  db.projectActivity.find({allowAdditionalSurveySites:true})
     cPA_N.forEach(function(pa){
-        print('updating project activity with allowAddtionSurveySites is true: '+ pa.projectActivityId)
+        var project = db.project.findOne({projectId:pa.projectId});
+        print('updating project activity with allowAddtionSurveySites is true: '+ pa.name +" : " +  pa.projectActivityId + " for project:" + project.name +" : " +project.projectId)
         })   
     
     db.projectActivity.update({allowAdditionalSurveySites:{$exists:false}},{$set:{allowPolygons:false,allowPoints:true,allowAdditionalSurveySites:false}},{multi:true})    
