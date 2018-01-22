@@ -21,8 +21,7 @@ function updateActivitySiteId() {
         "distinct" :  "project",
         "key" : "projectId",
         "query" :  {
-            "isMERIT": false,
-            "status": { '$ne': 'deleted'}
+            "isMERIT": false
         }
     }).values;
 

@@ -406,24 +406,32 @@ class SiteService {
                     log.error("Invalid site: ${site.siteId} missing coordinates")
                     return
                 }
-                // The map drawing tools allow you to draw lines using the "polygon" tool.
-                def coordinateLength = geometry.coordinates.size()
-                if (coordinateLength == 1 && geometry.coordinates[0] instanceof List) {
-                    geometry.coordinates = removeDuplicateCoordinatesFromPolygon(geometry.coordinates)
-                    def type = geometry.coordinates[0].size() < 4 ? 'MultiLineString' : 'MultiPolygon'
-                    result = [type:type, coordinates: geometry.coordinates]
-                }
-                else {
-                    def type = coordinateLength < 4 ? 'LineString' : 'Polygon'
-                    result = [type: type, coordinates: geometry.coordinates]
+
+                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
+                if(!isValidPolygon(geometry.coordinates)){
+                    // The map drawing tools allow you to draw lines using the "polygon" tool.
+                    def coordinateLength = geometry.coordinates.size()
+                    if (coordinateLength == 1 && geometry.coordinates[0] instanceof List) {
+                        def type = geometry.coordinates[0].size() < 4 ? 'MultiLineString' : 'MultiPolygon'
+                        result = [type:type, coordinates: [geometry.coordinates]]
+                    }
+                    else {
+                        def type = coordinateLength < 4 ? 'LineString' : 'Polygon'
+                        result = [type: type, coordinates: [geometry.coordinates]]
+                    }
+                } else {
+                    result =  [type:geometry.type, coordinates: geometry.coordinates]
                 }
                 break
             case 'LineString':
             case 'MultiPolygon':
+            case 'MultiLineString':
                 if (!geometry.coordinates) {
                     log.error("Invalid site: ${site.siteId} missing coordinates")
                     return
                 }
+
+                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
                 result =  [type:geometry.type, coordinates: geometry.coordinates]
                 break
             case 'pid':
@@ -433,29 +441,61 @@ class SiteService {
         result
     }
 
-    List removeDuplicateCoordinatesFromPolygon(List coordinates){
-        List vettedPolygons = []
+    Boolean isValidPolygon (List coordinates){
+        Boolean valid = false
+        Integer depth = 0
+        def coord = coordinates
 
-        coordinates?.each { List polygon ->
-            List vettedCoordinates = []
-            List previousPoint
-
-            polygon?.each { List point ->
-                if(!point.equals(previousPoint)){coordinates
-                    vettedCoordinates.add(point)
-                } else if(previousPoint == null){
-                    vettedCoordinates.add(point)
-                } else {
-                    log.debug("Duplicate points identified - ${point}")
-                }
-
-                previousPoint = point
-            }
-
-            vettedPolygons.add(vettedCoordinates)
+        while( coord instanceof List){
+            depth ++;
+            coord = coord[0]
         }
 
-        return vettedPolygons
+        if(depth == 3){
+            valid = true
+        }
+
+        valid
+    }
+
+    /**
+     * Removes consecutive duplicate coordinates. Elasticsearch throws exception.
+     * @param coordinates
+     * @return
+     */
+    List removeDuplicatesFromCoordinates(List coordinates){
+        if(!(coordinates instanceof List && coordinates[0] instanceof List && (coordinates[0][0] instanceof List || coordinates[0][0]?.toString()?.isNumber()))){
+            return coordinates
+        }
+
+        if((coordinates instanceof List) && ( coordinates[0] instanceof List)  && !(coordinates[0][0] instanceof List)){
+            return removeDuplicatePoint(coordinates)
+        } else {
+            for (int i = 0; i < coordinates.size(); i++) {
+                coordinates[i] = removeDuplicatesFromCoordinates(coordinates[i])
+            }
+        }
+
+        coordinates
+    }
+
+    List removeDuplicatePoint(List points){
+        List vettedCoordinates = []
+        List previousPoint
+
+        points?.each { List point ->
+            if(!point.equals(previousPoint)){
+                vettedCoordinates.add(point)
+            } else if(previousPoint == null){
+                vettedCoordinates.add(point)
+            } else {
+                log.debug("Duplicate points identified - ${point}")
+            }
+
+            previousPoint = point
+        }
+
+        vettedCoordinates
     }
 
     def geometryForPid(pid) {
