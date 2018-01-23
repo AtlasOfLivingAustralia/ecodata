@@ -32,7 +32,7 @@ function updateAllowPolygonsForProjectActviity(){
  *  Find outputs which have both lng/lat and location in BioCollect project
  *  Log them and remove the location
  */
-function updateOutputsWithTwoLocatins(){
+function updateOutputsWithTwoLocations(){
     var projects =  db.project.find({isMERIT:false})
     var total = 0;
     projects.forEach(function(project){
@@ -46,7 +46,7 @@ function updateOutputsWithTwoLocatins(){
             if (oc > 0){
                total = total+oc;
                outputsInproject += oc;
-               db.output.update({$and:[{activityId: activityId}, {'data.locationLatitude':{$ne:null}} , {'data.locationLongitude':{$ne:null}}, {'data.location':{$ne:null} }]},{$unset:{'data.location':""}})
+               db.output.update({$and:[{activityId: activityId}, {'data.locationLatitude':{$ne:null}} , {'data.locationLongitude':{$ne:null}}, {'data.location':{$ne:null} }]},{$set:{'data.location':null}})
             }
         })
 
@@ -57,8 +57,6 @@ function updateOutputsWithTwoLocatins(){
 }
 
 
-//updateAllowPolygonsForProjectActviity()
-updateOutputsWithTwoLocatins()
+updateAllowPolygonsForProjectActviity()
+updateOutputsWithTwoLocations()
 print ('Excution is done')
-
-//removeSiteIdForTheProjectActivity('59754a0b-478c-4815-b368-eef5f9edfb07')

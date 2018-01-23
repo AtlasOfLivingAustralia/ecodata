@@ -59,6 +59,7 @@ function createSiteFromPointCoordinates() {
                     lonField = field.name + 'Longitude';
                 query["data." + lonField] = {$exists:true};
                 query["data." + latField] = {$exists:true};
+                query[dataField] = null;
                 var outputs = db.output.find(query);
 
                 while(outputs.hasNext()){

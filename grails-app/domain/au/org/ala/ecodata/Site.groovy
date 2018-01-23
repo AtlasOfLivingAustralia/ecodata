@@ -83,7 +83,7 @@ class Site {
      * Remove duplicate co-ordinates that appear consecutively. Such co-ordinates causes an exception during indexing.
      */
     def beforeValidate(){
-        if(extent?.geometry?.type != 'pid'){
+        if((extent?.geometry?.type != 'pid') && extent?.geometry){
             geoIndex = siteService?.geometryAsGeoJson(this)
         }
     }
