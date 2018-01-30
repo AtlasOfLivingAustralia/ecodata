@@ -16,6 +16,10 @@
  */
 load('utils.js');
 function updateActivitySiteId() {
+    print("------------------");
+    print('Updating siteId field Activity using data from Output');
+    print("------------------");
+
     // get biocollect projects only
     var projects = db.runCommand({
         "distinct" :  "project",
@@ -56,6 +60,7 @@ function updateActivitySiteId() {
             fields.forEach(function (field) {
                 var dataField = 'data.' + field.name;
                 query[dataField] = {$exists: true};
+                query["activityId"] = {$in: group.activities}
                 // get all outputs where geoMap field exists.
                 var outputs = db.output.find(query);
 
@@ -93,14 +98,14 @@ function updateActivitySiteId() {
         }
     });
 
-    print('Total number of activities ' + activityCounter);
+    print('The number of activities with site id updated\t' + activityNeedingUpdate);
+    print('Total number of activities\t' + activityCounter);
     var totalOutputs = noSite + equal + notEqual + activityNeedingUpdate + error;
-    print('Total number of outputs '+ totalOutputs);
-    print('The number of activities with site id updated ' + activityNeedingUpdate);
-    print('The number of activities where site id is not equal to output site id ' + notEqual);
-    print('The number of activities that need not change ' + equal);
-    print('No sites defined ' + noSite);
-    print('The number of activities and outputs with no site id ' + error);
+    print('Total number of outputs\t'+ totalOutputs);
+    print('The number of activities where site id is not equal to output site id\t' + notEqual);
+    print('The number of activities that need not change\t' + equal);
+    print('No sites defined\t' + noSite);
+    print('The number of activities and outputs with no site id\t' + error);
 }
 
 updateActivitySiteId();

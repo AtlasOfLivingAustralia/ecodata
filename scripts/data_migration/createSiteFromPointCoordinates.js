@@ -21,6 +21,10 @@ load('utils.js');
  * Convert point co-ordinates to site.
  */
 function createSiteFromPointCoordinates() {
+    print("------------------");
+    print('Creating private site from latitude longitude');
+    print("------------------");
+
     var projects = db.runCommand({
         "distinct" :  "project",
         "key" : "projectId",
@@ -60,6 +64,7 @@ function createSiteFromPointCoordinates() {
                 query["data." + lonField] = {$exists:true};
                 query["data." + latField] = {$exists:true};
                 query[dataField] = null;
+                query["activityId"] = {$in: group.activities};
                 var outputs = db.output.find(query);
 
                 while(outputs.hasNext()){
@@ -82,7 +87,7 @@ function createSiteFromPointCoordinates() {
                                 sitesCreated ++;
                             }
                         } else {
-                            print("Could not find activity for id -" + activityId);
+                            print("Could not find activity for id\t" + activityId);
                         }
                     }
                 }
@@ -90,8 +95,8 @@ function createSiteFromPointCoordinates() {
         }
     });
 
-    print('Total activities checked ' + counter);
-    print('Total sites created ' + sitesCreated);
+    print('Total activities checked\t' + counter);
+    print('Total sites created\t' + sitesCreated);
 }
 
 function getGeoJson(output, field) {
@@ -157,7 +162,7 @@ function createSiteForActivity(geoJson, extent, act, output, field) {
     };
 
     var result = db.site.insert(site);
-    print("Created site - " + site.siteId);
+    print("Created site\t" + site.siteId);
     return site.siteId
 }
 

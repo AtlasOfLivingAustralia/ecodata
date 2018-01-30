@@ -14,8 +14,12 @@
  * 
  * Created by Temi on 16/10/17.
  */
+print("------------------");
+print("Hub migration");
+print("------------------");
+
 var hubs = db.hub.find({});
-print("updating " +hubs.count()+ " hubs");
+print("Number of hubs to update\t" + hubs.count());
 
 while (hubs.hasNext()) {
     var hub = hubs.next();
