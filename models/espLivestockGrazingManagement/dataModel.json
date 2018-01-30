@@ -7,10 +7,6 @@
       "name": "grazingPeriods",
       "columns": [
         {
-          "dataType":"number",
-          "name":"paddockNum"
-        },
-        {
           "dataType": "date",
           "description": "",
           "name": "startDate",
@@ -312,11 +308,6 @@
           "source": "grazingPeriods",
           "allowHeaderWrap": true,
           "columns": [
-            {
-              "title":"Paddock (if applicable)",
-              "source":"paddockNum",
-              "type":"number"
-            },
             {
               "title": "Start Date",
               "source": "startDate",
