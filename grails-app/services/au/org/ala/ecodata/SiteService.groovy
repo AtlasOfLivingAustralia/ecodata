@@ -188,7 +188,8 @@ class SiteService {
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
-                Thread.start{
+                Thread.start {
+                    addSpatialPortalPID(props);
                     populateLocationMetadataForSite(props)
                     getCommonService().updateProperties(site, props)
                 }
@@ -767,5 +768,34 @@ class SiteService {
         }
 
         return Site.countBySiteIdInListAndName(sites, name) > 0
+    }
+
+    def addSpatialPortalPID(Map props){
+        //if its a drawn shape, save and get a PID
+        if (props?.extent?.source?.toLowerCase() == 'drawn') {
+            def userId = props.remove('userId')
+            def shapePid = persistSiteExtent(props.name, props.extent.geometry, userId)
+            props.extent.geometry.pid = shapePid?.resp?.id ?: ""
+
+            if (!props.extent.geometry.pid) {
+                log.error("Failed persisting site on spatial portal. Site Id ${props.siteId}")
+            }
+        }
+    }
+
+    def persistSiteExtent(name, geometry, userId = "") {
+
+        def resp = null
+        if (geometry?.type == 'Circle') {
+            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.api_key]
+            def url = grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/pointradius/" +
+                    geometry?.coordinates[1] + '/' + geometry?.coordinates[0] + '/' + (geometry?.radius / 1000)
+            resp = webService.doPost(url, body)
+        } else if (geometry?.type in ['Polygon', 'LineString']) {
+            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.api_key]
+            resp = webService.doPost(grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/geojson", body)
+        }
+
+        resp
     }
 }
