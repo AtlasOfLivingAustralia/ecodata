@@ -8,6 +8,7 @@ import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import static grails.async.Promises.task
 
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -188,8 +189,9 @@ class SiteService {
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
-                Thread.start {
-                    addSpatialPortalPID(props);
+                String userId = props.remove('userId')
+                task {
+                    addSpatialPortalPID(props, userId)
                     populateLocationMetadataForSite(props)
                     getCommonService().updateProperties(site, props)
                 }
@@ -770,10 +772,9 @@ class SiteService {
         return Site.countBySiteIdInListAndName(sites, name) > 0
     }
 
-    def addSpatialPortalPID(Map props){
+    def addSpatialPortalPID(Map props, String userId){
         //if its a drawn shape, save and get a PID
         if (props?.extent?.source?.toLowerCase() == 'drawn') {
-            def userId = props.remove('userId')
             def shapePid = persistSiteExtent(props.name, props.extent.geometry, userId)
             props.extent.geometry.pid = shapePid?.resp?.id ?: ""
 
