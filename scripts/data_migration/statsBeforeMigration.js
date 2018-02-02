@@ -43,5 +43,5 @@ var activitiesWithoutSiteId = db.runCommand({
     "key" : "activityId",
     "query" :  query
 }).values;
-var countSiteIdUpdated = db.output.find({activityId: {$in: activitiesWithoutSiteId}, "data.location": { $exists: true}}).count();
-print( "Number of activities updated with sites\t" + countSiteIdUpdated );
+var countSiteIdUpdated = db.output.find({activityId: {$in: activitiesWithoutSiteId}, "data.location": { $nin: ["", null, "null"]}}).count();
+print( "Number of activities updated with sites\t" + (countSiteIdUpdated - countOutputLocationsToClear) );

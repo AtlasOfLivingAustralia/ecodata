@@ -8,6 +8,7 @@ import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
 import org.grails.datastore.mapping.query.api.BuildableCriteria
+import static grails.async.Promises.task
 
 import static au.org.ala.ecodata.Status.DELETED
 
@@ -188,7 +189,9 @@ class SiteService {
         // If the site location is being updated, refresh the location metadata.
         if (forceRefresh || hasGeometryChanged(toMap(site), props)) {
             if (asyncUpdate){
-                Thread.start{
+                String userId = props.remove('userId')
+                task {
+                    addSpatialPortalPID(props, userId)
                     populateLocationMetadataForSite(props)
                     getCommonService().updateProperties(site, props)
                 }
@@ -407,7 +410,7 @@ class SiteService {
                     return
                 }
 
-                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
+                geometry.coordinates = removeDuplicatesFromCoordinates(geometry.coordinates)
                 if(!isValidPolygon(geometry.coordinates)){
                     // The map drawing tools allow you to draw lines using the "polygon" tool.
                     def coordinateLength = geometry.coordinates.size()
@@ -431,7 +434,7 @@ class SiteService {
                     return
                 }
 
-                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
+                geometry.coordinates = removeDuplicatesFromCoordinates(geometry.coordinates)
                 result =  [type:geometry.type, coordinates: geometry.coordinates]
                 break
             case 'pid':
@@ -767,5 +770,33 @@ class SiteService {
         }
 
         return Site.countBySiteIdInListAndName(sites, name) > 0
+    }
+
+    def addSpatialPortalPID(Map props, String userId){
+        //if its a drawn shape, save and get a PID
+        if (props?.extent?.source?.toLowerCase() == 'drawn') {
+            def shapePid = persistSiteExtent(props.name, props.extent.geometry, userId)
+            props.extent.geometry.pid = shapePid?.resp?.id ?: ""
+
+            if (!props.extent.geometry.pid) {
+                log.error("Failed persisting site on spatial portal. Site Id ${props.siteId}")
+            }
+        }
+    }
+
+    def persistSiteExtent(name, geometry, userId = "") {
+
+        def resp = null
+        if (geometry?.type == 'Circle') {
+            def body = [name: name, description: "my description", user_id: userId, api_key: grailsApplication.config.api_key]
+            def url = grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/pointradius/" +
+                    geometry?.coordinates[1] + '/' + geometry?.coordinates[0] + '/' + (geometry?.radius / 1000)
+            resp = webService.doPost(url, body)
+        } else if (geometry?.type in ['Polygon', 'LineString']) {
+            def body = [geojson: [type: geometry.type, coordinates: geometry.coordinates], name: name, description: 'my description', user_id: userId, api_key: grailsApplication.config.api_key]
+            resp = webService.doPost(grailsApplication.config.spatial.baseUrl + "/ws/shape/upload/geojson", body)
+        }
+
+        resp
     }
 }
