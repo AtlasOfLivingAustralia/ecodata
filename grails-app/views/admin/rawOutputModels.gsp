@@ -62,6 +62,7 @@
 <asset:script>
     $(function(){
         var rawData = ${outputData?:'{}'};
+        var $textarea = $('#outputModelEdit');
         var ViewModel = function () {
             var self = this;
             this.modelName = ko.observable('No output selected');
@@ -145,7 +146,7 @@
             };
 
             this.displayDataModel = function(data) {
-                $textarea = $('#outputModelEdit');
+
                 self.modelName(data.modelName);
 
                 self.dataModel(ko.toJSON(data.dataModel, null, 2));
