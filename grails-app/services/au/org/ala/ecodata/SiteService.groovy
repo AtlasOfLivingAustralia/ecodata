@@ -410,7 +410,7 @@ class SiteService {
                     return
                 }
 
-                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
+                geometry.coordinates = removeDuplicatesFromCoordinates(geometry.coordinates)
                 if(!isValidPolygon(geometry.coordinates)){
                     // The map drawing tools allow you to draw lines using the "polygon" tool.
                     def coordinateLength = geometry.coordinates.size()
@@ -434,7 +434,7 @@ class SiteService {
                     return
                 }
 
-                geometry.coordinates = removeDuplicatePoint(geometry.coordinates)
+                geometry.coordinates = removeDuplicatesFromCoordinates(geometry.coordinates)
                 result =  [type:geometry.type, coordinates: geometry.coordinates]
                 break
             case 'pid':
