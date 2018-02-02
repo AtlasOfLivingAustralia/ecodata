@@ -62,6 +62,7 @@
 <asset:script>
     $(function(){
         var rawData = ${outputData?:'{}'};
+        var $textarea = $('#outputModelEdit');
         var ViewModel = function () {
             var self = this;
             this.modelName = ko.observable('No output selected');
@@ -73,6 +74,51 @@
             this.transients.hasMessage = ko.computed(function () {return self.transients.message() !== ''});
             this.revert = function () {
                 document.location.reload();
+            };
+
+            /** Merge properties from obj2 into obj1 recursively, favouring obj1 unless undefined / missing. */
+            self.merge = function (obj1, obj2, result, config) {
+
+                var keys = _.union(_.keys(obj1), _.keys(obj2));
+                result = result || {};
+
+                for (var i = 0; i < keys.length; i++) {
+
+                    var key = keys[i];
+                    if (obj2[key] === undefined) {
+                        result[key] = obj1[key];
+                    }
+                    else if (obj1[key] === undefined && config.replaceUndefined) {
+                        result[key] = obj2[key];
+                    }
+                    else if (!obj1.hasOwnProperty(key)) {
+                        result[key] = obj2[key];
+                    }
+                    else if (_.isArray(obj1[key]) && _.isArray(obj2[key])) {
+                        if (obj2[key].length > obj1[key].length) {
+                            obj2[key].splice(obj1[key].length, obj2[key].length - obj1[key].length); // Delete extra array elements from obj2.
+                        }
+                        result[key] = self.merge(obj1[key], obj2[key], [], config);
+                    }
+                    else if (_.isObject(obj1[key]) && _.isObject(obj2[key])) {
+                        result[key] = self.merge(obj1[key], obj2[key], {}, config);
+                    }
+                    else {
+                        result[key] = obj1[key];
+                    }
+                }
+                return result;
+            };
+            self.mergeAndDisplay = function(data) {
+                var current = $('#outputModelEdit').val();
+                var result = {};
+                if (current) {
+                    current = JSON.parse(current);
+                    self.merge(data, current, result, {replaceUndefined:true});
+                    data = result;
+
+                }
+                self.displayDataModel(data);
             };
             this.save = function () {
                 console.log($('#dataModel').val());
@@ -100,7 +146,7 @@
             };
 
             this.displayDataModel = function(data) {
-                $textarea = $('#outputModelEdit');
+
                 self.modelName(data.modelName);
 
                 self.dataModel(ko.toJSON(data.dataModel, null, 2));
@@ -166,7 +212,7 @@
                     alert(result.errors);
 
                 }
-                viewModel.displayDataModel(result);
+                viewModel.mergeAndDisplay(result);
 
             }
 

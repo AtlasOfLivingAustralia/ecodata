@@ -116,7 +116,7 @@
     "viewModel": [
         {
             "items": [{
-                "preLabel":"In the last 12 months have you reported against any management actions that you are not contracted to undertake? Please note that this includes recording costs against non-contracted activities",
+                "preLabel":"In the last 12 months have you reported against any management actions that you are not contracted to undertake?",
                 "type":"selectOne",
                 "source":"reportedAgainstUncontractedManagementActions"
 
