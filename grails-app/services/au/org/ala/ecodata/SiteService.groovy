@@ -7,6 +7,7 @@ import org.elasticsearch.common.geo.builders.ShapeBuilder
 import org.elasticsearch.common.xcontent.XContentParser
 import org.elasticsearch.common.xcontent.json.JsonXContent
 import org.geotools.geojson.geom.GeometryJSON
+import org.grails.datastore.mapping.mongo.MongoSession
 import org.grails.datastore.mapping.query.api.BuildableCriteria
 import static grails.async.Promises.task
 
@@ -191,9 +192,12 @@ class SiteService {
             if (asyncUpdate){
                 String userId = props.remove('userId')
                 task {
-                    addSpatialPortalPID(props, userId)
-                    populateLocationMetadataForSite(props)
-                    getCommonService().updateProperties(site, props)
+                    Site.withNewSession { MongoSession session ->
+                        site = Site.findBySiteId(site.siteId)
+                        addSpatialPortalPID(props, userId)
+                        populateLocationMetadataForSite(props)
+                        getCommonService().updateProperties(site, props)
+                    }
                 }
             }
             else {
