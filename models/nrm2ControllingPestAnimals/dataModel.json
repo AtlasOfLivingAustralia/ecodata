@@ -1,0 +1,161 @@
+{
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "The total area where all pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
+      "name": "pestAnimalAreaTreatedHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "description": "The total area where all followup treatment for pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
+      "name": "pestAnimalAreaTreatedFollowupHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "list",
+      "name": "pestAnimalsControlled",
+      "columns": [
+        {
+          "dataType": "text",
+          "dwcAttribute": "treatmentMethod",
+          "name": "pestManagementMethod",
+          "description": "The method used in this activity to manage pests",
+          "constraints": [
+            "Crown of Thorns Starfish injection",
+            "Bait & trap",
+            "Bait only",
+            "Biological control agents",
+            "Exclusion fencing",
+            "Fumigation",
+            "Harbour destruction",
+            "Positive competition",
+            "Spotlight cull",
+            "Trap & cull",
+            "Trap & remove",
+            "Other (specify in notes)"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "species",
+          "dwcAttribute": "scientificName",
+          "name": "pestSpecies",
+          "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "description": "",
+          "name": "baitAreaOfInfluence",
+          "validate": "min[0]",
+          "behaviour": [
+            {
+              "type": "enable",
+              "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\""
+            }
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "confirmedKills",
+          "validate": "min[0]",
+          "behaviour": [
+            {
+              "type": "enable",
+              "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\""
+            }
+          ]
+        },
+        {
+          "dataType": "stringList",
+          "name": "siteId",
+          "constraints": {
+            "type": "pre-populated",
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "source-path": "siteId",
+                  "target": "id"
+                },
+                {
+                  "source-path": "name",
+                  "target": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "modelName": "Controlling Pest Animals",
+  "title": "Controlling Pest Animals",
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "<h4>Controlling pest animals (including culling feral cats)</h4>",
+          "computed": null,
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "type": "section",
+      "items": [
+        {
+          "items": [
+            {
+              "source": "pestAnimalAreaTreatedHa",
+              "type": "number",
+              "preLabel": "Area treated for pest animals (Ha) - initial treatment area only"
+            },
+            {
+              "source": "pestAnimalAreaTreatedFollowupHa",
+              "type": "number",
+              "preLabel": "Area treated for pest animals (Ha) - followup treatment area only"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "type": "table",
+          "userAddedRows": true,
+          "source": "pestAnimalsControlled",
+          "columns": [
+            {
+              "title": "Species controlled",
+              "source": "pestSpecies",
+              "type": "speciesSelect"
+            },
+            {
+              "title": "Management method",
+              "source": "pestManagementMethod",
+              "type": "selectOne"
+            },
+            {
+              "title": "Area of influence of bait (Ha)",
+              "source": "baitAreaOfInfluence",
+              "type": "number"
+            },
+            {
+              "title": "Number of confirmed kills",
+              "source": "confirmedKills",
+              "type": "number"
+            },
+            {
+              "title": "Site(s)",
+              "source": "siteId",
+              "type": "select2Many"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

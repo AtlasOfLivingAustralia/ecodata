@@ -1,0 +1,79 @@
+{
+  "modelName":"Protecting habitat by controlling access",
+  "title":"Protecting habitat by controlling access",
+  "dataModel":[
+    {
+      "dataType": "text",
+      "name": "reasonForControllingAccess",
+      "constraints": [
+        "Reducing spread of weeds",
+        "Erosion"
+      ]
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfAccessPointsManaged",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaProtectedHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "text",
+      "name": "typeOfStructure",
+      "constraints": [
+        "Fence",
+        "Walkway / bridge"
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "<h4>Protecting habitat by controlling access</h4>",
+          "computed": null,
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "type": "section",
+      "items": [
+        {
+          "items": [
+            {
+              "source": "reasonForControllingAccess",
+              "type": "select2Many",
+              "preLabel": "Reason for controlling access"
+            },
+            {
+              "source": "typeOfStructure",
+              "type": "select2Many",
+              "preLabel": "Type of structure"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "source": "numberOfAccessPointsManaged",
+              "type": "number",
+              "preLabel": "Number of access points managed"
+            },
+            {
+              "source": "areaProtectedHa",
+              "type": "number",
+              "preLabel": "Area protected (Ha)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

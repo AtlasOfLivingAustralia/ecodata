@@ -1,0 +1,105 @@
+{
+  "modelName":"Managing Diseases",
+  "title":"Managing Diseases",
+  "dataModel":[
+    {
+      "dataType": "number",
+      "name": "totalAreaManagedForDiseaseHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "list",
+      "name": "diseaseManagementDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "targetedDisease"
+        },
+        {
+          "dataType": "species",
+          "name": "targetSpecies"
+        },
+        {
+          "dataType": "number",
+          "name": "areaAffectedByDisease",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "text",
+          "name":"siteId",
+          "constraints": {
+            "type": "pre-populated",
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "source-path": "siteId",
+                  "target": "id"
+                },
+                {
+                  "source-path": "name",
+                  "target": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "<h4>Managing diseases</h4>",
+          "computed": null,
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "type": "section",
+      "items": [
+        {
+          "items": [
+            {
+              "source": "totalAreaManagedForDiseaseHa",
+              "type": "number",
+              "preLabel": "Total area managed for disease (Ha)"
+            },
+            {
+              "type": "table",
+              "source": "diseaseManagementDetails",
+              "columns": [
+                {
+                  "title": "Targetted disease / pathogen",
+                  "source": "targetedDisease",
+                  "type": "text"
+                },
+                {
+                  "title": "Affected species",
+                  "source": "targetSpecies",
+                  "type": "speciesSelect"
+                },
+                {
+                  "title": "Area affected by disease",
+                  "source": "areaAffectedByDisease",
+                  "type": "number"
+                },
+                {
+                  "title": "Affected site",
+                  "source": "areaAffectedByDisease",
+                  "type": "select2"
+                }
+              ]
+            }
+          ],
+          "type": "row"
+        }
+      ]
+    }
+  ]
+}
