@@ -126,17 +126,20 @@
                     "title": "",
                     "source": "sampleName",
                     "noEdit": true,
-                    "type": "text"
+                    "type": "text",
+                    "width":"33%"
                 },
                 {
                     "title": "Distance along transect (m)",
                     "source": "distanceAlongTransect",
-                    "type": "number"
+                    "type": "number",
+                    "width":"33%"
                 },
                 {
                     "title": "Crown Type (%)",
                     "source": "crownType",
-                    "type": "number"
+                    "type": "number",
+                    "width":"33%"
                 }
             ],
             "type": "table"

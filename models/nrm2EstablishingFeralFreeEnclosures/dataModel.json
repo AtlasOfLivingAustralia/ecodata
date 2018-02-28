@@ -1,0 +1,183 @@
+{
+  "dataModel":[
+    {
+      "dataType": "number",
+      "name": "areaOfEnclosureEstablishedHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "list",
+      "name": "pestAnimalsObserved",
+      "columns": [
+        {
+          "dataType": "number",
+          "name": "numberOfPestAnimalsDirectlyObserved",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "species",
+          "name": "speciesOfPestAnimalsDirectlyObserved"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfPestAnimalsControlled",
+          "validate": "min[0]"
+        }
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "indirectEvidenceOfPestAnimalsObserved",
+      "constraints": [
+        "n/a",
+        "Y",
+        "N"
+      ]
+    },
+    {
+      "dataType": "list",
+      "name": "speciesProtected",
+      "columns": [
+        {
+          "dataType": "number",
+          "name": "numberOfSpeciesProtected",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "species",
+          "name": "speciesProtected"
+        }
+      ]
+    },
+    {
+      "dataType": "list",
+      "name": "speciesIntroduced",
+      "columns": [
+        {
+          "dataType": "number",
+          "name": "numberOfSpeciesIntroduced",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "species",
+          "name": "speciesIntroduced"
+        },
+        {
+          "dataType": "number",
+          "name": "survivalRate",
+          "validate": "min[0],max[100]"
+        }
+      ]
+    }
+  ],
+  "modelName":"Establishing and maintaining feral free enclosures",
+  "title":"Establishing and maintaining feral free enclosures",
+  "viewModel":[
+    {
+      "items": [
+        {
+          "source": "<h4>Establishing and maintaining feral free enclosures</h4>",
+          "computed": null,
+          "type": "literal"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "type": "section",
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaOfEnclosureEstablishedHa",
+              "type": "number",
+              "preLabel": "Area of enclosure established (Ha)"
+            },
+            {
+              "source": "numberOfHabitatDevices",
+              "type": "number",
+              "preLabel": "Number of habitat devices installed"
+            },
+            {
+              "source": "areaOfInfluenceOfHabitatDevices",
+              "type": "number",
+              "preLabel": "Area of influence of installed habitat devices (Ha)"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "dataType": "table",
+          "source": "pestAnimalsObserved",
+          "title": "Pest animals observed in enclosure",
+          "columns": [
+            {
+              "title": "Species observed",
+              "source": "speciesOfPestAnimalsDirectlyObserved",
+              "type": "speciesSelect"
+            },
+            {
+              "title": "Number observed",
+              "source": "numberOfPestAnimalsDirectlyObserved",
+              "type": "number"
+            },
+            {
+              "title": "Number controlled",
+              "source": "numberOfPestAnimalsControlled",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "source": "indirectEvidenceOfPestAnimalsObserved",
+              "preLabel": "Indirect evidence of pest animals observed",
+              "type": "selectOne"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "source": "speciesProtected",
+          "title": "Species protected by the enclosure",
+          "columns": [
+            {
+              "title": "Species protected",
+              "source": "speciesProtected",
+              "type": "speciesSelect"
+            },
+            {
+              "title": "Number protected",
+              "source": "numberOfSpeciesProtected",
+              "type": "number"
+            }
+          ]
+        },
+        {
+          "type": "table",
+          "source": "speciesIntroduced",
+          "title": "Species introduced into the enclosure",
+          "columns": [
+            {
+              "title": "Species introduced",
+              "source": "speciesIntroduced",
+              "type": "speciesSelect"
+            },
+            {
+              "title": "Number introduced",
+              "source": "numberOfSpeciesIntroduced",
+              "type": "number"
+            },
+            {
+              "title": "Survival rate (%)",
+              "source": "survivalRate",
+              "type": "number"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
