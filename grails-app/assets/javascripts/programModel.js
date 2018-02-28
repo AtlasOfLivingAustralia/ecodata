@@ -14,6 +14,7 @@ var ProgramModel = function (prg, model) {
     self.projectDatesContracted = ko.observable(prg.projectDatesContracted);
     self.optionalProjectContent = ko.observableArray(prg.optionalProjectContent || []);
     self.weekDaysToCompleteReport = ko.observable(prg.weekDaysToCompleteReport);
+    self.reportNamePrefix = ko.observable(prg.reportNamePrefix);
     self.projectTemplate = ko.observable(prg.projectTemplate);
     self.activities = ko.observableArray(prg.activities?prg.activities:[]);
     self.speciesFieldsSettings = ko.observable().extend({jsonText:prg.speciesFieldsSettings});
