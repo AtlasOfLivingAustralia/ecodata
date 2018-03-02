@@ -56,7 +56,7 @@
     },
     {
       "type": "table",
-      "source": "speciesIntroduced",
+      "source": "speciesBredAndReleased",
       "title": "Species bred and released",
       "columns": [
         {
@@ -72,11 +72,6 @@
         {
           "title": "Number of animals released",
           "source": "numberOfAnimalsReleased",
-          "type": "number"
-        },
-        {
-          "title": "Survival rate of released species (%)",
-          "source": "survivalRate",
           "type": "number"
         },
         {

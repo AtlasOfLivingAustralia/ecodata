@@ -60,7 +60,7 @@
         },
         {
           "dataType": "species",
-          "name": "speciesIntroduced"
+          "name": "species"
         },
         {
           "dataType": "number",
@@ -92,16 +92,6 @@
               "source": "areaOfEnclosureEstablishedHa",
               "type": "number",
               "preLabel": "Area of enclosure established (Ha)"
-            },
-            {
-              "source": "numberOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Number of habitat devices installed"
-            },
-            {
-              "source": "areaOfInfluenceOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Area of influence of installed habitat devices (Ha)"
             }
           ],
           "type": "row"
@@ -162,7 +152,7 @@
           "columns": [
             {
               "title": "Species introduced",
-              "source": "speciesIntroduced",
+              "source": "species",
               "type": "speciesSelect"
             },
             {
