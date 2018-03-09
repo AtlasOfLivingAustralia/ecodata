@@ -828,6 +828,24 @@ facets.data = [
                 dataType: 'number',
                 helpText: 'Is species present or absent',
                 facetTermType: 'PresenceOrAbsence'
+        ],
+        [
+                name: "associatedProgramFacet",
+                title: 'Program Name',
+                dataType: 'text',
+                helpText: 'The administrative Program under which a project is being run.'
+        ],
+        [
+                name: "siteNameFacet",
+                title: 'Site Name',
+                dataType: 'text',
+                helpText: 'A site at which data has been collected for one or projects.'
+        ],
+        [
+                name: "associatedSubProgramFacet",
+                title: 'Sub Program',
+                dataType: 'text',
+                helpText: 'Titles of sub-programmes under listed programmes.'
         ]
 ]
 

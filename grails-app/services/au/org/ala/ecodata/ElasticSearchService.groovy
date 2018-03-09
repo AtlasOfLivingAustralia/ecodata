@@ -855,7 +855,7 @@ class ElasticSearchService {
             def pActivity = version || isWorksActivity ? activity : projectActivityService.get(activity.projectActivityId)
             // if project could not be resolved from previous lookup, then try look it up using projectId from projectActivity.
             if(!project && pActivity.projectId){
-                project = projectService.get(pActivity.projectId, ProjectService.FLAT, version)
+                project = projectService.get(pActivity.projectId, ProjectService.PRIVATE_SITES_REMOVED, version)
             }
 
             Map projectActivity = [:]
