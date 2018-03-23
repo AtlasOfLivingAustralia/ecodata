@@ -1,28 +1,28 @@
 {
-  "modelName":"Removing Pest Weeds",
-  "title":"Removing Pest Weeds",
-  "dataModel":[
+  "title": "Removing Pest Weeds",
+  "modelName": "Removing Pest Weeds",
+  "dataModel": [
     {
       "dataType": "number",
-      "description": "The total area where weed control has been undertaken. Do not double count (1) the same area for different species or retreatment, e.g 20ha of treatment that targeted Lantana and Camphor laurel at a single site is be reported as 20ha, not 40ha. or (2) follow up treatment. Eg. If the initial 20ha site is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of the 20ha initial treatment and the 20ha follow up treatment.",
+      "description": "This is the total area where initial weed treatment has been undertaken/applied across ass sites for this project only.  Please see the reference guide for more information on initial weed treatment.",
       "name": "weedAreaTreatedHa",
-      "validate": "min[0]"
+      "validate": "required,min[0]"
     },
     {
       "dataType": "number",
-      "description": "The total area where weed control has been undertaken as a followup activity.",
+      "description": "This is the total area where follow-up weed treatment has been undertaken/applied across ass sites for this project only.  Please see the reference guide for more information on follow-up weed control.",
       "name": "weedAreaTreatedFollowupHa",
-      "validate": "min[0]"
+      "validate": "required,min[0]"
     },
     {
       "dataType": "text",
-      "dwcAttribute": "treatmentType",
-      "name": "weedTreatmentType",
       "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+      "name": "weedTreatmentType",
       "constraints": [
         "Initial treatment",
         "Follow-up treatment"
       ],
+      "dwcAttribute": "treatmentType",
       "validate": "required"
     },
     {
@@ -31,9 +31,9 @@
       "columns": [
         {
           "dataType": "species",
-          "dwcAttribute": "scientificName",
-          "name": "weedTargetSpecies",
           "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
+          "name": "weedTargetSpecies",
+          "dwcAttribute": "scientificName",
           "validate": "required"
         },
         {
@@ -65,82 +65,93 @@
           "validate": "required"
         },
         {
-          "dataType": "text",
-          "name": "siteId",
+          "dataType":"text",
+          "name":"treatmentMethodNotes",
+          "description":"Please specify the method of treatment used if Other (specify in notes) was selected in the Treatment Method column.",
+          "behaviour":[
+            {
+              "condition": "treatmentMethod == \"Other (specify in notes)\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType": "stringList",
+          "name": "siteIds",
           "constraints": {
-            "type": "pre-populated",
             "config": {
               "source": {
                 "context-path": "project.sites"
               },
               "mapping": [
                 {
-                  "source-path": "siteId",
-                  "target": "id"
+                  "target": "id",
+                  "source-path": "siteId"
                 },
                 {
-                  "source-path": "name",
-                  "target": "text"
+                  "target": "text",
+                  "source-path": "name"
                 }
               ]
-            }
+            },
+            "type": "pre-populated"
           }
         }
       ]
     }
   ],
-  "viewModel":[
+  "viewModel": [
     {
-      "items": [
-        {
-          "source": "<h4>Removing Pest Weeds</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "weedAreaTreatedHa",
-              "type": "number",
-              "preLabel": "Area treated for weeds (Ha) - initial treatment area only"
+              "preLabel": "Area treated for weeds (Ha) - initial treatment area only",
+              "type": "number"
             },
             {
               "source": "weedAreaTreatedFollowupHa",
-              "type": "number",
-              "preLabel": "Area treated for weeds (Ha) - followup treatment area only"
+              "preLabel": "Area treated for weeds (Ha) - followup treatment area only",
+              "type": "number"
             }
           ],
           "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     },
     {
-      "type": "table",
-      "userAddedRows": true,
       "source": "weedSpeciesTreated",
       "columns": [
         {
           "title": "Species treated",
           "source": "weedTargetSpecies",
-          "type": "speciesSelect"
+          "type": "speciesSelect",
+          "width":"40%"
         },
         {
           "title": "Treatment method",
           "source": "treatmentMethod",
-          "type": "selectOne"
+          "type": "selectOne",
+          "width":"20%"
+        },
+        {
+          "title":"Treatment method (if other)",
+          "source":"treatmentMethodNotes",
+          "type":"textarea",
+          "width":"20%"
         },
         {
           "title": "Site(s)",
-          "source": "siteId",
-          "type": "select2Many"
+          "source": "siteIds",
+          "type": "select2Many",
+          "width":"20%"
         }
-      ]
+      ],
+      "userAddedRows": true,
+      "type": "table"
     }
   ]
 }

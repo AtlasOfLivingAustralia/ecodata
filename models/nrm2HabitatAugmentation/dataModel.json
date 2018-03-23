@@ -1,7 +1,7 @@
 {
-  "modelName":"Habitat Augmentation",
-  "title":"Habitat Augmentation",
-  "dataModel":[
+  "title": "Habitat Augmentation",
+  "modelName": "Habitat Augmentation",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "numberOfFaunaMovementDevices",
@@ -33,61 +33,52 @@
       "validate": "min[0]"
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Habitat augmentation</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "numberOfFaunaMovementDevices",
-              "type": "number",
-              "preLabel": "Number of fauna movement devices installed"
+              "preLabel": "Number of fauna movement devices installed",
+              "type": "number"
             },
             {
               "source": "numberOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Number of habitat devices installed"
+              "preLabel": "Number of habitat devices installed",
+              "type": "number"
             },
             {
               "source": "areaOfInfluenceOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Area of influence of installed habitat devices (Ha)"
+              "preLabel": "Area of influence of installed habitat devices (Ha)",
+              "type": "number"
             }
           ],
           "type": "row"
         },
         {
-          "type": "row",
           "items": [
             {
               "source": "seedBankedKg",
-              "type": "number",
-              "preLabel": "Seed banked (kg)"
+              "preLabel": "Seed banked (kg)",
+              "type": "number"
             },
             {
               "source": "numberOfConservationAgreements",
-              "type": "number",
-              "preLabel": "Number of conservation agreements"
+              "preLabel": "Number of conservation agreements",
+              "type": "number"
             },
             {
               "source": "areaUnderConservationAgreementHa",
-              "type": "number",
-              "preLabel": "Area under conservation agreement (Ha)"
+              "preLabel": "Area under conservation agreement (Ha)",
+              "type": "number"
             }
-          ]
+          ],
+          "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

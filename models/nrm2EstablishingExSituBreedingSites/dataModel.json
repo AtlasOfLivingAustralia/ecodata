@@ -1,7 +1,7 @@
 {
-  "modelName":"Establishing and maintaining ex-situ breeding sites and/or populations",
-  "title":"Establishing and maintaining ex-situ breeding sites and/or populations",
-  "dataModel":[
+  "title": "Establishing and maintaining ex-situ breeding sites and/or populations",
+  "modelName": "Establishing and maintaining ex-situ breeding sites and/or populations",
+  "dataModel": [
     {
       "dataType": "list",
       "name": "speciesBredAndReleased",
@@ -45,19 +45,8 @@
   ],
   "viewModel": [
     {
-      "items": [
-        {
-          "source": "<h4>Establishing and maintaining ex-situ breeding sites and/or populations</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "table",
-      "source": "speciesBredAndReleased",
       "title": "Species bred and released",
+      "source": "speciesBredAndReleased",
       "columns": [
         {
           "title": "Species",
@@ -89,7 +78,8 @@
           "source": "whereDidFoundersComeFrom",
           "type": "textarea"
         }
-      ]
+      ],
+      "type": "table"
     }
   ]
 }

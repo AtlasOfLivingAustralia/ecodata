@@ -1,7 +1,7 @@
 {
-  "modelName":"Improving hydrological regimes",
-  "title":"Improving hydrological regimes",
-  "dataModel":[
+  "title": "Improving hydrological regimes",
+  "modelName": "Improving hydrological regimes",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "numberOfStructures",
@@ -16,15 +16,7 @@
         "3"
       ]
     },
-    {
-      "dataType": "number",
-      "name": "increasedFlowM3"
-    },
-    {
-      "dataType": "number",
-      "name": "lengthOfStreamHabitatImprovedKm",
-      "validate": "min[0]"
-    },
+
     {
       "dataType": "number",
       "name": "lengthOfFishPassageInstalledKm",
@@ -34,6 +26,11 @@
       "dataType": "number",
       "name": "numberOfFishwayEstablished",
       "validate": "min[0]"
+    },
+    {
+      "name":"numberOfFishBarriersRemoved",
+      "validate":"min[0]",
+      "type":"number"
     },
     {
       "dataType": "number",
@@ -51,61 +48,21 @@
       "validate": "min[0]"
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Improving hydrological regimes</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "numberOfStructures",
-              "type": "number",
-              "preLabel": "Number of structures installed"
+              "preLabel": "Number of structures installed",
+              "type": "number"
             },
             {
               "source": "typeOfStructure",
-              "type": "select2Many",
-              "preLabel": "Type of structure(s) installed"
-            }
-          ],
-          "type": "row"
-        },
-        {
-          "items": [
-            {
-              "source": "increasedFlowM3",
-              "type": "number",
-              "preLabel": "Increase in flow achieved (m3)"
-            },
-            {
-              "source": "lengthOfStreamHabitatImprovedKm",
-              "type": "number",
-              "preLabel": "Length of stream habitat improved (km)"
-            }
-          ],
-          "type": "row"
-        },
-        {
-          "items": [
-            {
-              "source": "lengthOfFishPassageInstalledKm",
-              "type": "number",
-              "preLabel": "Length of fish passage installed (km)"
-            },
-            {
-              "source": "numberOfFishwayEstablished",
-              "type": "number",
-              "preLabel": "Number of fishways established"
+              "preLabel": "Type of structure(s) installed",
+              "type": "select2Many"
             }
           ],
           "type": "row"
@@ -114,18 +71,49 @@
           "items": [
             {
               "source": "numberOfConstructedWetlands",
-              "type": "number",
-              "preLabel": "Number of constructed wetlands"
+              "preLabel": "Number of constructed wetlands",
+              "type": "number"
             },
             {
               "source": "areaOfConstructedWetlandsHa",
-              "type": "number",
-              "preLabel": "Total area of constructed wetlands (Ha)"
+              "preLabel": "Total area of constructed wetlands (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "lengthOfFishPassageInstalledKm",
+              "preLabel": "Length of fish passage installed (km)",
+              "type": "number"
+            },
+            {
+              "source": "numberOfFishwayEstablished",
+              "preLabel": "Number of fishways established",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "numberOfFishBarriersRemoved",
+              "preLabel": "Number of barriers to fish movement removed",
+              "type": "number"
+            },
+            {
+              "source": "numberOfFishwayEstablished",
+              "preLabel": "Number of fishways established",
+              "type": "number"
             }
           ],
           "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }
