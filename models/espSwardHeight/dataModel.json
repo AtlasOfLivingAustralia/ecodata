@@ -1,5 +1,6 @@
 {
   "title": "Sward Height",
+  "description":"To measure sward height, find a spot on your site that is representative of the site. Use either a ruler or eyeball a measurement of the sward height. If using a ruler, place the base on the surface of the soil. Slide your thumb down until you touch the top of the leaf blade. Do not measure the stems or flower heads.",
   "modelName": "ESP Sward Height",
   "dataModel": [
     {
