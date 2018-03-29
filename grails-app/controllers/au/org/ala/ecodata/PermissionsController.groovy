@@ -209,9 +209,9 @@ class PermissionsController {
 
     def addUserWithRoleToProgram(String userId, String programId, String role) {
         Program program = Program.findByProgramId(programId)
-        Closure removeFromProgram = { String userId2, String role2, String programId2 ->
+        Closure addToProgram = { String userId2, String role2, String programId2 ->
             permissionService.addUserAsRoleToProgram(userId2, AccessLevel.valueOf(role2), programId2)}
-        Map result = validateAndUpdatePermission(program, programId, role, userId, removeFromProgram)
+        Map result = validateAndUpdatePermission(program, programId, role, userId, addToProgram)
         render status:result.status, text:result.text
     }
 
@@ -221,6 +221,38 @@ class PermissionsController {
             permissionService.removeUserAsRoleFromProgram(userId2, AccessLevel.valueOf(role2), programId2)}
         Map result = validateAndUpdatePermission(program, programId, role, userId, removeFromProgram)
         render status:result.status, text:result.text
+    }
+
+    def addUserWithRoleToHub(String userId, String hubId, String role) {
+        Hub hub = Hub.findByHubId(hubId)
+        Closure addToHub= { String userId2, String role2, String hubId2 ->
+            permissionService.addUserAsRoleToHub(userId2, AccessLevel.valueOf(role2), hubId2)}
+        Map result = validateAndUpdatePermission(hub, hubId, role, userId, addToHub)
+        render status:result.status, text:result.text
+    }
+
+    def removeUserWithRoleFromHub(String userId, String hubId, String role) {
+        Hub hub = Hub.findByHubId(hubId)
+        Closure removeFromProgram = { String userId2, String role2, String hubId2 ->
+            permissionService.removeUserRoleFromHub(userId2, AccessLevel.valueOf(role2), hubId2)}
+        Map result = validateAndUpdatePermission(hub, hubId, role, userId, removeFromProgram)
+        render status:result.status, text:result.text
+    }
+
+    /**
+     * Returns the users and their roles for a hub.
+     * @param id the hubId of the hub.
+     * @return
+     */
+    def getMembersOfProgram(String id) {
+        if (!id) {
+            render status:400, text:'The id parameter must be supplied'
+        }
+        Integer max = params.max as Integer
+        Integer offset = params.offset as Integer
+        String sort = params.sort
+        String order = params.order
+        render permissionService.getMembersOfProgram(id, max, offset, order, sort) as JSON
     }
 
     private Map validateAndUpdatePermission(entity, String entityId, String role, String userId, Closure serviceCall) {

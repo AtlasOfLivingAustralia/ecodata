@@ -243,6 +243,17 @@ class PermissionService {
     }
 
     /**
+     * Returns a list of all users who have permissions configured for the specified program.
+     * @param programId the programId of the program to get permissions for.
+     * @return a List of the users that have roles configured for the program.
+     */
+    List<Map> getMembersOfProgram(String programId, Integer max = 100, Integer offset = 0, String order = "asc", String sort = "accessLevel") {
+        List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(
+                programId, Program.name, DELETED, [max:max, offset:offset, sort:sort, order:order])
+        permissions.collect{toMap(it)}
+    }
+
+    /**
      * Converts a UserPermission into a Map, looking up the user display name from the user details service.
      */
     private Map toMap(UserPermission userPermission) {
@@ -260,7 +271,7 @@ class PermissionService {
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         List prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
-println "Prev: "+prevRoles
+
         // It's possible that a user could attempt to reassign permission at the same level they already have
         UserPermission up = prevRoles.find{it.accessLevel == accessLevel}
         if (!up) {
@@ -366,8 +377,16 @@ println "Prev: "+prevRoles
         return addUserAsRoleToEntity(userId, accessLevel, Program, programId)
     }
 
-    def removeUserAsRoleFromProgram(String userId, AccessLevel accessLevel, String programId) {
+    Map removeUserAsRoleFromProgram(String userId, AccessLevel accessLevel, String programId) {
         return removeUserAsRoleToEntity(userId, accessLevel, Program, programId)
+    }
+
+    Map addUserAsRoleToHub(String userId, AccessLevel accessLevel, String hubId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    }
+
+    Map removeUserRoleFromHub(String userId, AccessLevel accessLevel, String hubId) {
+        return removeUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
     }
 
     /**

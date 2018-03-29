@@ -44,6 +44,46 @@ class PermissionServiceSpec extends Specification {
 
     }
 
+    void "A user can be assigned a role for a hub"() {
+        setup:
+        String userId = 'u1'
+        String hubId = 'h1'
+        AccessLevel role = AccessLevel.admin
+
+        when:
+        service.addUserAsRoleToHub(userId, role, hubId)
+
+        then:
+        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, AccessLevel.admin, hubId) != null
+    }
+
+    void "A user can only be assigned one role for a hub"() {
+        setup:
+        String userId = '1'
+        String hubId = '1'
+        new UserPermission(userId:userId, entityId:hubId, entityType:Hub.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
+
+        when:
+        service.addUserAsRoleToHub(userId, AccessLevel.editor, hubId)
+
+        then:
+        UserPermission.findAllByUserIdAndEntityId(userId, hubId).size() == 1
+        UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, AccessLevel.editor, hubId) != null
+    }
+
+    void "A user can have a role unassigned from a hub"() {
+        setup:
+        String userId = '1'
+        String hubId = '1'
+        new UserPermission(userId:userId, entityId:hubId, entityType:Hub.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
+
+        when:
+        service.removeUserRoleFromHub(userId, AccessLevel.admin, hubId)
+
+        then:
+        UserPermission.findAllByUserIdAndEntityId(userId, hubId).size() == 0
+    }
+
     void "A user can be assigned a role for a program"() {
         setup:
         String userId = 'u1'
@@ -53,7 +93,6 @@ class PermissionServiceSpec extends Specification {
         when:
         service.addUserAsRoleToProgram(userId, role, programId)
         UserPermission up = UserPermission.findAll()[0]
-        println up.accessLevel.name()+','+up.entityId+','+up.entityType+','+up.userId
 
         then:
         UserPermission.findByUserIdAndAccessLevelAndEntityId(userId, AccessLevel.admin, programId) != null
@@ -65,7 +104,6 @@ class PermissionServiceSpec extends Specification {
         String programId = '1'
         new UserPermission(userId:userId, entityId:programId, entityType:Program.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
 
-        println "All"+UserPermission.findAll()
         when:
         service.addUserAsRoleToProgram(userId, AccessLevel.editor, programId)
 
@@ -80,12 +118,28 @@ class PermissionServiceSpec extends Specification {
         String programId = '1'
         new UserPermission(userId:userId, entityId:programId, entityType:Program.name, accessLevel: AccessLevel.admin).save(flush:true, failOnError:true)
 
-        println "All"+UserPermission.findAll()
         when:
         service.removeUserAsRoleFromProgram(userId, AccessLevel.admin, programId)
 
         then:
         UserPermission.findAllByUserIdAndEntityId(userId, programId).size() == 0
+    }
+
+    void "the list of users with permissions configured on a program can be returned"() {
+
+        setup:
+        String programId = 'p1'
+        Set<String> userIds = ['1','2','3']
+        userIds.each { userId ->
+            new UserPermission(entityId:programId, entityType:Program.name, userId: userId, accessLevel:AccessLevel.admin.name()).save(flush:true, failOnError: true)
+        }
+
+        when:
+        List users = service.getMembersOfProgram(programId)
+
+        then:
+        users.size() == userIds.size()
+        new HashSet(users.collect{it.userId}).equals(userIds)
     }
 
 }
