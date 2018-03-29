@@ -260,7 +260,7 @@ class PermissionService {
     private def addUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         List prevRoles = UserPermission.findAllByUserIdAndEntityIdAndEntityTypeAndAccessLevelNotEqual(userId, entityId, entityType.name, AccessLevel.starred)
         log.debug "0. prevRoles = ${prevRoles}"
-
+println "Prev: "+prevRoles
         // It's possible that a user could attempt to reassign permission at the same level they already have
         UserPermission up = prevRoles.find{it.accessLevel == accessLevel}
         if (!up) {
@@ -310,7 +310,7 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
     }
 
-    private def removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
+    private Map removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         def up = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, entityId, entityType.name, accessLevel)
         if (up) {
             try {
@@ -360,6 +360,14 @@ class PermissionService {
 
     List getAllAdminsForProject(String id){
         getAllUserPermissionForEntity(id, Project.class.name, 'admin')
+    }
+
+    Map addUserAsRoleToProgram(String userId, AccessLevel accessLevel, String programId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Program, programId)
+    }
+
+    def removeUserAsRoleFromProgram(String userId, AccessLevel accessLevel, String programId) {
+        return removeUserAsRoleToEntity(userId, accessLevel, Program, programId)
     }
 
     /**

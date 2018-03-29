@@ -207,6 +207,55 @@ class PermissionsController {
         }
     }
 
+    def addUserWithRoleToProgram(String userId, String programId, String role) {
+        Program program = Program.findByProgramId(programId)
+        Closure removeFromProgram = { String userId2, String role2, String programId2 ->
+            permissionService.addUserAsRoleToProgram(userId2, AccessLevel.valueOf(role2), programId2)}
+        Map result = validateAndUpdatePermission(program, programId, role, userId, removeFromProgram)
+        render status:result.status, text:result.text
+    }
+
+    def removeUserWithRoleFromProgram(String userId, String programId, String role) {
+        Program program = Program.findByProgramId(programId)
+        Closure removeFromProgram = { String userId2, String role2, String programId2 ->
+            permissionService.removeUserAsRoleFromProgram(userId2, AccessLevel.valueOf(role2), programId2)}
+        Map result = validateAndUpdatePermission(program, programId, role, userId, removeFromProgram)
+        render status:result.status, text:result.text
+    }
+
+    private Map validateAndUpdatePermission(entity, String entityId, String role, String userId, Closure serviceCall) {
+        Map result = validate(entity, entityId, role, userId)
+
+        if (!result) {
+            result = serviceCall(userId, role, entityId)
+            if (result.status == "ok") {
+                result = [status:200 , text:"success: ${result.id}"]
+            } else {
+                result = [status: 500, text: "Error removing user/role: ${result}"]
+            }
+        }
+        result
+    }
+
+    private Map validate(entity, String entityId, String role, String userId) {
+        Map result
+        if (!entityId || !role || !userId) {
+            result = [status:400, text: 'Required params not provided: userId, role, id']
+        }
+        else if (!entity) {
+            result = [status:404, text: 'Not found']
+        }
+        else {
+            try {
+                AccessLevel.valueOf(role)
+            }
+            catch (Exception e) {
+                result = [status:400, text: 'Invalid role: '+role]
+            }
+        }
+        result
+    }
+
     /**
      * Delete a {@link UserDetails user}-{@link Organisation project}-{@link UserPermission role}
      * {@link UserPermission} object
