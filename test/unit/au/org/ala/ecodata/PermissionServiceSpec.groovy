@@ -135,7 +135,7 @@ class PermissionServiceSpec extends Specification {
         }
 
         when:
-        List users = service.getMembersOfProgram(programId)
+        List users = service.getMembersOfProgram(programId).members
 
         then:
         users.size() == userIds.size()

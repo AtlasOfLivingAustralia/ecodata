@@ -247,10 +247,11 @@ class PermissionService {
      * @param programId the programId of the program to get permissions for.
      * @return a List of the users that have roles configured for the program.
      */
-    List<Map> getMembersOfProgram(String programId, Integer max = 100, Integer offset = 0, String order = "asc", String sort = "accessLevel") {
+    Map getMembersOfProgram(String programId, Integer max = 100, Integer offset = 0, String order = "asc", String sort = "accessLevel") {
         List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(
                 programId, Program.name, DELETED, [max:max, offset:offset, sort:sort, order:order])
-        permissions.collect{toMap(it)}
+        List members = permissions.collect{toMap(it)}
+        [programId:programId, members:members]
     }
 
     /**

@@ -11,22 +11,29 @@ class Program {
     String programId
     String name
     String description
-    String status = 'active'
+    String status = Status.ACTIVE
     String url
     Date dateCreated
     Date lastUpdated
     List blog
     List risks
+    List themes
+
+    /** Configuration related to the program */
+    Map config
 
     Date startDate
     Date endDate
 
-    List<Program> subPrograms
+    List<Program> subPrograms = []
+    Program parent
 
     static mapping = {
         programId index: true
         version false
     }
+
+    static hasMany = [subPrograms:Program]
 
     static constraints = {
         name unique: true
@@ -37,5 +44,11 @@ class Program {
         startDate nullable: true
         endDate nullable: true
         url nullable: true
+        config nullable: true
+        parent nullable: true
+    }
+
+    public String toString() {
+        return "Name: "+name+ ", description: "+description
     }
 }

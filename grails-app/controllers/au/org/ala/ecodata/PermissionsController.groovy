@@ -646,6 +646,19 @@ class PermissionsController {
         }
     }
 
+    def getUserRolesForUserId() {
+        String userId = params.id
+        if (userId) {
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelNotEqualAndStatusNotEqual(userId, AccessLevel.starred, DELETED, params)
+            Map result = [roles:permissions.collect { [entityId:it.entityId, entityType:it.entityType, role:it.accessLevel.name()] }]
+
+            render result as JSON
+        } else {
+            render status: 400, text: "Required params not provided: userId"
+        }
+    }
+
+
     /**
      * Get a list of {@link Project projects} with {@link AccessLevel#starred starred} level access
      * for a given {@link UserDetails#userId userId}

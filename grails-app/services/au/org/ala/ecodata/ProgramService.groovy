@@ -1,11 +1,9 @@
 package au.org.ala.ecodata
 
-import grails.transaction.Transactional
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.DELETED
 
-@Transactional
 class ProgramService {
     
     def commonService
@@ -30,15 +28,24 @@ class ProgramService {
         properties.programId = Identifiers.getNew(true, '')
         Program program = new Program(programId:properties.programId)
         commonService.updateProperties(program, properties)
-        program.save(flush:true)
         return program
     }
 
     Program update(String id, Map properties) {
-        Program Program = get(id)
-        commonService.updateProperties(Program, properties)
-        Program.save(flush:true)
-        return Program
+        Program program = get(id)
+        commonService.updateProperties(program, properties)
+        program.save(flush:true)
+        return program
+    }
+
+    Map<String, String> parentNames(Program program) {
+        List names = []
+        names << program.name
+        while (program.parent != null) {
+            program = program.parent
+            names << program.name
+        }
+        names
     }
 
     def delete(String id, boolean destroy) {
