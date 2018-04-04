@@ -36,6 +36,22 @@
         {
           "items": [
             {
+              "source": "areaProtectedHa",
+              "preLabel": "Area protected (Ha)",
+              "type": "number"
+            },
+            {
+              "source": "numberOfAccessPointsManaged",
+              "preLabel": "Number of access points managed",
+              "type": "number"
+            }
+
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
               "source": "reasonForControllingAccess",
               "preLabel": "Reason for controlling access",
               "type": "select2Many"
@@ -47,22 +63,8 @@
             }
           ],
           "type": "row"
-        },
-        {
-          "items": [
-            {
-              "source": "numberOfAccessPointsManaged",
-              "preLabel": "Number of access points managed",
-              "type": "number"
-            },
-            {
-              "source": "areaProtectedHa",
-              "preLabel": "Area protected (Ha)",
-              "type": "number"
-            }
-          ],
-          "type": "row"
         }
+
       ],
       "type": "section"
     }
