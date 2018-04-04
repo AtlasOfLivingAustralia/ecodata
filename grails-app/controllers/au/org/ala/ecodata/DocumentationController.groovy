@@ -30,8 +30,15 @@ class DocumentationController {
 
             def outputDataModel = metadataService.getOutputDataModel(output.template)
 
-            outputs << [(output.name): schemaGenerator.schemaForOutput(output.name, outputDataModel)]
-            scoresByOutput << [(output.name):output.scores]
+            try {
+                def schema = schemaGenerator.schemaForOutput(output.name, outputDataModel)
+                outputs << [(output.name): schema]
+                scoresByOutput << [(output.name):output.scores]
+            }
+            catch (Exception e) {
+                log.error("Unable to generate documentation for output: ${output.name}", e)
+            }
+
         }
 
         [activitiesModel:displayModel, outputs:outputs, scores:scoresByOutput]
@@ -65,9 +72,6 @@ class DocumentationController {
             html {
                 def activityForm = null
 
-                if (exampleActivity) {
-                    activityForm = "http://fieldcapture-dev.ala.org.au/activity/enterData/${exampleActivity.activityId}?returnTo=http://fieldcapture-dev.ala.org.au/project/index/746cb3f2-1f76-3824-9e80-fa735ae5ff35"
-                }
                 [name: activityModel.name, activity:schema, overview:simplifiedSchema, example:exampleActivity, formUrl:activityForm]
             }
         }
@@ -146,11 +150,11 @@ class DocumentationController {
 
     def exampleActivity(activityType) {
 
-        // Get demo data from the dev server....
-        def url = 'http://ecodata-dev.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
+        // Get demo data from the test server....
+        def url = grailsApplication.config.ecodata.documentation.exampleProjectUrl
 
         def activities = doGet(url)
-        if (!activities.error) {
+        if (activities && !activities.error) {
             def activity = activities.list.find{it.type == activityType}
             if (activity) {
                 activity.remove('documents')
@@ -167,7 +171,7 @@ class DocumentationController {
 
     def exampleOutput(outputType) {
         // Get demo data from the dev server....
-        def url = 'http://ecodata-dev.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
+        def url = grailsApplication.config.ecodata.documentation.exampleProjectUrl
         def output
 
         def activities = doGet(url)
@@ -202,10 +206,8 @@ class DocumentationController {
             log.error error
             return error
         } catch (Exception e) {
-            def error = [error: "Failed calling web service. ${e.getClass()} ${e.getMessage()} URL= ${url}.",
-                    statusCode: conn.responseCode?:"",
-                    detail: conn.errorStream?.text]
-            log.error error
+            log.error e
+            def error = [error:e.message]
             return error
         }
     }

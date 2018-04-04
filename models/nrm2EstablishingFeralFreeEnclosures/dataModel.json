@@ -1,5 +1,7 @@
 {
-  "dataModel":[
+  "title": "Establishing and maintaining feral free enclosures",
+  "modelName": "Establishing and maintaining feral free enclosures",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "areaOfEnclosureEstablishedHa",
@@ -60,7 +62,7 @@
         },
         {
           "dataType": "species",
-          "name": "speciesIntroduced"
+          "name": "species"
         },
         {
           "dataType": "number",
@@ -70,46 +72,34 @@
       ]
     }
   ],
-  "modelName":"Establishing and maintaining feral free enclosures",
-  "title":"Establishing and maintaining feral free enclosures",
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Establishing and maintaining feral free enclosures</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "areaOfEnclosureEstablishedHa",
-              "type": "number",
-              "preLabel": "Area of enclosure established (Ha)"
+              "preLabel": "Area of enclosure established (Ha)",
+              "type": "number"
             },
             {
               "source": "numberOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Number of habitat devices installed"
+              "preLabel": "Number of habitat devices installed",
+              "type": "number"
             },
             {
               "source": "areaOfInfluenceOfHabitatDevices",
-              "type": "number",
-              "preLabel": "Area of influence of installed habitat devices (Ha)"
+              "preLabel": "Area of influence of installed habitat devices (Ha)",
+              "type": "number"
             }
           ],
           "type": "row"
         },
         {
+          "title": "Pest animals observed in enclosure",
           "dataType": "table",
           "source": "pestAnimalsObserved",
-          "title": "Pest animals observed in enclosure",
           "columns": [
             {
               "title": "Species observed",
@@ -129,19 +119,18 @@
           ]
         },
         {
-          "type": "row",
           "items": [
             {
               "source": "indirectEvidenceOfPestAnimalsObserved",
-              "preLabel": "Indirect evidence of pest animals observed",
+              "preLabel": "Indirect evidence of pest animals observed?",
               "type": "selectOne"
             }
-          ]
+          ],
+          "type": "row"
         },
         {
-          "type": "table",
-          "source": "speciesProtected",
           "title": "Species protected by the enclosure",
+          "source": "speciesProtected",
           "columns": [
             {
               "title": "Species protected",
@@ -153,16 +142,16 @@
               "source": "numberOfSpeciesProtected",
               "type": "number"
             }
-          ]
+          ],
+          "type": "table"
         },
         {
-          "type": "table",
-          "source": "speciesIntroduced",
           "title": "Species introduced into the enclosure",
+          "source": "speciesIntroduced",
           "columns": [
             {
               "title": "Species introduced",
-              "source": "speciesIntroduced",
+              "source": "species",
               "type": "speciesSelect"
             },
             {
@@ -175,9 +164,11 @@
               "source": "survivalRate",
               "type": "number"
             }
-          ]
+          ],
+          "type": "table"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

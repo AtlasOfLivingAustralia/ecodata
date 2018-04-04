@@ -1,7 +1,7 @@
 {
-  "modelName":"Revegetating habitat",
-  "title":"Revegetating habitat",
-  "dataModel":[
+  "title": "Revegetating habitat",
+  "modelName": "Revegetating habitat",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "areaRevegetatedHa",
@@ -18,41 +18,32 @@
       "validate": "min[0]"
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Revegetating habitat</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "areaRevegetatedHa",
-              "type": "number",
-              "preLabel": "Area revegetated (km)"
+              "preLabel": "Area revegetated (km)",
+              "type": "number"
             },
             {
               "source": "areaRevegetationMaintenanceHa",
-              "type": "number",
-              "preLabel": "Area of revegetation maintenance / infill plantings (Ha)"
+              "preLabel": "Area of revegetation maintenance / infill plantings (Ha)",
+              "type": "number"
             },
             {
               "source": "numberOfPlantsPlanted",
-              "type": "number",
-              "preLabel": "Number of plants planted"
+              "preLabel": "Number of plants planted",
+              "type": "number"
             }
           ],
           "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

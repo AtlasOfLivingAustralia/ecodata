@@ -1,7 +1,7 @@
 {
-  "modelName":"Remediating riparian and aquatic areas",
-  "title":"Remediating riparian and aquatic areas",
-  "dataModel":[
+  "title": "Remediating riparian and aquatic areas",
+  "modelName": "Remediating riparian and aquatic areas",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "instreamHabitatImprovementKm",
@@ -18,41 +18,32 @@
       "validate": "min[0]"
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Remediating riparian and aquatic areas</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "instreamHabitatImprovementKm",
-              "type": "number",
-              "preLabel": "Length of stream improved (km)"
+              "preLabel": "Length of stream improved (km)",
+              "type": "number"
             },
             {
               "source": "areaOfLandProtectedFromErosionHa",
-              "type": "number",
-              "preLabel": "Area of land protected from erosion (Ha)"
+              "preLabel": "Area of land protected from erosion (Ha)",
+              "type": "number"
             },
             {
               "source": "numberOfErosionControlStructures",
-              "type": "number",
-              "preLabel": "Number of erosion control structures installed"
+              "preLabel": "Number of erosion control structures installed",
+              "type": "number"
             }
           ],
           "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

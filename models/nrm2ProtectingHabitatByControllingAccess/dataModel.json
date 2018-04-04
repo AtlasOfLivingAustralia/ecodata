@@ -1,9 +1,9 @@
 {
-  "modelName":"Protecting habitat by controlling access",
-  "title":"Protecting habitat by controlling access",
-  "dataModel":[
+  "title": "Protecting habitat by controlling access",
+  "modelName": "Protecting habitat by controlling access",
+  "dataModel": [
     {
-      "dataType": "text",
+      "dataType": "stringList",
       "name": "reasonForControllingAccess",
       "constraints": [
         "Reducing spread of weeds",
@@ -21,7 +21,7 @@
       "validate": "min[0]"
     },
     {
-      "dataType": "text",
+      "dataType": "stringList",
       "name": "typeOfStructure",
       "constraints": [
         "Fence",
@@ -29,51 +29,42 @@
       ]
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Protecting habitat by controlling access</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "reasonForControllingAccess",
-              "type": "select2Many",
-              "preLabel": "Reason for controlling access"
+              "preLabel": "Reason for controlling access",
+              "type": "select2Many"
             },
             {
               "source": "typeOfStructure",
-              "type": "select2Many",
-              "preLabel": "Type of structure"
+              "preLabel": "Type of structure",
+              "type": "select2Many"
             }
           ],
           "type": "row"
         },
         {
-          "type": "row",
           "items": [
             {
               "source": "numberOfAccessPointsManaged",
-              "type": "number",
-              "preLabel": "Number of access points managed"
+              "preLabel": "Number of access points managed",
+              "type": "number"
             },
             {
               "source": "areaProtectedHa",
-              "type": "number",
-              "preLabel": "Area protected (Ha)"
+              "preLabel": "Area protected (Ha)",
+              "type": "number"
             }
-          ]
+          ],
+          "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

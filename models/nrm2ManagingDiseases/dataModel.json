@@ -1,7 +1,7 @@
 {
-  "modelName":"Managing Diseases",
-  "title":"Managing Diseases",
-  "dataModel":[
+  "title": "Managing Diseases",
+  "modelName": "Managing Diseases",
+  "dataModel": [
     {
       "dataType": "number",
       "name": "totalAreaManagedForDiseaseHa",
@@ -26,52 +26,41 @@
         },
         {
           "dataType": "text",
-          "name":"siteId",
+          "name": "siteId",
           "constraints": {
-            "type": "pre-populated",
             "config": {
               "source": {
                 "context-path": "project.sites"
               },
               "mapping": [
                 {
-                  "source-path": "siteId",
-                  "target": "id"
+                  "target": "id",
+                  "source-path": "siteId"
                 },
                 {
-                  "source-path": "name",
-                  "target": "text"
+                  "target": "text",
+                  "source-path": "name"
                 }
               ]
-            }
+            },
+            "type": "pre-populated"
           }
         }
       ]
     }
   ],
-  "viewModel":[
+  "viewModel": [
+
     {
-      "items": [
-        {
-          "source": "<h4>Managing diseases</h4>",
-          "computed": null,
-          "type": "literal"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type": "section",
       "items": [
         {
           "items": [
             {
               "source": "totalAreaManagedForDiseaseHa",
-              "type": "number",
-              "preLabel": "Total area managed for disease (Ha)"
+              "preLabel": "Total area managed for disease (Ha)",
+              "type": "number"
             },
             {
-              "type": "table",
               "source": "diseaseManagementDetails",
               "columns": [
                 {
@@ -94,12 +83,14 @@
                   "source": "areaAffectedByDisease",
                   "type": "select2"
                 }
-              ]
+              ],
+              "type": "table"
             }
           ],
           "type": "row"
         }
-      ]
+      ],
+      "type": "section"
     }
   ]
 }

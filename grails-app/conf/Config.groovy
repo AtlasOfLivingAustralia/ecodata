@@ -582,6 +582,8 @@ if (!authCheckKeyUrl) {
     authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
 }
 
+ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
+
 
 if (!grails.cache.ehcache) {
     grails {

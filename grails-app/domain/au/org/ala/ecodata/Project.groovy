@@ -84,6 +84,9 @@ class Project {
 
     List<AssociatedOrg> associatedOrganisations
 
+    /** The program of work this project is a part of, if any */
+    String programId
+
     static embedded = ['associatedOrganisations','fundings']
 
     static transients = ['activities', 'plannedDurationInWeeks', 'actualDurationInWeeks']
@@ -186,6 +189,7 @@ class Project {
         tags nullable: true
         alaHarvest nullable: true
         industries nullable: true
+        programId nullable: true
     }
 }
 

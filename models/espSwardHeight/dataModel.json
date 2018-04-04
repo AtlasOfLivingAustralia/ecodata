@@ -1,54 +1,54 @@
 {
-  "modelName":"ESP Sward Height",
-  "title":"Sward Height",
-  "dataModel":[
+  "title": "Sward Height",
+  "description":"To measure sward height, find a spot on your site that is representative of the site. Use either a ruler or eyeball a measurement of the sward height. If using a ruler, place the base on the surface of the soil. Slide your thumb down until you touch the top of the leaf blade. Do not measure the stems or flower heads.",
+  "modelName": "ESP Sward Height",
+  "dataModel": [
     {
-      "name":"swardHeight",
-      "dataType":"list",
+      "dataType": "list",
+      "name": "swardHeight",
       "columns": [
         {
-          "name":"swardHeightCm",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "swardHeightCm",
+          "validate": "required,min[0]"
         },
         {
-          "name":"dateMeasured",
-          "dataType":"date",
-          "validate":"required"
+          "dataType": "date",
+          "name": "dateMeasured",
+          "validate": "required"
         }
       ]
-
     }
   ],
-  "viewModel":[
+  "viewModel": [
     {
-      "type": "row",
       "items": [
         {
-          "type":"literal",
-          "source":"Please note that sward height only needs to be recorded once per site per year (but can be recorded multiple times if you wish). We recommend recording sward height at the same time that you take your annual photo-point photograph and record your estimated ground cover percentage."
+          "source": "Please note that sward height only needs to be recorded once per site per year (but can be recorded multiple times if you wish). Please note that sward height needs to be recorded at the same time each year, preferably at the same time you take your annual phot-point photograph and record your estimated ground cover percentage.",
+          "type": "literal"
         }
-      ]
+      ],
+      "type": "row"
     },
     {
       "items": [
         {
           "source": "swardHeight",
-          "type": "table",
-          "userAddedRows":true,
-          "disableTableUpload":true,
-          "columns":[
+          "columns": [
             {
-              "title":"Sward Height (cm)",
-              "source":"swardHeightCm",
-              "type":"number"
+              "title": "Sward Height (cm)",
+              "source": "swardHeightCm",
+              "type": "number"
             },
             {
-              "title":"Date measured",
-              "source":"dateMeasured",
-              "type":"date"
+              "title": "Date measured",
+              "source": "dateMeasured",
+              "type": "date"
             }
-          ]
+          ],
+          "userAddedRows": true,
+          "disableTableUpload": true,
+          "type": "table"
         }
       ],
       "type": "row"
