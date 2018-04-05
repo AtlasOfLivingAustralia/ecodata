@@ -421,7 +421,11 @@
                     "items": [{
                         "source": "photo",
                         "preLabel": "Please attach a representative image of the species or ecological community",
-                        "type": "image"
+                        "type": "image",
+                        "displayOptions": {
+                            "disableDragDrop": true
+
+                        }
                     }],
                     "type": "col"
                 }
