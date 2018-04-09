@@ -4,22 +4,25 @@
   "dataModel": [
     {
       "dataType": "text",
-      "name":"multiplePaddocks",
-      "constraints":["Yes", "No"]
+      "name": "multiplePaddocks",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
     },
     {
       "dataType": "list",
       "name": "grazingPeriods",
       "columns": [
         {
-          "dataType":"number",
-          "name":"paddockNum",
-          "behaviour":[
+          "dataType": "number",
+          "behaviour": [
             {
               "condition": "multiplePaddocks == \"Yes\"",
               "type": "enable"
             }
-          ]
+          ],
+          "name": "paddockNum"
         },
         {
           "dataType": "date",
@@ -317,20 +320,19 @@
       "type": "row"
     },
     {
-      "type":"row",
-      "items":[
+      "items": [
         {
-          "type":"col",
-          "items":[
+          "items": [
             {
-              "type":"selectOne",
-              "preLabel":"Do you have more than one paddock on this site?",
-              "source":"multiplePaddocks"
+              "source": "multiplePaddocks",
+              "preLabel": "Is this site divided up into multiple paddocks?",
+              "type": "selectOne"
             }
-          ]
+          ],
+          "type": "col"
         }
-
-      ]
+      ],
+      "type": "row"
     },
     {
       "items": [
@@ -340,9 +342,9 @@
           "allowHeaderWrap": true,
           "columns": [
             {
-              "title":"Paddock (if applicable)",
-              "source":"paddockNum",
-              "type":"number"
+              "title": "Paddock (if applicable)",
+              "source": "paddockNum",
+              "type": "number"
             },
             {
               "title": "Start Date",
@@ -418,7 +420,6 @@
       ],
       "type": "row"
     },
-
     {
       "items": [
         {
