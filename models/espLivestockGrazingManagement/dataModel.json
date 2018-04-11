@@ -3,9 +3,27 @@
   "modelName": "ESP Livestock Grazing Management",
   "dataModel": [
     {
+      "dataType": "text",
+      "name": "multiplePaddocks",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
       "dataType": "list",
       "name": "grazingPeriods",
       "columns": [
+        {
+          "dataType": "number",
+          "behaviour": [
+            {
+              "condition": "multiplePaddocks == \"Yes\"",
+              "type": "enable"
+            }
+          ],
+          "name": "paddockNum"
+        },
         {
           "dataType": "date",
           "description": "",
@@ -287,19 +305,34 @@
     },
     {
       "dataType": "text",
-      "name": "notes",
-      "description": ""
+      "description": "",
+      "name": "notes"
     }
   ],
   "viewModel": [
     {
-      "type":"row",
-      "items":[
+      "items": [
         {
-          "type":"literal",
-          "source":"<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. "
+          "source": "<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. ",
+          "type": "literal"
         }
-      ]
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "multiplePaddocks",
+              "preLabel": "Is this site divided up into multiple paddocks?",
+              "type": "selectOne"
+            }
+          ],
+          "type": "col"
+        }
+      ],
+      "type": "row"
     },
     {
       "items": [
@@ -308,6 +341,11 @@
           "source": "grazingPeriods",
           "allowHeaderWrap": true,
           "columns": [
+            {
+              "title": "Paddock (if applicable)",
+              "source": "paddockNum",
+              "type": "number"
+            },
             {
               "title": "Start Date",
               "source": "startDate",
@@ -345,8 +383,18 @@
             }
           ],
           "userAddedRows": true,
-          "disableTableUpload":true,
+          "disableTableUpload": true,
           "type": "table"
+        }
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "source": "cost",
+          "preLabel": "Total cost of management actions",
+          "type": "currency"
         }
       ],
       "type": "row"
@@ -373,24 +421,14 @@
       "type": "row"
     },
     {
-      "type":"row",
-      "items":[
-        {
-          "preLabel": "Total cost of management actions",
-          "source": "cost",
-          "type": "currency"
-        }
-      ]
-    },
-    {
-      "type": "row",
       "items": [
         {
-          "type": "textarea",
           "source": "notes",
-          "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:"
+          "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+          "type": "textarea"
         }
-      ]
+      ],
+      "type": "row"
     }
   ]
 }
