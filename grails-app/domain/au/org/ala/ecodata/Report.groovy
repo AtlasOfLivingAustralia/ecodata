@@ -15,7 +15,14 @@ class Report {
     public static final String REPORT_SUBMITTED = 'pendingApproval'
     public static final String REPORT_NOT_APPROVED = 'unpublished'
 
+    /**
+     *  An activity report is the one that is applied to all activities performed during the
+     *  reporting period.
+     */
     public static final String TYPE_ACTIVITY = 'Activity'
+
+    /** A single report is a report that can be completed using a single activity form */
+    public static final String TYPE_SINGLE = 'Single'
 
     public static class StatusChange {
         Date dateChanged
@@ -39,6 +46,17 @@ class Report {
     String name
     String description
     String type // "Activity" for stage reporting, "Performance" for organisation performance self assessments
+    /**
+     * For type == REPORT_TYPE_SINGLE this field holds the id of the activity that contains the data for this report.
+     * It is unused for other report types.
+     */
+    String activityId
+    /**
+     * For type == REPORT_TYPE_SINGLE this field holds the type of activity that needs to be
+     * completed as a requirement for this report.
+     * It is unused for other report types.
+     */
+    String activityType
 
     Date fromDate
     Date toDate
@@ -177,6 +195,8 @@ class Report {
         data nullable: true
         progress nullable: true
         submissionDate nullable: true
+        activityId nullable: true
+        activityType nullable: true
     }
 
     static embedded = ['statusChangeHistory']
