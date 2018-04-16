@@ -116,30 +116,30 @@ class ProjectActivityService {
     }
 
     private static updateEmbargoDetails(ProjectActivity projectActivity, Map incomingProperties) {
-        EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
+        if(incomingProperties.visibility) {
+            EmbargoOption option = incomingProperties.visibility?.embargoOption as EmbargoOption
+            VisibilityConstraint visibility = new VisibilityConstraint()
+            switch (option) {
+                case EmbargoOption.NONE:
+                    visibility.embargoOption = EmbargoOption.NONE
+                    visibility.embargoUntil = null
+                    visibility.embargoForDays = null
+                    break
+                case EmbargoOption.DAYS:
+                    visibility.embargoOption = EmbargoOption.DAYS
+                    visibility.embargoForDays = incomingProperties.visibility?.embargoForDays
+                    visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
+                    break
+                case EmbargoOption.DATE:
+                    visibility.embargoOption = EmbargoOption.DATE
+                    visibility.embargoForDays = null
+                    visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
+                    break
+            }
 
-        VisibilityConstraint visibility = new VisibilityConstraint()
-        switch (option) {
-            case EmbargoOption.NONE:
-                visibility.embargoOption = EmbargoOption.NONE
-                visibility.embargoUntil = null
-                visibility.embargoForDays = null
-                break
-            case EmbargoOption.DAYS:
-                visibility.embargoOption = EmbargoOption.DAYS
-                visibility.embargoForDays = incomingProperties.visibility?.embargoForDays
-                visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
-                break
-            case EmbargoOption.DATE:
-                visibility.embargoOption = EmbargoOption.DATE
-                visibility.embargoForDays = null
-                visibility.embargoUntil = EmbargoUtil.calculateEmbargoUntilDate(incomingProperties)
-                break
+            incomingProperties.remove("visibility")
+            projectActivity.visibility = visibility
         }
-
-        incomingProperties.remove("visibility")
-        projectActivity.visibility = visibility
-
     }
 
     Map delete(String projectActivityId, boolean destroy = false) {
