@@ -1,0 +1,60 @@
+{
+  "modelName": "RLP Annual Report",
+  "title":"Annual project report",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "progressUpdate",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "issues",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "adaptiveManagementActions",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "ohsUpdate",
+      "validate": "required"
+    }
+  ],
+  "viewModel":[
+    {
+      "type":"row",
+      "items":[{
+        "preLabel":"Provide an update on progress highlighting key achievements.",
+        "source":"progressUpdate",
+        "type":"textarea"
+      }]
+    },
+    {
+      "type":"row",
+      "items":[{
+        "preLabel":"Provide an overview of any issues that have impacted project delivery.",
+        "source":"issues",
+        "type":"textarea"
+      }]
+    },
+    {
+      "type":"row",
+      "items":[{
+        "preLabel":"Outline any adaptive management actions required to ensure project delivery and highlight what, if any changes to the project MERI plan are required.",
+        "source":"adaptiveManagementActions",
+        "type":"textarea"
+      }]
+    },
+    {
+      "type":"row",
+      "items":[{
+        "preLabel":"Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+        "source":"ohsUpdate",
+        "type":"textarea"
+      }]
+    },
+  ]
+}

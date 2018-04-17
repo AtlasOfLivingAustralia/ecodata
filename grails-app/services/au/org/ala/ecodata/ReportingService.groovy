@@ -35,8 +35,10 @@ class ReportingService {
         mapOfProperties.findAll {k,v -> v != null}
     }
 
-    def findAllForProject(String projectId) {
-        Report.findAllByProjectIdAndStatusNotEqual(projectId, DELETED)
+    List findAllForProject(String projectId) {
+        List projectReports = Report.findAllByProjectIdAndStatusNotEqual(projectId, DELETED)
+        populateActivityCounts(projectReports)
+        projectReports
     }
 
     def findAllForUser(String userId) {
