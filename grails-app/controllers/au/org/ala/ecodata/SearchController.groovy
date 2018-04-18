@@ -315,16 +315,31 @@ class SearchController {
         render results as JSON
     }
 
+    def targetsReportForScoreIds() {
+        def scoreIds = params.getList("scoreIds")
+        def scores = reportService.findScoresByScoreId(scoreIds)
+
+        Map results = targetsReportForScores(scores, params)
+        render results as JSON
+    }
+
     def targetsReportByScoreLabel() {
         def scoreLabels = params.getList("scores")
         def scores = reportService.findScoresByLabel(scoreLabels)
-        def filters = params.getList("fq")
-        def searchTerm = params.query ?: "*:*"
+
+        Map results = targetsReportForScores(scores, params)
+        render results as JSON
+    }
+
+    private def targetsReportForScores(List scores, params) {
+        List filters = params.getList("fq")
+        String searchTerm = params.query ?: "*:*"
+        boolean approvedActivitiesOnly = params.getBoolean('approvedActivitiesOnly', true)
         def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.outputTargetReport(filters, searchTerm, scores)
+        def scoresReport = reportService.outputTargetReport(filters, searchTerm, scores, approvedActivitiesOnly)
 
         def results = [scores:scoresReport, targets:targets]
-        render results as JSON
+        return results
     }
 
     def targetsReport() {
