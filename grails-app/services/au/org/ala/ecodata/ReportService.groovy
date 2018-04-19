@@ -302,7 +302,7 @@ class ReportService {
                 project.outputTargets?.each { target ->
                     def program = project.associatedProgram + ' - ' + project.associatedSubProgram
                     if (!targetsBySubProgram[program]) {
-                        targetsBySubProgram[program] = [projectCount:0]
+                        targetsBySubProgram[program] = [:]
                     }
                     if ((target.scoreId || target.scoreLabel) && target.target) {
                         if (!scores || scores.find {(it.scoreId == target.scoreId) || (it.label == target.scoreLabel)}) {
