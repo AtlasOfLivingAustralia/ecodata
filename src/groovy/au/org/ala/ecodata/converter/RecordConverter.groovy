@@ -71,7 +71,7 @@ class RecordConverter {
         List singleItemModels
         List multiItemModels
         (singleItemModels, multiItemModels) = outputMetadata?.dataModel?.split {
-            !MULTI_ITEM_DATA_TYPES.contains(it.dataType.toLowerCase())
+            !MULTI_ITEM_DATA_TYPES.contains(it.dataType?.toLowerCase())
         }
 
 
