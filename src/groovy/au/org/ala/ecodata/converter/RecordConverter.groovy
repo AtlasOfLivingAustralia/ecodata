@@ -82,7 +82,7 @@ class RecordConverter {
         List baseRecordModels
         List speciesModels
         (baseRecordModels, speciesModels) = singleItemModels?.split {
-            it.dataType.toLowerCase() != "species"
+            it.dataType?.toLowerCase() != "species"
         }
 
 
