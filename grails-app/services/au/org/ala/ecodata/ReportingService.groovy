@@ -19,13 +19,16 @@ class ReportingService {
     AggregatorFactory aggregatorFactory = new AggregatorFactory()
 
     def get(String reportId, includeDeleted = false) {
+
+        Report report = null
         if (includeDeleted) {
-            return Report.findByReportId(reportId)
+            report = Report.findByReportId(reportId)
         }
-        Report report = Report.findByReportIdAndStatusNotEqual(reportId, DELETED)
-        if (report.isActivityReport()) {
-            report.activityCount = getActivityCountForReport(report)
+        else {
+            report = Report.findByReportIdAndStatusNotEqual(reportId, DELETED)
         }
+
+        populateActivityInformation([report])
         report
     }
 
@@ -37,7 +40,7 @@ class ReportingService {
 
     List findAllForProject(String projectId) {
         List projectReports = Report.findAllByProjectIdAndStatusNotEqual(projectId, DELETED)
-        populateActivityCounts(projectReports)
+        populateActivityInformation(projectReports)
         projectReports
     }
 
@@ -46,7 +49,7 @@ class ReportingService {
         List permissions = UserPermission.findAllByUserIdAndEntityTypeAndAccessLevelNotEqual(userId, Project.class.name, AccessLevel.starred)
 
         def projectReports = Report.findAllByProjectIdInListAndStatusNotEqual(permissions.collect{it.entityId}, DELETED)
-        populateActivityCounts(projectReports)
+        populateActivityInformation(projectReports)
 
         permissions = UserPermission.findAllByUserIdAndEntityType(userId, Organisation.class)
 
@@ -70,7 +73,7 @@ class ReportingService {
             order("toDate", "asc")
         }
 
-        populateActivityCounts(results)
+        populateActivityInformation(results)
     }
 
     /**
@@ -78,9 +81,16 @@ class ReportingService {
      * @param reports the reports of interest
      * @return returns the reports parameter (not a copy)
      */
-    private List<Report> populateActivityCounts(List<Report> reports) {
+    private List<Report> populateActivityInformation(List<Report> reports) {
         for (Report report : reports) {
-            report.activityCount = getActivityCountForReport(report)
+            if (report.isActivityReport()) {
+                report.activityCount = getActivityCountForReport(report)
+            }
+            else if (report.isSingleActivityReport() && report.activityId) {
+                Activity activity = Activity.findByActivityId(report.activityId)
+                report.progress = activity.progress
+            }
+
         }
         reports
     }
@@ -90,15 +100,42 @@ class ReportingService {
         properties.reportId = Identifiers.getNew(true, '')
         Report report = new Report(reportId:properties.reportId)
         commonService.updateProperties(report, properties)
-        report.save(flush:true)
+
+        if (!report.hasErrors() && report.isSingleActivityReport()) {
+            createReportActivity(report)
+        }
+        if (!report.hasErrors()) {
+            report.save(flush:true)
+        }
         return report
     }
 
     Report update(String id, Map properties) {
         Report report = get(id)
-        commonService.updateProperties(report, properties)
-        report.save(flush:true)
+        if (properties.type && properties.type != report.type) {
+            report.errors.reject("Changing the type of a report is not supported.")
+        }
+        else {
+            commonService.updateProperties(report, properties)
+            report.save(flush:true)
+        }
         return report
+    }
+
+    /**
+     * Creates an activity to be associated with this report.
+     * @param report the Report to create an activity for, assumed to be valid.
+     */
+    private void createReportActivity(Report report) {
+
+        Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
+        Map result = activityService.create(activity)
+        if (result.error) {
+            report.errors.reject('report.activity.creationFailed', [result.error])
+        }
+        else {
+            report.activityId = result.activityId
+        }
     }
 
     def delete(String id, boolean destroy) {
