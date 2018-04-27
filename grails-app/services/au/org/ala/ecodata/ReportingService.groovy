@@ -148,6 +148,10 @@ class ReportingService {
                     report.status = DELETED
                     report.save(flush: true, failOnError: true)
                 }
+                if (report.activityId) {
+                    activityService.delete(report.activityId, destroy)
+                }
+
                 return [status: 'ok']
 
             } catch (Exception e) {
