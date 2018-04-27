@@ -174,6 +174,10 @@ class Report {
         return change
     }
 
+    public boolean isSingleActivityReport() {
+        return type == TYPE_SINGLE
+    }
+
     static transients = ['due', 'overdue', 'current']
 
     static constraints = {
@@ -196,7 +200,17 @@ class Report {
         progress nullable: true
         submissionDate nullable: true
         activityId nullable: true
-        activityType nullable: true
+        // If the report type is TYPE_SINGLE the activityType becomes a mandatory field
+        activityType nullable:true, validator: { val, obj -> if (obj.isSingleActivityReport()) return val != null}
+        // The type cannot be changed once assigned
+        type nullable:false, validator: {val, obj ->
+            String type = obj.getPersistentValue('type')
+            println type
+            println val
+            if (type && val != type) {
+                return ['report.type.immutable']
+            }
+        }
     }
 
     static embedded = ['statusChangeHistory']
