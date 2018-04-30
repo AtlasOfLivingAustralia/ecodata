@@ -205,8 +205,6 @@ class Report {
         // The type cannot be changed once assigned
         type nullable:false, validator: {val, obj ->
             String type = obj.getPersistentValue('type')
-            println type
-            println val
             if (type && val != type) {
                 return ['report.type.immutable']
             }
