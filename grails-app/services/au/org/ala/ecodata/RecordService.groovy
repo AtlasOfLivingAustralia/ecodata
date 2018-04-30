@@ -196,7 +196,7 @@ class RecordService {
      * @return
      */
     def  createRecord(json){
-        Record record = new Record().(true)
+        Record record = new Record().save(true)
         updateRecord(record, json)
         record
     }
