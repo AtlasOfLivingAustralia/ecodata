@@ -1,0 +1,65 @@
+{
+  "title": "Publications",
+  "modelName": "RLP - Publications",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"publications",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "publicationType",
+          "constraints":[
+            "type 1",
+            "type 2",
+            "type 3"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfPublications",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "publicationPurpose",
+          "validate": "required"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "publicationType",
+              "title": "Type of publication",
+              "type": "selectOne",
+              "width":"35%"
+            },
+            {
+              "source": "numberOfPublications",
+              "title": "Number of publications produced",
+              "type": "number",
+              "width":"15%"
+            },
+            {
+              "source": "publicationPurpose",
+              "title": "Purpose ",
+              "type": "text",
+              "width":"50%"
+            }
+          ],
+          "source":"publications",
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

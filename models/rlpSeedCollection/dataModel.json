@@ -1,0 +1,61 @@
+{
+  "title": "Seed collection and provenance",
+  "modelName": "RLP - Seed collection and provenance",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"seedCollectionDetails",
+      "columns":[
+        {
+          "dataType": "species",
+          "name": "species",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "seedCollectedKg",
+          "units":"kg",
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"provenance",
+          "validate":"required"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "species",
+              "title": "Species",
+              "type": "speciesSelect",
+              "width":"45%"
+            },
+            {
+              "source": "seedCollectedKg",
+              "title": "Seed collected (kg)",
+              "type": "number",
+              "width":"20%"
+            },
+            {
+              "source": "provenance",
+              "title": "Provenance",
+              "type": "text",
+              "width":"35%"
+            }
+          ],
+          "source":"seedCollectionDetails",
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

@@ -1,23 +1,53 @@
 {
-  "title": "Controlling Pest Animals",
-  "modelName": "Controlling Pest Animals",
+  "title": "Pest animals",
+  "modelName": "RLP - Pest animal management",
   "dataModel": [
     {
       "dataType": "number",
-      "description": "This is the total area where initial pest animal treatment has been undertaken/applied across ass sites for this project only.  Please see the reference guide for more information on initial pest animal control.",
+      "description": "This is the total area where initial pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on initial pest animal control.",
       "name": "pestAnimalAreaTreatedHa",
       "validate": "required,min[0]"
     },
     {
       "dataType": "number",
-      "description": "This is the total area where follow-up pest animal treatment has been undertaken/applied across ass sites for this project only.  Please see the reference guide for more information on follow-up pest animal treatment.",
+      "description": "This is the total area where follow-up pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on follow-up pest animal treatment.",
       "name": "pestAnimalAreaTreatedFollowupHa",
       "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
     },
     {
       "dataType": "list",
       "name": "pestAnimalsControlled",
       "columns": [
+        {
+          "dataType": "species",
+          "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+          "name": "pestSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
         {
           "dataType": "text",
           "description": "The method used in this activity to manage pests",
@@ -41,7 +71,7 @@
         },
         {
           "dataType":"text",
-          "name":"managementMethodNotes",
+          "name":"otherManagementMethod",
           "description":"Please specify the management method used if Other (specify in notes) was selected in the Management Method column.",
           "behaviour":[
             {
@@ -50,58 +80,6 @@
             }
           ],
           "validate":"required"
-        },
-        {
-          "dataType": "species",
-          "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
-          "name": "pestSpecies",
-          "dwcAttribute": "scientificName",
-          "validate": "required"
-        },
-        {
-          "dataType": "number",
-          "behaviour": [
-            {
-              "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\"",
-              "type": "enable"
-            }
-          ],
-          "description": "",
-          "name": "baitAreaOfInfluence",
-          "validate": "min[0]"
-        },
-        {
-          "dataType": "number",
-          "behaviour": [
-            {
-              "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\"",
-              "type": "enable"
-            }
-          ],
-          "name": "confirmedKills",
-          "validate": "min[0]"
-        },
-        {
-          "dataType": "stringList",
-          "name": "siteIds",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
         }
       ]
     }
@@ -114,12 +92,20 @@
             {
               "source": "pestAnimalAreaTreatedHa",
               "preLabel": "Area treated for pest animals (Ha) - initial treatment area only",
-              "type": "number"
+              "type": "number",
+              "css":"span3"
             },
             {
               "source": "pestAnimalAreaTreatedFollowupHa",
               "preLabel": "Area treated for pest animals (Ha) - followup treatment area only",
-              "type": "number"
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Select the project sites where control was undertaken",
+              "css":"span6"
             }
           ],
           "type": "row"
@@ -137,19 +123,13 @@
               "title": "Management method",
               "source": "pestManagementMethod",
               "type": "selectOne",
-              "width":"20%"
+              "width":"30%"
             },
             {
               "title":"Management method (if other)",
-              "source":"managementMethodNotes",
-              "type":"textarea",
-              "width":"20%"
-            },
-            {
-              "title": "Site(s)",
-              "source": "siteIds",
-              "type": "select2Many",
-              "width":"20%"
+              "source":"otherManagementMethod",
+              "type":"text",
+              "width":"30%"
             }
           ],
           "userAddedRows": true,

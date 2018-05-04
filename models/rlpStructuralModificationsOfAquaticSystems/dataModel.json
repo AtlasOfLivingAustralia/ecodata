@@ -1,0 +1,162 @@
+{
+  "title": "Structural modifications - aquatic systems",
+  "modelName": "RLP - Structural modifications - aquatic systems",
+  "dataModel": [
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "structuresInstalled",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "structureType",
+          "constraints": [
+            "1",
+            "2",
+            "3",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfStructures",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "otherStructureType",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "typeOfStructure == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "dataType": "list",
+      "name": "barriersRemoved",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "typeOfBarrier",
+          "constraints": [
+            "1",
+            "2",
+            "3",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfBarriers",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "otherBarrierType",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "typeOfBarrier == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "type": "select2Many",
+              "source": "siteIds",
+              "preLabel": "Select the sites where revegetation was undertaken",
+              "css": "span9"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "type":"table",
+          "source":"structuresInstalled",
+          "columns":[
+            {
+              "type":"select2",
+              "source":"structureType",
+              "title":"Type of structure installed",
+              "width":"40%"
+            },
+            {
+              "type":"number",
+              "source":"numberOfStructures",
+              "title":"Number of structures installed",
+              "width":"20%"
+            },
+            {
+              "type":"text",
+              "source":"otherStructureType",
+              "title":"Type of structure installed (if Other)",
+              "width":"40%"
+            }
+
+          ]
+        },
+        {
+          "type":"table",
+          "source":"barriersRemoved",
+          "columns":[
+            {
+              "type":"select2",
+              "source":"barrierType",
+              "title":"Type of barrier removed",
+              "width":"40%"
+            },
+            {
+              "type":"number",
+              "source":"numberOfBarriers",
+              "title":"Number of barriers installed",
+              "width":"20%"
+            },
+            {
+              "type":"text",
+              "source":"otherStructureType",
+              "title":"Type of barrier removed (if Other)",
+              "width":"40%"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

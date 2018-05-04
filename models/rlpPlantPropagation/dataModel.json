@@ -1,0 +1,97 @@
+{
+  "title": "Plant propagation",
+  "modelName": "RLP - Plant propagation",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"plants",
+      "columns":[
+        {
+          "dataType": "species",
+          "name": "species",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "germinationMethod",
+          "validate": "required",
+          "constraints": [
+            "Direct sowing - pre-treated (abrasion / scarification)",
+            "Direct sowing - pre-treated (cold stratification)",
+            "Direct sowing - pre-treated (moist stratification)",
+            "Direct sowing - pre-treated (cold moist stratification)",
+            "Direct sowing - pre-treated (freezing and thawing)",
+            "Direct sowing - pre-treated (light)",
+            "Direct sowing - pre-treated (Hot Water)",
+            "Direct sowing - pre-treated (fire)",
+            "Direct sowing - pre-treated (smoke)",
+            "Direct sowing - pre-treated (leaching)",
+            "Direct sowing - seeds untreated",
+            "Mycorrhizal inoculation",
+            "Vegetative - cuttings - direct striking",
+            "Vegetative - cuttings - pre-rooting",
+            "Vegetative - layering",
+            "Vegetative - tissue culture",
+            "Other (specify in notes)"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherGerminationMethod",
+          "description":"Please specify the method  used if Other (specify in notes) was selected in the Germination Method column.",
+          "behaviour":[
+            {
+              "condition": "germinationMethod == \"Other (specify in notes)\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberReadyForPlanting",
+          "validate": "required"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "species",
+              "title": "Species",
+              "type": "speciesSelect",
+              "width":"30%"
+            },
+            {
+              "source": "germinationMethod",
+              "title": "Germination method",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "source": "otherGerminationMethod",
+              "title": "Germination method (if other)",
+              "type": "text",
+              "width":"25%"
+            },
+            {
+              "source": "numberReadyForPlanting",
+              "title": "Number of plants germinated and ready for planting",
+              "type": "number",
+              "width":"20%"
+            }
+          ],
+          "source":"plants",
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
