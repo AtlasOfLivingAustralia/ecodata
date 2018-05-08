@@ -52,6 +52,7 @@
             }
           ],
           "source":"seedCollectionDetails",
+          "userAddedRows":true,
           "type": "table"
         }
       ],

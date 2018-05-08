@@ -55,13 +55,8 @@
           "dwcAttribute": "establishmentMeans",
           "description": "The method used for planting",
           "constraints": [
-            "Direct drill seeding",
-            "Hand broadcast seeding",
-            "Hand planting",
-            "Machine planting",
-            "Natural regeneration from threat exclusion / removal",
-            "Infill plantings",
-            "Combination of methods",
+            "Direct seeding",
+            "Planting",
             "Other"
           ],
           "validate": "required"
@@ -101,7 +96,7 @@
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Select the sites where revegetation was undertaken",
+              "preLabel":"Project sites where revegetation was undertaken",
               "css":"span6"
             }
           ],

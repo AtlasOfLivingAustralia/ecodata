@@ -33,9 +33,7 @@
           "dataType": "text",
           "name": "structureType",
           "constraints": [
-            "1",
-            "2",
-            "3",
+            "Fish passage way",
             "Other"
           ],
           "validate": "required"
@@ -51,7 +49,7 @@
           "validate": "required",
           "behaviour": [
             {
-              "condition": "typeOfStructure == \"Other\"",
+              "condition": "structureType == \"Other\"",
               "type": "enable"
             }
           ]
@@ -64,11 +62,12 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "typeOfBarrier",
+          "name": "barrierType",
           "constraints": [
-            "1",
-            "2",
-            "3",
+            "Weirs",
+            "Flow gauging stations",
+            "Fords",
+            "Culverts",
             "Other"
           ],
           "validate": "required"
@@ -84,7 +83,7 @@
           "validate": "required",
           "behaviour": [
             {
-              "condition": "typeOfBarrier == \"Other\"",
+              "condition": "barrierType == \"Other\"",
               "type": "enable"
             }
           ]
@@ -100,7 +99,7 @@
             {
               "type": "select2Many",
               "source": "siteIds",
-              "preLabel": "Select the sites where revegetation was undertaken",
+              "preLabel": "Project sites where structual modifications have occurred",
               "css": "span9"
             }
           ],
@@ -109,6 +108,7 @@
         {
           "type":"table",
           "source":"structuresInstalled",
+          "userAddedRows":true,
           "columns":[
             {
               "type":"select2",
@@ -134,6 +134,7 @@
         {
           "type":"table",
           "source":"barriersRemoved",
+          "userAddedRows":true,
           "columns":[
             {
               "type":"select2",
@@ -149,7 +150,7 @@
             },
             {
               "type":"text",
-              "source":"otherStructureType",
+              "source":"otherBarrierType",
               "title":"Type of barrier removed (if Other)",
               "width":"40%"
             }

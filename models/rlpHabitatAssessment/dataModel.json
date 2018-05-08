@@ -69,7 +69,7 @@
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Select project sites where assessments were undertaken",
+              "preLabel":"Project sites where assessments were undertaken",
               "css":"span9"
             }
 
@@ -79,7 +79,7 @@
           "columns": [
             {
               "source": "habitatType",
-              "title": "Target community/word heritage/Ramsar site",
+              "title": "Target community / word heritage / Ramsar site",
               "type": "select2",
               "width":"70%"
             },
@@ -91,7 +91,17 @@
             }
           ],
           "source":"habitatsAssessed",
-          "type": "table"
+          "type": "table",
+          "userAddedRows": true
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"literal",
+              "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+            }
+          ]
         }
       ],
       "type": "section"

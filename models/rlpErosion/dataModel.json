@@ -1,0 +1,156 @@
+{
+  "title": "Erosion",
+  "modelName": "RLP - Erosion",
+  "dataModel": [
+    {
+      "dataType":"number",
+      "name":"areaOfErosionTreatedHa",
+      "units":"ha",
+      "validate":"required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated",
+
+      }
+    },
+    {
+      "dataType":"list",
+      "name":"erosionManagementDetails",
+      "minSize":0,
+      "columns":[
+
+        {
+          "dataType":"text",
+          "name":"erosionManagementMethod",
+          "validate":"required",
+          "constraints":[
+            "Erosion control structures",
+            "Farming practice change - improved crop management (contour plowing / bunding)",
+            "Farming practice change - improved crop management (cover crops & mulching)",
+            "Farming practice change - improved stock management (grazing regime)",
+            "Farming practice change - improved crop management (perennial crops)",
+            "Farming practice change - improved crop management (rotation)",
+            "Farming practice change - improved stock management (stock movement)",
+            "Farming practice change - improved stock management (stock watering)",
+            "Farming practice change - improved crop management (tillage systems)",
+            "Farming practice change - reduced stocking",
+            "Farming practice change - riparian buffer strips",
+            "Farming practice change - stock exclusion",
+            "Farming practice change - strip farming"
+          ]
+
+        }
+
+      ]
+    },
+    {
+      "dataType":"list",
+      "name":"erosionStructuresInstalled",
+      "columns":[
+        {
+          "dataType":"text",
+          "name":"erosionStructureType",
+          "validate":"required",
+          "constraints":[
+            "Channel / bank lining - cellular confinement systems",
+            "Channel / bank lining - solid barrier",
+            "Dams & spillways (flood mitigation)",
+            "Drift fence",
+            "Flumes & Chutes",
+            "Gabions",
+            "Reventment structures (bank protection)",
+            "Sea wall",
+            "Sediment traps & groynes",
+            "Slope reduction - flow interception structures (eg. contour banks & swales)",
+            "Slope reduction - Weirs & connected weir pools",
+            "Stilling ponds & retention basins",
+            "Other"
+          ]
+        },
+        {
+          "dataType":"number",
+          "name":"numberInstalled",
+          "validate":"required,min[1]"
+        }
+      ],
+      "minSize":0
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"number",
+              "source":"areaOfErosionTreatedHa",
+              "preLabel":"Area of erosion being treated (ha)",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where erosion control was undertaken",
+              "css":"span9"
+            }
+
+          ]
+        },
+        {
+          "columns": [
+            {
+              "source": "erosionManagementMethod",
+              "title": "Erosion management method(s) used",
+              "type": "select2"
+
+            }
+          ],
+          "source":"erosionManagementDetails",
+          "userAddedRows":true,
+          "type": "table"
+        },
+        {
+          "columns": [
+            {
+              "source": "erosionStructureType",
+              "title": "Type of erosion control structure installed",
+              "type": "select2",
+              "width":"70%"
+            },
+            {
+              "source": "numberInstalled",
+              "title": "Number of erosion control structures installed",
+              "type": "number",
+              "width":"30%"
+            }
+          ],
+          "source":"erosionStructuresInstalled",
+          "userAddedRows":true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

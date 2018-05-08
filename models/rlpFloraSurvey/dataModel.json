@@ -79,7 +79,7 @@
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Select project sites where assessments were undertaken",
+              "preLabel":"Project sites where surveys were undertaken",
               "css":"span9"
             }
 
@@ -91,7 +91,7 @@
               "source": "species",
               "title": "Target species of flora survey",
               "type": "speciesSelect",
-              "width":"35%"
+              "width":"50%"
             },
             {
               "source": "populationOrIndividual",
@@ -103,16 +103,11 @@
               "source": "surveyMethod",
               "title": "Survey method",
               "type": "text",
-              "width":"25%"
-            },
-            {
-              "source": "otherSurveyMethod",
-              "title": "Other survey method",
-              "type": "text",
-              "width":"25%"
+              "width":"35%"
             }
           ],
           "source":"floraSurveyResults",
+          "userAddedRows": true,
           "type": "table"
         },
         {

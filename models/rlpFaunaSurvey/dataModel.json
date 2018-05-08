@@ -3,10 +3,10 @@
   "modelName": "RLP - Fauna survey",
   "dataModel": [
     {
-      "dataType":"number",
-      "name":"areaCoveredByFaunaSurveyHa",
-      "units":"ha",
-      "validate":"required,min[0]"
+      "dataType": "number",
+      "name": "areaCoveredByFaunaSurveyHa",
+      "units": "ha",
+      "validate": "required,min[0]"
     },
     {
       "dataType": "stringList",
@@ -28,54 +28,70 @@
             }
           ]
         },
-        "type": "pre-populated",
-
+        "type": "pre-populated"
       }
     },
     {
-      "dataType":"list",
-      "name":"faunaSurveyResults",
-      "minSize":1,
-      "columns":[
+      "dataType": "list",
+      "name": "faunaSurveyResults",
+      "minSize": 1,
+      "columns": [
         {
           "dataType": "species",
           "name": "species",
           "validate": "required"
         },
         {
-          "dataType":"text",
-          "name":"surveyMethod",
-          "validate":"required",
-
+          "dataType": "text",
+          "name": "surveyMethod",
+          "validate": "required",
+          "constraints": [
+            "Trap",
+            "Hair tubes",
+            "Tracks and scats",
+            "Spotlighting",
+            "Active search",
+            "Tape recorded calls",
+            "Drum net",
+            "Visual census",
+            "Call census",
+            "Nets",
+            "Fish traps",
+            "Other"
+          ]
         },
         {
-          "dataType":"text",
-          "name":"otherSurveyMethod",
-          "validate":"required"
+          "dataType": "text",
+          "name": "otherSurveyMethod",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "surveyMethod == \"Other\"",
+              "type": "enable"
+            }
+          ]
         }
       ]
     }
   ],
   "viewModel": [
-
     {
       "items": [
         {
-          "type":"row",
-          "items":[
+          "type": "row",
+          "items": [
             {
-              "type":"number",
-              "source":"areaCoveredByFaunaSurveyHa",
-              "preLabel":"Area covered by fauna survey (Ha)",
-              "css":"span3"
+              "type": "number",
+              "source": "areaCoveredByFaunaSurveyHa",
+              "preLabel": "Area covered by fauna survey (Ha)",
+              "css": "span3"
             },
             {
-              "type":"select2Many",
-              "source":"siteIds",
-              "preLabel":"Select project sites where assessments were undertaken",
-              "css":"span9"
+              "type": "select2Many",
+              "source": "siteIds",
+              "preLabel": "Project sites where surveys were undertaken",
+              "css": "span9"
             }
-
           ]
         },
         {
@@ -84,33 +100,32 @@
               "source": "species",
               "title": "Target species of fauna survey",
               "type": "speciesSelect",
-              "width":"40%"
+              "width": "40%"
             },
             {
               "source": "surveyMethod",
               "title": "Survey method",
-              "type": "text",
-              "width":"30%"
+              "type": "select2",
+              "width": "30%"
             },
             {
               "source": "otherSurveyMethod",
               "title": "Other survey method",
               "type": "text",
-              "width":"30%"
+              "width": "30%"
             }
           ],
-          "source":"faunaSurveyResults",
+          "source": "faunaSurveyResults",
+          "userAddedRows": true,
           "type": "table"
         },
         {
-          "type":"row",
-          "items":[
+          "type": "row",
+          "items": [
             {
-              "type":"literal",
-              "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
-
+              "type": "literal",
+              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
             }
-
           ]
         }
       ],

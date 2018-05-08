@@ -53,26 +53,27 @@
           "description": "The primary method used to treat the patch of the target species",
           "name": "treatmentMethod",
           "constraints": [
-            "Environmental management - Fire",
-            "Environmental management - moisture & nutrient control",
-            "Environmental management - over-planting",
-            "Chemical control - Foliar spraying",
-            "Chemical control - Basal bark spraying",
-            "Chemical control - Stem injection",
-            "Chemical control - Cut stump",
-            "Chemical control - Cut and swab",
-            "Chemical control - Splatter gun",
-            "Chemical control - Stem scraper",
-            "Chemical control - Wick applicators",
-            "Mechanical control - Slashing",
-            "Mechanical control - Mowing",
-            "Mechanical control - Dozing",
-            "Mechanical control - Pushing",
-            "Mechanical control - Felling",
-            "Manual control - Hand pulling",
-            "Manual control - Grubbing/chipping",
-            "Biological control - Biological agents (specify in notes)",
-            "Other (specify in notes)"
+            "Fire",
+            "Moisture and nutrient control",
+            "Overplanting",
+            "Foliar spraying",
+            "Basal bark spraying",
+            "Stem injection",
+            "Cut stump",
+            "Cut and swab",
+            "Splatter gun",
+            "Stem scraper",
+            "Wick applicators",
+            "Slashing",
+            "Mowing",
+            "Dozing",
+            "Pushing",
+            "Felling",
+            "Hand pulling",
+            "Grubbing/chipping",
+            "Biological agents",
+            "Other"
+
           ],
           "validate": "required"
         },
@@ -82,7 +83,7 @@
           "description":"Please specify the method of treatment used if Other (specify in notes) was selected in the Treatment Method column.",
           "behaviour":[
             {
-              "condition": "treatmentMethod == \"Other (specify in notes)\"",
+              "condition": "treatmentMethod == \"Other\"",
               "type": "enable"
             }
           ],
@@ -111,7 +112,7 @@
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Select the sites where treatment / removal was undertaken",
+              "preLabel":"Project sites where treatment / removal was undertaken",
               "css":"span6"
             }
           ],
@@ -127,7 +128,7 @@
               "width":"40%"
             },
             {
-              "title": "Management method",
+              "title": "Treatment method",
               "source": "treatmentMethod",
               "type": "select2",
               "width":"30%"

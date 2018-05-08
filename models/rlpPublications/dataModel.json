@@ -10,9 +10,12 @@
           "dataType": "text",
           "name": "publicationType",
           "constraints":[
-            "type 1",
-            "type 2",
-            "type 3"
+            "Media release",
+            "Report",
+            "Social media posts",
+            "Brochures",
+            "Fliers",
+            "Other"
           ],
           "validate": "required"
         },
@@ -39,7 +42,7 @@
             {
               "source": "publicationType",
               "title": "Type of publication",
-              "type": "selectOne",
+              "type": "select2",
               "width":"35%"
             },
             {
@@ -56,7 +59,18 @@
             }
           ],
           "source":"publications",
-          "type": "table"
+          "type": "table",
+          "userAddedRows": true
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"literal",
+              "source":"<i>Note: to upload a publication refer to the documents tab.</i>"
+            }
+          ]
+
         }
       ],
       "type": "section"

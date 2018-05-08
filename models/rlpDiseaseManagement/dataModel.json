@@ -1,17 +1,12 @@
 {
-  "title": "Pest animal management",
-  "modelName": "RLP - Pest animal management",
+  "title": "Managing disease",
+  "modelName": "RLP - Disease management",
   "dataModel": [
     {
       "dataType": "number",
-      "description": "This is the total area where initial pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on initial pest animal control.",
-      "name": "pestAnimalAreaTreatedHa",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "number",
-      "description": "This is the total area where follow-up pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on follow-up pest animal treatment.",
-      "name": "pestAnimalAreaTreatedFollowupHa",
+      "description": "",
+      "name": "areaQuarantinedOrTreatedHa",
+      "units":"ha",
       "validate": "required,min[0]"
     },
     {
@@ -39,31 +34,27 @@
     },
     {
       "dataType": "list",
-      "name": "pestAnimalsControlled",
+      "name": "diseaseManagementDetails",
       "columns": [
         {
           "dataType": "species",
-          "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
-          "name": "pestSpecies",
+          "description": "",
+          "name": "targetSpecies",
           "dwcAttribute": "scientificName",
           "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "The method used in this activity to manage pests",
-          "name": "pestManagementMethod",
+          "description": "",
+          "name": "managementMethod",
           "constraints": [
-            "Crown of Thorns Starfish injection",
-            "Bait & trap",
-            "Bait only",
             "Biological control agents",
-            "Exclusion fencing",
             "Fumigation",
-            "Harbour destruction",
+            "Host destruction",
+            "Plant disease management - quaratine",
+            "Plant disease management - treatment",
+            "Plant disease management - hygiene",
             "Positive competition",
-            "Spotlight cull",
-            "Trap & cull",
-            "Trap & remove",
             "Other"
           ],
           "dwcAttribute": "treatmentMethod",
@@ -72,10 +63,10 @@
         {
           "dataType":"text",
           "name":"otherManagementMethod",
-          "description":"Please specify the management method used if Other was selected in the Management Method column.",
+          "description":"Please specify the management method used if Other (specify in notes) was selected in the Management Method column.",
           "behaviour":[
             {
-              "condition": "pestManagementMethod == \"Other\"",
+              "condition": "managementMethod == \"Other (specify in notes)\"",
               "type": "enable"
             }
           ],
@@ -90,39 +81,33 @@
         {
           "items": [
             {
-              "source": "pestAnimalAreaTreatedHa",
-              "preLabel": "Area treated for pest animals (Ha) - initial treatment area only",
-              "type": "number",
-              "css":"span3"
-            },
-            {
-              "source": "pestAnimalAreaTreatedFollowupHa",
-              "preLabel": "Area treated for pest animals (Ha) - followup treatment area only",
+              "source": "areaQuarantinedOrTreatedHa",
+              "preLabel": "Area (Ha) quarantined / treated",
               "type": "number",
               "css":"span3"
             },
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Project sites where control was undertaken",
+              "preLabel":"Select the project sites where control was undertaken",
               "css":"span6"
             }
           ],
           "type": "row"
         },
         {
-          "source": "pestAnimalsControlled",
+          "source": "diseaseManagementDetails",
           "columns": [
             {
-              "title": "Species controlled",
-              "source": "pestSpecies",
+              "title": "Target species",
+              "source": "targetSpecies",
               "type": "speciesSelect",
               "width":"40%"
             },
             {
               "title": "Management method",
-              "source": "pestManagementMethod",
-              "type": "selectOne",
+              "source": "managementMethod",
+              "type": "select2",
               "width":"30%"
             },
             {

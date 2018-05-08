@@ -1,0 +1,121 @@
+{
+  "title": "Conservation agreements",
+  "modelName": "RLP - Conservation agreements",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "",
+      "name": "areaCoveredByAgreementHa",
+      "units":"ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "agreements",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "agreementType",
+          "constraints": [
+            "On title in perpetuity (e.g. conservation convenant)",
+            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
+            "Termed agreement not on title - binding (e.g. land management agreement)",
+            "Not on title - non-binding (e.g. Wildlife Refuge)",
+            "No protection mechanism applicable",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherAgreementType",
+          "description":"",
+          "behaviour":[
+            {
+              "condition": "agreementType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfAgreementMechanisms",
+          "validated":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaCoveredByAgreementHa",
+              "preLabel": "Area (Ha) covered by agreement",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites covered by agreements",
+              "css":"span9"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "agreements",
+          "columns": [
+            {
+              "title": "Type of agreement",
+              "source": "agreementType",
+              "type": "select2",
+              "width":"40%"
+            },
+            {
+              "title":"Agreement type (if other)",
+              "source":"otherAgreementType",
+              "type":"text",
+              "width":"40%"
+            },
+            {
+              "title":"Number of agreement mechanisms",
+              "source":"numberOfAgreementMechanisms",
+              "type":"number"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
