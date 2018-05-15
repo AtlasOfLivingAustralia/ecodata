@@ -1,0 +1,142 @@
+{
+  "title": "Pest animal management",
+  "modelName": "RLP - Pest animal management",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "This is the total area where initial pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on initial pest animal control.",
+      "name": "pestAnimalAreaTreatedHa",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "description": "This is the total area where follow-up pest animal treatment has been undertaken/applied across sites for this project only.  Please see the reference guide for more information on follow-up pest animal treatment.",
+      "name": "pestAnimalAreaTreatedFollowupHa",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "pestAnimalsControlled",
+      "columns": [
+        {
+          "dataType": "species",
+          "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+          "name": "pestSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "The method used in this activity to manage pests",
+          "name": "pestManagementMethod",
+          "constraints": [
+            "Crown of Thorns Starfish injection",
+            "Bait & trap",
+            "Bait only",
+            "Biological control agents",
+            "Exclusion fencing",
+            "Fumigation",
+            "Harbour destruction",
+            "Positive competition",
+            "Spotlight cull",
+            "Trap & cull",
+            "Trap & remove",
+            "Other"
+          ],
+          "dwcAttribute": "treatmentMethod",
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherManagementMethod",
+          "description":"Please specify the management method used if Other was selected in the Management Method column.",
+          "behaviour":[
+            {
+              "condition": "pestManagementMethod == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "pestAnimalAreaTreatedHa",
+              "preLabel": "Area treated for pest animals (Ha) - initial treatment area only",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "source": "pestAnimalAreaTreatedFollowupHa",
+              "preLabel": "Area treated for pest animals (Ha) - followup treatment area only",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where control was undertaken",
+              "css":"span6"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "pestAnimalsControlled",
+          "columns": [
+            {
+              "title": "Species controlled",
+              "source": "pestSpecies",
+              "type": "speciesSelect",
+              "width":"40%"
+            },
+            {
+              "title": "Management method",
+              "source": "pestManagementMethod",
+              "type": "selectOne",
+              "width":"30%"
+            },
+            {
+              "title":"Management method (if other)",
+              "source":"otherManagementMethod",
+              "type":"text",
+              "width":"30%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

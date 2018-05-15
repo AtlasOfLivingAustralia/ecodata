@@ -1,0 +1,87 @@
+{
+  "title": "Fencing",
+  "modelName": "RLP - Fencing",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "areaProtectedByFenceHa",
+      "units":"ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "number",
+      "name": "lengthOfNewFenceKm",
+      "units":"km",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "lengthOfExistingFenceKm",
+      "units":"km",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "number",
+              "source": "areaProtectedByFenceHa",
+              "preLabel": "Area protected by fence (Ha)",
+              "css": "span3"
+            },
+            {
+              "type": "select2Many",
+              "source": "siteIds",
+              "preLabel": "Project sites where fencing occurred",
+              "css": "span9"
+            }
+          ]
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "number",
+              "source": "lengthOfNewFenceKm",
+              "preLabel": "Length of new fence (km)"
+            },
+            {
+              "type": "number",
+              "source": "lengthOfExistingFenceKm",
+              "preLabel": "Length of existing fence maintained (Km)"
+
+            }
+          ]
+        }
+      ],
+      "type":"section"
+    }
+  ]
+}

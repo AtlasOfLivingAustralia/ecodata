@@ -1,0 +1,89 @@
+{
+  "title": "Grazing management",
+  "modelName": "RLP - Grazing management",
+  "dataModel": [
+    {
+      "dataType":"number",
+      "name":"areaOfGrazingManagement",
+      "units":"ha",
+      "validate":"required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+
+      }
+    },
+    {
+      "dataType":"list",
+      "name":"grazingManagement",
+      "minSize":0,
+      "columns":[
+
+        {
+          "dataType":"text",
+          "name":"landManagementChange",
+          "validate":"required"
+
+        }
+
+      ]
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"number",
+              "source":"areaOfGrazingManagement",
+              "preLabel":"Area (ha) covered by grazing management change",
+              "css":"span4"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where grazing management has been implemented",
+              "css":"span8"
+            }
+
+          ]
+        },
+        {
+          "columns": [
+            {
+              "source": "landManagementChange",
+              "title": "Type of land management practice change",
+              "type": "text"
+            }
+          ],
+          "source":"grazingManagement",
+          "userAddedRows":true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

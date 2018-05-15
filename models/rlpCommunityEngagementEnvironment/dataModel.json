@@ -1,0 +1,102 @@
+{
+  "title": "Community engagement events (environment outcomes)",
+  "modelName": "RLP - Community engagement - environment",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"environmentEvents",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "eventType",
+          "constraints":[
+            "Field day activity",
+            "Conference/Seminar",
+            "Meeting",
+            "Training/course session",
+            "Planning session",
+            "Working bee",
+            "Workshop",
+            "Project feedback / debrief session",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "otherEventType",
+          "validate": "required",
+          "behaviour":[
+
+            {
+              "condition": "eventType == \"Other\"",
+              "type": "enable"
+            }
+
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfParticipants",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfIndigenousParticipants",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "environmentEventPurpose",
+          "validate": "required,maxSize[80]"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "eventType",
+              "title": "Type of event",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "source": "otherEventType",
+              "title": "Type of event (if other)",
+              "type": "text",
+              "width":"20%"
+            },
+            {
+              "source": "numberOfParticipants",
+              "title": "Total number of participants",
+              "type": "number",
+              "width":"15%"
+            },
+            {
+              "source": "numberOfIndigenousParticipants",
+              "title": "Total number of indigenous participants",
+              "type": "number",
+              "width":"15%"
+            },
+            {
+              "source": "environmentEventPurpose",
+              "title": "Purpose of event",
+              "type": "textarea",
+              "width":"30%"
+            }
+          ],
+          "source":"environmentEvents",
+          "userAddedRows":true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

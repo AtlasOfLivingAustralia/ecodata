@@ -1,0 +1,128 @@
+{
+  "title": "Flora survey",
+  "modelName": "RLP - Flora survey",
+  "dataModel": [
+    {
+      "dataType":"number",
+      "name":"areaCoveredByFloraSurveyHa",
+      "units":"ha",
+      "validate":"required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType":"list",
+      "name":"floraSurveyResults",
+      "minSize":1,
+      "columns":[
+        {
+          "dataType": "species",
+          "name": "species",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "populationOrIndividual",
+          "validate": "required",
+          "constraints":[
+            "Population","Individual"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"surveyMethod",
+          "validate":"required",
+
+        },
+        {
+          "dataType":"text",
+          "name":"otherSurveyMethod",
+          "validate":"required",
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"number",
+              "source":"areaCoveredByFloraSurveyHa",
+              "preLabel":"Area covered by flora survey (Ha)",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where surveys were undertaken",
+              "css":"span9"
+            }
+
+          ]
+        },
+        {
+          "columns": [
+            {
+              "source": "species",
+              "title": "Target species of flora survey",
+              "type": "speciesSelect",
+              "width":"50%"
+            },
+            {
+              "source": "populationOrIndividual",
+              "title": "Population survey or individual species survey?",
+              "type": "selectOne",
+              "width":"15%"
+            },
+            {
+              "source": "surveyMethod",
+              "title": "Survey method",
+              "type": "text",
+              "width":"35%"
+            }
+          ],
+          "source":"floraSurveyResults",
+          "userAddedRows": true,
+          "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"literal",
+              "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

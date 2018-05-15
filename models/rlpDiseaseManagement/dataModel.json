@@ -1,0 +1,127 @@
+{
+  "title": "Managing disease",
+  "modelName": "RLP - Disease management",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "",
+      "name": "areaQuarantinedOrTreatedHa",
+      "units":"ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "diseaseManagementDetails",
+      "columns": [
+        {
+          "dataType": "species",
+          "description": "",
+          "name": "targetSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "managementMethod",
+          "constraints": [
+            "Biological control agents",
+            "Fumigation",
+            "Host destruction",
+            "Plant disease management - quaratine",
+            "Plant disease management - treatment",
+            "Plant disease management - hygiene",
+            "Positive competition",
+            "Other"
+          ],
+          "dwcAttribute": "treatmentMethod",
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherManagementMethod",
+          "description":"Please specify the management method used if Other (specify in notes) was selected in the Management Method column.",
+          "behaviour":[
+            {
+              "condition": "managementMethod == \"Other (specify in notes)\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaQuarantinedOrTreatedHa",
+              "preLabel": "Area (Ha) quarantined / treated",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Select the project sites where control was undertaken",
+              "css":"span6"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "diseaseManagementDetails",
+          "columns": [
+            {
+              "title": "Target species",
+              "source": "targetSpecies",
+              "type": "speciesSelect",
+              "width":"40%"
+            },
+            {
+              "title": "Management method",
+              "source": "managementMethod",
+              "type": "select2",
+              "width":"30%"
+            },
+            {
+              "title":"Management method (if other)",
+              "source":"otherManagementMethod",
+              "type":"text",
+              "width":"30%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

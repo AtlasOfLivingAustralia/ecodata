@@ -38,7 +38,7 @@ class ProgramService {
         return program
     }
 
-    Map<String, String> parentNames(Program program) {
+    List parentNames(Program program) {
         List names = []
         names << program.name
         while (program.parent != null) {
