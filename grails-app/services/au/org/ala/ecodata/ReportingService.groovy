@@ -102,7 +102,7 @@ class ReportingService {
         commonService.updateProperties(report, properties)
 
         if (!report.hasErrors() && report.isSingleActivityReport()) {
-            createReportActivity(report)
+            syncReportActivity(report)
         }
         if (!report.hasErrors()) {
             report.save(flush:true)
@@ -112,13 +112,14 @@ class ReportingService {
 
     Report update(String id, Map properties) {
         Report report = get(id)
-        if (properties.type && properties.type != report.type) {
-            report.errors.reject("Changing the type of a report is not supported.")
+
+        commonService.updateProperties(report, properties)
+        report.save(flush:true)
+
+        if (!report.hasErrors() && report.isSingleActivityReport()) {
+            syncReportActivity(report)
         }
-        else {
-            commonService.updateProperties(report, properties)
-            report.save(flush:true)
-        }
+
         return report
     }
 
@@ -126,15 +127,22 @@ class ReportingService {
      * Creates an activity to be associated with this report.
      * @param report the Report to create an activity for, assumed to be valid.
      */
-    private void createReportActivity(Report report) {
+    private void syncReportActivity(Report report) {
 
         Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
-        Map result = activityService.create(activity)
-        if (result.error) {
+        Map syncResult
+        if (report.activityId) {
+            syncResult = activityService.update(report.activityId, activity)
+        }
+        else {
+            syncResult = activityService.create(activity)
+        }
+
+        if (syncResult.error) {
             report.errors.reject('report.activity.creationFailed', [result.error])
         }
         else {
-            report.activityId = result.activityId
+            report.activityId = syncResult.activityId
         }
     }
 

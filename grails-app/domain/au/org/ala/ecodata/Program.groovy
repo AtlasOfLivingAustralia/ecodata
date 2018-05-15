@@ -17,7 +17,15 @@ class Program {
     Date lastUpdated
     List blog
     List risks
+    /** Themes for this program */
     List themes
+    /** Assets managed by this program (e.g. threatened species, or ecological communities) */
+    List assets
+    /** Outcomes to be achieved by this program */
+    List outcomes
+
+    /** Priorities for program outcomes */
+    List priorities
 
     /** Configuration related to the program */
     Map config
