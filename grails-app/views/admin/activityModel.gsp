@@ -73,6 +73,7 @@
 <div class="clearfix"><span class="span2">GMS ID:</span> <input type="text" class="input-large pull-right" data-bind="value:gmsId"></div>
 <div class="clearfix"><span class="span2">Sites?:</span><input type="checkbox" class="pull-right" data-bind="checked:supportsSites"></div>
 <div class="clearfix"><span class="span2">Photo points?:</span><input type="checkbox" class="pull-right" data-bind="checked:supportsPhotoPoints"></div>
+<div class="clearfix"><span class="span2">Min optional:</span><input type="text" class="pull-right" data-bind="value:minOptionalSectionsCompleted"></div>
 
 <div>Outputs: <ul data-bind="sortable:{data:outputs}" class="output-drop-target sortableList small">
     <li>

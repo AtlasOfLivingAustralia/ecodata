@@ -14,6 +14,7 @@ var ActivityModel = function (act, model) {
     self.gmsId = ko.observable(act.gmsId);
     self.supportsSites = ko.observable(act.supportsSites);
     self.supportsPhotoPoints = ko.observable(act.supportsPhotoPoints);
+    self.minOptionalSectionsCompleted = ko.observable(act.minOptionalSectionsCompleted || 1);
 
     self.outputs.subscribe(function () {
         self.initialiseOutputConfig();
