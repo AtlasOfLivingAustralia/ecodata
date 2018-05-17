@@ -18,7 +18,10 @@ class UserController {
         if (username && password) {
             def ret = userService.getUserKey(username, password)
             if (ret.error) {
-                result = [status: 'error', statusCode: ret.statusCode, error: ret.error]
+                String error = "Failed to get key for user: "+username
+                log.error(error)
+                result = [status: 'error', statusCode: ret.statusCode, error: error]
+
             } else if (ret.resp) {
                 result = ret.resp
                 String userDetailsUrl = grailsApplication.config.userDetails.url + "getUserDetails"
