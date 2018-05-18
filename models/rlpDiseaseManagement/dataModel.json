@@ -89,7 +89,7 @@
             {
               "type":"select2Many",
               "source":"siteIds",
-              "preLabel":"Select the project sites where control was undertaken",
+              "preLabel":"Project sites where disease management was undertaken",
               "css":"span6"
             }
           ],

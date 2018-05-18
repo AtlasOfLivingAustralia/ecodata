@@ -52,13 +52,13 @@
         {
           "dataType":"text",
           "name":"surveyMethod",
-          "validate":"required",
+          "validate":"required"
 
         },
         {
           "dataType":"text",
           "name":"otherSurveyMethod",
-          "validate":"required",
+          "validate":"required"
         }
       ]
     }

@@ -21,8 +21,6 @@ class Report {
      */
     public static final String TYPE_ACTIVITY = 'Activity'
 
-    /** A single report is a report that can be completed using a single activity form */
-    public static final String TYPE_SINGLE = 'Single'
 
     public static class StatusChange {
         Date dateChanged
@@ -47,7 +45,7 @@ class Report {
     String description
     String type // "Activity" for stage reporting, "Performance" for organisation performance self assessments
     /**
-     * For type == REPORT_TYPE_SINGLE this field holds the id of the activity that contains the data for this report.
+     * For reports with an activityType specified, this field holds the id of the activity that contains the data for this report.
      * It is unused for other report types.
      */
     String activityId
@@ -175,7 +173,7 @@ class Report {
     }
 
     public boolean isSingleActivityReport() {
-        return type == TYPE_SINGLE
+        return activityType != null
     }
 
     static transients = ['due', 'overdue', 'current']
@@ -200,15 +198,8 @@ class Report {
         progress nullable: true
         submissionDate nullable: true
         activityId nullable: true
-        // If the report type is TYPE_SINGLE the activityType becomes a mandatory field
-        activityType nullable:true, validator: { val, obj -> if (obj.isSingleActivityReport()) return val != null}
-        // The type cannot be changed once assigned
-        type nullable:false, validator: {val, obj ->
-            String type = obj.getPersistentValue('type')
-            if (type && val != type) {
-                return ['report.type.immutable']
-            }
-        }
+        activityType nullable:true
+        type nullable:false
     }
 
     static embedded = ['statusChangeHistory']
