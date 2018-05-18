@@ -83,12 +83,13 @@ class ReportingService {
      */
     private List<Report> populateActivityInformation(List<Report> reports) {
         for (Report report : reports) {
-            if (report.isActivityReport()) {
-                report.activityCount = getActivityCountForReport(report)
-            }
-            else if (report.isSingleActivityReport() && report.activityId) {
+
+            if (report.isSingleActivityReport() && report.activityId) {
                 Activity activity = Activity.findByActivityId(report.activityId)
                 report.progress = activity.progress
+            }
+            else if (report.isActivityReport()) {
+                report.activityCount = getActivityCountForReport(report)
             }
 
         }
@@ -101,7 +102,7 @@ class ReportingService {
         Report report = new Report(reportId:properties.reportId)
         commonService.updateProperties(report, properties)
 
-        if (!report.hasErrors() && report.isSingleActivityReport()) {
+        if (!report.hasErrors() && report.activityType) {
             syncReportActivity(report)
         }
         if (!report.hasErrors()) {
@@ -112,12 +113,16 @@ class ReportingService {
 
     Report update(String id, Map properties) {
         Report report = get(id)
+        if (report.isSubmittedOrApproved()) {
+            report.errors.rejectValue('report.cannotUpdateSubmittedOrApprovedReport')
+        }
+        else {
+            commonService.updateProperties(report, properties)
+            report.save(flush:true)
 
-        commonService.updateProperties(report, properties)
-        report.save(flush:true)
-
-        if (!report.hasErrors() && report.isSingleActivityReport()) {
-            syncReportActivity(report)
+            if (!report.hasErrors() && report.isSingleActivityReport()) {
+                syncReportActivity(report)
+            }
         }
 
         return report
@@ -132,14 +137,14 @@ class ReportingService {
         Map activity = [plannedStartDate:report.fromDate, plannedEndDate:report.toDate, startDate: report.fromDate, endDate:report.toDate, type:report.activityType, description:report.name, projectId:report.projectId, programId:report.programId]
         Map syncResult
         if (report.activityId) {
-            syncResult = activityService.update(report.activityId, activity)
+            syncResult = activityService.update(activity, report.activityId)
         }
         else {
             syncResult = activityService.create(activity)
         }
 
         if (syncResult.error) {
-            report.errors.reject('report.activity.creationFailed', [result.error])
+            report.errors.reject('report.activity.creationFailed', [syncResult.error])
         }
         else {
             report.activityId = syncResult.activityId

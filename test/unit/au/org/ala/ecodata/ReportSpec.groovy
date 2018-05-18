@@ -79,29 +79,5 @@ class ReportSpec extends Specification {
         savedReport.statusChangeHistory.size() == 1
     }
 
-    void "single activity reports must have an activity type specified"() {
-        when:
-        Report report = new Report(reportId:'blah', name:'My report', type:Report.TYPE_SINGLE, fromDate:new Date(), toDate: new Date(), dueDate: new Date())
-        report.save(flush:true)
-
-        then:
-        report.hasErrors() == true
-        report.errors.getFieldError('activityType') != null
-    }
-
-    void "the report type cannot be updated"() {
-        when:
-        Report report = new Report(reportId:'blah', name:'My report', type:Report.TYPE_SINGLE, activityType:'test', fromDate:new Date(), toDate: new Date(), dueDate: new Date())
-        report.save(flush:true, failOnError: true)
-
-        report.type = Report.TYPE_ACTIVITY
-        report.save(failOnError:false)
-
-        then:
-        report.hasErrors() == true
-        report.errors.getFieldError('type') != null
-
-
-    }
     
 }
