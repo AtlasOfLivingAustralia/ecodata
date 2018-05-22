@@ -141,6 +141,11 @@ class UrlMappings {
             action = 'findByUserId'
         }
 
+        "/ws/$entity/$id/projects" {
+            controller = 'project'
+            action = 'findByAssociation'
+        }
+
         "/ws/report/runReport"(controller:"report", action:"runReport")
 
         "/ws/project/findByName"(controller: "project"){ action = [GET:"findByName"] }

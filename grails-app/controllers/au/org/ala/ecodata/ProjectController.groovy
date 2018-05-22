@@ -279,6 +279,14 @@ class ProjectController {
     }
 
     @RequireApiKey
+    def findByAssociation(String entity, String id) {
+        List projects = projectService.findAllByAssociation(entity+"Id", id, params.view ?: ProjectService.BRIEF) ?: []
+
+        Map result = [count:projects.size(), projects:projects]
+        render result as JSON
+    }
+
+    @RequireApiKey
     def findByName() {
         if (!params.projectName) {
             render status:400, text: "projectName is a required parameter"

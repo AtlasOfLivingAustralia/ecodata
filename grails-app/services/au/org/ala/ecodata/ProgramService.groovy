@@ -12,9 +12,7 @@ class ProgramService {
         if (includeDeleted) {
             return Program.findByProgramId(programId)
         }
-        Program Program = Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
-        
-        Program
+        Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
     }
 
     Map toMap(Program program, levelOfDetail = []) {
