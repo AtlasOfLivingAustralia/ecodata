@@ -519,6 +519,17 @@ class ProjectService {
     }
 
     /**
+     * Returns all projects with the specified owner field
+     * @param ownerProperty the property that specifies the project relationship (e.g organisationId)
+     * @param id the id of the related entity.
+     * @param levelOfDetail the amount of data to return for each project.
+     * @return a List of projects matching the supplied property
+     */
+    List<Map> findAllByAssociation(String property, String id, levelOfDetail = []) {
+        search([(property):id], levelOfDetail)
+    }
+
+    /**
      * Updates the organisation name for all projects with the organisation id.
      * (The name is stored alongside the id in the project because not all organisations have entries in the database).
      * @param orgId identifies the organsation that has changed name
