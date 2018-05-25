@@ -91,7 +91,7 @@ class CollectoryServiceSpec extends Specification {
         service.updateDataResource(projectData)
 
         then:
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, hiddenJSON:[isMERIT:false, dataResourceId: dataResourceId],'connectionParameters':'{"protocol":"DwC","url":"sftp://upload.ala.org.au:biocollect/dr1234","automation":false,"csv_delimiter":",","csv_eol":"\n","csv_escape_char":"\\","csv_text_enclosure":"\"","termsForUniqueKey":["occurrenceID"],"strip":false,"incremental":false}']) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, hiddenJSON:[isMERIT:false, dataResourceId: dataResourceId]]) >> [:]
         0 * webServiceMock.doPost(_, _)
 
     }
@@ -139,7 +139,7 @@ class CollectoryServiceSpec extends Specification {
 
         then:
 
-        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, institution:[uid:institutionId], hiddenJSON:[isMERIT:false, dataResourceId: dataResourceId, organisationId: '1234'], 'connectionParameters':'{"protocol":"DwC","url":"sftp://upload.ala.org.au:biocollect/dr1234","automation":false,"csv_delimiter":",","csv_eol":"\n","csv_escape_char":"\\","csv_text_enclosure":"\"","termsForUniqueKey":["occurrenceID"],"strip":false,"incremental":false}']) >> [:]
+        1 * webServiceMock.doPost(collectoryBaseUrl+"ws/dataResource/"+dataResourceId,  [name:projectData.name, pubDescription:projectData.description, institution:[uid:institutionId], hiddenJSON:[isMERIT:false, dataResourceId: dataResourceId, organisationId: '1234']]) >> [:]
         0 * webServiceMock.doPost(_, _)
     }
 

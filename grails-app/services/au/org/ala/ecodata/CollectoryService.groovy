@@ -165,10 +165,12 @@ class CollectoryService {
 
             Map properties = changedProperties ?: project
             Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
-            collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
+            if (forceUpdate) {
+                collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
+            }
 
             // Only update if a property other than the "hiddenJSON" attribute has changed.
-            if ((collectoryAttributes.size() > 2) || forceUpdate) {
+            if ((collectoryAttributes.size() > 1) || forceUpdate) {
                 Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
                 if (result.error) {
                     log.error "Error updating collectory info for project ${projectId} - ${result.error}"
