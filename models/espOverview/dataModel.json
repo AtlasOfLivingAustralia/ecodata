@@ -107,6 +107,10 @@
             "validate": "required,max[500]"
         },
         {
+            "dataType": "number",
+            "name":"foregoneProductionCost"
+        },
+        {
             "dataType": "text",
             "description": "",
             "name": "notes"
@@ -180,6 +184,16 @@
                 }
             ],
             "type": "row"
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "source":"foregoneProductionCost",
+                    "preLabel":"If you would like to provide information on any opportunity costs incurred through your involvement in the ESP please record the dollar value below:",
+                    "type":"currency"
+                }
+            ]
         },
         {
             "items": [

@@ -279,24 +279,19 @@
               }
             ]
           }
+        },
+        {
+          "dataType": "number",
+          "name": "swardHeightCm",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "groundCoverPercent",
+          "validate": "min[0],max[100]"
         }
+
       ]
-    },
-    {
-      "dataType": "text",
-      "description": "",
-      "name": "foregoneProductionCost",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "description": "",
-      "name": "foregoneProductionAmountEstimate",
-      "validate": "integer,min[0]"
     },
     {
       "dataType": "number",
@@ -313,7 +308,7 @@
     {
       "items": [
         {
-          "source": "<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. ",
+          "source": "<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. <br/><i>Please endeavour to record sward height and ground cover percentage after each grazing period.</i>",
           "type": "literal"
         }
       ],
@@ -380,6 +375,16 @@
               "title": "Breed",
               "source": "breed",
               "type": "selectOne"
+            },
+            {
+              "title": "Sward Height (cm)",
+              "source": "swardHeightCm",
+              "type": "number"
+            },
+            {
+              "title": "Ground cover %",
+              "source": "groundCoverPercent",
+              "type": "number"
             }
           ],
           "userAddedRows": true,
@@ -395,27 +400,6 @@
           "source": "cost",
           "preLabel": "Total cost of management actions",
           "type": "currency"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "source": "foregoneProductionCost",
-          "preLabel": "Did you experience any loss of production due to ESP grazing restrictions? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "source": "foregoneProductionAmountEstimate",
-          "preLabel": "If you would like to record any forgone production costs please do so below. Please note that this is strictly voluntary.",
-          "type": "currency",
-          "validate": "min[0]"
         }
       ],
       "type": "row"
