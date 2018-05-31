@@ -1044,3 +1044,5 @@ facets.project = [
                 helpText: "The industries relevant to the project"
         ]
 ]
+
+license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"
