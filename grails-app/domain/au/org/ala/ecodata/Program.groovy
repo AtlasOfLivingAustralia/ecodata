@@ -52,13 +52,34 @@ class Program {
         program.assets = assets
         program.outcomes = outcomes
         program.priorities = priorities
-        program.config = config
+        program.config = getInhertitedConfig()
         program.risks = risks
         if (parent) {
             program.parentId = parent.programId
         }
 
         program
+    }
+
+    Map getInhertitedConfig() {
+        Program program = this
+        Deque<Map> allConfig = new ArrayDeque<Map>()
+        while(program != null) {
+            if (program.config) {
+                allConfig.push(program.config)
+            }
+            program = program.parent
+        }
+
+        Map result = [:]
+
+        Map config = allConfig.peek()
+        while (config != null) {
+            result.putAll(allConfig.pop())
+            config = allConfig.peek()
+        }
+
+        result
     }
 
     static mapping = {
