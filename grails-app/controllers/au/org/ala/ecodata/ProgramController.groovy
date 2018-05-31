@@ -10,6 +10,10 @@ class ProgramController {
         respond programService.get(id, false)
     }
 
+    def findByName(String name) {
+        respond programService.findByName(name)
+    }
+
     @RequireApiKey
     def update(String id) {
         if (!id) {

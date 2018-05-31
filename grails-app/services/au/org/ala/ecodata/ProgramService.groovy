@@ -8,17 +8,15 @@ class ProgramService {
     
     def commonService
 
-    def get(String programId, includeDeleted = false) {
+    Program get(String programId, includeDeleted = false) {
         if (includeDeleted) {
             return Program.findByProgramId(programId)
         }
         Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
     }
 
-    Map toMap(Program program, levelOfDetail = []) {
-        def dbo = program.dbo
-        def mapOfProperties = dbo.toMap()
-        mapOfProperties.findAll {k,v -> v != null}
+    Program findByName(String name) {
+        return Program.findByNameAndStatusNotEqual(name, DELETED)
     }
 
     Program create(Map properties) {
@@ -46,6 +44,28 @@ class ProgramService {
         names
     }
 
+
+    Map getProgramConfiguration(String programId) {
+        Program program = get(programId)
+        Deque<Map> allConfig = new ArrayDeque<Map>([name:program?.name])
+        while(program != null) {
+            if (program.config) {
+                config.push(program.config)
+            }
+            program = program.parent
+        }
+
+        Map result = [:]
+
+        Map config = allConfig.pop()
+        while (config != null) {
+            result.putAll(config)
+            config = allConfig.pop()
+        }
+
+        result
+
+    }
     def delete(String id, boolean destroy) {
         Program program = get(id)
         if (program) {

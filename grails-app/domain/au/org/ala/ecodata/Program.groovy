@@ -15,7 +15,7 @@ class Program {
     String url
     Date dateCreated
     Date lastUpdated
-    List blog
+
     List risks
     /** Themes for this program */
     List themes
@@ -36,6 +36,31 @@ class Program {
     List<Program> subPrograms = []
     Program parent
 
+
+    /** Custom rendering for the program */
+    Map toMap() {
+        Map program = [:]
+        program.programId = programId
+        program.name = name
+        program.description = description
+        program.startDate = startDate
+        program.endDate = endDate
+        program.dateCreated = dateCreated
+        program.lastUpdated = lastUpdated
+        program.url = url
+        program.themes = themes
+        program.assets = assets
+        program.outcomes = outcomes
+        program.priorities = priorities
+        program.config = config
+        program.risks = risks
+        if (parent) {
+            program.parentId = parent.programId
+        }
+
+        program
+    }
+
     static mapping = {
         programId index: true
         version false
@@ -46,7 +71,6 @@ class Program {
     static constraints = {
         name unique: true
         description nullable: true
-        blog nullable: true
         risks nullable: true
         subPrograms nullable: true
         startDate nullable: true

@@ -23,7 +23,7 @@
     {
       "items": [
         {
-          "source": "Please note that you only need to record one estimate of ground cover percentage per site per year (but can be recorded multiple times if you wish). Please note that ground cover percentage estimate needs to be recorded at the same time each year, preferably at the same time you take your annual photo-point photograph and record sward height.",
+          "source": "If you undertake grazing, please record ground cover at the end of your grazing periods (in the table under “Livestock Grazing Management). If you do not undertake grazing, then record ground cover percentage at the same time that you take the photo-point photograph for this site. Please ensure that this is done at the same time each year.",
           "type": "literal"
         }
       ],
