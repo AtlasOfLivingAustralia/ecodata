@@ -44,28 +44,6 @@ class ProgramService {
         names
     }
 
-
-    Map getProgramConfiguration(String programId) {
-        Program program = get(programId)
-        Deque<Map> allConfig = new ArrayDeque<Map>([name:program?.name])
-        while(program != null) {
-            if (program.config) {
-                config.push(program.config)
-            }
-            program = program.parent
-        }
-
-        Map result = [:]
-
-        Map config = allConfig.pop()
-        while (config != null) {
-            result.putAll(config)
-            config = allConfig.pop()
-        }
-
-        result
-
-    }
     def delete(String id, boolean destroy) {
         Program program = get(id)
         if (program) {
