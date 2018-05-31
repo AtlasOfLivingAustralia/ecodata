@@ -63,7 +63,7 @@ class Program {
 
     Map getInhertitedConfig() {
         Program program = this
-        Deque<Map> allConfig = new ArrayDeque<Map>()
+        Deque<Map> allConfig = new LinkedList<Map>()
         while(program != null) {
             if (program.config) {
                 allConfig.push(program.config)
