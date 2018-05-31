@@ -161,6 +161,8 @@ class UrlMappings {
 
         "/ws/$controller/list"() { action = [GET:'list'] }
 
+        "/ws/$controller/findByName"{ action = [GET:"findByName"] }
+
 
         "/"(view:"/index")
 		"500"(view:'/error')

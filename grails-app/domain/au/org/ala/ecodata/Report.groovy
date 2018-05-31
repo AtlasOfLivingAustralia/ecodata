@@ -40,10 +40,10 @@ class Report {
     String reportId
     String projectId
     String organisationId
-
     String name
     String description
-    String type // "Activity" for stage reporting, "Performance" for organisation performance self assessments
+    String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
+    String category // Client classification for reports
     /**
      * For reports with an activityType specified, this field holds the id of the activity that contains the data for this report.
      * It is unused for other report types.
@@ -200,6 +200,7 @@ class Report {
         activityId nullable: true
         activityType nullable:true
         type nullable:false
+        category nullable:true
     }
 
     static embedded = ['statusChangeHistory']
