@@ -52,7 +52,8 @@ class Program {
         program.assets = assets
         program.outcomes = outcomes
         program.priorities = priorities
-        program.config = getInhertitedConfig()
+        program.inheritedConfig = getInhertitedConfig()
+        program.config = config
         program.risks = risks
         if (parent) {
             program.parentId = parent.programId
