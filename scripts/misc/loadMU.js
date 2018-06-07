@@ -309,12 +309,12 @@ for (var i=0; i<mus.length; i++) {
 
 
     mu.outcomes = [
-        {outcome:"By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions", priorities:[{category:"Ramsar"}]},
-        {outcome:"By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.", priorities:[{category:"Threatened Species"}]},
-        {outcome:"By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.", priorities:[{category:"World Heritage Sites"}]},
-        {outcome:"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.", priorities:[{category:"Threatened Ecological Communities"}]},
-        {outcome:"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.", priorities:[{category:"Land Management"}]},
-        {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}]}
+        {outcome:"By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions", priorities:[{category:"Ramsar"}], category:"environment"},
+        {outcome:"By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.", priorities:[{category:"Threatened Species"}], category:"environment"},
+        {outcome:"By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.", priorities:[{category:"World Heritage Sites"}], category:"environment"},
+        {outcome:"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.", priorities:[{category:"Threatened Ecological Communities"}], category:"environment"},
+        {outcome:"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.", priorities:[{category:"Land Management"}], category:"agriculture"},
+        {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}], category:"agriculture"}
     ];
 
     db.program.insert(mu);
