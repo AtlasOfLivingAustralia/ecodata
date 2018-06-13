@@ -37,9 +37,15 @@ class Report {
 
     ObjectId id
 
+    /** UUID for this report */
     String reportId
+
+    /** If this report is for a project, this identifies which project */
     String projectId
+    /** If this report is for a organisation, this identifies which organisation */
     String organisationId
+    /** If this report is for a program, this identifies which program */
+    String programId
     String name
     String description
     String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
@@ -191,6 +197,7 @@ class Report {
         projectId nullable:true
         dueDate nullable:true
         organisationId nullable:true
+        programId nullable:true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
         activityCount nullable: true

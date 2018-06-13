@@ -276,7 +276,52 @@ for (var i=0; i<mus.length; i++) {
         lastUpdated:now,
         startDate:programStart,
         endDate:programEnd,
-        parent:{$id:parentId, $db:"ecodata", $ref:'program'}};
+        parent:{$id:parentId, $db:"ecodata", $ref:'program'},
+        config: {
+            "projectReports": [
+                {
+                    "category":"Progress report",
+                    "reportType": "Activity",
+                    "activityType": "RLP Progress Report",
+                    "reportNameFormat": "Progress report %d",
+                    "reportDescriptionFormat": "Progress report %d for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": true,
+                    "reportingPeriodInMonths": 12,
+                    "reportType": "Administrative",
+                    "activityType": "RLP Annual Report",
+                    "reportNameFormat": "Annual Report %2$tY - %3$tY",
+                    "reportDescriptionFormat": "Annual Report %2$tY - %3$tY for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": false,
+                    "reportingPeriodInMonths": 0,
+                    "reportType": "Single",
+                    "activityType": "Short-term project outcomes",
+                    "reportNameFormat": "Short-term project outcomes",
+                    "reportDescriptionFormat": "Short-term project outcomes for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": false,
+                    "reportingPeriodInMonths": 0,
+                    "reportType": "Single",
+                    "activityType": "Medium-term project outcomes",
+                    "reportNameFormat": "Medium-term project outcomes",
+                    "reportDescriptionFormat": "Medium-term project outcomes for %4$s"
+                }
+            ],
+            "programReports":[
+                {
+                    "reportDescriptionFormat": "Core services report %d for %4$s",
+                    "category": "Core Services",
+                    "reportType": "Administrative",
+                    "reportNameFormat": "Core services report %d",
+                    "activityType":"RLP Core Services report"
+                }
+            ]
+        }
+    };
 
     mu.priorities = [];
     var priorities = ramsarByMu[mus[i]] || [];
@@ -309,12 +354,12 @@ for (var i=0; i<mus.length; i++) {
 
 
     mu.outcomes = [
-        {outcome:"By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions", priorities:[{category:"Ramsar"}]},
-        {outcome:"By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.", priorities:[{category:"Threatened Species"}]},
-        {outcome:"By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.", priorities:[{category:"World Heritage Sites"}]},
-        {outcome:"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.", priorities:[{category:"Threatened Ecological Communities"}]},
-        {outcome:"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.", priorities:[{category:"Land Management"}]},
-        {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}]}
+        {outcome:"By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions", priorities:[{category:"Ramsar"}], category:"environment"},
+        {outcome:"By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.", priorities:[{category:"Threatened Species"}], category:"environment"},
+        {outcome:"By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.", priorities:[{category:"World Heritage Sites"}], category:"environment"},
+        {outcome:"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.", priorities:[{category:"Threatened Ecological Communities"}], category:"environment"},
+        {outcome:"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.", priorities:[{category:"Land Management"}], category:"agriculture"},
+        {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}], category:"agriculture"}
     ];
 
     db.program.insert(mu);
