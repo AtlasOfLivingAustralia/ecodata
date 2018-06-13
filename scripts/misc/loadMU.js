@@ -260,7 +260,13 @@ var program = {
     lastUpdated:now,
     startDate:programStart,
     endDate:programEnd,
-    status:'active'
+    status:'active',
+    config:{
+        "meriPlanTemplate":"rlpMeriPlan",
+        "projectTemplate":"rlp",
+        "activityPeriodDescriptor":"Outputs report #"
+
+    }
 };
 
 db.program.insert(program);
@@ -280,44 +286,59 @@ for (var i=0; i<mus.length; i++) {
         config: {
             "projectReports": [
                 {
-                    "category":"Progress report",
+                    "category":"Outputs Reporting",
                     "reportType": "Activity",
                     "activityType": "RLP Progress Report",
-                    "reportNameFormat": "Progress report %d",
-                    "reportDescriptionFormat": "Progress report %d for %4$s"
+                    "reportNameFormat": "Outputs Report %d",
+                    "reportDescriptionFormat": "Outputs Report %d for %4$s"
                 },
                 {
-                    "reportsAlignedToCalendar": true,
+                    "category":"Annual Progress Reporting",
+                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
                     "reportingPeriodInMonths": 12,
                     "reportType": "Administrative",
                     "activityType": "RLP Annual Report",
-                    "reportNameFormat": "Annual Report %2$tY - %3$tY",
-                    "reportDescriptionFormat": "Annual Report %2$tY - %3$tY for %4$s"
+                    "reportNameFormat": "Annual Progress Report %2$tY - %3$tY",
+                    "reportDescriptionFormat": "Annual Progress Report %2$tY - %3$tY for %4$s"
                 },
                 {
+                    "category":"Outcomes Report 1",
                     "reportsAlignedToCalendar": false,
-                    "reportingPeriodInMonths": 0,
+                    "reportingPeriodInMonths": 36,
                     "reportType": "Single",
                     "activityType": "Short-term project outcomes",
-                    "reportNameFormat": "Short-term project outcomes",
-                    "reportDescriptionFormat": "Short-term project outcomes for %4$s"
+                    "reportNameFormat": "Outcomes Report 1",
+                    "reportDescriptionFormat": "Outcomes Report 1 for %4$s",
+                    "multiple":false
                 },
                 {
+                    "category":"Outcomes Report 2",
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 0,
                     "reportType": "Single",
                     "activityType": "Medium-term project outcomes",
-                    "reportNameFormat": "Medium-term project outcomes",
-                    "reportDescriptionFormat": "Medium-term project outcomes for %4$s"
+                    "reportNameFormat": "Outcomes Report 2",
+                    "reportDescriptionFormat": "Outcomes Report 2 for %4$s",
+                    "multiple":false,
+                    "minimumPeriodInMonths":37
                 }
             ],
             "programReports":[
                 {
                     "reportDescriptionFormat": "Core services report %d for %4$s",
-                    "category": "Core Services",
+                    "category": "Core Services Reporting",
                     "reportType": "Administrative",
                     "reportNameFormat": "Core services report %d",
                     "activityType":"RLP Core Services report"
+                },
+                {
+                    "reportDescriptionFormat": "Core services annual report %d for %4$s",
+                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
+                    "reportingPeriodInMonths": 12,
+                    "category": "Core Services Annual Reporting",
+                    "reportType": "Administrative",
+                    "reportNameFormat": "Core services annual report %d",
+                    "activityType":"RLP Core Services annual report"
                 }
             ]
         }
