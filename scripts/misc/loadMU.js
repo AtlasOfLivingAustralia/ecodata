@@ -276,7 +276,52 @@ for (var i=0; i<mus.length; i++) {
         lastUpdated:now,
         startDate:programStart,
         endDate:programEnd,
-        parent:{$id:parentId, $db:"ecodata", $ref:'program'}};
+        parent:{$id:parentId, $db:"ecodata", $ref:'program'},
+        config: {
+            "projectReports": [
+                {
+                    "category":"Progress report",
+                    "reportType": "Activity",
+                    "activityType": "RLP Progress Report",
+                    "reportNameFormat": "Progress report %d",
+                    "reportDescriptionFormat": "Progress report %d for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": true,
+                    "reportingPeriodInMonths": 12,
+                    "reportType": "Administrative",
+                    "activityType": "RLP Annual Report",
+                    "reportNameFormat": "Annual Report %2$tY - %3$tY",
+                    "reportDescriptionFormat": "Annual Report %2$tY - %3$tY for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": false,
+                    "reportingPeriodInMonths": 0,
+                    "reportType": "Single",
+                    "activityType": "Short-term project outcomes",
+                    "reportNameFormat": "Short-term project outcomes",
+                    "reportDescriptionFormat": "Short-term project outcomes for %4$s"
+                },
+                {
+                    "reportsAlignedToCalendar": false,
+                    "reportingPeriodInMonths": 0,
+                    "reportType": "Single",
+                    "activityType": "Medium-term project outcomes",
+                    "reportNameFormat": "Medium-term project outcomes",
+                    "reportDescriptionFormat": "Medium-term project outcomes for %4$s"
+                }
+            ],
+            "programReports":[
+                {
+                    "reportDescriptionFormat": "Core services report %d for %4$s",
+                    "category": "Core Services",
+                    "reportType": "Administrative",
+                    "reportNameFormat": "Core services report %d",
+                    "activityType":"RLP Core Services report"
+                }
+            ]
+        }
+    };
 
     mu.priorities = [];
     var priorities = ramsarByMu[mus[i]] || [];
