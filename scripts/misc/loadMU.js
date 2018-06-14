@@ -264,7 +264,9 @@ var program = {
     config:{
         "meriPlanTemplate":"rlpMeriPlan",
         "projectTemplate":"rlp",
-        "activityPeriodDescriptor":"Outputs report #"
+        "activityPeriodDescriptor":"Outputs report #",
+        "requiresActivityLocking":true,
+        "navigationMode":"returnToProject"
 
     }
 };
