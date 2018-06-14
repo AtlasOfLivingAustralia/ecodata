@@ -306,7 +306,7 @@ for (var i=0; i<mus.length; i++) {
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 36,
                     "reportType": "Single",
-                    "activityType": "Short-term project outcomes",
+                    "activityType": "RLP Short term project outcomes",
                     "reportNameFormat": "Outcomes Report 1",
                     "reportDescriptionFormat": "Outcomes Report 1 for %4$s",
                     "multiple":false
@@ -316,7 +316,7 @@ for (var i=0; i<mus.length; i++) {
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 0,
                     "reportType": "Single",
-                    "activityType": "Medium-term project outcomes",
+                    "activityType": "RLP Medium term project outcomes",
                     "reportNameFormat": "Outcomes Report 2",
                     "reportDescriptionFormat": "Outcomes Report 2 for %4$s",
                     "multiple":false,
