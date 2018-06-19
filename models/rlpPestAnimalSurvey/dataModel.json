@@ -1,0 +1,34 @@
+{
+  "title": "Pest animal survey",
+  "modelName": "RLP - Pest animal survey",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfSurveys",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberOfSurveys",
+                  "preLabel": "Number of pest animal surveys conducted",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

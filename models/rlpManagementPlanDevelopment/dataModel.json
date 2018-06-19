@@ -1,30 +1,7 @@
 {
-  "title": "Management plans",
+  "title": "Developing project/site management plan",
   "modelName": "RLP - Management plan development",
   "dataModel": [
-    {
-      "dataType": "stringList",
-      "name": "siteIds",
-      "validate": "required",
-      "constraints": {
-        "config": {
-          "source": {
-            "context-path": "project.sites"
-          },
-          "mapping": [
-            {
-              "target": "id",
-              "source-path": "siteId"
-            },
-            {
-              "target": "text",
-              "source-path": "name"
-            }
-          ]
-        },
-        "type": "pre-populated"
-      }
-    },
     {
       "dataType": "list",
       "name": "managementPlans",
@@ -72,21 +49,10 @@
     {
       "items": [
         {
-          "items": [
-            {
-              "type":"select2Many",
-              "source":"siteIds",
-              "preLabel":"Project sites covered by management plans",
-              "css":"span9"
-            }
-          ],
-          "type": "row"
-        },
-        {
           "source": "managementPlans",
           "columns": [
             {
-              "title": "Type of management plan",
+              "title": "Type of plan",
               "source": "managementPlanType",
               "type": "select2",
               "width":"50%"
@@ -98,7 +64,7 @@
               "width":"30%"
             },
             {
-              "title":"Area covered by plan (ha)",
+              "title":"Area (ha) plan covers",
               "source":"areaCoveredByPlanHa",
               "type":"number",
               "width":"20%"

@@ -1,0 +1,123 @@
+{
+  "title": "Improving land management practices",
+  "modelName": "RLP - Improving land management practices",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "landManagementDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "practiceChangeType",
+          "constraints": [
+            "Stocking rates",
+            "Watering arrangements",
+            "Paddock design",
+            "Rotation grazing",
+            "Permaculture",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherPracticeChangeType",
+          "description":"Please specify the type of land management practice change if Other (specify in notes) was selected in the Type of land management practice change.",
+          "behaviour":[
+            {
+              "condition": "practiceChangeType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"industryType",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Broad acre cropping",
+            "Dairy",
+            "Horticulture",
+            "Grazing",
+            "Fisheries",
+            "Aquaculture"
+          ]
+        },
+        {
+          "name":"practiceChangeObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "landManagementDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where actions were undertaken",
+              "width":"15%"
+            },
+            {
+              "title": "Type of action",
+              "source": "practiceChangeType",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "title":"Type of action (if Other)",
+              "source":"otherPracticeChangeType",
+              "type":"text",
+              "width":"20%"
+            },
+            {
+              "title":"Industry type",
+              "source":"industryType",
+              "type":"selectOne",
+              "width":"15%"
+            },
+            {
+              "title":"Action aim (300 character limit)",
+              "source":"practiceChangeObjective",
+              "type":"textarea",
+              "width":"30%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

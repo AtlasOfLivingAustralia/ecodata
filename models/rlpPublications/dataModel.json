@@ -1,5 +1,5 @@
 {
-  "title": "Publications",
+  "title": "Releasing publications",
   "modelName": "RLP - Publications",
   "dataModel": [
     {
@@ -18,6 +18,19 @@
             "Other"
           ],
           "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "otherPublicationType",
+          "validate": "required",
+          "behaviour":[
+
+            {
+              "condition": "publicationType == \"Other\"",
+              "type": "enable"
+            }
+
+          ]
         },
         {
           "dataType": "number",
@@ -43,19 +56,25 @@
               "source": "publicationType",
               "title": "Type of publication",
               "type": "select2",
-              "width":"35%"
+              "width":"25%"
+            },
+            {
+              "source":"otherPublicationType",
+              "title":"Other type of publication released",
+              "width":"25",
+              "type":"text"
             },
             {
               "source": "numberOfPublications",
-              "title": "Number of publications produced",
+              "title": "Number of publications released",
               "type": "number",
               "width":"15%"
             },
             {
               "source": "publicationPurpose",
-              "title": "Purpose ",
+              "title": "Purpose of publication",
               "type": "text",
-              "width":"50%"
+              "width":"35%"
             }
           ],
           "source":"publications",

@@ -1,0 +1,34 @@
+{
+  "title": "Water quality survey",
+  "modelName": "RLP - Water quality survey",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfSurveys",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberOfSurveys",
+                  "preLabel": "Number of water quality surveys conducted",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
