@@ -81,6 +81,7 @@ class ElasticSearchService {
     EmailService emailService
     HubService hubService
     CacheService cacheService
+    ProgramService programService
 
 
     Node node;
@@ -465,7 +466,6 @@ class ElasticSearchService {
                 def doc = Project.findByProjectId(docId)
                 def projectMap = projectService.toMap(doc, "flat")
                 projectMap["className"] = docType
-                doc?.isMERIT ? indexDoc(projectMap, DEFAULT_INDEX) : ''
                 indexHomePage(doc, docType)
                 if(projectMap.siteId){
                     indexDocType(projectMap.siteId, Site.class.name)
@@ -796,6 +796,8 @@ class ElasticSearchService {
         // Hence the if condition.
         if(projectMap.isMERIT){
             projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+            projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+            projectMap.remove('outputTargets')
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
         }
@@ -803,6 +805,10 @@ class ElasticSearchService {
             // Not useful for the search index and there is a bug right now that can result in invalid POI
             // data causing the indexing to fail.
             site.remove('poi')
+            if (site?.extent?.geometry?.coordinates) {
+                // This can be very large in some cases and is not used for searching (see the geoIndex field)
+                site.extent.geometry.remove('coordinates')
+            }
 
         }
         projectMap.links = documentService.findAllLinksForProjectId(project.projectId)
@@ -811,7 +817,7 @@ class ElasticSearchService {
         projectMap.logoAttribution = documentService.getLogoAttributionForProjectId(project.projectId)
         projectMap.admins = permissionService.getAllAdminsForProject(project.projectId)?.collect {
             it.userId
-        };
+        }
 
         projectMap.allParticipants = permissionService.getAllUserPermissionForEntity(project.projectId, Project.class.name)?.collect {
             it.userId
@@ -819,9 +825,21 @@ class ElasticSearchService {
 
         projectMap.typeOfProject = projectService.getTypeOfProject(projectMap)
 
-        // Include only for MERIT type projects.
-        if (project.isMERIT) {
-            projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
+        // Populate program facets from the project program, if available
+        if (project.programId) {
+            Program program = programService.get(project.programId)
+            if (program) {
+                List programNames = programService.parentNames(program)
+
+                projectMap.associatedProgram = programNames[-1]
+                if (programNames.size() >= 2) {
+                    projectMap.associatedSubProgram = programNames[-2]
+                }
+            }
+            else {
+                log.error("Project "+project.projectId+" references invalid program with programId = "+project.programId)
+            }
+
         }
 
         projectMap
