@@ -264,12 +264,20 @@ var program = {
     config:{
         "meriPlanTemplate":"rlpMeriPlan",
         "projectTemplate":"rlp",
-        "activityPeriodDescriptor":"Outputs report #"
+        "activityPeriodDescriptor":"Outputs report #",
+        "requiresActivityLocking":true,
+        "navigationMode":"returnToProject"
 
     }
 };
 
-db.program.insert(program);
+var rlpProgram = db.program.find({name:program.name});
+if (rlpProgram.hasNext()) {
+    var rlp2 = rlpProgram.next();
+    program._id = rlp2._id;
+    program.programId = rlp2.programId;
+}
+db.program.save(program);
 
 var parentId = db.program.find({programId:program.programId}).next()._id;
 
@@ -288,7 +296,7 @@ for (var i=0; i<mus.length; i++) {
                 {
                     "category":"Outputs Reporting",
                     "reportType": "Activity",
-                    "activityType": "RLP Progress Report",
+                    "activityType": "RLP Output Report",
                     "reportNameFormat": "Outputs Report %d",
                     "reportDescriptionFormat": "Outputs Report %d for %4$s"
                 },
@@ -306,7 +314,7 @@ for (var i=0; i<mus.length; i++) {
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 36,
                     "reportType": "Single",
-                    "activityType": "Short-term project outcomes",
+                    "activityType": "RLP Short term project outcomes",
                     "reportNameFormat": "Outcomes Report 1",
                     "reportDescriptionFormat": "Outcomes Report 1 for %4$s",
                     "multiple":false
@@ -316,7 +324,7 @@ for (var i=0; i<mus.length; i++) {
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 0,
                     "reportType": "Single",
-                    "activityType": "Medium-term project outcomes",
+                    "activityType": "RLP Medium term project outcomes",
                     "reportNameFormat": "Outcomes Report 2",
                     "reportDescriptionFormat": "Outcomes Report 2 for %4$s",
                     "multiple":false,
@@ -383,6 +391,16 @@ for (var i=0; i<mus.length; i++) {
         {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}], category:"agriculture"}
     ];
 
-    db.program.insert(mu);
+
+    var existingMu = db.program.find({name:mu.name});
+    if (existingMu.hasNext()) {
+        var mu2 = existingMu.next();
+        mu.description = mu2.description;
+        mu._id = mu2._id;
+        mu.programId = mu2.programId;
+
+    }
+
+    db.program.save(mu);
 
 }

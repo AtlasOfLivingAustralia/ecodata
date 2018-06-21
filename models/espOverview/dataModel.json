@@ -3,6 +3,10 @@
     "modelName": "ESP Overview",
     "dataModel": [
         {
+            "dataType": "number",
+            "name":"foregoneProductionCost"
+        },
+        {
             "dataType": "text",
             "name": "reportedAgainstUncontractedManagementActions",
             "constraints": [
@@ -13,12 +17,10 @@
         },
         {
             "dataType": "text",
-            "behaviour": [
-                {
-                    "condition": "reportedAgainstUncontractedManagementActions == \"Yes\"",
-                    "type": "enable"
-                }
-            ],
+            "behaviour": [{
+                "condition": "reportedAgainstUncontractedManagementActions == \"Yes\"",
+                "type": "enable"
+            }],
             "name": "uncontractedManagementActionsDetails",
             "validate": "required"
         },
@@ -34,13 +36,11 @@
         },
         {
             "dataType": "stringList",
+            "behaviour": [{
+                "condition": "experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\"",
+                "type": "enable"
+            }],
             "description": "",
-            "behaviour": [
-                {
-                    "condition": "experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\"",
-                    "type": "enable"
-                }
-            ],
             "name": "typeOfExtremeDisturbanceOrWeatherEvent",
             "constraints": [
                 "Fire",
@@ -53,13 +53,11 @@
         },
         {
             "dataType": "text",
+            "behaviour": [{
+                "condition": "experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\"",
+                "type": "enable"
+            }],
             "description": "",
-            "behaviour": [
-                {
-                    "condition": "experiencedExtremeDisturbanceOrWeatherEvents == \"Yes\"",
-                    "type": "enable"
-                }
-            ],
             "name": "impactOfExtremeDisturbanceOrWeatherEvent"
         },
         {
@@ -74,13 +72,11 @@
         },
         {
             "dataType": "text",
+            "behaviour": [{
+                "condition": "undertakenProhibitedActions == \"Yes\"",
+                "type": "enable"
+            }],
             "description": "",
-            "behaviour": [
-                {
-                    "condition": "undertakenProhibitedActions == \"Yes\"",
-                    "type": "enable"
-                }
-            ],
             "name": "undertakenProhibitedActionsReason",
             "validate": "max[500],required"
         },
@@ -96,19 +92,13 @@
         },
         {
             "dataType": "text",
+            "behaviour": [{
+                "condition": "actionsRequiredByStateOrLocalLegislation == \"Yes\"",
+                "type": "enable"
+            }],
             "description": "",
-            "behaviour": [
-                {
-                    "condition": "actionsRequiredByStateOrLocalLegislation == \"Yes\"",
-                    "type": "enable"
-                }
-            ],
             "name": "actionsRequiredByStateOrLocalLegislationReason",
             "validate": "required,max[500]"
-        },
-        {
-            "dataType": "number",
-            "name":"foregoneProductionCost"
         },
         {
             "dataType": "text",
@@ -117,74 +107,6 @@
         }
     ],
     "viewModel": [
-        {
-            "items": [
-                {
-                    "source": "reportedAgainstUncontractedManagementActions",
-                    "preLabel": "In the last 12 months have you reported against any management actions that you are not contracted to undertake?",
-                    "type": "selectOne"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "uncontractedManagementActionsDetails",
-                    "preLabel": "If “Yes” please provide details below",
-                    "type": "textarea"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>Extreme disturbance / weather events:</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "experiencedExtremeDisturbanceOrWeatherEvents",
-                    "preLabel": "Have you experienced any extreme disturbances or weather events on your Environmental Stewardship site(s) in the last 12 months?",
-                    "type": "selectOne"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "typeOfExtremeDisturbanceOrWeatherEvent",
-                    "preLabel": "If 'Yes', please select from the following:",
-                    "type": "selectMany"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "impactOfExtremeDisturbanceOrWeatherEvent",
-                    "preLabel": "Please provide comments on any impact(s) on your Environmental Stewardship site(s) below:",
-                    "type": "textarea"
-                }
-            ],
-            "type": "row"
-        },
-        {
-            "items": [
-                {
-                    "source": "<h4>General Seasonal Observations</h4>",
-                    "type": "literal"
-                }
-            ],
-            "type": "row"
-        },
         {
             "type":"row",
             "items":[
@@ -196,89 +118,125 @@
             ]
         },
         {
-            "items": [
-                {
-                    "source": "notes",
-                    "preLabel": "If you have any additional comments or observations regarding general seasonal conditions please  provide them below:",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "reportedAgainstUncontractedManagementActions",
+                "preLabel": "In the last 12 months have you reported against any management actions that you are not contracted to undertake?",
+                "type": "selectOne"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Personal Details:</h4> <p>Have any of your contact details changed since you last reported? If “Yes” then please contact the Department to advise us of any change(s).</p>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "uncontractedManagementActionsDetails",
+                "preLabel": "If “Yes” please provide details below",
+                "type": "textarea"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Financial Reports:</h4> <p>Please note that if the total amount of funding you are receiving under the Environmental Stewardship Program is less than $750,000 (GST exclusive) you must download the Statutory Declaration form at <a href=\"www.nrm.gov.au/stewardship\">www.nrm.gov.au/stewardship</a>. This must then be submitted to the Department via the Environmental Stewardship inbox at <a href=\"mailto:EnviroStewardship@environment.gov.au\">EnviroStewardship@environment.gov.au</a>  </p><p>However, </p><p>If the total amount of funding you are receiving under the Environmental Stewardship program is more than $750,000 (GST exclusive) you must download the Financial Report at <a href=\"www.nrm.gov.au/stewardship\">www.nrm.gov.au/stewardship</a> and have it prepared and certified by a qualifies accountant. This must then be submitted to the Department via the Environmental Stewardship inbox at <a href=\"mailto:EnviroStewardship@environment.gov.au\">EnviroStewardship@environment.gov.au</a>.</p>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Extreme disturbance / weather events:<\/h4>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<h4>Prohibited Actions:</h4><p>Have you undertaken any of the following actions on your ESP site(s)?:</p><ul><li>Cultivation</li><li>Used fertilizer or inappropriate agrochemicals</li><li>Removed standing or fallen timber</li><li>Added permanent infrastructure</li><li>Removed or disturbed native vegetation (living or dead)</li><li>Removed or disturbed bush rocks</li><li>Planted non-native species in the ecological community</li><li>Intentionally conducted burning outside of a fire management unit</li>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "experiencedExtremeDisturbanceOrWeatherEvents",
+                "preLabel": "Have you experienced any extreme disturbances or weather events on your Environmental Stewardship site(s) in the last 12 months?",
+                "type": "selectOne"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "undertakenProhibitedActions",
-                    "preLabel": "Yes / No",
-                    "type": "selectOne"
-                }
-            ],
+            "items": [{
+                "source": "typeOfExtremeDisturbanceOrWeatherEvent",
+                "preLabel": "If 'Yes', please select from the following:",
+                "type": "selectMany"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "undertakenProhibitedActionsReason",
-                    "preLabel": "If \"Yes\" please detail your reasons below",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "impactOfExtremeDisturbanceOrWeatherEvent",
+                "preLabel": "Please provide comments on any impact(s) on your Environmental Stewardship site(s) below:",
+                "type": "textarea"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "<i>In the last 12 months have you: Undertaken, without direction, any activities to meet your obligations under state and/or local government regulations (e.g. Control of noxious or declared weeds)?</li>",
-                    "type": "literal"
-                }
-            ],
+            "items": [{
+                "source": "<h4>General Seasonal Observations<\/h4>",
+                "type": "literal"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "actionsRequiredByStateOrLocalLegislation",
-                    "preLabel": "Yes / No",
-                    "type": "selectOne"
-                }
-            ],
+            "items": [{
+                "source": "notes",
+                "preLabel": "If you have any additional comments or observations regarding general seasonal conditions please  provide them below:",
+                "type": "textarea"
+            }],
             "type": "row"
         },
         {
-            "items": [
-                {
-                    "source": "actionsRequiredByStateOrLocalLegislationReason",
-                    "preLabel": "If \"Yes\" please detail your reasons below",
-                    "type": "textarea"
-                }
-            ],
+            "items": [{
+                "source": "<h4>Personal Details:<\/h4> <p>Have any of your contact details changed since you last reported? If “Yes” then please contact the Department to advise us of any change(s).<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Financial Reports:<\/h4> <p>Please note that if the total amount of funding you are receiving under the Environmental Stewardship Program is less than $750,000 (GST exclusive) you must download the Statutory Declaration form at <a href=\"www.nrm.gov.au/stewardship\">www.nrm.gov.au/stewardship<\/a>. This must then be submitted to the Department via the Environmental Stewardship inbox at <a href=\"mailto:EnviroStewardship@environment.gov.au\">EnviroStewardship@environment.gov.au<\/a>  <\/p><p>However, <\/p><p>If the total amount of funding you are receiving under the Environmental Stewardship program is more than $750,000 (GST exclusive) you must download the Financial Report at <a href=\"www.nrm.gov.au/stewardship\">www.nrm.gov.au/stewardship<\/a> and have it prepared and certified by a qualifies accountant. This must then be submitted to the Department via the Environmental Stewardship inbox at <a href=\"mailto:EnviroStewardship@environment.gov.au\">EnviroStewardship@environment.gov.au<\/a>.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Prohibited Actions:<\/h4><p>Have you undertaken any of the following actions on your ESP site(s)?:<\/p><ul><li>Cultivation<\/li><li>Used fertilizer or inappropriate agrochemicals<\/li><li>Removed standing or fallen timber<\/li><li>Added permanent infrastructure<\/li><li>Removed or disturbed native vegetation (living or dead)<\/li><li>Removed or disturbed bush rocks<\/li><li>Planted non-native species in the ecological community<\/li><li>Intentionally conducted burning outside of a fire management unit<\/li><\/ul>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "undertakenProhibitedActions",
+                "preLabel": "Yes / No",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "undertakenProhibitedActionsReason",
+                "preLabel": "If \"Yes\" please detail your reasons below",
+                "type": "textarea"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<i>In the last 12 months have you: Undertaken, without direction, any activities to meet your obligations under state and/or local government regulations (e.g. Control of noxious or declared weeds)?<\/i>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "actionsRequiredByStateOrLocalLegislation",
+                "preLabel": "Yes / No",
+                "type": "selectOne"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "source": "actionsRequiredByStateOrLocalLegislationReason",
+                "preLabel": "If \"Yes\" please detail your reasons below",
+                "type": "textarea"
+            }],
             "type": "row"
         }
     ]

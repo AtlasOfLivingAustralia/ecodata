@@ -1,6 +1,6 @@
 {
-  "title": "Community engagement events (environment outcomes)",
-  "modelName": "RLP - Community engagement - environment",
+  "title": "Community/stakeholder engagement (enviro)",
+  "modelName": "RLP - Community engagement (enviro)",
   "dataModel": [
     {
       "dataType":"list",
@@ -62,15 +62,21 @@
           "columns": [
             {
               "source": "eventType",
-              "title": "Type of event",
+              "title": "Community engagement activity type",
               "type": "select2",
               "width":"20%"
             },
             {
               "source": "otherEventType",
-              "title": "Type of event (if other)",
+              "title": "Type of activity (if other)",
               "type": "text",
               "width":"20%"
+            },
+            {
+              "source": "environmentEventPurpose",
+              "title": "Aim of activity",
+              "type": "textarea",
+              "width":"30%"
             },
             {
               "source": "numberOfParticipants",
@@ -83,13 +89,8 @@
               "title": "Total number of indigenous participants",
               "type": "number",
               "width":"15%"
-            },
-            {
-              "source": "environmentEventPurpose",
-              "title": "Purpose of event",
-              "type": "textarea",
-              "width":"30%"
             }
+
           ],
           "source":"environmentEvents",
           "userAddedRows":true,

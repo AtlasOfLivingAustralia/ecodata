@@ -1,0 +1,107 @@
+{
+  "name": "RLP - Core services annual report",
+  "title": "Core services annual reporting",
+  "dataModel": [
+    {
+      "name": "coreServicesProgress",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]"
+    },
+    {
+      "name": "deliveryImpactOccurred",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "deliveryImpactDescription",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "deliveryImpactOccurred == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "adaptiveManagementImplemented",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "adaptiveManagementActions",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "adaptiveManagementImplemented == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "coreServicesProgress",
+          "preLabel": "1. Please outline progress in delivering the Core Services, highlighting key achievements within the past 12 months (1250 character, [approx. 250 word] limit)"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "deliveryImpactOccurred",
+          "preLabel": "2. In the past 12 months, have there been any issues that have impacted on delivery of Core Services?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "deliveryImpactDescription",
+          "preLabel": "2. a) Please describe these issues and degree of impact they have had on delivery of Core Services (1250 character [approx. 250 word] limit)."
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "adaptiveManagementImplemented",
+          "preLabel": "3. In the past 12 months, have any adaptive management actions been implemented to improve delivery of Core Services?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "adaptiveManagementActions",
+          "preLabel": "3. a) Please describe these adaptive management actions (1250 character [approx. 250 word] limit)."
+        }
+      ]
+
+    }
+  ]
+}

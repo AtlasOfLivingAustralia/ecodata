@@ -1,0 +1,138 @@
+{
+  "title": "Revegetating habitat",
+  "modelName": "RLP - Revegetating habitat",
+  "dataModel": [
+
+    {
+      "dataType": "list",
+      "name": "revegetationDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "revegetationMethod",
+          "dwcAttribute": "establishmentMeans",
+          "description": "The method used for planting",
+          "constraints": [
+            "Direct seeding",
+            "Planting",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "species",
+          "description": "",
+          "name": "species",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherRevegetationMethod",
+          "description":"Please specify the revegetation method if Other was selected in the Revegetation Method column.",
+          "behaviour":[
+            {
+              "condition": "revegetationMethod == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"numberPlanted",
+           "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"revegetationObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"initialOrInfill",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Infill planting"
+          ]
+
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "revegetationDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where habitat revegetation was undertaken",
+              "width":"10%"
+            },
+            {
+              "title": "Planting method",
+              "source": "revegetationMethod",
+              "type": "selectOne",
+              "width":"15%"
+            },
+            {
+              "title": "Species planted",
+              "source": "species",
+              "type": "speciesSelect",
+              "width":"25%"
+            },
+            {
+              "title":"Number planted (include predicted count through kilograms of direct seeding)",
+              "source":"numberPlanted",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Objective of revegetation (300 character limit)",
+              "source":"revegetationObjective",
+              "type":"textarea",
+              "width":"20%"
+            },
+            {
+              "title":"Initial or infill planting",
+              "source":"initialOrInfill",
+              "type":"selectOne",
+              "width":"15%"
+            }
+
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

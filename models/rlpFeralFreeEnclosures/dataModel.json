@@ -1,0 +1,107 @@
+{
+  "title": "Establishing and maintaining feral-enclosures",
+  "modelName": "RLP - Maintaining feral free enclosures",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "enclosureDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "species",
+          "description": "The threatened species protected by the enclosure",
+          "name": "targetSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"newOrMaintained",
+          "validate": "required",
+          "constraints": [
+            "Newly established",
+            "Maintained"
+          ]
+
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfPopulationsOrIndividualsProtected",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"enclosureObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "enclosureDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where control was undertaken",
+              "width":"15%"
+            },
+            {
+              "title": "Targeted threatened species",
+              "source": "targetSpecies",
+              "type": "speciesSelect",
+              "width":"30%"
+            },
+            {
+              "title": "Is this a newly established or maintained feral free enclosure?",
+              "source": "newOrMaintained",
+              "type": "selectOne",
+              "width":"15%"
+            },
+            {
+              "title":"Number of populations (or individuals) protected within feral free enclosures",
+              "source":"numberOfPopulationsOrIndividualsProtected",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Aim of feral free enclosure (300 character limit)",
+              "source":"enclosureObjective",
+              "type":"textarea",
+              "width":"40%"
+            }
+
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

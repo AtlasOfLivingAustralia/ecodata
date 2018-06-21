@@ -1,10 +1,10 @@
 {
-  "title": "Conservation agreements",
-  "modelName": "RLP - Conservation agreements",
+  "title": "Controlling access",
+  "modelName": "RLP - Controlling access",
   "dataModel": [
     {
       "dataType": "list",
-      "name": "agreements",
+      "name": "accessControlDetails",
       "columns": [
         {
           "dataType": "text",
@@ -32,34 +32,35 @@
         {
           "dataType": "text",
           "description": "",
-          "name": "agreementType",
+          "name": "accessControlType",
           "constraints": [
-            "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
-            "Termed agreement not on title - binding (e.g. land management agreement)",
-            "Not on title - non-binding (e.g. Wildlife Refuge)",
-            "No protection mechanism applicable",
-            "Other"
+              "Boardwalks",
+              "Bollards & barriers",
+              "Constructed parking bays",
+              "Fencing, styles, gates & grids",
+              "Formed traffic ways",
+              "Signage",
+              "Other"
           ],
           "validate": "required"
         },
         {
           "dataType":"text",
-          "name":"otherAgreementType",
-          "description":"",
+          "name":"otherAccessControlType",
+          "description":"Please specify the type of access control if Other (specify in notes) was selected in the Type of Access Control Installed column.",
           "behaviour":[
             {
-              "condition": "agreementType == \"Other\"",
+              "condition": "accessControlType == \"Other\"",
               "type": "enable"
             }
           ],
           "validate":"required"
         },
         {
-          "name":"agreementObjective",
+          "name":"controlObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
-        },
+        }
       ]
     }
   ],
@@ -67,7 +68,7 @@
     {
       "items": [
         {
-          "source": "agreements",
+          "source": "accessControlDetails",
           "columns": [
             {
               "type":"select2",
@@ -76,23 +77,23 @@
               "width":"20%"
             },
             {
-              "title": "Type of agreement",
-              "source": "agreementType",
+              "title": "Type of access control installed",
+              "source": "accessControlType",
               "type": "select2",
               "width":"20%"
             },
             {
-              "title":"Agreement type (if other)",
-              "source":"otherAgreementType",
+              "title":"Type of access control installed (if Other)",
+              "source":"otherAccessControlType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Purpose of agreement (300 character limit)",
-              "source":"agreementObjective",
+              "title":"Control objective (300 character limit)",
+              "source":"controlObjective",
               "type":"textarea",
               "width":"40%"
-            },
+            }
           ],
           "userAddedRows": true,
           "type": "table"

@@ -3,44 +3,36 @@
   "modelName": "RLP - Disease management",
   "dataModel": [
     {
-      "dataType": "number",
-      "description": "",
-      "name": "areaQuarantinedOrTreatedHa",
-      "units":"ha",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "stringList",
-      "name": "siteIds",
-      "validate": "required",
-      "constraints": {
-        "config": {
-          "source": {
-            "context-path": "project.sites"
-          },
-          "mapping": [
-            {
-              "target": "id",
-              "source-path": "siteId"
-            },
-            {
-              "target": "text",
-              "source-path": "name"
-            }
-          ]
-        },
-        "type": "pre-populated"
-      }
-    },
-    {
       "dataType": "list",
       "name": "diseaseManagementDetails",
       "columns": [
         {
-          "dataType": "species",
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
           "description": "",
-          "name": "targetSpecies",
-          "dwcAttribute": "scientificName",
+          "name": "targetDisease",
           "validate": "required"
         },
         {
@@ -66,11 +58,25 @@
           "description":"Please specify the management method used if Other (specify in notes) was selected in the Management Method column.",
           "behaviour":[
             {
-              "condition": "managementMethod == \"Other (specify in notes)\"",
+              "condition": "managementMethod == \"Other\"",
               "type": "enable"
             }
           ],
           "validate":"required"
+        },
+        {
+          "name":"treatmentObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial treatment",
+            "Follow-up treatment"
+          ]
         }
       ]
     }
@@ -79,42 +85,43 @@
     {
       "items": [
         {
-          "items": [
-            {
-              "source": "areaQuarantinedOrTreatedHa",
-              "preLabel": "Area (Ha) quarantined / treated",
-              "type": "number",
-              "css":"span3"
-            },
-            {
-              "type":"select2Many",
-              "source":"siteIds",
-              "preLabel":"Project sites where disease management was undertaken",
-              "css":"span6"
-            }
-          ],
-          "type": "row"
-        },
-        {
           "source": "diseaseManagementDetails",
           "columns": [
             {
-              "title": "Target species",
-              "source": "targetSpecies",
-              "type": "speciesSelect",
-              "width":"40%"
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where control was undertaken",
+              "width":"10%"
             },
             {
-              "title": "Management method",
+              "title": "Disease managed",
+              "source": "targetDisease",
+              "type": "text",
+              "width":"20%"
+            },
+            {
+              "title": "Type of management method / treatment",
               "source": "managementMethod",
               "type": "select2",
-              "width":"30%"
+              "width":"20%"
             },
             {
-              "title":"Management method (if other)",
+              "title":"Type of management method / treatment (if other)",
               "source":"otherManagementMethod",
               "type":"text",
-              "width":"30%"
+              "width":"20%"
+            },
+            {
+              "title":"Treatment objective (300 character limit)",
+              "source":"treatmentObjective",
+              "type":"textarea",
+              "width":"20%"
+            },
+            {
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
             }
           ],
           "userAddedRows": true,

@@ -1,10 +1,10 @@
 {
-  "title": "Conservation agreements",
-  "modelName": "RLP - Conservation agreements",
+  "title": "Improving hydrological regimes",
+  "modelName": "RLP - Improving hydrological regimes",
   "dataModel": [
     {
       "dataType": "list",
-      "name": "agreements",
+      "name": "hydrologicalRegimeDetails",
       "columns": [
         {
           "dataType": "text",
@@ -32,34 +32,36 @@
         {
           "dataType": "text",
           "description": "",
-          "name": "agreementType",
+          "name": "improvementType",
           "constraints": [
-            "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
-            "Termed agreement not on title - binding (e.g. land management agreement)",
-            "Not on title - non-binding (e.g. Wildlife Refuge)",
-            "No protection mechanism applicable",
+            "Removing barriers",
+            "Structure instalment",
             "Other"
           ],
           "validate": "required"
         },
         {
           "dataType":"text",
-          "name":"otherAgreementType",
-          "description":"",
+          "name":"otherImprovementType",
+          "description":"Please specify the action if Other (specify in notes) was selected in the Type of action column.",
           "behaviour":[
             {
-              "condition": "agreementType == \"Other\"",
+              "condition": "improvementType == \"Other\"",
               "type": "enable"
             }
           ],
           "validate":"required"
         },
         {
-          "name":"agreementObjective",
+          "name":"improvementObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
         },
+        {
+          "name":"numberOfActions",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        }
       ]
     }
   ],
@@ -67,32 +69,38 @@
     {
       "items": [
         {
-          "source": "agreements",
+          "source": "hydrologicalRegimeDetails",
           "columns": [
             {
               "type":"select2",
               "source":"siteId",
-              "title":"Site where control was undertaken",
+              "title":"Site where actions were undertaken",
               "width":"20%"
             },
             {
-              "title": "Type of agreement",
-              "source": "agreementType",
+              "title": "Type of action",
+              "source": "improvementType",
               "type": "select2",
               "width":"20%"
             },
             {
-              "title":"Agreement type (if other)",
-              "source":"otherAgreementType",
+              "title":"Type of action (if Other)",
+              "source":"otherImprovementType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Purpose of agreement (300 character limit)",
-              "source":"agreementObjective",
+              "title":"Action aim (300 character limit)",
+              "source":"improvementObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"30%"
             },
+            {
+              "title":"Number of actions",
+              "type":"number",
+              "source":"numberOfActions",
+              "width":"10%"
+            }
           ],
           "userAddedRows": true,
           "type": "table"

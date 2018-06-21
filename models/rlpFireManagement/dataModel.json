@@ -1,10 +1,10 @@
 {
-  "title": "Conservation agreements",
-  "modelName": "RLP - Conservation agreements",
+  "title": "Implementing fire management actions",
+  "modelName": "RLP - Fire management",
   "dataModel": [
     {
       "dataType": "list",
-      "name": "agreements",
+      "name": "fireManagementDetails",
       "columns": [
         {
           "dataType": "text",
@@ -32,34 +32,31 @@
         {
           "dataType": "text",
           "description": "",
-          "name": "agreementType",
+          "name": "fireManagementType",
           "constraints": [
-            "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
-            "Termed agreement not on title - binding (e.g. land management agreement)",
-            "Not on title - non-binding (e.g. Wildlife Refuge)",
-            "No protection mechanism applicable",
+            "Ecological burn",
+            "Hazard reduction burn",
             "Other"
           ],
           "validate": "required"
         },
         {
           "dataType":"text",
-          "name":"otherAgreementType",
-          "description":"",
+          "name":"otherFireManagementType",
+          "description":"Please specify the fire management action if Other (specify in notes) was selected in the Type of fire management action column.",
           "behaviour":[
             {
-              "condition": "agreementType == \"Other\"",
+              "condition": "fireManagementType == \"Other\"",
               "type": "enable"
             }
           ],
           "validate":"required"
         },
         {
-          "name":"agreementObjective",
+          "name":"fireManagementObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
-        },
+        }
       ]
     }
   ],
@@ -67,7 +64,7 @@
     {
       "items": [
         {
-          "source": "agreements",
+          "source": "fireManagementDetails",
           "columns": [
             {
               "type":"select2",
@@ -76,23 +73,23 @@
               "width":"20%"
             },
             {
-              "title": "Type of agreement",
-              "source": "agreementType",
+              "title": "Type of fire management action",
+              "source": "fireManagementType",
               "type": "select2",
               "width":"20%"
             },
             {
-              "title":"Agreement type (if other)",
-              "source":"otherAgreementType",
+              "title":"Type of fire management action (if Other)",
+              "source":"otherFireManagementType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Purpose of agreement (300 character limit)",
-              "source":"agreementObjective",
+              "title":"Fire management action objective (300 character limit)",
+              "source":"fireManagementObjective",
               "type":"textarea",
               "width":"40%"
-            },
+            }
           ],
           "userAddedRows": true,
           "type": "table"
