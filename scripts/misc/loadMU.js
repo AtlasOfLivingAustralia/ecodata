@@ -288,8 +288,8 @@ var program = {
         "projectTemplate":"rlp",
         "activityPeriodDescriptor":"Outputs report #",
         "requiresActivityLocking":true,
-        "navigationMode":"returnToProject"
-
+        "navigationMode":"returnToProject",
+        "visibility":"private"
     }
 };
 
@@ -326,7 +326,7 @@ for (var i=0; i<mus.length; i++) {
                 },
                 {
                     "category":"Annual Progress Reporting",
-                    "reportsAlignedToCalendar":false,
+                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
                     "reportingPeriodInMonths": 12,
                     "reportType": "Administrative",
                     "activityType": "RLP Annual Report",
@@ -365,7 +365,7 @@ for (var i=0; i<mus.length; i++) {
                 },
                 {
                     "reportDescriptionFormat": "Core services annual report %d for %4$s",
-                    "reportsAlignedToCalendar":false,
+                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
                     "reportingPeriodInMonths": 12,
                     "category": "Core Services Annual Reporting",
                     "reportType": "Administrative",
