@@ -253,21 +253,43 @@ var tssSpeciesByMu = {
 var now = ISODate();
 var programStart = ISODate('2018-06-30T14:00:00Z');
 var programEnd = ISODate('2023-06-30T13:59:59Z');
+
+
+var nlp = {
+    name:"National Landcare Programme",
+    programId:UUID.generate(),
+    dateCreated:now,
+    lastUpdated:now,
+    status:'active'
+};
+
+var nlpProgram = db.program.find({name:nlp.name});
+if (nlpProgram.hasNext()) {
+    var nlp2 = nlpProgram.next();
+    nlp._id = nlp2._id;
+    nlp.programId = nlp2.programId;
+}
+db.program.save(nlp);
+
+var parentId = db.program.find({programId:nlp.programId}).next()._id;
+
 var program = {
     name:"Regional Landcare Program",
     programId:UUID.generate(),
     dateCreated:now,
     lastUpdated:now,
     startDate:programStart,
+    parent:parentId,
     endDate:programEnd,
     status:'active',
+    visibility:'private',
     config:{
         "meriPlanTemplate":"rlpMeriPlan",
         "projectTemplate":"rlp",
         "activityPeriodDescriptor":"Outputs report #",
         "requiresActivityLocking":true,
-        "navigationMode":"returnToProject"
-
+        "navigationMode":"returnToProject",
+        "visibility":"private"
     }
 };
 
@@ -278,8 +300,10 @@ if (rlpProgram.hasNext()) {
     program.programId = rlp2.programId;
 }
 db.program.save(program);
+print("Saving program: ");
+printjson(program);
 
-var parentId = db.program.find({programId:program.programId}).next()._id;
+parentId = db.program.find({programId:program.programId}).next()._id;
 
 for (var i=0; i<mus.length; i++) {
     var mu = {
@@ -290,7 +314,7 @@ for (var i=0; i<mus.length; i++) {
         lastUpdated:now,
         startDate:programStart,
         endDate:programEnd,
-        parent:{$id:parentId, $db:"ecodata", $ref:'program'},
+        parent:parentId,
         config: {
             "projectReports": [
                 {

@@ -797,7 +797,7 @@ class ElasticSearchService {
         if(projectMap.isMERIT){
             projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
             projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
-            projectMap.remove('outputTargets')
+            projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
             projectMap.sites = siteService.findAllNonPrivateSitesForProjectId(project.projectId, SiteService.FLAT)
         }
