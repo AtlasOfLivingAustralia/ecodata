@@ -282,7 +282,6 @@ var program = {
     parent:parentId,
     endDate:programEnd,
     status:'active',
-    visibility:'private',
     config:{
         "meriPlanTemplate":"rlpMeriPlan",
         "projectTemplate":"rlp",
