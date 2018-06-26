@@ -32,4 +32,9 @@ class ProgramController {
     def search() {
         elasticSearchService.search(params.query,[:], ElasticIndex.DEFAULT_INDEX)
     }
+
+    @RequireApiKey
+    def findAllForUser(String id) {
+        respond programService.findAllProgramsForUser(id)
+    }
 }
