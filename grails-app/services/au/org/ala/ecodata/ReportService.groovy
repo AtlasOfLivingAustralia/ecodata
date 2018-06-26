@@ -276,9 +276,9 @@ class ReportService {
 
     def outputTargetReport(List filters, String searchTerm, scores, boolean approvedActivitiesOnly = true) {
 
-        //def groupingSpec = [property:'activity.', type:'discrete']
+        def groupingSpec = [property:'activity.programSubProgram', type:'discrete']
 
-        aggregate(filters, searchTerm, scores, null, approvedActivitiesOnly)
+        aggregate(filters, searchTerm, scores, groupingSpec, approvedActivitiesOnly)
     }
 
     def outputTargetsBySubProgram(params) {
@@ -310,11 +310,16 @@ class ReportService {
                             if (value == null) {
                                 log.warn project.projectId + ' ' + target.scoreLabel + ' ' + target.target + ':' + value
                             } else {
-                                if (!targetsBySubProgram[program][target.scoreLabel]) {
-                                    targetsBySubProgram[program][target.scoreLabel] = [scoreId: target.scoreId, count: 0, total: 0]
+                                String label = target.scoreLabel
+                                if (!label && scores) {
+                                    def score = scores.find({it.scoreId == target.scoreId})
+                                    label = score.label
                                 }
-                                targetsBySubProgram[program][target.scoreLabel].total += value
-                                targetsBySubProgram[program][target.scoreLabel].count++
+                                if (!targetsBySubProgram[program][label]) {
+                                    targetsBySubProgram[program][label] = [scoreId: target.scoreId, count: 0, total: 0]
+                                }
+                                targetsBySubProgram[program][label].total += value
+                                targetsBySubProgram[program][label].count++
 
                             }
                         }
