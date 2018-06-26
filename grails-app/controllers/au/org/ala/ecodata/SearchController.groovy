@@ -336,7 +336,7 @@ class SearchController {
         String searchTerm = params.query ?: "*:*"
         boolean approvedActivitiesOnly = params.getBoolean('approvedActivitiesOnly', true)
         def targets = reportService.outputTargetsBySubProgram(params, scores)
-        def scoresReport = reportService.outputTargetReport(filters, searchTerm, scores, approvedActivitiesOnly)
+        def scoresReport = reportService.aggregate(filters, searchTerm, scores, null, approvedActivitiesOnly)
 
         def results = [scores:scoresReport, targets:targets]
         return results
