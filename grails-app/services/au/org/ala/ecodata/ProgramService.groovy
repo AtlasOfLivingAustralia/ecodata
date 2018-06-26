@@ -68,5 +68,12 @@ class ProgramService {
         }
     }
 
+    List<Program> findAllProgramsForUser(String userId) {
+        List userPrograms = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Program.class.name, DELETED)
+
+        List result = Program.findAllByProgramIdInList(userPrograms?.collect{it.entityId})
+        result
+    }
+
 
 }
