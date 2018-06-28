@@ -1,0 +1,85 @@
+{
+  "title": "Establishing and maintaining ex-situ breeding sites and/or populations",
+  "modelName": "Establishing and maintaining ex-situ breeding sites and/or populations",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "speciesBredAndReleased",
+      "columns": [
+        {
+          "dataType": "number",
+          "name": "numberOfAnimalsSuccessfullyBred",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "species",
+          "name": "speciesBredOrReleased"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfAnimalsReleased",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "species",
+          "name": "speciesReleased"
+        },
+        {
+          "dataType": "number",
+          "name": "survivalRateOfReleasedSpecies"
+        },
+        {
+          "dataType": "text",
+          "name": "estimatedAgesOfSurvivors"
+        },
+        {
+          "dataType": "text",
+          "name": "releaseLocation"
+        },
+        {
+          "dataType": "text",
+          "name": "whereDidFoundersComeFrom"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "title": "Species bred and released",
+      "source": "speciesBredAndReleased",
+      "columns": [
+        {
+          "title": "Species",
+          "source": "speciesBredOrReleased",
+          "type": "speciesSelect"
+        },
+        {
+          "title": "Number successfully bread",
+          "source": "numberOfAnimalsSuccessfullyBred",
+          "type": "number"
+        },
+        {
+          "title": "Number of animals released",
+          "source": "numberOfAnimalsReleased",
+          "type": "number"
+        },
+        {
+          "title": "Estimated ages of survivors",
+          "source": "estimatedAgesOfSurvivors",
+          "type": "text"
+        },
+        {
+          "title": "Release location",
+          "source": "releaseLocation",
+          "type": "text"
+        },
+        {
+          "title": "Where did the founders come from?",
+          "source": "whereDidFoundersComeFrom",
+          "type": "textarea"
+        }
+      ],
+      "type": "table"
+    }
+  ]
+}

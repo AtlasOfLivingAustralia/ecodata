@@ -161,7 +161,7 @@ class WebService {
      * @param params
      * @return the contents of the response as a map
      */
-    Map doPostWithParams(String url, Map params) {
+    Map doPostWithParams(String url, Map params, boolean suppressLog = false) {
         def conn = null
         def charEncoding = 'utf-8'
         try {
@@ -185,13 +185,18 @@ class WebService {
             return [resp: JSON.parse(resp?:"{}")]
         } catch (SocketTimeoutException e) {
             def error = [error: "Timed out calling web service. URL= ${url}."]
-            log.error(error, e)
+            if (!suppressLog) {
+                log.error(error, e)
+            }
+
             return error
         } catch (Exception e) {
             def error = [error: "Failed calling web service. ${e.getMessage()} URL= ${url}.",
                          statusCode: conn?.responseCode?:"",
                          detail: conn?.errorStream?.text]
-            log.error(error, e)
+            if (!suppressLog) {
+                log.error(error, e)
+            }
             return error
         }
     }

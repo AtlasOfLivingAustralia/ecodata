@@ -1,0 +1,80 @@
+{
+  "title": "Developing project/site management plan",
+  "modelName": "RLP - Management plan development",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "managementPlans",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "managementPlanType",
+          "constraints": [
+            "Fire management plan",
+            "Catchment plan",
+            "Implementation works design",
+            "Marine protection plan",
+            "Project arrangements and governance",
+            "Site devlopement plan",
+            "Site management plan",
+            "Recovery plan",
+            "Regional plan",
+            "Resource management plan",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"newOrRevised",
+          "description":"",
+          "constraints":[
+            "New plan",
+            "Revised plan"
+          ],
+          "validate":"required"
+
+        },
+        {
+          "dataType":"number",
+          "name":"areaCoveredByPlanHa",
+          "unit":"ha",
+          "validate":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "managementPlans",
+          "columns": [
+            {
+              "title": "Type of plan",
+              "source": "managementPlanType",
+              "type": "select2",
+              "width":"50%"
+            },
+            {
+              "title":"Is this plan new or revised?",
+              "source":"newOrRevised",
+              "type":"selectOne",
+              "width":"30%"
+            },
+            {
+              "title":"Area (ha) plan covers",
+              "source":"areaCoveredByPlanHa",
+              "type":"number",
+              "width":"20%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

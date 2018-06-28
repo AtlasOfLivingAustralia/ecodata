@@ -1,0 +1,59 @@
+{
+  "title": "Hazard reduction burns",
+  "modelName": "RLP - Hazard reduction burns",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfBurns",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "number",
+              "source": "numberOfBurns",
+              "preLabel": "Number of hazard reduction burns",
+              "css": "span3"
+            },
+            {
+              "type": "select2Many",
+              "source": "siteIds",
+              "preLabel": "Project sites where burns were undertaken",
+              "css": "span9"
+            }
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}
+

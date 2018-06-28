@@ -1,0 +1,1155 @@
+{
+    "dataModel": [
+        {
+            "dataType": "number",
+            "description": "The total area where all pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
+            "name": "pestAnimalAreaTreatedHa",
+            "validate": "min[0],max[${now}]"
+        },
+        {
+            "dataType": "number",
+            "description": "The total area where all followup treatment for pest animal control has been undertaken. For some species (such as foxes and rabbits), it includes the area of influence around the actual bait location/line. Do not double count the same area for; (1) work on different species, e.g. 20ha of treatment that targeted foxes and rabbits at a single site is reported as 20ha, not 40ha, or (2)  for follow up treatment. If the initial 20ha is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of 20ha initial treatment and the 20ha follow up treatment.",
+            "name": "pestAnimalAreaTreatedFollowupHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "list",
+            "name": "pestAnimalsControlled",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "description": "The method used in this activity to manage pests",
+                    "name": "pestManagementMethod",
+                    "constraints": [
+                        "Crown of Thorns Starfish injection",
+                        "Bait & trap",
+                        "Bait only",
+                        "Biological control agents",
+                        "Exclusion fencing",
+                        "Fumigation",
+                        "Harbour destruction",
+                        "Positive competition",
+                        "Spotlight cull",
+                        "Trap & cull",
+                        "Trap & remove",
+                        "Other (specify in notes)"
+                    ],
+                    "dwcAttribute": "treatmentMethod",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "species",
+                    "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+                    "name": "pestSpecies",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "description": "",
+                    "behaviour": [{
+                        "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\"",
+                        "type": "enable"
+                    }],
+                    "name": "baitAreaOfInfluence",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "behaviour": [{
+                        "condition": "pestManagementMethod == \"Bait & trap\" or pestManagementMethod == \"Bait only\"",
+                        "type": "enable"
+                    }],
+                    "name": "confirmedKills",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "siteId",
+                    "constraints": {
+                        "config": {
+                            "source": {"context-path": "project.sites"},
+                            "mapping": [
+                                {
+                                    "target": "id",
+                                    "source-path": "siteId"
+                                },
+                                {
+                                    "target": "text",
+                                    "source-path": "name"
+                                }
+                            ]
+                        },
+                        "type": "pre-populated"
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "description": "The total area where weed control has been undertaken. Do not double count (1) the same area for different species or retreatment, e.g 20ha of treatment that targeted Lantana and Camphor laurel at a single site is be reported as 20ha, not 40ha. or (2) follow up treatment. Eg. If the initial 20ha site is targeted with secondary rounds of treatment, the reported area treated remains 20ha, not the combination of the 20ha initial treatment and the 20ha follow up treatment.",
+            "name": "weedAreaTreatedHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "description": "The total area where weed control has been undertaken as a followup activity.",
+            "name": "weedAreaTreatedFollowupHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "description": "Indicate whether the main treatment action over this area was an initial or follow-up treatment.",
+            "name": "weedTreatmentType",
+            "constraints": [
+                "Initial treatment",
+                "Follow-up treatment"
+            ],
+            "dwcAttribute": "treatmentType",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "name": "weedSpeciesTreated",
+            "columns": [
+                {
+                    "dataType": "species",
+                    "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
+                    "name": "weedTargetSpecies",
+                    "dwcAttribute": "scientificName",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The primary method used to treat the patch of the target species",
+                    "name": "treatmentMethod",
+                    "constraints": [
+                        "Environmental management - Fire",
+                        "Environmental management - moisture & nutrient control",
+                        "Environmental management - over-planting",
+                        "Chemical control - Foliar spraying",
+                        "Chemical control - Basal bark spraying",
+                        "Chemical control - Stem injection",
+                        "Chemical control - Cut stump",
+                        "Chemical control - Cut and swab",
+                        "Chemical control - Splatter gun",
+                        "Chemical control - Stem scraper",
+                        "Chemical control - Wick applicators",
+                        "Mechanical control - Slashing",
+                        "Mechanical control - Mowing",
+                        "Mechanical control - Dozing",
+                        "Mechanical control - Pushing",
+                        "Mechanical control - Felling",
+                        "Manual control - Hand pulling",
+                        "Manual control - Grubbing/chipping",
+                        "Biological control - Biological agents (specify in notes)",
+                        "Other (specify in notes)"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "siteId",
+                    "constraints": {
+                        "config": {
+                            "source": {"context-path": "project.sites"},
+                            "mapping": [
+                                {
+                                    "target": "id",
+                                    "source-path": "siteId"
+                                },
+                                {
+                                    "target": "text",
+                                    "source-path": "name"
+                                }
+                            ]
+                        },
+                        "type": "pre-populated"
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfStructures",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "stringList",
+            "name": "typeOfStructure",
+            "constraints": [
+                "1",
+                "2",
+                "3"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "increasedFlowM3"
+        },
+        {
+            "dataType": "number",
+            "name": "lengthOfStreamHabitatImprovedKm",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "lengthOfFishPassageInstalledKm",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfFishwayEstablished",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfConstructedWetlands",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfConstructedWetlandsHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "wetlandConnectivityAreaHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "instreamHabitatImprovementKm",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfLandProtectedFromErosionHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfErosionControlStructures",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaRevegetatedHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaRevegetationMaintenanceHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfPlantsPlanted",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfBurnHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "list",
+            "name": "fireManagementDetails",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "siteId",
+                    "constraints": {
+                        "config": {
+                            "source": {"context-path": "project.sites"},
+                            "mapping": [
+                                {
+                                    "target": "id",
+                                    "source-path": "siteId"
+                                },
+                                {
+                                    "target": "text",
+                                    "source-path": "name"
+                                }
+                            ]
+                        },
+                        "type": "pre-populated"
+                    }
+                },
+                {
+                    "dataType": "number",
+                    "name": "previousFireRegimeLengthKm",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "consultedWithParksOrIndigenous",
+                    "constraints": [
+                        "n/a",
+                        "Y",
+                        "N"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "summaryOfConsultingAdvice"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaReturnedToTraditionalBurningPatternHa",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfBurnsAtThisSite",
+                    "validate": "min[0]"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "reasonForControllingAccess",
+            "constraints": [
+                "Reducing spread of weeds",
+                "Erosion"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfAccessPointsManaged",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaProtectedHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "text",
+            "name": "typeOfStructure",
+            "constraints": [
+                "Fence",
+                "Walkway / bridge"
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfFaunaMovementDevices",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfHabitatDevices",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfInfluenceOfHabitatDevices",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "seedBankedKg",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "numberOfConservationAgreements",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaUnderConservationAgreementHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaOfEnclosureEstablishedHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "list",
+            "name": "pestAnimalsObserved",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberOfPestAnimalsDirectlyObserved",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "name": "speciesOfPestAnimalsDirectlyObserved"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfPestAnimalsControlled",
+                    "validate": "min[0]"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "indirectEvidenceOfPestAnimalsObserved",
+            "constraints": [
+                "n/a",
+                "Y",
+                "N"
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "speciesProtected",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberOfSpeciesProtected",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "name": "speciesProtected"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "speciesIntroduced",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberOfSpeciesIntroduced",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "name": "speciesIntroduced"
+                },
+                {
+                    "dataType": "number",
+                    "name": "survivalRate",
+                    "validate": "min[0],max[100]"
+                }
+            ]
+        },
+        {
+            "dataType": "list",
+            "name": "speciesBredAndReleased",
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberOfAnimalsSuccessfullyBred",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "name": "speciesBredOrReleased"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfAnimalsReleased",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "species",
+                    "name": "speciesReleased"
+                },
+                {
+                    "dataType": "number",
+                    "name": "survivalRateOfReleasedSpecies"
+                },
+                {
+                    "dataType": "text",
+                    "name": "estimatedAgesOfSurvivors"
+                },
+                {
+                    "dataType": "text",
+                    "name": "releaseLocation"
+                },
+                {
+                    "dataType": "text",
+                    "name": "whereDidFoundersComeFrom"
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "totalAreaManagedForDiseaseHa",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "list",
+            "name": "diseaseManagementDetails",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "targetedDisease"
+                },
+                {
+                    "dataType": "species",
+                    "name": "targetSpecies"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaAffectedByDisease",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "siteId",
+                    "constraints": {
+                        "config": {
+                            "source": {"context-path": "project.sites"},
+                            "mapping": [
+                                {
+                                    "target": "id",
+                                    "source-path": "siteId"
+                                },
+                                {
+                                    "target": "text",
+                                    "source-path": "name"
+                                }
+                            ]
+                        },
+                        "type": "pre-populated"
+                    }
+                }
+            ]
+        },
+        {
+            "dataType": "number",
+            "name": "lengthOfFenceKm",
+            "validate": "min[0]"
+        },
+        {
+            "dataType": "number",
+            "name": "areaProtectedByFence",
+            "validate": "min[0]"
+        }
+    ],
+    "modelName": "Prototype",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Controlling pest animals (including culling feral cats)<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "pestAnimalAreaTreatedHa",
+                            "preLabel": "Area treated for pest animals (Ha) - initial treatment area only",
+                            "type": "number"
+                        },
+                        {
+                            "source": "pestAnimalAreaTreatedFollowupHa",
+                            "preLabel": "Area treated for pest animals (Ha) - followup treatment area only",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "source": "pestAnimalsControlled",
+                    "columns": [
+                        {
+                            "title": "Species controlled",
+                            "source": "pestSpecies",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Management method",
+                            "source": "pestManagementMethod",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Area of influence of bait (Ha)",
+                            "source": "baitAreaOfInfluence",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Number of confirmed kills",
+                            "source": "confirmedKills",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Site(s)",
+                            "source": "siteId",
+                            "type": "select2Many"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Removing Pest Weeds<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "weedAreaTreatedHa",
+                        "preLabel": "Area treated for weeds (Ha) - initial treatment area only",
+                        "type": "number"
+                    },
+                    {
+                        "source": "weedAreaTreatedFollowupHa",
+                        "preLabel": "Area treated for weeds (Ha) - followup treatment area only",
+                        "type": "number"
+                    }
+                ],
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "source": "weedSpeciesTreated",
+            "columns": [
+                {
+                    "title": "Species treated",
+                    "source": "weedTargetSpecies",
+                    "type": "speciesSelect"
+                },
+                {
+                    "title": "Treatment method",
+                    "source": "treatmentMethod",
+                    "type": "selectOne"
+                },
+                {
+                    "title": "Site(s)",
+                    "source": "siteId",
+                    "type": "select2Many"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "<h4>Improving hydrological regimes<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "numberOfStructures",
+                            "preLabel": "Number of structures installed",
+                            "type": "number"
+                        },
+                        {
+                            "source": "typeOfStructure",
+                            "preLabel": "Type of structure(s) installed",
+                            "type": "select2Many"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "increasedFlowM3",
+                            "preLabel": "Increase in flow achieved (m3)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "lengthOfStreamHabitatImprovedKm",
+                            "preLabel": "Length of stream habitat improved (km)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "lengthOfFishPassageInstalledKm",
+                            "preLabel": "Length of fish passage installed (km)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfFishwayEstablished",
+                            "preLabel": "Number of fishways established",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfConstructedWetlands",
+                            "preLabel": "Number of constructed wetlands",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaOfConstructedWetlandsHa",
+                            "preLabel": "Total area of constructed wetlands (Ha)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Remediating riparian and aquatic areas<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "instreamHabitatImprovementKm",
+                        "preLabel": "Length of stream improved (km)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "areaOfLandProtectedFromErosionHa",
+                        "preLabel": "Area of land protected from erosion (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfErosionControlStructures",
+                        "preLabel": "Number of erosion control structures installed",
+                        "type": "number"
+                    }
+                ],
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Revegetating habitat<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "areaRevegetatedHa",
+                        "preLabel": "Area revegetated (km)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "areaRevegetationMaintenanceHa",
+                        "preLabel": "Area of revegetation maintenance / infill plantings (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "numberOfPlantsPlanted",
+                        "preLabel": "Number of plants planted",
+                        "type": "number"
+                    }
+                ],
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Managing fire regemes<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [{
+                        "source": "areaOfBurnHa",
+                        "preLabel": "Area of burn (Ha)",
+                        "type": "number"
+                    }],
+                    "type": "row"
+                },
+                {
+                    "source": "fireManagementDetails",
+                    "columns": [
+                        {
+                            "title": "Site",
+                            "source": "siteId",
+                            "type": "select2"
+                        },
+                        {
+                            "title": "Previous fire regime length (if known)",
+                            "source": "previousFireRegimeLengthKm",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Consulted with parks staff / indigenous communities?",
+                            "source": "consultedWithParksOrIndigenous",
+                            "type": "selectOne"
+                        },
+                        {
+                            "title": "Summary of consulting advice",
+                            "source": "summaryOfConsultingAdvice",
+                            "type": "textarea"
+                        },
+                        {
+                            "title": "Number of burns at this site",
+                            "source": "numberOfBurnsAtThisSite",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Area (Ha) returned to traditional burning patterns",
+                            "source": "areaReturnedToTraditionalBurningPatternHa",
+                            "type": "number"
+                        }
+                    ],
+                    "userAddedRows": true,
+                    "type": "table"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Protecting habitat by controlling access<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "reasonForControllingAccess",
+                            "preLabel": "Reason for controlling access",
+                            "type": "select2Many"
+                        },
+                        {
+                            "source": "typeOfStructure",
+                            "preLabel": "Type of structure",
+                            "type": "select2Many"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "numberOfAccessPointsManaged",
+                            "preLabel": "Number of access points managed",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaProtectedHa",
+                            "preLabel": "Area protected (Ha)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Habitat augmentation<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "numberOfFaunaMovementDevices",
+                            "preLabel": "Number of fauna movement devices installed",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfHabitatDevices",
+                            "preLabel": "Number of habitat devices installed",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaOfInfluenceOfHabitatDevices",
+                            "preLabel": "Area of influence of installed habitat devices (Ha)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "items": [
+                        {
+                            "source": "seedBankedKg",
+                            "preLabel": "Seed banked (kg)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfConservationAgreements",
+                            "preLabel": "Number of conservation agreements",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaUnderConservationAgreementHa",
+                            "preLabel": "Area under conservation agreement (Ha)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Establishing and maintaining feral free enclosures<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "areaOfEnclosureEstablishedHa",
+                            "preLabel": "Area of enclosure established (Ha)",
+                            "type": "number"
+                        },
+                        {
+                            "source": "numberOfHabitatDevices",
+                            "preLabel": "Number of habitat devices installed",
+                            "type": "number"
+                        },
+                        {
+                            "source": "areaOfInfluenceOfHabitatDevices",
+                            "preLabel": "Area of influence of installed habitat devices (Ha)",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "row"
+                },
+                {
+                    "dataType": "table",
+                    "title": "Pest animals observed in enclosure",
+                    "source": "pestAnimalsObserved",
+                    "columns": [
+                        {
+                            "title": "Species observed",
+                            "source": "speciesOfPestAnimalsDirectlyObserved",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Number observed",
+                            "source": "numberOfPestAnimalsDirectlyObserved",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Number controlled",
+                            "source": "numberOfPestAnimalsControlled",
+                            "type": "number"
+                        }
+                    ]
+                },
+                {
+                    "items": [{
+                        "source": "indirectEvidenceOfPestAnimalsObserved",
+                        "preLabel": "Indirect evidence of pest animals observed",
+                        "type": "selectOne"
+                    }],
+                    "type": "row"
+                },
+                {
+                    "title": "Species protected by the enclosure",
+                    "source": "speciesProtected",
+                    "columns": [
+                        {
+                            "title": "Species protected",
+                            "source": "speciesProtected",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Number protected",
+                            "source": "numberOfSpeciesProtected",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "table"
+                },
+                {
+                    "title": "Species introduced into the enclosure",
+                    "source": "speciesIntroduced",
+                    "columns": [
+                        {
+                            "title": "Species introduced",
+                            "source": "speciesIntroduced",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "title": "Number introduced",
+                            "source": "numberOfSpeciesIntroduced",
+                            "type": "number"
+                        },
+                        {
+                            "title": "Survival rate (%)",
+                            "source": "survivalRate",
+                            "type": "number"
+                        }
+                    ],
+                    "type": "table"
+                }
+            ],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Establishing and maintaining ex-situ breeding sites and/or populations<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "title": "Species bred and released",
+            "source": "speciesBredAndReleased",
+            "columns": [
+                {
+                    "title": "Species",
+                    "source": "speciesBredOrReleased",
+                    "type": "speciesSelect"
+                },
+                {
+                    "title": "Number successfully bread",
+                    "source": "numberOfAnimalsSuccessfullyBred",
+                    "type": "number"
+                },
+                {
+                    "title": "Number of animals released",
+                    "source": "numberOfAnimalsReleased",
+                    "type": "number"
+                },
+                {
+                    "title": "Survival rate of released species (%)",
+                    "source": "survivalRate",
+                    "type": "number"
+                },
+                {
+                    "title": "Estimated ages of survivors",
+                    "source": "estimatedAgesOfSurvivors",
+                    "type": "text"
+                },
+                {
+                    "title": "Release location",
+                    "source": "releaseLocation",
+                    "type": "text"
+                },
+                {
+                    "title": "Where did the founders come from?",
+                    "source": "whereDidFoundersComeFrom",
+                    "type": "textarea"
+                }
+            ],
+            "type": "table"
+        },
+        {
+            "items": [{
+                "source": "<h4>Managing diseases<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "totalAreaManagedForDiseaseHa",
+                        "preLabel": "Total area managed for disease (Ha)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "diseaseManagementDetails",
+                        "columns": [
+                            {
+                                "title": "Targetted disease / pathogen",
+                                "source": "targetedDisease",
+                                "type": "text"
+                            },
+                            {
+                                "title": "Affected species",
+                                "source": "targetSpecies",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "title": "Area affected by disease",
+                                "source": "areaAffectedByDisease",
+                                "type": "number"
+                            },
+                            {
+                                "title": "Affected site",
+                                "source": "areaAffectedByDisease",
+                                "type": "select2"
+                            }
+                        ],
+                        "type": "table"
+                    }
+                ],
+                "type": "row"
+            }],
+            "type": "section"
+        },
+        {
+            "items": [{
+                "source": "<h4>Fencing<\/h4>",
+                "computed": null,
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [{
+                "items": [
+                    {
+                        "source": "lengthOfFenceKm",
+                        "preLabel": "Length of fence (km)",
+                        "type": "number"
+                    },
+                    {
+                        "source": "areaProtectedByFence",
+                        "preLabel": "Area protected by fence (Ha)",
+                        "type": "number"
+                    }
+                ],
+                "type": "row"
+            }],
+            "type": "section"
+        }
+    ]
+}

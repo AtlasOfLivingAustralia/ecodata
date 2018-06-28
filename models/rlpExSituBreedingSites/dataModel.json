@@ -1,0 +1,85 @@
+{
+  "title": "Establishing ex-situ breeding program",
+  "modelName": "RLP - Establishing ex-situ breeding programs",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "breedingProgramDetails",
+      "columns": [
+        {
+          "dataType":"text",
+          "name":"breedingTechnique",
+          "description":"e.g. Seed bank or captive breeding",
+          "validate":"required"
+        },
+        {
+          "dataType": "species",
+          "description": "The threatened species targeted by the breeding program",
+          "name": "targetSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfIndividuals",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"programObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"numberOfIndividualsReleased",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "breedingProgramDetails",
+          "columns": [
+            {
+              "type":"text",
+              "source":"breedingTechnique",
+              "title":"Technique of ex situ breeding program",
+              "width":"20%"
+            },
+            {
+              "title": "Targeted threatened species",
+              "source": "targetSpecies",
+              "type": "speciesSelect",
+              "width":"30%"
+            },
+            {
+              "title":"Number of individuals in ex situ breeding program",
+              "source":"numberOfIndividuals",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Aim of ex situ breeding program (300 character limit)",
+              "source":"programObjective",
+              "type":"textarea",
+              "width":"30%"
+            },
+            {
+              "title":"Number of individuals released or established in the wild",
+              "source":"numberOfIndividualsReleased",
+              "type":"number",
+              "width":"10%"
+            },
+
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

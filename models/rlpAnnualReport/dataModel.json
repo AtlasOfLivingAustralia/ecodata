@@ -1,0 +1,196 @@
+{
+  "modelName": "RLP Annual Report",
+  "title":"Annual project report",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "keyAchievements",
+      "validate": "required,maxSize[1250]"
+    },
+
+    {
+      "name": "minimumAnnualTargetsMet",
+      "dataType": "text",
+      "description":"Annual minimum targets are outlined in the MERI plan",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "reasonsMinimumAnnualTargetsNotMet",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "minimumAnnualTargetsMet == \"No\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "weatherDisturbanceOccurred",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "weatherDisturbanceImpact",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "weatherDisturbanceOccurred == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "adaptiveManagementImplemented",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "adaptiveManagementActions",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "adaptiveManagementImplemented == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "whsIncidentsOccurred",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "name": "whsIncidentsDescription",
+      "dataType": "text",
+      "validate": "required",
+      "behaviour": [
+        {
+          "condition": "whsIncidentsOccurred == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    }
+  ],
+  "viewModel":[
+    {
+      "type":"row",
+      "items":[{
+        "preLabel":"1. Please outline the project's key achievements met within the past 12 months (1250 character, [approx. 250 word] limit)",
+        "source":"keyAchievements",
+        "type":"textarea",
+        "rows":4
+      }]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "minimumAnnualTargetsMet",
+          "preLabel": "2. Have all project minimum annual targets for projects services been met?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "rows":5,
+          "source": "reasonsMinimumAnnualTargetsNotMet",
+          "preLabel": "2. a) Please outline which minimum annual target services, and why they have not been met."
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "weatherDisturbanceOccurred",
+          "preLabel": "3. In the past 12 months, have any disturbances or weather events occurred on, or to, any of the project sites which may hinder the project's success?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "source": "weatherDisturbanceImpact",
+          "rows":4,
+          "preLabel": "3. a) Please describe these events and degree of impact they have had on or to the project sites (1250 character, [approx. 250 word] limit)"
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "adaptiveManagementImplemented",
+          "preLabel": "4. In the past 12 months, have any adaptive management actions been implemented to improve the project?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "rows":4,
+          "source": "adaptiveManagementActions",
+          "preLabel": "4. a) Please describe these adaptive management actions (1250 character [approx. 250 word] limit)."
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
+          "source": "whsIncidentsOccurred",
+          "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "rows":4,
+          "source": "whsIncidentsDescription",
+          "preLabel": "5. a) Please describe the project Workplace Health and Safety incidents"
+        }
+      ]
+
+    }
+  ]
+}

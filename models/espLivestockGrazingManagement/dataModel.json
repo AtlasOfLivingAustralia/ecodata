@@ -3,9 +3,27 @@
   "modelName": "ESP Livestock Grazing Management",
   "dataModel": [
     {
+      "dataType": "text",
+      "name": "multiplePaddocks",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
       "dataType": "list",
       "name": "grazingPeriods",
       "columns": [
+        {
+          "dataType": "number",
+          "behaviour": [
+            {
+              "condition": "multiplePaddocks == \"Yes\"",
+              "type": "enable"
+            }
+          ],
+          "name": "paddockNum"
+        },
         {
           "dataType": "date",
           "description": "",
@@ -261,24 +279,19 @@
               }
             ]
           }
+        },
+        {
+          "dataType": "number",
+          "name": "swardHeightCm",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "groundCoverPercent",
+          "validate": "min[0],max[100]"
         }
+
       ]
-    },
-    {
-      "dataType": "text",
-      "description": "",
-      "name": "foregoneProductionCost",
-      "constraints": [
-        "Yes",
-        "No"
-      ],
-      "validate": "required"
-    },
-    {
-      "dataType": "number",
-      "description": "",
-      "name": "foregoneProductionAmountEstimate",
-      "validate": "integer,min[0]"
     },
     {
       "dataType": "number",
@@ -287,19 +300,34 @@
     },
     {
       "dataType": "text",
-      "name": "notes",
-      "description": ""
+      "description": "",
+      "name": "notes"
     }
   ],
   "viewModel": [
     {
-      "type":"row",
-      "items":[
+      "items": [
         {
-          "type":"literal",
-          "source":"<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. "
+          "source": "<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. <br/><i>Please endeavour to record sward height and ground cover percentage after each grazing period.</i>",
+          "type": "literal"
         }
-      ]
+      ],
+      "type": "row"
+    },
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "multiplePaddocks",
+              "preLabel": "Is this site divided up into multiple paddocks?",
+              "type": "selectOne"
+            }
+          ],
+          "type": "col"
+        }
+      ],
+      "type": "row"
     },
     {
       "items": [
@@ -308,6 +336,11 @@
           "source": "grazingPeriods",
           "allowHeaderWrap": true,
           "columns": [
+            {
+              "title": "Paddock (if applicable)",
+              "source": "paddockNum",
+              "type": "number"
+            },
             {
               "title": "Start Date",
               "source": "startDate",
@@ -342,10 +375,20 @@
               "title": "Breed",
               "source": "breed",
               "type": "selectOne"
+            },
+            {
+              "title": "Sward Height (cm)",
+              "source": "swardHeightCm",
+              "type": "number"
+            },
+            {
+              "title": "Ground cover %",
+              "source": "groundCoverPercent",
+              "type": "number"
             }
           ],
           "userAddedRows": true,
-          "disableTableUpload":true,
+          "disableTableUpload": true,
           "type": "table"
         }
       ],
@@ -354,43 +397,22 @@
     {
       "items": [
         {
-          "source": "foregoneProductionCost",
-          "preLabel": "Did you experience any loss of production due to ESP grazing restrictions? (Yes / No)",
-          "type": "selectOne"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "items": [
-        {
-          "source": "foregoneProductionAmountEstimate",
-          "preLabel": "If you would like to record any forgone production costs please do so below. Please note that this is strictly voluntary.",
-          "type": "currency",
-          "validate": "min[0]"
-        }
-      ],
-      "type": "row"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "preLabel": "Total cost of management actions",
           "source": "cost",
+          "preLabel": "Total cost of management actions",
           "type": "currency"
         }
-      ]
+      ],
+      "type": "row"
     },
     {
-      "type": "row",
       "items": [
         {
-          "type": "textarea",
           "source": "notes",
-          "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:"
+          "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
+          "type": "textarea"
         }
-      ]
+      ],
+      "type": "row"
     }
   ]
 }

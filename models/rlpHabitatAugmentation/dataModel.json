@@ -1,0 +1,102 @@
+{
+  "title": "Habitat augmentation",
+  "modelName": "RLP - Habitat augmentation",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "habitatAugmentationDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "habitatAugmentationType",
+          "constraints": [
+            "Artificial fauna movement devices",
+            "Artificial nesting or roosting habitat",
+            "Environmental thinning",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherHabitatAugmentationType",
+          "description":"Please specify the habitat augmentation type if Other (specify in notes) was selected in the Type of habitat augmentation column.",
+          "behaviour":[
+            {
+              "condition": "habitatAugmentationType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"habitatAugmentationObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "habitatAugmentationDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where habitat augmentation was conducted",
+              "width":"20%"
+            },
+            {
+              "title": "Type of habitat augmentation",
+              "source": "habitatAugmentationType",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "title":"Type of habitat augmentation (if Other)",
+              "source":"otherHabitatAugmentationType",
+              "type":"text",
+              "width":"20%"
+            },
+            {
+              "title":"Purpose of habitat augmentation (300 character limit)",
+              "source":"habitatAugmentationObjective",
+              "type":"textarea",
+              "width":"40%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

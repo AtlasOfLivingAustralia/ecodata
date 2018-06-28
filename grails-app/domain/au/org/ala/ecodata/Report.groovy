@@ -15,7 +15,12 @@ class Report {
     public static final String REPORT_SUBMITTED = 'pendingApproval'
     public static final String REPORT_NOT_APPROVED = 'unpublished'
 
+    /**
+     *  An activity report is the one that is applied to all activities performed during the
+     *  reporting period.
+     */
     public static final String TYPE_ACTIVITY = 'Activity'
+
 
     public static class StatusChange {
         Date dateChanged
@@ -32,13 +37,30 @@ class Report {
 
     ObjectId id
 
+    /** UUID for this report */
     String reportId
-    String projectId
-    String organisationId
 
+    /** If this report is for a project, this identifies which project */
+    String projectId
+    /** If this report is for a organisation, this identifies which organisation */
+    String organisationId
+    /** If this report is for a program, this identifies which program */
+    String programId
     String name
     String description
-    String type // "Activity" for stage reporting, "Performance" for organisation performance self assessments
+    String type // "Activity" for stage/activity progress reporting, "Performance", "Administrative" for organisation performance self assessments
+    String category // Client classification for reports
+    /**
+     * For reports with an activityType specified, this field holds the id of the activity that contains the data for this report.
+     * It is unused for other report types.
+     */
+    String activityId
+    /**
+     * For type == REPORT_TYPE_SINGLE this field holds the type of activity that needs to be
+     * completed as a requirement for this report.
+     * It is unused for other report types.
+     */
+    String activityType
 
     Date fromDate
     Date toDate
@@ -156,6 +178,10 @@ class Report {
         return change
     }
 
+    public boolean isSingleActivityReport() {
+        return activityType != null
+    }
+
     static transients = ['due', 'overdue', 'current']
 
     static constraints = {
@@ -171,12 +197,17 @@ class Report {
         projectId nullable:true
         dueDate nullable:true
         organisationId nullable:true
+        programId nullable:true
         approvalDeltaInWeekdays nullable: true
         submissionDeltaInWeekdays nullable: true
         activityCount nullable: true
         data nullable: true
         progress nullable: true
         submissionDate nullable: true
+        activityId nullable: true
+        activityType nullable:true
+        type nullable:false
+        category nullable:true
     }
 
     static embedded = ['statusChangeHistory']

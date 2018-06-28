@@ -1,0 +1,101 @@
+{
+  "title": "Implementing fire management actions",
+  "modelName": "RLP - Fire management",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "fireManagementDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "fireManagementType",
+          "constraints": [
+            "Ecological burn",
+            "Hazard reduction burn",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherFireManagementType",
+          "description":"Please specify the fire management action if Other (specify in notes) was selected in the Type of fire management action column.",
+          "behaviour":[
+            {
+              "condition": "fireManagementType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"fireManagementObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "fireManagementDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where control was undertaken",
+              "width":"20%"
+            },
+            {
+              "title": "Type of fire management action",
+              "source": "fireManagementType",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "title":"Type of fire management action (if Other)",
+              "source":"otherFireManagementType",
+              "type":"text",
+              "width":"20%"
+            },
+            {
+              "title":"Fire management action objective (300 character limit)",
+              "source":"fireManagementObjective",
+              "type":"textarea",
+              "width":"40%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

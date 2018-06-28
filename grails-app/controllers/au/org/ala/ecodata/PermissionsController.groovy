@@ -207,6 +207,87 @@ class PermissionsController {
         }
     }
 
+    def addUserWithRoleToProgram(String userId, String programId, String role) {
+        Program program = Program.findByProgramId(programId)
+        Closure addToProgram = { String userId2, String role2, String programId2 ->
+            permissionService.addUserAsRoleToProgram(userId2, AccessLevel.valueOf(role2), programId2)}
+        Map result = validateAndUpdatePermission(program, programId, role, userId, addToProgram)
+        render status:result.status, text:result.text
+    }
+
+    def removeUserWithRoleFromProgram(String userId, String programId, String role) {
+        Program program = Program.findByProgramId(programId)
+        Closure removeFromProgram = { String userId2, String role2, String programId2 ->
+            permissionService.removeUserAsRoleFromProgram(userId2, AccessLevel.valueOf(role2), programId2)}
+        Map result = validateAndUpdatePermission(program, programId, role, userId, removeFromProgram)
+        render status:result.status, text:result.text
+    }
+
+    def addUserWithRoleToHub(String userId, String hubId, String role) {
+        Hub hub = Hub.findByHubId(hubId)
+        Closure addToHub= { String userId2, String role2, String hubId2 ->
+            permissionService.addUserAsRoleToHub(userId2, AccessLevel.valueOf(role2), hubId2)}
+        Map result = validateAndUpdatePermission(hub, hubId, role, userId, addToHub)
+        render status:result.status, text:result.text
+    }
+
+    def removeUserWithRoleFromHub(String userId, String hubId, String role) {
+        Hub hub = Hub.findByHubId(hubId)
+        Closure removeFromProgram = { String userId2, String role2, String hubId2 ->
+            permissionService.removeUserRoleFromHub(userId2, AccessLevel.valueOf(role2), hubId2)}
+        Map result = validateAndUpdatePermission(hub, hubId, role, userId, removeFromProgram)
+        render status:result.status, text:result.text
+    }
+
+    /**
+     * Returns the users and their roles for a hub.
+     * @param id the hubId of the hub.
+     * @return
+     */
+    def getMembersOfProgram(String id) {
+        if (!id) {
+            render status:400, text:'The id parameter must be supplied'
+        }
+        Integer max = params.max as Integer
+        Integer offset = params.offset as Integer
+        String sort = params.sort
+        String order = params.order
+        render permissionService.getMembersOfProgram(id, max, offset, order, sort) as JSON
+    }
+
+    private Map validateAndUpdatePermission(entity, String entityId, String role, String userId, Closure serviceCall) {
+        Map result = validate(entity, entityId, role, userId)
+
+        if (!result) {
+            result = serviceCall(userId, role, entityId)
+            if (result.status == "ok") {
+                result = [status:200 , text:"success: ${result.id}"]
+            } else {
+                result = [status: 500, text: "Error removing user/role: ${result}"]
+            }
+        }
+        result
+    }
+
+    private Map validate(entity, String entityId, String role, String userId) {
+        Map result
+        if (!entityId || !role || !userId) {
+            result = [status:400, text: 'Required params not provided: userId, role, id']
+        }
+        else if (!entity) {
+            result = [status:404, text: 'Not found']
+        }
+        else {
+            try {
+                AccessLevel.valueOf(role)
+            }
+            catch (Exception e) {
+                result = [status:400, text: 'Invalid role: '+role]
+            }
+        }
+        result
+    }
+
     /**
      * Delete a {@link UserDetails user}-{@link Organisation project}-{@link UserPermission role}
      * {@link UserPermission} object
@@ -564,6 +645,19 @@ class PermissionsController {
             render status: 400, text: "Required params not provided: userId"
         }
     }
+
+    def getUserRolesForUserId() {
+        String userId = params.id
+        if (userId) {
+            List<UserPermission> permissions = UserPermission.findAllByUserIdAndAccessLevelNotEqualAndStatusNotEqual(userId, AccessLevel.starred, DELETED, params)
+            Map result = [roles:permissions.collect { [entityId:it.entityId, entityType:it.entityType, role:it.accessLevel.name()] }]
+
+            render result as JSON
+        } else {
+            render status: 400, text: "Required params not provided: userId"
+        }
+    }
+
 
     /**
      * Get a list of {@link Project projects} with {@link AccessLevel#starred starred} level access

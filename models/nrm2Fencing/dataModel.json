@@ -1,0 +1,39 @@
+{
+  "title": "",
+  "modelName": "",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "lengthOfFenceKm",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaProtectedByFence",
+      "validate": "min[0]"
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "lengthOfFenceKm",
+              "preLabel": "Length of fence (km)",
+              "type": "number"
+            },
+            {
+              "source": "areaProtectedByFence",
+              "preLabel": "Area protected by fence (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

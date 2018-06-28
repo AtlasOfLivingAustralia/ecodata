@@ -10,6 +10,10 @@
           "type" : "string",
           "index" : "not_analyzed"
         },
+        "programId" : {
+          "type" : "string",
+          "index": "not_analyzed"
+        },
         "origin" : {
           "type" : "string",
           "index" : "not_analyzed"
@@ -152,6 +156,12 @@
             "externalId":{"type":"string"},
             "geoIndex": {
               "type": "geo_shape"
+            },
+            "name": {
+              "type" : "string",
+              "fields" : {
+                "siteNameFacet" : {"type" : "string", "index" : "not_analyzed"}
+              }
             }
           }
         },

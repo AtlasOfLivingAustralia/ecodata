@@ -1,0 +1,122 @@
+{
+  "title": "Debris removal",
+  "modelName": "RLP - Debris removal",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "description": "",
+      "name": "areaCoveredByDebrisRemovalHa",
+      "units":"ha",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "siteIds",
+      "validate": "required",
+      "constraints": {
+        "config": {
+          "source": {
+            "context-path": "project.sites"
+          },
+          "mapping": [
+            {
+              "target": "id",
+              "source-path": "siteId"
+            },
+            {
+              "target": "text",
+              "source-path": "name"
+            }
+          ]
+        },
+        "type": "pre-populated"
+      }
+    },
+    {
+      "dataType": "list",
+      "name": "debrisRemovalDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "debrisType",
+          "constraints": [
+            "Building & Industrial waste",
+            "Domestic waste",
+            "Green waste",
+            "Other"
+
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherDebrisType",
+          "description":"",
+          "behaviour":[
+            {
+              "condition": "debrisType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"weightOfDebrisTonnes",
+          "units":"tonnes",
+          "validated":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaCoveredByDebrisRemovalHa",
+              "preLabel": "Area (Ha) covered by debris removal",
+              "type": "number",
+              "css":"span3"
+            },
+            {
+              "type":"select2Many",
+              "source":"siteIds",
+              "preLabel":"Project sites where debris removal was implemented",
+              "css":"span9"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "debrisRemovalDetails",
+          "columns": [
+            {
+              "title": "Type of debris removed",
+              "source": "debrisType",
+              "type": "select2",
+              "width":"40%"
+            },
+            {
+              "title":"Type of debris removed (if other)",
+              "source":"otherDebrisType",
+              "type":"text",
+              "width":"40%"
+            },
+            {
+              "title":"Weight of debris removed (tonnes)",
+              "source":"weightOfDebrisTonnes",
+              "type":"number",
+              "width":"20%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

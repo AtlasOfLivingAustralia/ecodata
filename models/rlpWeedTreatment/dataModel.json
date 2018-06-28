@@ -1,0 +1,147 @@
+{
+  "title": "Removing weeds",
+  "modelName": "RLP - Weed management",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "weedSpeciesTreated",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "species",
+          "description": "Weed species targeted for treatment (start typing a  scientific or common name for a species)",
+          "name": "weedTargetSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "The primary method used to treat the patch of the target species",
+          "name": "treatmentMethod",
+          "constraints": [
+            "Fire",
+            "Moisture and nutrient control",
+            "Overplanting",
+            "Foliar spraying",
+            "Basal bark spraying",
+            "Stem injection",
+            "Cut stump",
+            "Cut and swab",
+            "Splatter gun",
+            "Stem scraper",
+            "Wick applicators",
+            "Slashing",
+            "Mowing",
+            "Dozing",
+            "Pushing",
+            "Felling",
+            "Hand pulling",
+            "Grubbing/chipping",
+            "Biological agents",
+            "Other"
+
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherTreatmentMethod",
+          "description":"Please specify the method of treatment used if Other (specify in notes) was selected in the Treatment Method column.",
+          "behaviour":[
+            {
+              "condition": "treatmentMethod == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"treatmentObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial treatment",
+            "Follow-up treatment"
+          ]
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "weedSpeciesTreated",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where control was undertaken",
+              "width":"15%"
+            },
+            {
+              "title": "Species treated",
+              "source": "weedTargetSpecies",
+              "type": "speciesSelect",
+              "width":"30%"
+            },
+            {
+              "title": "Treatment method",
+              "source": "treatmentMethod",
+              "type": "select2",
+              "width":"15%"
+            },
+            {
+              "title":"Treatment method (if other)",
+              "source":"otherTreatmentMethod",
+              "type":"text",
+              "width":"15%"
+            },
+            {
+              "title":"Treatment objective (300 character limit)",
+              "source":"treatmentObjective",
+              "type":"textarea",
+              "width":"15%"
+            },
+            {
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

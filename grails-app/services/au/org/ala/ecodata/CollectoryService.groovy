@@ -3,6 +3,10 @@ package au.org.ala.ecodata
 import grails.converters.JSON
 import org.codehaus.groovy.grails.commons.GrailsApplication
 
+import java.lang.reflect.UndeclaredThrowableException
+
+import static grails.async.Promises.task
+
 
 /** Provides an interface to the ALA Collectory web services */
 class CollectoryService {
@@ -12,6 +16,8 @@ class CollectoryService {
 
     WebService webService
     GrailsApplication grailsApplication
+    ProjectService projectService
+    EmailService emailService
 
     /** These are configuration options used by the Collectory to describe how to import data from MERIT / BioCollect */
     Map defaultConnectionParameters = [
@@ -149,7 +155,7 @@ class CollectoryService {
      * @param project the UPDATED project in ecodata.
      * @return void.
      */
-    def updateDataResource(Map project, Map changedProperties = null) {
+    def updateDataResource(Map project, Map changedProperties = null, Boolean forceUpdate = false) {
 
         if (!project.dataResourceId || project.dataResourceId == "null") {
            createDataResource(project)
@@ -159,14 +165,52 @@ class CollectoryService {
 
             Map properties = changedProperties ?: project
             Map collectoryAttributes = mapProjectAttributesToCollectoryDataResource(properties)
+            if (forceUpdate) {
+                collectoryAttributes.connectionParameters = collectoryConnectionParametersForProject(project, project.dataResourceId)
+            }
 
             // Only update if a property other than the "hiddenJSON" attribute has changed.
-            if (collectoryAttributes.size() > 1) {
+            if ((collectoryAttributes.size() > 1) || forceUpdate) {
                 Map result = webService.doPost(grailsApplication.config.collectory.baseURL + 'ws/dataResource/' + project.dataResourceId, collectoryAttributes)
                 if (result.error) {
                     log.error "Error updating collectory info for project ${projectId} - ${result.error}"
                 }
             }
+        }
+    }
+
+    def updateCollectoryEntryForProjects (Boolean isBiocollect) {
+        if (Boolean.valueOf(grailsApplication.config.collectory.collectoryIntegrationEnabled)) {
+            log.info("Collectory update started.")
+
+            Boolean isMERIT = !isBiocollect
+            Integer counter = 0;
+            Project.withNewSession {
+                Project.findAllByStatusAndIsMERITAndIsExternalAndDataResourceIdIsNotNull('active', isMERIT, false).each { Project object ->
+                    Map project = projectService.toMap(object, projectService.FLAT)
+                    if (project.dataResourceId != "null") {
+                            updateDataResource(project, null, true)
+                            counter ++
+                    }
+                }
+            }
+
+            log.info("Collectory update finished. Sent requests to updated collectory for ${counter} projects.")
+        }
+    }
+
+    def updateCollectoryEntryForBiocollectProjects () {
+        task {
+            updateCollectoryEntryForProjects(true);
+        }.onComplete {
+            log.info("Collectory update complete")
+        }.onError { Throwable error ->
+            if (error instanceof UndeclaredThrowableException) {
+                error = error.undeclaredThrowable
+            }
+            String message = error.message
+            log.error(message, error)
+            emailService.sendEmail(message, "Error: ${error.message}", [grailsApplication.config.ecodata.support.email.address])
         }
     }
 

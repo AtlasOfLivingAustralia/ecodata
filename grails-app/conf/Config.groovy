@@ -582,6 +582,8 @@ if (!authCheckKeyUrl) {
     authCheckKeyUrl = "https://m.ala.org.au/mobileauth/mobileKey/checkKey"
 }
 
+ecodata.documentation.exampleProjectUrl = 'http://ecodata-test.ala.org.au/ws/activitiesForProject/746cb3f2-1f76-3824-9e80-fa735ae5ff35'
+
 
 if (!grails.cache.ehcache) {
     grails {
@@ -828,6 +830,24 @@ facets.data = [
                 dataType: 'number',
                 helpText: 'Is species present or absent',
                 facetTermType: 'PresenceOrAbsence'
+        ],
+        [
+                name: "associatedProgramFacet",
+                title: 'Program Name',
+                dataType: 'text',
+                helpText: 'The administrative Program under which a project is being run.'
+        ],
+        [
+                name: "siteNameFacet",
+                title: 'Site Name',
+                dataType: 'text',
+                helpText: 'A site at which data has been collected for one or projects.'
+        ],
+        [
+                name: "associatedSubProgramFacet",
+                title: 'Sub Program',
+                dataType: 'text',
+                helpText: 'Titles of sub-programmes under listed programmes.'
         ]
 ]
 
@@ -1024,3 +1044,5 @@ facets.project = [
                 helpText: "The industries relevant to the project"
         ]
 ]
+
+license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"

@@ -1,822 +1,835 @@
 {
-  "title": "Threatened Species Recovery Team Reporting",
-  "modelName": "Threatened Species Recovery Team Reporting",
-  "dataModel": [
-    {
-      "dataType": "species",
-      "name": "threatenedSpecies",
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
-      "name": "ecologicalCommunity",
-      "validate": "required",
-      "constraints": [
-        "Alpine Sphagnum Bogs and Associated Fens",
-        "Aquatic Root Mat Community 1 in Caves of the Leeuwin Naturaliste Ridge",
-        "Aquatic Root Mat Community 2 in Caves of the Leeuwin Naturaliste Ridge",
-        "Aquatic Root Mat Community 3 in Caves of the Leeuwin Naturaliste Ridge",
-        "Aquatic Root Mat Community 4 in Caves of the Leeuwin Naturaliste Ridge",
-        "Aquatic Root Mat Community in Caves of the Swan Coastal Plain",
-        "Arnhem Plateau Sandstone Shrubland Complex",
-        "Assemblages of plants and invertebrate animals of tumulus (organic mound) springs of the Swan Coastal Plain",
-        "Blue Gum High Forest of the Sydney Basin Bioregion",
-        "Brigalow (Acacia harpophylla dominant and co-dominant)",
-        "Broad leaf tea-tree (Melaleuca viridiflora) woodlands in high rainfall coastal north Queensland",
-        "Buloke Woodlands of the Riverina and Murray-Darling Depression Bioregions",
-        "Castlereagh Scribbly Gum and Agnes Banks Woodlands of the Sydney Basin Bioregion",
-        "Central Hunter Valley eucalypt forest and woodland",
-        "Claypans of the Swan Coastal Plain",
-        "Coastal Upland Swamps in the Sydney Basin Bioregion",
-        "Cooks River/Castlereagh Ironbark Forest of the Sydney Basin Bioregion",
-        "Coolibah - Black Box Woodlands of the Darling Riverine Plains and the Brigalow Belt South Bioregions",
-        "Corymbia calophylla - Kingia australis woodlands on heavy soils of the Swan Coastal Plain",
-        "Corymbia calophylla - Xanthorrhoea preissii woodlands and shrublands of the Swan Coastal Plain",
-        "Cumberland Plain Shale Woodlands and Shale-Gravel Transition Forest",
-        "Eastern Stirling Range Montane Heath and Thicket",
-        "Eastern Suburbs Banksia Scrub of the Sydney Region",
-        "Eucalypt Woodlands of the Western Australian Wheatbelt",
-        "Eucalyptus ovata - Callitris oblonga Forest",
-        "Eyre Peninsula Blue Gum (Eucalyptus petiolaris) Woodland",
-        "Giant Kelp Marine Forests of South East Australia",
-        "Gippsland Red Gum (Eucalyptus tereticornis subsp. mediana) Grassy Woodland and Associated Native Grassland",
-        "Grassy Eucalypt Woodland of the Victorian Volcanic Plain",
-        "Grey Box (Eucalyptus microcarpa) Grassy Woodlands and Derived Native Grasslands of South-eastern Australia",
-        "Hunter Valley Weeping Myall (Acacia pendula) Woodland",
-        "Iron-grass Natural Temperate Grassland of South Australia",
-        "Kangaroo Island Narrow-leaved Mallee (Eucalyptus cneorifolia) Woodland",
-        "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia",
-        "Lowland Grassy Woodland in the South East Corner Bioregion",
-        "Lowland Native Grasslands of Tasmania",
-        "Lowland Rainforest of Subtropical Australia",
-        "Mabi Forest (Complex Notophyll Vine Forest 5b)",
-        "Monsoon vine thickets on the coastal sand dunes of Dampier Peninsula",
-        "Natural Damp Grassland of the Victorian Coastal Plains",
-        "Natural Grasslands of the Murray Valley Plains",
-        "Natural Grasslands of the Queensland Central Highlands and the northern Fitzroy Basin",
-        "Natural grasslands on basalt and fine-textured alluvial plains of northern New South Wales and southern Queensland",
-        "Natural Temperate Grassland of the South Eastern Highlands",
-        "Natural Temperate Grassland of the Victorian Volcanic Plain",
-        "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands",
-        "Peppermint Box (Eucalyptus odorata) Grassy Woodland of South Australia",
-        "Perched Wetlands of the Wheatbelt region with extensive stands of living sheoak and paperbark across the lake floor (Toolibin Lake)",
-        "Posidonia australis seagrass meadows of the Manning-Hawkesbury ecoregion",
-        "Proteaceae Dominated Kwongkan Shrublands of the Southeast Coastal Floristic Province of Western Australia",
-        "Scott River Ironstone Association",
-        "Seasonal Herbaceous Wetlands (Freshwater) of the Temperate Lowland Plains",
-        "Sedgelands in Holocene dune swales of the southern Swan Coastal Plain",
-        "Semi-evergreen vine thickets of the Brigalow Belt (North and South) and Nandewar Bioregions",
-        "Shale Sandstone Transition Forest of the Sydney Basin Bioregion",
-        "Shrublands and Woodlands of the eastern Swan Coastal Plain",
-        "Shrublands and Woodlands on Muchea Limestone of the Swan Coastal Plain",
-        "Shrublands and Woodlands on Perth to Gingin ironstone (Perth to Gingin ironstone association) of the Swan Coastal Plain",
-        "Shrublands on southern Swan Coastal Plain ironstones",
-        "Silurian Limestone Pomaderris Shrubland of the South East Corner and Australian Alps Bioregions",
-        "Southern Highlands Shale Forest and Woodland in the Sydney Basin Bioregion",
-        "Subtropical and Temperate Coastal Saltmarsh",
-        "Swamp Tea-tree (Melaleuca irbyana) Forest of South-east Queensland",
-        "Swamps of the Fleurieu Peninsula",
-        "Temperate Highland Peat Swamps on Sandstone",
-        "The community of native species dependent on natural discharge of groundwater from the Great Artesian Basin",
-        "Thrombolite (microbial) community of coastal freshwater lakes of the Swan Coastal Plain (Lake Richmond)",
-        "Thrombolite (microbialite) Community of a Coastal Brackish Lake (Lake Clifton)",
-        "Turpentine-Ironbark Forest in the Sydney Basin Bioregion",
-        "Upland Basalt Eucalypt Forests of the Sydney Basin Bioregion",
-        "Upland Wetlands of the New England Tablelands and the Monaro Plateau",
-        "Warkworth Sands Woodland of the Hunter Valley",
-        "Weeping Myall Woodlands",
-        "Western Sydney Dry Rainforest and Moist Woodland on Shale",
-        "White Box-Yellow Box-Blakely's Red Gum Grassy Woodland and Derived Native Grassland"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "recoveryTeam",
-      "validate": "required"
-    },
-    {
-      "dataType": "text",
-      "name": "conservationStatus",
-      "validate": "required",
-      "constraints": [
-        "Critically Endangered",
-        "Endangered",
-        "Vulnerable"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "recoveryPlanOrConservationAdvice",
-      "validate": "required",
-      "constraints": [
-        "Recovery Plan",
-        "Conservation Advice"
-      ]
-    },
-    {
-      "dataType": "image",
-      "name": "photo",
-      "validate": "required"
-    },
-    {
-      "dataType": "list",
-      "name": "overallObjectives",
-      "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "text",
-          "name": "objective",
-          "validate": "required"
+            "dataType": "species",
+            "name": "threatenedSpecies",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "ecologicalCommunity",
+            "constraints": [
+                "Alpine Sphagnum Bogs and Associated Fens",
+                "Aquatic Root Mat Community 1 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 2 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 3 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community 4 in Caves of the Leeuwin Naturaliste Ridge",
+                "Aquatic Root Mat Community in Caves of the Swan Coastal Plain",
+                "Arnhem Plateau Sandstone Shrubland Complex",
+                "Assemblages of plants and invertebrate animals of tumulus (organic mound) springs of the Swan Coastal Plain",
+                "Blue Gum High Forest of the Sydney Basin Bioregion",
+                "Brigalow (Acacia harpophylla dominant and co-dominant)",
+                "Broad leaf tea-tree (Melaleuca viridiflora) woodlands in high rainfall coastal north Queensland",
+                "Buloke Woodlands of the Riverina and Murray-Darling Depression Bioregions",
+                "Castlereagh Scribbly Gum and Agnes Banks Woodlands of the Sydney Basin Bioregion",
+                "Central Hunter Valley eucalypt forest and woodland",
+                "Claypans of the Swan Coastal Plain",
+                "Coastal Upland Swamps in the Sydney Basin Bioregion",
+                "Cooks River/Castlereagh Ironbark Forest of the Sydney Basin Bioregion",
+                "Coolibah - Black Box Woodlands of the Darling Riverine Plains and the Brigalow Belt South Bioregions",
+                "Corymbia calophylla - Kingia australis woodlands on heavy soils of the Swan Coastal Plain",
+                "Corymbia calophylla - Xanthorrhoea preissii woodlands and shrublands of the Swan Coastal Plain",
+                "Cumberland Plain Shale Woodlands and Shale-Gravel Transition Forest",
+                "Eastern Stirling Range Montane Heath and Thicket",
+                "Eastern Suburbs Banksia Scrub of the Sydney Region",
+                "Eucalypt Woodlands of the Western Australian Wheatbelt",
+                "Eucalyptus ovata - Callitris oblonga Forest",
+                "Eyre Peninsula Blue Gum (Eucalyptus petiolaris) Woodland",
+                "Giant Kelp Marine Forests of South East Australia",
+                "Gippsland Red Gum (Eucalyptus tereticornis subsp. mediana) Grassy Woodland and Associated Native Grassland",
+                "Grassy Eucalypt Woodland of the Victorian Volcanic Plain",
+                "Grey Box (Eucalyptus microcarpa) Grassy Woodlands and Derived Native Grasslands of South-eastern Australia",
+                "Hunter Valley Weeping Myall (Acacia pendula) Woodland",
+                "Iron-grass Natural Temperate Grassland of South Australia",
+                "Kangaroo Island Narrow-leaved Mallee (Eucalyptus cneorifolia) Woodland",
+                "Littoral Rainforest and Coastal Vine Thickets of Eastern Australia",
+                "Lowland Grassy Woodland in the South East Corner Bioregion",
+                "Lowland Native Grasslands of Tasmania",
+                "Lowland Rainforest of Subtropical Australia",
+                "Mabi Forest (Complex Notophyll Vine Forest 5b)",
+                "Monsoon vine thickets on the coastal sand dunes of Dampier Peninsula",
+                "Natural Damp Grassland of the Victorian Coastal Plains",
+                "Natural Grasslands of the Murray Valley Plains",
+                "Natural Grasslands of the Queensland Central Highlands and the northern Fitzroy Basin",
+                "Natural grasslands on basalt and fine-textured alluvial plains of northern New South Wales and southern Queensland",
+                "Natural Temperate Grassland of the South Eastern Highlands",
+                "Natural Temperate Grassland of the Victorian Volcanic Plain",
+                "New England Peppermint (Eucalyptus nova-anglica) Grassy Woodlands",
+                "Peppermint Box (Eucalyptus odorata) Grassy Woodland of South Australia",
+                "Perched Wetlands of the Wheatbelt region with extensive stands of living sheoak and paperbark across the lake floor (Toolibin Lake)",
+                "Posidonia australis seagrass meadows of the Manning-Hawkesbury ecoregion",
+                "Proteaceae Dominated Kwongkan Shrublands of the Southeast Coastal Floristic Province of Western Australia",
+                "Scott River Ironstone Association",
+                "Seasonal Herbaceous Wetlands (Freshwater) of the Temperate Lowland Plains",
+                "Sedgelands in Holocene dune swales of the southern Swan Coastal Plain",
+                "Semi-evergreen vine thickets of the Brigalow Belt (North and South) and Nandewar Bioregions",
+                "Shale Sandstone Transition Forest of the Sydney Basin Bioregion",
+                "Shrublands and Woodlands of the eastern Swan Coastal Plain",
+                "Shrublands and Woodlands on Muchea Limestone of the Swan Coastal Plain",
+                "Shrublands and Woodlands on Perth to Gingin ironstone (Perth to Gingin ironstone association) of the Swan Coastal Plain",
+                "Shrublands on southern Swan Coastal Plain ironstones",
+                "Silurian Limestone Pomaderris Shrubland of the South East Corner and Australian Alps Bioregions",
+                "Southern Highlands Shale Forest and Woodland in the Sydney Basin Bioregion",
+                "Subtropical and Temperate Coastal Saltmarsh",
+                "Swamp Tea-tree (Melaleuca irbyana) Forest of South-east Queensland",
+                "Swamps of the Fleurieu Peninsula",
+                "Temperate Highland Peat Swamps on Sandstone",
+                "The community of native species dependent on natural discharge of groundwater from the Great Artesian Basin",
+                "Thrombolite (microbial) community of coastal freshwater lakes of the Swan Coastal Plain (Lake Richmond)",
+                "Thrombolite (microbialite) Community of a Coastal Brackish Lake (Lake Clifton)",
+                "Turpentine-Ironbark Forest in the Sydney Basin Bioregion",
+                "Upland Basalt Eucalypt Forests of the Sydney Basin Bioregion",
+                "Upland Wetlands of the New England Tablelands and the Monaro Plateau",
+                "Warkworth Sands Woodland of the Hunter Valley",
+                "Weeping Myall Woodlands",
+                "Western Sydney Dry Rainforest and Moist Woodland on Shale",
+                "White Box-Yellow Box-Blakely's Red Gum Grassy Woodland and Derived Native Grassland"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recoveryTeam",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "conservationStatus",
+            "constraints": [
+                "Critically Endangered",
+                "Endangered",
+                "Vulnerable"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "recoveryPlanOrConservationAdvice",
+            "constraints": [
+                "Recovery Plan",
+                "Conservation Advice"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "image",
+            "name": "photo",
+            "validate": "required"
+        },
+        {
+            "dataType": "list",
+            "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+            "name": "overallObjectives",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "objective",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments"
+                },
+                {
+                    "dataType": "text",
+                    "name": "status",
+                    "constraints": [
+                        "Objective not achieved",
+                        "Objective partially achieved",
+                        "Objective achieved"
+                    ],
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report.",
+            "name": "condition",
+            "constraints": [
+                "Very poor",
+                "Poor",
+                "Good",
+                "Very good"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "conditionConfidence",
+            "constraints": [
+                "Evidence and consensus too low to make an assessment",
+                "Limited evidence or limited consensus",
+                "Adequate high-quality evidence and high consensus"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report.",
+            "name": "trajectory",
+            "constraints": [
+                "Improving",
+                "Deteriorating",
+                "Stable",
+                "Unclear"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "name": "trajectoryConfidence",
+            "constraints": [
+                "Evidence and consensus too low to make an assessment",
+                "Limited evidence or limited consensus",
+                "Adequate high-quality evidence and high consensus"
+            ],
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+            "name": "keyHighlights",
+            "validate": "required,max[2000]"
+        },
+        {
+            "dataType": "list",
+            "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
+            "name": "implementingActions",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "actions",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "outcomes",
+                    "validate": "required,max[2000]"
+                },
+                {
+                    "dataType": "stringList",
+                    "description": "The EPBC Act specifies that a recovery plan must identify organisations or persons who will be involved in evaluating the performance of the recovery plan",
+                    "name": "deliveryPartners",
+                    "constraints": [
+                        "Organisation 1",
+                        "Organisation 2"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "issues",
+                    "validate": "required,max[2000]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "investment",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "status",
+                    "constraints": [
+                        "No / little progress",
+                        "Some progress",
+                        "Action completed"
+                    ],
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "In a paragraph or dot points, summarise implementation of the actions (e.g. what worked or didn’t work, any impediments or catalysts, and any other issues encountered).",
+            "name": "actionsSummary",
+            "validate": "required,max[2000]"
+        },
+        {
+            "dataType": "list",
+            "name": "subObjectives",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "objective",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "The EPBC Act specifies that a recovery plan must state criteria against which achievement of the objectives is to be measured (e.g. a specified number and distribution of viable populations of a species or community, or the abatement of specific threats to a species or community). A recovery plan must identify the criteria against which achievement towards each objective can be assessed. Performance criteria enable measurement of progress towards meeting the objectives and should enable assessment of success or failure. Criteria must be clear and measurable, and each objective may have more than one criterion, but must have at least one.",
+                    "name": "recoveryCriteria",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "comments"
+                },
+                {
+                    "dataType": "text",
+                    "name": "status",
+                    "constraints": [
+                        "Objective not achieved",
+                        "Objective partially achieved",
+                        "Objective achieved"
+                    ],
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "In a paragraph or dot points, summarise the extent to which actions are contributing to the overall objective or progressing towards it. Include whether and to what extent the sub/objectives are being achieved and the contribution of actions to any achievements. Also state any reasons for the objectives not being achieved and/or the level of success not being measured",
+            "name": "objectivesSummary"
+        },
+        {
+            "defaultRows": [
+                {"category": "Abundance"},
+                {"category": "Distribution"},
+                {"category": "Habitat condition"},
+                {"category": "Threats"}
+            ],
+            "dataType": "list",
+            "name": "currentKnownState",
+            "columns": [
+                {
+                    "dataType": "text",
+                    "readOnly": true,
+                    "name": "category",
+                    "constraints": [
+                        "Abundance",
+                        "Distribution",
+                        "Habitat condition",
+                        "Threats"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "This applies only to the time the recovery plan was published, and only needs to be completed once in the first progress report. Include reference to measures that are relevant to assessing the species’ or ecological communities’ condition and trajectory (e.g. abundance, distribution, habitat condition, threats). Refer to the recovery plan and/or listing assessment. Please note where data are stored or published",
+                    "name": "initialCondition",
+                    "constraints": [
+                        "Very poor",
+                        "Poor",
+                        "Good",
+                        "Very good"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "This applies only to the time the recovery plan was published, and only needs to be completed once in the first progress report. Include reference to measures that are relevant to assessing the species’ or ecological communities’ condition and trajectory (e.g. abundance, distribution, habitat condition, threats). Refer to the recovery plan and/or listing assessment. Please note where data are stored or published",
+                    "name": "initialConditionDescription",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Reference any changes from initial condition, new information etc. Include only information that will be significant in informing the assessment of the current state/condition of the species or ecological community. Include notes on where data are stored or published.",
+                    "name": "currentCondition",
+                    "constraints": [
+                        "Very poor",
+                        "Poor",
+                        "Good",
+                        "Very good"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "description": "Reference any changes from initial condition, new information etc. Include only information that will be significant in informing the assessment of the current state/condition of the species or ecological community. Include notes on where data are stored or published.",
+                    "name": "currentConditionDescription",
+                    "validate": "required"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "description": "Identify any monitoring programs in place and any assessment of condition/trajectory over the reporting period. Please note where the information is stored and whether it is publicly accessible",
+            "name": "relevantMonitoringData",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Short statement of any changes/trends, etc. For example, the population has remained stable or population x has shown an increase in the number of mature individuals etc. This information should form the basis for completing the ‘summary assessment of progress’ (part 4).",
+            "name": "currentStateAndTrajectoryOverview",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Summary paragraph/dot points –provide an overall summary of the above evaluation and reasons for your conservation assessment. Consider, for example, if there were any advances in knowledge/ data, any knowledge/data gaps, or a change in the impact of threats. Were any data available from a monitoring program that informed the assessment? How effective has the implementation of the recovery plan been in influencing recovery?",
+            "name": "currentStateSummary",
+            "validate": "required"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide a brief overview of the operation of the recovery team over the past year, for example: (1) how many times you met, (2) whether there were any community based activities initiated by the team that raised the profile of the species or ecological community, or (3) whether there were any achievements/challenges for the reporting period. Provide a brief assessment of how the recovery team has been influential in driving the effective implementation of the recovery plan. Identify if there have been any unexpected developments which may influence the future course of action or which require urgent review of the recovery plan.",
+            "name": "recoveryTeamSupport"
+        },
+        {
+            "dataType": "text",
+            "description": "Does the report: (1) necessitate a review of the recovery plan or changes to future planned activities, or (2) propose changes to actions or objectives?Are there any potential opportunities for the coming year e.g. funding opportunities?",
+            "name": "futureCourseOfAction"
+        },
+        {
+            "dataType": "text",
+            "description": "Provide any other information (or web links) that: (1) support the conservation assessment, e.g. publications, reports, monitoring program and/or data; and/or (2) promote the work of the recovery team and successes to date e.g. photos, websites, media stories.",
+            "name": "informationSources"
+        }
+    ],
+    "modelName": "Threatened Species Recovery Team Reporting",
+    "title": "Threatened Species Recovery Team Reporting",
+    "viewModel": [
+        {
+            "items": [{
+                "source": "<h4>Purpose<\/h4><p>Monitoring, evaluation and reporting is an important part of any recovery effort. Regular monitoring and assessment of the progress of a recovery program provides clarity on whether investments are improving the status of threatened species and ecological communities. It also enables adaptive management, so that we can adjust our efforts accordingly. Recovery teams have an important leadership role in communicating the effectiveness of recovery programs.<\/p><p>A national reporting framework has been established for recovery teams to report on their progress in achieving the objectives of a recovery plan. Consistent reporting across nationally registered recovery teams will progressively build a national snapshot of species conservation efforts over time. Annual progress reporting will allow teams to build a story on how the species is tracking which will feed into the more comprehensive five-year review of recovery plans and conservation advices.  Information from this reporting will also inform other national reporting such as the State of the Environment and in reporting progress against Australia’s international obligations such as the Convention on Biological Diversity. Recovery team reports are to be published on the Department’s website. Please note that the terms recovery plan and conservation advice are considered interchangeable terms in this document.<\/p><h4>Guidance<\/h4><p>This on -line report is designed to be populated by a recovery team or equivalent governance group overseeing the implementation of a recovery plan. The report is comprised of three main sections describing progress in:<ol><li>Implementing actions; <\/li><li>meeting objectives; and <\/li><li>tracking changes in condition and conservation trajectory, andthen to finalise the report a summary (snapshot) of the overall health of the threatened species or ecological community is completed to align with the State of the Environment reporting framework.<\/li><\/ol><p>The report is structured so that each section builds towards an assessment of the current state of the species/ecological community (termed ‘condition’ in this report) and its conservation trajectory. The report provides the opportunity to briefly identify key recovery team activities and proposed activities in the coming year/s. Reporting should also highlight any issues or difficulties encountered in the plan’s implementation.<\/p><p>It is important to report all results, whether positive or negative and to what extent actions have been implemented and what (if any) impediments there have been to implementing the actions or meeting the objectives of the recovery plan. This can guide future recovery priorities and facilitate the identification of opportunities for reassessing the approaches taken and future investment in action. As part of the adaptive management cycle, regular ongoing reviews will help indicate whether the recovery actions remain appropriate for achieving the objectives or whether a different approach is needed.<\/p><p>It is intended that the first report be the foundation for subsequent reports. Much of the information can be added in the first year, while subsequent years will provide the opportunity to update the report, adding information and actions progressed in that reporting period. It is intended that the progress report will be completed annually for the first four years of the life of the recovery plan and then in the fifth year the statutory five year recovery plan review will be completed.<\/p><p>It is acknowledged that some recovery plans cover multiple species and that the objectives/actions target multiple species. These should be collectively reported on as identified in the recovery plan, but it is desirable that the assessment of conservation trajectory be undertaken for each individual species or ecological community.<\/p><p>Reporting should be completed on or close to the anniversary date of when the recovery plan was first published.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "items": [
+                {
+                    "items": [
+                        {
+                            "source": "threatenedSpecies",
+                            "preLabel": "Scientific name of threatened species",
+                            "type": "speciesSelect"
+                        },
+                        {
+                            "source": "ecologicalCommunity",
+                            "preLabel": "Ecological community",
+                            "type": "select2"
+                        },
+                        {
+                            "source": "recoveryTeam",
+                            "preLabel": "Recovery team",
+                            "type": "text"
+                        },
+                        {
+                            "source": "conservationStatus",
+                            "preLabel": "Conservation status under EPBC Act Advice",
+                            "type": "selectOne"
+                        },
+                        {
+                            "source": "recoveryPlanOrConservationAdvice",
+                            "preLabel": "Indicate whether using a Recovery Plan or Conservation Advice",
+                            "type": "selectOne"
+                        }
+                    ],
+                    "type": "col"
+                },
+                {
+                    "items": [{
+                        "source": "photo",
+                        "preLabel": "Please attach a representative image of the species or ecological community",
+                        "type": "image",
+                        "displayOptions": {
+                            "disableDragDrop": true
 
+                        }
+                    }],
+                    "type": "col"
+                }
+            ],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "comments"
+            "items": [{
+                "source": "<h4>Objectives<\/h4> In the table below, please enter one or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: <ul><li>to reduce the impact of threatening processes and prevent further decline of the species<\/li><li>to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and <\/li><li>to ensure that threatening processes do not impact on the ongoing viability of the [species name].<\/li><\/ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria.",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "status",
-          "validate": "required",
-          "constraints": [
-            "Objective not achieved",
-            "Objective partially achieved",
-            "Objective achieved"
-          ]
-        }
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "condition",
-      "validate": "required",
-      "description": "Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report.",
-      "constraints": [
-        "Very poor",
-        "Poor",
-        "Good",
-        "Very good"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "conditionConfidence",
-      "validate": "required",
-      "constraints": [
-        "Evidence and consensus too low to make an assessment",
-        "Limited evidence or limited consensus",
-        "Adequate high-quality evidence and high consensus"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "trajectory",
-      "validate": "required",
-      "constraints": [
-        "Improving",
-        "Deteriorating",
-        "Stable",
-        "Unclear"
-      ],
-      "description": "Refer to Conservation assessment criteria found at XXXX to grade the state/ condition of the species/ecological community in terms of the prospects for long term survival in the wild; the conservation trajectory of the entity in terms of whether it is improving, deteriorating, or stable; and your confidence in these estimates based on available data and the consensus of experts. This assessment should be undertaken following completion of the report."
-    },
-    {
-      "dataType": "text",
-      "name": "trajectoryConfidence",
-      "validate": "required",
-      "constraints": [
-        "Evidence and consensus too low to make an assessment",
-        "Limited evidence or limited consensus",
-        "Adequate high-quality evidence and high consensus"
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "keyHighlights",
-      "validate": "required,max[2000]",
-      "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan."
-    },
-    {
-      "dataType": "list",
-      "name": "implementingActions",
-      "description": "What were the overall achievements/challenges for the reporting period. Provide a snapshot of the current state/condition of the species/ecological community and the reasons for the identified trends i.e. increased effort in threat abatement in a particular area, emergence of new threats (disease etc.) Comment on any progress towards achieving the objectives of the plan.",
-      "columns": [
-        {
-          "dataType": "text",
-          "name": "actions",
-          "validate": "required"
+            "source": "overallObjectives",
+            "columns": [
+                {
+                    "title": "Overall objective",
+                    "source": "objective",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Comments",
+                    "source": "comments",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Status",
+                    "source": "status",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
         },
         {
-          "dataType": "text",
-          "name": "outcomes",
-          "validate": "required,max[2000]"
+            "items": [{
+                "source": "<h3>1. Implementing Actions<\/h3>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "stringList",
-          "description": "The EPBC Act specifies that a recovery plan must identify organisations or persons who will be involved in evaluating the performance of the recovery plan",
-          "name": "deliveryPartners",
-          "constraints": [
-            "Organisation 1",
-            "Organisation 2"
-          ],
-          "validate":"required"
-
+            "items": [{
+                "source": "List the actions as identified in the recovery plan. Against each action describe briefly the extent to which it was implemented including activities undertaken and any achievements or outcomes. Identify any issues or impediments to implementation. Where known, include the investment in actions to date and identify the contributors to implementing actions. Identify any additional actions that were undertaken that are not in the current recovery plan and provide a rationale for their inclusion. Assign the appropriate status term for each action.",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "issues",
-          "validate": "required,max[2000]"
+            "items": [{
+                "source": "Actions to enable assessment of each criterion must be included in the plan. For example, the action of monitoring population size will allow assessment of population changes and decline rates.",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "number",
-          "name": "investment",
-          "validate": "min[0]"
+            "source": "implementingActions",
+            "columns": [
+                {
+                    "title": "Actions",
+                    "source": "actions",
+                    "width": "20%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Activities / achievements / outcomes",
+                    "source": "outcomes",
+                    "width": "20%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Contributors",
+                    "source": "deliveryPartners",
+                    "width": "20%",
+                    "type": "select2Many"
+                },
+                {
+                    "title": "Issues (e.g. impediments that constrained implementation)",
+                    "name": "issues",
+                    "width": "20%",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Investment ($)",
+                    "source": "investment",
+                    "width": "10%",
+                    "type": "currency"
+                },
+                {
+                    "title": "Status",
+                    "source": "status",
+                    "width": "10%",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
         },
         {
-          "dataType": "text",
-          "name": "status",
-          "validate": "required",
-          "constraints": [
-            "No / little progress",
-            "Some progress",
-            "Action completed"
-          ]
-        }
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "actionsSummary",
-      "validate": "required,max[2000]",
-      "description": "In a paragraph or dot points, summarise implementation of the actions (e.g. what worked or didn’t work, any impediments or catalysts, and any other issues encountered)."
-    },
-    {
-      "dataType": "list",
-      "name": "subObjectives",
-      "columns": [
-        {
-          "dataType": "text",
-          "name": "objective",
-          "validate": "required"
+            "items": [{
+                "source": "actionsSummary",
+                "preLabel": "Summary",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "recoveryCriteria",
-          "validate": "required",
-          "description":"The EPBC Act specifies that a recovery plan must state criteria against which achievement of the objectives is to be measured (e.g. a specified number and distribution of viable populations of a species or community, or the abatement of specific threats to a species or community). A recovery plan must identify the criteria against which achievement towards each objective can be assessed. Performance criteria enable measurement of progress towards meeting the objectives and should enable assessment of success or failure. Criteria must be clear and measurable, and each objective may have more than one criterion, but must have at least one."
+            "items": [{
+                "source": "<h3>2. Meeting Objectives<\/h3>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "comments"
+            "items": [{
+                "source": "List the sub-objectives and recovery criteria    as identified in the recovery plan. Use the recovery criteria or other measures to assess the extent to which the objectives were achieved, the contribution of actions to any achievements, and any known reasons for objectives not being achieved and/or the level of success not being measured (including, if relevant, the appropriateness of the original sub-objectives and criteria). Assign the appropriate status term for each sub-objective",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "status",
-          "validate": "required",
-          "constraints": [
-            "Objective not achieved",
-            "Objective partially achieved",
-            "Objective achieved"
-          ]
-        }
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "objectivesSummary",
-      "description": "In a paragraph or dot points, summarise the extent to which actions are contributing to the overall objective or progressing towards it. Include whether and to what extent the sub/objectives are being achieved and the contribution of actions to any achievements. Also state any reasons for the objectives not being achieved and/or the level of success not being measured"
-    },
-    {
-      "dataType": "list",
-      "name": "currentKnownState",
-      "columns": [
-        {
-          "dataType": "text",
-          "name": "category",
-          "validate": "required",
-          "constraints": [
-            "Abundance",
-            "Distribution",
-            "Habitat condition",
-            "Threats"
-          ],
-          "readOnly": true
+            "source": "subObjectives",
+            "columns": [
+                {
+                    "title": "Sub-objective",
+                    "source": "objective",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Recovery criteria/ion",
+                    "source": "recoveryCriteria",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Comments",
+                    "source": "comments",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Status",
+                    "source": "status",
+                    "type": "selectOne"
+                }
+            ],
+            "userAddedRows": true,
+            "type": "table"
         },
         {
-          "dataType": "text",
-          "name": "initialCondition",
-          "validate": "required",
-          "constraints": [
-            "Very poor",
-            "Poor",
-            "Good",
-            "Very good"
-          ],
-          "description":"This applies only to the time the recovery plan was published, and only needs to be completed once in the first progress report. Include reference to measures that are relevant to assessing the species’ or ecological communities’ condition and trajectory (e.g. abundance, distribution, habitat condition, threats). Refer to the recovery plan and/or listing assessment. Please note where data are stored or published"
+            "items": [{
+                "source": "objectivesSummary",
+                "preLabel": "Summary",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "initialConditionDescription",
-          "validate": "required",
-          "description":"This applies only to the time the recovery plan was published, and only needs to be completed once in the first progress report. Include reference to measures that are relevant to assessing the species’ or ecological communities’ condition and trajectory (e.g. abundance, distribution, habitat condition, threats). Refer to the recovery plan and/or listing assessment. Please note where data are stored or published"
-        },
-
-        {
-          "dataType": "text",
-          "name": "currentCondition",
-          "validate": "required",
-          "constraints": [
-            "Very poor",
-            "Poor",
-            "Good",
-            "Very good"
-          ],
-          "description":"Reference any changes from initial condition, new information etc. Include only information that will be significant in informing the assessment of the current state/condition of the species or ecological community. Include notes on where data are stored or published."
+            "items": [{
+                "source": "keyHighlights",
+                "preLabel": "Key highlights",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "dataType": "text",
-          "name": "currentConditionDescription",
-          "validate":"required",
-          "description":"Reference any changes from initial condition, new information etc. Include only information that will be significant in informing the assessment of the current state/condition of the species or ecological community. Include notes on where data are stored or published."
-        }
-      ],
-      "defaultRows": [
-        {
-          "category": "Abundance"
+            "items": [{
+                "source": "<h3>3. Tracking changes in the state / condition and conservation trajectory<\/h3>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "category": "Distribution"
+            "items": [{
+                "source": "This field considers what has been learned over the life of the report. It considers the condition and trajectory of the species when the recovery plan was first approved, the present condition and trajectory, and the extent to which the plan influenced any change in the condition or trajectory.",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "category": "Habitat condition"
+            "items": [{
+                "source": "<b><i>Please delete the rows that are not applicable<\/i><\/b>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "category": "Threats"
-        }
-      ]
-    },
-    {
-      "dataType": "text",
-      "name": "relevantMonitoringData",
-      "validate": "required",
-      "description":"Identify any monitoring programs in place and any assessment of condition/trajectory over the reporting period. Please note where the information is stored and whether it is publicly accessible"
-    },
-    {
-      "dataType": "text",
-      "name": "currentStateAndTrajectoryOverview",
-      "validate": "required",
-      "description": "Short statement of any changes/trends, etc. For example, the population has remained stable or population x has shown an increase in the number of mature individuals etc. This information should form the basis for completing the ‘summary assessment of progress’ (part 4)."
-    },
-    {
-      "dataType": "text",
-      "name": "currentStateSummary",
-      "validate": "required",
-      "description": "Summary paragraph/dot points –provide an overall summary of the above evaluation and reasons for your conservation assessment. Consider, for example, if there were any advances in knowledge/ data, any knowledge/data gaps, or a change in the impact of threats. Were any data available from a monitoring program that informed the assessment? How effective has the implementation of the recovery plan been in influencing recovery?"
-    },
-    {
-      "dataType": "text",
-      "name": "recoveryTeamSupport",
-      "description": "Provide a brief overview of the operation of the recovery team over the past year, for example: (1) how many times you met, (2) whether there were any community based activities initiated by the team that raised the profile of the species or ecological community, or (3) whether there were any achievements/challenges for the reporting period. Provide a brief assessment of how the recovery team has been influential in driving the effective implementation of the recovery plan. Identify if there have been any unexpected developments which may influence the future course of action or which require urgent review of the recovery plan."
-    },
-    {
-      "dataType": "text",
-      "name": "futureCourseOfAction",
-      "description": "Does the report: (1) necessitate a review of the recovery plan or changes to future planned activities, or (2) propose changes to actions or objectives?Are there any potential opportunities for the coming year e.g. funding opportunities?"
-    },
-    {
-      "dataType": "text",
-      "name": "informationSources",
-      "description": "Provide any other information (or web links) that: (1) support the conservation assessment, e.g. publications, reports, monitoring program and/or data; and/or (2) promote the work of the recovery team and successes to date e.g. photos, websites, media stories."
-    }
-  ],
-  "viewModel": [
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h4>Purpose</h4><p>Monitoring, evaluation and reporting is an important part of any recovery effort. Regular monitoring and assessment of the progress of a recovery program provides clarity on whether investments are improving the status of threatened species and ecological communities. It also enables adaptive management, so that we can adjust our efforts accordingly. Recovery teams have an important leadership role in communicating the effectiveness of recovery programs.</p><p>A national reporting framework has been established for recovery teams to report on their progress in achieving the objectives of a recovery plan. Consistent reporting across nationally registered recovery teams will progressively build a national snapshot of species conservation efforts over time. Annual progress reporting will allow teams to build a story on how the species is tracking which will feed into the more comprehensive five-year review of recovery plans and conservation advices.  Information from this reporting will also inform other national reporting such as the State of the Environment and in reporting progress against Australia’s international obligations such as the Convention on Biological Diversity. Recovery team reports are to be published on the Department’s website. Please note that the terms recovery plan and conservation advice are considered interchangeable terms in this document.</p><h4>Guidance</h4><p>This on -line report is designed to be populated by a recovery team or equivalent governance group overseeing the implementation of a recovery plan. The report is comprised of three main sections describing progress in:<ol><li>Implementing actions; </li><li>meeting objectives; and </li><li>tracking changes in condition and conservation trajectory, andthen to finalise the report a summary (snapshot) of the overall health of the threatened species or ecological community is completed to align with the State of the Environment reporting framework.</li></ol><p>The report is structured so that each section builds towards an assessment of the current state of the species/ecological community (termed ‘condition’ in this report) and its conservation trajectory. The report provides the opportunity to briefly identify key recovery team activities and proposed activities in the coming year/s. Reporting should also highlight any issues or difficulties encountered in the plan’s implementation.</p><p>It is important to report all results, whether positive or negative and to what extent actions have been implemented and what (if any) impediments there have been to implementing the actions or meeting the objectives of the recovery plan. This can guide future recovery priorities and facilitate the identification of opportunities for reassessing the approaches taken and future investment in action. As part of the adaptive management cycle, regular ongoing reviews will help indicate whether the recovery actions remain appropriate for achieving the objectives or whether a different approach is needed.</p><p>It is intended that the first report be the foundation for subsequent reports. Much of the information can be added in the first year, while subsequent years will provide the opportunity to update the report, adding information and actions progressed in that reporting period. It is intended that the progress report will be completed annually for the first four years of the life of the recovery plan and then in the fifth year the statutory five year recovery plan review will be completed.</p><p>It is acknowledged that some recovery plans cover multiple species and that the objectives/actions target multiple species. These should be collectively reported on as identified in the recovery plan, but it is desirable that the assessment of conservation trajectory be undertaken for each individual species or ecological community.</p><p>Reporting should be completed on or close to the anniversary date of when the recovery plan was first published.</p>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "col",
-          "items": [
-            {
-              "type": "speciesSelect",
-              "source": "threatenedSpecies",
-              "preLabel": "Scientific name of threatened species"
-            },
-            {
-              "type": "select2",
-              "source": "ecologicalCommunity",
-              "preLabel": "Ecological community"
-            },
-            {
-              "type": "text",
-              "source": "recoveryTeam",
-              "preLabel": "Recovery team"
-            },
-            {
-              "type": "selectOne",
-              "source": "conservationStatus",
-              "preLabel": "Conservation status under EPBC Act Advice"
-            },
-            {
-              "type": "selectOne",
-              "source": "recoveryPlanOrConservationAdvice",
-              "preLabel": "Indicate whether using a Recovery Plan or Conservation Advice"
-            }
-          ]
+            "source": "currentKnownState",
+            "columns": [
+                {
+                    "title": "Category",
+                    "readOnly": true,
+                    "source": "category",
+                    "type": "text"
+                },
+                {
+                    "title": "Initial condition",
+                    "source": "initialCondition",
+                    "type": "select2",
+                    "displayOptions": {"constraintIcons": {
+                        "Good": {
+                            "style": {"color": "blue"},
+                            "class": "fa fa-square"
+                        },
+                        "Very good": {
+                            "style": {"color": "green"},
+                            "class": "fa fa-square"
+                        },
+                        "Very poor": {
+                            "style": {"color": "red"},
+                            "class": "fa fa-square"
+                        },
+                        "Poor": {
+                            "style": {"color": "orange"},
+                            "class": "fa fa-square"
+                        }
+                    }}
+                },
+                {
+                    "title": "Description of initial condition",
+                    "source": "initialConditionDescription",
+                    "type": "textarea"
+                },
+                {
+                    "title": "Current known state",
+                    "source": "currentCondition",
+                    "constraintIcons": {
+                        "Good": {
+                            "style": {"color": "blue"},
+                            "class": "fa fa-square"
+                        },
+                        "Very good": {
+                            "style": {"color": "green"},
+                            "class": "fa fa-square"
+                        },
+                        "Very poor": {
+                            "style": {"color": "red"},
+                            "class": "fa fa-square"
+                        },
+                        "Poor": {
+                            "style": {"color": "orange"},
+                            "class": "fa fa-square"
+                        }
+                    },
+                    "type": "select2"
+                },
+                {
+                    "title": "Description of current condition",
+                    "source": "currentConditionDescription",
+                    "type": "textarea"
+                }
+            ],
+            "type": "table"
         },
         {
-          "type": "col",
-          "items": [
-            {
-              "type": "image",
-              "source": "photo",
-              "preLabel": "Please attach a representative image of the species or ecological community"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h4>Objectives</h4> In the table below, please enter one or two overarching statement(s) relating to recovery of the species or ecological community over the long term. For example: <ul><li>to reduce the impact of threatening processes and prevent further decline of the species</li><li>to improve the population status, leading to future removal of the [species name] from the threatened species list of the EPBC Act; and </li><li>to ensure that threatening processes do not impact on the ongoing viability of the [species name].</li></ul>The overall objective should remain unchanged after filling in at the start of the reporting cycle, and guide the  sub-objectives and recovery criteria."
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "source": "overallObjectives",
-      "columns": [
-        {
-          "type": "textarea",
-          "source": "objective",
-          "title": "Overall objective"
+            "items": [{
+                "source": "relevantMonitoringData",
+                "preLabel": "Relevant monitoring data",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "source": "comments",
-          "title": "Comments"
+            "items": [{
+                "source": "currentStateAndTrajectoryOverview",
+                "preLabel": "What is the current state/condition and conservation trajectory?",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "type": "selectOne",
-          "source": "status",
-          "title": "Status"
-        }
-      ],
-      "userAddedRows": true
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h3>1. Implementing Actions</h3>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "List the actions as identified in the recovery plan. Against each action describe briefly the extent to which it was implemented including activities undertaken and any achievements or outcomes. Identify any issues or impediments to implementation. Where known, include the investment in actions to date and identify the contributors to implementing actions. Identify any additional actions that were undertaken that are not in the current recovery plan and provide a rationale for their inclusion. Assign the appropriate status term for each action."
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "Actions to enable assessment of each criterion must be included in the plan. For example, the action of monitoring population size will allow assessment of population changes and decline rates."
-
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "source": "implementingActions",
-      "columns": [
-        {
-          "type": "textarea",
-          "source": "actions",
-          "title": "Actions",
-          "width":"20%"
+            "items": [{
+                "source": "currentStateSummary",
+                "preLabel": "Summary",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "source": "outcomes",
-          "title": "Activities / achievements / outcomes",
-          "width":"20%"
+            "items": [{
+                "source": "<h3>4. Summary Assessment of Progress<\/h3>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "select2Many",
-          "title": "Contributors",
-          "source": "deliveryPartners",
-          "width":"20%"
+            "items": [{
+                "source": "<p>The format for reporting on ‘current condition’ and ‘current trajectory’ of threatened species and ecological communities follows the assessment summaries presented in the Australia State of the Environment 2011 and 2016 reports. Like those reports, this ‘Summary assessment of progress’ comprises a short synopsis and graphical representation of the key results of the assessments, providing an at-a-glance view of the current conservation status.<\/p><p>The measures used to assess condition and trajectory should be those relating to the EPBC Act listing criteria for species and ecological communities, facilitating any future reassessment. Importantly, the measures used must be consistent over the reporting period. The Guidelines for using the IUCN Red List Categories and Criteria should also be consulted when considering appropriate measures for particular taxa and the available evidence.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "name": "issues",
-          "title": "Issues (e.g. impediments that constrained implementation)",
-          "width":"20%"
+            "items": [{
+                "items": [
+                    {
+                        "source": "condition",
+                        "preLabel": "Current condition",
+                        "type": "select2",
+                        "displayOptions": {"constraintIcons": {
+                            "Good": {
+                                "style": {"color": "blue"},
+                                "class": "fa fa-square"
+                            },
+                            "Very good": {
+                                "style": {"color": "green"},
+                                "class": "fa fa-square"
+                            },
+                            "Very poor": {
+                                "style": {"color": "red"},
+                                "class": "fa fa-square"
+                            },
+                            "Poor": {
+                                "style": {"color": "orange"},
+                                "class": "fa fa-square"
+                            }
+                        }}
+                    },
+                    {
+                        "source": "conditionConfidence",
+                        "preLabel": "Confidence in condition assessment",
+                        "type": "select2",
+                        "displayOptions": {"constraintIcons": {
+                            "Limited evidence or limited consensus": {"class": "fa fa-adjust"},
+                            "Adequate high-quality evidence and high consensus": {"class": "fa fa-circle"},
+                            "Evidence and consensus too low to make an assessment": {"class": "fa fa-circle-o"}
+                        }}
+                    },
+                    {
+                        "source": "trajectory",
+                        "preLabel": "Current trajectory",
+                        "type": "select2",
+                        "displayOptions": {"constraintIcons": {
+                            "Improving": {"class": "fa fa-arrow-circle-up"},
+                            "Deteriorating": {"class": "fa fa-arrow-circle-down"},
+                            "Stable": {"class": "fa fa-arrow-circle-right"},
+                            "Unclear": {"class": "fa fa-question-circle"}
+                        }}
+                    },
+                    {
+                        "source": "trajectoryConfidence",
+                        "preLabel": "Confidence in trajectory assessment",
+                        "type": "select2",
+                        "displayOptions": {"constraintIcons": {
+                            "Limited evidence or limited consensus": {"class": "fa fa-adjust"},
+                            "Adequate high-quality evidence and high consensus": {"class": "fa fa-circle"},
+                            "Evidence and consensus too low to make an assessment": {"class": "fa fa-circle-o"}
+                        }}
+                    }
+                ],
+                "type": "col"
+            }],
+            "type": "row"
         },
         {
-          "type": "currency",
-          "source": "investment",
-          "title": "Investment ($)",
-          "width":"10%"
+            "items": [{
+                "source": "<condition-trajectory params=\"condition:data.condition, trajectory:data.trajectory\"/>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "selectOne",
-          "source": "status",
-          "title": "Status",
-          "width":"10%"
-        }
-      ],
-      "userAddedRows": true
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "actionsSummary",
-          "preLabel": "Summary"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h3>2. Meeting Objectives</h3>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "List the sub-objectives and recovery criteria    as identified in the recovery plan. Use the recovery criteria or other measures to assess the extent to which the objectives were achieved, the contribution of actions to any achievements, and any known reasons for objectives not being achieved and/or the level of success not being measured (including, if relevant, the appropriateness of the original sub-objectives and criteria). Assign the appropriate status term for each sub-objective"
-        }
-      ]
-    },
-    {
-      "type": "table",
-      "source": "subObjectives",
-      "columns": [
-        {
-          "type": "textarea",
-          "source": "objective",
-          "title": "Sub-objective"
+            "items": [{
+                "source": "<p><u>Legend<\/u><\/p><p><strong>Condition and prospects for long term survival in the wild<\/strong><br /><em>Based on current information, how do you rate the condition of the species or ecological community and its prospects for long term survival of the in the wild? If there are limited data available, it may be appropriate to make a qualitative assessment based on expert opinion or consensus.<\/em><\/p><table><thead><tr><th>Assessment grades<\/th><th>Criteria<\/th><\/tr><\/thead><tbody><tr><td><span class=\"fa fa-square\" style=\"color:red;\"><\/span> Very good<\/td><td>The species appears to have very good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.<\/td><\/tr><tr><td>Good<\/td><td>The species appears to have good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.<\/tr><tr><td>Poor<\/td><td>The species appears to have poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.<\/td><\/tr><tr><td>Very poor<\/td><td>The species appears to have very poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.<\/td><\/tr><\/tbody><\/table><p><strong>Conservation trajectory<\/strong><br /><em>What is the conservation trajectory of the species or ecological community in terms of whether it is improving, deteriorating, or stable? Refer to the EPBC Act listing criteria for species and ecological communities and make a determination of the conservation trajectory using at least one listing criterion.<\/em><\/p><table><thead><tr><th>Recent trajectory<\/th><th>Criterion<\/th><\/thead><\/tr><tbody><tr><td><span class=\"fa fa-arrow-circle-up\"><\/span>  Improving  <\/td>  <td>Increase in population size (numbers or geographic distribution. by calculating the Area of Occupancy (AOO), or Extent of Occurrence (EOO) (see below for more information on AOO and EOO).  <\/td>  <\/tr><tr>  <td>  <span class=\"fa fa-arrow-circle-down\"><\/span> Deteriorating<\/td><td>Decrease in population size (numbers or geographic distribution, by calculating the AOO or EOO).<\/td>  <tr>  <td><span class=\"fa fa-arrow-circle-right\"><\/span> Stable<\/td><td>Population size stable (numbers or geographic distribution, by calculating the AOO or EOO).<\/td>  <\/tr>  <tr>  <td><span class=\"fa fa-question-circle\"><\/span> Unclear<\/td><td>Insufficient information to estimate the conservation trajectory.<\/td>  <\/tr>  <\/tbody><\/table><p><strong>Level of confidence<\/strong><br /><em>Your level of confidence in these estimates based on the available evidence and/or the consensus of experts:<\/em><br /> <span class=\"fa fa-circle-o\"><\/span> Evidence and consensus too low to make an assessment <br /><br /> <span class=\"fa fa-adjust\"><\/span> Limited evidence or limited consensus <br /><br />  <span class=\"fa fa-circle\"><\/span> Adequate high-quality evidence and high consensus<\/p><p><strong>Calculating Area of Occupancy (AOO) and Extent of Occurrence (EOO)<\/strong> <br /><strong>Extent of occurrence<\/strong> <br />Extent of occurrence is defined as the area contained within the shortest continuous imaginary boundary which can be drawn to encompass all the known, inferred or projected sites of present occurrence of a taxon, excluding cases of vagrancy (see Figure 1, below). This measure may exclude discontinuities or disjunctions within the overall distributions of taxa (e.g. large areas of obviously unsuitable habitat, see 'area of occupancy' below). However, such exclusions are not recommended for reasons detailed by IUCN (2014, section 4.9). Extent of occurrence can often be measured by a minimum convex polygon (the smallest polygon in which no internal angle exceeds 180 degrees and which contains all the sites of occurrence).<br /><strong>Area of occupancy<\/strong> <br />Area of occupancy is defined as the area within its 'extent of occurrence' (see above) which is occupied by a taxon, excluding cases of vagrancy. The measure reflects the fact that a taxon will not usually occur throughout the area of its extent of occurrence, which may contain unsuitable or unoccupied habitats. In some cases (e.g. irreplaceable colonial nesting sites, crucial feeding sites for migratory taxa) the area of occupancy is the smallest area essential at any stage to the survival of existing populations of a taxon. The size of the area of occupancy will be a function of the scale at which it is measured, and should be at a scale appropriate to relevant biological aspects of the taxon, the nature of threats and the available data. To avoid inconsistencies and bias in assessments caused by estimating area of occupancy at different scales, IUCN (2014) recommends standardization of estimates by applying a 2 x 2 km grid to occurrence data. IUCN (2014) give guidance on how standardization should be done, although conversion between different scales is difficult because different types of taxa have different scale-area relationships.<\/p>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "source": "recoveryCriteria",
-          "title": "Recovery criteria/ion"
+            "items": [{
+                "source": "<h3>5. Supporting information<\/h3>",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "source": "comments",
-          "title": "Comments"
+            "items": [{
+                "source": "Provide any additional information relating to the operation of the recovery team and any future course of action of the recovery team as well as any supporting information for the reporting period.",
+                "type": "literal"
+            }],
+            "type": "row"
         },
         {
-          "type": "selectOne",
-          "source": "status",
-          "title": "Status"
-        }
-      ],
-      "userAddedRows": true
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "objectivesSummary",
-          "preLabel": "Summary"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "keyHighlights",
-          "preLabel": "Key highlights"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h3>3. Tracking changes in the state / condition and conservation trajectory</h3>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "This field considers what has been learned over the life of the report. It considers the condition and trajectory of the species when the recovery plan was first approved, the present condition and trajectory, and the extent to which the plan influenced any change in the condition or trajectory."
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<b><i>Please delete the rows that are not applicable</i></b>"
-        }
-      ]
-    },
-
-    {
-      "type": "table",
-      "source": "currentKnownState",
-      "columns": [
-        {
-          "type": "text",
-          "source": "category",
-          "title": "Category",
-          "readOnly":true
+            "items": [{
+                "source": "recoveryTeamSupport",
+                "preLabel": "Recovery team support",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "type": "select2",
-          "source": "initialCondition",
-          "title": "Initial condition"
+            "items": [{
+                "source": "futureCourseOfAction",
+                "preLabel": "Future course of action",
+                "type": "textarea"
+            }],
+            "type": "row"
         },
         {
-          "type": "textarea",
-          "source": "initialConditionDescription",
-          "title": "Description of initial condition"
-        },
-        {
-          "type": "select2",
-          "source": "currentCondition",
-          "title": "Current known state"
-        },
-        {
-          "type": "textarea",
-          "source": "currentConditionDescription",
-          "title": "Description of current condition"
+            "items": [{
+                "source": "informationSources",
+                "preLabel": "Information sources",
+                "type": "textarea"
+            }],
+            "type": "row"
         }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "relevantMonitoringData",
-          "preLabel": "Relevant monitoring data"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "currentStateAndTrajectoryOverview",
-          "preLabel": "What is the current state/condition and conservation trajectory?"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "currentStateSummary",
-          "preLabel": "Summary"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h3>4. Summary Assessment of Progress</h3>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<p>The format for reporting on ‘current condition’ and ‘current trajectory’ of threatened species and ecological communities follows the assessment summaries presented in the Australia State of the Environment 2011 and 2016 reports. Like those reports, this ‘Summary assessment of progress’ comprises a short synopsis and graphical representation of the key results of the assessments, providing an at-a-glance view of the current conservation status.</p><p>The measures used to assess condition and trajectory should be those relating to the EPBC Act listing criteria for species and ecological communities, facilitating any future reassessment. Importantly, the measures used must be consistent over the reporting period. The Guidelines for using the IUCN Red List Categories and Criteria should also be consulted when considering appropriate measures for particular taxa and the available evidence.</p>"
-        }
-      ]
-    },
-
-
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "col",
-          "items": [
-            {
-              "type": "selectOne",
-              "source": "condition",
-              "preLabel": "Current condition"
-            },
-            {
-              "type": "selectOne",
-              "source": "conditionConfidence",
-              "preLabel": "Confidence in condition assessment"
-            },
-            {
-              "type": "selectOne",
-              "source": "trajectory",
-              "preLabel": "Current trajectory"
-            },
-            {
-              "type": "selectOne",
-              "source": "trajectoryConfidence",
-              "preLabel": "Confidence in trajectory assessment"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"literal",
-          "source":"<p><u>Legend</u></p><p><strong>Condition and prospects for long term survival in the wild</strong><br /><em>Based on current information, how do you rate the condition of the species or ecological community and its prospects for long term survival of the in the wild? If there are limited data available, it may be appropriate to make a qualitative assessment based on expert opinion or consensus.</em></p><table><thead><tr><th>Assessment grades</th><th>Criteria</th></tr></thead><tbody><tr><td>Very good</td><td>The species appears to have very good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr><tr><td>Good</td><td>The species appears to have good prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</tr><tr><td>Poor</td><td>The species appears to have poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr><tr><td>Very poor</td><td>The species appears to have very poor prospects for long term survival in the wild, based on an evaluation of the parameters outlined in section 3, such as abundance, distribution, habitat condition or the impact of threats.</td></tr></tbody></table><p><strong>Conservation trajectory</strong><br /><em>What is the conservation trajectory of the species or ecological community in terms of whether it is improving, deteriorating, or stable? Refer to the EPBC Act listing criteria for species and ecological communities and make a determination of the conservation trajectory using at least one listing criterion.</em></p><table><thead><tr><th>Recent trajectory</th><th>Criterion</th></thead></tr><tbody><tr><td>  Improving  </td>  <td>Increase in population size (numbers or geographic distribution. by calculating the Area of Occupancy (AOO), or Extent of Occurrence (EOO) (see below for more information on AOO and EOO).  </td>  </tr><tr>  <td>  Deteriorating</td><td>Decrease in population size (numbers or geographic distribution, by calculating the AOO or EOO).</td>  <tr>  <td>Stable</td><td>Population size stable (numbers or geographic distribution, by calculating the AOO or EOO).</td>  </tr>  <tr>  <td>Unclear</td><td>Insufficient information to estimate the conservation trajectory.</td>  </tr>  </tbody></table><p><strong>Level of confidence</strong><br /><em>Your level of confidence in these estimates based on the available evidence and/or the consensus of experts:</em><br />  Evidence and consensus too low to make an assessment <br /><br />  Limited evidence or limited consensus <br /><br />  Adequate high-quality evidence and high consensus</p><p><strong>Calculating Area of Occupancy (AOO) and Extent of Occurrence (EOO)</strong> <br /><strong>Extent of occurrence</strong> <br />Extent of occurrence is defined as the area contained within the shortest continuous imaginary boundary which can be drawn to encompass all the known, inferred or projected sites of present occurrence of a taxon, excluding cases of vagrancy (see Figure 1, below). This measure may exclude discontinuities or disjunctions within the overall distributions of taxa (e.g. large areas of obviously unsuitable habitat, see 'area of occupancy' below). However, such exclusions are not recommended for reasons detailed by IUCN (2014, section 4.9). Extent of occurrence can often be measured by a minimum convex polygon (the smallest polygon in which no internal angle exceeds 180 degrees and which contains all the sites of occurrence).<br /><strong>Area of occupancy</strong> <br />Area of occupancy is defined as the area within its 'extent of occurrence' (see above) which is occupied by a taxon, excluding cases of vagrancy. The measure reflects the fact that a taxon will not usually occur throughout the area of its extent of occurrence, which may contain unsuitable or unoccupied habitats. In some cases (e.g. irreplaceable colonial nesting sites, crucial feeding sites for migratory taxa) the area of occupancy is the smallest area essential at any stage to the survival of existing populations of a taxon. The size of the area of occupancy will be a function of the scale at which it is measured, and should be at a scale appropriate to relevant biological aspects of the taxon, the nature of threats and the available data. To avoid inconsistencies and bias in assessments caused by estimating area of occupancy at different scales, IUCN (2014) recommends standardization of estimates by applying a 2 x 2 km grid to occurrence data. IUCN (2014) give guidance on how standardization should be done, although conversion between different scales is difficult because different types of taxa have different scale-area relationships.</p>"
-
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "<h3>5. Supporting information</h3>"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "literal",
-          "source": "Provide any additional information relating to the operation of the recovery team and any future course of action of the recovery team as well as any supporting information for the reporting period."
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "recoveryTeamSupport",
-          "preLabel": "Recovery team support"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "futureCourseOfAction",
-          "preLabel": "Future course of action"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "informationSources",
-          "preLabel": "Information sources"
-        }
-      ]
-    }
-  ]
+    ]
 }

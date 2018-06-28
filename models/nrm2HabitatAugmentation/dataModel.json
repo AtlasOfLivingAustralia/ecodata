@@ -1,0 +1,84 @@
+{
+  "title": "Habitat Augmentation",
+  "modelName": "Habitat Augmentation",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfFaunaMovementDevices",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfHabitatDevices",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaOfInfluenceOfHabitatDevices",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "seedBankedKg",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfConservationAgreements",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaUnderConservationAgreementHa",
+      "validate": "min[0]"
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "numberOfFaunaMovementDevices",
+              "preLabel": "Number of fauna movement devices installed",
+              "type": "number"
+            },
+            {
+              "source": "numberOfHabitatDevices",
+              "preLabel": "Number of habitat devices installed",
+              "type": "number"
+            },
+            {
+              "source": "areaOfInfluenceOfHabitatDevices",
+              "preLabel": "Area of influence of installed habitat devices (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "seedBankedKg",
+              "preLabel": "Seed banked (kg)",
+              "type": "number"
+            },
+            {
+              "source": "numberOfConservationAgreements",
+              "preLabel": "Number of conservation agreements",
+              "type": "number"
+            },
+            {
+              "source": "areaUnderConservationAgreementHa",
+              "preLabel": "Area under conservation agreement (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

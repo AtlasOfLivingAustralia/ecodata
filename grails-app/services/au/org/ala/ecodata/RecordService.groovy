@@ -930,4 +930,20 @@ class RecordService {
 
         date
     }
+
+    /**
+     * Get license for a record by looking up license from project activity or return default license
+     * @param record
+     * @return
+     */
+    String getLicense (Map record) {
+        if (record.projectActivityId) {
+            Map projectActivity = projectActivityService.get(record.projectActvityId)
+            if (projectActivity.dataSharingLicense) {
+               return  projectActivity.dataSharingLicense
+            }
+        }
+
+        return grailsApplication.config.license.default;
+    }
 }

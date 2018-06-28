@@ -246,8 +246,11 @@ class ProjectController {
         // Need to add targets to this also.
         def p = Project.findByProjectId(id)
 
+        boolean approvedOnly = params.getBoolean('approvedOnly')
+        List scoreIds = params.getList('scoreIds')
+
         if (p) {
-            render projectService.projectMetrics(id) as JSON
+            render projectService.projectMetrics(id, false, approvedOnly, scoreIds) as JSON
 
         } else {
             render (status: 404, text: 'No such id')
@@ -276,6 +279,14 @@ class ProjectController {
         def view = searchCriteria.remove('view') ?: ProjectService.BRIEF
         def projectList = projectService.search(searchCriteria, view)
         asJson projects:projectList
+    }
+
+    @RequireApiKey
+    def findByAssociation(String entity, String id) {
+        List projects = projectService.findAllByAssociation(entity+"Id", id, params.view ?: ProjectService.BRIEF) ?: []
+
+        Map result = [count:projects.size(), projects:projects]
+        render result as JSON
     }
 
     @RequireApiKey

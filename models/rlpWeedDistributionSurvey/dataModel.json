@@ -1,0 +1,34 @@
+{
+  "title": "Weed distribution survey",
+  "modelName": "RLP - Weed distribution survey",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfSurveys",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberOfSurveys",
+                  "preLabel": "Number of weed distribution surveys conducted",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

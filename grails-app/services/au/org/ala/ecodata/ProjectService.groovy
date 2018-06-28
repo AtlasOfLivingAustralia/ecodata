@@ -422,12 +422,21 @@ class ProjectService {
      * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
      *
      */
-    def projectMetrics(String id, targetsOnly = false, approvedOnly = false) {
+    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
 
-            def toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
+            List toAggregate
+            if (scoreIds && targetsOnly) {
+                toAggregate = Score.findAllByScoreIdInListAndIsOutputTarget(scoreIds, true)
+            }
+            else if (scoreIds) {
+                toAggregate = Score.findAllByScoreIdInList(scoreIds)
+            }
+            else {
+                toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
+            }
 
             def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
 
@@ -450,7 +459,7 @@ class ProjectService {
                     // one in containing the target.
                     def score = toAggregate.find { it.scoreId == target.scoreId }
                     if (score) {
-                        outputSummary << [label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
+                        outputSummary << [scoreId:score.scoreId, label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
                     } else {
                         // This can happen if the meta-model is changed after targets have already been defined for a project.
                         // Once the project output targets are re-edited and saved, the old targets will be deleted.
@@ -516,6 +525,17 @@ class ProjectService {
 
         }
         projects.collect { toMap(it, levelOfDetail) }
+    }
+
+    /**
+     * Returns all projects with the specified owner field
+     * @param ownerProperty the property that specifies the project relationship (e.g organisationId)
+     * @param id the id of the related entity.
+     * @param levelOfDetail the amount of data to return for each project.
+     * @return a List of projects matching the supplied property
+     */
+    List<Map> findAllByAssociation(String property, String id, levelOfDetail = []) {
+        search([(property):id], levelOfDetail)
     }
 
     /**

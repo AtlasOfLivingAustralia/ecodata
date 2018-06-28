@@ -1,0 +1,123 @@
+{
+  "title": "Managing fire regimes",
+  "modelName": "Managing fire regimes",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "areaOfBurnHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "list",
+      "name": "fireManagementDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "number",
+          "name": "previousFireRegimeLengthKm",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "consultedWithParksOrIndigenous",
+          "constraints": [
+            "n/a",
+            "Y",
+            "N"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "summaryOfConsultingAdvice"
+        },
+        {
+          "dataType": "number",
+          "name": "areaReturnedToTraditionalBurningPatternHa",
+          "validate": "min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfBurnsAtThisSite",
+          "validate": "min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "areaOfBurnHa",
+              "preLabel": "Area of burn (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "source": "fireManagementDetails",
+          "columns": [
+            {
+              "title": "Site",
+              "source": "siteId",
+              "type": "select2"
+            },
+            {
+              "title": "Previous fire regime length (if known)",
+              "source": "previousFireRegimeLengthKm",
+              "type": "number"
+            },
+            {
+              "title": "Consulted with parks staff / indigenous communities?",
+              "source": "consultedWithParksOrIndigenous",
+              "type": "selectOne"
+            },
+            {
+              "title": "Summary of consulting advice",
+              "source": "summaryOfConsultingAdvice",
+              "type": "textarea"
+            },
+            {
+              "title": "Number of burns at this site",
+              "source": "numberOfBurnsAtThisSite",
+              "type": "number"
+            },
+            {
+              "title": "Area (Ha) returned to traditional burning patterns",
+              "source": "areaReturnedToTraditionalBurningPatternHa",
+              "type": "number"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

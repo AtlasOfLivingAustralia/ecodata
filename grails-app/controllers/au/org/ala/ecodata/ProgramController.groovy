@@ -10,6 +10,10 @@ class ProgramController {
         respond programService.get(id, false)
     }
 
+    def findByName(String name) {
+        respond programService.findByName(name)
+    }
+
     @RequireApiKey
     def update(String id) {
         if (!id) {
@@ -27,5 +31,10 @@ class ProgramController {
 
     def search() {
         elasticSearchService.search(params.query,[:], ElasticIndex.DEFAULT_INDEX)
+    }
+
+    @RequireApiKey
+    def findAllForUser(String id) {
+        respond programService.findAllProgramsForUser(id)
     }
 }

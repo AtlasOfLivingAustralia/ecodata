@@ -1,0 +1,34 @@
+{
+  "title": "Establishing monitoring regimes",
+  "modelName": "RLP - Establishing monitoring regimes",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberMonitoringRegimesEstablished",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberMonitoringRegimesEstablished",
+                  "preLabel": "Number of monitoring regimes established",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

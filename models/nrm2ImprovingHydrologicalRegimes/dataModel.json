@@ -1,0 +1,119 @@
+{
+  "title": "Improving hydrological regimes",
+  "modelName": "Improving hydrological regimes",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberOfStructures",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "name": "typeOfStructure",
+      "constraints": [
+        "1",
+        "2",
+        "3"
+      ]
+    },
+
+    {
+      "dataType": "number",
+      "name": "lengthOfFishPassageInstalledKm",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfFishwayEstablished",
+      "validate": "min[0]"
+    },
+    {
+      "name":"numberOfFishBarriersRemoved",
+      "validate":"min[0]",
+      "type":"number"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfConstructedWetlands",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaOfConstructedWetlandsHa",
+      "validate": "min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "wetlandConnectivityAreaHa",
+      "validate": "min[0]"
+    }
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "items": [
+            {
+              "source": "numberOfStructures",
+              "preLabel": "Number of structures installed",
+              "type": "number"
+            },
+            {
+              "source": "typeOfStructure",
+              "preLabel": "Type of structure(s) installed",
+              "type": "select2Many"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "numberOfConstructedWetlands",
+              "preLabel": "Number of constructed wetlands",
+              "type": "number"
+            },
+            {
+              "source": "areaOfConstructedWetlandsHa",
+              "preLabel": "Total area of constructed wetlands (Ha)",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "lengthOfFishPassageInstalledKm",
+              "preLabel": "Length of fish passage installed (km)",
+              "type": "number"
+            },
+            {
+              "source": "numberOfFishwayEstablished",
+              "preLabel": "Number of fishways established",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        },
+        {
+          "items": [
+            {
+              "source": "numberOfFishBarriersRemoved",
+              "preLabel": "Number of barriers to fish movement removed",
+              "type": "number"
+            },
+            {
+              "source": "numberOfFishwayEstablished",
+              "preLabel": "Number of fishways established",
+              "type": "number"
+            }
+          ],
+          "type": "row"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

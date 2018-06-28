@@ -136,6 +136,7 @@ class RecordController {
                 result = recordService.listByProjectId(args, lastUpdated, restrictedProjectActivities)
                 result?.list?.each {
                     it.projectName = project?.name
+                    it.license = recordService.getLicense(it)
                 }
             } else {
                 response.status = HttpStatus.SC_BAD_REQUEST

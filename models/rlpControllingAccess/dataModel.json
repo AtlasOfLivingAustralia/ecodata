@@ -1,0 +1,105 @@
+{
+  "title": "Controlling access",
+  "modelName": "RLP - Controlling access",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "accessControlDetails",
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "siteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "accessControlType",
+          "constraints": [
+              "Boardwalks",
+              "Bollards & barriers",
+              "Constructed parking bays",
+              "Fencing, styles, gates & grids",
+              "Formed traffic ways",
+              "Signage",
+              "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherAccessControlType",
+          "description":"Please specify the type of access control if Other (specify in notes) was selected in the Type of Access Control Installed column.",
+          "behaviour":[
+            {
+              "condition": "accessControlType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"controlObjective",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "accessControlDetails",
+          "columns": [
+            {
+              "type":"select2",
+              "source":"siteId",
+              "title":"Site where control was undertaken",
+              "width":"20%"
+            },
+            {
+              "title": "Type of access control installed",
+              "source": "accessControlType",
+              "type": "select2",
+              "width":"20%"
+            },
+            {
+              "title":"Type of access control installed (if Other)",
+              "source":"otherAccessControlType",
+              "type":"text",
+              "width":"20%"
+            },
+            {
+              "title":"Control objective (300 character limit)",
+              "source":"controlObjective",
+              "type":"textarea",
+              "width":"40%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

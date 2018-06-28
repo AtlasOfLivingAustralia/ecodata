@@ -1,0 +1,34 @@
+{
+  "title": "Negotiating with the Community, landholders, Traditional Owner groups etc.",
+  "modelName": "RLP - Negotiations",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberGroupsNegotiatedWith",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberGroupsNegotiatedWith",
+                  "preLabel": "Number of groups negotiated with",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

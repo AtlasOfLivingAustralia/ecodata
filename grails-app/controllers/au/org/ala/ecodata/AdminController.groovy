@@ -737,5 +737,10 @@ class AdminController {
         render errors as JSON
     }
 
+    @AlaSecured("ROLE_ADMIN")
+    def updateCollectoryEntryForBiocollectProjects () {
+        collectoryService.updateCollectoryEntryForBiocollectProjects()
+        render text: [ message: 'Successfully submit synchronisation job.' ] as JSON
+    }
 
 }

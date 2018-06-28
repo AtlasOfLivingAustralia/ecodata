@@ -1,0 +1,34 @@
+{
+  "title": "Obtaining relevant approvals",
+  "modelName": "RLP - Obtaining approvals",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberApprovalsObtained",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberApprovalsObtained",
+                  "preLabel": "Number of relevant approvals obtained",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

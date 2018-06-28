@@ -69,6 +69,15 @@
                     }
                 });
 
+                $("#btnUpdateCollectoryForBiocollectProjects").click(function(e) {
+                    e.preventDefault();
+                    $.ajax("${createLink(controller: 'admin', action:'updateCollectoryEntryForBiocollectProjects')}").done(function(result) {
+                        document.location.reload();
+                    }).fail(function (result) {
+                        alert(result);
+                    });
+                });
+
             });
         </asset:script>
         <content tag="pageTitle">Tools</content>
@@ -136,6 +145,14 @@
                     <p>
                     Output id: <input type="text" id="outputId" name="outputId" class="input-xxxlarge">
                     </p>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button id="btnUpdateCollectoryForBiocollectProjects" class="btn btn-small btn-info" title="Forcefully update information in Collectory of internal Biocollect projects.">Update Collectory</button>
+                </td>
+                <td>
+                    Forcefully update information in Collectory of internal Biocollect projects. Note: This does not create a new entry since it assumes an entry exists in Collectory.
                 </td>
             </tr>
             </tbody>

@@ -1,0 +1,98 @@
+{
+  "title": "Releasing publications",
+  "modelName": "RLP - Publications",
+  "dataModel": [
+    {
+      "dataType":"list",
+      "name":"publications",
+      "columns":[
+        {
+          "dataType": "text",
+          "name": "publicationType",
+          "constraints":[
+            "Media release",
+            "Report",
+            "Social media posts",
+            "Brochures",
+            "Fliers",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "otherPublicationType",
+          "validate": "required",
+          "behaviour":[
+
+            {
+              "condition": "publicationType == \"Other\"",
+              "type": "enable"
+            }
+
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfPublications",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "publicationPurpose",
+          "validate": "required"
+        }
+      ]
+    }
+
+  ],
+  "viewModel": [
+
+    {
+      "items": [
+        {
+          "columns": [
+            {
+              "source": "publicationType",
+              "title": "Type of publication",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "source":"otherPublicationType",
+              "title":"Other type of publication released",
+              "width":"25",
+              "type":"text"
+            },
+            {
+              "source": "numberOfPublications",
+              "title": "Number of publications released",
+              "type": "number",
+              "width":"15%"
+            },
+            {
+              "source": "publicationPurpose",
+              "title": "Purpose of publication",
+              "type": "text",
+              "width":"35%"
+            }
+          ],
+          "source":"publications",
+          "type": "table",
+          "userAddedRows": true
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"literal",
+              "source":"<i>Note: to upload a publication refer to the documents tab.</i>"
+            }
+          ]
+
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

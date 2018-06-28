@@ -243,6 +243,18 @@ class PermissionService {
     }
 
     /**
+     * Returns a list of all users who have permissions configured for the specified program.
+     * @param programId the programId of the program to get permissions for.
+     * @return a List of the users that have roles configured for the program.
+     */
+    Map getMembersOfProgram(String programId, Integer max = 100, Integer offset = 0, String order = "asc", String sort = "accessLevel") {
+        List permissions = UserPermission.findAllByEntityIdAndEntityTypeAndStatusNotEqual(
+                programId, Program.name, DELETED, [max:max, offset:offset, sort:sort, order:order])
+        List members = permissions.collect{toMap(it)}
+        [programId:programId, members:members]
+    }
+
+    /**
      * Converts a UserPermission into a Map, looking up the user display name from the user details service.
      */
     private Map toMap(UserPermission userPermission) {
@@ -310,7 +322,7 @@ class PermissionService {
         return addUserAsRoleToEntity(userId, accessLevel, Organisation, organisationId)
     }
 
-    private def removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
+    private Map removeUserAsRoleToEntity(String userId, AccessLevel accessLevel, Class entityType, String entityId) {
         def up = UserPermission.findByUserIdAndEntityIdAndEntityTypeAndAccessLevel(userId, entityId, entityType.name, accessLevel)
         if (up) {
             try {
@@ -360,6 +372,22 @@ class PermissionService {
 
     List getAllAdminsForProject(String id){
         getAllUserPermissionForEntity(id, Project.class.name, 'admin')
+    }
+
+    Map addUserAsRoleToProgram(String userId, AccessLevel accessLevel, String programId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Program, programId)
+    }
+
+    Map removeUserAsRoleFromProgram(String userId, AccessLevel accessLevel, String programId) {
+        return removeUserAsRoleToEntity(userId, accessLevel, Program, programId)
+    }
+
+    Map addUserAsRoleToHub(String userId, AccessLevel accessLevel, String hubId) {
+        return addUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
+    }
+
+    Map removeUserRoleFromHub(String userId, AccessLevel accessLevel, String hubId) {
+        return removeUserAsRoleToEntity(userId, accessLevel, Hub, hubId)
     }
 
     /**

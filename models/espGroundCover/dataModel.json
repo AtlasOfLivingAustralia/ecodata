@@ -1,55 +1,53 @@
 {
-  "modelName":"ESP Ground Cover",
-  "title":"Ground Cover % Estimate",
-  "dataModel":[
+  "title": "Ground Cover % Estimate",
+  "modelName": "ESP Ground Cover",
+  "dataModel": [
     {
-      "name":"groundCoverPercent",
-      "dataType":"list",
+      "dataType": "list",
+      "name": "groundCoverPercent",
       "columns": [
         {
-          "name":"groundCoverPercent",
-          "dataType":"number",
-          "validate":"required,min[0],max[100]"
+          "dataType": "number",
+          "name": "groundCoverPercent",
+          "validate": "required,min[0],max[100]"
         },
         {
-          "name":"dateMeasured",
-          "dataType":"date",
-          "validate":"required"
+          "dataType": "date",
+          "name": "dateMeasured",
+          "validate": "required"
         }
-
       ]
     }
   ],
-  "viewModel":[
+  "viewModel": [
     {
-      "type": "row",
       "items": [
         {
-          "type":"literal",
-          "source":"Please note that you only need to record one estimate of ground cover percentage per site per year (but can be recorded multiple times if you wish). We recommend recording an estimate of ground cover % at the same time that you take your annual photo-point photograph and record a measurement of sward height."
+          "source": "If you undertake grazing, please record ground cover at the end of your grazing periods (in the table under “Livestock Grazing Management). If you do not undertake grazing, then record ground cover percentage at the same time that you take the photo-point photograph for this site. Please ensure that this is done at the same time each year.",
+          "type": "literal"
         }
-      ]
+      ],
+      "type": "row"
     },
     {
       "items": [
         {
           "source": "groundCoverPercent",
-          "type": "table",
-          "userAddedRows":true,
-          "disableTableUpload":true,
-          "columns":[
-
+          "columns": [
             {
-              "title":"Ground cover %",
-              "source":"groundCoverPercent",
-              "type":"number"
+              "title": "Ground cover %",
+              "source": "groundCoverPercent",
+              "type": "number"
             },
             {
-              "title":"Date measured",
-              "source":"dateMeasured",
-              "type":"date"
+              "title": "Date measured",
+              "source": "dateMeasured",
+              "type": "date"
             }
-          ]
+          ],
+          "userAddedRows": true,
+          "disableTableUpload": true,
+          "type": "table"
         }
       ],
       "type": "row"

@@ -12,9 +12,11 @@ import javax.servlet.http.HttpServletRequest
 @TestFor(ElasticSearchService)
 class ElasticSearchServiceSpec extends Specification {
     PermissionService permissionService = Stub(PermissionService)
+    ProgramService programService = Stub(ProgramService)
 
     def setup() {
         service.permissionService = permissionService
+        service.programService = programService
     }
 
     def cleanup() {

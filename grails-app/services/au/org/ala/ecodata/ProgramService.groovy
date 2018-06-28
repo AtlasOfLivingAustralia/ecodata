@@ -1,28 +1,22 @@
 package au.org.ala.ecodata
 
-import grails.transaction.Transactional
 import grails.validation.ValidationException
 
 import static au.org.ala.ecodata.Status.DELETED
 
-@Transactional
 class ProgramService {
     
     def commonService
 
-    def get(String programId, includeDeleted = false) {
+    Program get(String programId, includeDeleted = false) {
         if (includeDeleted) {
             return Program.findByProgramId(programId)
         }
-        Program Program = Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
-        
-        Program
+        Program.findByProgramIdAndStatusNotEqual(programId, DELETED)
     }
 
-    Map toMap(Program program, levelOfDetail = []) {
-        def dbo = program.dbo
-        def mapOfProperties = dbo.toMap()
-        mapOfProperties.findAll {k,v -> v != null}
+    Program findByName(String name) {
+        return Program.findByNameAndStatusNotEqual(name, DELETED)
     }
 
     Program create(Map properties) {
@@ -30,15 +24,24 @@ class ProgramService {
         properties.programId = Identifiers.getNew(true, '')
         Program program = new Program(programId:properties.programId)
         commonService.updateProperties(program, properties)
-        program.save(flush:true)
         return program
     }
 
     Program update(String id, Map properties) {
-        Program Program = get(id)
-        commonService.updateProperties(Program, properties)
-        Program.save(flush:true)
-        return Program
+        Program program = get(id)
+        commonService.updateProperties(program, properties)
+        program.save(flush:true)
+        return program
+    }
+
+    List parentNames(Program program) {
+        List names = []
+        names << program.name
+        while (program.parent != null) {
+            program = program.parent
+            names << program.name
+        }
+        names
     }
 
     def delete(String id, boolean destroy) {
@@ -63,6 +66,13 @@ class ProgramService {
         } else {
             return [status: 'error', errors: ['No such id']]
         }
+    }
+
+    List<Program> findAllProgramsForUser(String userId) {
+        List userPrograms = UserPermission.findAllByUserIdAndEntityTypeAndStatusNotEqual(userId, Program.class.name, DELETED)
+
+        List result = Program.findAllByProgramIdInList(userPrograms?.collect{it.entityId})
+        result
     }
 
 

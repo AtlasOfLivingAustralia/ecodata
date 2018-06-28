@@ -1,0 +1,34 @@
+{
+  "title": "Project planning and delivery of documents as required for the delivery of the Project Services and monitoring",
+  "modelName": "RLP - Project planning",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "numberPlanningDocuments",
+      "validate": "required,min[0]"
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "type": "row",
+          "items": [
+            {
+              "type":"col",
+              "items":[
+                {
+                  "source": "numberPlanningDocuments",
+                  "preLabel": "Number of planning and delivery documents for delivery of the project services and monitoring",
+                  "type": "number"
+                }
+              ]
+            }
+
+          ]
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

@@ -21,6 +21,11 @@ class ReportService {
         Score.findAllByLabelInList(labels)
     }
 
+    def findScoresByScoreId(List scoreIds) {
+        Score.findAllByScoreIdInList(scoreIds)
+    }
+
+
     def findScoresByCategory(String category) {
         Score.findAllByCategory(category)
     }
@@ -269,11 +274,11 @@ class ReportService {
         outputTargetReport(filters, searchTerm, scores)
     }
 
-    def outputTargetReport(List filters, String searchTerm, scores) {
+    def outputTargetReport(List filters, String searchTerm, scores, boolean approvedActivitiesOnly = true) {
 
         def groupingSpec = [property:'activity.programSubProgram', type:'discrete']
 
-        aggregate(filters, searchTerm, scores, groupingSpec)
+        aggregate(filters, searchTerm, scores, groupingSpec, approvedActivitiesOnly)
     }
 
     def outputTargetsBySubProgram(params) {
@@ -297,19 +302,24 @@ class ReportService {
                 project.outputTargets?.each { target ->
                     def program = project.associatedProgram + ' - ' + project.associatedSubProgram
                     if (!targetsBySubProgram[program]) {
-                        targetsBySubProgram[program] = [projectCount:0]
+                        targetsBySubProgram[program] = [:]
                     }
-                    if (target.scoreLabel && target.target) {
-                        if (!scores || scores.find {it.label == target.scoreLabel}) {
+                    if ((target.scoreId || target.scoreLabel) && target.target) {
+                        if (!scores || scores.find {(it.scoreId == target.scoreId) || (it.label == target.scoreLabel)}) {
                             def value = propertyAccessor.getPropertyAsNumeric(target)
                             if (value == null) {
                                 log.warn project.projectId + ' ' + target.scoreLabel + ' ' + target.target + ':' + value
                             } else {
-                                if (!targetsBySubProgram[program][target.scoreLabel]) {
-                                    targetsBySubProgram[program][target.scoreLabel] = [count: 0, total: 0]
+                                String label = target.scoreLabel
+                                if (!label && scores) {
+                                    def score = scores.find({it.scoreId == target.scoreId})
+                                    label = score.label
                                 }
-                                targetsBySubProgram[program][target.scoreLabel].total += value
-                                targetsBySubProgram[program][target.scoreLabel].count++
+                                if (!targetsBySubProgram[program][label]) {
+                                    targetsBySubProgram[program][label] = [scoreId: target.scoreId, count: 0, total: 0]
+                                }
+                                targetsBySubProgram[program][label].total += value
+                                targetsBySubProgram[program][label].count++
 
                             }
                         }
