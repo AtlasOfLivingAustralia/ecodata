@@ -366,54 +366,58 @@ class RecordService {
 
         //persist any supplied images into imageMetadata service
         if (json.multimedia) {
+            try{
+                json.multimedia.eachWithIndex { image, idx ->
 
-            json.multimedia.eachWithIndex { image, idx ->
+                    record.multimedia[idx] = [:]
 
-                record.multimedia[idx] = [:]
+                    // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
+                    record.multimedia[idx].documentId = image.documentId
 
-                // Each image in Ecodata may have an associated Document entity. We need to maintain this relationship in the resulting Record entity
-                record.multimedia[idx].documentId = image.documentId
+                    // reconcile new with old images...
+                    // Only upload images that are NOT already in images.ala.org.au
+                    if (!image.creator) {
+                        image.creator = userDetails.displayName
+                    }
 
-                // reconcile new with old images...
-                // Only upload images that are NOT already in images.ala.org.au
-                if (!image.creator) {
-                    image.creator = userDetails.displayName
+                    if (!image.rightsHolder) {
+                        image.rightsHolder = userDetails.displayName
+                    }
+
+                    def alreadyLoaded = false
+
+                    def document = documentService.get(image.documentId)
+
+                    // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
+                    if (!document.imageId) {
+                        log.debug "Uploading imageMetadata - ${image.identifier}"
+                        def downloadedFile = download(record.occurrenceID, idx, image.identifier)
+                        def imageId = uploadImage(record, downloadedFile, image)
+                        record.multimedia[idx].imageId = imageId
+                        record.multimedia[idx].identifier = getImageUrl(imageId)
+                        document.imageId = imageId
+                        documentService.update(document, document.documentId)
+
+                    } else {
+                        alreadyLoaded = true
+                        //re-use the existing imageId rather than upload again
+                        log.debug "Image already uploaded - ${image.imageId}"
+                        record.multimedia[idx].imageId = image.imageId
+                        record.multimedia[idx].identifier = image.identifier
+                    }
+
+                    setDCTerms(image, record.multimedia[idx])
+
+                    if (alreadyLoaded) {
+                        log.debug "Refreshing metadata - ${image.identifier}"
+                        //refresh metadata in imageMetadata service
+                        updateImageMetadata(image.imageId, record, record.multimedia[idx])
+                    }
                 }
-
-                if (!image.rightsHolder) {
-                    image.rightsHolder = userDetails.displayName
-                }
-
-                def alreadyLoaded = false
-
-                def document = documentService.get(image.documentId)
-
-                // Rely on document to check whether image has been uploaded to image server. Output data will not have imageId.
-                if (!document.imageId) {
-                    log.debug "Uploading imageMetadata - ${image.identifier}"
-                    def downloadedFile = download(record.occurrenceID, idx, image.identifier)
-                    def imageId = uploadImage(record, downloadedFile, image)
-                    record.multimedia[idx].imageId = imageId
-                    record.multimedia[idx].identifier = getImageUrl(imageId)
-                    document.imageId = imageId
-                    documentService.update(document, document.documentId)
-
-                } else {
-                    alreadyLoaded = true
-                    //re-use the existing imageId rather than upload again
-                    log.debug "Image already uploaded - ${image.imageId}"
-                    record.multimedia[idx].imageId = image.imageId
-                    record.multimedia[idx].identifier = image.identifier
-                }
-
-                setDCTerms(image, record.multimedia[idx])
-
-                if (alreadyLoaded) {
-                    log.debug "Refreshing metadata - ${image.identifier}"
-                    //refresh metadata in imageMetadata service
-                    updateImageMetadata(image.imageId, record, record.multimedia[idx])
-                }
+            } catch(Exception ex){
+                log.error("Error uploading image to images.ala.org.au -${ex.message}")
             }
+
         } else if (imageMap) {
             //upload the images supplied as bytes
             def idx = 0
@@ -925,5 +929,21 @@ class RecordService {
         }
 
         date
+    }
+
+    /**
+     * Get license for a record by looking up license from project activity or return default license
+     * @param record
+     * @return
+     */
+    String getLicense (Map record) {
+        if (record.projectActivityId) {
+            Map projectActivity = projectActivityService.get(record.projectActvityId)
+            if (projectActivity.dataSharingLicense) {
+               return  projectActivity.dataSharingLicense
+            }
+        }
+
+        return grailsApplication.config.license.default;
     }
 }

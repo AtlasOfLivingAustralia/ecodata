@@ -71,7 +71,8 @@ class RecordConverter {
         List singleItemModels
         List multiItemModels
         (singleItemModels, multiItemModels) = outputMetadata?.dataModel?.split {
-            !MULTI_ITEM_DATA_TYPES.contains(it.dataType.toLowerCase())
+            //check if dataType is null
+            !MULTI_ITEM_DATA_TYPES.contains(it.dataType?.toLowerCase())
         }
 
 
@@ -81,7 +82,7 @@ class RecordConverter {
         List baseRecordModels
         List speciesModels
         (baseRecordModels, speciesModels) = singleItemModels?.split {
-            it.dataType.toLowerCase() != "species"
+            it.dataType?.toLowerCase() != "species"
         }
 
 

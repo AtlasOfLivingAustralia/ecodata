@@ -2,11 +2,9 @@ package au.org.ala.ecodata
 
 import grails.converters.JSON
 import grails.test.mixin.TestFor
-import org.codehaus.groovy.grails.commons.InstanceFactoryBean
 import org.codehaus.groovy.grails.web.converters.marshaller.json.CollectionMarshaller
 import org.codehaus.groovy.grails.web.converters.marshaller.json.MapMarshaller
 import spock.lang.Specification
-
 /**
  * Tests the CollectoryService
  */
