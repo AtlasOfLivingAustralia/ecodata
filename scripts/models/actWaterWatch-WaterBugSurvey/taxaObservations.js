@@ -14,25 +14,26 @@ self.transients.calculateSPI = function() {
 		sumOfWeights = sumOfWeights + taxon.taxonWeightFactor();
 	});
 	var spi = sumOfWeights > 0 ? (sumOfIndexValues / sumOfWeights) : 0;
-	spi = spi.toFixed(2);
-	self.data.spiValue(spi);
+	self.data.spiValue(spi.toFixed(2));
 	return spi;
 };
 self.transients.taxaRichness = function(){
 	var taxaRichness = 0;
 	$.each(self.data.taxaObservations(), function (i, taxon) {
-			if(taxon.individualCount() > 0) {
-				taxaRichness++;
-			}
-		});
-	self.data.taxaRichness(taxaRichness);	
+		if(taxon.individualCount() > 0) {
+			taxaRichness++;
+		}
+	});
+	self.data.taxaRichness(taxaRichness);
 	return taxaRichness;
-};
+}
 self.transients.calculateStreamQualityRating = function(){
 	var qualityRating = "";
 	var spi = self.transients.calculateSPI();
 	var richness = self.transients.taxaRichness();
-	if (spi < 5.5) {
+	if(spi == 0 && richness == 0) {
+		qualityRating = '';
+	} else if (spi < 5.5) {
 		if (richness <= 7) {
 			qualityRating = "Poor";
 		}
@@ -114,7 +115,10 @@ self.addtaxaObservationsRow = function () {
 	self.data.taxaObservations.push(newRow);
 };
 self.removetaxaObservationsRow = function (row) {
-	self.data.taxaObservations.remove(row);
+	blockUIWithMessage("<p class='text-center'>Not Permitted</p>");
+	setTimeout(function(){
+		$.unblockUI();
+	}, 1500);
 };
 self.taxaObservationsrowCount = function () {
 	return self.data.taxaObservations().length;
