@@ -14,6 +14,7 @@ self.transients.calculateSPI = function() {
 		sumOfWeights = sumOfWeights + taxon.taxonWeightFactor();
 	});
 	var spi = sumOfWeights > 0 ? (sumOfIndexValues / sumOfWeights) : 0;
+	spi = spi.toFixed(2);
 	self.data.spiValue(spi);
 	return spi;
 };
@@ -26,7 +27,7 @@ self.transients.taxaRichness = function(){
 		});
 	self.data.taxaRichness(taxaRichness);	
 	return taxaRichness;
-}
+};
 self.transients.calculateStreamQualityRating = function(){
 	var qualityRating = "";
 	var spi = self.transients.calculateSPI();
