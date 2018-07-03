@@ -2,7 +2,8 @@
 // Activity Name: ACT Water Watch - Water Bug Survey.
 // Output model name: actWaterwatch_waterBugSurvey
 // "jsMain": "https://dl.dropbox.com/s/qdv5zznw7grsuy1/taxaObservations.js?dl=0",
-// https://www.dropbox.com/s/qdv5zznw7grsuy1/taxaObservations.js?dl=0
+// https://dl.dropbox.com/s/hxtk06ythysu4xr/taxaObservations.min.js?dl=0
+
 self.data.taxaObservations = ko.observableArray();
 self.data.spiValue = ko.observable();
 self.data.streamQualityRating = ko.observable();

@@ -191,7 +191,7 @@
       ],
       "dataType": "list",
       "name": "taxaObservations",
-      "jsMain": "https://dl.dropbox.com/s/qdv5zznw7grsuy1/taxaObservations.js?dl=0",
+      "jsMain": "https://dl.dropbox.com/s/hxtk06ythysu4xr/taxaObservations.min.js?dl=0",
       "defaultRows": [
         {
           "scientificName": "Megaloptera",
@@ -545,7 +545,7 @@
           "taxonSensitivityRating": "4"
         }
       ],
-      "jsClass": "https://dl.dropbox.com/s/ilp2dw0un4ej782/TaxaObservationsRow.js?dl=0"
+      "jsClass": "https://dl.dropbox.com/s/30fnaw0udvnini8/TaxaObservationsRow.min.js?dl=0"
     }
   ],
   "viewModel": [
