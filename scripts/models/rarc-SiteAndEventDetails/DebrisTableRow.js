@@ -2,6 +2,7 @@
 // Activity Name: Rapid Appraisal of Riparian Condition (RARC)
 // Output model name: rarc_EventAndLocationDetails
 // jsClass: https://dl.dropbox.com/s/b3vxokkwb3ntgfe/DebrisTableRow.js?dl=0
+// Minified: https://dl.dropbox.com/s/d6tr2lqnvd0jcuf/DebrisTableRow.min.js?dl=0
 var DebrisTableRow = function (data) {
     var self = this;
     if (!data) data = {};
