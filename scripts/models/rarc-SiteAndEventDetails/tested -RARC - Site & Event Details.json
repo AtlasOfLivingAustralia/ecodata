@@ -1,0 +1,1207 @@
+{
+  "modelName": "rarc_EventAndLocationDetails",
+  "record": "true",
+  "dataModel": [
+    {
+      "dataType": "text",
+      "name": "recordedBy",
+      "dwcAttribute": "recordedBy",
+      "description": "The name of the person who lead the survey.",
+      "validate": "required"
+    },
+    {
+      "defaultValue": "${now}",
+      "dataType": "date",
+      "name": "eventDate",
+      "description": "",
+      "validate": "required"
+    },
+    {
+      "dataType": "number",
+      "name": "gpsStart",
+      "description": ""
+    },
+    {
+      "dataType": "number",
+      "name": "gpsEnd",
+      "description": ""
+    },
+    {
+      "dataType": "text",
+      "name": "proportionOfRiverBankWithVegetationGreaterThan5mDeep",
+      "description": "",
+      "constraints": [
+        "0 - 50%",
+        "50 - 64%",
+        "65 - 79%",
+        "80 - 94%",
+        "> 95%"
+      ]
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfDiscontinuitiesGreaterThan50m",
+      "description": ""
+    },
+    {
+      "dataType": "text",
+      "name": "comments",
+      "description": ""
+    },
+    {
+      "dataType": "number",
+      "name": "continuityScore",
+      "description": ""
+    },
+    {
+      "dataType": "text",
+      "name": "nearestNativeVegetationGreaterThan10ha",
+      "description": "",
+      "constraints": [
+        "> 1 km",
+        "200 m - 1 km",
+        "Contiguous",
+        "Contiguous with patch > 50 ha"
+      ]
+    },
+    {
+      "dataType": "number",
+      "name": "proximityScore",
+      "description": ""
+    },
+    {
+      "defaultAccuracy": 50,
+      "hideMyLocation": false,
+      "columns": [
+        {
+          "dwcAttribute": "verbatimLatitude",
+          "source": "locationLatitude"
+        },
+        {
+          "dwcAttribute": "verbatimLongitude",
+          "source": "locationLongitude"
+        },
+        {
+          "source": "Locality"
+        },
+        {
+          "source": "Accuracy"
+        },
+        {
+          "source": "Notes"
+        },
+        {
+          "source": "Source"
+        }
+      ],
+      "dataType": "geoMap",
+      "name": "location",
+      "dwcAttribute": "verbatimCoordinates",
+      "hideSiteSelection": true,
+      "zoomToProjectArea": true,
+      "validate": "required"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "parameter",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "transectOne",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "transectTwo",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "transectThree",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "transectFour",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "vegetationWidthAverageScore",
+          "description": ""
+        }
+      ],
+      "dataType": "list",
+      "name": "canopyVegetationTable",
+      "jsMain": "https://dl.dropbox.com/s/ghpu4yaahpo27iu/canopyVegetationTable.min.js?dl=0",
+      "defaultRows": [
+        {
+          "channelWidth_T1": "",
+          "channelWidth_averageScore": "",
+          "channelWidth_T2": "",
+          "channelWidth_T3": "",
+          "channelWidth_T4": "",
+          "parameter": "Channel Width (CW)"
+        },
+        {
+          "vegetationWidth_T2": "",
+          "vegetationWidth_T1": "",
+          "vegetationWidth_T4": "",
+          "parameter": "Vegetation Width (VW)",
+          "vegetationWidth_T3": "",
+          "vegetationWidth_averageScore": ""
+        },
+        {
+          "vegetationWidth_T2_score": "",
+          "vegetationWidth_T1_score": "",
+          "vegetationWidth_averageScoreTotal": "",
+          "vegetationWidth_T3_score": "",
+          "parameter": "Score",
+          "vegetationWidth_T4_score": ""
+        }
+      ],
+      "jsClass": "https://dl.dropbox.com/s/mvhqohl0u2xwsj4/CanopyVegetationTableRow.js?dl=0"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "vegetationCover_parameter",
+          "description": ""
+        },
+        {
+          "dataType": "text",
+          "name": "vegetationCover_transectOne",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "1 - 5%",
+            "6 - 30%",
+            "> 30%"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "vegetationCover_transectTwo",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "1 - 5%",
+            "6 - 30%",
+            "> 30%"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "vegetationCover_transectThree",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "1 - 5%",
+            "6 - 30%",
+            "> 30%"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "vegetationCover_transectFour",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "1 - 5%",
+            "6 - 30%",
+            "> 30%"
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "vegetationCoverAverageScore",
+          "description": ""
+        }
+      ],
+      "dataType": "list",
+      "name": "vegetationCoverTable",
+      "jsMain": "https://dl.dropbox.com/s/vpswh9n3878f7pt/vegetationCoverTable.min.js?dl=0",
+      "defaultRows": [
+        {
+          "vegetationCover_parameter": "Total canopy %",
+          "totalCanopy_T3": "",
+          "totalCanopy_T4": "",
+          "totalCanopy_T1": "",
+          "totalCanopy_T2": "",
+          "totalCanopy_averageScore": ""
+        },
+        {
+          "vegetationCover_parameter": "Native canopy %",
+          "nativeCanopy_T4": "",
+          "nativeCanopy_T2": "",
+          "nativeCanopy_averageScore": "",
+          "nativeCanopy_T3": "",
+          "nativeCanopy_T1": ""
+        },
+        {
+          "totalUnderstorey_T3": "",
+          "totalUnderstorey_T4": "",
+          "vegetationCover_parameter": "Total understorey %",
+          "totalUnderstorey_T1": "",
+          "totalUnderstorey_T2": "",
+          "totalUnderstorey_averageScore": ""
+        },
+        {
+          "vegetationCover_parameter": "Native understorey %",
+          "nativeUnderstorey_T1": "",
+          "nativeUnderstorey_T4": "",
+          "nativeUnderstorey_T3": "",
+          "nativeUnderstorey_T2": "",
+          "nativeUnderstorey_averageScore": ""
+        },
+        {
+          "vegetationCover_parameter": "Total ground cover %",
+          "totalGroundCover_T3_score": "",
+          "totalGroundCover_T2_score": "",
+          "totalGroundCover_T1_score": "",
+          "totalGroundCover_averageScoreTotal": "",
+          "noEdit": true,
+          "totalGroundCover_T4_score": ""
+        },
+        {
+          "nativeGroundCover_T1_score": "",
+          "nativeGroundCover_T4_score": "",
+          "vegetationCover_parameter": "Native ground cover %",
+          "nativeGroundCover_averageScoreTotal": "",
+          "noEdit": true,
+          "nativeGroundCover_T3_score": "",
+          "nativeGroundCover_T2_score": ""
+        },
+        {
+          "vegetationCover_parameter": "No. of structural layers",
+          "numberOfLayers_T1_score": "",
+          "numberOfLayers_T3_score": "",
+          "noEdit": true,
+          "numberOfLayers_T4_score": "",
+          "numberOfLayers_averageScoreTotal": "",
+          "numberOfLayers_T2_score": ""
+        }
+      ],
+      "jsClass": "https://dl.dropbox.com/s/9h8sh2wnzj0n4xy/VegetationCoverTableRow.js?dl=0"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "debris_parameter",
+          "description": ""
+        },
+        {
+          "dataType": "text",
+          "name": "debris_transectOne",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "Absent",
+            "Present",
+            "None",
+            "Small quantities",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "debris_transectTwo",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "Absent",
+            "Present",
+            "None",
+            "Small quantities",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "debris_transectThree",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "Absent",
+            "Present",
+            "None",
+            "Small quantities",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "debris_transectFour",
+          "description": "",
+          "constraints": [
+            "None",
+            "1 - 30%",
+            "31 - 60%",
+            "> 60%",
+            "Absent",
+            "Present",
+            "None",
+            "Small quantities",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "vegetationWidthAverageScore",
+          "description": ""
+        }
+      ],
+      "dataType": "list",
+      "name": "debrisTable",
+      "defaultRows": [
+        {
+          "debris_parameter": "Total leaf litter",
+          "totalLeafLitter_T4": "",
+          "totalLeafLitter_T3": "",
+          "totalLeafLitter_T2": "",
+          "totalLeafLitter_T1": "",
+          "totalLeafLitter_averageScore": ""
+        },
+        {
+          "debris_parameter": "Native leaf litter",
+          "nativeLeafLitter_T1": "",
+          "nativeLeafLitter_T3": "",
+          "nativeLeafLitter_T2": "",
+          "nativeLeafLitter_T4": "",
+          "nativeLeafLitter_averageScore": ""
+        },
+        {
+          "deadTrees_averageScore": "",
+          "debris_parameter": "Standing dead trees",
+          "deadTrees_T3": "",
+          "deadTrees_T2": "",
+          "deadTrees_T4": "",
+          "deadTrees_T1": ""
+        },
+        {
+          "debris_parameter": "Hollow bearing trees (>20cm DBH)",
+          "hollowBearingTrees_T1": "",
+          "hollowBearingTrees_averageScore": "",
+          "hollowBearingTrees_T2": "",
+          "hollowBearingTrees_T3": "",
+          "hollowBearingTrees_T4": ""
+        },
+        {
+          "debris_parameter": "Fallen logs (>10cm diameter)",
+          "logs_averageScoreTotal": "",
+          "logs_T3_score": "",
+          "logs_T1_score": "",
+          "logs_T4_score": "",
+          "noEdit": true,
+          "logs_T2_score": ""
+        }
+      ],
+      "jsClass": "https://dl.dropbox.com/s/d6tr2lqnvd0jcuf/DebrisTableRow.min.js?dl=0"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "feature_parameter",
+          "description": ""
+        },
+        {
+          "dataType": "text",
+          "name": "feature_transectOne",
+          "description": "",
+          "constraints": [
+            "None",
+            "Scattered",
+            "Abundant with grazing damage",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "feature_transectTwo",
+          "description": "",
+          "constraints": [
+            "None",
+            "Scattered",
+            "Abundant with grazing damage",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "feature_transectThree",
+          "description": "",
+          "constraints": [
+            "None",
+            "Scattered",
+            "Abundant with grazing damage",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "feature_transectFour",
+          "description": "",
+          "constraints": [
+            "None",
+            "Scattered",
+            "Abundant with grazing damage",
+            "Abundant"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "featuresAverageScore",
+          "description": ""
+        }
+      ],
+      "dataType": "list",
+      "name": "featuresTable",
+      "defaultRows": [
+        {
+          "nativeCanopyRegen_T3": "",
+          "nativeCanopyRegen_T4": "",
+          "nativeCanopyRegen_averageScore": "",
+          "feature_parameter": "Native canopy species regeneration",
+          "nativeCanopyRegen_T1": "",
+          "nativeCanopyRegen_T2": ""
+        },
+        {
+          "nativeUnderstoreyRegen_averageScore": "",
+          "feature_parameter": "Native understorey regeneration",
+          "nativeUnderstoreyRegen_T1": "",
+          "nativeUnderstoreyRegen_T2": "",
+          "nativeUnderstoreyRegen_T3": "",
+          "nativeUnderstoreyRegen_T4": ""
+        },
+        {
+          "tussockGrasses_averageScore": "",
+          "feature_parameter": "Large native tussock grasses",
+          "tussockGrasses_T4": "",
+          "tussockGrasses_T3": "",
+          "tussockGrasses_T2": "",
+          "tussockGrasses_T1": ""
+        },
+        {
+          "reeds_T1": "",
+          "reeds_T4": "",
+          "feature_parameter": "Reeds",
+          "reeds_T3": "",
+          "reeds_T2": "",
+          "reeds_averageScore": ""
+        }
+      ],
+      "jsClass": "https://dl.dropbox.com/s/cjqrn6rt6602lgx/FeatureTableRow.min.js?dl=0"
+    },
+    {
+      "dataType": "number",
+      "name": "habitatScoreTotal"
+    },
+    {
+      "dataType": "number",
+      "name": "coverScoreTotal"
+    },
+    {
+      "dataType": "number",
+      "name": "nativesScoreTotal"
+    },
+    {
+      "dataType": "number",
+      "name": "debrisScoreTotal"
+    },
+    {
+      "dataType": "number",
+      "name": "featuresScoreTotal"
+    },
+    {
+      "dataType": "number",
+      "name": "totalScoreAggregate"
+    },
+    {
+      "dataType": "text",
+      "name": "overallQuality",
+      "jsMain": "https://dl.dropbox.com/s/svbt8rur6lr3z89/overallQuality.min.js?dl=0"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "source": "<h2>Rapid Appraisal of Riparian Condition (RARC)</h2>",
+          "type": "literal"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Site Visit",
+              "type": "section",
+              "items": [
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Observer",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "recordedBy",
+                      "preLabelClass": "span4",
+                      "type": "text"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Date",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "eventDate",
+                      "preLabelClass": "span4",
+                      "type": "date"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "GPS start",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "gpsStart",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "GPS end",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "gpsEnd",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            },
+            {
+              "boxed": true,
+              "title": "Longitudinal Continuity",
+              "type": "section",
+              "items": [
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Proportion of river bank with vegetation > 5m deep",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "proportionOfRiverBankWithVegetationGreaterThan5mDeep",
+                      "preLabelClass": "span4",
+                      "type": "selectOne"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "No. of discontinuities > 50m",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "numberOfDiscontinuitiesGreaterThan50m",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Comments",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "comments",
+                      "preLabelClass": "span4",
+                      "type": "textarea"
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Continuity score",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "noEdit": true,
+                      "source": "continuityScore",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            },
+            {
+              "boxed": true,
+              "title": "Proximity",
+              "type": "section",
+              "items": [
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Nearest patch of native vegetation >10 ha",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "source": "nearestNativeVegetationGreaterThan10ha",
+                      "preLabelClass": "span4",
+                      "type": "selectOne"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Proximity score",
+                      "inline": true,
+                      "computed": null,
+                      "dataClass": "span8",
+                      "noEdit": true,
+                      "source": "proximityScore",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        },
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Location",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "includeNotes": false,
+                      "orientation": "vertical",
+                      "computed": null,
+                      "autoLocalitySearch": true,
+                      "readonly": true,
+                      "includeSource": false,
+                      "includeAccuracy": false,
+                      "hideSiteSelection": false,
+                      "source": "location",
+                      "type": "geoMap",
+                      "includeLocality": false
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Width of Riparian Canopy Vegetation",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "allowRowDelete": "false",
+                      "allowHeaderWrap": true,
+                      "columns": [
+                        {
+                          "width": "25%",
+                          "noEdit": true,
+                          "source": "parameter",
+                          "type": "text",
+                          "title": ""
+                        },
+                        {
+                          "width": "15%",
+                          "source": "transectOne",
+                          "type": "number",
+                          "title": "Transect 1"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "transectTwo",
+                          "type": "number",
+                          "title": "Transect 2"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "transectThree",
+                          "type": "number",
+                          "title": "Transect 3"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "transectFour",
+                          "title": "Transect 4",
+                          "type": "number"
+                        },
+                        {
+                          "width": "15%",
+                          "noEdit": true,
+                          "source": "vegetationWidthAverageScore",
+                          "title": "Average Score",
+                          "type": "number"
+                        }
+                      ],
+                      "userAddedRows": false,
+                      "source": "canopyVegetationTable",
+                      "type": "table"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Vegetation Cover",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "allowRowDelete": "false",
+                      "allowHeaderWrap": true,
+                      "columns": [
+                        {
+                          "width": "25%",
+                          "noEdit": true,
+                          "source": "vegetationCover_parameter",
+                          "type": "text",
+                          "title": ""
+                        },
+                        {
+                          "width": "15%",
+                          "source": "vegetationCover_transectOne",
+                          "type": "selectOne",
+                          "title": "Transect 1"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "vegetationCover_transectTwo",
+                          "type": "selectOne",
+                          "title": "Transect 2"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "vegetationCover_transectThree",
+                          "type": "selectOne",
+                          "title": "Transect 3"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "vegetationCover_transectFour",
+                          "title": "Transect 4",
+                          "type": "selectOne"
+                        },
+                        {
+                          "width": "15%",
+                          "noEdit": true,
+                          "source": "vegetationCoverAverageScore",
+                          "title": "Average Score",
+                          "type": "text"
+                        }
+                      ],
+                      "userAddedRows": false,
+                      "source": "vegetationCoverTable",
+                      "type": "table"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Debris",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "allowRowDelete": "false",
+                      "allowHeaderWrap": true,
+                      "columns": [
+                        {
+                          "width": "25%",
+                          "noEdit": true,
+                          "source": "debris_parameter",
+                          "type": "text",
+                          "title": ""
+                        },
+                        {
+                          "width": "15%",
+                          "source": "debris_transectOne",
+                          "type": "selectOne",
+                          "title": "Transect 1"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "debris_transectTwo",
+                          "type": "selectOne",
+                          "title": "Transect 2"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "debris_transectThree",
+                          "type": "selectOne",
+                          "title": "Transect 3"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "debris_transectFour",
+                          "title": "Transect 4",
+                          "type": "selectOne"
+                        },
+                        {
+                          "width": "15%",
+                          "noEdit": true,
+                          "source": "vegetationWidthAverageScore",
+                          "title": "Average Score",
+                          "type": "text"
+                        }
+                      ],
+                      "userAddedRows": false,
+                      "source": "debrisTable",
+                      "type": "table"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Features",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "allowRowDelete": false,
+                      "allowHeaderWrap": true,
+                      "columns": [
+                        {
+                          "width": "25%",
+                          "noEdit": true,
+                          "source": "feature_parameter",
+                          "type": "text",
+                          "title": ""
+                        },
+                        {
+                          "width": "15%",
+                          "source": "feature_transectOne",
+                          "type": "selectOne",
+                          "title": "Transect 1"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "feature_transectTwo",
+                          "type": "selectOne",
+                          "title": "Transect 2"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "feature_transectThree",
+                          "type": "selectOne",
+                          "title": "Transect 3"
+                        },
+                        {
+                          "width": "15%",
+                          "source": "feature_transectFour",
+                          "title": "Transect 4",
+                          "type": "selectOne"
+                        },
+                        {
+                          "width": "15%",
+                          "noEdit": true,
+                          "source": "featuresAverageScore",
+                          "title": "Average Score",
+                          "type": "text"
+                        }
+                      ],
+                      "userAddedRows": false,
+                      "source": "featuresTable",
+                      "type": "table"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Component Scores",
+              "type": "section",
+              "items": [
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "type": "col",
+                      "items": [
+                        {
+                          "type": "row",
+                          "items": [
+                            {
+                              "preLabel": "Habitat score (/11)",
+                              "inline": true,
+                              "computed": null,
+                              "dataClass": "span8",
+                              "noEdit": true,
+                              "source": "habitatScoreTotal",
+                              "preLabelClass": "span4",
+                              "type": "number"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "row",
+                          "items": [
+                            {
+                              "preLabel": "Cover score (/12)",
+                              "inline": true,
+                              "computed": null,
+                              "dataClass": "span8",
+                              "noEdit": true,
+                              "source": "coverScoreTotal",
+                              "preLabelClass": "span4",
+                              "type": "number"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "row",
+                          "items": [
+                            {
+                              "preLabel": "Natives score (/9)",
+                              "inline": true,
+                              "computed": null,
+                              "dataClass": "span8",
+                              "noEdit": true,
+                              "source": "nativesScoreTotal",
+                              "preLabelClass": "span4",
+                              "type": "number"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "col",
+                      "items": [
+                        {
+                          "type": "row",
+                          "items": [
+                            {
+                              "preLabel": "Debris score (/10)",
+                              "inline": true,
+                              "computed": null,
+                              "dataClass": "span8",
+                              "noEdit": true,
+                              "source": "debrisScoreTotal",
+                              "preLabelClass": "span4",
+                              "type": "number"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "row",
+                          "items": [
+                            {
+                              "preLabel": "Features score (/8)",
+                              "inline": true,
+                              "computed": null,
+                              "dataClass": "span8",
+                              "noEdit": true,
+                              "source": "featuresScoreTotal",
+                              "preLabelClass": "span4",
+                              "type": "number"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        },
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Overall Quality",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "TOTAL SCORE (/50)",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "noEdit": true,
+                      "source": "totalScoreAggregate",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Overall Quality",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "noEdit": true,
+                      "source": "overallQuality",
+                      "preLabelClass": "span4",
+                      "type": "number"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
