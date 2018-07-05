@@ -8,7 +8,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "fireSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "protectedSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -68,9 +91,15 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
-              "width":"20%"
+              "source":"fireSiteId",
+              "title":"Area (ha) fire management action was implemented",
+              "width":"10%"
+            },
+            {
+              "type":"select2",
+              "source":"protectedSiteId",
+              "title":"Area (ha) protected by fire management action",
+              "width":"10%"
             },
             {
               "title": "Type of fire management action",

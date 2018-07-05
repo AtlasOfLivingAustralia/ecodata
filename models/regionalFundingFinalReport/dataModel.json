@@ -1,24 +1,22 @@
 {
+  "modelName": "Final Report",
   "dataModel": [
     {
-      "dataType": "list",
-      "description": "",
-      "name": "outcomes",
       "columns": [
         {
           "dataType": "text",
-          "description": "SMART outcome being reported against, as per the MERI Plan.",
-          "name": "outcome"
+          "name": "outcome",
+          "description": "SMART outcome being reported against, as per the MERI Plan."
         },
         {
           "dataType": "stringList",
-          "description": "Assets addressed by this outcome, as per the MERI Plan.",
-          "name": "assets"
+          "name": "assets",
+          "description": "Assets addressed by this outcome, as per the MERI Plan."
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "status",
+          "description": "",
           "constraints": [
             "Achieved",
             "Not achieved"
@@ -26,69 +24,76 @@
           "validate": "required"
         },
         {
-          "dataType":"text",
-          "description":"",
-          "name":"outcomeNotAchievedReason",
-          "validate":"required",
+          "dataType": "text",
+          "name": "outcomeNotAchievedReason",
+          "description": "Succinctly identify the reasons the outcome was not achieved, this may include references to identified risks materialising and impacting on the project outcomes. The Lessons learned section should incorporate how the project would be delivered differently next time.",
           "behaviour": [
             {
               "condition": "status == \"Not achieved\"",
               "type": "enable"
             }
-          ]
+          ],
+          "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "Succinctly summarise your projects success in meeting the outcome using evidence, such as KEQ monitoring data, to support your reporting. Consider any environmental, social and economic outcomes achieved.",
           "name": "outcomeResult",
+          "description": "Succinctly summarise your project’s success in meeting the outcome using evidence, such as evaluation of your KEQ(s), and other information.   Consider environmental, social and economic outcomes achieved, where relevant.",
           "validate": "required"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "outcomes",
+      "description": ""
     },
     {
-      "dataType": "list",
-      "description": "",
-      "name": "keyEvaluationQuestions",
       "columns": [
         {
           "dataType": "text",
-          "description": "Key evaluation question as per the MERI plan",
-          "name": "question"
+          "name": "question",
+          "description": "Key evaluation question as per the MERI plan"
         },
         {
           "dataType": "text",
-          "description": "Monitoring, as per the MERI Plan.",
-          "name": "monitoring"
+          "name": "monitoring",
+          "description": "Monitoring, as per the MERI Plan."
         },
         {
           "dataType": "text",
-          "description": "Summarise your findings for the KEQ by using data sourced from the monitoring approach.",
           "name": "evaluation",
+          "description": "Summarise the evaluation of KEQ drawing from monitoring approach and other relevant evidence.",
           "validate": "required"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "keyEvaluationQuestions",
+      "description": ""
     },
     {
-      "dataType":"text",
-      "name":"outputTargetsAchieved",
-      "validate":"required",
-      "constraints":["Yes","No"]
+      "dataType": "text",
+      "name": "outputTargetsAchieved",
+      "description": "Refer to the project Dashboard tab in MERIT",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
     },
     {
-      "dataType":"text",
-      "name":"outputTargetsNotAchievedReason",
-      "validate":"required",
+      "dataType": "text",
+      "name": "outputTargetsNotAchievedReason",
       "behaviour": [
         {
           "condition": "outputTargetsAchieved == \"No\"",
           "type": "enable"
         }
-      ]
+      ],
+      "validate": "required"
     },
     {
       "dataType": "text",
-      "description": "Refer to the Work, Health and Safety section of your funding agreement for further information.",
       "name": "workplaceHeathAndSafetyIncidents",
+      "description": "This refers to the final stage of the project only, not WH&S incidents over the life of the project.  Refer to the Work, Health and Safety section of your funding agreement for further information.",
       "constraints": [
         "Y",
         "N"
@@ -97,176 +102,282 @@
     },
     {
       "dataType": "text",
-      "description": "Description of lessons learnt from the project and how they may be applied in the future.",
       "name": "lessonsLearned",
+      "description": "Briefly describe what worked well and what you would do differently. If an outcome was not achieved how would the project be delivered differently in the future.",
       "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "projectStory"
+    },
+    {
+      "dataType": "image",
+      "name": "projectImage"
     }
   ],
-  "modelName": "Final Report",
-  "title": "Final Report",
-  "pre-populate": [
+  "viewModel": [
     {
-      "source": {
-        "context-path": "project"
-      },
-      "merge": true,
-      "mapping": [
+      "type": "row",
+      "items": [
         {
-          "target": "outcomes",
-          "mapping": [
-            {
-              "target": "outcome",
-              "source-path": "description"
-            },
-            {
-              "target": "assets",
-              "source-path": "assets"
-            }
-          ],
-          "source-path": "custom.details.objectives.rows1"
+          "source": "<h4>Key Evaluation Questions</h4> <p>In addition to completing the following section, please ensure any review documents that were identified in your ‘monitoring approach’ and KEQs have been attached to your project.</p>",
+          "type": "literal"
         }
       ]
     },
     {
-      "source": {
-        "context-path": "project"
-      },
-      "merge": true,
-      "mapping": [
+      "source": "keyEvaluationQuestions",
+      "type": "repeat",
+      "items": [
         {
-          "target": "keyEvaluationQuestions",
-          "mapping": [
+          "type": "row",
+          "items": [
             {
-              "target": "question",
-              "source-path": "data1"
-            },
-            {
-              "target": "monitoring",
-              "source-path": "data2"
+              "type": "col",
+              "items": [
+                {
+                  "preLabel": {
+                    "computed": "\\'KEQ \\' || (index + 1)"
+                  },
+                  "readonly": true,
+                  "source": "question",
+                  "type": "textarea"
+                },
+                {
+                  "preLabel": "Monitoring approach",
+                  "readonly": true,
+                  "source": "monitoring",
+                  "type": "textarea"
+                },
+                {
+                  "preLabel": "Summary of findings from your evaluation",
+                  "source": "evaluation",
+                  "placeholder": "Summarise the evaluation of KEQ drawing from monitoring approach and other relevant evidence",
+                  "type": "textarea"
+                }
+              ]
             }
           ],
-          "source-path": "custom.details.keq.rows"
+          "class": "output-section"
         }
       ]
-    }
-  ],
-  "title": "Overview of Project Progress",
-  "viewModel": [
+    },
     {
-      "type":"row",
-      "items":[
+      "type": "row",
+      "items": [
         {
-          "type":"literal",
-          "source":"<h4>Outcomes<h4>"
+          "source": "<h4>Project Outputs<h4>",
+          "type": "literal"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "preLabel": "Did you meet all project output targets?",
+              "source": "outputTargetsAchieved",
+              "type": "selectOne"
+            },
+            {
+              "preLabel": "If output targets were not met, partially met, or exceeded explain the reasons for variance",
+              "source": "outputTargetsNotAchievedReason",
+              "type": "textarea"
+            }
+          ]
+        }
+      ],
+      "class": "output-section"
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "source": "<h4>Workplace Health and Safety<h4>",
+          "type": "literal"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
+              "source": "workplaceHeathAndSafetyIncidents",
+              "type": "selectOne"
+            }
+          ]
+        }
+      ],
+      "class": "output-section"
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "source": "<h4>Outcomes<h4>",
+          "type": "literal"
         }
       ]
     },
     {
       "source": "outcomes",
+      "type": "repeat",
       "items": [
         {
+          "type": "row",
           "items": [
             {
+              "type": "col",
               "items": [
                 {
-                  "source": "outcome",
                   "preLabel": {
                     "computed": "\\'Outcome \\' || (index + 1)"
                   },
-                  "type": "text",
-                  "readonly": true
+                  "readonly": true,
+                  "source": "outcome",
+                  "type": "text"
                 },
                 {
-                  "source": "assets",
                   "preLabel": "Assets addressed",
-                  "type": "selectMany",
-                  "readonly": true
+                  "readonly": true,
+                  "source": "assets",
+                  "type": "selectMany"
                 },
                 {
-                  "source": "status",
                   "preLabel": "Status of outcome",
+                  "source": "status",
                   "type": "selectOne"
                 },
                 {
+                  "preLabel": "If the outcome was not achieved, what are the reasons?",
                   "source": "outcomeNotAchievedReason",
-                  "preLabel": "If outcomes were not achieved, report the reasons why",
                   "type": "textarea"
                 },
                 {
+                  "preLabel": "What was achieved in relation to this outcome?",
                   "source": "outcomeResult",
-                  "preLabel": "Report on projects achievement of the outcome",
-                  "type": "textarea",
-                  "placeholder":"Summarise the achievement of the project for the life of the project, not just the most recent stage"
+                  "placeholder": "Summarise the achievement of the project for the life of the project, not just the most recent stage",
+                  "type": "textarea"
                 }
-              ],
-              "type": "col"
+              ]
             }
           ],
-          "class": "output-section",
-          "type": "row"
-        }
-      ],
-      "type": "repeat"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"literal",
-          "source":"<h4>Project Outputs<h4>"
+          "class": "output-section"
         }
       ]
     },
     {
+      "type": "row",
       "items": [
         {
-          "items": [
-            {
-              "source": "outputTargetsAchieved",
-              "preLabel": "Did you meet all project output targets?",
-              "type": "selectOne"
-            },
-            {
-              "source": "outputTargetsNotAchievedReason",
-              "preLabel": "If output targets were not met, report the reasons why",
-              "type": "textarea"
-            }
-          ],
-          "type": "col"
-        }
-      ],
-      "class": "output-section",
-      "type": "row"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"literal",
-          "source":"<h4>Other<h4>"
+          "source": "<h4>Lessons Learned<h4>",
+          "type": "literal"
         }
       ]
     },
     {
+      "type": "row",
       "items": [
         {
+          "type": "col",
           "items": [
             {
-              "source": "lessonsLearned",
               "preLabel": "What lessons has the organisation learnt while undertaking this project?",
+              "source": "lessonsLearned",
               "type": "textarea"
-            },
-            {
-              "source": "workplaceHeathAndSafetyIncidents",
-              "preLabel": "Have you had any notifiable Workplace Health and Safety incidents during the reporting period?",
-              "type": "selectOne"
             }
-          ],
-          "type": "col"
+          ]
         }
       ],
-      "class": "output-section",
-      "type": "row"
+      "class": "output-section"
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "source": "<h4>Good News Story<h4>",
+          "type": "literal"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "preLabel": "If you think the project has been a great success please provide a brief summary that would be suitable for use on the Department’s social media account",
+              "source": "projectStory",
+              "type": "textarea",
+              "rows": "4"
+            },
+            {
+              "preLabel": "Optionally attach an image to illustrate the story",
+              "source": "projectImage",
+              "type": "image",
+              "displayOptions": {
+                "disableDragDrop": false
+              }
+            }
+          ]
+        }
+      ],
+      "class": "output-section"
+    }
+  ],
+  "title": "Overview of Project Progress",
+  "pre-populate": [
+    {
+      "mapping": [
+        {
+          "mapping": [
+            {
+              "source-path": "description",
+              "target": "outcome"
+            },
+            {
+              "source-path": "assets",
+              "target": "assets"
+            }
+          ],
+          "source-path": "custom.details.objectives.rows1",
+          "target": "outcomes"
+        }
+      ],
+      "merge": true,
+      "source": {
+        "context-path": "project"
+      }
+    },
+    {
+      "mapping": [
+        {
+          "mapping": [
+            {
+              "source-path": "data1",
+              "target": "question"
+            },
+            {
+              "source-path": "data2",
+              "target": "monitoring"
+            }
+          ],
+          "source-path": "custom.details.keq.rows",
+          "target": "keyEvaluationQuestions"
+        }
+      ],
+      "merge": true,
+      "source": {
+        "context-path": "project"
+      }
     }
   ]
 }

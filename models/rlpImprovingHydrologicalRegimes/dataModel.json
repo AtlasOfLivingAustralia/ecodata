@@ -74,7 +74,7 @@
             {
               "type":"select2",
               "source":"siteId",
-              "title":"Site where actions were undertaken",
+              "title":"Area (ha) improved by hydrological regime change",
               "width":"20%"
             },
             {
