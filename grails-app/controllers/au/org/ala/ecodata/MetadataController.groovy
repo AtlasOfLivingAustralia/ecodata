@@ -1,5 +1,6 @@
 package au.org.ala.ecodata
 
+import au.org.ala.ecodata.metadata.OutputMetadata
 import au.org.ala.ecodata.metadata.OutputUploadTemplateBuilder
 import au.org.ala.web.AlaSecured
 import grails.converters.JSON
@@ -149,7 +150,8 @@ class MetadataController {
         def fileName = outputName
 
         if (listName) {
-            def listModel = annotatedModel.find { it.name == listName }
+            OutputMetadata outputMetadata = new OutputMetadata([dataModel:annotatedModel])
+            Map listModel = outputMetadata.findDataModelItemByName(listName)
             annotatedModel = listModel?.columns
         }
 

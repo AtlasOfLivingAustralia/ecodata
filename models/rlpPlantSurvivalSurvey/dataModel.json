@@ -1,6 +1,6 @@
 {
-  "title": "Social survey",
-  "modelName": "RLP - Social survey",
+  "title": "Plant survival survey",
+  "modelName": "RLP - Plant survival survey",
   "dataModel": [
     {
       "dataType": "number",
@@ -19,7 +19,7 @@
               "items":[
                 {
                   "source": "numberOfSurveys",
-                  "preLabel": "Number of social surveys conducted",
+                  "preLabel": "Number of plant survival surveys conducted",
                   "type": "number"
                 }
               ]

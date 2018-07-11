@@ -9,7 +9,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "revegetationSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "improvedSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -92,8 +115,14 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
-              "title":"Site where habitat revegetation was undertaken",
+              "source":"revegetationSiteId",
+              "title":"Area (ha) revegetated",
+              "width":"10%"
+            },
+            {
+              "type":"select2",
+              "source":"improvedSiteId",
+              "title":"Area (ha) improved by revegetation",
               "width":"10%"
             },
             {
@@ -124,7 +153,7 @@
               "title":"Initial or infill planting",
               "source":"initialOrInfill",
               "type":"selectOne",
-              "width":"15%"
+              "width":"10%"
             }
 
           ],

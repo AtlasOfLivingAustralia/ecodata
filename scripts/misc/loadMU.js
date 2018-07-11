@@ -288,7 +288,15 @@ var program = {
         "activityPeriodDescriptor":"Outputs report #",
         "requiresActivityLocking":true,
         "navigationMode":"returnToProject",
-        "visibility":"private"
+        "visibility":"private",
+        "riskAndThreatTypes":[
+            "Performance",
+            "Work Health and Safety",
+            "People resources",
+            "Financial",
+            "External stakeholders",
+            "Natural Environment"
+        ]
     }
 };
 
