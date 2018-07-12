@@ -1,6 +1,6 @@
 {
-  "title": "Erosion",
-  "modelName": "RLP - Erosion",
+  "title": "Erosion management",
+  "modelName": "RLP - Erosion Management",
   "dataModel": [
     {
       "dataType":"number",
