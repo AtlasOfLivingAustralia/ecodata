@@ -8,7 +8,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "treatmentSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "threatReductionSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -89,21 +112,27 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
+              "source":"treatmentSiteId",
+              "title":"Area management method/treatment area was applied (ha)",
+              "width":"10%"
+            },
+            {
+              "type":"select2",
+              "source":"threatReductionSiteId",
+              "title":"Area where disease threat is reduced (ha)",
               "width":"10%"
             },
             {
               "title": "Disease managed",
               "source": "targetDisease",
               "type": "text",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title": "Type of management method / treatment",
               "source": "managementMethod",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Type of management method / treatment (if other)",

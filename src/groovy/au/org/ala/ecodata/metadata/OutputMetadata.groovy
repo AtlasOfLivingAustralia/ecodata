@@ -71,6 +71,24 @@ class OutputMetadata {
         }
     }
 
+    Map findDataModelItemByName(String name, List context = null) {
+        if (!context) {
+            context = metadata.dataModel
+        }
+        return context.findResult { Map node ->
+            if (node.name == name) {
+                return node
+            }
+            else if (isNestedDataModelType(node)) {
+                List nested = getNestedDataModelNodes(node)
+                return findDataModelItemByName(name, nested)
+            }
+            else {
+                return null
+            }
+        }
+    }
+
     def getNestedPropertyNames() {
         def props = []
         metadata.dataModel.each { property ->
