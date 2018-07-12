@@ -24,6 +24,10 @@
         }
 
       ]
+    },
+    {
+      "dataType":"text",
+      "name":"something"
     }
   ],
   "viewModel": [
@@ -48,13 +52,24 @@
                   "title": "Test",
                   "type": "number"
                 }
-              ]
+              ],
+              "userAddedRows":true
             }
 
           ]
         }
       ],
       "type": "section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"text",
+          "source":"something",
+          "preLabel":"Something"
+        }
+      ]
     }
   ]
 }

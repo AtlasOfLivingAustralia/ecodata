@@ -1,6 +1,6 @@
 {
-  "title": "Conservation agreements",
-  "modelName": "RLP - Conservation agreements",
+  "title": "Establishing agreements",
+  "modelName": "RLP - Establishing Agreements",
   "dataModel": [
     {
       "dataType": "list",
@@ -59,7 +59,7 @@
           "name":"agreementObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
-        },
+        }
       ]
     }
   ],
