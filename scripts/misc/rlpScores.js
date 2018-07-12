@@ -107,6 +107,69 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.",
+            "type": ""
+         }],
+         "label": "Number of one-on-one technical advice interactions"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of one-on-one technical advice interactions",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.",
+            "type": ""
+         }],
+         "label": "Number of on-ground trials / demonstrations"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of on-ground trials / demonstrations",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.",
+            "type": ""
+         }],
+         "label": "Number of on-ground works"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of on-ground works",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Controlling access",
             "property": "name",
             "type": "filter"
