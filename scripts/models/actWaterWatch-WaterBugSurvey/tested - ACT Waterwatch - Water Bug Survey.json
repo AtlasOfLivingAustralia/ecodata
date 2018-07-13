@@ -1,0 +1,942 @@
+{
+  "modelName": "ACT_Waterwatch_Modified_SIGNAL2_macroinvertebrates",
+  "record": "true",
+  "dataModel": [
+    {
+      "dataType": "number",
+      "name": "taxaRichness",
+      "description": "Taxa richness"
+    },
+    {
+      "dataType": "number",
+      "name": "spiValue",
+      "description": "Calculated stream pollution index (SPI)"
+    },
+    {
+      "dataType": "text",
+      "name": "streamQualityRating",
+      "description": "Stream quality rating"
+    },
+    {
+      "dataType": "text",
+      "name": "samplingProtocol",
+      "dwcAttribute": "samplingProtocol",
+      "value": "SIGNAL2 aquatic macroinvertebrates"
+    },
+    {
+      "dataType": "date",
+      "name": "surveyDate",
+      "dwcAttribute": "eventDate",
+      "description": "The date on which the survey was undertaken",
+      "validate": "required"
+    },
+    {
+      "dataType": "time",
+      "name": "surveyTime",
+      "dwcAttribute": "eventTime",
+      "description": "The time of the day that the survey was undertaken",
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "surveyDuration",
+      "description": "The duration of the sampling event in decimal hours"
+    },
+    {
+      "dataType": "text",
+      "name": "notes",
+      "dwcAttribute": "eventRemarks",
+      "description": "General remarks about the survey event, including any characteristic site features, conditions such as cloudy, sunny or raining, whether the sampling was done in a shady place or in the open, etc."
+    },
+    {
+      "dataType": "text",
+      "name": "recordedBy",
+      "dwcAttribute": "recordedBy",
+      "description": "The name of the person or group undertaking the sampling event."
+    },
+    {
+      "dataType": "stringList",
+      "name": "samplingMethod",
+      "description": "The method used to sample the waterbody for macroinvertebrates.",
+      "constraints": [
+        "Kick",
+        "Sweep"
+      ],
+      "validate": "required"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "habitatType",
+          "description": "Select the type of habitat sampled",
+          "constraints": [
+            "Silt and sand",
+            "Stones",
+            "Water plants",
+            "Leaves and twigs",
+            "Logs branches and tree roots"
+          ]
+        },
+        {
+          "dataType": "boolean",
+          "name": "edge"
+        },
+        {
+          "dataType": "boolean",
+          "name": "pool"
+        },
+        {
+          "dataType": "boolean",
+          "name": "riffle"
+        }
+      ],
+      "dataType": "list",
+      "name": "habitatSampled"
+    },
+    {
+      "dataType": "text",
+      "name": "idConfirmedBy",
+      "description": "Verification of this record by a qualified person will help to make it more useful in scientific analysis of the data.",
+      "constraints": [
+        "Waterwatch coordinator",
+        "Professional staff of council or agency",
+        "Experienced teacher",
+        "Community member",
+        "Other (specify in notes)"
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "gambusiaPresent",
+      "description": "Gambusia is an introduced freshwater pest species which damages the aquatic environment.",
+      "constraints": [
+        "Yes",
+        "No"
+      ]
+    },
+    {
+      "dataType": "text",
+      "name": "wqFactors",
+      "description": "Please note any factors apparent during your sampling which may affect water quality. (eg. muddy or very clear water, the amount of algae present, etc.."
+    },
+    {
+      "dataType": "text",
+      "name": "comments",
+      "dwcAttribute": "notes",
+      "description": "Observation notes about the record."
+    },
+    {
+      "defaultAccuracy": 50,
+      "hideMyLocation": false,
+      "columns": [
+        {
+          "dwcAttribute": "verbatimLatitude",
+          "source": "locationLatitude"
+        },
+        {
+          "dwcAttribute": "verbatimLongitude",
+          "source": "locationLongitude"
+        },
+        {
+          "source": "Locality"
+        },
+        {
+          "source": "Accuracy"
+        },
+        {
+          "source": "Notes"
+        },
+        {
+          "source": "Source"
+        }
+      ],
+      "dataType": "geoMap",
+      "name": "location",
+      "dwcAttribute": "verbatimCoordinates",
+      "hideSiteSelection": true,
+      "zoomToProjectArea": true,
+      "validate": "required"
+    },
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "taxonName"
+        },
+        {
+          "dataType": "text",
+          "name": "taxonSensitivityClass",
+          "description": "Different macroinvertebrate species/taxa have different degrees of sensitivity to water quality conditions and can be an indicator of changes. Grouping them into broad categories makes it easier to relate the species that you see with the calculated water quality."
+        },
+        {
+          "dataType": "number",
+          "name": "taxonSensitivityRating",
+          "description": "A rating between 1 and 10 which reflects the relative sensitivity of different species/taxa of macroinvertebrates to water quality factors."
+        },
+        {
+          "dataType": "number",
+          "name": "individualCount",
+          "description": "Enter the actual number of each species/taxon that you count in your sample.",
+          "validate": "integer,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "taxonWeightFactor"
+        },
+        {
+          "dataType": "number",
+          "name": "taxonIndexValue"
+        }
+      ],
+      "dataType": "list",
+      "name": "taxaObservations",
+      "jsMain": "https://dl.dropbox.com/s/hxtk06ythysu4xr/taxaObservations.min.js?dl=0",
+      "defaultRows": [
+        {
+          "scientificName": "Megaloptera",
+          "taxonSensitivityClass": "Sensitive",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Alderfly larva (Megaloptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "8"
+        },
+        {
+          "scientificName": "Notonectidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Backswimmer (Notonectidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Coleoptera",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Beetle larva (Coleoptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "5"
+        },
+        {
+          "scientificName": "Ceratopogonidae",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Biting Midge larva & pupa (Ceratopogonidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Chironomidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Bloodworm, Non-biting Midge (Chironomidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "1"
+        },
+        {
+          "scientificName": "Trichoptera",
+          "taxonSensitivityClass": "Sensitive",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Caddisfly larva (Trichoptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "8"
+        },
+        {
+          "scientificName": "Odonata - Zygoptera",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Damselfly nymph (Odonata - Zygoptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "6"
+        },
+        {
+          "scientificName": "Dytiscidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Diving Beetle & larva (Dytiscidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Odonata - Epiprocta",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Dragonfly nymph (Odonata - Epiprocta)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "4"
+        },
+        {
+          "scientificName": "Diptera",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Fly larva & pupa (Diptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Turbellaria",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Free-living Flatworm, Flatworms  (Turbellaria)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Hydrozoa",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Hydra (Hydrozoa)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Bivalvia",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Mussel (Bivalvia)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Amphipoda",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Sandhopper (Amphipoda)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Oligochaeta",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Segmented worm  (Oligochaeta)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Caridea",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Shrimp (Caridea)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Isopoda",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Slater, Isopod  (Isopoda)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Gastropoda",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Snail (Gastropoda)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "1"
+        },
+        {
+          "scientificName": "Decapoda",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Freshwater Yabby/Crayfish (Decapoda)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "4"
+        },
+        {
+          "scientificName": "Belostomatidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Giant Water Bug  (Belostomatidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Hirudinea",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Leech (Hirudinea)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "1"
+        },
+        {
+          "scientificName": "Ephemeroptera",
+          "taxonSensitivityClass": "Very sensitive",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Mayfly nymph (Ephemeroptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "9"
+        },
+        {
+          "scientificName": "Culicidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Mosquito larva & pupa (Culicidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "1"
+        },
+        {
+          "scientificName": "Nematoda",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Nematode (Nematoda)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Elmidae",
+          "taxonSensitivityClass": "Sensitive",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Riffle Beetle & larva (Elmidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "7"
+        },
+        {
+          "scientificName": "Plecoptera",
+          "taxonSensitivityClass": "Very sensitive",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Stonefly nymph (Plecoptera)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "10"
+        },
+        {
+          "scientificName": "Corixidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Water Boatman (Corixidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Arcarina",
+          "taxonSensitivityClass": "Sensitive",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Water Mites (Arcarina)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "6"
+        },
+        {
+          "scientificName": "Nepidae",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Water Scorpions/Needle Bug  (Nepidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "3"
+        },
+        {
+          "scientificName": "Gerridae",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Water Strider (Gerridae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "4"
+        },
+        {
+          "scientificName": "Mesoveliidae",
+          "taxonSensitivityClass": "Very tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Water Treader (Mesoveliidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "2"
+        },
+        {
+          "scientificName": "Gyrinidae",
+          "taxonSensitivityClass": "Tolerant",
+          "taxonIndexValue": "",
+          "dataType": "species",
+          "taxonWeightFactor": "",
+          "individualCount": "",
+          "taxonName": "Whirligig Beetle & larva (Gyrinidae)",
+          "dwcAttribute": "scientificName",
+          "taxonSensitivityRating": "4"
+        }
+      ],
+      "jsClass": "https://dl.dropbox.com/s/30fnaw0udvnini8/TaxaObservationsRow.min.js?dl=0"
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "source": "<h2>Water Bug Survey</h2>",
+          "type": "literal"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Site Visit Details",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Date",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "source": "surveyDate",
+                      "preLabelClass": "span4",
+                      "type": "date"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Time",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "source": "eventTime",
+                      "preLabelClass": "span4",
+                      "type": "time"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Survey duration (decimal hours)",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "source": "surveyDuration",
+                      "preLabelClass": "span4",
+                      "type": "text"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Notes",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "source": "notes",
+                      "preLabelClass": "span4",
+                      "type": "textarea"
+                    }
+                  ]
+                },
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "preLabel": "Recorded by",
+                      "inline": true,
+                      "dataClass": "span8",
+                      "source": "recordedBy",
+                      "preLabelClass": "span4",
+                      "type": "text"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            },
+            {
+              "boxed": true,
+              "title": "Site Habitat & Sampling Method",
+              "type": "section",
+              "items": [
+                {
+                  "computed": null,
+                  "type": "row",
+                  "items": [
+                    {
+                      "computed": null,
+                      "columns": [
+                        {
+                          "width": "50%",
+                          "source": "habitatType",
+                          "title": "Habitat",
+                          "type": "selectOne"
+                        },
+                        {
+                          "width": "16%",
+                          "source": "edge",
+                          "title": "Edge",
+                          "type": "boolean"
+                        },
+                        {
+                          "width": "16%",
+                          "source": "pool",
+                          "title": "Pool",
+                          "type": "boolean"
+                        },
+                        {
+                          "width": "16%",
+                          "source": "riffle",
+                          "title": "Riffle",
+                          "type": "boolean"
+                        }
+                      ],
+                      "userAddedRows": "true",
+                      "source": "habitatSampled",
+                      "type": "table"
+                    },
+                    {
+                      "computed": null,
+                      "type": "row",
+                      "items": [
+                        {
+                          "preLabel": "Sampling methods:",
+                          "inline": true,
+                          "dataClass": "span8",
+                          "source": "samplingMethod",
+                          "preLabelClass": "span4",
+                          "type": "selectMany"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            },
+            {
+              "computed": null,
+              "type": "row",
+              "items": [
+                {
+                  "preLabel": "Bug identification confirmed by:",
+                  "inline": true,
+                  "dataClass": "span8",
+                  "source": "idConfirmedBy",
+                  "preLabelClass": "span4",
+                  "type": "selectOne"
+                }
+              ]
+            },
+            {
+              "computed": null,
+              "type": "row",
+              "items": [
+                {
+                  "preLabel": "Did you catch Gambusia during this sampling event?",
+                  "inline": true,
+                  "dataClass": "span8",
+                  "source": "gambusiaPresent",
+                  "preLabelClass": "span4",
+                  "type": "selectOne"
+                }
+              ]
+            },
+            {
+              "computed": null,
+              "type": "row",
+              "items": [
+                {
+                  "preLabel": "What other factors may be influencing water quality for this sampling event?",
+                  "inline": true,
+                  "dataClass": "span8",
+                  "source": "wqFactors",
+                  "preLabelClass": "span4",
+                  "type": "textarea"
+                }
+              ]
+            },
+            {
+              "computed": null,
+              "type": "row",
+              "items": [
+                {
+                  "preLabel": "Notes:",
+                  "inline": true,
+                  "dataClass": "span8",
+                  "source": "notes",
+                  "preLabelClass": "span4",
+                  "type": "textarea"
+                }
+              ]
+            }
+          ],
+          "class": ""
+        },
+        {
+          "type": "col",
+          "items": [
+            {
+              "type": "row",
+              "items": [
+                {
+                  "boxed": true,
+                  "title": "Site",
+                  "type": "section",
+                  "items": [
+                    {
+                      "type": "row",
+                      "items": [
+                        {
+                          "includeNotes": false,
+                          "orientation": "vertical",
+                          "computed": null,
+                          "autoLocalitySearch": true,
+                          "readonly": false,
+                          "includeSource": false,
+                          "includeAccuracy": false,
+                          "hideSiteSelection": true,
+                          "source": "location",
+                          "type": "geoMap",
+                          "zoomToProjectArea": true,
+                          "includeLocality": false
+                        }
+                      ]
+                    }
+                  ],
+                  "class": ""
+                }
+              ]
+            },
+            {
+              "type": "row",
+              "items": [
+                {
+                  "boxed": true,
+                  "title": "How healthy is this site?",
+                  "type": "section",
+                  "items": [
+                    {
+                      "computed": null,
+                      "type": "row",
+                      "items": [
+                        {
+                          "preLabel": "Number of different types of bugs (taxa richness):",
+                          "inline": true,
+                          "dataClass": "span8",
+                          "noEdit": "true",
+                          "source": "taxaRichness",
+                          "preLabelClass": "span4",
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    {
+                      "computed": null,
+                      "type": "row",
+                      "items": [
+                        {
+                          "preLabel": "Calculated stream pollution index (SPI):",
+                          "inline": true,
+                          "dataClass": "span8",
+                          "noEdit": "true",
+                          "source": "spiValue",
+                          "preLabelClass": "span4",
+                          "type": "number"
+                        }
+                      ]
+                    },
+                    {
+                      "computed": null,
+                      "type": "row",
+                      "items": [
+                        {
+                          "preLabel": "Stream quality rating:",
+                          "inline": true,
+                          "dataClass": "span8",
+                          "noEdit": "true",
+                          "source": "streamQualityRating",
+                          "preLabelClass": "span4",
+                          "type": "text"
+                        }
+                      ]
+                    }
+                  ],
+                  "class": ""
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "col",
+          "items": [
+            {
+              "boxed": true,
+              "title": "Water Bug Count",
+              "type": "section",
+              "items": [
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "items": [
+                        {
+                          "computed": null,
+                          "source": "Record all of the bug species in your sample and the number of each that you count.",
+                          "type": "literal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "row",
+                  "items": [
+                    {
+                      "columns": [
+                        {
+                          "noEdit": "true",
+                          "source": "taxonName",
+                          "title": "Type of bug",
+                          "type": "text"
+                        },
+                        {
+                          "noEdit": "true",
+                          "source": "taxonSensitivityClass",
+                          "title": "Sensitivity",
+                          "type": "text"
+                        },
+                        {
+                          "noEdit": "true",
+                          "source": "taxonSensitivityRating",
+                          "title": "Sensitivity rating",
+                          "type": "number"
+                        },
+                        {
+                          "source": "individualCount",
+                          "title": "Number of bugs",
+                          "type": "number",
+                          "validate": "min[0]"
+                        },
+                        {
+                          "noEdit": "true",
+                          "source": "taxonWeightFactor",
+                          "title": "Weight factor",
+                          "type": "number"
+                        },
+                        {
+                          "noEdit": "true",
+                          "source": "taxonIndexValue",
+                          "title": "Index value",
+                          "type": "number"
+                        }
+                      ],
+                      "source": "taxaObservations",
+                      "type": "table"
+                    }
+                  ]
+                }
+              ],
+              "class": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
