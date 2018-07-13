@@ -282,14 +282,21 @@ var program = {
     parent:parentId,
     endDate:programEnd,
     status:'active',
-    visibility:'private',
     config:{
         "meriPlanTemplate":"rlpMeriPlan",
         "projectTemplate":"rlp",
         "activityPeriodDescriptor":"Outputs report #",
         "requiresActivityLocking":true,
         "navigationMode":"returnToProject",
-        "visibility":"private"
+        "visibility":"private",
+        "riskAndThreatTypes":[
+            "Performance",
+            "Work Health and Safety",
+            "People resources",
+            "Financial",
+            "External stakeholders",
+            "Natural Environment"
+        ]
     }
 };
 

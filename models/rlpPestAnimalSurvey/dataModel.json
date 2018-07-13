@@ -3,32 +3,73 @@
   "modelName": "RLP - Pest animal survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "surveys",
+      "columns": [
+
+        {
+          "dataType":"number",
+          "name":"test2"
+
+        },
+        {
+          "dataType":"list",
+          "name":"surveyDetails",
+          "columns":[
+            {
+              "dataType":"number",
+              "name":"test"
+            }
+          ]
+        }
+
+      ]
+    },
+    {
+      "dataType":"text",
+      "name":"something"
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
+          "type": "repeat",
+          "source":"surveys",
           "items": [
             {
-              "type":"col",
-              "items":[
+              "source":"test2",
+              "type":"number",
+              "preLabel":"Test"
+
+            },
+            {
+              "type":"table",
+              "source":"surveyDetails",
+              "columns":[
                 {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of pest animal surveys conducted",
+                  "source": "test",
+                  "title": "Test",
                   "type": "number"
                 }
-              ]
+              ],
+              "userAddedRows":true
             }
 
           ]
         }
       ],
       "type": "section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"text",
+          "source":"something",
+          "preLabel":"Something"
+        }
+      ]
     }
   ]
 }

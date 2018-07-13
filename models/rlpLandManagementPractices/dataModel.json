@@ -8,7 +8,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "managedSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "protectedSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -84,9 +107,15 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
-              "title":"Site where actions were undertaken",
-              "width":"15%"
+              "source":"managedSiteId",
+              "title":"Area (ha) covered by practice change",
+              "width":"10%"
+            },
+            {
+              "type":"select2",
+              "source":"protectedSiteId",
+              "title":"Area (ha) improve/protected by land management practice change",
+              "width":"10%"
             },
             {
               "title": "Type of action",
@@ -110,7 +139,7 @@
               "title":"Action aim (300 character limit)",
               "source":"practiceChangeObjective",
               "type":"textarea",
-              "width":"30%"
+              "width":"25%"
             }
           ],
           "userAddedRows": true,

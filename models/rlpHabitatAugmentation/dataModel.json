@@ -8,7 +8,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "augmentationSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "protectedSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -69,9 +92,15 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
+              "source":"augmentationSiteId",
               "title":"Site where habitat augmentation was conducted",
-              "width":"20%"
+              "width":"10%"
+            },
+            {
+              "type":"select2",
+              "source":"protectedSiteId",
+              "title":"Area improved or protected by augmentation (ha)",
+              "width":"10%"
             },
             {
               "title": "Type of habitat augmentation",

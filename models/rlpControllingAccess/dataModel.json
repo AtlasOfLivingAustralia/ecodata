@@ -8,7 +8,30 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
+          "name": "installedSiteId",
+          "validate": "required",
+          "constraints": {
+            "config": {
+              "source": {
+                "context-path": "project.sites"
+              },
+              "mapping": [
+                {
+                  "target": "id",
+                  "source-path": "siteId"
+                },
+                {
+                  "target": "text",
+                  "source-path": "name"
+                }
+              ]
+            },
+            "type": "pre-populated"
+          }
+        },
+        {
+          "dataType": "text",
+          "name": "protectedSiteId",
           "validate": "required",
           "constraints": {
             "config": {
@@ -72,8 +95,14 @@
           "columns": [
             {
               "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
+              "source":"installedSiteId",
+              "title":"Area installed (Ha)",
+              "width":"20%"
+            },
+            {
+              "type":"select2",
+              "source":"protectedSiteId",
+              "title":"Area protected by access control structure (Ha)",
               "width":"20%"
             },
             {
