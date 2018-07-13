@@ -187,67 +187,67 @@ var soilPrioritiesByMU = {
     "ACT": ["Soil acidification", "Soil Carbon priority", "Hillslope erosion priority", "Wind erosion priority"]
 };
 
+var tssSpecies = ["Acacia purpureopetala", "Acacia whibleyana (Whibley Wattle)", "Amytornis woodwardi (White-throated Grasswren, Yirlinkirrkirr)", "Anthochaera phrygia (Regent Honeyeater)", "Banksia cuneata (Matchstick Banksia, Quairading Banksia)", "Banksia vincentia", "Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Brachychiton sp. Ormeau (L.H.Bird AQ435851) (Ormeau Bottle Tree)", "Burramys parvus (Mountain Pygmy-possum)", "Calyptorhynchus banksii graptogyne (Red-tailed Black-Cockatoo (south-eastern))", "Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Conilurus penicillatus (Brush-tailed Rabbit-rat, Brush-tailed Tree-rat, Pakooma)", "Cyanoramphus cookii (Norfolk Island Green Parrot, Tasman Parakeet, Norfolk Island Parakeet)", "Dasyornis brachypterus (Eastern Bristlebird)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Dasyurus viverrinus (Eastern Quoll, Luaner)", "Drakaea elastica (Glossy-leafed Hammer Orchid, Glossy-leaved Hammer Orchid,  Warty Hammer Orchid)", "Epacris stuartii (Stuart's Heath, Southport Heath)", "Epthianura crocea tunneyi (Alligator Rivers Yellow Chat, Yellow Chat (Alligator Rivers))", "Eucalyptus crenulata (Silver Gum, Buxton Gum)", "Eucalyptus morrisbyi (Morrisby's Gum, Morrisbys Gum)", "Eucalyptus recurva (Mongarlowe Mallee)", "Fregata andrewsi (Christmas Island Frigatebird, Andrew's Frigatebird)", "Grevillea caleyi (Caley's Grevillea)", "Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)", "Gymnobelideus leadbeateri (Leadbeater's Possum)", "Hibiscus brennanii", "Homoranthus darwinioides", "Isoodon auratus auratus (Golden Bandicoot (mainland))", "Isoodon auratus barrowensis (Golden Bandicoot (Barrow Island))", "Lagorchestes hirsutus Central Australian subspecies (Mala, Rufous Hare-Wallaby (Central Australia))", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Lepidorrhachis mooreana (Little Mountain Palm, Moorei Palm)", "Lichenostomus melanops cassidix (Helmeted Honeyeater, Yellow-tufted Honeyeater (Helmeted))", "Livistona mariae subsp. mariae (Central Australian Cabbage Palm, Red Cabbage Palm)", "Macadamia jansenii (Bulberin Nut, Bulburin Nut Tree)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Myrmecodia beccarii (Ant Plant)", "Neophema chrysogaster (Orange-bellied Parrot)", "Ninox novaeseelandiae undulata (Norfolk Island Boobook, Southern Boobook (Norfolk Island))", "Notomys aquilo (Northern Hopping-mouse, Woorrentinta)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Oberonia attenuata (Mossman Fairy Orchid)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Perameles gunnii Victorian subspecies (Eastern Barred Bandicoot (Mainland))", "Perameles gunnii gunnii (Eastern Barred Bandicoot (Tasmania))", "Petaurus gracilis (Mahogany Glider)", "Petrogale lateralis MacDonnell Ranges race (Warru, Black-footed Rock-wallaby (MacDonnell Ranges race))", "Petrogale lateralis West Kimberley race (Black-footed Rock-wallaby (West Kimberley race))", "Petrogale lateralis hackettii (Recherche Rock-wallaby)", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Pezoporus flaviventris (Western Ground Parrot, Kyloring)", "Pezoporus occidentalis (Night Parrot)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Potorous tridactylus gilbertii (Gilbert's Potoroo)", "Prasophyllum murfetii (Fleurieu Leek Orchid)", "Psephotus chrysopterygius (Golden-shouldered Parrot, Alwal)", "Pseudocheirus occidentalis (Western Ringtail Possum, Ngwayir, Womp, Woder, Ngoor, Ngoolangit)", "Pteropus natalis (Christmas Island Flying-fox, Christmas Island Fruit-bat)", "Ptilotus fasciculatus (Fitzgerald's Mulla-mulla)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Sclerolaena napiformis (Turnip Copperburr)", "Sminthopsis aitkeni (Kangaroo Island Dunnart)", "Stipiturus mallee (Mallee Emu-wren)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)", "Syzygium paniculatum (Magenta Lilly Pilly, Magenta Cherry, Daguba, Scrub Cherry, Creek Lilly Pilly, Brush Cherry)", "Tetratheca gunnii (Shy Pinkbells, Shy Susan)", "Thelymitra cyanapicata (Blue Top Sun-orchid, Dark-tipped Sun-orchid)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))", "Verticordia spicata subsp. squamosa (Scaly-leaved Featherflower)", "Zyzomys pedunculatus (Central Rock-rat, Antina)"];
 
-var tssSpecies = ["Acacia purpureopetala", "Acacia whibleyana", "Amytornis woodwardi", "Anthochaera phrygia", "Banksia cuneata", "Banksia vincentia", "Bettongia gaimardi", "Bettongia penicillata", "Botaurus poiciloptilus", "Brachychiton sp. Ormeau (L.H.Bird AQ435851)", "Burramys parvus", "Calyptorhynchus banksii graptogyne", "Casuarius casuarius johnsonii", "Conilurus penicillatus", "Cyanoramphus cookii", "Dasyornis brachypterus", "Dasyurus geoffroii", "Dasyurus viverrinus", "Drakaea elastica", "Epacris stuartii", "Epthianura crocea tunneyi", "Eucalyptus crenulata", "Eucalyptus morrisbyi", "Eucalyptus recurva", "Fregata andrewsi", "Grevillea caleyi", "Grevillea calliantha", "Gymnobelideus leadbeateri", "Hibiscus brennanii", "Homoranthus darwinioides", "Isoodon auratus auratus", "Isoodon auratus barrowensis", "Lagorchestes hirsutus Central Australian subspecies", "Lathamus discolor", "Leipoa ocellata", "Lepidorrhachis mooreana", "Lichenostomus melanops cassidix", "Livistona mariae subsp. mariae", "Macadamia jansenii", "Macrotis lagotis", "Myrmecobius fasciatus", "Myrmecodia beccarii", "Neophema chrysogaster", "Ninox novaeseelandiae undulata", "Notomys aquilo", "Numenius madagascariensis", "Oberonia attenuata", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Perameles gunnii Victorian subspecies", "Perameles gunnii gunnii", "Petaurus gracilis", "Petrogale lateralis MacDonnell Ranges race", "Petrogale lateralis West Kimberley race", "Petrogale lateralis hackettii", "Petrogale lateralis lateralis", "Pezoporus flaviventris", "Pezoporus occidentalis", "Pimelea spinescens subsp. spinescens", "Potorous tridactylus gilbertii", "Prasophyllum murfetii", "Psephotus chrysopterygius", "Pseudocheirus occidentalis", "Pteropus natalis", "Ptilotus fasciculatus", "Rutidosis leptorrhynchoides", "Sclerolaena napiformis", "Sminthopsis aitkeni", "Stipiturus mallee", "Swainsona recta", "Syzygium paniculatum", "Tetratheca gunnii", "Thelymitra cyanapicata", "Thinornis rubricollis rubricollis", "Verticordia spicata subsp. squamosa", "Zyzomys pedunculatus"];
 var tssSpeciesByMu = {
-    "Northern Gulf": ["Acacia purpureopetala", "Casuarius casuarius johnsonii", "Myrmecodia beccarii", "Numenius madagascariensis", "Psephotus chrysopterygius"],
-    "Wet Tropics": ["Acacia purpureopetala", "Casuarius casuarius johnsonii", "Myrmecodia beccarii", "Numenius madagascariensis", "Oberonia attenuata", "Petaurus gracilis"],
-    "Eyre Peninsula": ["Acacia whibleyana", "Bettongia penicillata", "Leipoa ocellata", "Macrotis lagotis", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Thinornis rubricollis rubricollis"],
-    "Northern Territory": ["Amytornis woodwardi", "Conilurus penicillatus", "Epthianura crocea tunneyi", "Hibiscus brennanii", "Isoodon auratus auratus", "Lagorchestes hirsutus Central Australian subspecies", "Leipoa ocellata", "Livistona mariae subsp. mariae", "Macrotis lagotis", "Notomys aquilo", "Numenius madagascariensis", "Petrogale lateralis MacDonnell Ranges race", "Zyzomys pedunculatus"],
-    "Central Tablelands": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Homoranthus darwinioides", "Lathamus discolor", "Leipoa ocellata", "Swainsona recta"],
-    "Central West": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Homoranthus darwinioides", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Swainsona recta"],
-    "Greater Sydney": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Grevillea caleyi", "Homoranthus darwinioides", "Lathamus discolor", "Numenius madagascariensis", "Syzygium paniculatum"],
-    "Hunter": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Homoranthus darwinioides", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Syzygium paniculatum"],
-    "Murray": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Burramys parvus", "Lathamus discolor", "Leipoa ocellata", "Pedionomus torquatus", "Pimelea spinescens subsp. spinescens", "Sclerolaena napiformis"],
-    "North Coast": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Dasyornis brachypterus", "Lathamus discolor", "Numenius madagascariensis"],
-    "North West NSW": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Lathamus discolor", "Leipoa ocellata"],
-    "Northern Tablelands": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Dasyornis brachypterus", "Lathamus discolor"],
-    "Riverina": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Burramys parvus", "Lathamus discolor", "Leipoa ocellata", "Pedionomus torquatus", "Sclerolaena napiformis"],
-    "South East NSW": ["Anthochaera phrygia", "Banksia vincentia", "Bettongia gaimardi", "Botaurus poiciloptilus", "Burramys parvus", "Dasyornis brachypterus", "Eucalyptus recurva", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Rutidosis leptorrhynchoides", "Swainsona recta", "Syzygium paniculatum", "Thinornis rubricollis rubricollis"],
-    "Corangamite": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Lathamus discolor", "Neophema chrysogaster", "Numenius madagascariensis", "Pedionomus torquatus", "Pimelea spinescens subsp. spinescens", "Rutidosis leptorrhynchoides", "Thinornis rubricollis rubricollis"],
-    "East Gippsland": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Burramys parvus", "Dasyornis brachypterus", "Lathamus discolor", "Numenius madagascariensis", "Thinornis rubricollis rubricollis"],
-    "Goulburn Broken": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Burramys parvus", "Eucalyptus crenulata", "Gymnobelideus leadbeateri", "Lathamus discolor", "Pedionomus torquatus", "Pimelea spinescens subsp. spinescens", "Sclerolaena napiformis", "Swainsona recta"],
-    "North Central": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Pedionomus torquatus", "Pimelea spinescens subsp. spinescens", "Sclerolaena napiformis"],
-    "North East": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Burramys parvus", "Lathamus discolor", "Pedionomus torquatus", "Sclerolaena napiformis", "Swainsona recta"],
-    "Port Phillip and Western Port": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Eucalyptus crenulata", "Gymnobelideus leadbeateri", "Lathamus discolor", "Lichenostomus melanops cassidix", "Neophema chrysogaster", "Numenius madagascariensis", "Pedionomus torquatus", "Perameles gunnii Victorian subspecies", "Pimelea spinescens subsp. spinescens", "Rutidosis leptorrhynchoides", "Thinornis rubricollis rubricollis"],
-    "West Gippsland": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Gymnobelideus leadbeateri", "Lathamus discolor", "Neophema chrysogaster", "Numenius madagascariensis", "Thinornis rubricollis rubricollis"],
-    "Wimmera": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Calyptorhynchus banksii graptogyne", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Pedionomus torquatus", "Pimelea spinescens subsp. spinescens", "Rutidosis leptorrhynchoides", "Sclerolaena napiformis"],
-    "Burnett Mary": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Dasyornis brachypterus", "Lathamus discolor", "Macadamia jansenii", "Numenius madagascariensis"],
-    "Condamine": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Dasyornis brachypterus", "Lathamus discolor"],
-    "Maranoa Balonne and Border Rivers": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Lathamus discolor"],
-    "South East Queensland": ["Anthochaera phrygia", "Botaurus poiciloptilus", "Brachychiton sp. Ormeau (L.H.Bird AQ435851)", "Dasyornis brachypterus", "Lathamus discolor", "Numenius madagascariensis"],
-    "ACT": ["Anthochaera phrygia", "Bettongia gaimardi", "Botaurus poiciloptilus", "Lathamus discolor", "Rutidosis leptorrhynchoides", "Swainsona recta"],
-    "Peel-Harvey Region": ["Banksia cuneata", "Bettongia penicillata", "Botaurus poiciloptilus", "Dasyurus geoffroii", "Drakaea elastica", "Leipoa ocellata", "Macrotis lagotis", "Myrmecobius fasciatus", "Numenius madagascariensis", "Pseudocheirus occidentalis"],
-    "Avon River Basin": ["Banksia cuneata", "Bettongia penicillata", "Dasyurus geoffroii", "Leipoa ocellata", "Myrmecobius fasciatus", "Petrogale lateralis lateralis", "Ptilotus fasciculatus"],
-    "North West NRM Region": ["Bettongia gaimardi", "Botaurus poiciloptilus", "Dasyurus viverrinus", "Lathamus discolor", "Neophema chrysogaster", "Numenius madagascariensis", "Perameles gunnii gunnii", "Tetratheca gunnii", "Thinornis rubricollis rubricollis"],
-    "North NRM Region": ["Bettongia gaimardi", "Botaurus poiciloptilus", "Dasyurus viverrinus", "Lathamus discolor", "Numenius madagascariensis", "Perameles gunnii gunnii", "Tetratheca gunnii", "Thinornis rubricollis rubricollis"],
-    "South NRM Region": ["Bettongia gaimardi", "Botaurus poiciloptilus", "Dasyurus viverrinus", "Epacris stuartii", "Eucalyptus morrisbyi", "Lathamus discolor", "Neophema chrysogaster", "Numenius madagascariensis", "Perameles gunnii gunnii", "Thinornis rubricollis rubricollis"],
-    "Western": ["Bettongia penicillata", "Botaurus poiciloptilus", "Leipoa ocellata", "Macrotis lagotis", "Myrmecobius fasciatus", "Pedionomus torquatus"],
-    "Northern Agricultural Region": ["Bettongia penicillata", "Dasyurus geoffroii", "Drakaea elastica", "Grevillea calliantha", "Leipoa ocellata", "Numenius madagascariensis", "Petrogale lateralis lateralis", "Ptilotus fasciculatus", "Verticordia spicata subsp. squamosa"],
-    "Swan Region": ["Bettongia penicillata", "Botaurus poiciloptilus", "Dasyurus geoffroii", "Drakaea elastica", "Leipoa ocellata", "Numenius madagascariensis", "Petrogale lateralis lateralis", "Pseudocheirus occidentalis"],
-    "Rangelands Region": ["Bettongia penicillata", "Conilurus penicillatus", "Dasyurus geoffroii", "Isoodon auratus auratus", "Isoodon auratus barrowensis", "Lagorchestes hirsutus Central Australian subspecies", "Leipoa ocellata", "Macrotis lagotis", "Myrmecobius fasciatus", "Numenius madagascariensis", "Petrogale lateralis MacDonnell Ranges race", "Petrogale lateralis West Kimberley race", "Petrogale lateralis lateralis", "Pezoporus occidentalis"],
-    "South Coast Region": ["Bettongia penicillata", "Botaurus poiciloptilus", "Dasyurus geoffroii", "Leipoa ocellata", "Myrmecobius fasciatus", "Numenius madagascariensis", "Petrogale lateralis hackettii", "Petrogale lateralis lateralis", "Pezoporus flaviventris", "Potorous tridactylus gilbertii", "Pseudocheirus occidentalis"],
-    "South West Region": ["Bettongia penicillata", "Botaurus poiciloptilus", "Dasyurus geoffroii", "Drakaea elastica", "Leipoa ocellata", "Myrmecobius fasciatus", "Numenius madagascariensis", "Pseudocheirus occidentalis"],
-    "Glenelg Hopkins": ["Botaurus poiciloptilus", "Calyptorhynchus banksii graptogyne", "Lathamus discolor", "Leipoa ocellata", "Neophema chrysogaster", "Numenius madagascariensis", "Pedionomus torquatus", "Perameles gunnii Victorian subspecies", "Pimelea spinescens subsp. spinescens", "Rutidosis leptorrhynchoides", "Thinornis rubricollis rubricollis"],
-    "Mallee": ["Botaurus poiciloptilus", "Lathamus discolor", "Leipoa ocellata", "Numenius madagascariensis", "Pedionomus torquatus", "Stipiturus mallee"],
-    "Fitzroy": ["Botaurus poiciloptilus", "Macadamia jansenii", "Numenius madagascariensis"],
-    "South West Queensland": ["Botaurus poiciloptilus", "Pedionomus torquatus"],
-    "Adelaide and Mount Lofty Ranges": ["Botaurus poiciloptilus", "Leipoa ocellata", "Neophema chrysogaster", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Prasophyllum murfetii", "Thelymitra cyanapicata", "Thinornis rubricollis rubricollis"],
-    "Kangaroo Island": ["Botaurus poiciloptilus", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Sminthopsis aitkeni", "Thinornis rubricollis rubricollis"],
-    "South Australian Murray Darling Basin": ["Botaurus poiciloptilus", "Leipoa ocellata", "Macrotis lagotis", "Myrmecobius fasciatus", "Neophema chrysogaster", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Prasophyllum murfetii", "Stipiturus mallee", "Thelymitra cyanapicata", "Thinornis rubricollis rubricollis"],
-    "South East": ["Botaurus poiciloptilus", "Calyptorhynchus banksii graptogyne", "Lathamus discolor", "Leipoa ocellata", "Neophema chrysogaster", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Stipiturus mallee", "Thinornis rubricollis rubricollis"],
-    "Cape York": ["Casuarius casuarius johnsonii", "Myrmecodia beccarii", "Numenius madagascariensis", "Psephotus chrysopterygius"],
-    "Co-operative Management Area": ["Casuarius casuarius johnsonii", "Numenius madagascariensis", "Psephotus chrysopterygius"],
-    "Burdekin": ["Casuarius casuarius johnsonii", "Macrotis lagotis", "Myrmecodia beccarii", "Numenius madagascariensis", "Petaurus gracilis"],
-    "Torres Strait": ["Casuarius casuarius johnsonii", "Numenius madagascariensis"],
-    "Alinytjara Wilurara": ["Leipoa ocellata", "Petrogale lateralis MacDonnell Ranges race"],
-    "Northern and Yorke": ["Leipoa ocellata", "Numenius madagascariensis", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Thinornis rubricollis rubricollis"],
-    "South Australian Arid Lands": ["Leipoa ocellata", "Macrotis lagotis", "Myrmecobius fasciatus", "Olearia pannosa subsp. pannosa", "Pedionomus torquatus", "Pezoporus occidentalis"],
-    "North Coast - Lord Howe Island": ["Lepidorrhachis mooreana", "Numenius madagascariensis"],
-    "Desert Channels": ["Macrotis lagotis", "Pedionomus torquatus", "Pezoporus occidentalis"],
-    "Southern Gulf": ["Macrotis lagotis", "Numenius madagascariensis", "Pezoporus occidentalis"],
-    "Mackay Whitsunday": ["Numenius madagascariensis"]
-};
+    "Northern Gulf": ["Acacia purpureopetala", "Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Myrmecodia beccarii (Ant Plant)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Psephotus chrysopterygius (Golden-shouldered Parrot, Alwal)"],
+    "Wet Tropics": ["Acacia purpureopetala", "Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Myrmecodia beccarii (Ant Plant)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Oberonia attenuata (Mossman Fairy Orchid)", "Petaurus gracilis (Mahogany Glider)"],
+    "Eyre Peninsula": ["Acacia whibleyana (Whibley Wattle)", "Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Northern Territory": ["Amytornis woodwardi (White-throated Grasswren, Yirlinkirrkirr)", "Conilurus penicillatus (Brush-tailed Rabbit-rat, Brush-tailed Tree-rat, Pakooma)", "Epthianura crocea tunneyi (Alligator Rivers Yellow Chat, Yellow Chat (Alligator Rivers))", "Hibiscus brennanii", "Isoodon auratus auratus (Golden Bandicoot (mainland))", "Lagorchestes hirsutus Central Australian subspecies (Mala, Rufous Hare-Wallaby (Central Australia))", "Leipoa ocellata (Malleefowl)", "Livistona mariae subsp. mariae (Central Australian Cabbage Palm, Red Cabbage Palm)", "Macrotis lagotis (Greater Bilby)", "Notomys aquilo (Northern Hopping-mouse, Woorrentinta)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petrogale lateralis MacDonnell Ranges race (Warru, Black-footed Rock-wallaby (MacDonnell Ranges race))", "Zyzomys pedunculatus (Central Rock-rat, Antina)"],
+    "Central Tablelands": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Homoranthus darwinioides", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)"],
+    "Central West": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Homoranthus darwinioides", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)"],
+    "Greater Sydney": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Grevillea caleyi (Caley's Grevillea)", "Homoranthus darwinioides", "Lathamus discolor (Swift Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Syzygium paniculatum (Magenta Lilly Pilly, Magenta Cherry, Daguba, Scrub Cherry, Creek Lilly Pilly, Brush Cherry)"],
+    "Hunter": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Homoranthus darwinioides", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Syzygium paniculatum (Magenta Lilly Pilly, Magenta Cherry, Daguba, Scrub Cherry, Creek Lilly Pilly, Brush Cherry)"],
+    "Murray": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Pedionomus torquatus (Plains-wanderer)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Sclerolaena napiformis (Turnip Copperburr)"],
+    "North Coast": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "North West NSW": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)"],
+    "Northern Tablelands": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)"],
+    "Riverina": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Pedionomus torquatus (Plains-wanderer)", "Sclerolaena napiformis (Turnip Copperburr)"],
+    "South East NSW": ["Anthochaera phrygia (Regent Honeyeater)", "Banksia vincentia", "Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Dasyornis brachypterus (Eastern Bristlebird)", "Eucalyptus recurva (Mongarlowe Mallee)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)", "Syzygium paniculatum (Magenta Lilly Pilly, Magenta Cherry, Daguba, Scrub Cherry, Creek Lilly Pilly, Brush Cherry)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Corangamite": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "East Gippsland": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Goulburn Broken": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Eucalyptus crenulata (Silver Gum, Buxton Gum)", "Gymnobelideus leadbeateri (Leadbeater's Possum)", "Lathamus discolor (Swift Parrot)", "Pedionomus torquatus (Plains-wanderer)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Sclerolaena napiformis (Turnip Copperburr)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)"],
+    "North Central": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Sclerolaena napiformis (Turnip Copperburr)"],
+    "North East": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Burramys parvus (Mountain Pygmy-possum)", "Lathamus discolor (Swift Parrot)", "Pedionomus torquatus (Plains-wanderer)", "Sclerolaena napiformis (Turnip Copperburr)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)"],
+    "Port Phillip and Western Port": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Eucalyptus crenulata (Silver Gum, Buxton Gum)", "Gymnobelideus leadbeateri (Leadbeater's Possum)", "Lathamus discolor (Swift Parrot)", "Lichenostomus melanops cassidix (Helmeted Honeyeater, Yellow-tufted Honeyeater (Helmeted))", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Perameles gunnii Victorian subspecies (Eastern Barred Bandicoot (Mainland))", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "West Gippsland": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Gymnobelideus leadbeateri (Leadbeater's Possum)", "Lathamus discolor (Swift Parrot)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Wimmera": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Calyptorhynchus banksii graptogyne (Red-tailed Black-Cockatoo (south-eastern))", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Sclerolaena napiformis (Turnip Copperburr)"],
+    "Burnett Mary": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)", "Macadamia jansenii (Bulberin Nut, Bulburin Nut Tree)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "Condamine": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)"],
+    "Maranoa Balonne and Border Rivers": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)"],
+    "South East Queensland": ["Anthochaera phrygia (Regent Honeyeater)", "Botaurus poiciloptilus (Australasian Bittern)", "Brachychiton sp. Ormeau (L.H.Bird AQ435851) (Ormeau Bottle Tree)", "Dasyornis brachypterus (Eastern Bristlebird)", "Lathamus discolor (Swift Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "ACT": ["Anthochaera phrygia (Regent Honeyeater)", "Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Swainsona recta (Small Purple-pea, Mountain Swainson-pea, Small Purple Pea)"],
+    "Peel-Harvey Region": ["Banksia cuneata (Matchstick Banksia, Quairading Banksia)", "Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Drakaea elastica (Glossy-leafed Hammer Orchid, Glossy-leaved Hammer Orchid,  Warty Hammer Orchid)", "Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pseudocheirus occidentalis (Western Ringtail Possum, Ngwayir, Womp, Woder, Ngoor, Ngoolangit)"],
+    "Avon River Basin": ["Banksia cuneata (Matchstick Banksia, Quairading Banksia)", "Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Leipoa ocellata (Malleefowl)", "Myrmecobius fasciatus (Numbat)", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Ptilotus fasciculatus (Fitzgerald's Mulla-mulla)"],
+    "North West NRM Region": ["Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus viverrinus (Eastern Quoll, Luaner)", "Lathamus discolor (Swift Parrot)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Perameles gunnii gunnii (Eastern Barred Bandicoot (Tasmania))", "Tetratheca gunnii (Shy Pinkbells, Shy Susan)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "North NRM Region": ["Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus viverrinus (Eastern Quoll, Luaner)", "Lathamus discolor (Swift Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Perameles gunnii gunnii (Eastern Barred Bandicoot (Tasmania))", "Tetratheca gunnii (Shy Pinkbells, Shy Susan)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "South NRM Region": ["Bettongia gaimardi (Tasmanian Bettong, Eastern Bettong)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus viverrinus (Eastern Quoll, Luaner)", "Epacris stuartii (Stuart's Heath, Southport Heath)", "Eucalyptus morrisbyi (Morrisby's Gum, Morrisbys Gum)", "Lathamus discolor (Swift Parrot)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Perameles gunnii gunnii (Eastern Barred Bandicoot (Tasmania))", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Western": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Pedionomus torquatus (Plains-wanderer)"],
+    "Northern Agricultural Region": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Drakaea elastica (Glossy-leafed Hammer Orchid, Glossy-leaved Hammer Orchid,  Warty Hammer Orchid)", "Grevillea calliantha (Foote's Grevillea, Cataby Grevillea, Black Magic Grevillea)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Ptilotus fasciculatus (Fitzgerald's Mulla-mulla)", "Verticordia spicata subsp. squamosa (Scaly-leaved Featherflower)"],
+    "Swan Region": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Drakaea elastica (Glossy-leafed Hammer Orchid, Glossy-leaved Hammer Orchid,  Warty Hammer Orchid)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Pseudocheirus occidentalis (Western Ringtail Possum, Ngwayir, Womp, Woder, Ngoor, Ngoolangit)"],
+    "Rangelands Region": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Conilurus penicillatus (Brush-tailed Rabbit-rat, Brush-tailed Tree-rat, Pakooma)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Isoodon auratus auratus (Golden Bandicoot (mainland))", "Isoodon auratus barrowensis (Golden Bandicoot (Barrow Island))", "Lagorchestes hirsutus Central Australian subspecies (Mala, Rufous Hare-Wallaby (Central Australia))", "Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petrogale lateralis MacDonnell Ranges race (Warru, Black-footed Rock-wallaby (MacDonnell Ranges race))", "Petrogale lateralis West Kimberley race (Black-footed Rock-wallaby (West Kimberley race))", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Pezoporus occidentalis (Night Parrot)"],
+    "South Coast Region": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Leipoa ocellata (Malleefowl)", "Myrmecobius fasciatus (Numbat)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petrogale lateralis hackettii (Recherche Rock-wallaby)", "Petrogale lateralis lateralis (Black-flanked Rock-wallaby, Moororong, Black-footed Rock Wallaby)", "Pezoporus flaviventris (Western Ground Parrot, Kyloring)", "Potorous tridactylus gilbertii (Gilbert's Potoroo)", "Pseudocheirus occidentalis (Western Ringtail Possum, Ngwayir, Womp, Woder, Ngoor, Ngoolangit)"],
+    "South West Region": ["Bettongia penicillata (Brush-tailed Bettong, Woylie)", "Botaurus poiciloptilus (Australasian Bittern)", "Dasyurus geoffroii (Chuditch, Western Quoll)", "Drakaea elastica (Glossy-leafed Hammer Orchid, Glossy-leaved Hammer Orchid,  Warty Hammer Orchid)", "Leipoa ocellata (Malleefowl)", "Myrmecobius fasciatus (Numbat)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pseudocheirus occidentalis (Western Ringtail Possum, Ngwayir, Womp, Woder, Ngoor, Ngoolangit)"],
+    "Glenelg Hopkins": ["Botaurus poiciloptilus (Australasian Bittern)", "Calyptorhynchus banksii graptogyne (Red-tailed Black-Cockatoo (south-eastern))", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Perameles gunnii Victorian subspecies (Eastern Barred Bandicoot (Mainland))", "Pimelea spinescens subsp. spinescens (Plains Rice-flower, Spiny Rice-flower, Prickly Pimelea)", "Rutidosis leptorrhynchoides (Button Wrinklewort)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Mallee": ["Botaurus poiciloptilus (Australasian Bittern)", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pedionomus torquatus (Plains-wanderer)", "Stipiturus mallee (Mallee Emu-wren)"],
+    "Fitzroy": ["Botaurus poiciloptilus (Australasian Bittern)", "Macadamia jansenii (Bulberin Nut, Bulburin Nut Tree)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "South West Queensland": ["Botaurus poiciloptilus (Australasian Bittern)", "Pedionomus torquatus (Plains-wanderer)"],
+    "Adelaide and Mount Lofty Ranges": ["Botaurus poiciloptilus (Australasian Bittern)", "Leipoa ocellata (Malleefowl)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Prasophyllum murfetii (Fleurieu Leek Orchid)", "Thelymitra cyanapicata (Blue Top Sun-orchid, Dark-tipped Sun-orchid)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Kangaroo Island": ["Botaurus poiciloptilus (Australasian Bittern)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Sminthopsis aitkeni (Kangaroo Island Dunnart)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "South Australian Murray Darling Basin": ["Botaurus poiciloptilus (Australasian Bittern)", "Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Prasophyllum murfetii (Fleurieu Leek Orchid)", "Stipiturus mallee (Mallee Emu-wren)", "Thelymitra cyanapicata (Blue Top Sun-orchid, Dark-tipped Sun-orchid)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "South East": ["Botaurus poiciloptilus (Australasian Bittern)", "Calyptorhynchus banksii graptogyne (Red-tailed Black-Cockatoo (south-eastern))", "Lathamus discolor (Swift Parrot)", "Leipoa ocellata (Malleefowl)", "Neophema chrysogaster (Orange-bellied Parrot)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Stipiturus mallee (Mallee Emu-wren)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "Cape York": ["Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Myrmecodia beccarii (Ant Plant)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Psephotus chrysopterygius (Golden-shouldered Parrot, Alwal)"],
+    "Co-operative Management Area": ["Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Psephotus chrysopterygius (Golden-shouldered Parrot, Alwal)"],
+    "Burdekin": ["Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Macrotis lagotis (Greater Bilby)", "Myrmecodia beccarii (Ant Plant)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Petaurus gracilis (Mahogany Glider)"],
+    "Torres Strait": ["Casuarius casuarius johnsonii (Southern Cassowary, Australian Cassowary, Double-wattled Cassowary)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "Alinytjara Wilurara": ["Leipoa ocellata (Malleefowl)", "Petrogale lateralis MacDonnell Ranges race (Warru, Black-footed Rock-wallaby (MacDonnell Ranges race))"],
+    "Northern and Yorke": ["Leipoa ocellata (Malleefowl)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Thinornis rubricollis rubricollis (Hooded Plover (eastern))"],
+    "South Australian Arid Lands": ["Leipoa ocellata (Malleefowl)", "Macrotis lagotis (Greater Bilby)", "Myrmecobius fasciatus (Numbat)", "Olearia pannosa subsp. pannosa (Silver Daisy-bush, Silver-leaved Daisy, Velvet Daisy-bush)", "Pedionomus torquatus (Plains-wanderer)", "Pezoporus occidentalis (Night Parrot)"],
+    "North Coast - Lord Howe Island": ["Lepidorrhachis mooreana (Little Mountain Palm, Moorei Palm)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"],
+    "Desert Channels": ["Macrotis lagotis (Greater Bilby)", "Pedionomus torquatus (Plains-wanderer)", "Pezoporus occidentalis (Night Parrot)"],
+    "Southern Gulf": ["Macrotis lagotis (Greater Bilby)", "Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)", "Pezoporus occidentalis (Night Parrot)"],
+    "Mackay Whitsunday": ["Numenius madagascariensis (Eastern Curlew, Far Eastern Curlew)"]
+}
 
 
 var now = ISODate();
@@ -256,14 +256,14 @@ var programEnd = ISODate('2023-06-30T13:59:59Z');
 
 
 var nlp = {
-    name:"National Landcare Programme",
-    programId:UUID.generate(),
-    dateCreated:now,
-    lastUpdated:now,
-    status:'active'
+    name: "National Landcare Programme",
+    programId: UUID.generate(),
+    dateCreated: now,
+    lastUpdated: now,
+    status: 'active'
 };
 
-var nlpProgram = db.program.find({name:nlp.name});
+var nlpProgram = db.program.find({name: nlp.name});
 if (nlpProgram.hasNext()) {
     var nlp2 = nlpProgram.next();
     nlp._id = nlp2._id;
@@ -271,25 +271,25 @@ if (nlpProgram.hasNext()) {
 }
 db.program.save(nlp);
 
-var parentId = db.program.find({programId:nlp.programId}).next()._id;
+var parentId = db.program.find({programId: nlp.programId}).next()._id;
 
 var program = {
-    name:"Regional Landcare Program",
-    programId:UUID.generate(),
-    dateCreated:now,
-    lastUpdated:now,
-    startDate:programStart,
-    parent:parentId,
-    endDate:programEnd,
-    status:'active',
-    config:{
-        "meriPlanTemplate":"rlpMeriPlan",
-        "projectTemplate":"rlp",
-        "activityPeriodDescriptor":"Outputs report #",
-        "requiresActivityLocking":true,
-        "navigationMode":"returnToProject",
-        "visibility":"private",
-        "riskAndThreatTypes":[
+    name: "Regional Landcare Program",
+    programId: UUID.generate(),
+    dateCreated: now,
+    lastUpdated: now,
+    startDate: programStart,
+    parent: parentId,
+    endDate: programEnd,
+    status: 'active',
+    config: {
+        "meriPlanTemplate": "rlpMeriPlan",
+        "projectTemplate": "rlp",
+        "activityPeriodDescriptor": "Outputs report #",
+        "requiresActivityLocking": true,
+        "navigationMode": "returnToProject",
+        "visibility": "private",
+        "riskAndThreatTypes": [
             "Performance",
             "Work Health and Safety",
             "People resources",
@@ -300,7 +300,7 @@ var program = {
     }
 };
 
-var rlpProgram = db.program.find({name:program.name});
+var rlpProgram = db.program.find({name: program.name});
 if (rlpProgram.hasNext()) {
     var rlp2 = rlpProgram.next();
     program._id = rlp2._id;
@@ -310,30 +310,30 @@ db.program.save(program);
 print("Saving program: ");
 printjson(program);
 
-parentId = db.program.find({programId:program.programId}).next()._id;
+parentId = db.program.find({programId: program.programId}).next()._id;
 
-for (var i=0; i<mus.length; i++) {
+for (var i = 0; i < mus.length; i++) {
     var mu = {
-        name:mus[i],
-        programId:UUID.generate(),
-        status:'active',
-        dateCreated:now,
-        lastUpdated:now,
-        startDate:programStart,
-        endDate:programEnd,
-        parent:parentId,
+        name: mus[i],
+        programId: UUID.generate(),
+        status: 'active',
+        dateCreated: now,
+        lastUpdated: now,
+        startDate: programStart,
+        endDate: programEnd,
+        parent: parentId,
         config: {
             "projectReports": [
                 {
-                    "category":"Outputs Reporting",
+                    "category": "Outputs Reporting",
                     "reportType": "Activity",
                     "activityType": "RLP Output Report",
                     "reportNameFormat": "Outputs Report %d",
                     "reportDescriptionFormat": "Outputs Report %d for %4$s"
                 },
                 {
-                    "category":"Annual Progress Reporting",
-                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
+                    "category": "Annual Progress Reporting",
+                    "firstReportingPeriodEnd": "2019-06-30T14:00:00Z",
                     "reportingPeriodInMonths": 12,
                     "reportType": "Administrative",
                     "activityType": "RLP Annual Report",
@@ -341,43 +341,43 @@ for (var i=0; i<mus.length; i++) {
                     "reportDescriptionFormat": "Annual Progress Report %2$tY - %3$tY for %4$s"
                 },
                 {
-                    "category":"Outcomes Report 1",
+                    "category": "Outcomes Report 1",
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 36,
                     "reportType": "Single",
                     "activityType": "RLP Short term project outcomes",
                     "reportNameFormat": "Outcomes Report 1",
                     "reportDescriptionFormat": "Outcomes Report 1 for %4$s",
-                    "multiple":false
+                    "multiple": false
                 },
                 {
-                    "category":"Outcomes Report 2",
+                    "category": "Outcomes Report 2",
                     "reportsAlignedToCalendar": false,
                     "reportingPeriodInMonths": 0,
                     "reportType": "Single",
                     "activityType": "RLP Medium term project outcomes",
                     "reportNameFormat": "Outcomes Report 2",
                     "reportDescriptionFormat": "Outcomes Report 2 for %4$s",
-                    "multiple":false,
-                    "minimumPeriodInMonths":37
+                    "multiple": false,
+                    "minimumPeriodInMonths": 37
                 }
             ],
-            "programReports":[
+            "programReports": [
                 {
                     "reportDescriptionFormat": "Core services report %d for %4$s",
                     "category": "Core Services Reporting",
                     "reportType": "Administrative",
                     "reportNameFormat": "Core services report %d",
-                    "activityType":"RLP Core Services report"
+                    "activityType": "RLP Core Services report"
                 },
                 {
                     "reportDescriptionFormat": "Core services annual report %d for %4$s",
-                    "firstReportingPeriodEnd":"2019-06-30T14:00:00Z",
+                    "firstReportingPeriodEnd": "2019-06-30T14:00:00Z",
                     "reportingPeriodInMonths": 12,
                     "category": "Core Services Annual Reporting",
                     "reportType": "Administrative",
                     "reportNameFormat": "Core services annual report %d",
-                    "activityType":"RLP Core Services annual report"
+                    "activityType": "RLP Core Services annual report"
                 }
             ]
         }
@@ -385,45 +385,74 @@ for (var i=0; i<mus.length; i++) {
 
     mu.priorities = [];
     var priorities = ramsarByMu[mus[i]] || [];
-    for (var j=0; j<priorities.length;j++) {
-        mu.priorities.push({category:'Ramsar', priority:priorities[j]})
-    };
+    for (var j = 0; j < priorities.length; j++) {
+        mu.priorities.push({category: 'Ramsar', priority: priorities[j]})
+    }
+    ;
     priorities = tssSpeciesByMu[mus[i]] || [];
-    for (var j=0; j<priorities.length;j++) {
-        mu.priorities.push({category:'Threatened Species', priority:priorities[j]})
-    };
+    for (var j = 0; j < priorities.length; j++) {
+        mu.priorities.push({category: 'Threatened Species', priority: priorities[j]})
+    }
+    ;
     priorities = teCommunitesByMu[mus[i]] || [];
-    for (var j=0; j<priorities.length;j++) {
-        mu.priorities.push({category:'Threatened Ecological Communities', priority:priorities[j]})
-    };
+    for (var j = 0; j < priorities.length; j++) {
+        mu.priorities.push({category: 'Threatened Ecological Communities', priority: priorities[j]})
+    }
+    ;
     priorities = worldHeritageSitesByMu[mus[i]] || [];
-    for (var j=0; j<priorities.length;j++) {
-        mu.priorities.push({category:'World Heritage Sites', priority:priorities[j]})
-    };
+    for (var j = 0; j < priorities.length; j++) {
+        mu.priorities.push({category: 'World Heritage Sites', priority: priorities[j]})
+    }
+    ;
     priorities = soilPrioritiesByMU[mus[i]] || [];
-    for (var j=0; j<priorities.length;j++) {
-        mu.priorities.push({category:'Soil Quality', priority:priorities[j]})
-    };
+    for (var j = 0; j < priorities.length; j++) {
+        mu.priorities.push({category: 'Soil Quality', priority: priorities[j]})
+    }
+    ;
 
     var landManagementPriorities = ['Soil acidification', 'Soil erosion', 'Hillslope erosion', 'Wind erosion', 'Native vegetation and biodiversity on-farm'];
-    for (var j=0; j<landManagementPriorities.length; j++) {
-        mu.priorities.push({category:'Land Management', priority:landManagementPriorities[j]});
+    for (var j = 0; j < landManagementPriorities.length; j++) {
+        mu.priorities.push({category: 'Land Management', priority: landManagementPriorities[j]});
     }
-    mu.priorities.push({category:'Sustainable Agriculture', priority:'Climate change adaptation'});
-    mu.priorities.push({category:'Sustainable Agriculture', priority:'Market traceability'});
+    mu.priorities.push({category: 'Sustainable Agriculture', priority: 'Climate change adaptation'});
+    mu.priorities.push({category: 'Sustainable Agriculture', priority: 'Market traceability'});
 
 
     mu.outcomes = [
-        {outcome:"By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions", priorities:[{category:"Ramsar"}], category:"environment"},
-        {outcome:"By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.", priorities:[{category:"Threatened Species"}], category:"environment"},
-        {outcome:"By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.", priorities:[{category:"World Heritage Sites"}], category:"environment"},
-        {outcome:"By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.", priorities:[{category:"Threatened Ecological Communities"}], category:"environment"},
-        {outcome:"By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.", priorities:[{category:"Land Management"}], category:"agriculture"},
-        {outcome:"By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.", priorities:[{category:"Sustainable Agriculture"}], category:"agriculture"}
+        {
+            outcome: "1. By 2023, there is restoration of, and reduction in threats to, the ecological character of Ramsar sites, through the implementation of priority actions",
+            priorities: [{category: "Ramsar"}],
+            category: "environment"
+        },
+        {
+            outcome: "2. By 2023, the trajectory of species targeted under the Threatened Species Strategy, and other EPBC Act priority species, is stabilised or improved.",
+            priorities: [{category: "Threatened Species"}],
+            category: "environment"
+        },
+        {
+            outcome: "3. By 2023, invasive species management has reduced threats to the natural heritage Outstanding Universal Value of World Heritage properties through the implementation of priority actions.",
+            priorities: [{category: "World Heritage Sites"}],
+            category: "environment"
+        },
+        {
+            outcome: "4. By 2023, the implementation of priority actions is leading to an improvement in the condition of EPBC Act listed Threatened Ecological Communities.",
+            priorities: [{category: "Threatened Ecological Communities"}],
+            category: "environment"
+        },
+        {
+            outcome: "5. By 2023, there is an increase in the awareness and adoption of land management practices that improve and protect the condition of soil, biodiversity and vegetation.",
+            priorities: [{category: "Land Management"}],
+            category: "agriculture"
+        },
+        {
+            outcome: "6. By 2023, there is an increase in the capacity of agriculture systems to adapt to significant changes in climate and market demands for information on provenance and sustainable production.",
+            priorities: [{category: "Sustainable Agriculture"}],
+            category: "agriculture"
+        }
     ];
 
 
-    var existingMu = db.program.find({name:mu.name});
+    var existingMu = db.program.find({name: mu.name});
     if (existingMu.hasNext()) {
         var mu2 = existingMu.next();
         mu.description = mu2.description;
