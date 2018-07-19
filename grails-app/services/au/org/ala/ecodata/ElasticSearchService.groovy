@@ -1067,7 +1067,6 @@ class ElasticSearchService {
         List result = []
         List navigatedPath = []
         path?.each{ prop ->
-            navigatedPath.add(prop)
             if(temp instanceof Map){
                 temp = temp[prop]
             } else if(temp instanceof List){
@@ -1077,6 +1076,8 @@ class ElasticSearchService {
 
                 temp = null
             }
+
+            navigatedPath.add(prop)
         }
 
         if(temp != null){
