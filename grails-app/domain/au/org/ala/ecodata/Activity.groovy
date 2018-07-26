@@ -71,6 +71,11 @@ class Activity {
         return progress in completedStates
     }
 
+    /** Activities with a progress of DEFFERED or CANCELLED should not have any outputs associated with them */
+    public boolean supportsOutputs() {
+        return progress in [PLANNED, STARTED, FINISHED]
+    }
+
     static transients = ['complete']
 
     static constraints = {
