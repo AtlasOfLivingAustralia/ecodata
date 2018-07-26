@@ -415,6 +415,14 @@ class ActivityService {
                         deleteActivityOutputs(id)
                     }
                     commonService.updateProperties(activity, props)
+
+                    // If the activity has been updated to a state where Outputs are not supported, delete any
+                    // existing outputs.  This is to handle the case where an activity with output data is
+                    // cancelled or deferred.
+                    if (!activity.supportsOutputs()) {
+                        deleteActivityOutputs(id)
+                    }
+
                 } catch (Exception e) {
                     Activity.withSession { session -> session.clear() }
                     def error = "Error updating Activity ${id} - ${e.message}"

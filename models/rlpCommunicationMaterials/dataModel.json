@@ -1,14 +1,14 @@
 {
-  "title": "Releasing publications",
-  "modelName": "RLP - Publications",
+  "title": "Communication Materials",
+  "modelName": "RLP - Communication Materials",
   "dataModel": [
     {
       "dataType":"list",
-      "name":"publications",
+      "name":"communicationMaterials",
       "columns":[
         {
           "dataType": "text",
-          "name": "publicationType",
+          "name": "communicationMaterialType",
           "constraints":[
             "Media release",
             "Report",
@@ -21,12 +21,12 @@
         },
         {
           "dataType": "text",
-          "name": "otherPublicationType",
+          "name": "otherCommunicationMaterialType",
           "validate": "required",
           "behaviour":[
 
             {
-              "condition": "publicationType == \"Other\"",
+              "condition": "communicationMaterialType == \"Other\"",
               "type": "enable"
             }
 
@@ -34,12 +34,12 @@
         },
         {
           "dataType": "number",
-          "name": "numberOfPublications",
+          "name": "numberOfCommunicationMaterials",
           "validate": "required,min[0]"
         },
         {
           "dataType": "text",
-          "name": "publicationPurpose",
+          "name": "communicationMaterialPurpose",
           "validate": "required"
         }
       ]
@@ -53,31 +53,31 @@
         {
           "columns": [
             {
-              "source": "publicationType",
-              "title": "Type of publication",
+              "source": "communicationMaterialType",
+              "title": "Type of communication material",
               "type": "select2",
               "width":"25%"
             },
             {
-              "source":"otherPublicationType",
-              "title":"Other type of publication released",
+              "source":"otherCommunicationMaterialType",
+              "title":"Other type of communication material released",
               "width":"25",
               "type":"text"
             },
             {
-              "source": "numberOfPublications",
-              "title": "Number of publications released",
+              "source": "numberOfCommunicationMaterials",
+              "title": "Number of communication materials released",
               "type": "number",
               "width":"15%"
             },
             {
-              "source": "publicationPurpose",
-              "title": "Purpose of publication",
+              "source": "communicationMaterialPurpose",
+              "title": "Purpose of communication material",
               "type": "text",
               "width":"35%"
             }
           ],
-          "source":"publications",
+          "source":"communicationMaterials",
           "type": "table",
           "userAddedRows": true
         },
@@ -86,7 +86,7 @@
           "items":[
             {
               "type":"literal",
-              "source":"<i>Note: to upload a publication refer to the documents tab.</i>"
+              "source":"<i>Note: to upload a communication material refer to the documents tab.</i>"
             }
           ]
 
