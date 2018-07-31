@@ -70,8 +70,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of training / workshop events"
       },
@@ -91,8 +91,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of conferences / seminars"
       },
@@ -451,11 +451,11 @@ scores = [
             "property": "data.numberOfSurveys",
             "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of farm management surveys conducted"
       },
       "outputType": "RLP - Farm Management Survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of farm management surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -808,11 +808,11 @@ scores = [
             "property": "data.numberOfSurveys",
             "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of pest animal surveys conducted"
       },
       "outputType": "RLP - Pest animal survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of pest animal surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -1128,6 +1128,27 @@ scores = [
       "outputType": "RLP - Weed distribution survey",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of weed distribution surveys conducted",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Debris removal",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.areaHa",
+            "type": "SUM"
+         }],
+         "label": "Area (ha) of debris removal"
+      },
+      "outputType": "RLP - Debris removal",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Area (ha) of debris removal",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
