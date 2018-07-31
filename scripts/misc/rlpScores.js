@@ -451,11 +451,11 @@ scores = [
             "property": "data.numberOfSurveys",
             "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of farm management surveys conducted"
       },
       "outputType": "RLP - Farm Management Survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of farm management surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -808,11 +808,11 @@ scores = [
             "property": "data.numberOfSurveys",
             "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of pest animal surveys conducted"
       },
       "outputType": "RLP - Pest animal survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of pest animal surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
