@@ -70,8 +70,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of training / workshop events"
       },
@@ -91,8 +91,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of conferences / seminars"
       },
@@ -1128,6 +1128,27 @@ scores = [
       "outputType": "RLP - Weed distribution survey",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of weed distribution surveys conducted",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Debris removal",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.areaHa",
+            "type": "SUM"
+         }],
+         "label": "Area (ha) of debris removal"
+      },
+      "outputType": "RLP - Debris removal",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Area (ha) of debris removal",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
