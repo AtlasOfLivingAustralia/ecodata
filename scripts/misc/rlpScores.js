@@ -70,8 +70,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of training / workshop events"
       },
@@ -91,14 +91,77 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.tba",
+            "type": "SUM"
          }],
          "label": "Number of conferences / seminars"
       },
       "outputType": "RLP - Community engagement",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of conferences / seminars",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.tba",
+            "type": "SUM"
+         }],
+         "label": "Number of one-on-one technical advice interactions"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of one-on-one technical advice interactions",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.tba",
+            "type": "SUM"
+         }],
+         "label": "Number of on-ground trials / demonstrations"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of on-ground trials / demonstrations",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Community engagement",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.tba",
+            "type": "SUM"
+         }],
+         "label": "Number of on-ground works"
+      },
+      "outputType": "RLP - Community engagement",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of on-ground works",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -238,8 +301,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.areaOfErosionControlHa",
+            "type": "SUM"
          }],
          "label": "Area (ha) of erosion control"
       },
@@ -259,8 +322,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.lengthTreatedForErosionKm",
+            "type": "SUM"
          }],
          "label": "Length (km) of stream/coastline treated for erosion"
       },
@@ -280,8 +343,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOFAgreements",
+            "type": "SUM"
          }],
          "label": "Number of agreements"
       },
@@ -322,8 +385,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.enclosureDetails.areaProtectedHa",
+            "type": "SUM"
          }],
          "label": "Area of feral-free enclosure"
       },
@@ -385,14 +448,14 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of farm management surveys conducted"
       },
       "outputType": "RLP - Farm Management Survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of farm management surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -427,8 +490,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of fauna surveys conducted"
       },
@@ -464,6 +527,27 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Fire management",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.areaProtectedHa",
+            "type": "SUM"
+         }],
+         "label": "Area (ha) protected by fire management action"
+      },
+      "outputType": "RLP - Fire management",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Area (ha) protected by fire management action",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Flora survey",
             "property": "name",
             "type": "filter"
@@ -490,8 +574,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of flora surveys conducted"
       },
@@ -532,8 +616,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfStructures",
+            "type": "SUM"
          }],
          "label": "Number of structures or installations"
       },
@@ -595,8 +679,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.areaManagedHa",
+            "type": "SUM"
          }],
          "label": "Area (ha) of catchment being managed as a result of this management action"
       },
@@ -721,14 +805,14 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
-         "label": "Number of surveys conducted"
+         "label": "Number of pest animal surveys conducted"
       },
       "outputType": "RLP - Pest animal survey",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of surveys conducted",
+      "label": "Number of pest animal surveys conducted",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -763,8 +847,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of plant survival surveys conducted"
       },
@@ -805,8 +889,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.areaRemediatedHa",
+            "type": "SUM"
          }],
          "label": "Area (ha) remediated"
       },
@@ -826,8 +910,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.lengthRemediatedKm",
+            "type": "SUM"
          }],
          "label": "Length (km) remediated"
       },
@@ -884,6 +968,27 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Revegetating habitat",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfDaysCollectingSeed",
+            "type": "SUM"
+         }],
+         "label": "Number of days collecting seed"
+      },
+      "outputType": "RLP - Revegetating habitat",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of days collecting seed",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Skills and knowledge survey",
             "property": "name",
             "type": "filter"
@@ -910,8 +1015,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of skills and knowledge surveys conducted"
       },
@@ -952,8 +1057,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfInterventions",
+            "type": "SUM"
          }],
          "label": "Number of interventions"
       },
@@ -994,8 +1099,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of water quality surveys"
       },
@@ -1036,14 +1141,35 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.",
-            "type": ""
+            "property": "data.numberOfSurveys",
+            "type": "SUM"
          }],
          "label": "Number of weed distribution surveys conducted"
       },
       "outputType": "RLP - Weed distribution survey",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of weed distribution surveys conducted",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Debris removal",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.areaHa",
+            "type": "SUM"
+         }],
+         "label": "Area (ha) of debris removal"
+      },
+      "outputType": "RLP - Debris removal",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Area (ha) of debris removal",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,

@@ -3,6 +3,7 @@ package au.org.ala.ecodata
 import grails.test.mixin.*
 import grails.test.mixin.gorm.Domain
 import grails.test.mixin.mongodb.MongoDbTestMixin
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.codehaus.groovy.grails.commons.ServiceArtefactHandler
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -22,6 +23,8 @@ import java.text.SimpleDateFormat
 @Domain(Activity)
 @TestFor(ActivityService)
 class ActivityServiceSpec extends Specification {
+
+    OutputService outputService = Mock(OutputService)
 
     /** Insert some activities into the database to work with */
     def setup() {
@@ -49,6 +52,11 @@ class ActivityServiceSpec extends Specification {
         }
 
         service.lockService = Stub(LockService)
+        service.outputService = outputService
+
+        CommonService commonService = new CommonService()
+        commonService.grailsApplication = Stub(GrailsApplication)
+        service.commonService = commonService
     }
 
     private def createActivity(props) {
@@ -147,5 +155,45 @@ class ActivityServiceSpec extends Specification {
         '2014/01/01' | '2016/01/02' | Boolean.TRUE  | [:] | ['activity0', 'activity1', 'activity2', 'activity3', 'activity4', 'activity5']
 
     }
+
+    def "when an activity is cancelled or deferred, existing Output data should be deleted"(String progressToAssign, boolean shouldBeDeleted) {
+        setup:
+        String id = 'activity1'
+        createActivity([activityId:id, type:'Type 1', description:'Test', progress:Activity.FINISHED, plannedStartDate:new Date(), plannedEndDate: new Date()])
+
+        when:
+        service.update([activityId: id, progress:progressToAssign], id)
+
+        then:
+        if (shouldBeDeleted) {
+            1 * outputService.getAllOutputIdsForActivity(id) >> ['output1']
+            1 * outputService.delete('output1', false)
+        }
+        else {
+            0 * outputService._
+        }
+
+        where:
+        progressToAssign   | shouldBeDeleted
+        Activity.PLANNED   | false
+        Activity.STARTED   | false
+        Activity.FINISHED  | false
+        Activity.DEFERRED  | true
+        Activity.CANCELLED | true
+    }
+
+    def "when an activity type is changed, existing Output data should be deleted"() {
+        setup:
+        String id = 'activity1'
+        createActivity([activityId:id, type:'Type 1', description:'Test', progress:Activity.FINISHED, plannedStartDate:new Date(), plannedEndDate: new Date()])
+
+        when:
+        service.update([activityId: id, type:'Type 2'], id)
+
+        then:
+        1 * outputService.getAllOutputIdsForActivity(id) >> ['output1']
+        1 * outputService.delete('output1', false)
+    }
+
 
 }

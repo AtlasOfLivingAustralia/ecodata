@@ -18,6 +18,8 @@ class ReportingService {
 
     AggregatorFactory aggregatorFactory = new AggregatorFactory()
 
+    private String INVALID_STATUS_FOR_UPDATE_ERROR_KEY = 'report.cannotUpdateSubmittedOrApprovedReport'
+
     def get(String reportId, includeDeleted = false) {
 
         Report report = null
@@ -113,8 +115,12 @@ class ReportingService {
 
     Report update(String id, Map properties) {
         Report report = get(id)
+        if (!report) {
+            return null
+        }
+
         if (report.isSubmittedOrApproved()) {
-            report.errors.rejectValue('report.cannotUpdateSubmittedOrApprovedReport')
+            report.errors.reject(INVALID_STATUS_FOR_UPDATE_ERROR_KEY)
         }
         else {
             commonService.updateProperties(report, properties)
@@ -177,6 +183,31 @@ class ReportingService {
         } else {
             return [status: 'error', errors: ['No such id']]
         }
+    }
+
+    /**
+     * If the report is completed via a single activity, this method deletes any activity output data and
+     * resets the progress to planned.  Otherwise, no changes are made.
+     * @param id the report id to reset.
+     * @return the report, after the update.
+     */
+    Report reset(String id) {
+        Report report = get(id)
+        if (!report) {
+            return null
+        }
+        if (report.isSubmittedOrApproved()) {
+            report.errors.reject(INVALID_STATUS_FOR_UPDATE_ERROR_KEY)
+        }
+        else {
+            if (report.isSingleActivityReport()) {
+                activityService.update([progress:Activity.PLANNED, activityId:report.activityId], report.activityId)
+                activityService.deleteActivityOutputs(report.activityId)
+            }
+            populateActivityInformation([report])
+
+        }
+        return report
     }
 
     def submit(String id, String comment = '') {

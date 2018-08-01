@@ -43,6 +43,16 @@ class ReportController {
         respond reportList
     }
 
+    /**
+     * Clears any data entered for this report.
+     * @param id the reportId of the report to clear.
+     * @return
+     */
+    @RequireApiKey
+    def reset(String id) {
+        respond reportingService.reset(id)
+    }
+
     @RequireApiKey
     def submit(String id) {
         Map params = request.JSON
