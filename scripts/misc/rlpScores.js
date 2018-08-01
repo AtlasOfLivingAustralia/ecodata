@@ -968,6 +968,27 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Revegetating habitat",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfDaysCollectingSeed",
+            "type": "SUM"
+         }],
+         "label": "Number of days collecting seed"
+      },
+      "outputType": "RLP - Revegetating habitat",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of days collecting seed",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Skills and knowledge survey",
             "property": "name",
             "type": "filter"
