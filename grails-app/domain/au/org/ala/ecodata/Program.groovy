@@ -36,6 +36,8 @@ class Program {
     List<Program> subPrograms = []
     Program parent
 
+    List<AssociatedOrg> associatedOrganisations
+
 
     /** Custom rendering for the program */
     Map toMap() {
@@ -58,6 +60,7 @@ class Program {
         if (parent) {
             program.parentId = parent.programId
         }
+        program.associatedOrganisations = associatedOrganisations
 
         program
     }
@@ -88,6 +91,8 @@ class Program {
         version false
     }
 
+    static embedded = ['associatedOrganisations']
+
     static hasMany = [subPrograms:Program]
 
     static constraints = {
@@ -100,6 +105,7 @@ class Program {
         url nullable: true
         config nullable: true
         parent nullable: true
+        associatedOrganisations nullable:true
     }
 
     public String toString() {
