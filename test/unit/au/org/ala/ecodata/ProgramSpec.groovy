@@ -63,4 +63,31 @@ class ProgramSpec extends Specification {
         config.c == 'c'
         config.d == 'd'
     }
+
+    void "when a program is retrieved, the parent program name and id are included"() {
+        setup:
+        Program p1 = new Program(programId:'p1', name: 'test 1', description: 'description 1', config:['a':'a', 'b':'b', c:'c'])
+        p1.save(flush:true, failOnError: true)
+        Program p2 = new Program(programId:'p2', name:'test 2', config:[a:'aa', d:'d'], parent: p1)
+        p2.save(flush:true, failOnError: true)
+        Program p3 = new Program(programId:'p3', name:'test 3', config:[b:'bb'], parent: p2)
+        p3.save(flush:true, failOnError: true)
+
+        when:
+        Map serializedProgram = p3.toMap()
+
+        then:
+        serializedProgram.parent.name == p2.name
+        serializedProgram.parent.programId == p2.programId
+
+        serializedProgram.parent.parent.name == p1.name
+        serializedProgram.parent.parent.programId == p1.programId
+
+        when:
+        serializedProgram = p1.toMap()
+
+        then:
+        serializedProgram.parent == null
+
+    }
 }
