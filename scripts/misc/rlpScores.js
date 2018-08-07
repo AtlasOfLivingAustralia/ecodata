@@ -989,6 +989,27 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Revegetating habitat",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfDaysPropogatingPlants",
+            "type": "SUM"
+         }],
+         "label": "Number of days propagating plants"
+      },
+      "outputType": "RLP - Revegetating habitat",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of days propagating plants",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Skills and knowledge survey",
             "property": "name",
             "type": "filter"
