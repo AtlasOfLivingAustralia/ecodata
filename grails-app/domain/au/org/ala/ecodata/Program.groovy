@@ -57,12 +57,31 @@ class Program {
         program.inheritedConfig = getInhertitedConfig()
         program.config = config
         program.risks = risks
-        if (parent) {
-            program.parentId = parent.programId
-        }
+        program.parent = populateParentProgramSummary(parent)
+
         program.associatedOrganisations = associatedOrganisations
 
         program
+    }
+
+    /**
+     * Walks up the tree of parents for this Program and produces a summary of the parent names and programIds.
+     * @param currentProgram the program currently being summarized.
+     * @return a Map containing [name:, programId:, parent:]
+     */
+    private Map populateParentProgramSummary(Program currentProgram) {
+        if (!currentProgram) {
+            return null
+        }
+        Map programSummary = [
+                name:currentProgram.name,
+                programId:currentProgram.programId
+        ]
+        if (currentProgram.parent) {
+            programSummary.parent = populateParentProgramSummary(currentProgram.parent)
+        }
+        return programSummary
+
     }
 
     Map getInhertitedConfig() {

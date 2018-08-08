@@ -83,7 +83,7 @@ class AggregatorFactory {
                 return new Aggregators.SetAggregator(config.label, config.property)
                 break;
             default:
-                throw new IllegalAccessException('Invalid aggregation type: '+config.type)
+                throw new IllegalAccessException("Invalid aggregation type: ${config.type}, label:${config.label}, property:${config.property}")
         }
 
 
