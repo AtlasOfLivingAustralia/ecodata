@@ -343,7 +343,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOFAgreements",
+            "property": "data.numberOfAgreements",
             "type": "SUM"
          }],
          "label": "Number of agreements"
@@ -351,6 +351,27 @@ scores = [
       "outputType": "RLP - Establishing Agreeemnts",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of agreements",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Establishing Agreeemnts",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfPermanentAgreements",
+            "type": "SUM"
+         }],
+         "label": "Number of permanent agreements"
+      },
+      "outputType": "RLP - Establishing Agreeemnts",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of permanent agreements",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
