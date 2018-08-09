@@ -795,7 +795,7 @@ class ElasticSearchService {
         // Some Biocollect project have huge numbers of private sites. This will significantly hurt performance.
         // Hence the if condition.
         if(projectMap.isMERIT){
-            projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)
+            projectMap.sites = siteService.findAllForProjectId(project.projectId, SiteService.FLAT)?.findAll{canIndex(it)}
             projectMap.activities = activityService.findAllForProjectId(project.projectId, LevelOfDetail.NO_OUTPUTS.name())
             projectMap.outputTargets?.each{it.remove('periodTargets')} // Not useful for searching and is causing issues with the current mapping.
         } else {
