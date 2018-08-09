@@ -311,4 +311,35 @@ class ProjectActivityService {
         restrictedProjectActivityIds
     }
 
+    void addProjectActivityStats (Map projectActivity) {
+        projectActivity.publicAccess = isProjectActivityDataPublic(projectActivity)
+        projectActivity.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+    }
+
+    boolean isProjectActivityDataPublic (Map projectActivity) {
+        EmbargoOption option = projectActivity.visibility?.embargoOption as EmbargoOption
+        if ((option != EmbargoOption.NONE) && (!projectActivity?.visibility?.embargoUntil.after(new Date()) )) {
+            if ( Activity.countByProjectActivityIdAndStatus(projectActivity.projectActivityId, ACTIVE) > 0 ) {
+                return true
+            }
+        } else if (option == EmbargoOption.NONE) {
+            return  true
+        }
+
+        return false
+    }
+
+    int getActivityCountForProjectActivity(String pActivityId) {
+         Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    Date getLastUpdatedActivityForProjectActivity(String pActivityId) {
+        return Activity.findByProjectActivityIdAndStatus(pActivityId, ACTIVE, [sort: 'lastUpdated', order: 'desc'])?.lastUpdated
+    }
+
+    int getSpeciesRecordedForProjectActivity(String pActivityId) {
+        return Record.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
 }
