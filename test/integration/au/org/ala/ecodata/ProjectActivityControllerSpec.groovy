@@ -25,7 +25,7 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
                                endDate        : '2015-06-17T14:00:00Z',
                                publicAccess   : true,
                                dynamicProperty: 'dynamicProperty',
-                               projectId      : 'test-project-id']
+                               projectId      : 'test-project-id', isDataManagementPolicyDocumented: false, dataAccessMethod: "dataAccessMethod", dataQualityAssuranceMethod: "dataQualityAssuranceMethod", "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", "spatialAccuracy": "low"]
         projectActivityController.request.contentType = 'application/json;charset=UTF-8'
         projectActivityController.request.content = (projectActivity as JSON).toString().getBytes('UTF-8')
         projectActivityController.request.method = 'POST'
