@@ -23,6 +23,21 @@ class ProjectActivity {
     boolean publicAccess // only editors/admins can add data to a project activity unless publicAccess = true
     VisibilityConstraint visibility = new VisibilityConstraint(embargoOption: EmbargoOption.NONE)
     List<SubmissionRecord> submissionRecords
+    String legalCustodianOrganisation
+    String spatialAccuracy
+    String speciesIdentification
+    String temporalAccuracy
+    String nonTaxonomicAccuracy
+    String dataQualityAssuranceMethod
+    String dataQualityAssuranceDescription
+    String dataAccessMethod
+    String dataAccessExternalURL
+    boolean isDataManagementPolicyDocumented
+    String dataManagementPolicyDescription
+    String dataManagementPolicyURL
+    String dataManagementPolicyDocument
+    Date dateCreated
+    Date lastUpdated
 
     static embedded = ['visibility']
 
@@ -40,6 +55,12 @@ class ProjectActivity {
         publicAccess nullable: true
         visibility nullable: true
         submissionRecords nullable: true
+        legalCustodianOrganisation nullable: true
+        dataAccessExternalURL nullable: true
+        dataQualityAssuranceDescription nullable: true
+        dataManagementPolicyDescription nullable: true
+        dataManagementPolicyURL nullable: true
+        dataManagementPolicyDocument nullable: true
     }
 
     static mapping = {
