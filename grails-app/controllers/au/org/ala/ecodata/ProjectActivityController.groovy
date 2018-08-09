@@ -22,6 +22,12 @@ class ProjectActivityController {
         if (id) {
             def list = []
             list.addAll(projectActivityService.getAllByProject(id, params.view, params?.version))
+            if( params.stats?.asBoolean() ){
+                list.each { pActivity ->
+                    projectActivityService.addProjectActivityStats(pActivity)
+                }
+            }
+
             asJson([list: list])
         } else {
             response.status = 404
@@ -41,6 +47,10 @@ class ProjectActivityController {
             result = [status: 404, text: 'No such id'];
         } else {
             result = projectActivityService.get(id, params.view, params?.version)
+            if( params.stats?.asBoolean() ){
+                projectActivityService.addProjectActivityStats(result)
+            }
+
             if (!result) {
                 result = [status: 404, text: 'Invalid id'];
             }
