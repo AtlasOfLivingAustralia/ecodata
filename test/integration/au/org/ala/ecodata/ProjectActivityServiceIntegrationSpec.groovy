@@ -56,7 +56,7 @@ class ProjectActivityServiceIntegrationSpec extends IntegrationSpec {
     private static createHierarchy() {
         Project project = new Project(projectId: "project1", name: "project1").save(failOnError: true, flush: true)
 
-        ProjectActivity projectActivity1 = new ProjectActivity(projectActivityId: "proAct1", projectId: project.projectId, description: "d", name: "n", startDate: new Date(), status: ACTIVE, isDataManagementPolicyDocumented: false, dataAccessMethod: "dataAccessMethod", dataQualityAssuranceMethod: "dataQualityAssuranceMethod", "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", "spatialAccuracy": "low").save(failOnError: true, flush: true)
+        ProjectActivity projectActivity1 = new ProjectActivity(projectActivityId: "proAct1", projectId: project.projectId, description: "d", name: "n", startDate: new Date(), status: ACTIVE, isDataManagementPolicyDocumented: false, dataAccessMethod: "dataAccessMethod", dataQualityAssuranceMethods: ["dataownercurated"], "nonTaxonomicAccuracy": "low", "temporalAccuracy": "low", "speciesIdentification": "low", "spatialAccuracy": "low", methodType     : "opportunistic").save(failOnError: true, flush: true)
         new Document(documentId: "doc5", projectActivityId: projectActivity1.projectActivityId).save(failOnError: true, flush: true)
         new Document(documentId: "doc6", projectActivityId: projectActivity1.projectActivityId).save(failOnError: true, flush: true)
         Activity activity1 = new Activity(activityId: "act3", projectActivityId: projectActivity1.projectActivityId).save(failOnError: true, flush: true)

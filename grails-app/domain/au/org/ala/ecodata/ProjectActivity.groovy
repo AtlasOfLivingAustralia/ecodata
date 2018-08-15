@@ -11,6 +11,7 @@ class ProjectActivity {
     String description
     String status
     String pActivityFormName
+    String methodType
     boolean commentsAllowed
     Date startDate
     Date endDate
@@ -28,7 +29,7 @@ class ProjectActivity {
     String speciesIdentification
     String temporalAccuracy
     String nonTaxonomicAccuracy
-    String dataQualityAssuranceMethod
+    List<String> dataQualityAssuranceMethods
     String dataQualityAssuranceDescription
     String dataAccessMethod
     String dataAccessExternalURL
@@ -45,6 +46,10 @@ class ProjectActivity {
 
     static constraints = {
         endDate nullable: true
+        methodType inList: ['opportunistic', 'systematic']
+        dataQualityAssuranceMethods validator: { values ->
+            [ "dataownercurated", "subjectexpertverification", "crowdsourcedverification", "recordannotation", "systemsupported", "nodqmethodsused", "na" ].containsAll(values)
+        }
         pActivityFormName nullable: true
         alerts nullable: true
         sites nullable: true

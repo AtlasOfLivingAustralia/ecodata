@@ -234,6 +234,34 @@
                   }
                 }
               }
+            },
+            "methodType":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "spatialAccuracy":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "speciesIdentification":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "temporalAccuracy":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "nonTaxonomicAccuracy":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "dataQualityAssuranceMethods":{
+              "type":"string",
+              "index":"not_analyzed"
+            },
+            "isDataManagementPolicyDocumented":{
+              "type":"boolean",
+              "index":"not_analyzed"
             }
           }
         },
