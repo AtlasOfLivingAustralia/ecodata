@@ -7,49 +7,39 @@
       "name": "accessControlDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "installedSiteId",
+          "dataType": "feature",
+          "name": "areaInstalled",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaInstalledHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(areaInstalled)",
+            "dependents": {
+              "source": [
+                "site"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
+          "dataType": "feature",
+          "name": "protectedArea",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaProtectedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(protectedArea)",
+            "dependents": {
+              "source": [
+                "protectedArea"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -94,16 +84,30 @@
           "source": "accessControlDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"installedSiteId",
-              "title":"Area installed (Ha)",
-              "width":"20%"
+              "type":"feature",
+              "source":"areaInstalled",
+              "title":"Installation",
+              "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
+              "type":"number",
+              "source":"areaInstalledHa",
+              "title":"Area installed (Ha)",
+              "width":"10%",
+              "readonly":"readonly"
+            },
+            {
+              "type":"feature",
+              "source":"protectedArea",
+              "title":"Spatial area protected by access control structure (Ha)",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"areaProtectedHa",
               "title":"Area protected by access control structure (Ha)",
-              "width":"20%"
+              "width":"10%",
+              "readonly":"readonly"
             },
             {
               "title": "Type of access control installed",

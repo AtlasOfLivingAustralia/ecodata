@@ -34,8 +34,9 @@
         },
         {
           "dataType": "number",
-          "name": "numberOfCommunicationMaterials",
-          "validate": "required,min[0]"
+          "name": "numberOfCommunicationMaterialsPublished",
+          "validate": "required,min[0]",
+          "description":"Refers to unique publications not number printed"
         },
         {
           "dataType": "text",
@@ -54,19 +55,19 @@
           "columns": [
             {
               "source": "communicationMaterialType",
-              "title": "Type of communication material",
+              "title": "Type of communication material published",
               "type": "select2",
               "width":"25%"
             },
             {
               "source":"otherCommunicationMaterialType",
-              "title":"Other type of communication material released",
+              "title":"Type of communication material published (if Other)",
               "width":"25",
               "type":"text"
             },
             {
-              "source": "numberOfCommunicationMaterials",
-              "title": "Number of communication materials released",
+              "source": "numberOfCommunicationMaterialsPublished",
+              "title": "Number of communication materials published",
               "type": "number",
               "width":"15%"
             },

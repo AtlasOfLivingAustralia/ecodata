@@ -10,36 +10,23 @@
           "dataType": "text",
           "name": "eventType",
           "constraints":[
-            "On-farm trials",
-            "On-farm inspections",
-            "Field day activity",
-            "Conference/Seminar",
-            "Meeting",
-            "Training session",
-            "Planning session",
-            "Working bee",
-            "Workshop",
-            "Project feedback / debrief session",
-            "Other"
+            "Field day",
+            "Training / workshop event",
+            "Conference / seminar",
+            "One-on-one technical advice interaction",
+            "On-ground trial / demonstration",
+            "On-ground works"
           ],
           "validate": "required"
         },
         {
-          "dataType": "text",
-          "name": "otherEventType",
-          "validate": "required",
-          "behaviour":[
-
-            {
-              "condition": "eventType == \"Other\"",
-              "type": "enable"
-            }
-
-          ]
+          "dataType": "number",
+          "name": "numberOfParticipants",
+          "validate": "required,min[0]"
         },
         {
           "dataType": "number",
-          "name": "numberOfParticipants",
+          "name": "numberOfIndigenousParticipants",
           "validate": "required,min[0]"
         },
         {
@@ -51,6 +38,7 @@
           "dataType": "stringList",
           "name": "industryType",
           "constraints":[
+            "n/a",
             "Broad acre cropping",
             "Dairy",
             "Horticulture",
@@ -82,20 +70,20 @@
               "width":"20%"
             },
             {
-              "source": "otherEventType",
-              "title": "Type of activity (if other)",
-              "type": "text",
-              "width":"20%"
-            },
-            {
               "source": "eventPurpose",
               "title": "Aim of activity",
               "type": "textarea",
-              "width":"20%"
+              "width":"30%"
             },
             {
               "source": "numberOfParticipants",
               "title": "Total number of attendees / participants",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "numberOfParticipants",
+              "title": "Total number of Indigenous attendees / participants",
               "type": "number",
               "width":"10%"
             },

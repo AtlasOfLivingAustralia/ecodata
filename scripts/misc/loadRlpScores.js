@@ -19,7 +19,7 @@ for (var i=0; i<scores.length; i++) {
             var existingScore = existing.next();
             score._id = existingScore._id;
             score.scoreId = existingScore.scoreId;
-            db.score.save(existingScore);
+            db.score.save(score);
         }
 
     }
