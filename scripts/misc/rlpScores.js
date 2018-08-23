@@ -528,11 +528,11 @@ scores = [
             "property": "data.enclosureDetails.areaProtectedHa",
             "type": "SUM"
          }],
-         "label": "Area of feral-free enclosure"
+         "label": "Area (ha) of feral-free enclosure"
       },
       "outputType": "RLP - Maintaining feral free enclosures",
       "entityTypes": ["RLP Output Report"],
-      "label": "Area of feral-free enclosure",
+      "label": "Area (ha) of feral-free enclosure",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -570,11 +570,11 @@ scores = [
             "property": "data.breedingProgramDetails.numberOfIndividuals",
             "type": "SUM"
          }],
-         "label": "Number of ex-situ breeding sites and/or populations"
+         "label": "Number of breeding sites and/or populations"
       },
       "outputType": "RLP - Establishing ex-situ breeding programs",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of ex-situ breeding sites and/or populations",
+      "label": "Number of breeding sites and/or populations",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -617,6 +617,27 @@ scores = [
       "outputType": "RLP - Establishing monitoring regimes",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of monitoring regimes established",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Establishing monitoring regimes",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfDaysMaintainingMonitoringRegemes",
+            "type": "SUM"
+         }],
+         "label": "Number of days�maintaining�monitoring regimes"
+      },
+      "outputType": "RLP - Establishing monitoring regimes",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of days�maintaining�monitoring regimes",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -693,35 +714,14 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.areaTreatedHa",
             "type": "SUM"
          }],
-         "label": "Area (ha) fire management action implemented"
+         "label": "Area (ha) treated by fire management action"
       },
       "outputType": "RLP - Fire management",
       "entityTypes": ["RLP Output Report"],
-      "label": "Area (ha) fire management action implemented",
-      "units": "",
-      "category": "RLP",
-      "isOutputTarget": true,
-      "status": "active"
-   },
-   {
-      "configuration": {
-         "filter": {
-            "filterValue": "RLP - Fire management",
-            "property": "name",
-            "type": "filter"
-         },
-         "childAggregations": [{
-            "property": "data.areaProtectedHa",
-            "type": "SUM"
-         }],
-         "label": "Area (ha) protected by fire management action"
-      },
-      "outputType": "RLP - Fire management",
-      "entityTypes": ["RLP Output Report"],
-      "label": "Area (ha) protected by fire management action",
+      "label": "Area (ha) treated by fire management action",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -843,32 +843,11 @@ scores = [
             "property": "data.hydrologicalRegimeDetails.numberOfActions",
             "type": "SUM"
          }],
-         "label": "Number of structures in place to manage water"
+         "label": "Number of treatments implemented to improve water management"
       },
       "outputType": "RLP - Improving hydrological regimes",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of structures in place to manage water",
-      "units": "",
-      "category": "RLP",
-      "isOutputTarget": true,
-      "status": "active"
-   },
-   {
-      "configuration": {
-         "filter": {
-            "filterValue": "RLP - Improving hydrological regimes",
-            "property": "name",
-            "type": "filter"
-         },
-         "childAggregations": [{
-            "property": "data.areaManagedHa",
-            "type": "SUM"
-         }],
-         "label": "Area (ha) of catchment being managed as a result of this management action"
-      },
-      "outputType": "RLP - Improving hydrological regimes",
-      "entityTypes": ["RLP Output Report"],
-      "label": "Area (ha) of catchment being managed as a result of this management action",
+      "label": "Number of treatments implemented to improve water management",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -1058,6 +1037,27 @@ scores = [
       "outputType": "RLP - Project planning",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of planning and delivery documents for delivery of the project services and monitoring",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Project planning",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "property": "data.numberOfDaysProjectPlanning",
+            "type": "SUM"
+         }],
+         "label": "Number of days project planning / preparation"
+      },
+      "outputType": "RLP - Project planning",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Number of days project planning / preparation",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
@@ -1282,27 +1282,6 @@ scores = [
       "outputType": "RLP - Site preparation",
       "entityTypes": ["RLP Output Report"],
       "label": "Number of days preparing site/s",
-      "units": "",
-      "category": "RLP",
-      "isOutputTarget": true,
-      "status": "active"
-   },
-   {
-      "configuration": {
-         "filter": {
-            "filterValue": "RLP - Skills and knowledge survey",
-            "property": "name",
-            "type": "filter"
-         },
-         "childAggregations": [{
-            "property": "data.numberOfSurveys",
-            "type": "SUM"
-         }],
-         "label": "Area (ha) surveyed for skills and knowledge"
-      },
-      "outputType": "RLP - Skills and knowledge survey",
-      "entityTypes": ["RLP Output Report"],
-      "label": "Area (ha) surveyed for skills and knowledge",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
