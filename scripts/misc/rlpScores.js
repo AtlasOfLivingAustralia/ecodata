@@ -633,11 +633,11 @@ scores = [
             "property": "data.numberOfDaysMaintainingMonitoringRegemes",
             "type": "SUM"
          }],
-         "label": "Number of days�maintaining�monitoring regimes"
+         "label": "Number of days maintaining monitoring regimes"
       },
       "outputType": "RLP - Establishing monitoring regimes",
       "entityTypes": ["RLP Output Report"],
-      "label": "Number of days�maintaining�monitoring regimes",
+      "label": "Number of days maintaining monitoring regimes",
       "units": "",
       "category": "RLP",
       "isOutputTarget": true,
