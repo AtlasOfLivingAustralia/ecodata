@@ -26,6 +26,4 @@ while (programs.hasNext()) {
         db.program.save(program);
 
     }
-
-
 }
