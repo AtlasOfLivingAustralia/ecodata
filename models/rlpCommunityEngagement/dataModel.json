@@ -20,6 +20,11 @@
           "validate": "required"
         },
         {
+          "dataType":"number",
+          "name":"numberOfEvents",
+          "validate":"required"
+        },
+        {
           "dataType": "number",
           "name": "numberOfParticipants",
           "validate": "required,min[0]"
@@ -32,6 +37,11 @@
         {
           "dataType": "number",
           "name": "numberOfFarmers",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfGroups",
           "validate": "required,min[0]"
         },
         {
@@ -65,15 +75,21 @@
           "columns": [
             {
               "source": "eventType",
-              "title": "Community engagement activity type",
+              "title": "Type of Community / Stakeholder engagement activity",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
+            },
+            {
+              "source": "numberOfEvents",
+              "title": "Number of Community / Stakeholder engagement events",
+              "type": "number",
+              "width":"10%"
             },
             {
               "source": "eventPurpose",
-              "title": "Aim of activity",
+              "title": "Purpose of engagement",
               "type": "textarea",
-              "width":"30%"
+              "width":"20%"
             },
             {
               "source": "numberOfParticipants",
@@ -82,7 +98,7 @@
               "width":"10%"
             },
             {
-              "source": "numberOfParticipants",
+              "source": "numberOfIndigenousParticipants",
               "title": "Total number of Indigenous attendees / participants",
               "type": "number",
               "width":"10%"
@@ -94,10 +110,16 @@
               "width":"10%"
             },
             {
+              "source": "numberOfGroups",
+              "title": "Number of communities or groups engaged",
+              "type": "number",
+              "width":"10%"
+            },
+            {
               "source": "industryType",
               "title": "Industry type engaged",
               "type": "select2Many",
-              "width":"20%"
+              "width":"15%"
             }
 
           ],

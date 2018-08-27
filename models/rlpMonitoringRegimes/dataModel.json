@@ -6,6 +6,16 @@
       "dataType": "number",
       "name": "numberMonitoringRegimesEstablished",
       "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfDays",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "text",
+      "name": "monitoringRegimeObjective",
+      "validate": "required"
     }
   ],
   "viewModel": [
@@ -15,16 +25,21 @@
           "type": "row",
           "items": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberMonitoringRegimesEstablished",
-                  "preLabel": "Number of monitoring regimes established",
-                  "type": "number"
-                }
-              ]
+              "source": "numberMonitoringRegimesEstablished",
+              "preLabel": "Number of monitoring regimes established",
+              "type": "number"
+            },
+            {
+              "source": "numberOfDays",
+              "preLabel": "Number of days establishing monitoring regimes",
+              "type": "number"
+            },
+            {
+              "source": "monitoringRegimeObjective",
+              "preLabel": "Monitoring regimes objective",
+              "type": "textarea",
+              "rows": 3
             }
-
           ]
         }
       ],

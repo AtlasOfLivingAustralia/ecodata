@@ -84,7 +84,7 @@
           ]
         },
         {
-          "name":"individualsOrColoniesRemoved",
+          "name":"individualsOrColonies",
           "dataType":"number",
           "validate":"min[0]"
         }
@@ -98,6 +98,12 @@
         {
           "source": "pestAnimalsControlled",
           "columns": [
+            {
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
+            },
             {
               "type":"select2",
               "source":"siteId",
@@ -129,15 +135,9 @@
               "width":"20%"
             },
             {
-              "title":"Initial / Followup control",
-              "source":"initialOrFollowup",
+              "title":"Individuals or colonies",
+              "source":"individualsOrColonies",
               "type":"selectOne",
-              "width":"10%"
-            },
-            {
-              "title":"Number of individuals or colonies killed / removed",
-              "source":"individualsOrColoniesRemoved",
-              "type":"number",
               "width":"10%"
             }
           ],

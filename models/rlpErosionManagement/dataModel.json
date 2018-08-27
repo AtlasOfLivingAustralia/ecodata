@@ -3,40 +3,50 @@
   "modelName": "RLP - Erosion Management",
   "dataModel": [
     {
-      "dataType":"number",
-      "name":"areaOfErosionTreatedHa",
-      "units":"ha",
-      "validate":"required,min[0]"
-    },
-    {
-      "dataType": "stringList",
-      "name": "siteIds",
-      "validate": "required",
-      "constraints": {
-        "config": {
-          "source": {
-            "context-path": "project.sites"
-          },
-          "mapping": [
-            {
-              "target": "id",
-              "source-path": "siteId"
-            },
-            {
-              "target": "text",
-              "source-path": "name"
-            }
-          ]
-        },
-        "type": "pre-populated",
-
-      }
-    },
-    {
       "dataType":"list",
       "name":"erosionManagementDetails",
       "minSize":0,
       "columns":[
+        {
+          "dataType":"text",
+          "name":"initialOrFollowup",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Followup"
+          ]
+        },
+        {
+          "dataType": "feature",
+          "name": "sitesManaged",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaOfErosionControlHa",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.areaHa(sitesManaged)",
+            "dependents": {
+              "source": [
+                "sitesManaged"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "number",
+          "name": "lengthOfErosionControlKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesManaged)",
+            "dependents": {
+              "source": [
+                "sitesManaged"
+              ]
+            }
+          }
+        },
 
         {
           "dataType":"text",
@@ -55,9 +65,31 @@
             "Farming practice change - reduced stocking",
             "Farming practice change - riparian buffer strips",
             "Farming practice change - stock exclusion",
-            "Farming practice change - strip farming"
+            "Farming practice change - strip farming",
+            "Other"
           ]
 
+        },
+        {
+          "dataType":"text",
+          "name":"otherErosionManagementMethod",
+          "validate":"required",
+          "behaviour":[
+            {
+              "condition": "erosionManagementMethod == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "dataType":"number",
+          "name":"areaBenefitingHa",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"number",
+          "name":"numberInstalled",
+          "validate":"required,min[0]"
         }
 
       ]
@@ -85,11 +117,6 @@
             "Stilling ponds & retention basins",
             "Other"
           ]
-        },
-        {
-          "dataType":"number",
-          "name":"numberInstalled",
-          "validate":"required,min[1]"
         }
       ],
       "minSize":0
@@ -100,52 +127,56 @@
     {
       "items": [
         {
-          "type":"row",
-          "items":[
-            {
-              "type":"number",
-              "source":"areaOfErosionTreatedHa",
-              "preLabel":"Area of erosion being treated (ha)",
-              "css":"span3"
-            },
-            {
-              "type":"select2Many",
-              "source":"siteIds",
-              "preLabel":"Project sites where erosion control was undertaken",
-              "css":"span9"
-            }
-
-          ]
-        },
-        {
           "columns": [
             {
+              "title":"Site/s where erosion management was undertaken",
+              "source":"sitesManaged",
+              "type":"feature",
+              "width":"10%"
+            },
+            {
+              "title":"Area (Ha) of erosion control",
+              "source":"areaOfErosionControlHa",
+              "type":"number",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "title":"Length (km) of erosion control",
+              "source":"lengthOfErosionControlKm",
+              "type":"number",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
               "source": "erosionManagementMethod",
-              "title": "Erosion management method(s) used",
-              "type": "select2"
+              "title": "Type of treatment method",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "title": "Type of treatment method (if Other)",
+              "source": "otherErosionManagementMethod",
+              "type": "text",
+              "width":"25%"
+            },
+            {
+              "title": "Area (ha) benefiting from erosion management",
+              "source": "areaBenefitingHa",
+              "type": "number",
+              "width":"10%"
+
+            },
+            {
+              "title":"Number of erosion control structures installed",
+              "source":"numberInstalled",
+              "type":"number",
+              "width":"10%"
+
 
             }
           ],
           "source":"erosionManagementDetails",
-          "userAddedRows":true,
-          "type": "table"
-        },
-        {
-          "columns": [
-            {
-              "source": "erosionStructureType",
-              "title": "Type of erosion control structure installed",
-              "type": "select2",
-              "width":"70%"
-            },
-            {
-              "source": "numberInstalled",
-              "title": "Number of erosion control structures installed",
-              "type": "number",
-              "width":"30%"
-            }
-          ],
-          "source":"erosionStructuresInstalled",
           "userAddedRows":true,
           "type": "table"
         }

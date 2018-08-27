@@ -1,5 +1,5 @@
 {
-  "title": "Establishing and maintaining feral-enclosures",
+  "title": "Establishing and maintaining feral-free enclosures",
   "modelName": "RLP - Maintaining feral free enclosures",
   "dataModel": [
     {
@@ -7,27 +7,32 @@
       "name": "enclosureDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "siteId",
+          "dataType": "number",
+          "name": "numberOfEnclosures",
+          "validate": "required,min[1]"
+        },
+        {
+          "dataType": "feature",
+          "name": "siteOfEnclosures",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaOfEnclosuresHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(siteOfEnclosures)",
+            "dependents": {
+              "source": [
+                "siteOfEnclosures"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
+        },
+        {
+          "dataType":"number",
+          "name":"daysSpentOnMaintenanceOfEnclosures",
+          "validate":"min[0]"
         },
         {
           "dataType": "species",
@@ -66,34 +71,53 @@
           "source": "enclosureDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"siteId",
-              "title":"Area (ha) of feral-free enclosure established or maintained",
-              "width":"15%"
+              "type":"number",
+              "source":"numberOfEnclosures",
+              "title":"Number of feral free enclosures",
+              "width":"8%"
             },
             {
-              "title": "Targeted threatened species",
-              "source": "targetSpecies",
-              "type": "speciesSelect",
-              "width":"30%"
-            },
-            {
-              "title": "Is this a newly established or maintained feral free enclosure?",
+              "title": "Are they newly established or maintained feral free enclosure?",
               "source": "newOrMaintained",
               "type": "selectOne",
               "width":"15%"
             },
             {
+              "type":"feature",
+              "source":"siteOfEnclosures",
+              "title":"Site/s of feral free enclosures",
+              "width":"8%"
+            },
+            {
+              "type":"number",
+              "source":"areaOfEnclosuresHa",
+              "title":"Area (Ha) of feral-free enclosures established or maintained",
+              "width":"8%"
+            },
+            {
+              "type":"number",
+              "source":"daysSpentOnMaintenanceOfEnclosures",
+              "title":"Time (days) spent on maintenance of enclosures",
+              "width":"8%"
+            },
+            {
+              "title": "Targeted threatened species",
+              "source": "targetSpecies",
+              "type": "speciesSelect",
+              "width":"22%"
+            },
+
+            {
               "title":"Number of populations (or individuals) protected within feral free enclosures",
               "source":"numberOfPopulationsOrIndividualsProtected",
               "type":"number",
-              "width":"10%"
+              "width":"8%"
             },
             {
               "title":"Aim of feral free enclosure (300 character limit)",
               "source":"enclosureObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"23%"
             }
 
           ],

@@ -8,25 +8,38 @@
       "columns": [
         {
           "dataType": "feature",
-          "name": "areaInstalled",
+          "name": "sitesInstalled",
           "validate": "required"
         },
         {
           "dataType": "number",
-          "name": "areaInstalledHa",
+          "name": "sitesInstalledHa",
           "validate": "required",
           "computed": {
-            "expression": "$geom.areaHa(areaInstalled)",
+            "expression": "$geom.areaHa(sitesInstalled)",
             "dependents": {
               "source": [
-                "site"
+                "sitesInstalled"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "number",
+          "name": "lengthInstalledKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesInstalled)",
+            "dependents": {
+              "source": [
+                "sitesInstalled"
               ]
             }
           }
         },
         {
           "dataType": "feature",
-          "name": "protectedArea",
+          "name": "protectedSites",
           "validate": "required"
         },
         {
@@ -34,10 +47,10 @@
           "name": "areaProtectedHa",
           "validate": "required",
           "computed": {
-            "expression": "$geom.areaHa(protectedArea)",
+            "expression": "$geom.areaHa(protectedSites)",
             "dependents": {
               "source": [
-                "protectedArea"
+                "protectedSites"
               ]
             }
           }
@@ -85,21 +98,28 @@
           "columns": [
             {
               "type":"feature",
-              "source":"areaInstalled",
-              "title":"Installation",
+              "source":"sitesInstalled",
+              "title":"Site/s where access was controlled",
               "width":"10%"
             },
             {
               "type":"number",
-              "source":"areaInstalledHa",
+              "source":"sitesInstalledHa",
               "title":"Area installed (Ha)",
               "width":"10%",
               "readonly":"readonly"
             },
             {
+              "type":"number",
+              "source":"lengthInstalledKm",
+              "title":"Length installed (km)",
+              "width":"10%",
+              "readonly":"readonly"
+            },
+            {
               "type":"feature",
-              "source":"protectedArea",
-              "title":"Spatial area protected by access control structure (Ha)",
+              "source":"protectedSites",
+              "title":"Site/s protected by access control structure (Ha)",
               "width":"10%"
             },
             {
@@ -113,19 +133,19 @@
               "title": "Type of access control installed",
               "source": "accessControlType",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Type of access control installed (if Other)",
               "source":"otherAccessControlType",
               "type":"text",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Control objective (300 character limit)",
               "source":"controlObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"20%"
             }
           ],
           "userAddedRows": true,

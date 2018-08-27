@@ -1,0 +1,78 @@
+{
+  "title": "Farm management surveys",
+  "modelName": "RLP - Farm Management Survey",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "farmManagementSurveys",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndictorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfFarmManagementSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyPurpose",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherSurveyPurpose",
+          "validate":"required"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "farmManagementSurveys",
+          "columns": [
+            {
+              "title": "Baseline or indicator survey?",
+              "source": "baselineOrIndictorSurvey",
+              "type": "selectOne",
+              "width":"20%"
+            },
+            {
+              "title":"Number of farm management surveys conducted",
+              "source":"numberOfFarmManagementSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"select2",
+              "source":"surveyPurpose",
+              "width":"35%"
+            },
+            {
+              "title":"Survey purpose (if Other)",
+              "type":"textarea",
+              "source":"otherSurveyPurpose",
+              "width":"35%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

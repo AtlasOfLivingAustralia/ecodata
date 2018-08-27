@@ -1,101 +1,67 @@
 {
-  "title": "Establishing agreements",
+  "title": "Establishing and maintaining agreements",
   "modelName": "RLP - Establishing Agreements",
   "dataModel": [
     {
-      "dataType": "list",
-      "name": "agreements",
-      "columns": [
-        {
-          "dataType": "text",
-          "name": "siteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "agreementType",
-          "constraints": [
-            "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
-            "Termed agreement not on title - binding (e.g. land management agreement)",
-            "Not on title - non-binding (e.g. Wildlife Refuge)",
-            "No protection mechanism applicable",
-            "Other"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"otherAgreementType",
-          "description":"",
-          "behaviour":[
-            {
-              "condition": "agreementType == \"Other\"",
-              "type": "enable"
-            }
-          ],
-          "validate":"required"
-        },
-        {
-          "name":"agreementObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]"
-        }
-      ]
+      "dataType": "number",
+      "name": "numberOfAgreements",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "areaCoveredByAgreementsHa",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfDaysMaintainingAgreements",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "stringList",
+      "description": "",
+      "name": "agreementType",
+      "constraints": [
+        "On title in perpetuity (e.g. conservation convenant)",
+        "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
+        "Termed agreement not on title - binding (e.g. land management agreement)",
+        "Not on title - non-binding (e.g. Wildlife Refuge)",
+        "No protection mechanism applicable"
+      ],
+      "validate": "required"
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "source": "agreements",
-          "columns": [
+          "items": [
             {
-              "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
-              "width":"20%"
+              "type": "number",
+              "source": "numberOfAgreements",
+              "preLabel": "Number of agreement established",
+              "width": "15%"
             },
             {
-              "title": "Type of agreement",
+              "type": "number",
+              "source": "areaCoveredByAgreementsHa",
+              "preLabel": "Area (Ha) covered by agreements",
+              "width": "15%"
+            },
+            {
+              "type": "number",
+              "source": "numberOfDaysMaintainingAgreements",
+              "preLabel": "Number of days maintaining agreements (if applicable)",
+              "width": "15%"
+            },
+            {
+              "preLabel": "Type of agreement/s",
               "source": "agreementType",
-              "type": "select2",
-              "width":"20%"
-            },
-            {
-              "title":"Agreement type (if other)",
-              "source":"otherAgreementType",
-              "type":"text",
-              "width":"20%"
-            },
-            {
-              "title":"Purpose of agreement (300 character limit)",
-              "source":"agreementObjective",
-              "type":"textarea",
-              "width":"40%"
-            },
+              "type": "select2Many",
+              "width": "55%"
+            }
           ],
-          "userAddedRows": true,
-          "type": "table"
+          "type": "row"
         }
       ],
       "type": "section"
