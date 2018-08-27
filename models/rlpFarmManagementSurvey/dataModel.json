@@ -32,7 +32,13 @@
         {
           "dataType":"text",
           "name":"otherSurveyPurpose",
-          "validate":"required"
+          "validate":"required",
+          "behaviour": [
+            {
+              "condition": "surveyPurpose == \"Other\"",
+              "type": "enable"
+            }
+          ]
         }
       ]
     }

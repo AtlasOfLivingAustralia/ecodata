@@ -7,49 +7,30 @@
       "name": "landManagementDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "managedSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial control",
+            "Follow-up control"
+          ]
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
+          "dataType": "feature",
+          "name": "implementationSite",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaImplementedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(implementationSite)",
+            "dependents": {
+              "source": [
+                "implementationSite"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -95,6 +76,10 @@
           "name":"practiceChangeObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
+        },
+        {
+          "dataType":"feature",
+          "name":"offSiteBenefitSites"
         }
       ]
     }
@@ -106,28 +91,35 @@
           "source": "landManagementDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"managedSiteId",
-              "title":"Area (ha) covered by practice change",
+              "type":"selectOne",
+              "source":"initialOrFollowup",
+              "title":"Initial or follow up",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
-              "title":"Area (ha) improve/protected by land management practice change",
-              "width":"10%"
+              "type":"feature",
+              "source":"implementationSite",
+              "title":"Site/s covered by implementation",
+              "width":"5%"
             },
             {
-              "title": "Type of action",
-              "source": "practiceChangeType",
-              "type": "select2",
-              "width":"20%"
+              "title": "Area (Ha) covered by implementation",
+              "source": "areaImplementedHa",
+              "type": "number",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title":"Type of action",
+              "source":"practiceChangeType",
+              "type":"select2",
+              "width":"15%"
             },
             {
               "title":"Type of action (if Other)",
               "source":"otherPracticeChangeType",
               "type":"text",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Industry type",
@@ -136,10 +128,16 @@
               "width":"15%"
             },
             {
-              "title":"Action aim (300 character limit)",
+              "title":"Purpose of improving LMP change",
               "source":"practiceChangeObjective",
               "type":"textarea",
               "width":"25%"
+            },
+            {
+              "title":"Please identify any area/s that have shown evidence of off-site benefits",
+              "source":"offSiteBenefitSites",
+              "type":"feature",
+              "width":"10%"
             }
           ],
           "userAddedRows": true,

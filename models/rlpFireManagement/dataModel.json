@@ -7,49 +7,30 @@
       "name": "fireManagementDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "fireSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
+          "dataType": "feature",
+          "name": "sitesTreated",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaTreatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -79,6 +60,11 @@
           "name":"fireManagementObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"areaProtectedByFireHa",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
       ]
     }
@@ -90,34 +76,46 @@
           "source": "fireManagementDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"fireSiteId",
-              "title":"Area (ha) fire management action was implemented",
+              "type":"selectOne",
+              "source":"initialOrFollowup",
+              "title":"Initial or follow-up",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
-              "title":"Area (ha) protected by fire management action",
-              "width":"10%"
+              "type":"feature",
+              "source":"sitesTreated",
+              "width":"5%",
+              "title":"Site/s treated by fire management activity"
             },
             {
-              "title": "Type of fire management action",
+              "type":"number",
+              "source":"areaTreatedHa",
+              "width":"10%",
+              "title":"Area (Ha) treated by fire management activity"
+            },
+            {
+              "title": "Type of fire management activity",
               "source": "fireManagementType",
               "type": "select2",
               "width":"20%"
             },
             {
-              "title":"Type of fire management action (if Other)",
+              "title":"Type of fire management activity (if Other)",
               "source":"otherFireManagementType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Fire management action objective (300 character limit)",
+              "title":"Fire management activity objective (300 character limit)",
               "source":"fireManagementObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"25%"
+            },
+            {
+              "type":"number",
+              "source":"areaProtectedByFireHa",
+              "title":"Area (ha) protected by fire management action",
+              "width":"10%"
             }
           ],
           "userAddedRows": true,

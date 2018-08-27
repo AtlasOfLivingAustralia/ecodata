@@ -3,39 +3,43 @@
   "modelName": "RLP - Flora survey",
   "dataModel": [
     {
-      "dataType":"number",
-      "name":"areaCoveredByFloraSurveyHa",
-      "units":"ha",
-      "validate":"required,min[0]"
-    },
-    {
-      "dataType": "stringList",
-      "name": "siteIds",
-      "validate": "required",
-      "constraints": {
-        "config": {
-          "source": {
-            "context-path": "project.sites"
-          },
-          "mapping": [
-            {
-              "target": "id",
-              "source-path": "siteId"
-            },
-            {
-              "target": "text",
-              "source-path": "name"
-            }
-          ]
+      "dataType": "list",
+      "name": "floraSurveys",
+      "minSize": 1,
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
         },
-        "type": "pre-populated"
-      }
-    },
-    {
-      "dataType":"list",
-      "name":"floraSurveyResults",
-      "minSize":1,
-      "columns":[
+        {
+          "dataType":"number",
+          "name":"numberOfFloraSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(areaSurveyedHa)",
+            "dependents": {
+              "source": [
+                "areaSurveyedHa"
+              ]
+            }
+          }
+        },
         {
           "dataType": "species",
           "name": "species",
@@ -43,82 +47,108 @@
         },
         {
           "dataType": "text",
-          "name": "populationOrIndividual",
+          "name": "surveyPurpose",
           "validate": "required",
-          "constraints":[
-            "Population","Individual"
+          "constraints": [
+            "Other"
           ]
         },
         {
-          "dataType":"text",
-          "name":"surveyMethod",
-          "validate":"required"
-
+          "dataType": "text",
+          "name": "otherSurveyPurpose",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "surveyPurpose == \"Other\"",
+              "type": "enable"
+            }
+          ]
         },
         {
-          "dataType":"text",
-          "name":"otherSurveyMethod",
-          "validate":"required"
+          "name":"numberOfPopulations",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"numberOfIndividualsCounted",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
       ]
     }
   ],
   "viewModel": [
-
     {
       "items": [
         {
-          "type":"row",
-          "items":[
-            {
-              "type":"number",
-              "source":"areaCoveredByFloraSurveyHa",
-              "preLabel":"Area covered by flora survey (Ha)",
-              "css":"span3"
-            },
-            {
-              "type":"select2Many",
-              "source":"siteIds",
-              "preLabel":"Project sites where surveys were undertaken",
-              "css":"span9"
-            }
-
-          ]
-        },
-        {
           "columns": [
             {
-              "source": "species",
-              "title": "Target species of flora survey",
-              "type": "speciesSelect",
-              "width":"50%"
+              "title": "Baseline survey or indicator survey?",
+              "source": "baselineOrIndicatorSurvey",
+              "type": "selectOne",
+              "width":"10%"
             },
             {
-              "source": "populationOrIndividual",
-              "title": "Population survey or individual species survey?",
-              "type": "selectOne",
+              "title":"Number of surveys conducted",
+              "source":"numberOfFloraSurveys",
+              "type":"number",
+              "width":"8%"
+            },
+            {
+              "title":"Site/s of surveyed flora",
+              "source":"sitesSurveyed",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (Ha) surveyed for flora",
+              "source":"areaSurveyedHa",
+              "readonly":"readonly",
+              "width":"8%",
+              "type":"number"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"select2",
+              "source":"surveyPurpose",
               "width":"15%"
             },
             {
-              "source": "surveyMethod",
-              "title": "Survey method",
-              "type": "text",
-              "width":"35%"
+              "title":"Survey purpose (if Other)",
+              "type":"textarea",
+              "source":"otherSurveyPurpose",
+              "width":"18%"
+            },
+            {
+              "source": "species",
+              "title": "Target species recorded",
+              "type": "speciesSelect",
+              "width": "20%"
+            },
+            {
+              "source": "numberOfPopulations",
+              "title": "Number of populations",
+              "type": "number",
+              "width": "8%"
+            },
+            {
+              "source": "numberOfIndividualsCounted",
+              "title": "Number of individuals counted",
+              "type": "number",
+              "width": "8%"
             }
           ],
-          "source":"floraSurveyResults",
+          "source": "floraSurveys",
           "userAddedRows": true,
           "type": "table"
         },
         {
-          "type":"row",
-          "items":[
+          "type": "row",
+          "items": [
             {
-              "type":"literal",
-              "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
-
+              "type": "literal",
+              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
             }
-
           ]
         }
       ],

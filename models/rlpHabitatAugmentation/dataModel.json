@@ -7,49 +7,30 @@
       "name": "habitatAugmentationDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "augmentationSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial control",
+            "Follow-up control"
+          ]
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "name":"sitesOfAugmentation",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaAugmentedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesOfAugmentation)",
+            "dependents": {
+              "source": [
+                "sitesOfAugmentation"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -80,6 +61,11 @@
           "name":"habitatAugmentationObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]"
+        },
+        {
+          "name":"areaProtectedByAugmentationHa",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
       ]
     }
@@ -91,34 +77,47 @@
           "source": "habitatAugmentationDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"augmentationSiteId",
-              "title":"Site where habitat augmentation was conducted",
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
-              "title":"Area improved or protected by augmentation (ha)",
+              "type":"feature",
+              "source":"sitesOfAugmentation",
+              "title":"Site/s of habitat augmentation",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"areaAugmentedHa",
+              "title":"Area (Ha) of augmentation",
+              "readonly":"readonly",
               "width":"10%"
             },
             {
               "title": "Type of habitat augmentation",
               "source": "habitatAugmentationType",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Type of habitat augmentation (if Other)",
               "source":"otherHabitatAugmentationType",
               "type":"text",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Purpose of habitat augmentation (300 character limit)",
               "source":"habitatAugmentationObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"30%"
+            },
+            {
+              "title":"Area (Ha) improved or protected by augmentation",
+              "source":"areaProtectedByAugmentationHa",
+              "width":"10%",
+              "type":"number"
             }
           ],
           "userAddedRows": true,

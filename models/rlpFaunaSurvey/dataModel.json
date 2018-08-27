@@ -3,39 +3,43 @@
   "modelName": "RLP - Fauna survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "areaCoveredByFaunaSurveyHa",
-      "units": "ha",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "stringList",
-      "name": "siteIds",
-      "validate": "required",
-      "constraints": {
-        "config": {
-          "source": {
-            "context-path": "project.sites"
-          },
-          "mapping": [
-            {
-              "target": "id",
-              "source-path": "siteId"
-            },
-            {
-              "target": "text",
-              "source-path": "name"
-            }
-          ]
-        },
-        "type": "pre-populated"
-      }
-    },
-    {
       "dataType": "list",
-      "name": "faunaSurveyResults",
+      "name": "faunaSurveys",
       "minSize": 1,
       "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfFaunaSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(areaSurveyedHa)",
+            "dependents": {
+              "source": [
+                "areaSurveyedHa"
+              ]
+            }
+          }
+        },
         {
           "dataType": "species",
           "name": "species",
@@ -43,33 +47,32 @@
         },
         {
           "dataType": "text",
-          "name": "surveyMethod",
+          "name": "surveyPurpose",
           "validate": "required",
           "constraints": [
-            "Trap",
-            "Hair tubes",
-            "Tracks and scats",
-            "Spotlighting",
-            "Active search",
-            "Tape recorded calls",
-            "Drum net",
-            "Visual census",
-            "Call census",
-            "Nets",
-            "Fish traps",
             "Other"
           ]
         },
         {
           "dataType": "text",
-          "name": "otherSurveyMethod",
+          "name": "otherSurveyPurpose",
           "validate": "required",
           "behaviour": [
             {
-              "condition": "surveyMethod == \"Other\"",
+              "condition": "surveyPurpose == \"Other\"",
               "type": "enable"
             }
           ]
+        },
+        {
+          "name":"numberOfPopulations",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"numberOfIndividualsOrGroupsCounted",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
       ]
     }
@@ -78,44 +81,64 @@
     {
       "items": [
         {
-          "type": "row",
-          "items": [
-            {
-              "type": "number",
-              "source": "areaCoveredByFaunaSurveyHa",
-              "preLabel": "Area covered by fauna survey (Ha)",
-              "css": "span3"
-            },
-            {
-              "type": "select2Many",
-              "source": "siteIds",
-              "preLabel": "Project sites where surveys were undertaken",
-              "css": "span9"
-            }
-          ]
-        },
-        {
           "columns": [
             {
+              "title": "Baseline survey or indicator survey?",
+              "source": "baselineOrIndicatorSurvey",
+              "type": "selectOne",
+              "width":"10%"
+            },
+            {
+              "title":"Number of surveys conducted",
+              "source":"numberOfFaunaSurveys",
+              "type":"number",
+              "width":"8%"
+            },
+            {
+              "title":"Site/s of surveyed fauna",
+              "source":"sitesSurveyed",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (Ha) surveyed for fauna",
+              "source":"areaSurveyedHa",
+              "readonly":"readonly",
+              "width":"8%",
+              "type":"number"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"select2",
+              "source":"surveyPurpose",
+              "width":"15%"
+            },
+            {
+              "title":"Survey purpose (if Other)",
+              "type":"textarea",
+              "source":"otherSurveyPurpose",
+              "width":"18%"
+            },
+            {
               "source": "species",
-              "title": "Target species of fauna survey",
+              "title": "Target species recorded",
               "type": "speciesSelect",
-              "width": "40%"
+              "width": "20%"
             },
             {
-              "source": "surveyMethod",
-              "title": "Survey method",
-              "type": "select2",
-              "width": "30%"
+              "source": "numberOfPopulations",
+              "title": "Number of populations",
+              "type": "number",
+              "width": "8%"
             },
             {
-              "source": "otherSurveyMethod",
-              "title": "Other survey method",
-              "type": "text",
-              "width": "30%"
+              "source": "numberOfIndividualsOrGroupsCounted",
+              "title": "Number of individuals / groups counted",
+              "type": "number",
+              "width": "8%"
             }
           ],
-          "source": "faunaSurveyResults",
+          "source": "faunaSurveys",
           "userAddedRows": true,
           "type": "table"
         },
