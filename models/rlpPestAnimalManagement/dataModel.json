@@ -7,26 +7,21 @@
       "name": "pestAnimalsControlled",
       "columns": [
         {
-          "dataType": "text",
-          "name": "siteId",
+          "dataType": "feature",
+          "name": "site",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaControlledHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(site)",
+            "dependents": {
+              "source": [
+                "feature"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -86,7 +81,16 @@
         {
           "name":"individualsOrColonies",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"required",
+          "constraints":[
+            "Individuals",
+            "Colonies"
+          ]
+        },
+        {
+          "name":"individualsOrColoniesRemoved",
+          "dataType":"number",
+          "validate":"required"
         }
 
       ]
@@ -105,9 +109,16 @@
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
+              "type":"feature",
+              "source":"site",
+              "title":"Site/s where pest control was undertaken",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"areaControlledHa",
+              "title":"Area (Ha) controlled for pest animals",
+              "readOnly":"readonly",
               "width":"10%"
             },
             {
@@ -139,6 +150,12 @@
               "source":"individualsOrColonies",
               "type":"selectOne",
               "width":"10%"
+            },
+            {
+            "title":"Number of individuals OR colonies killed / removed",
+            "source":"individualsOrColoniesRemoved",
+            "type":"number",
+            "width":"10%"
             }
           ],
           "userAddedRows": true,
