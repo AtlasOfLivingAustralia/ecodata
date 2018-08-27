@@ -19,7 +19,7 @@
             "expression": "$geom.areaHa(site)",
             "dependents": {
               "source": [
-                "feature"
+                "site"
               ]
             }
           }
@@ -118,7 +118,7 @@
               "type":"number",
               "source":"areaControlledHa",
               "title":"Area (Ha) controlled for pest animals",
-              "readOnly":"readonly",
+              "readonly":"readonly",
               "width":"10%"
             },
             {

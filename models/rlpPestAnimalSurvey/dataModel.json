@@ -2,6 +2,7 @@
   "title": "Pest animal survey",
   "modelName": "RLP - Pest animal survey",
   "dataModel": [
+
     {
       "dataType": "list",
       "name": "surveys",
@@ -26,37 +27,45 @@
       ]
     },
     {
-      "dataType":"text",
+      "dataType":"feature",
       "name":"something"
     }
   ],
   "viewModel": [
+
     {
       "items": [
         {
           "type": "repeat",
           "source":"surveys",
-          "items": [
+          "userAddedRows":true,
+          "items":[
             {
-              "source":"test2",
-              "type":"number",
-              "preLabel":"Test"
-
-            },
-            {
-              "type":"table",
-              "source":"surveyDetails",
-              "columns":[
+              "type":"row",
+              "items": [
                 {
-                  "source": "test",
-                  "title": "Test",
-                  "type": "number"
-                }
-              ],
-              "userAddedRows":true
-            }
+                  "source":"test2",
+                  "type":"number",
+                  "preLabel":"Test"
 
+                },
+                {
+                  "type":"table",
+                  "source":"surveyDetails",
+                  "columns":[
+                    {
+                      "source": "test",
+                      "title": "Test",
+                      "type": "number"
+                    }
+                  ],
+                  "userAddedRows":true
+                }
+
+              ]
+            }
           ]
+
         }
       ],
       "type": "section"
@@ -65,11 +74,12 @@
       "type":"row",
       "items":[
         {
-          "type":"text",
+          "type":"feature",
           "source":"something",
           "preLabel":"Something"
         }
       ]
     }
+
   ]
 }

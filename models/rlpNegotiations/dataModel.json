@@ -3,29 +3,47 @@
   "modelName": "RLP - Negotiations",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberGroupsNegotiatedWith",
-      "validate": "required,min[0]"
+      "dataType":"list",
+      "name":"negotiations",
+      "columns":[
+        {
+          "dataType":"text",
+          "name":"typeOfGroup",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfNegotiationsCompleted",
+          "validate": "required,min[0]"
+        }
+      ]
     }
+
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+          "type": "table",
+          "columns":[
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberGroupsNegotiatedWith",
-                  "preLabel": "Number of groups negotiated with",
-                  "type": "number"
-                }
-              ]
+              "type":"select2",
+              "source":"typeOfGroup",
+              "title":"Type of group",
+              "width":"75%"
+            },
+            {
+              "source": "numberOfNegotiationsCompleted",
+              "title": "Number of negotiations completed",
+              "type": "number",
+              "width":"25%"
             }
-
-          ]
+          ],
+          "source":"negotiations",
+          "userAddedRows":true
         }
       ],
       "type": "section"

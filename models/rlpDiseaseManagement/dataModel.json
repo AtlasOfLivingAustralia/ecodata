@@ -7,51 +7,24 @@
       "name": "diseaseManagementDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "treatmentSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
+          "dataType": "feature",
+          "name": "siteTreated",
+          "validate": "required"
         },
         {
-          "dataType": "text",
-          "name": "threatReductionSiteId",
+          "dataType": "number",
+          "name": "areaTreatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(siteTreated)",
+            "dependents": {
+              "source": [
+                "siteTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
+
         {
           "dataType": "text",
           "description": "",
@@ -100,6 +73,11 @@
             "Initial treatment",
             "Follow-up treatment"
           ]
+        },
+        {
+          "name":"areaDiseaseThreatReducedHa",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
       ]
     }
@@ -111,19 +89,26 @@
           "source": "diseaseManagementDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"treatmentSiteId",
-              "title":"Area management method/treatment area was applied (ha)",
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"threatReductionSiteId",
-              "title":"Area where disease threat is reduced (ha)",
-              "width":"10%"
+              "type":"feature",
+              "source":"siteTreated",
+              "title":"Site/s treated for disease",
+              "width":"5%"
             },
             {
-              "title": "Disease managed",
+              "type":"number",
+              "source":"areaTreatedHa",
+              "title":"Area (Ha) treated for disease",
+              "readonly":"readonly",
+              "width":"8%"
+            },
+            {
+              "title": "Disease treated",
               "source": "targetDisease",
               "type": "text",
               "width":"15%"
@@ -147,10 +132,10 @@
               "width":"20%"
             },
             {
-              "title":"Initial / Followup control",
-              "source":"initialOrFollowup",
-              "type":"selectOne",
-              "width":"10%"
+              "title":"Area (Ha) where disease threat has reduced",
+              "source":"areaDiseaseThreatReducedHa",
+              "type":"number",
+              "width":"7%"
             }
           ],
           "userAddedRows": true,
