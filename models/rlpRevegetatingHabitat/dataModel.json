@@ -8,49 +8,31 @@
       "name": "revegetationDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "revegetationSiteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
-              ]
-            },
-            "type": "pre-populated"
-          }
+          "name":"initialOrInfill",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Infill planting"
+          ]
+
         },
         {
-          "dataType": "text",
-          "name": "improvedSiteId",
+          "dataType": "feature",
+          "name": "sitesRevegetated",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaRevegetatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(sitesRevegetated)",
+            "dependents": {
+              "source": [
+                "sitesRevegetated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -95,15 +77,10 @@
           "validate":"required,maxSize[300]"
         },
         {
-          "name":"initialOrInfill",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial",
-            "Infill planting"
-          ]
-
+          "name":"offSiteBenefitSites",
+          "dataType":"feature"
         }
+
       ]
     }
   ],
@@ -114,16 +91,23 @@
           "source": "revegetationDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"revegetationSiteId",
-              "title":"Area (ha) revegetated",
+              "title":"Initial or infill planting",
+              "source":"initialOrInfill",
+              "type":"selectOne",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"improvedSiteId",
-              "title":"Area (ha) improved by revegetation",
-              "width":"10%"
+              "type":"feature",
+              "source":"sitesRevegetated",
+              "title":"Site/s of revegetations",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"areaRevegetatedHa",
+              "title":"Area (ha) of revegetations",
+              "width":"10%",
+              "readonly":"readonly"
             },
             {
               "title": "Planting method",
@@ -150,11 +134,12 @@
               "width":"20%"
             },
             {
-              "title":"Initial or infill planting",
-              "source":"initialOrInfill",
-              "type":"selectOne",
-              "width":"10%"
+              "title":"Please identify any area/s that have shown evidence of off-site benefits",
+              "source":"offSiteBenefitSites",
+              "type":"feature",
+              "width":"5%"
             }
+
 
           ],
           "userAddedRows": true,

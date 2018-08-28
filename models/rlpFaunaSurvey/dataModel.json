@@ -32,10 +32,10 @@
           "dataType":"number",
           "validate":"required,min[1]",
           "computed": {
-            "expression": "$geom.areaHa(areaSurveyedHa)",
+            "expression": "$geom.areaHa(sitesSurveyed)",
             "dependents": {
               "source": [
-                "areaSurveyedHa"
+                "sitesSurveyed"
               ]
             }
           }
@@ -101,7 +101,7 @@
               "width":"5%"
             },
             {
-              "title":"Area (Ha) surveyed for fauna",
+              "title":"Area (ha) surveyed for fauna",
               "source":"areaSurveyedHa",
               "readonly":"readonly",
               "width":"8%",

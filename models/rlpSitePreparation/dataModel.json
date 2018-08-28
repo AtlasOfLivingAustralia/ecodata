@@ -1,0 +1,143 @@
+{
+  "title": "Site preparation",
+  "modelName": "RLP - Site preparation",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "sitePreparationDetails",
+      "columns": [
+
+        {
+          "name":"sitesPrepared",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaPreparedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesPrepared)",
+            "dependents": {
+              "source": [
+                "sitesPrepared"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "actionType",
+          "constraints": [
+            "Weeding",
+            "Digging",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherActionType",
+          "behaviour":[
+            {
+              "condition": "actionType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"purposeOfSitePreparation",
+          "dataType":"text",
+          "validate":"required"
+        },
+        {
+          "name":"numberOfDaysPreparingSite",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"numberOParticipantsPreparingSite",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType": "stringList",
+          "name": "industryType",
+          "constraints":[
+            "Broad acre cropping",
+            "Dairy",
+            "Horticulture",
+            "Grazing",
+            "Fisheries",
+            "Aquaculture"
+          ]
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "sitePreparationDetails",
+          "columns": [
+            {
+              "type":"feature",
+              "source":"sitesPrepared",
+              "title":"Site/s being prepared",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"areaPreparedHa",
+              "title":"Area (ha) of site preparation",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "title": "Type of action",
+              "source": "actionType",
+              "type": "select2",
+              "width":"15%"
+            },
+            {
+              "title":"Type of action (if Other)",
+              "source":"otherActionType",
+              "type":"text",
+              "width":"17%"
+            },
+            {
+              "title":"Aim of site preparation",
+              "type":"textarea",
+              "width":"23%",
+              "source":"purposeOfSitePreparation"
+            },
+            {
+              "title":"Number of days preparing site",
+              "source":"numberOfDaysPreparingSite",
+              "width":"10%",
+              "type":"number"
+            },
+            {
+              "title":"Number of participants preparing site",
+              "source":"numberOParticipantsPreparingSite",
+              "width":"10%",
+              "type":"number"
+            },
+            {
+              "title":"Industry type",
+              "source":"industryType",
+              "width":"10%",
+              "type":"select2"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

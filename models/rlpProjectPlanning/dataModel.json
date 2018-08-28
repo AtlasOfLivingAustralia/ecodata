@@ -6,6 +6,16 @@
       "dataType": "number",
       "name": "numberPlanningDocuments",
       "validate": "required,min[0]"
+    },
+    {
+      "dataType": "number",
+      "name": "numberOfDaysAdministeringProjectPlans",
+      "validate": "required,min[0]"
+    },
+    {
+      "dataType": "text",
+      "name": "purposeOfProjectPlans",
+      "validate": "required"
     }
   ],
   "viewModel": [
@@ -15,16 +25,25 @@
           "type": "row",
           "items": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberPlanningDocuments",
-                  "preLabel": "Number of planning and delivery documents for delivery of the project services and monitoring",
-                  "type": "number"
-                }
-              ]
-            }
+              "source": "numberPlanningDocuments",
+              "preLabel": "Number of project plans delivered",
+              "type": "number",
+              "css":"span2"
+            },
+            {
+              "source": "numberOfDaysAdministeringProjectPlans",
+              "preLabel": "Number of days administering project plans",
+              "type": "number",
+              "css":"span2"
 
+            },
+            {
+              "source": "purposeOfProjectPlans",
+              "preLabel": "Purpose of project plans",
+              "type": "textarea",
+              "rows":3,
+              "css":"span7"
+            }
           ]
         }
       ],

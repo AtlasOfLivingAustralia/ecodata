@@ -1,0 +1,86 @@
+{
+  "title": "Undertaking emergency interventions to prevent extinctions",
+  "modelName": "RLP - Emergency Interventions",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "interventionDetails",
+      "columns": [
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial treatment",
+            "Follow-up treatment"
+          ]
+        },
+        {
+          "name":"purposeOfIntervention",
+          "dataType":"text",
+          "validate":"required"
+        },
+        {
+          "name":"numberOfInterventions",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"numberOfIndividualsInvolved",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"numberOfDaysPerformingInterventions",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "interventionDetails",
+          "columns": [
+            {
+              "title":"Initial or follow-up",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"15%"
+            },
+            {
+              "title":"Type and goal or intervention",
+              "source":"purposeOfIntervention",
+              "width":"55%",
+              "type":"textarea",
+              "rows":3
+            },
+            {
+              "type":"number",
+              "source":"numberOfInterventions",
+              "width":"10%",
+              "title":"Number of interventions"
+            },
+            {
+              "type":"number",
+              "source":"numberOfIndividualsInvolved",
+              "width":"10%",
+              "title":"Number of individuals invovled"
+            },
+            {
+              "type":"number",
+              "source":"numberOfDaysPerformingInterventions",
+              "width":"10%",
+              "title":"Time (days) of intervention"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

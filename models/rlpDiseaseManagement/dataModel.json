@@ -103,7 +103,7 @@
             {
               "type":"number",
               "source":"areaTreatedHa",
-              "title":"Area (Ha) treated for disease",
+              "title":"Area (ha) treated for disease",
               "readonly":"readonly",
               "width":"8%"
             },
@@ -132,7 +132,7 @@
               "width":"20%"
             },
             {
-              "title":"Area (Ha) where disease threat has reduced",
+              "title":"Area (ha) where disease threat has reduced",
               "source":"areaDiseaseThreatReducedHa",
               "type":"number",
               "width":"7%"

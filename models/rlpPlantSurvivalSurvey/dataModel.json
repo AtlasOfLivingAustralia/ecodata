@@ -3,28 +3,173 @@
   "modelName": "RLP - Plant survival survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "plantSurvivalSurveys",
+      "minSize": 1,
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfPlantSurvivalSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "list",
+          "name": "speciesSurveyed",
+          "columns": [
+            {
+              "dataType": "species",
+              "name": "species",
+              "validate": "required"
+            }
+          ]
+
+        },
+        {
+          "dataType": "text",
+          "name": "surveyPurpose",
+          "validate": "required",
+          "constraints": [
+            "Other"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "otherSurveyPurpose",
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "surveyPurpose == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "name":"numberOfSurvivingIndividuals",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"survivalRate",
+          "dataType":"number",
+          "validate":"required,min[0],max[100]",
+          "behaviour": [
+            {
+              "condition": "baselineOrIndicatorSurvey == \"Indicator\"",
+              "type": "enable"
+            }
+          ]
+        }
+      ]
     }
   ],
   "viewModel": [
     {
       "items": [
         {
+          "columns": [
+            {
+              "title": "Baseline survey or indicator survey?",
+              "source": "baselineOrIndicatorSurvey",
+              "type": "selectOne",
+              "width":"8%"
+            },
+            {
+              "title":"Number of surveys conducted",
+              "source":"numberOfPlantSurvivalSurveys",
+              "type":"number",
+              "width":"8%"
+            },
+            {
+              "title":"Site/s surveyed for plant survival",
+              "source":"sitesSurveyed",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (Ha) surveyed for plant survival",
+              "source":"areaSurveyedHa",
+              "readonly":"readonly",
+              "width":"8%",
+              "type":"number"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"select2",
+              "source":"surveyPurpose",
+              "width":"15%"
+            },
+            {
+              "title":"Survey purpose (if Other)",
+              "type":"textarea",
+              "source":"otherSurveyPurpose",
+              "width":"18%"
+            },
+            {
+              "source": "speciesSurveyed",
+              "type":"repeat",
+              "title": "Species recorded",
+              "items":[
+                {
+                  "source":"species",
+
+                  "type": "speciesSelect",
+                  "width": "20%"
+                }
+              ]
+
+            },
+            {
+              "source": "numberOfSurvivingIndividuals",
+              "title": "Number of surviving individuals",
+              "type": "number",
+              "width": "8%"
+            },
+            {
+              "source": "survivalRate",
+              "title": "If follow-up (indicator) survey, what is the survival rate (%)",
+              "type": "number",
+              "width": "8%"
+            }
+          ],
+          "source": "plantSurvivalSurveys",
+          "userAddedRows": true,
+          "type": "table"
+        },
+        {
           "type": "row",
           "items": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of plant survival surveys conducted",
-                  "type": "number"
-                }
-              ]
+              "type": "literal",
+              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
             }
-
           ]
         }
       ],

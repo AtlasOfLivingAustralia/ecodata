@@ -2,84 +2,146 @@
   "title": "Pest animal survey",
   "modelName": "RLP - Pest animal survey",
   "dataModel": [
-
     {
       "dataType": "list",
-      "name": "surveys",
+      "name": "pestAnimalSurveys",
+      "minSize": 1,
       "columns": [
-
         {
-          "dataType":"number",
-          "name":"test2"
-
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
         },
         {
-          "dataType":"list",
-          "name":"surveyDetails",
-          "columns":[
+          "dataType":"number",
+          "name":"numberOfPestAnimalSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "species",
+          "name": "species",
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "name": "surveyPurpose",
+          "validate": "required",
+          "constraints": [
+            "Other"
+          ]
+        },
+        {
+          "dataType": "text",
+          "name": "otherSurveyPurpose",
+          "validate": "required",
+          "behaviour": [
             {
-              "dataType":"number",
-              "name":"test"
+              "condition": "surveyPurpose == \"Other\"",
+              "type": "enable"
             }
           ]
+        },
+        {
+          "name":"populationDensity",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
-
       ]
-    },
-    {
-      "dataType":"feature",
-      "name":"something"
     }
   ],
   "viewModel": [
-
     {
       "items": [
         {
-          "type": "repeat",
-          "source":"surveys",
-          "userAddedRows":true,
-          "items":[
+          "columns": [
             {
-              "type":"row",
-              "items": [
-                {
-                  "source":"test2",
-                  "type":"number",
-                  "preLabel":"Test"
-
-                },
-                {
-                  "type":"table",
-                  "source":"surveyDetails",
-                  "columns":[
-                    {
-                      "source": "test",
-                      "title": "Test",
-                      "type": "number"
-                    }
-                  ],
-                  "userAddedRows":true
-                }
-
-              ]
+              "title": "Baseline survey or indicator survey?",
+              "source": "baselineOrIndicatorSurvey",
+              "type": "selectOne",
+              "width":"10%"
+            },
+            {
+              "title":"Number of surveys conducted",
+              "source":"numberOfPestAnimalSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Site/s of surveyed pest animals",
+              "source":"sitesSurveyed",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) surveyed for pest animals",
+              "source":"areaSurveyedHa",
+              "readonly":"readonly",
+              "width":"10%",
+              "type":"number"
+            },
+            {
+              "title":"Survey purpose",
+              "type":"select2",
+              "source":"surveyPurpose",
+              "width":"15%"
+            },
+            {
+              "title":"Survey purpose (if Other)",
+              "type":"textarea",
+              "source":"otherSurveyPurpose",
+              "width":"20%"
+            },
+            {
+              "source": "species",
+              "title": "Target species recorded",
+              "type": "speciesSelect",
+              "width": "20%"
+            },
+            {
+              "source": "populationDensity",
+              "title": "Population density",
+              "type": "number",
+              "width": "10%"
+            }
+          ],
+          "source": "pestAnimalSurveys",
+          "userAddedRows": true,
+          "type": "table"
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "literal",
+              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
             }
           ]
-
         }
       ],
       "type": "section"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"feature",
-          "source":"something",
-          "preLabel":"Something"
-        }
-      ]
     }
-
   ]
 }

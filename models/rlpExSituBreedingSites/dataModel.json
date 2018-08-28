@@ -107,7 +107,7 @@
               "type":"number",
               "readonly":"readonly",
               "width":"8%",
-              "title":"Area (Ha) of feral-free enclosures established or maintained",
+              "title":"Area (ha) of feral-free enclosures established or maintained",
               "source":"areaOfEnclosureHa"
             },
             {

@@ -117,7 +117,7 @@
             {
               "type":"number",
               "source":"areaControlledHa",
-              "title":"Area (Ha) controlled for pest animals",
+              "title":"Area (ha) controlled for pest animals",
               "readonly":"readonly",
               "width":"10%"
             },

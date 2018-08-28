@@ -93,7 +93,7 @@
               "width":"10%"
             },
             {
-              "title":"Area (Ha) covered by debris removal",
+              "title":"Area (ha) covered by debris removal",
               "source":"debrisRemovedHa",
               "type":"number",
               "readonly":"readonly",

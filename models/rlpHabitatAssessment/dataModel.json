@@ -63,7 +63,7 @@
             {
               "type":"number",
               "source":"areaCoveredByAssessmentHa",
-              "preLabel":"Area covered by habitat assessment (Ha)",
+              "preLabel":"Area covered by habitat assessment (ha)",
               "css":"span3"
             },
             {

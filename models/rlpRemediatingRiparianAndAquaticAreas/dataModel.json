@@ -1,0 +1,137 @@
+{
+  "title": "Remediating riparian and aquatic areas",
+  "modelName": "RLP - Remediating riparian and aquatic areas",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "remediationDetails",
+      "columns": [
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial control",
+            "Follow-up control"
+          ]
+        },
+        {
+          "name":"sitesRemediated",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaRemediatedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesRemediated)",
+            "dependents": {
+              "source": [
+                "sitesRemediated"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthRemediatedKm",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesRemediated)",
+            "dependents": {
+              "source": [
+                "sitesRemediated"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "remediationType",
+          "constraints": [
+            "Erosion control",
+            "Fencing",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherRemediationType",
+          "behaviour":[
+            {
+              "condition": "remediationType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "name":"areaImprovedByRemediationHa",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "remediationDetails",
+          "columns": [
+            {
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
+            },
+            {
+              "type":"feature",
+              "source":"sitesRemediated",
+              "title":"Site/s covered by remediation",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"areaRemediatedHa",
+              "title":"Area (ha) being remediated",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"lengthRemediatedKm",
+              "title":"Length (km) being remediated",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "title": "Type of remediation",
+              "source": "remediationType",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "title":"Type of remediation (if Other)",
+              "source":"otherRemediationType",
+              "type":"text",
+              "width":"25%"
+            },
+            {
+              "title":"Area (Ha) improved by remediation",
+              "source":"areaImprovedByRemediationHa",
+              "width":"10%",
+              "type":"number"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

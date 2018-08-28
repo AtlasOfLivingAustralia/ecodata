@@ -91,7 +91,7 @@
               "type":"number",
               "source":"areaTreatedHa",
               "width":"10%",
-              "title":"Area (Ha) treated by fire management activity"
+              "title":"Area (ha) treated by fire management activity"
             },
             {
               "title": "Type of fire management activity",

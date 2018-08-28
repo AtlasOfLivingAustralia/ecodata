@@ -105,7 +105,7 @@
             {
               "type":"number",
               "source":"sitesInstalledHa",
-              "title":"Area installed (Ha)",
+              "title":"Area installed (ha)",
               "width":"10%",
               "readonly":"readonly"
             },
@@ -119,13 +119,13 @@
             {
               "type":"feature",
               "source":"protectedSites",
-              "title":"Site/s protected by access control structure (Ha)",
+              "title":"Site/s protected by access control structure (ha)",
               "width":"10%"
             },
             {
               "type":"number",
               "source":"areaProtectedHa",
-              "title":"Area protected by access control structure (Ha)",
+              "title":"Area protected by access control structure (ha)",
               "width":"10%",
               "readonly":"readonly"
             },

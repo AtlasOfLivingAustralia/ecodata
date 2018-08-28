@@ -3,29 +3,125 @@
   "modelName": "RLP - Skills and knowledge survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "skillsAndKnowledgeSurveys",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndictorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfSkillsAndKnowledgeSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysAdministeringSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherSurveyTechnique",
+          "validate":"required",
+          "behaviour": [
+            {
+              "condition": "surveyTechnique == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"surveyObjective",
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfParticipants",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"areaWhereSurveyConducted",
+          "validate":"required"
+        }
+      ]
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+          "source": "skillsAndKnowledgeSurveys",
+          "columns": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of skills and knowledge surveys conducted",
-                  "type": "number"
-                }
-              ]
+              "title": "Baseline or indicator survey?",
+              "source": "baselineOrIndictorSurvey",
+              "type": "selectOne",
+              "width":"10%"
+            },
+            {
+              "title":"Number of skills and knowledge surveys",
+              "source":"numberOfSkillsAndKnowledgeSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Number of days spent on administering survey/s",
+              "source":"numberOfDaysAdministeringSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Survey technique",
+              "type":"select2",
+              "source":"surveyTechnique",
+              "width":"15%"
+            },
+            {
+              "title":"Survey technique (if Other)",
+              "type":"text",
+              "source":"otherSurveyTechnique",
+              "width":"15%"
+            },
+            {
+              "title":"Survey objective",
+              "type":"textarea",
+              "source":"surveyObjective",
+              "width":"15%",
+              "rows":3
+            },
+            {
+              "title":"Number of participants",
+              "source":"numberOfParticipants",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Area where survey/s were conducted (free text)",
+              "type":"textarea",
+              "source":"areaWhereSurveyConducted",
+              "width":"15%",
+              "rows":3
             }
-
-          ]
+          ],
+          "userAddedRows": true,
+          "type": "table"
         }
       ],
       "type": "section"

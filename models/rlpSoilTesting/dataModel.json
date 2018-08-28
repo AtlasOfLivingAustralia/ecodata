@@ -3,29 +3,109 @@
   "modelName": "RLP - Soil testing",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "soilTestingDetails",
+      "columns": [
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
+        },
+        {
+          "name":"numberOfSoilTests",
+          "dataType":"number",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesTested",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaTestedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesPrepared)",
+            "dependents": {
+              "source": [
+                "sitesPrepared"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"testingTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherTestingTechnique",
+          "validate":"required,maxSize[85]",
+          "behaviour": [
+            {
+              "condition": "testingTechnique == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        }
+      ]
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+          "source": "soilTestingDetails",
+          "columns": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of soil tests conducted",
-                  "type": "number"
-                }
-              ]
+              "title":"Initial or follow-up",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"15%"
+            },
+            {
+              "type":"number",
+              "source":"numberOfSoilTests",
+              "width":"10%",
+              "title":"Number of soil tests conducted in targeted areas"
+            },
+            {
+              "type":"feature",
+              "source":"sitesTested",
+              "title":"Project site/s where soil tests were conducted",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"areaTestedHa",
+              "title":"Area (ha) where soil tests were conducted",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "title": "Testing technique",
+              "source": "testingTechnique",
+              "type": "select2",
+              "width":"25%"
+            },
+            {
+              "title":"Testing technique (if Other) (85 character limit)",
+              "source":"otherTestingTechnique",
+              "type":"text",
+              "width":"35%"
             }
-
-          ]
+          ],
+          "userAddedRows": true,
+          "type": "table"
         }
       ],
       "type": "section"

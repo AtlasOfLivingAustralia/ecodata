@@ -3,10 +3,89 @@
   "modelName": "RLP - Water quality survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType":"list",
+      "name":"waterQualitySurveyDetails",
+      "columns":[
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicator",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfSurveysConducted",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"waterBodyType",
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysConductingSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherSurveyTechnique",
+          "validate":"required",
+          "behaviour": [
+            {
+              "condition": "surveyTechnique == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"surveyObjective",
+          "validate":"required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfParticipants",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"areaWhereSurveyConducted",
+          "validate":"required"
+        }
+      ]
     }
+
   ],
   "viewModel": [
     {
@@ -15,12 +94,79 @@
           "type": "row",
           "items": [
             {
-              "type":"col",
-              "items":[
+              "type":"table",
+              "userAddedRows":true,
+              "source":"waterQualitySurveyDetails",
+              "columns":[
                 {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of water quality surveys conducted",
-                  "type": "number"
+                  "type":"number",
+                  "source":"numberOfSurveysConducted",
+                  "width":"5%",
+                  "title":"Number of water quality surveys conducted"
+                },
+                {
+                  "title":"Baseline or indicator survey",
+                  "source":"baselineOrIndicator",
+                  "type":"selectOne",
+                  "width":"10%"
+                },
+
+                {
+                  "type":"feature",
+                  "source":"sitesSurveyed",
+                  "title":"Site/s where water quality surveys were conducted",
+                  "width":"5%"
+                },
+                {
+                  "type":"number",
+                  "source":"areaSurveyedHa",
+                  "title":"Area (ha) covered by water quality surveys",
+                  "readonly":"readonly",
+                  "width":"5%"
+                },
+                {
+                  "type":"text",
+                  "source":"waterBodyType",
+                  "width":"10%",
+                  "title":"Type/s of water body (free text)"
+                },
+                {
+                  "type":"number",
+                  "width":"5%",
+                  "source":"numberOfDaysConductingSurveys",
+                  "title":"Number of days spent on administering survey/s"
+                },
+                {
+                  "title": "Survey technique",
+                  "source": "surveyTechnique",
+                  "type": "select2",
+                  "width":"10%"
+                },
+                {
+                  "title":"Survey technique (if Other)",
+                  "source":"otherSurveyTechnique",
+                  "type":"text",
+                  "width":"10%"
+                },
+                {
+                  "title":"Survey objective",
+                  "source":"surveyObjective",
+                  "type":"textarea",
+                  "rows":3,
+                  "width":"15%"
+                },
+                {
+                  "title":"Number of participants",
+                  "source":"numberOfParticipants",
+                  "type":"number",
+                  "width":"5%"
+                },
+                {
+                  "title":"Area where survey/s were conducted (free text)",
+                  "type":"textarea",
+                  "source":"areaWhereSurveyConducted",
+                  "width":"15%",
+                  "rows":3
                 }
               ]
             }

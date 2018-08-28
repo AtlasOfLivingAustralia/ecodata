@@ -135,7 +135,7 @@
               "width":"10%"
             },
             {
-              "title":"Area (Ha) of erosion control",
+              "title":"Area (ha) of erosion control",
               "source":"areaOfErosionControlHa",
               "type":"number",
               "readonly":"readonly",

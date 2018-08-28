@@ -1,32 +1,36 @@
 {
   "title": "Removing weeds",
-  "modelName": "RLP - Weed management",
+  "modelName": "RLP - Weed treatment",
   "dataModel": [
     {
       "dataType": "list",
       "name": "weedSpeciesTreated",
       "columns": [
         {
-          "dataType": "text",
-          "name": "siteId",
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial treatment",
+            "Follow-up treatment"
+          ]
+        },
+        {
+          "dataType": "feature",
+          "name": "sitesTreated",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaTreatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -83,14 +87,11 @@
           "validate":"required,maxSize[300]"
         },
         {
-          "name":"initialOrFollowup",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial treatment",
-            "Follow-up treatment"
-          ]
+          "name":"numberOfIndividualsOrInfestationsRemoved",
+          "dataType":"number",
+          "validate":"required,min[0]"
         }
+
       ]
     }
   ],
@@ -101,25 +102,38 @@
           "source": "weedSpeciesTreated",
           "columns": [
             {
-              "type":"select2",
-              "source":"siteId",
-              "title":"Site where control was undertaken",
-              "width":"15%"
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
             },
             {
-              "title": "Species treated",
+              "type":"feature",
+              "source":"sitesTreated",
+              "title":"Sites treated for weeds",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "readonly":"readonly",
+              "source":"areaTreatedHa",
+              "title":"Area (ha) treated for weed removal",
+              "width":"5%"
+            },
+            {
+              "title": "Target weed species",
               "source": "weedTargetSpecies",
               "type": "speciesSelect",
-              "width":"30%"
+              "width":"20%"
             },
             {
-              "title": "Treatment method",
+              "title": "Type of treatment",
               "source": "treatmentMethod",
               "type": "select2",
               "width":"15%"
             },
             {
-              "title":"Treatment method (if other)",
+              "title":"Type of treatment (if other)",
               "source":"otherTreatmentMethod",
               "type":"text",
               "width":"15%"
@@ -128,14 +142,15 @@
               "title":"Treatment objective (300 character limit)",
               "source":"treatmentObjective",
               "type":"textarea",
-              "width":"15%"
+              "width":"20%"
             },
             {
-              "title":"Initial / Followup control",
-              "source":"initialOrFollowup",
-              "type":"selectOne",
-              "width":"10%"
+              "title":"Number of individuals OR infestations destroyed / removed",
+              "source":"numberOfIndividualsOrInfestationsRemoved",
+              "type":"number",
+              "width":"5%"
             }
+
           ],
           "userAddedRows": true,
           "type": "table"

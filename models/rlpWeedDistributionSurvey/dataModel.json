@@ -3,10 +3,94 @@
   "modelName": "RLP - Weed distribution survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType":"list",
+      "name":"weedDistributionSurveyDetails",
+      "columns":[
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicator",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfSurveysConducted",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthSurveyedKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "species",
+          "name": "targetWeedSpecies",
+          "dwcAttribute": "scientificName",
+          "validate": "required"
+        },
+
+        {
+          "dataType":"text",
+          "name":"surveyTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"otherSurveyTechnique",
+          "validate":"required",
+          "behaviour": [
+            {
+              "condition": "surveyTechnique == \"Other\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfIndividualWeeds",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"number",
+          "name":"estimatedCoverPercent",
+          "validate":"required,min[0],max[100]"
+        }
+      ]
     }
+
   ],
   "viewModel": [
     {
@@ -15,12 +99,73 @@
           "type": "row",
           "items": [
             {
-              "type":"col",
-              "items":[
+              "type":"table",
+              "userAddedRows":true,
+              "source":"weedDistributionSurveyDetails",
+              "columns":[
                 {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of weed distribution surveys conducted",
-                  "type": "number"
+                  "title":"Baseline or indicator survey?",
+                  "source":"baselineOrIndicator",
+                  "type":"selectOne",
+                  "width":"10%"
+                },
+                {
+                  "type":"number",
+                  "source":"numberOfSurveysConducted",
+                  "width":"5%",
+                  "title":"Number of weed distribution surveys conducted"
+                },
+                {
+                  "type":"feature",
+                  "source":"sitesSurveyed",
+                  "title":"Project site/s covered by survey",
+                  "width":"5%"
+                },
+                {
+                  "type":"number",
+                  "source":"areaSurveyedHa",
+                  "title":"Area (ha) surveyed for weeds",
+                  "readonly":"readonly",
+                  "width":"5%"
+                },
+                {
+                  "type":"number",
+                  "source":"lengthSurveyedKm",
+                  "title":"Length (km) surveyed for weeds",
+                  "readonly":"readonly",
+                  "width":"5%"
+                },
+                {
+                  "type":"speciesSelect",
+                  "source":"targetWeedSpecies",
+                  "width":"30%",
+                  "title":"Target weed species"
+                },
+                {
+                  "title": "Survey technique",
+                  "source": "surveyTechnique",
+                  "type": "select2",
+                  "width":"15%"
+                },
+                {
+                  "title":"Survey technique (if Other)",
+                  "source":"otherSurveyTechnique",
+                  "type":"text",
+                  "width":"15%"
+                },
+
+                {
+                  "title":"Number of individual weeds",
+                  "source":"numberOfIndividualWeeds",
+                  "type":"number",
+                  "width":"5%"
+                },
+                {
+                  "title":"Estimated weed cover (%)",
+                  "type":"number",
+                  "source":"estimatedCoverPercent",
+                  "width":"5%",
+                  "rows":3
                 }
               ]
             }
