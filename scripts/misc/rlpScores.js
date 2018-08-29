@@ -218,7 +218,7 @@ scores = [
          },
          "childAggregations": [{
             "property": "data.accessControlDetails.accessControlType",
-            "type": "SUM"
+            "type": "COUNT"
          }],
          "label": "Number of structures installed"
       },
@@ -238,7 +238,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.accessControlDetails.structureLengthKm",
+            "property": "data.accessControlDetails.lengthInstalledKm",
             "type": "SUM"
          }],
          "label": "Length (km) installed"
@@ -259,7 +259,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.tba",
+            "property": "data.accessControlDetails.areaInstalledHa",
             "type": "SUM"
          }],
          "label": "Area (ha) where access has been controlled"
@@ -282,11 +282,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Initial",
-               "property": "data.pestAnimalManagementDetails.managementType",
+               "property": "data.pestAnimalsControlled.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.pestAnimalManagementDetails.areaHa",
+               "property": "data.pestAnimalsControlled.areaControlledHa",
                "type": "SUM"
             }]
          }],
@@ -310,11 +310,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Follow-up",
-               "property": "data.pestAnimalManagementDetails.managementType",
+               "property": "data.pestAnimalsControlled.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.pestAnimalManagementDetails.areaHa",
+               "property": "data.pestAnimalsControlled.areaControlledHa",
                "type": "SUM"
             }]
          }],
@@ -336,7 +336,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.debrisRemovalDetails.debrisRemovedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) of debris removal"
@@ -358,7 +358,7 @@ scores = [
          },
          "childAggregations": [{
             "property": "data.managementPlans.managementPlanType",
-            "type": "SUM"
+            "type": "COUNT"
          }],
          "label": "Number of farm/project/site plans developed"
       },
@@ -399,7 +399,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaOfErosionControlHa",
+            "property": "data.erosionManagementDetails.areaOfErosionControlHa",
             "type": "SUM"
          }],
          "label": "Area (ha) of erosion control"
@@ -420,7 +420,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.lengthTreatedForErosionKm",
+            "property": "data.erosionManagementDetails.lengthOfErosionControlKm",
             "type": "SUM"
          }],
          "label": "Length (km) of stream/coastline treated for erosion"
@@ -462,7 +462,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHaCoveredByAgreements",
+            "property": "data.areaCoveredByAgreementsHa",
             "type": "SUM"
          }],
          "label": "Area (ha) covered by agreements"
@@ -483,7 +483,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.agreements.numberOfDaysMaintainingAgreements",
+            "property": "data.numberOfDaysMaintainingAgreements",
             "type": "SUM"
          }],
          "label": "Number of days maintaining agreements"
@@ -504,8 +504,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.enclosureDetails.newOrMaintained",
-            "type": "COUNT"
+            "property": "data.enclosureDetails.numberOfEnclosures",
+            "type": "SUM"
          }],
          "label": "Number of feral free enclosures"
       },
@@ -525,7 +525,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.enclosureDetails.areaProtectedHa",
+            "property": "data.enclosureDetails.areaOfEnclosuresHa",
             "type": "SUM"
          }],
          "label": "Area (ha) of feral-free enclosure"
@@ -546,7 +546,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.enclosureDetails.numberOfDaysMaintainingEnclosures",
+            "property": "data.enclosureDetails.daysSpentOnMaintenanceOfEnclosures",
             "type": "SUM"
          }],
          "label": "Number of days maintaining feral-free enclosures"
@@ -567,7 +567,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.breedingProgramDetails.numberOfIndividuals",
+            "property": "data.breedingProgramDetails.numberOfSitesCreated",
             "type": "SUM"
          }],
          "label": "Number of breeding sites and/or populations"
@@ -630,7 +630,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysMaintainingMonitoringRegemes",
+            "property": "data.numberOfDaysMaintainingMonitoringRegimes",
             "type": "SUM"
          }],
          "label": "Number of days maintaining monitoring regimes"

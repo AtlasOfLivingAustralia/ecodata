@@ -13,7 +13,7 @@
         },
         {
           "dataType": "number",
-          "name": "sitesInstalledHa",
+          "name": "areaInstalledHa",
           "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(sitesInstalled)",
@@ -104,7 +104,7 @@
             },
             {
               "type":"number",
-              "source":"sitesInstalledHa",
+              "source":"areaInstalledHa",
               "title":"Area installed (ha)",
               "width":"10%",
               "readonly":"readonly"

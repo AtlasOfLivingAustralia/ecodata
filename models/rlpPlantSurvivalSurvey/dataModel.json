@@ -18,19 +18,19 @@
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"numberOfPlantSurvivalSurveys",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "numberOfPlantSurvivalSurveys",
+          "validate": "required,min[0]"
         },
         {
-          "name":"sitesSurveyed",
-          "dataType":"feature",
-          "validate":"required"
+          "name": "sitesSurveyed",
+          "dataType": "feature",
+          "validate": "required"
         },
         {
-          "name":"areaSurveyedHa",
-          "dataType":"number",
-          "validate":"required,min[1]",
+          "name": "areaSurveyedHa",
+          "dataType": "number",
+          "validate": "required,min[1]",
           "computed": {
             "expression": "$geom.areaHa(sitesSurveyed)",
             "dependents": {
@@ -41,16 +41,9 @@
           }
         },
         {
-          "dataType": "list",
+          "dataType": "species",
           "name": "speciesSurveyed",
-          "columns": [
-            {
-              "dataType": "species",
-              "name": "species",
-              "validate": "required"
-            }
-          ]
-
+          "validate": "required"
         },
         {
           "dataType": "text",
@@ -72,14 +65,14 @@
           ]
         },
         {
-          "name":"numberOfSurvivingIndividuals",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "name": "numberOfSurvivingIndividuals",
+          "dataType": "number",
+          "validate": "required,min[0]"
         },
         {
-          "name":"survivalRate",
-          "dataType":"number",
-          "validate":"required,min[0],max[100]",
+          "name": "survivalRate",
+          "dataType": "number",
+          "validate": "required,min[0],max[100]",
           "behaviour": [
             {
               "condition": "baselineOrIndicatorSurvey == \"Indicator\"",
@@ -99,52 +92,50 @@
               "title": "Baseline survey or indicator survey?",
               "source": "baselineOrIndicatorSurvey",
               "type": "selectOne",
-              "width":"8%"
+              "width": "8%"
             },
             {
-              "title":"Number of surveys conducted",
-              "source":"numberOfPlantSurvivalSurveys",
-              "type":"number",
-              "width":"8%"
+              "title": "Number of surveys conducted",
+              "source": "numberOfPlantSurvivalSurveys",
+              "type": "number",
+              "width": "8%"
             },
             {
-              "title":"Site/s surveyed for plant survival",
-              "source":"sitesSurveyed",
-              "type":"feature",
-              "width":"5%"
+              "title": "Site/s surveyed for plant survival",
+              "source": "sitesSurveyed",
+              "type": "feature",
+              "width": "5%"
             },
             {
-              "title":"Area (Ha) surveyed for plant survival",
-              "source":"areaSurveyedHa",
-              "readonly":"readonly",
-              "width":"8%",
-              "type":"number"
+              "title": "Area (Ha) surveyed for plant survival",
+              "source": "areaSurveyedHa",
+              "readonly": "readonly",
+              "width": "8%",
+              "type": "number"
             },
             {
-              "title":"Survey purpose",
-              "type":"select2",
-              "source":"surveyPurpose",
-              "width":"15%"
+              "title": "Survey purpose",
+              "type": "select2",
+              "source": "surveyPurpose",
+              "width": "15%"
             },
             {
-              "title":"Survey purpose (if Other)",
-              "type":"textarea",
-              "source":"otherSurveyPurpose",
-              "width":"18%"
+              "title": "Survey purpose (if Other)",
+              "type": "textarea",
+              "source": "otherSurveyPurpose",
+              "width": "18%"
             },
             {
               "source": "speciesSurveyed",
-              "type":"repeat",
+              "type": "repeat",
               "title": "Species recorded",
-              "items":[
+              "items": [
                 {
-                  "source":"species",
-
+                  "source": "species",
                   "type": "speciesSelect",
                   "width": "20%"
                 }
               ]
-
             },
             {
               "source": "numberOfSurvivingIndividuals",

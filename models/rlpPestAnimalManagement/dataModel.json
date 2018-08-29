@@ -74,13 +74,13 @@
           "dataType":"text",
           "validate":"required",
           "constraints":[
-            "Initial control",
-            "Follow-up control"
+            "Initial",
+            "Follow-up"
           ]
         },
         {
           "name":"individualsOrColonies",
-          "dataType":"number",
+          "dataType":"text",
           "validate":"required",
           "constraints":[
             "Individuals",

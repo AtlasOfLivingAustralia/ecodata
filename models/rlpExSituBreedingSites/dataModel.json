@@ -16,6 +16,11 @@
           ]
         },
         {
+          "dataType":"number",
+          "name":"numberOfSitesCreated",
+          "validate":"required,min[1]"
+        },
+        {
           "dataType":"text",
           "name":"newOrMaintained",
           "validate": "required",
@@ -26,7 +31,7 @@
         },
         {
           "dataType":"number",
-          "name":"numberOfDays",
+          "name":"numberOfDaysMaintainingBreedingPrograms",
           "validate":"min[0]"
         },
         {
@@ -86,6 +91,12 @@
               "width":"10%"
             },
             {
+              "type":"number",
+              "title":"Number of breeding sites created",
+              "source":"numberOfSitesCreated",
+              "width":"10%"
+            },
+            {
               "type":"selectOne",
               "title":"Is this a newly established or maintained breeding program?",
               "source":"newOrMaintained",
@@ -94,7 +105,7 @@
             {
               "type":"number",
               "width":"8%",
-              "source":"numberOfDays",
+              "source":"numberOfDaysMaintainingBreedingPrograms",
               "title":"Number of days maintaining breeding program"
             },
             {

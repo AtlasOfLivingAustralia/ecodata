@@ -9,7 +9,7 @@
     },
     {
       "dataType": "number",
-      "name": "numberOfDays",
+      "name": "numberOfDaysMaintainingMonitoringRegimes",
       "validate": "required,min[0]"
     },
     {
@@ -30,7 +30,7 @@
               "type": "number"
             },
             {
-              "source": "numberOfDays",
+              "source": "numberOfDaysMaintainingMonitoringRegimes",
               "preLabel": "Number of days establishing monitoring regimes",
               "type": "number"
             },

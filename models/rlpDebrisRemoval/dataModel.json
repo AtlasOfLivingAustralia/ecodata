@@ -119,7 +119,7 @@
             },
             {
               "title":"Volume (m3) of debris removed",
-              "source":"weightOfDebrisTonnes",
+              "source":"volumeRemovedM3",
               "type":"number",
               "width":"10%"
             }
