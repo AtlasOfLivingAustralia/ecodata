@@ -356,7 +356,7 @@ class ProjectActivityService {
             if (notify) {
                 String content = getNotificationContent(body, notify)
                 String subject = "Project activity changed"
-                emailService.sendEmail(subject, content, null)
+                emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
             }
         }
     }
