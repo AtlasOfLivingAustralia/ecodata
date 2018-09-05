@@ -28,7 +28,7 @@ class ProjectActivityControllerSpec extends IntegrationSpec {
                                projectId      : 'test-project-id',
                                methodType     : "opportunistic",
                                isDataManagementPolicyDocumented: false,
-                               dataAccessMethod: "dataAccessMethod",
+                               dataAccessMethods: ["na"],
                                dataQualityAssuranceMethods: ["dataownercurated"],
                                "nonTaxonomicAccuracy": "low",
                                "temporalAccuracy": "low",

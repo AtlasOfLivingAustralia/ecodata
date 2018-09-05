@@ -6,6 +6,11 @@ class ProjectActivityService {
     static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
+    static final SUBSCRIBED_PROPERTIES = [
+            'methodName'
+    ]
+
+    def grailsApplication
 
     CommonService commonService
     DocumentService documentService
@@ -15,6 +20,7 @@ class ProjectActivityService {
     CommentService commentService
     PermissionService permissionService
     ElasticSearchService elasticSearchService
+    EmailService emailService
 
     /**
      * Creates an project activity.
@@ -29,7 +35,7 @@ class ProjectActivityService {
         try {
             props.remove("projectId");
             props.remove("projectActivityId");
-
+            notifyChangeToAdmin(props)
             commonService.updateProperties(projectActivity, props)
 
             result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -66,6 +72,7 @@ class ProjectActivityService {
                     updateAekosSubmission(projectActivity, props)
                 }
 
+                notifyChangeToAdmin(props, toMap(projectActivity))
                 commonService.updateProperties(projectActivity, props)
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -341,5 +348,35 @@ class ProjectActivityService {
 
     int getSpeciesRecordedForProjectActivity(String pActivityId) {
         return Record.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    def notifyChangeToAdmin(Map body, Map old = [:]) {
+        if (grailsApplication.config.projectActivity.notifyOnChange?.toBoolean()) {
+            List notify = notifiableProperties(body, old)
+            if (notify) {
+                String content = getNotificationContent(body, notify)
+                String subject = "Project activity changed"
+                emailService.sendEmail(subject, content, null)
+            }
+        }
+    }
+
+    def notifiableProperties (Map body, Map old) {
+        List notify = []
+        SUBSCRIBED_PROPERTIES.each {
+            if (old[it] != body[it]) {
+                notify.add(it)
+            }
+        }
+
+        notify
+    }
+
+    def getNotificationContent (Map body, List changedProps) {
+        List output = []
+        changedProps?.each { key ->
+            output.add("${key} : ${body[key]}")
+        }
+        output.join('\n');
     }
 }

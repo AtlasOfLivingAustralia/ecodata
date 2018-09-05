@@ -1089,3 +1089,4 @@ facets.project = [
 ]
 
 license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"
+projectActivity.notifyOnChange=true
