@@ -355,7 +355,7 @@ class ProjectActivityService {
             List notify = notifiableProperties(body, old)
             if (notify) {
                 String content = getNotificationContent(body, notify)
-                String subject = "Project activity changed"
+                String subject = "New proposed survey method"
                 emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
             }
         }
@@ -373,10 +373,10 @@ class ProjectActivityService {
     }
 
     def getNotificationContent (Map body, List changedProps) {
-        List output = []
+        List output = ["Please consider adding the following Survey Method(s) to the Survey methods select list:"]
         changedProps?.each { key ->
             output.add("${key} : ${body[key]}")
         }
-        output.join('\n');
+        output.join('\n')
     }
 }
