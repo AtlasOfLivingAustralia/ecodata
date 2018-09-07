@@ -6,6 +6,11 @@ class ProjectActivityService {
     static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
+    static final SUBSCRIBED_PROPERTIES = [
+            'methodName'
+    ]
+
+    def grailsApplication
 
     CommonService commonService
     DocumentService documentService
@@ -15,6 +20,7 @@ class ProjectActivityService {
     CommentService commentService
     PermissionService permissionService
     ElasticSearchService elasticSearchService
+    EmailService emailService
 
     /**
      * Creates an project activity.
@@ -29,7 +35,7 @@ class ProjectActivityService {
         try {
             props.remove("projectId");
             props.remove("projectActivityId");
-
+            notifyChangeToAdmin(props)
             commonService.updateProperties(projectActivity, props)
 
             result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -66,6 +72,7 @@ class ProjectActivityService {
                     updateAekosSubmission(projectActivity, props)
                 }
 
+                notifyChangeToAdmin(props, toMap(projectActivity))
                 commonService.updateProperties(projectActivity, props)
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -311,4 +318,65 @@ class ProjectActivityService {
         restrictedProjectActivityIds
     }
 
+    void addProjectActivityStats (Map projectActivity) {
+        projectActivity.publicAccess = isProjectActivityDataPublic(projectActivity)
+        projectActivity.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+    }
+
+    boolean isProjectActivityDataPublic (Map projectActivity) {
+        EmbargoOption option = projectActivity.visibility?.embargoOption as EmbargoOption
+        if ((option != EmbargoOption.NONE) && (!projectActivity?.visibility?.embargoUntil.after(new Date()) )) {
+            if ( Activity.countByProjectActivityIdAndStatus(projectActivity.projectActivityId, ACTIVE) > 0 ) {
+                return true
+            }
+        } else if (option == EmbargoOption.NONE) {
+            return  true
+        }
+
+        return false
+    }
+
+    int getActivityCountForProjectActivity(String pActivityId) {
+         Activity.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    Date getLastUpdatedActivityForProjectActivity(String pActivityId) {
+        return Activity.findByProjectActivityIdAndStatus(pActivityId, ACTIVE, [sort: 'lastUpdated', order: 'desc'])?.lastUpdated
+    }
+
+    int getSpeciesRecordedForProjectActivity(String pActivityId) {
+        return Record.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    def notifyChangeToAdmin(Map body, Map old = [:]) {
+        if (grailsApplication.config.projectActivity.notifyOnChange?.toBoolean()) {
+            List notify = notifiableProperties(body, old)
+            if (notify) {
+                String content = getNotificationContent(body, notify)
+                String subject = "New proposed survey method"
+                emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
+            }
+        }
+    }
+
+    def notifiableProperties (Map body, Map old) {
+        List notify = []
+        SUBSCRIBED_PROPERTIES.each {
+            if (old[it] != body[it]) {
+                notify.add(it)
+            }
+        }
+
+        notify
+    }
+
+    def getNotificationContent (Map body, List changedProps) {
+        List output = ["Please consider adding the following Survey Method(s) to the Survey methods select list:"]
+        changedProps?.each { key ->
+            output.add("${key} : ${body[key]}")
+        }
+        output.join('\n')
+    }
 }

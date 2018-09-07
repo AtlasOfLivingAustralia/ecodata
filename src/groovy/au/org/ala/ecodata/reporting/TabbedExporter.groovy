@@ -62,7 +62,7 @@ class TabbedExporter {
                     properties << it.name + '.' + col.name
                     headers << col.label
                 }
-            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail', 'geoMap']) {
+            } else if (it.dataType in ['photoPoints', 'matrix', 'masterDetail']) {
                 // not supported, do nothing.
             } else if (it.dataType == 'stringList') {
                 if (it.constraints) {

@@ -139,6 +139,10 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
             def tmpNode = node.find { it.name == part }
             // List typed model elements have a cols element containing nested nodes.
             node = tmpNode.columns ?: tmpNode
+            // ignore columns property of geoMap
+            if(tmpNode.dataType == "geoMap"){
+                node = tmpNode
+            }
         }
         try {
             result = processNode(this, node, getValue(output))
