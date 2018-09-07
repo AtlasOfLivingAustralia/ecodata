@@ -1,6 +1,11 @@
 package au.org.ala.ecodata
 
-import static au.org.ala.ecodata.Status.*
+import org.springframework.context.MessageSource
+
+import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class ProjectActivityService {
     static transactional = false
@@ -21,6 +26,7 @@ class ProjectActivityService {
     PermissionService permissionService
     ElasticSearchService elasticSearchService
     EmailService emailService
+    MessageSource messageSource
 
     /**
      * Creates an project activity.
@@ -246,6 +252,7 @@ class ProjectActivityService {
 
         }
 
+        mapOfProperties["attribution"] = generateAttributionText(projectActivity)
         mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
             submissionService.get(it)
         }
@@ -378,5 +385,24 @@ class ProjectActivityService {
             output.add("${key} : ${body[key]}")
         }
         output.join('\n')
+    }
+
+    String generateAttributionText (ProjectActivity projectActivity) {
+        def name = projectActivity?.name
+        Project project = Project.findByProjectId(projectActivity?.projectId)
+        if (projectActivity && name && project) {
+            def orgName = project.organisationName
+            if (orgName) {
+                def calendar = Calendar.getInstance()
+                def year = calendar.get(Calendar.YEAR).toString()
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+                Calendar cal = Calendar.getInstance()
+                def time = dateFormat.format(cal.getTime())
+                def dataUrl = "${grailsApplication.config.biocollect.projectActivityDataURL}/${projectActivity.projectId}"
+                return messageSource.getMessage("projectAcitivity.attribution", [orgName, year, name, dataUrl, time].toArray(), "", Locale.default)
+            }
+        }
+
+        ""
     }
 }
