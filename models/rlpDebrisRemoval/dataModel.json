@@ -12,7 +12,7 @@
           "validate":"required",
           "constraints":[
             "Initial",
-            "Followup"
+            "Follow-up"
           ]
         },
         {
@@ -26,6 +26,19 @@
           "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(clearedSites)",
+            "dependents": {
+              "source": [
+                "clearedSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "number",
+          "name": "debrisRemovedKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(clearedSites)",
             "dependents": {
               "source": [
                 "clearedSites"
@@ -81,7 +94,7 @@
           "source": "debrisRemovalDetails",
           "columns": [
             {
-              "title":"Initial or followup",
+              "title":"Initial or follow-up activity?",
               "source":"initialOrFollowup",
               "type":"selectOne",
               "width":"10%"
@@ -99,6 +112,14 @@
               "readonly":"readonly",
               "width":"10%"
             },
+            {
+              "title":"Length (km) covered by debris removal",
+              "source":"debrisRemovedKm",
+              "type":"number",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+
             {
               "title": "Type of debris removed",
               "source": "debrisType",
