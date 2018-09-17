@@ -13,7 +13,7 @@
           "validate":"required",
           "constraints":[
             "Initial",
-            "Followup"
+            "Follow-up"
           ]
         },
         {
@@ -47,25 +47,24 @@
             }
           }
         },
-
+        {
+          "dataType":"number",
+          "name":"numberInstalled",
+          "validate":"required,min[0]"
+        },
         {
           "dataType":"text",
           "name":"erosionManagementMethod",
           "validate":"required",
           "constraints":[
+            "Alternative watering point",
             "Erosion control structures",
-            "Farming practice change - improved crop management (contour plowing / bunding)",
-            "Farming practice change - improved crop management (cover crops & mulching)",
-            "Farming practice change - improved stock management (grazing regime)",
-            "Farming practice change - improved crop management (perennial crops)",
-            "Farming practice change - improved crop management (rotation)",
-            "Farming practice change - improved stock management (stock movement)",
-            "Farming practice change - improved stock management (stock watering)",
-            "Farming practice change - improved crop management (tillage systems)",
-            "Farming practice change - reduced stocking",
-            "Farming practice change - riparian buffer strips",
-            "Farming practice change - stock exclusion",
-            "Farming practice change - strip farming",
+            "Farming practice change",
+            "Fencing",
+            "Revegetation",
+            "Terracing",
+            "Vegetated waterway (bioswale)",
+            "Windbreaks",
             "Other"
           ]
 
@@ -82,45 +81,30 @@
           ]
         },
         {
-          "dataType":"number",
-          "name":"areaBenefitingHa",
-          "validate":"required,min[0]"
+          "dataType":"feature",
+          "name":"sitesBenefittingFromErosionControl",
         },
         {
           "dataType":"number",
-          "name":"numberInstalled",
-          "validate":"required,min[0]"
+          "name":"areaBenefitingHa",
+          "computed": {
+            "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)",
+            "dependents": {
+              "source": [
+                "sitesBenefittingFromErosionControl"
+              ]
+            }
+          }
+        },
+        {
+          "name":"evidenceOfBenefit",
+          "dataType":"text",
+          "validate":"maxSize[300]"
         }
 
       ]
-    },
-    {
-      "dataType":"list",
-      "name":"erosionStructuresInstalled",
-      "columns":[
-        {
-          "dataType":"text",
-          "name":"erosionStructureType",
-          "validate":"required",
-          "constraints":[
-            "Channel / bank lining - cellular confinement systems",
-            "Channel / bank lining - solid barrier",
-            "Dams & spillways (flood mitigation)",
-            "Drift fence",
-            "Flumes & Chutes",
-            "Gabions",
-            "Reventment structures (bank protection)",
-            "Sea wall",
-            "Sediment traps & groynes",
-            "Slope reduction - flow interception structures (eg. contour banks & swales)",
-            "Slope reduction - Weirs & connected weir pools",
-            "Stilling ponds & retention basins",
-            "Other"
-          ]
-        }
-      ],
-      "minSize":0
     }
+
   ],
   "viewModel": [
 
@@ -129,51 +113,67 @@
         {
           "columns": [
             {
-              "title":"Site/s where erosion management was undertaken",
+              "title":"Initial or follow-up activity?",
+              "source":"initialOrFollowup",
+              "width":"10%",
+              "type":"selectOne"
+            },
+            {
+              "title":"Site/s of erosion control",
               "source":"sitesManaged",
               "type":"feature",
-              "width":"10%"
+              "width":"5%"
             },
             {
               "title":"Area (ha) of erosion control",
               "source":"areaOfErosionControlHa",
               "type":"number",
               "readonly":"readonly",
-              "width":"10%"
+              "width":"8%"
             },
             {
-              "title":"Length (km) of erosion control",
+              "title":"Length (km) of stream / coastline treated for erosion",
               "source":"lengthOfErosionControlKm",
               "type":"number",
               "readonly":"readonly",
-              "width":"10%"
-            },
-            {
-              "source": "erosionManagementMethod",
-              "title": "Type of treatment method",
-              "type": "select2",
-              "width":"25%"
-            },
-            {
-              "title": "Type of treatment method (if Other)",
-              "source": "otherErosionManagementMethod",
-              "type": "text",
-              "width":"25%"
-            },
-            {
-              "title": "Area (ha) benefiting from erosion management",
-              "source": "areaBenefitingHa",
-              "type": "number",
-              "width":"10%"
-
+              "width":"8%"
             },
             {
               "title":"Number of erosion control structures installed",
               "source":"numberInstalled",
               "type":"number",
-              "width":"10%"
-
-
+              "width":"8%"
+            },
+            {
+              "source": "erosionManagementMethod",
+              "title": "Type of treatment method",
+              "type": "select2",
+              "width":"15%"
+            },
+            {
+              "title": "Type of treatment method (if Other)",
+              "source": "otherErosionManagementMethod",
+              "type": "textarea",
+              "width":"15%"
+            },
+            {
+              "title":"Please map any off-site area/s if they benefitted from this erosion management activity",
+              "source":"sitesBenefittingFromErosionControl",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title": "Area (ha) benefiting from erosion management",
+              "source": "areaBenefitingHa",
+              "type": "number",
+              "width":"10%",
+              "readonly":"readonly"
+            },
+            {
+              "source": "evidenceOfBenefit",
+              "title": "If off-site area was mapped please provide a description on the evidence available to reflect his benefit.",
+              "type": "textarea",
+              "width":"16%"
             }
           ],
           "source":"erosionManagementDetails",

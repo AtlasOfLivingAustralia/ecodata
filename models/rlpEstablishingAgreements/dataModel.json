@@ -3,65 +3,130 @@
   "modelName": "RLP - Establishing Agreements",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfAgreements",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "number",
-      "name": "areaCoveredByAgreementsHa",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "number",
-      "name": "numberOfDaysMaintainingAgreements",
-      "validate": "required,min[0]"
-    },
-    {
-      "dataType": "stringList",
-      "description": "",
-      "name": "agreementType",
-      "constraints": [
-        "On title in perpetuity (e.g. conservation convenant)",
-        "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
-        "Termed agreement not on title - binding (e.g. land management agreement)",
-        "Not on title - non-binding (e.g. Wildlife Refuge)",
-        "No protection mechanism applicable"
-      ],
-      "validate": "required"
+      "dataType":"list",
+      "name":"agreements",
+      "columns":[
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "agreementType",
+          "constraints": [
+            "On title in perpetuity (e.g. conservation convenant)",
+            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
+            "Termed agreement not on title - binding (e.g. land management agreement)",
+            "Not on title - non-binding (e.g. Wildlife Refuge)",
+            "No protection mechanism applicable",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "otherAgreementType",
+          "behaviour":[
+            {
+              "condition": "agreementType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate": "required,maxSize[300]"
+        },
+        {
+          "name":"establishedOrMaintained",
+          "dataType":"text",
+          "constraints":[
+            "Established",
+            "Maintained"
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfAgreements",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfDaysMaintainingAgreements",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType":"feature",
+          "name":"agreementSites",
+          "validate":"required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaCoveredByAgreementsHa",
+          "validate": "required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(agreementSites)",
+            "dependents": {
+              "source": [
+                "agreementSites"
+              ]
+            }
+          }
+        }
+
+
+      ]
     }
+
   ],
   "viewModel": [
     {
       "items": [
         {
-          "items": [
+          "columns": [
             {
-              "type": "number",
-              "source": "numberOfAgreements",
-              "preLabel": "Number of agreement established",
-              "width": "15%"
+              "title": "Type of agreement/s",
+              "source": "agreementType",
+              "type": "select2Many",
+              "width": "20%"
+            },
+            {
+              "type":"textarea",
+              "source":"otherAgreementType",
+              "title":"Type of agreement/s (if Other)",
+              "width":"25%"
+            },
+            {
+              "type":"selectOne",
+              "source":"establishedOrMaintained",
+              "title":"Established or maintained?",
+              "width":"15%"
             },
             {
               "type": "number",
-              "source": "areaCoveredByAgreementsHa",
-              "preLabel": "Area (Ha) covered by agreements",
-              "width": "15%"
+              "source": "numberOfAgreements",
+              "title": "Number of agreements",
+              "width": "10%"
             },
             {
               "type": "number",
               "source": "numberOfDaysMaintainingAgreements",
-              "preLabel": "Number of days maintaining agreements (if applicable)",
-              "width": "15%"
+              "title": "Number of days maintaining agreements (if applicable)",
+              "width": "10%"
             },
             {
-              "preLabel": "Type of agreement/s",
-              "source": "agreementType",
-              "type": "select2Many",
-              "width": "55%"
+              "title":"Site/s where agreements were established",
+              "source":"agreementSites",
+              "type":"feature",
+              "width":"10%"
+            },
+            {
+              "type": "number",
+              "source": "areaCoveredByAgreementsHa",
+              "title": "Area (ha) covered by agreements",
+              "width": "10%",
+              "readonly":"readonly"
             }
+
           ],
-          "type": "row"
+          "type": "table",
+          "source":"agreements"
         }
       ],
       "type": "section"
