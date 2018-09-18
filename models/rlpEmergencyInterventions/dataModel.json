@@ -11,14 +11,9 @@
           "dataType":"text",
           "validate":"required",
           "constraints":[
-            "Initial treatment",
-            "Follow-up treatment"
+            "Initial",
+            "Follow-up"
           ]
-        },
-        {
-          "name":"purposeOfIntervention",
-          "dataType":"text",
-          "validate":"required"
         },
         {
           "name":"numberOfInterventions",
@@ -26,15 +21,90 @@
           "validate":"required,min[0]"
         },
         {
-          "name":"numberOfIndividualsInvolved",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "name":"siteOfIntervention",
+          "dataType":"feature",
+          "validate":"required"
         },
         {
-          "name":"numberOfDaysPerformingInterventions",
+          "name":"areaOfInterventionHa",
           "dataType":"number",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(siteOfIntervention)",
+            "dependents": {
+              "source": [
+                "siteOfIntervention"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthOfInterventionKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.lengthKm(siteOfIntervention)",
+            "dependents": {
+              "source": [
+                "siteOfIntervention"
+              ]
+            }
+          }
+        },
+        {
+          "name":"purposeOfIntervention",
+          "dataType":"text",
+          "validate":"required",
+          "description":"This field may be used to list What type of intervention is required. A list of multiple interventions need to be separated with a ';'."
+        },
+        {
+          "dataType":"list",
+          "name":"interventionSpecies",
+          "columns":[
+
+            {
+              "name": "species",
+              "dataType": "species",
+              "validate": "required"
+            },
+
+            {
+              "name":"numberOfIndividualsInvolved",
+              "dataType":"number",
+              "validate":"required,min[0]"
+            },
+            {
+              "name":"numberOfDaysPerformingInterventions",
+              "dataType":"number",
+              "validate":"required,min[0]"
+            },
+            {
+              "name":"relocationSite",
+              "dataType":"feature",
+              "validate":"required"
+            },
+            {
+              "name":"areaOfRelocationSiteHa",
+              "dataType":"number",
+              "validate":"required,min[0]",
+              "computed": {
+                "expression": "$geom.areaHa(relocationSite)",
+                "dependents": {
+                  "source": [
+                    "relocationSite"
+                  ]
+                }
+              }
+            },
+            {
+              "dataType":"text",
+              "name":"comment",
+              "validate":"maxSize[300]"
+            }
+          ]
         }
+
+
       ]
     }
   ],
@@ -43,41 +113,104 @@
       "items": [
         {
           "source": "interventionDetails",
-          "columns": [
+          "items": [
             {
-              "title":"Initial or follow-up",
-              "source":"initialOrFollowup",
-              "type":"selectOne",
-              "width":"15%"
+              "type":"row",
+              "items":[
+                {
+                  "preLabel":"Initial or follow-up activity?",
+                  "source":"initialOrFollowup",
+                  "type":"selectOne",
+                  "css":"span3"
+                },
+                {
+                  "type":"number",
+                  "source":"numberOfInterventions",
+                  "css":"span2",
+                  "preLabel":"Number of interventions"
+                }
+              ]
             },
             {
-              "title":"Type and goal or intervention",
-              "source":"purposeOfIntervention",
-              "width":"55%",
-              "type":"textarea",
-              "rows":3
+              "type": "row",
+              "items": [
+                {
+                  "type": "feature",
+                  "source": "siteOfIntervention",
+                  "preLabel": "Site/s where emergency interventions were undertaken",
+                  "css": "span3"
+                },
+                {
+                  "type": "number",
+                  "source": "areaOfInterventionHa",
+                  "preLabel": "Area (ha) where emergency interventions were undertaken",
+                  "css": "span2",
+                  "readonly": "readonly"
+                },
+                {
+                  "preLabel":"Type and goal or intervention",
+                  "source":"purposeOfIntervention",
+                  "css":"span5",
+                  "type":"textarea",
+                  "rows":3
+                }
+
+              ]
             },
+
             {
-              "type":"number",
-              "source":"numberOfInterventions",
-              "width":"10%",
-              "title":"Number of interventions"
-            },
-            {
-              "type":"number",
-              "source":"numberOfIndividualsInvolved",
-              "width":"10%",
-              "title":"Number of individuals invovled"
-            },
-            {
-              "type":"number",
-              "source":"numberOfDaysPerformingInterventions",
-              "width":"10%",
-              "title":"Time (days) of intervention"
+              "type":"table",
+              "source":"interventionSpecies",
+              "userAddedRows":true,
+              "columns":[
+                {
+                  "title": "Targeted species",
+                  "source": "species",
+                  "type": "speciesSelect",
+                  "width": "30%"
+                },
+                {
+                  "type":"number",
+                  "source":"numberOfIndividualsInvolved",
+                  "width":"10%",
+                  "title":"Number of individuals involved"
+                },
+                {
+                  "type":"number",
+                  "source":"numberOfDaysPerformingInterventions",
+                  "width":"10%",
+                  "title":"Time (days) of intervention"
+                },
+
+                {
+                  "type": "feature",
+                  "source": "relocationSite",
+                  "title": "Site/s where emergency interventions were relocated to",
+                  "width": "10%"
+                },
+                {
+                  "type": "number",
+                  "source": "areaOfRelocationSiteHa",
+                  "title": "Area (ha) where emergency interventions were relocated to",
+                  "width": "10%",
+                  "readonly": "readonly"
+                },
+                {
+                  "type":"textarea",
+                  "source":"comment",
+                  "title":"Comments",
+                  "rows":3,
+                  "width":"30%"
+                }
+
+              ]
             }
+
+
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "repeat",
+          "addRowText":"Add intervention site"
         }
       ],
       "type": "section"
