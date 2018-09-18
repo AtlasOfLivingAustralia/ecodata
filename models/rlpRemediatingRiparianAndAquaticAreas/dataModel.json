@@ -11,8 +11,8 @@
           "dataType":"text",
           "validate":"required",
           "constraints":[
-            "Initial control",
-            "Follow-up control"
+            "Initial",
+            "Follow-up"
           ]
         },
         {
@@ -23,7 +23,7 @@
         {
           "name":"areaRemediatedHa",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesRemediated)",
             "dependents": {
@@ -36,7 +36,7 @@
         {
           "name":"lengthRemediatedKm",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
           "computed": {
             "expression": "$geom.lengthKm(sitesRemediated)",
             "dependents": {
@@ -47,12 +47,22 @@
           }
         },
         {
+          "dataType":"number",
+          "name":"numberOfStructuresInstalled",
+          "validate":"required,min[0]"
+        },
+        {
           "dataType": "text",
           "description": "",
           "name": "remediationType",
           "constraints": [
-            "Erosion control",
-            "Fencing",
+            "Access control",
+            "Bank grooming",
+            "Flow gauging stations",
+            "Fords",
+            "Culverts",
+            "Revegetation",
+            "Weirs",
             "Other"
           ],
           "validate": "required"
@@ -69,9 +79,25 @@
           "validate":"required"
         },
         {
-          "name":"areaImprovedByRemediationHa",
+          "dataType":"feature",
+          "name":"offSiteBenefitSites"
+        },
+        {
           "dataType":"number",
-          "validate":"required,min[0]"
+          "name":"offSiteBenefitAreaHa",
+          "computed": {
+            "expression": "$geom.areaHa(offSiteBenefitSites)",
+            "dependents": {
+              "source": [
+                "offSiteBenefitSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"evidenceOfBenefit",
+          "validate":"maxSize[300]"
         }
       ]
     }
@@ -92,7 +118,7 @@
               "type":"feature",
               "source":"sitesRemediated",
               "title":"Site/s covered by remediation",
-              "width":"10%"
+              "width":"5%"
             },
             {
               "type":"number",
@@ -109,22 +135,41 @@
               "width":"10%"
             },
             {
+              "type":"number",
+              "source":"numberOfStructuresInstalled",
+              "title":"Number of structures installed",
+              "width":"10%"
+            },
+            {
               "title": "Type of remediation",
               "source": "remediationType",
               "type": "select2",
-              "width":"25%"
+              "width":"15%"
             },
             {
               "title":"Type of remediation (if Other)",
               "source":"otherRemediationType",
               "type":"text",
-              "width":"25%"
+              "width":"18%"
             },
             {
-              "title":"Area (Ha) improved by remediation",
-              "source":"areaImprovedByRemediationHa",
+              "title":"Please identify any area/s that have shown evidence of off-site benefits",
+              "source":"offSiteBenefitSites",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) evident of improved remediation",
+              "source":"offSiteBenefitAreaHa",
+              "type":"feature",
               "width":"10%",
-              "type":"number"
+              "readonly":"readonly"
+            },
+            {
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "source":"evidenceOfBenefit",
+              "type":"textarea",
+              "width":"17%"
             }
           ],
           "userAddedRows": true,

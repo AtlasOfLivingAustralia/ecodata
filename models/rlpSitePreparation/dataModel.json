@@ -26,31 +26,17 @@
           }
         },
         {
-          "dataType": "text",
-          "description": "",
-          "name": "actionType",
-          "constraints": [
-            "Weeding",
-            "Digging",
-            "Other"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"otherActionType",
-          "behaviour":[
-            {
-              "condition": "actionType == \"Other\"",
-              "type": "enable"
+          "name":"lengthPreparedKm",
+          "dataType":"number",
+          "validate":"required,min[1]",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesPrepared)",
+            "dependents": {
+              "source": [
+                "sitesPrepared"
+              ]
             }
-          ],
-          "validate":"required"
-        },
-        {
-          "name":"purposeOfSitePreparation",
-          "dataType":"text",
-          "validate":"required"
+          }
         },
         {
           "name":"numberOfDaysPreparingSite",
@@ -73,7 +59,62 @@
             "Fisheries",
             "Aquaculture"
           ]
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "actionType",
+          "constraints": [
+            "Basal bark spraying",
+            "Biological agents",
+            "Cut stump",
+            "Cut and swab",
+            "Dozing",
+            "Felling",
+            "Fire",
+            "Foliar spraying",
+            "Grubbing/chipping",
+            "Hand pulling",
+            "Moisture and nutrient control",
+            "Mowing",
+            "Overplanting",
+            "Pushing",
+            "Slashing",
+            "Spot spraying",
+            "Splatter gun",
+            "Stem injection",
+            "Stem scraper",
+            "Wick applicators",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherActionType",
+          "behaviour":[
+            {
+              "condition": "actionType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required",
+          "description":"This field may be used to list multiple preparation activities. This list of activities need to be separated with a ';'"
+        },
+        {
+          "name":"purposeOfSitePreparation",
+          "dataType":"text",
+          "validate":"required",
+          "description":"Please provide a brief description of how the work will benefit the area"
+        },
+        {
+          "dataType": "text",
+          "name": "threatenedEcologicalCommunity",
+          "validate": "maxSize[100]",
+          "description":"This free text field allows multiple TECs to be entered. They should be written as listed in EPBC, and separated by commas"
         }
+
+
       ]
     }
   ],
@@ -86,15 +127,41 @@
             {
               "type":"feature",
               "source":"sitesPrepared",
-              "title":"Site/s being prepared",
+              "title":"Site/s where preparation was undertaken",
               "width":"5%"
             },
             {
               "type":"number",
               "source":"areaPreparedHa",
-              "title":"Area (ha) of site preparation",
+              "title":"Area (ha) of the site preparation",
               "readonly":"readonly",
-              "width":"10%"
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"lengthPreparedKm",
+              "title":"Length (km) of the site preparation",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+
+            {
+              "title":"Number of days in preparing site",
+              "source":"numberOfDaysPreparingSite",
+              "width":"10%",
+              "type":"number"
+            },
+            {
+              "title":"Number of participants preparing site",
+              "source":"numberOParticipantsPreparingSite",
+              "width":"10%",
+              "type":"number"
+            },
+            {
+              "title":"Industry type",
+              "source":"industryType",
+              "width":"10%",
+              "type":"select2"
             },
             {
               "title": "Type of action",
@@ -114,23 +181,12 @@
               "width":"23%",
               "source":"purposeOfSitePreparation"
             },
+
             {
-              "title":"Number of days preparing site",
-              "source":"numberOfDaysPreparingSite",
-              "width":"10%",
-              "type":"number"
-            },
-            {
-              "title":"Number of participants preparing site",
-              "source":"numberOParticipantsPreparingSite",
-              "width":"10%",
-              "type":"number"
-            },
-            {
-              "title":"Industry type",
-              "source":"industryType",
-              "width":"10%",
-              "type":"select2"
+              "title":"Threatened ecological community (if applicable)",
+              "source":"threatenedEcologicalCommunity",
+              "type":"text",
+              "width":"15%"
             }
           ],
           "userAddedRows": true,

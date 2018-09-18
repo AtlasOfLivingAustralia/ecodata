@@ -22,33 +22,9 @@
           "validate":"required,min[0]"
         },
         {
-          "dataType":"number",
-          "name":"numberOfDaysAdministeringSurveys",
-          "validate":"required,min[0]"
-        },
-        {
           "dataType":"text",
-          "name":"surveyTechnique",
-          "validate":"required",
-          "constraints":[
-            "Other"
-          ]
-        },
-        {
-          "dataType":"text",
-          "name":"otherSurveyTechnique",
-          "validate":"required",
-          "behaviour": [
-            {
-              "condition": "surveyTechnique == \"Other\"",
-              "type": "enable"
-            }
-          ]
-        },
-        {
-          "dataType":"text",
-          "name":"surveyObjective",
-          "validate":"required"
+          "name":"dateRange",
+          "validate":"required,maxSize[100]"
         },
         {
           "dataType":"number",
@@ -56,10 +32,43 @@
           "validate":"required,min[0]"
         },
         {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+
+        {
           "dataType":"text",
-          "name":"areaWhereSurveyConducted",
-          "validate":"required"
-        }
+          "name":"surveyTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ],
+          "description":"What/How will these survey/s capture information"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyObjective",
+          "validate":"required",
+          "description":"How will the information obtained from the surveys be used"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysAdministeringSurveys",
+          "validate":"required,min[0]"
+        },
       ]
     }
   ],
@@ -76,27 +85,40 @@
               "width":"10%"
             },
             {
-              "title":"Number of skills and knowledge surveys",
+              "title":"Number of skills and knowledge surveys conducted",
               "source":"numberOfSkillsAndKnowledgeSurveys",
               "type":"number",
               "width":"10%"
             },
             {
-              "title":"Number of days spent on administering survey/s",
-              "source":"numberOfDaysAdministeringSurveys",
+              "title":"Date range",
+              "type":"text",
+              "source":"dateRange",
+              "width":"10%"
+            },
+            {
+              "title":"Number of people completing survey",
+              "source":"numberOfParticipants",
               "type":"number",
               "width":"10%"
             },
             {
-              "title":"Survey technique",
-              "type":"select2",
-              "source":"surveyTechnique",
-              "width":"15%"
+              "type":"feature",
+              "source":"sitesSurveyed",
+              "title":"Site/s where surveys were conducted (if applicable)",
+              "width":"5%"
             },
             {
-              "title":"Survey technique (if Other)",
-              "type":"text",
-              "source":"otherSurveyTechnique",
+              "type":"number",
+              "source":"areaSurveyedHa",
+              "title":"Area (ha) surveyed (if applicable)",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title":"Survey technique",
+              "type":"textarea",
+              "source":"surveyTechnique",
               "width":"15%"
             },
             {
@@ -107,18 +129,12 @@
               "rows":3
             },
             {
-              "title":"Number of participants",
-              "source":"numberOfParticipants",
+              "title":"Number of days spent on administering survey/s",
+              "source":"numberOfDaysAdministeringSurveys",
               "type":"number",
               "width":"10%"
-            },
-            {
-              "title":"Area where survey/s were conducted (free text)",
-              "type":"textarea",
-              "source":"areaWhereSurveyConducted",
-              "width":"15%",
-              "rows":3
             }
+
           ],
           "userAddedRows": true,
           "type": "table"

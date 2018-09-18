@@ -21,6 +21,11 @@
           "validate":"required,min[0]"
         },
         {
+          "dataType":"text",
+          "name":"dateRange",
+          "validate":"required,maxSize[100]"
+        },
+        {
           "name":"sitesTested",
           "dataType":"feature",
           "validate":"required"
@@ -28,12 +33,25 @@
         {
           "name":"areaTestedHa",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
           "computed": {
-            "expression": "$geom.areaHa(sitesPrepared)",
+            "expression": "$geom.areaHa(sitesTested)",
             "dependents": {
               "source": [
-                "sitesPrepared"
+                "sitesTested"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthTestedKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesTested)",
+            "dependents": {
+              "source": [
+                "sitesTested"
               ]
             }
           }
@@ -41,21 +59,15 @@
         {
           "dataType":"text",
           "name":"testingTechnique",
-          "validate":"required",
-          "constraints":[
-            "Other"
-          ]
+          "validate":"required,maxSize[100]",
+          "description":"What/How will these tests capture information"
+
         },
         {
           "dataType":"text",
-          "name":"otherTestingTechnique",
-          "validate":"required,maxSize[85]",
-          "behaviour": [
-            {
-              "condition": "testingTechnique == \"Other\"",
-              "type": "enable"
-            }
-          ]
+          "name":"testingObjective",
+          "validate":"required,maxSize[300]",
+          "description":"How will the infromation obtained from the tests be used"
         }
       ]
     }
@@ -67,7 +79,7 @@
           "source": "soilTestingDetails",
           "columns": [
             {
-              "title":"Initial or follow-up",
+              "title":"Initial or follow-up activity?",
               "source":"initialOrFollowup",
               "type":"selectOne",
               "width":"15%"
@@ -77,6 +89,12 @@
               "source":"numberOfSoilTests",
               "width":"10%",
               "title":"Number of soil tests conducted in targeted areas"
+            },
+            {
+              "title":"Date range",
+              "type":"text",
+              "source":"dateRange",
+              "width":"10%"
             },
             {
               "type":"feature",
@@ -92,16 +110,23 @@
               "width":"10%"
             },
             {
-              "title": "Testing technique",
-              "source": "testingTechnique",
-              "type": "select2",
-              "width":"25%"
+              "type":"number",
+              "source":"lengthTestedKm",
+              "title":"Length (km) where soil tests were conducted",
+              "readonly":"readonly",
+              "width":"10%"
             },
             {
-              "title":"Testing technique (if Other) (85 character limit)",
-              "source":"otherTestingTechnique",
-              "type":"text",
-              "width":"35%"
+              "title": "Testing technique",
+              "source": "testingTechnique",
+              "type": "textarea",
+              "width":"15%"
+            },
+            {
+              "title":"Testing objective",
+              "source":"testingObjective",
+              "type":"textarea",
+              "width":"20%"
             }
           ],
           "userAddedRows": true,
