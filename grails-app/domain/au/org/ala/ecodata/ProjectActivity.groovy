@@ -11,6 +11,7 @@ class ProjectActivity {
     String description
     String status
     String pActivityFormName
+    String methodType
     boolean commentsAllowed
     Date startDate
     Date endDate
@@ -28,9 +29,9 @@ class ProjectActivity {
     String speciesIdentification
     String temporalAccuracy
     String nonTaxonomicAccuracy
-    String dataQualityAssuranceMethod
+    List<String> dataQualityAssuranceMethods
     String dataQualityAssuranceDescription
-    String dataAccessMethod
+    List<String> dataAccessMethods
     String dataAccessExternalURL
     boolean isDataManagementPolicyDocumented
     String dataManagementPolicyDescription
@@ -45,6 +46,17 @@ class ProjectActivity {
 
     static constraints = {
         endDate nullable: true
+        methodType inList: ['opportunistic', 'systematic']
+        spatialAccuracy inList: ['low', 'moderate', 'high']
+        speciesIdentification inList: ['low', 'moderate', 'high', 'na']
+        temporalAccuracy inList: ['low', 'moderate', 'high']
+        nonTaxonomicAccuracy inList: ['low', 'moderate', 'high']
+        dataQualityAssuranceMethods validator: { values ->
+            [ "dataownercurated", "subjectexpertverification", "crowdsourcedverification", "recordannotation", "systemsupported", "nodqmethodsused", "na" ].containsAll(values)
+        }
+        dataAccessMethods validator: { values ->
+            ["oasrdfs", "oaordfs", "lsrds", "ordfsvr", "oasrdes", "casrdes", "rdna", "odidpa", "na"].containsAll(values)
+        }
         pActivityFormName nullable: true
         alerts nullable: true
         sites nullable: true

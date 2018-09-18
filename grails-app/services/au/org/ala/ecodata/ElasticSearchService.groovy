@@ -895,6 +895,13 @@ class ElasticSearchService {
             projectActivity.projectActivityId = pActivity.projectActivityId
             projectActivity.embargoed = pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date())
             projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
+            projectActivity.methodType = pActivity?.methodType
+            projectActivity.spatialAccuracy = pActivity?.spatialAccuracy
+            projectActivity.speciesIdentification = pActivity?.speciesIdentification
+            projectActivity.temporalAccuracy = pActivity?.temporalAccuracy
+            projectActivity.nonTaxonomicAccuracy = pActivity?.nonTaxonomicAccuracy
+            projectActivity.dataQualityAssuranceMethods = pActivity?.dataQualityAssuranceMethods
+            projectActivity.isDataManagementPolicyDocumented = pActivity?.isDataManagementPolicyDocumented
             projectActivity.activityOwnerName = userService.lookupUserDetails(activity.userId)?.displayName
             projectActivity.projectName = project?.name
             projectActivity.projectId = project?.projectId

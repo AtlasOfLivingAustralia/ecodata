@@ -848,7 +848,50 @@ facets.data = [
                 title: 'Sub Program',
                 dataType: 'text',
                 helpText: 'Titles of sub-programmes under listed programmes.'
+        ],
+        [
+                name: "methodType",
+                title: 'Method type',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "spatialAccuracy",
+                title: 'Spatial accuracy confidence',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "speciesIdentification",
+                title: 'Species identification confidence',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "temporalAccuracy",
+                title: 'Temporal accuracy confidence',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "nonTaxonomicAccuracy",
+                title: 'Non-taxonomic data accuracy',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "dataQualityAssuranceMethods",
+                title: 'Data quality assurance method',
+                dataType: 'text',
+                helpText: ''
+        ],
+        [
+                name: "isDataManagementPolicyDocumented",
+                title: 'Is data management policy documented?',
+                dataType: 'text',
+                helpText: ''
         ]
+
 ]
 
 facets.project = [
@@ -1046,3 +1089,6 @@ facets.project = [
 ]
 
 license.default = "https://creativecommons.org/licenses/by-nc/3.0/au/"
+projectActivity.notifyOnChange=true
+biocollect.baseURL="https://biocollect.ala.org.au"
+biocollect.projectActivityDataURL="${biocollect.baseURL}/bioActivity/projectRecords"

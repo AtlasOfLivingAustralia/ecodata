@@ -87,6 +87,7 @@ class OutputModelProcessor {
             case 'masterDetail':
                 break // do nothing, not supported yet
             case 'geoMap':
+                processor.text(node, context);
                 break
             case 'set':
                 break

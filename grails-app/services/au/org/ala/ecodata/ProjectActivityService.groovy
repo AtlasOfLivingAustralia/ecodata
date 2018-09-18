@@ -1,11 +1,21 @@
 package au.org.ala.ecodata
 
-import static au.org.ala.ecodata.Status.*
+import org.springframework.context.MessageSource
+
+import java.text.SimpleDateFormat
+
+import static au.org.ala.ecodata.Status.ACTIVE
+import static au.org.ala.ecodata.Status.DELETED
 
 class ProjectActivityService {
     static transactional = false
     static final DOCS = 'docs'
     static final ALL = 'all' // docs and sites
+    static final SUBSCRIBED_PROPERTIES = [
+            'methodName'
+    ]
+
+    def grailsApplication
 
     CommonService commonService
     DocumentService documentService
@@ -15,6 +25,8 @@ class ProjectActivityService {
     CommentService commentService
     PermissionService permissionService
     ElasticSearchService elasticSearchService
+    EmailService emailService
+    MessageSource messageSource
 
     /**
      * Creates an project activity.
@@ -29,7 +41,7 @@ class ProjectActivityService {
         try {
             props.remove("projectId");
             props.remove("projectActivityId");
-
+            notifyChangeToAdmin(props)
             commonService.updateProperties(projectActivity, props)
 
             result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -66,6 +78,7 @@ class ProjectActivityService {
                     updateAekosSubmission(projectActivity, props)
                 }
 
+                notifyChangeToAdmin(props, toMap(projectActivity))
                 commonService.updateProperties(projectActivity, props)
 
                 result = [status: 'ok', projectActivityId: projectActivity.projectActivityId]
@@ -239,6 +252,7 @@ class ProjectActivityService {
 
         }
 
+        mapOfProperties["attribution"] = generateAttributionText(projectActivity)
         mapOfProperties["submissionRecords"] = mapOfProperties.submissionRecords.collect {
             submissionService.get(it)
         }
@@ -341,5 +355,54 @@ class ProjectActivityService {
 
     int getSpeciesRecordedForProjectActivity(String pActivityId) {
         return Record.countByProjectActivityIdAndStatus(pActivityId, ACTIVE)
+    }
+
+    def notifyChangeToAdmin(Map body, Map old = [:]) {
+        if (grailsApplication.config.projectActivity.notifyOnChange?.toBoolean()) {
+            List notify = notifiableProperties(body, old)
+            if (notify) {
+                String content = getNotificationContent(body, notify)
+                String subject = "New proposed survey method"
+                emailService.sendEmail(subject, content, [grailsApplication.config.ecodata.support.email.address])
+            }
+        }
+    }
+
+    def notifiableProperties (Map body, Map old) {
+        List notify = []
+        SUBSCRIBED_PROPERTIES.each {
+            if (old[it] != body[it]) {
+                notify.add(it)
+            }
+        }
+
+        notify
+    }
+
+    def getNotificationContent (Map body, List changedProps) {
+        List output = ["Please consider adding the following Survey Method(s) to the Survey methods select list:"]
+        changedProps?.each { key ->
+            output.add("${key} : ${body[key]}")
+        }
+        output.join('\n')
+    }
+
+    String generateAttributionText (ProjectActivity projectActivity) {
+        def name = projectActivity?.name
+        Project project = Project.findByProjectId(projectActivity?.projectId)
+        if (projectActivity && name && project) {
+            def orgName = project.organisationName
+            if (orgName) {
+                def calendar = Calendar.getInstance()
+                def year = calendar.get(Calendar.YEAR).toString()
+                SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
+                Calendar cal = Calendar.getInstance()
+                def time = dateFormat.format(cal.getTime())
+                def dataUrl = "${grailsApplication.config.biocollect.projectActivityDataURL}/${projectActivity.projectId}"
+                return messageSource.getMessage("projectAcitivity.attribution", [orgName, year, name, dataUrl, time].toArray(), "", Locale.default)
+            }
+        }
+
+        ""
     }
 }
