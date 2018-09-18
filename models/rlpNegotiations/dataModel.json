@@ -10,14 +10,35 @@
           "dataType":"text",
           "name":"typeOfGroup",
           "validate":"required",
+          "description":"If 'Other', please include type in 'Objective of negotiations'",
           "constraints":[
+            "Community",
+            "Landholders",
+            "Farmers",
+            "Traditional owners",
+            "Agricultural industry group",
             "Other"
           ]
         },
         {
+          "dataType":"text",
+          "name":"groupsOrIndividuals",
+          "constraints":[
+            "Groups",
+            "Individuals"
+          ],
+          "validate":"required"
+        },
+        {
           "dataType": "number",
-          "name": "numberOfNegotiationsCompleted",
+          "name": "numberOfGroupsOrIndividuals",
           "validate": "required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"negotiationObjective",
+          "description":"Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of how will the negotiations contribute to protecting the area",
+          "validate":"required,maxSize[300]"
         }
       ]
     }
@@ -32,15 +53,29 @@
             {
               "type":"select2",
               "source":"typeOfGroup",
-              "title":"Type of group",
-              "width":"75%"
+              "title":"Type of negotiations",
+              "width":"20%"
             },
             {
-              "source": "numberOfNegotiationsCompleted",
-              "title": "Number of negotiations completed",
+              "type":"selectOne",
+              "title":"Groups / individuals",
+              "source":"groupsOrIndividuals",
+              "width":"15%"
+            },
+            {
+              "source": "numberOfGroupsOrIndividuals",
+              "title": "Number of individuals / groups negotiated with",
               "type": "number",
-              "width":"25%"
+              "width":"10%"
+            },
+            {
+              "source":"negotiationObjective",
+              "dataType":"textarea",
+              "rows":3,
+              "width":"50%",
+              "title":"Objective of negotiations"
             }
+
           ],
           "source":"negotiations",
           "userAddedRows":true

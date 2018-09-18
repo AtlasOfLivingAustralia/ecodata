@@ -7,6 +7,15 @@
       "name": "diseaseManagementDetails",
       "columns": [
         {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
+        },
+        {
           "dataType": "feature",
           "name": "siteTreated",
           "validate": "required"
@@ -24,7 +33,19 @@
             }
           }
         },
-
+        {
+          "dataType": "number",
+          "name": "lengthTreatedKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(siteTreated)",
+            "dependents": {
+              "source": [
+                "siteTreated"
+              ]
+            }
+          }
+        },
         {
           "dataType": "text",
           "description": "",
@@ -33,18 +54,18 @@
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "managementMethod",
           "constraints": [
             "Biological control agents",
             "Fumigation",
             "Host destruction",
-            "Plant disease management - quaratine",
+            "Plant disease management - quarantine",
             "Plant disease management - treatment",
             "Plant disease management - hygiene",
             "Positive competition",
             "Other"
           ],
+
           "dwcAttribute": "treatmentMethod",
           "validate": "required"
         },
@@ -58,27 +79,49 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,max[100]"
         },
         {
           "name":"treatmentObjective",
+          "description": "Please start with either part of the field heading [dash]. If reporting on both separate the information with a ';'. (eg. 'Management method -' and a brief description of method being used to fix the area; 'Treatment objective -' and a brief description of how the work will contribute to the area.",
+
           "dataType":"text",
           "validate":"required,maxSize[300]"
         },
         {
-          "name":"initialOrFollowup",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial treatment",
-            "Follow-up treatment"
-          ]
+          "dataType":"feature",
+          "name":"offSiteBenefitSites"
         },
         {
-          "name":"areaDiseaseThreatReducedHa",
           "dataType":"number",
-          "validate":"required,min[0]"
+          "name":"offSiteBenefitAreaHa",
+          "computed": {
+            "expression": "$geom.areaHa(offSiteBenefitSites)",
+            "dependents": {
+              "source": [
+                "offSiteBenefitSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"number",
+          "name":"offSiteBenefitLengthKm",
+          "computed": {
+            "expression": "$geom.lengthKm(offSiteBenefitSites)",
+            "dependents": {
+              "source": [
+                "offSiteBenefitSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"evidenceOfBenefit",
+          "validate":"maxSize[300]"
         }
+
       ]
     }
   ],
@@ -89,15 +132,15 @@
           "source": "diseaseManagementDetails",
           "columns": [
             {
-              "title":"Initial / Followup control",
+              "title":"Initial or follow-up treatment?",
               "source":"initialOrFollowup",
               "type":"selectOne",
-              "width":"10%"
+              "width":"5%"
             },
             {
               "type":"feature",
               "source":"siteTreated",
-              "title":"Site/s treated for disease",
+              "title":"Site/s where disease managed",
               "width":"5%"
             },
             {
@@ -105,37 +148,64 @@
               "source":"areaTreatedHa",
               "title":"Area (ha) treated for disease",
               "readonly":"readonly",
-              "width":"8%"
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"lengthTreatedKm",
+              "title":"Length (km) treated for disease",
+              "readonly":"readonly",
+              "width":"5%"
             },
             {
               "title": "Disease treated",
               "source": "targetDisease",
               "type": "text",
-              "width":"15%"
+              "width":"10%"
             },
             {
               "title": "Type of management method / treatment",
               "source": "managementMethod",
               "type": "select2",
-              "width":"15%"
+              "width":"10%"
             },
             {
               "title":"Type of management method / treatment (if other)",
               "source":"otherManagementMethod",
               "type":"text",
-              "width":"20%"
+              "width":"12%"
             },
             {
-              "title":"Treatment objective (300 character limit)",
+              "title":"Management method / treatment objective",
               "source":"treatmentObjective",
               "type":"textarea",
-              "width":"20%"
+              "width":"12%"
             },
             {
-              "title":"Area (ha) where disease threat has reduced",
-              "source":"areaDiseaseThreatReducedHa",
+              "title":"Please map any off-site area/s if they have also benefitted from this disease management",
+              "source":"offSiteBenefitSites",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) where disease threat is reduced",
+              "source":"offSiteBenefitAreaHa",
               "type":"number",
-              "width":"7%"
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title":"Length (km) where disease threat is reduced",
+              "source":"offSiteBenefitLengthKm",
+              "type":"number",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "source":"evidenceOfBenefit",
+              "type":"textarea",
+              "width":"13%"
             }
           ],
           "userAddedRows": true,

@@ -18,7 +18,7 @@
         },
         {
           "dataType":"number",
-          "name":"numberOfStructuresInstalled",
+          "name":"numberOfTreatmentsImplemented",
           "validate":"required,min[0]"
         },
         {
@@ -27,9 +27,22 @@
           "validate":"required"
         },
         {
-          "name":"areaCoveringRegimeChange",
+          "name":"areaCoveringRegimeChangeHa",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(improvedSites)",
+            "dependents": {
+              "source": [
+                "improvedSites"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthOfRegimeChangeKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
           "computed": {
             "expression": "$geom.areaHa(improvedSites)",
             "dependents": {
@@ -45,8 +58,9 @@
           "description": "",
           "name": "treatmentType",
           "constraints": [
-            "Removing barriers",
-            "Structure instalment",
+            "Removing barriers (e.g fish barriers)",
+            "Structure instalment or modification (e.g. weirs, flow gauging stations, fords, culverts)",
+            "Resnagging",
             "Other"
           ],
           "validate": "required"
@@ -65,12 +79,18 @@
         {
           "name":"treatmentObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":"Aim of the action - e.g. hydrological regime change from X to Y"
         },
         {
-          "name":"areaImprovedByRegimeChange",
+          "name":"sitesOfCatchmentManaged",
+          "dataType":"feature"
+        },
+        {
+          "name":"areaOfCatchmentManagedHa",
           "dataType":"number",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Area improved by hydrological regime change"
         }
       ]
     }
@@ -84,30 +104,38 @@
             {
               "type":"selectOne",
               "source":"installedOrMaintained",
-              "title":"Area (ha) improved by hydrological regime change",
+              "title":"Installed or maintained?",
               "width":"10%"
+            },
+            {
+              "title":"Number of treatments implemented to improve water management",
+              "type":"number",
+              "source":"numberOfTreatmentsImplemented",
+              "width":"5%"
             },
             {
               "type":"feature",
               "source":"improvedSites",
               "title":"Site/s where hydrological regimes are being improved",
-              "width":"6%"
+              "width":"5%"
             },
             {
               "type":"number",
               "readonly":"readonly",
-              "source":"areaCoveringRegimeChange",
-              "title":"Area (Ha) convering the hydrological regime change",
-              "width":"8%"
+              "source":"areaCoveringRegimeChangeHa",
+              "title":"Area (ha) covering the hydrological regime change",
+              "width":"5%"
             },
             {
-              "title":"Number of structures installed",
               "type":"number",
-              "source":"numberOfStructuresInstalled",
-              "width":"8%"
+              "readonly":"readonly",
+              "source":"lengthOfRegimeChangeKm",
+              "title":"Length (km) covering the hydrological regime change",
+              "width":"5%"
             },
+
             {
-              "title": "Type of treatment implemented",
+              "title": "Type of treatment implemented to improve water management",
               "source": "treatmentType",
               "type": "select2",
               "width":"15%"
@@ -119,16 +147,23 @@
               "width":"20%"
             },
             {
-              "title":"Hydrological treatment objective (300 character limit)",
+              "title":"Hydrological treatment objective",
               "source":"treatmentObjective",
               "type":"textarea",
-              "width":"25%"
+              "width":"20%"
             },
             {
-              "title":"Area (Ha) improved by hydrological regime change",
-              "source":"areaImprovedByRegimeChange",
+              "title":"Site/s of catchment being managed as a result of this management action",
+              "dataType":"feature",
+              "source":"sitesOfCatchmentManaged",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) of catchment being managed as a result of this management action",
+              "source":"areaOfCatchmentManagedHa",
               "type":"number",
-              "width":"8%"
+              "width":"5%",
+              "readonly":"readonly"
             }
           ],
           "userAddedRows": true,

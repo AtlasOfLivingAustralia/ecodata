@@ -11,8 +11,8 @@
           "dataType":"text",
           "validate":"required",
           "constraints":[
-            "Initial control",
-            "Follow-up control"
+            "Initial",
+            "Follow-up"
           ]
         },
         {
@@ -34,10 +34,25 @@
           }
         },
         {
+          "dataType": "number",
+          "name": "lengthImplementedKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(implementationSite)",
+            "dependents": {
+              "source": [
+                "implementationSite"
+              ]
+            }
+          }
+        },
+        {
           "dataType": "text",
           "description": "",
           "name": "practiceChangeType",
           "constraints": [
+            "Fencing",
+            "Erosion management",
             "Stocking rates",
             "Watering arrangements",
             "Paddock design",
@@ -69,18 +84,38 @@
             "Horticulture",
             "Grazing",
             "Fisheries",
-            "Aquaculture"
+            "Aquaculture",
+            "Environment"
           ]
         },
         {
           "name":"practiceChangeObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":"How will the practice change/s contribute to the area"
         },
         {
           "dataType":"feature",
           "name":"offSiteBenefitSites"
+        },
+        {
+          "dataType":"number",
+          "name":"offSiteBenefitAreaHa",
+          "computed": {
+            "expression": "$geom.areaHa(offSiteBenefitSites)",
+            "dependents": {
+              "source": [
+                "offSiteBenefitSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"evidenceOfBenefit",
+          "validate":"maxSize[300]"
         }
+
       ]
     }
   ],
@@ -93,18 +128,25 @@
             {
               "type":"selectOne",
               "source":"initialOrFollowup",
-              "title":"Initial or follow up",
+              "title":"Initial or follow-up control?",
               "width":"10%"
             },
             {
               "type":"feature",
               "source":"implementationSite",
-              "title":"Site/s covered by implementation",
+              "title":"Site/s covered by practice change",
               "width":"5%"
             },
             {
-              "title": "Area (Ha) covered by implementation",
+              "title": "Area (ha) covered by practice change",
               "source": "areaImplementedHa",
+              "type": "number",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title": "Length (km) covered by practice change",
+              "source": "lengthImplementedKm",
               "type": "number",
               "readonly":"readonly",
               "width":"5%"
@@ -113,7 +155,7 @@
               "title":"Type of action",
               "source":"practiceChangeType",
               "type":"select2",
-              "width":"15%"
+              "width":"10%"
             },
             {
               "title":"Type of action (if Other)",
@@ -125,19 +167,32 @@
               "title":"Industry type",
               "source":"industryType",
               "type":"selectOne",
+              "width":"10%"
+            },
+            {
+              "title":"Purpose of improving land management practice",
+              "source":"practiceChangeObjective",
+              "type":"textarea",
               "width":"15%"
             },
             {
-              "title":"Purpose of improving LMP change",
-              "source":"practiceChangeObjective",
-              "type":"textarea",
-              "width":"25%"
-            },
-            {
-              "title":"Please identify any area/s that have shown evidence of off-site benefits",
+              "title":"Please map any off-site area/s if they benefitted from this practice change",
               "source":"offSiteBenefitSites",
               "type":"feature",
-              "width":"10%"
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) benefitting from practice change",
+              "source":"offSiteBenefitAreaHa",
+              "type":"feature",
+              "width":"5%",
+              "readonly":"readonly"
+            },
+            {
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "source":"evidenceOfBenefit",
+              "type":"textarea",
+              "width":"15%"
             }
           ],
           "userAddedRows": true,
