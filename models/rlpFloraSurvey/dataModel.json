@@ -23,6 +23,11 @@
           "validate":"required,min[0]"
         },
         {
+          "name":"dateRange",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
+        },
+        {
           "name":"sitesSurveyed",
           "dataType":"feature",
           "validate":"required"
@@ -41,39 +46,41 @@
           }
         },
         {
-          "dataType": "species",
-          "name": "species",
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "name": "surveyPurpose",
-          "validate": "required",
-          "constraints": [
-            "Other"
-          ]
-        },
-        {
-          "dataType": "text",
-          "name": "otherSurveyPurpose",
-          "validate": "required",
-          "behaviour": [
+          "dataType":"list",
+          "name":"floraSurveyDetails",
+          "columns":[
             {
-              "condition": "surveyPurpose == \"Other\"",
-              "type": "enable"
+              "dataType": "species",
+              "name": "species",
+              "validate": "required"
+            },
+            {
+              "dataType": "text",
+              "name": "threatenedEcologicalCommunity"
+            },
+            {
+              "name":"surveyTechnique",
+              "description":"What/how will the survey capture the flora data",
+              "dataType":"text",
+              "validate":"required"
+            },
+            {
+              "name":"individualsOrGroups",
+              "dataType":"text",
+              "constraints":[
+                "Individuals",
+                "Groups"
+              ],
+              "validate":"required"
+            },
+            {
+              "name":"numberOfIndividualsOrGroups",
+              "dataType":"number",
+              "validate":"required,min[0]"
             }
           ]
-        },
-        {
-          "name":"numberOfPopulations",
-          "dataType":"number",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"numberOfIndividualsCounted",
-          "dataType":"number",
-          "validate":"required,min[0]"
         }
+
       ]
     }
   ],
@@ -81,75 +88,94 @@
     {
       "items": [
         {
-          "columns": [
+          "items": [
             {
-              "title": "Baseline survey or indicator survey?",
-              "source": "baselineOrIndicatorSurvey",
-              "type": "selectOne",
-              "width":"10%"
+              "type":"row",
+              "items":[
+                {
+                  "preLabel": "Baseline survey or indicator survey?",
+                  "source": "baselineOrIndicatorSurvey",
+                  "type": "selectOne",
+                  "css":"span3"
+                },
+                {
+                  "preLabel":"Number of flora surveys conducted",
+                  "source":"numberOfFloraSurveys",
+                  "type":"number",
+                  "css":"span3"
+                },
+                {
+                  "preLabel":"Date range",
+                  "source":"dateRange",
+                  "type":"text",
+                  "css":"span3"
+
+                }
+
+              ]
             },
             {
-              "title":"Number of surveys conducted",
-              "source":"numberOfFloraSurveys",
-              "type":"number",
-              "width":"8%"
+              "type":"row",
+              "items":[
+                {
+                  "preLabel":"Site/s covered by flora surveys",
+                  "source":"sitesSurveyed",
+                  "type":"feature",
+                  "css":"span3"
+                },
+                {
+                  "preLabel":"Area (ha) covered by flora surveys",
+                  "source":"areaSurveyedHa",
+                  "readonly":"readonly",
+                  "css":"span3",
+                  "type":"number"
+                }
+              ]
             },
             {
-              "title":"Site/s of surveyed flora",
-              "source":"sitesSurveyed",
-              "type":"feature",
-              "width":"5%"
-            },
-            {
-              "title":"Area (ha) surveyed for flora",
-              "source":"areaSurveyedHa",
-              "readonly":"readonly",
-              "width":"8%",
-              "type":"number"
-            },
-            {
-              "title":"Survey purpose",
-              "type":"select2",
-              "source":"surveyPurpose",
-              "width":"15%"
-            },
-            {
-              "title":"Survey purpose (if Other)",
-              "type":"textarea",
-              "source":"otherSurveyPurpose",
-              "width":"18%"
-            },
-            {
-              "source": "species",
-              "title": "Target species recorded",
-              "type": "speciesSelect",
-              "width": "20%"
-            },
-            {
-              "source": "numberOfPopulations",
-              "title": "Number of populations",
-              "type": "number",
-              "width": "8%"
-            },
-            {
-              "source": "numberOfIndividualsCounted",
-              "title": "Number of individuals counted",
-              "type": "number",
-              "width": "8%"
+              "type":"table",
+              "userAddedRows":true,
+              "source":"floraSurveyDetails",
+              "columns":[
+                {
+                  "source": "species",
+                  "title": "Target species recorded",
+                  "type": "speciesSelect",
+                  "width": "30%"
+                },
+                {
+                  "source": "threatenedEcologicalCommunity",
+                  "title": "Threatened ecological communities (if applicable)",
+                  "type": "text",
+                  "width": "25%"
+                },
+                {
+                  "source":"surveyTechnique",
+                  "title":"Survey technique",
+                  "type":"text",
+                  "width":"20%"
+                },
+                {
+                  "source": "individualsOrGroups",
+                  "title": "Individuals or groups?",
+                  "type": "selectOne",
+                  "width": "15%"
+                },
+                {
+                  "source": "numberOfIndividualsOrGroups",
+                  "title": "Number of groups / individuals in flora survey",
+                  "type": "number",
+                  "width": "10%"
+                }
+              ]
             }
+
+
           ],
           "source": "floraSurveys",
           "userAddedRows": true,
-          "type": "table"
-        },
-        {
-          "type": "row",
-          "items": [
-            {
-              "type": "literal",
-              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
-            }
-          ]
+          "addRowText":"New survey site",
+          "type": "repeat"
         }
       ],
       "type": "section"

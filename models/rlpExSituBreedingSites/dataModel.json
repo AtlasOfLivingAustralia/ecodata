@@ -16,11 +16,6 @@
           ]
         },
         {
-          "dataType":"number",
-          "name":"numberOfSitesCreated",
-          "validate":"required,min[1]"
-        },
-        {
           "dataType":"text",
           "name":"newOrMaintained",
           "validate": "required",
@@ -31,8 +26,13 @@
         },
         {
           "dataType":"number",
+          "name":"numberOfSitesCreated",
+          "validate":"required,min[1]"
+        },
+        {
+          "dataType":"number",
           "name":"numberOfDaysMaintainingBreedingPrograms",
-          "validate":"min[0]"
+          "validate":"required,min[0]"
         },
         {
           "dataType":"feature",
@@ -53,28 +53,51 @@
           }
         },
         {
-          "dataType":"text",
-          "name":"breedingTechnique",
-          "description":"e.g. Seed bank or captive breeding",
-          "validate":"required"
-        },
-        {
-          "dataType": "species",
-          "description": "The threatened species targeted by the breeding program",
-          "name": "targetSpecies",
-          "dwcAttribute": "scientificName",
-          "validate": "required"
-        },
-        {
-          "dataType":"number",
-          "name":"numberOfIndividuals",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"numberOfIndividualsReleased",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "dataType":"list",
+          "name":"speciesInBreedingProgram",
+          "columns":[
+            {
+              "dataType": "species",
+              "description": "The threatened species targeted by the breeding program",
+              "name": "targetSpecies",
+              "dwcAttribute": "scientificName",
+              "validate": "required"
+            },
+            {
+              "dataType":"text",
+              "name":"breedingTechnique",
+              "validate":"required",
+              "constraints":[
+                "Seed bank or captive breeding",
+                "Seed orchard",
+                "Seed nursery",
+                "Propagation",
+                "Seed viability testing",
+                "Seed genetic testing"
+              ]
+            },
+            {
+              "dataType":"text",
+              "name":"individualsOrGroups",
+              "constraints":[
+                "Individuals",
+                "Groups"
+              ],
+              "validate":"required"
+            },
+            {
+              "dataType":"number",
+              "name":"numberOfIndividualsOrGroups",
+              "validate":"required,min[0]"
+            },
+            {
+              "name":"numberOfIndividualsReleased",
+              "dataType":"number",
+              "validate":"required,min[0]"
+            }
+          ]
         }
+
       ]
     }
   ],
@@ -83,72 +106,98 @@
       "items": [
         {
           "source": "breedingProgramDetails",
-          "columns": [
+          "items": [
             {
-              "type":"selectOne",
-              "source":"inSituExSitu",
-              "title":"Ex-situ / In-situ",
-              "width":"10%"
+              "type": "row",
+              "items":[
+                {
+                  "type":"selectOne",
+                  "source":"inSituExSitu",
+                  "preLabel":"Ex-situ / In-situ",
+                  "css":"span3"
+                },
+                {
+                  "type":"selectOne",
+                  "preLabel":"Is this a newly established or maintained breeding program?",
+                  "source":"newOrMaintained",
+                  "css":"span3"
+                },
+                {
+                  "type":"number",
+                  "preLabel":"Number of breeding sites created",
+                  "source":"numberOfSitesCreated",
+                  "css":"span3"
+                }
+              ]
             },
             {
-              "type":"number",
-              "title":"Number of breeding sites created",
-              "source":"numberOfSitesCreated",
-              "width":"10%"
+              "type":"row",
+              "items":[
+
+                {
+                  "type":"number",
+                  "css":"span3",
+                  "source":"numberOfDaysMaintainingBreedingPrograms",
+                  "preLabel":"Number of days maintaining breeding program"
+                },
+                {
+                  "type":"feature",
+                  "css":"span3",
+                  "source":"sitesOfBreedingProgram",
+                  "preLabel":"Site/s of breeding program"
+                },
+                {
+                  "type":"number",
+                  "readonly":"readonly",
+                  "css":"span3",
+                  "preLabel":"Area (ha) of feral-free enclosures established or maintained",
+                  "source":"areaOfEnclosureHa"
+                }
+              ]
             },
             {
-              "type":"selectOne",
-              "title":"Is this a newly established or maintained breeding program?",
-              "source":"newOrMaintained",
-              "width":"10%"
-            },
-            {
-              "type":"number",
-              "width":"8%",
-              "source":"numberOfDaysMaintainingBreedingPrograms",
-              "title":"Number of days maintaining breeding program"
-            },
-            {
-              "type":"feature",
-              "width":"5%",
-              "source":"sitesOfBreedingProgram",
-              "title":"Site/s of breeding program"
-            },
-            {
-              "type":"number",
-              "readonly":"readonly",
-              "width":"8%",
-              "title":"Area (ha) of feral-free enclosures established or maintained",
-              "source":"areaOfEnclosureHa"
-            },
-            {
-              "type":"text",
-              "source":"breedingTechnique",
-              "title":"Technique of ex situ breeding program",
-              "width":"28%"
-            },
-            {
-              "title": "Targeted threatened species",
-              "source": "targetSpecies",
-              "type": "speciesSelect",
-              "width":"25%"
-            },
-            {
-              "title":"Number of individuals in breeding program",
-              "source":"numberOfIndividuals",
-              "type":"number",
-              "width":"8%"
-            },
-            {
-              "title":"Number of individuals released or established in the wild",
-              "source":"numberOfIndividualsReleased",
-              "type":"number",
-              "width":"8%"
-            },
+              "type":"table",
+              "userAddedRows":true,
+              "source":"speciesInBreedingProgram",
+              "columns":[
+                {
+                  "title": "Targeted threatened species",
+                  "source": "targetSpecies",
+                  "type": "speciesSelect",
+                  "width":"45%"
+                },
+                {
+                  "type":"select2",
+                  "source":"breedingTechnique",
+                  "title":"Technique of breeding program",
+                  "width":"20%"
+                },
+                {
+                  "type":"selectOne",
+                  "source":"individualsOrGroups",
+                  "title":"Individuals or groups?",
+                  "width":"15%"
+                },
+                {
+                  "title":"Number of groups / individuals in breeding program",
+                  "source":"numberOfIndividualsOrGroups",
+                  "type":"number",
+                  "width":"10%"
+                },
+                {
+                  "title":"Number of individuals released or established in the wild",
+                  "source":"numberOfIndividualsReleased",
+                  "type":"number",
+                  "width":"10%"
+                }
+
+              ]
+            }
 
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "repeat",
+          "addRowText":"Add breeding program"
         }
       ],
       "type": "section"

@@ -83,7 +83,7 @@
             {
               "title": "Type of agreement/s",
               "source": "agreementType",
-              "type": "select2Many",
+              "type": "select2",
               "width": "20%"
             },
             {

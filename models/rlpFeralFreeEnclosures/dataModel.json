@@ -7,9 +7,23 @@
       "name": "enclosureDetails",
       "columns": [
         {
+          "dataType":"text",
+          "name":"newOrMaintained",
+          "validate": "required",
+          "constraints": [
+            "Newly established",
+            "Maintained"
+          ]
+        },
+        {
           "dataType": "number",
           "name": "numberOfEnclosures",
-          "validate": "required,min[1]"
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"daysSpentOnMaintenanceOfEnclosures",
+          "validate":"min[0]"
         },
         {
           "dataType": "feature",
@@ -30,37 +44,52 @@
           }
         },
         {
-          "dataType":"number",
-          "name":"daysSpentOnMaintenanceOfEnclosures",
-          "validate":"min[0]"
-        },
-        {
-          "dataType": "species",
-          "description": "The threatened species protected by the enclosure",
-          "name": "targetSpecies",
-          "dwcAttribute": "scientificName",
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"newOrMaintained",
+          "dataType": "number",
+          "name": "lengthOfEnclosuresKm",
           "validate": "required",
-          "constraints": [
-            "Newly established",
-            "Maintained"
-          ]
+          "computed": {
+            "expression": "$geom.lengthKm(siteOfEnclosures)",
+            "dependents": {
+              "source": [
+                "siteOfEnclosures"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"list",
+          "name":"speciesProtected",
+          "columns":[
 
-        },
-        {
-          "dataType":"number",
-          "name":"numberOfPopulationsOrIndividualsProtected",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"enclosureObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]"
+            {
+              "dataType": "species",
+              "description": "The threatened species protected by the enclosure",
+              "name": "targetSpecies",
+              "dwcAttribute": "scientificName",
+              "validate": "required"
+            },
+            {
+              "dataType":"text",
+              "name":"individualsOrPopulations",
+              "validate":"required",
+              "constraints":[
+                "Individuals",
+                "Populations"
+              ]
+            },
+            {
+              "dataType":"number",
+              "name":"numberOfPopulationsOrIndividualsProtected",
+              "validate":"required,min[0]"
+            },
+            {
+              "name":"enclosureObjective",
+              "dataType":"text",
+              "validate":"required,maxSize[300]"
+            }
+          ]
         }
+
       ]
     }
   ],
@@ -69,60 +98,86 @@
       "items": [
         {
           "source": "enclosureDetails",
-          "columns": [
+          "addRowText":"Add feral-free enclousure",
+          "items": [
             {
-              "type":"number",
-              "source":"numberOfEnclosures",
-              "title":"Number of feral free enclosures",
-              "width":"8%"
+              "type":"row",
+              "items":[
+                {
+                  "preLabel": "Newly established or maintained feral free enclosure?",
+                  "source": "newOrMaintained",
+                  "type": "selectOne",
+                  "css":"span4"
+                },
+                {
+                  "type":"number",
+                  "source":"numberOfEnclosures",
+                  "preLabel":"Number of feral free enclosures",
+                  "css":"span3"
+                },
+                {
+                  "type":"number",
+                  "source":"daysSpentOnMaintenanceOfEnclosures",
+                  "preLabel":"Number of days maintaining feral-free enclosures",
+                  "css":"span3"
+                }]
             },
             {
-              "title": "Are they newly established or maintained feral free enclosure?",
-              "source": "newOrMaintained",
-              "type": "selectOne",
-              "width":"15%"
-            },
-            {
-              "type":"feature",
-              "source":"siteOfEnclosures",
-              "title":"Site/s of feral free enclosures",
-              "width":"8%"
-            },
-            {
-              "type":"number",
-              "source":"areaOfEnclosuresHa",
-              "title":"Area (Ha) of feral-free enclosures established or maintained",
-              "width":"8%"
-            },
-            {
-              "type":"number",
-              "source":"daysSpentOnMaintenanceOfEnclosures",
-              "title":"Time (days) spent on maintenance of enclosures",
-              "width":"8%"
-            },
-            {
-              "title": "Targeted threatened species",
-              "source": "targetSpecies",
-              "type": "speciesSelect",
-              "width":"22%"
-            },
+              "type":"row",
+              "items":[
 
-            {
-              "title":"Number of populations (or individuals) protected within feral free enclosures",
-              "source":"numberOfPopulationsOrIndividualsProtected",
-              "type":"number",
-              "width":"8%"
+                {
+                  "type":"feature",
+                  "source":"siteOfEnclosures",
+                  "preLabel":"Site/s of feral free enclosures",
+                  "css":"span4"
+                },
+                {
+                  "type":"number",
+                  "source":"areaOfEnclosuresHa",
+                  "preLabel":"Area (ha) of feral-free enclosures",
+                  "readonly":"readonly",
+                  "css":"span3"
+                },
+                {
+                  "type":"number",
+                  "source":"lengthOfEnclosuresKm",
+                  "preLabel":"Length (km) of feral-free enclosures",
+                  "css":"span3",
+                  "readonly":"readonly"
+                }
+
+              ]
             },
             {
-              "title":"Aim of feral free enclosure (300 character limit)",
-              "source":"enclosureObjective",
-              "type":"textarea",
-              "width":"23%"
+              "type":"table",
+              "userAddedRows": true,
+              "source":"speciesProtected",
+              "columns":[
+                {
+                  "title": "Targeted threatened species",
+                  "source": "targetSpecies",
+                  "type": "speciesSelect",
+                  "width":"50%"
+                },
+                {
+                  "title":"Individuals or populations?",
+                  "source":"individualsOrPopulations",
+                  "type":"selectOne",
+                  "width":"30%"
+                },
+                {
+                  "title":"Number of populations (or individuals) protected within feral free enclosures",
+                  "source":"numberOfPopulationsOrIndividualsProtected",
+                  "type":"number",
+                  "width":"20%"
+                }
+              ]
             }
 
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "repeat"
         }
       ],
       "type": "section"

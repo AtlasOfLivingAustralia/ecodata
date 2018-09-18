@@ -34,12 +34,29 @@
           }
         },
         {
+          "dataType": "number",
+          "name": "lengthTreatedKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
+              ]
+            }
+          }
+        },
+        {
           "dataType": "text",
           "description": "",
           "name": "fireManagementType",
           "constraints": [
+            "Cultural burn",
             "Ecological burn",
+            "Grading",
             "Hazard reduction burn",
+            "Herbicide",
+            "Slashing",
             "Other"
           ],
           "validate": "required"
@@ -47,24 +64,27 @@
         {
           "dataType":"text",
           "name":"otherFireManagementType",
-          "description":"Please specify the fire management action if Other (specify in notes) was selected in the Type of fire management action column.",
           "behaviour":[
             {
               "condition": "fireManagementType == \"Other\"",
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[100]"
         },
         {
-          "name":"fireManagementObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "name":"sitesBenefittedByFireAction",
+          "dataType":"feature"
         },
         {
-          "name":"areaProtectedByFireHa",
+          "name":"areaBenefittedByFireActionHa",
           "dataType":"number",
           "validate":"required,min[0]"
+        },
+        {
+          "name":"evidenceOfBenefit",
+          "dataType":"text",
+          "validate":"required,maxSize[300]"
         }
       ]
     }
@@ -78,44 +98,60 @@
             {
               "type":"selectOne",
               "source":"initialOrFollowup",
-              "title":"Initial or follow-up",
+              "title":"Initial or follow-up control?",
               "width":"10%"
             },
             {
               "type":"feature",
               "source":"sitesTreated",
               "width":"5%",
-              "title":"Site/s treated by fire management activity"
+              "title":"Site/s treated by fire management actions"
             },
             {
               "type":"number",
               "source":"areaTreatedHa",
-              "width":"10%",
-              "title":"Area (ha) treated by fire management activity"
+              "width":"5%",
+              "title":"Area (ha) treated by fire management action",
+              "readonly":"readonly"
             },
             {
-              "title": "Type of fire management activity",
+              "type":"number",
+              "source":"lengthTreatedKm",
+              "width":"5%",
+              "title":"Length (km) treated by fire management action",
+              "readonly":"readonly"
+            },
+            {
+              "title": "Type of fire management action",
               "source": "fireManagementType",
               "type": "select2",
               "width":"20%"
             },
             {
-              "title":"Type of fire management activity (if Other)",
+              "title":"Type of fire management action (if Other)",
               "source":"otherFireManagementType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Fire management activity objective (300 character limit)",
-              "source":"fireManagementObjective",
-              "type":"textarea",
-              "width":"25%"
+              "type":"feature",
+              "source":"sitesBenefittedByFireAction",
+              "width":"5%",
+              "title":"Please map any off-site area/s if they benefitted from this fire management action"
             },
             {
               "type":"number",
-              "source":"areaProtectedByFireHa",
+              "source":"areaBenefittedByFireActionHa",
               "title":"Area (ha) protected by fire management action",
-              "width":"10%"
+              "width":"5%",
+              "readonly":"readonly"
+            },
+            {
+              "type":"textarea",
+              "source":"evidenceOfBenefit",
+              "rows":3,
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "width":"20%"
             }
           ],
           "userAddedRows": true,
