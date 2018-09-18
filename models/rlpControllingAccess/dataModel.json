@@ -7,49 +7,69 @@
       "name": "accessControlDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "installedSiteId",
+          "dataType": "number",
+          "name":"numberInstalled",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"sitesRequired",
+          "validate":"required",
+          "constraints":["Yes","No"]
+        },
+        {
+          "dataType": "feature",
+          "name": "sitesInstalled",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "behaviour":[
+            {
+              "condition": "sitesRequired == \"Yes\"",
+              "type": "enable"
+            }
+          ]
+        },
+        {
+          "dataType": "number",
+          "name": "areaInstalledHa",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.areaHa(sitesInstalled)",
+            "dependents": {
+              "source": [
+                "sitesInstalled"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
+          "dataType": "number",
+          "name": "lengthInstalledKm",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.lengthKm(sitesInstalled)",
+            "dependents": {
+              "source": [
+                "sitesInstalled"
               ]
-            },
-            "type": "pre-populated"
+            }
+          }
+        },
+        {
+          "dataType": "feature",
+          "name": "protectedSites",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaProtectedHa",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.areaHa(protectedSites)",
+            "dependents": {
+              "source": [
+                "protectedSites"
+              ]
+            }
           }
         },
         {
@@ -82,9 +102,15 @@
         {
           "name":"controlObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":"How will the work contribute to protecting the area."
         }
       ]
+
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -94,38 +120,81 @@
           "source": "accessControlDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"installedSiteId",
-              "title":"Area installed (Ha)",
-              "width":"20%"
+              "type": "number",
+              "source":"numberInstalled",
+              "title":"Number of structures installed",
+              "width":"6%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
-              "title":"Area protected by access control structure (Ha)",
-              "width":"20%"
+              "type":"selectOne",
+              "source":"sitesRequired",
+              "title":"Will this report invoice for area / length covered?",
+              "width":"10%"
+            },
+            {
+              "type":"feature",
+              "source":"sitesInstalled",
+              "title":"Site/s where access has been controlled",
+              "width":"6%"
+            },
+            {
+              "type":"number",
+              "source":"areaInstalledHa",
+              "title":"Area (ha) where access has been controlled",
+              "width":"6%",
+              "readonly":"readonly"
+            },
+            {
+              "type":"number",
+              "source":"lengthInstalledKm",
+              "title":"Length (km) installed",
+              "width":"6%",
+              "readonly":"readonly"
+            },
+            {
+              "type":"feature",
+              "source":"protectedSites",
+              "title":"Site/s protected by access control structures",
+              "width":"6%"
+            },
+            {
+              "type":"number",
+              "source":"areaProtectedHa",
+              "title":"Area (ha) protected by access control structures",
+              "width":"6%",
+              "readonly":"readonly"
             },
             {
               "title": "Type of access control installed",
               "source": "accessControlType",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
               "title":"Type of access control installed (if Other)",
               "source":"otherAccessControlType",
               "type":"text",
-              "width":"20%"
+              "width":"17%"
             },
             {
               "title":"Control objective (300 character limit)",
               "source":"controlObjective",
               "type":"textarea",
-              "width":"40%"
+              "width":"22%"
             }
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos of the access control work performed"
+            }
+          ]
         }
       ],
       "type": "section"

@@ -3,29 +3,141 @@
   "modelName": "RLP - Skills and knowledge survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "skillsAndKnowledgeSurveys",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndictorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfSkillsAndKnowledgeSurveys",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"text",
+          "name":"dateRange",
+          "validate":"required,maxSize[100]"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfParticipants",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"sitesSurveyed",
+          "dataType":"feature",
+        },
+        {
+          "name":"areaSurveyedHa",
+          "dataType":"number",
+          "validate":"min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+
+        {
+          "dataType":"text",
+          "name":"surveyTechnique",
+          "validate":"required",
+          "constraints":[
+            "Other"
+          ],
+          "description":"What/How will these survey/s capture information"
+        },
+        {
+          "dataType":"text",
+          "name":"surveyObjective",
+          "validate":"required",
+          "description":"How will the information obtained from the surveys be used"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysAdministeringSurveys",
+          "validate":"required,min[0]"
+        },
+      ]
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+          "source": "skillsAndKnowledgeSurveys",
+          "columns": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberOfSurveys",
-                  "preLabel": "Number of skills and knowledge surveys conducted",
-                  "type": "number"
-                }
-              ]
+              "title": "Baseline or indicator survey?",
+              "source": "baselineOrIndictorSurvey",
+              "type": "selectOne",
+              "width":"10%"
+            },
+            {
+              "title":"Number of skills and knowledge surveys conducted",
+              "source":"numberOfSkillsAndKnowledgeSurveys",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "title":"Date range",
+              "type":"text",
+              "source":"dateRange",
+              "width":"10%"
+            },
+            {
+              "title":"Number of people completing survey",
+              "source":"numberOfParticipants",
+              "type":"number",
+              "width":"10%"
+            },
+            {
+              "type":"feature",
+              "source":"sitesSurveyed",
+              "title":"Site/s where surveys were conducted (if applicable)",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"areaSurveyedHa",
+              "title":"Area (ha) surveyed (if applicable)",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
+              "title":"Survey technique",
+              "type":"textarea",
+              "source":"surveyTechnique",
+              "width":"15%"
+            },
+            {
+              "title":"Survey objective",
+              "type":"textarea",
+              "source":"surveyObjective",
+              "width":"15%",
+              "rows":3
+            },
+            {
+              "title":"Number of days spent on administering survey/s",
+              "source":"numberOfDaysAdministeringSurveys",
+              "type":"number",
+              "width":"10%"
             }
 
-          ]
+          ],
+          "userAddedRows": true,
+          "type": "table"
         }
       ],
       "type": "section"

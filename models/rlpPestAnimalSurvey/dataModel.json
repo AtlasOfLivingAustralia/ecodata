@@ -4,72 +4,204 @@
   "dataModel": [
     {
       "dataType": "list",
-      "name": "surveys",
+      "name": "pestAnimalSurveys",
       "columns": [
-
         {
-          "dataType":"number",
-          "name":"test2"
-
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
         },
         {
-          "dataType":"list",
-          "name":"surveyDetails",
-          "columns":[
+          "dataType": "number",
+          "name": "numberOfPestAnimalSurveys",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "dateRange",
+          "validate": "required,maxSize[100]"
+        },
+        {
+          "name": "sitesSurveyed",
+          "dataType": "feature",
+          "validate": "required"
+        },
+        {
+          "name": "areaSurveyedHa",
+          "dataType": "number",
+          "validate": "required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "list",
+          "name": "pestAnimals",
+          "columns": [
             {
-              "dataType":"number",
-              "name":"test"
+              "dataType": "species",
+              "name": "species",
+              "validate": "required"
+            },
+            {
+              "dataType": "text",
+              "name": "surveyTechnique",
+              "validate": "required",
+              "description":"",
+              "constraints": [
+                "Spotlight count",
+                "Aerial survey",
+                "DNA sampling",
+                "Mark-recapture",
+                "Signs of presence",
+                "Camera trapping",
+                "Trap and release",
+                "Direct observation",
+                "Other"
+              ]
+            },
+            {
+              "dataType": "text",
+              "name": "otherSurveyTechnique",
+
+              "description":"This field may be used to list multiple survey techniques. This list of survey techniques need to be separated with a ';'. You may also identify what/how the survey will capture the pest animal data",
+              "validate": "required,maxSize[300]",
+              "behaviour": [
+                {
+                  "condition": "surveyTechnique == \"Other\"",
+                  "type": "enable"
+                }
+              ]
+            },
+            {
+              "name": "individualsOrGroups",
+              "dataType": "text",
+              "constraints": [
+                "Individuals",
+                "Groups"
+              ],
+              "validate": "required"
+            },
+            {
+              "name": "numberOfIndividualsOrGroups",
+              "dataType": "number",
+              "validate": "required,min[0]"
             }
           ]
         }
-
       ]
-    },
-    {
-      "dataType":"text",
-      "name":"something"
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "repeat",
-          "source":"surveys",
           "items": [
             {
-              "source":"test2",
-              "type":"number",
-              "preLabel":"Test"
-
+              "type":"row",
+              "items":[
+                {
+                  "preLabel": "Baseline survey or indicator survey?",
+                  "source": "baselineOrIndicatorSurvey",
+                  "type": "selectOne",
+                  "css": "span3"
+                },
+                {
+                  "preLabel": "Number of surveys conducted",
+                  "source": "numberOfPestAnimalSurveys",
+                  "type": "number",
+                  "css": "span3"
+                },
+                {
+                  "preLabel":"Date range",
+                  "source":"dateRange",
+                  "type":"text",
+                  "css":"span3"
+                }
+              ]
             },
             {
-              "type":"table",
-              "source":"surveyDetails",
-              "columns":[
+              "type":"row",
+              "items":[
                 {
-                  "source": "test",
-                  "title": "Test",
-                  "type": "number"
+                  "preLabel": "Site/s of surveyed pest animals",
+                  "source": "sitesSurveyed",
+                  "type": "feature",
+                  "css": "span3"
+                },
+                {
+                  "preLabel": "Area (ha) surveyed for pest animals",
+                  "source": "areaSurveyedHa",
+                  "readonly": "readonly",
+                  "type":"number",
+                  "css": "span3"
                 }
-              ],
-              "userAddedRows":true
+              ]
+            },
+            {
+              "type": "table",
+              "userAddedRows": true,
+              "source":"pestAnimals",
+              "columns": [
+                {
+                  "source": "species",
+                  "title": "Target species recorded",
+                  "type": "speciesSelect",
+                  "width": "40%"
+                },
+                {
+                  "source": "surveyTechnique",
+                  "title": "Survey technique",
+                  "type": "text",
+                  "width": "15%"
+                },
+                {
+                  "source": "otherSurveyTechnique",
+                  "title": "Survey technique (if Other)",
+                  "type": "text",
+                  "width": "20%"
+                },
+                {
+                  "source": "individualsOrGroups",
+                  "title": "Individuals or groups?",
+                  "type": "selectOne",
+                  "width": "15%"
+                },
+                {
+                  "source": "numberOfIndividualsOrGroups",
+                  "title": "Number of groups / individuals",
+                  "type": "number",
+                  "width": "10%"
+                }
+              ]
             }
-
+          ],
+          "source": "pestAnimalSurveys",
+          "userAddedRows": true,
+          "type": "repeat",
+          "addRowText":"New survey"
+        },
+        {
+          "type": "row",
+          "items": [
+            {
+              "type": "literal",
+              "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+            }
           ]
         }
       ],
       "type": "section"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"text",
-          "source":"something",
-          "preLabel":"Something"
-        }
-      ]
     }
   ]
 }

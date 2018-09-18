@@ -1,5 +1,5 @@
 {
-  "title": "Establishing ex-situ breeding program",
+  "title": "Establishing and maintaining breeding programs",
   "modelName": "RLP - Establishing ex-situ breeding programs",
   "dataModel": [
     {
@@ -8,32 +8,96 @@
       "columns": [
         {
           "dataType":"text",
-          "name":"breedingTechnique",
-          "description":"e.g. Seed bank or captive breeding",
+          "name":"inSituExSitu",
+          "validate":"required",
+          "constraints":[
+            "Ex-situ",
+            "In-situ"
+          ]
+        },
+        {
+          "dataType":"text",
+          "name":"newOrMaintained",
+          "validate": "required",
+          "constraints": [
+            "Newly established",
+            "Maintained"
+          ]
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfSitesCreated",
+          "validate":"required,min[1]"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfDaysMaintainingBreedingPrograms",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType":"feature",
+          "name":"sitesOfBreedingProgram",
           "validate":"required"
         },
         {
-          "dataType": "species",
-          "description": "The threatened species targeted by the breeding program",
-          "name": "targetSpecies",
-          "dwcAttribute": "scientificName",
-          "validate": "required"
-        },
-        {
           "dataType":"number",
-          "name":"numberOfIndividuals",
-          "validate":"required,min[0]"
+          "name":"areaOfEnclosureHa",
+          "validate":"required",
+          "computed": {
+            "expression": "$geom.areaHa(sitesOfBreedingProgram)",
+            "dependents": {
+              "source": [
+                "sitesOfBreedingProgram"
+              ]
+            }
+          }
         },
         {
-          "name":"programObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]"
-        },
-        {
-          "name":"numberOfIndividualsReleased",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "dataType":"list",
+          "name":"speciesInBreedingProgram",
+          "columns":[
+            {
+              "dataType": "species",
+              "description": "The threatened species targeted by the breeding program",
+              "name": "targetSpecies",
+              "dwcAttribute": "scientificName",
+              "validate": "required"
+            },
+            {
+              "dataType":"text",
+              "name":"breedingTechnique",
+              "validate":"required",
+              "constraints":[
+                "Seed bank or captive breeding",
+                "Seed orchard",
+                "Seed nursery",
+                "Propagation",
+                "Seed viability testing",
+                "Seed genetic testing"
+              ]
+            },
+            {
+              "dataType":"text",
+              "name":"individualsOrGroups",
+              "constraints":[
+                "Individuals",
+                "Groups"
+              ],
+              "validate":"required"
+            },
+            {
+              "dataType":"number",
+              "name":"numberOfIndividualsOrGroups",
+              "validate":"required,min[0]"
+            },
+            {
+              "name":"numberOfIndividualsReleased",
+              "dataType":"number",
+              "validate":"required,min[0]"
+            }
+          ]
         }
+
       ]
     }
   ],
@@ -42,41 +106,98 @@
       "items": [
         {
           "source": "breedingProgramDetails",
-          "columns": [
+          "items": [
             {
-              "type":"text",
-              "source":"breedingTechnique",
-              "title":"Technique of ex situ breeding program",
-              "width":"20%"
+              "type": "row",
+              "items":[
+                {
+                  "type":"selectOne",
+                  "source":"inSituExSitu",
+                  "preLabel":"Ex-situ / In-situ",
+                  "css":"span3"
+                },
+                {
+                  "type":"selectOne",
+                  "preLabel":"Is this a newly established or maintained breeding program?",
+                  "source":"newOrMaintained",
+                  "css":"span3"
+                },
+                {
+                  "type":"number",
+                  "preLabel":"Number of breeding sites created",
+                  "source":"numberOfSitesCreated",
+                  "css":"span3"
+                }
+              ]
             },
             {
-              "title": "Targeted threatened species",
-              "source": "targetSpecies",
-              "type": "speciesSelect",
-              "width":"30%"
+              "type":"row",
+              "items":[
+
+                {
+                  "type":"number",
+                  "css":"span3",
+                  "source":"numberOfDaysMaintainingBreedingPrograms",
+                  "preLabel":"Number of days maintaining breeding program"
+                },
+                {
+                  "type":"feature",
+                  "css":"span3",
+                  "source":"sitesOfBreedingProgram",
+                  "preLabel":"Site/s of breeding program"
+                },
+                {
+                  "type":"number",
+                  "readonly":"readonly",
+                  "css":"span3",
+                  "preLabel":"Area (ha) of feral-free enclosures established or maintained",
+                  "source":"areaOfEnclosureHa"
+                }
+              ]
             },
             {
-              "title":"Number of individuals in ex situ breeding program",
-              "source":"numberOfIndividuals",
-              "type":"number",
-              "width":"10%"
-            },
-            {
-              "title":"Aim of ex situ breeding program (300 character limit)",
-              "source":"programObjective",
-              "type":"textarea",
-              "width":"30%"
-            },
-            {
-              "title":"Number of individuals released or established in the wild",
-              "source":"numberOfIndividualsReleased",
-              "type":"number",
-              "width":"10%"
-            },
+              "type":"table",
+              "userAddedRows":true,
+              "source":"speciesInBreedingProgram",
+              "columns":[
+                {
+                  "title": "Targeted threatened species",
+                  "source": "targetSpecies",
+                  "type": "speciesSelect",
+                  "width":"45%"
+                },
+                {
+                  "type":"select2",
+                  "source":"breedingTechnique",
+                  "title":"Technique of breeding program",
+                  "width":"20%"
+                },
+                {
+                  "type":"selectOne",
+                  "source":"individualsOrGroups",
+                  "title":"Individuals or groups?",
+                  "width":"15%"
+                },
+                {
+                  "title":"Number of groups / individuals in breeding program",
+                  "source":"numberOfIndividualsOrGroups",
+                  "type":"number",
+                  "width":"10%"
+                },
+                {
+                  "title":"Number of individuals released or established in the wild",
+                  "source":"numberOfIndividualsReleased",
+                  "type":"number",
+                  "width":"10%"
+                }
+
+              ]
+            }
 
           ],
           "userAddedRows": true,
-          "type": "table"
+          "type": "repeat",
+          "addRowText":"Add breeding program"
         }
       ],
       "type": "section"

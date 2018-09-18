@@ -77,7 +77,7 @@
           "items": [
             {
               "source": "areaCoveredByActionsHa",
-              "preLabel": "Area (Ha) covered by actions",
+              "preLabel": "Area (ha) covered by actions",
               "type": "number",
               "css":"span3"
             },

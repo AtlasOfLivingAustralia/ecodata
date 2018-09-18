@@ -10,32 +10,19 @@
           "dataType": "text",
           "name": "eventType",
           "constraints":[
-            "On-farm trials",
-            "On-farm inspections",
-            "Field day activity",
-            "Conference/Seminar",
-            "Meeting",
-            "Training session",
-            "Planning session",
-            "Working bee",
-            "Workshop",
-            "Project feedback / debrief session",
-            "Other"
+            "Field days",
+            "Training / workshop events",
+            "Conferences / seminars",
+            "One-on-one technical advice interactions",
+            "On-ground trials / demonstrations",
+            "On-ground works"
           ],
           "validate": "required"
         },
         {
-          "dataType": "text",
-          "name": "otherEventType",
-          "validate": "required",
-          "behaviour":[
-
-            {
-              "condition": "eventType == \"Other\"",
-              "type": "enable"
-            }
-
-          ]
+          "dataType":"number",
+          "name":"numberOfEvents",
+          "validate":"required"
         },
         {
           "dataType": "number",
@@ -44,26 +31,36 @@
         },
         {
           "dataType": "number",
+          "name": "numberOfIndigenousParticipants",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
           "name": "numberOfFarmers",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfGroups",
           "validate": "required,min[0]"
         },
         {
           "dataType": "stringList",
           "name": "industryType",
           "constraints":[
-            "Broad acre cropping",
             "Dairy",
             "Horticulture",
             "Grazing",
             "Fisheries",
-            "Aquaculture"
+            "Aquaculture",
+            "Environmental"
           ],
-          "validate": "required,min[0]"
+          "validate": "required"
         },
         {
           "dataType": "text",
           "name": "eventPurpose",
-          "validate": "required,max[80]"
+          "validate": "required,max[300]"
         }
       ]
     }
@@ -77,39 +74,52 @@
           "columns": [
             {
               "source": "eventType",
-              "title": "Community engagement activity type",
+              "title": "Type of Community / Stakeholder engagement activity",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
-              "source": "otherEventType",
-              "title": "Type of activity (if other)",
-              "type": "text",
-              "width":"20%"
+              "source": "numberOfEvents",
+              "title": "Number of Community / Stakeholder engagement type events",
+              "type": "number",
+              "width":"10%"
             },
             {
               "source": "eventPurpose",
-              "title": "Aim of activity",
+              "title": "Purpose of engagement",
               "type": "textarea",
               "width":"20%"
             },
             {
+              "source": "numberOfGroups",
+              "title": "Number of communities or groups engaged",
+              "type": "number",
+              "width":"10%"
+            },
+            {
               "source": "numberOfParticipants",
-              "title": "Total number of attendees / participants",
+              "title": "Number of attendees / participants",
+              "type": "number",
+              "width":"10%"
+            },
+            {
+              "source": "numberOfIndigenousParticipants",
+              "title": "Number of Indigenous attendees / participants",
               "type": "number",
               "width":"10%"
             },
             {
               "source": "numberOfFarmers",
-              "title": "Total number of farmers attending / participating",
+              "title": "Number of farmers attending / participating",
               "type": "number",
               "width":"10%"
             },
+
             {
               "source": "industryType",
               "title": "Industry type engaged",
               "type": "select2Many",
-              "width":"20%"
+              "width":"15%"
             }
 
           ],

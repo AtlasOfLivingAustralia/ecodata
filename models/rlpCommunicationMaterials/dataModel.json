@@ -10,11 +10,15 @@
           "dataType": "text",
           "name": "communicationMaterialType",
           "constraints":[
+            "Advertising",
+            "Book",
+            "Brochures",
+            "Extension materials",
+            "Fliers",
             "Media release",
             "Report",
             "Social media posts",
-            "Brochures",
-            "Fliers",
+            "Videos",
             "Other"
           ],
           "validate": "required"
@@ -22,7 +26,7 @@
         {
           "dataType": "text",
           "name": "otherCommunicationMaterialType",
-          "validate": "required",
+          "validate": "required,maxSize[100]",
           "behaviour":[
 
             {
@@ -34,13 +38,14 @@
         },
         {
           "dataType": "number",
-          "name": "numberOfCommunicationMaterials",
-          "validate": "required,min[0]"
+          "name": "numberOfCommunicationMaterialsPublished",
+          "validate": "required,min[0]",
+          "description":"Refers to unique publications not number printed"
         },
         {
           "dataType": "text",
           "name": "communicationMaterialPurpose",
-          "validate": "required"
+          "validate": "required,maxSize[300]"
         }
       ]
     }
@@ -54,26 +59,26 @@
           "columns": [
             {
               "source": "communicationMaterialType",
-              "title": "Type of communication material",
+              "title": "Type of communication material published",
               "type": "select2",
               "width":"25%"
             },
             {
               "source":"otherCommunicationMaterialType",
-              "title":"Other type of communication material released",
-              "width":"25",
-              "type":"text"
+              "title":"Type of communication material published (if Other)",
+              "width":"25%",
+              "type":"textarea"
             },
             {
-              "source": "numberOfCommunicationMaterials",
-              "title": "Number of communication materials released",
+              "source": "numberOfCommunicationMaterialsPublished",
+              "title": "Number of communication materials published",
               "type": "number",
               "width":"15%"
             },
             {
               "source": "communicationMaterialPurpose",
               "title": "Purpose of communication material",
-              "type": "text",
+              "type": "textarea",
               "width":"35%"
             }
           ],

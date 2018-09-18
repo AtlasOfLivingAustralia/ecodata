@@ -1,32 +1,49 @@
 {
   "title": "Removing weeds",
-  "modelName": "RLP - Weed management",
+  "modelName": "RLP - Weed treatment",
   "dataModel": [
     {
       "dataType": "list",
       "name": "weedSpeciesTreated",
       "columns": [
         {
-          "dataType": "text",
-          "name": "siteId",
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
+        },
+        {
+          "dataType": "feature",
+          "name": "sitesTreated",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaTreatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
+          }
+        },
+        {
+          "dataType": "number",
+          "name": "lengthTreatedKm",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
+              ]
+            }
           }
         },
         {
@@ -37,38 +54,43 @@
           "validate": "required"
         },
         {
+          "dataType":"text",
+          "name":"threatenedEcologicalCommunity",
+          "validate":"maxSize[100]"
+        },
+        {
           "dataType": "text",
           "description": "The primary method used to treat the patch of the target species",
           "name": "treatmentMethod",
           "constraints": [
-            "Fire",
-            "Moisture and nutrient control",
-            "Overplanting",
-            "Foliar spraying",
             "Basal bark spraying",
-            "Stem injection",
+            "Biological agents",
             "Cut stump",
             "Cut and swab",
+            "Dozing",
+            "Felling",
+            "Fire",
+            "Foliar spraying",
+            "Grubbing / chipping",
+            "Hand pulling",
+            "Moisture and nutrient control",
+            "Mowing",
+            "Overplanting",
+            "Pushing",
+            "Slashing",
+            "Spot spraying",
             "Splatter gun",
+            "Stem injection",
             "Stem scraper",
             "Wick applicators",
-            "Slashing",
-            "Mowing",
-            "Dozing",
-            "Pushing",
-            "Felling",
-            "Hand pulling",
-            "Grubbing/chipping",
-            "Biological agents",
             "Other"
-
           ],
           "validate": "required"
         },
         {
           "dataType":"text",
           "name":"otherTreatmentMethod",
-          "description":"Please specify the method of treatment used if Other (specify in notes) was selected in the Treatment Method column.",
+          "description":"Please specify the method of treatment used if Other was selected in the Type of treatment column.",
           "behaviour":[
             {
               "condition": "treatmentMethod == \"Other\"",
@@ -80,17 +102,10 @@
         {
           "name":"treatmentObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
-        },
-        {
-          "name":"initialOrFollowup",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial treatment",
-            "Follow-up treatment"
-          ]
+          "validate":"required,maxSize[300]",
+          "description":"How will the work contribute to protecting the area"
         }
+
       ]
     }
   ],
@@ -101,25 +116,52 @@
           "source": "weedSpeciesTreated",
           "columns": [
             {
-              "type":"select2",
-              "source":"siteId",
+              "title":"Initial or follow-up treatment",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
+            },
+            {
+              "type":"feature",
+              "source":"sitesTreated",
               "title":"Site where control was undertaken",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "readonly":"readonly",
+              "source":"areaTreatedHa",
+              "title":"Area (ha) treated for weed removal",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "readonly":"readonly",
+              "source":"lengthTreatedKm",
+              "title":"Length (km) treated for weed removal",
+              "width":"5%"
+            },
+            {
+              "title": "Target weed species",
+              "source": "weedTargetSpecies",
+              "type": "speciesSelect",
               "width":"15%"
             },
             {
-              "title": "Species treated",
-              "source": "weedTargetSpecies",
-              "type": "speciesSelect",
-              "width":"30%"
+              "title":"Threatened Ecological Community (if applicable)",
+              "source":"threatenedEcologicalCommunity",
+              "type":"text",
+              "width":"15%"
             },
+
             {
-              "title": "Treatment method",
+              "title": "Type of treatment",
               "source": "treatmentMethod",
               "type": "select2",
               "width":"15%"
             },
             {
-              "title":"Treatment method (if other)",
+              "title":"Type of treatment (if other)",
               "source":"otherTreatmentMethod",
               "type":"text",
               "width":"15%"
@@ -129,13 +171,8 @@
               "source":"treatmentObjective",
               "type":"textarea",
               "width":"15%"
-            },
-            {
-              "title":"Initial / Followup control",
-              "source":"initialOrFollowup",
-              "type":"selectOne",
-              "width":"10%"
             }
+
           ],
           "userAddedRows": true,
           "type": "table"

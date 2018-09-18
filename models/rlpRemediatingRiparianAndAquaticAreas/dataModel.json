@@ -1,0 +1,182 @@
+{
+  "title": "Remediating riparian and aquatic areas",
+  "modelName": "RLP - Remediating riparian and aquatic areas",
+  "dataModel": [
+    {
+      "dataType": "list",
+      "name": "remediationDetails",
+      "columns": [
+        {
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
+        },
+        {
+          "name":"sitesRemediated",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaRemediatedHa",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesRemediated)",
+            "dependents": {
+              "source": [
+                "sitesRemediated"
+              ]
+            }
+          }
+        },
+        {
+          "name":"lengthRemediatedKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.lengthKm(sitesRemediated)",
+            "dependents": {
+              "source": [
+                "sitesRemediated"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfStructuresInstalled",
+          "validate":"required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "remediationType",
+          "constraints": [
+            "Access control",
+            "Bank grooming",
+            "Flow gauging stations",
+            "Fords",
+            "Culverts",
+            "Revegetation",
+            "Weirs",
+            "Other"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"text",
+          "name":"otherRemediationType",
+          "behaviour":[
+            {
+              "condition": "remediationType == \"Other\"",
+              "type": "enable"
+            }
+          ],
+          "validate":"required"
+        },
+        {
+          "dataType":"feature",
+          "name":"offSiteBenefitSites"
+        },
+        {
+          "dataType":"number",
+          "name":"offSiteBenefitAreaHa",
+          "computed": {
+            "expression": "$geom.areaHa(offSiteBenefitSites)",
+            "dependents": {
+              "source": [
+                "offSiteBenefitSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"text",
+          "name":"evidenceOfBenefit",
+          "validate":"maxSize[300]"
+        }
+      ]
+    }
+  ],
+  "viewModel": [
+    {
+      "items": [
+        {
+          "source": "remediationDetails",
+          "columns": [
+            {
+              "title":"Initial / Followup control",
+              "source":"initialOrFollowup",
+              "type":"selectOne",
+              "width":"10%"
+            },
+            {
+              "type":"feature",
+              "source":"sitesRemediated",
+              "title":"Site/s covered by remediation",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "source":"areaRemediatedHa",
+              "title":"Area (ha) being remediated",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"lengthRemediatedKm",
+              "title":"Length (km) being remediated",
+              "readonly":"readonly",
+              "width":"10%"
+            },
+            {
+              "type":"number",
+              "source":"numberOfStructuresInstalled",
+              "title":"Number of structures installed",
+              "width":"10%"
+            },
+            {
+              "title": "Type of remediation",
+              "source": "remediationType",
+              "type": "select2",
+              "width":"15%"
+            },
+            {
+              "title":"Type of remediation (if Other)",
+              "source":"otherRemediationType",
+              "type":"text",
+              "width":"18%"
+            },
+            {
+              "title":"Please identify any area/s that have shown evidence of off-site benefits",
+              "source":"offSiteBenefitSites",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) evident of improved remediation",
+              "source":"offSiteBenefitAreaHa",
+              "type":"feature",
+              "width":"10%",
+              "readonly":"readonly"
+            },
+            {
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "source":"evidenceOfBenefit",
+              "type":"textarea",
+              "width":"17%"
+            }
+          ],
+          "userAddedRows": true,
+          "type": "table"
+        }
+      ],
+      "type": "section"
+    }
+  ]
+}

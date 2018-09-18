@@ -8,59 +8,89 @@
       "columns": [
         {
           "dataType": "text",
-          "name": "siteId",
-          "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "description": "",
+          "name": "installedOrMaintained",
+          "constraints": [
+            "Installed",
+            "Maintained"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType":"number",
+          "name":"numberOfTreatmentsImplemented",
+          "validate":"required,min[0]"
+        },
+        {
+          "name":"improvedSites",
+          "dataType":"feature",
+          "validate":"required"
+        },
+        {
+          "name":"areaCoveringRegimeChangeHa",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(improvedSites)",
+            "dependents": {
+              "source": [
+                "improvedSites"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
+          "name":"lengthOfRegimeChangeKm",
+          "dataType":"number",
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(improvedSites)",
+            "dependents": {
+              "source": [
+                "improvedSites"
+              ]
+            }
+          }
+        },
+
+        {
           "dataType": "text",
           "description": "",
-          "name": "improvementType",
+          "name": "treatmentType",
           "constraints": [
-            "Removing barriers",
-            "Structure instalment",
+            "Removing barriers (e.g fish barriers)",
+            "Structure instalment or modification (e.g. weirs, flow gauging stations, fords, culverts)",
+            "Resnagging",
             "Other"
           ],
           "validate": "required"
         },
         {
           "dataType":"text",
-          "name":"otherImprovementType",
-          "description":"Please specify the action if Other (specify in notes) was selected in the Type of action column.",
+          "name":"otherTreatmentType",
           "behaviour":[
             {
-              "condition": "improvementType == \"Other\"",
+              "condition": "treatmentType == \"Other\"",
               "type": "enable"
             }
           ],
           "validate":"required"
         },
         {
-          "name":"improvementObjective",
+          "name":"treatmentObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":"Aim of the action - e.g. hydrological regime change from X to Y"
         },
         {
-          "name":"numberOfActions",
+          "name":"sitesOfCatchmentManaged",
+          "dataType":"feature"
+        },
+        {
+          "name":"areaOfCatchmentManagedHa",
           "dataType":"number",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Area improved by hydrological regime change"
         }
       ]
     }
@@ -72,34 +102,68 @@
           "source": "hydrologicalRegimeDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"siteId",
-              "title":"Area (ha) improved by hydrological regime change",
-              "width":"20%"
+              "type":"selectOne",
+              "source":"installedOrMaintained",
+              "title":"Installed or maintained?",
+              "width":"10%"
             },
             {
-              "title": "Type of action",
-              "source": "improvementType",
+              "title":"Number of treatments implemented to improve water management",
+              "type":"number",
+              "source":"numberOfTreatmentsImplemented",
+              "width":"5%"
+            },
+            {
+              "type":"feature",
+              "source":"improvedSites",
+              "title":"Site/s where hydrological regimes are being improved",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "readonly":"readonly",
+              "source":"areaCoveringRegimeChangeHa",
+              "title":"Area (ha) covering the hydrological regime change",
+              "width":"5%"
+            },
+            {
+              "type":"number",
+              "readonly":"readonly",
+              "source":"lengthOfRegimeChangeKm",
+              "title":"Length (km) covering the hydrological regime change",
+              "width":"5%"
+            },
+
+            {
+              "title": "Type of treatment implemented to improve water management",
+              "source": "treatmentType",
               "type": "select2",
-              "width":"20%"
+              "width":"15%"
             },
             {
-              "title":"Type of action (if Other)",
-              "source":"otherImprovementType",
+              "title":"Type of treatment implemented (if Other)",
+              "source":"otherTreatmentType",
               "type":"text",
               "width":"20%"
             },
             {
-              "title":"Action aim (300 character limit)",
-              "source":"improvementObjective",
+              "title":"Hydrological treatment objective",
+              "source":"treatmentObjective",
               "type":"textarea",
-              "width":"30%"
+              "width":"20%"
             },
             {
-              "title":"Number of actions",
+              "title":"Site/s of catchment being managed as a result of this management action",
+              "dataType":"feature",
+              "source":"sitesOfCatchmentManaged",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) of catchment being managed as a result of this management action",
+              "source":"areaOfCatchmentManagedHa",
               "type":"number",
-              "source":"numberOfActions",
-              "width":"10%"
+              "width":"5%",
+              "readonly":"readonly"
             }
           ],
           "userAddedRows": true,

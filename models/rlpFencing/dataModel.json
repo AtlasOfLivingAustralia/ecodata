@@ -53,7 +53,7 @@
             {
               "type": "number",
               "source": "areaProtectedByFenceHa",
-              "preLabel": "Area protected by fence (Ha)",
+              "preLabel": "Area protected by fence (ha)",
               "css": "span3"
             },
             {
