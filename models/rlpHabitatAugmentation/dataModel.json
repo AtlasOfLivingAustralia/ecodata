@@ -89,7 +89,15 @@
         {
           "name":"areaBenefittedByHabitatAugmentationHa",
           "dataType":"number",
-          "validate":"min[0]"
+          "validate":"min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesBenefittedByHabitatAugmentation)",
+            "dependents": {
+              "source": [
+                "sitesBenefittedByHabitatAugmentation"
+              ]
+            }
+          }
         },
         {
           "name":"evidenceOfBenefit",

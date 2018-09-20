@@ -79,7 +79,15 @@
         {
           "name":"areaBenefittedByFireActionHa",
           "dataType":"number",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesBenefittedByFireAction)",
+            "dependents": {
+              "source": [
+                "sitesBenefittedByFireAction"
+              ]
+            }
+          }
         },
         {
           "name":"evidenceOfBenefit",

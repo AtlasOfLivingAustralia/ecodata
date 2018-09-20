@@ -90,7 +90,15 @@
           "name":"areaOfCatchmentManagedHa",
           "dataType":"number",
           "validate":"required,min[0]",
-          "description":"Area improved by hydrological regime change"
+          "description":"Area improved by hydrological regime change",
+          "computed": {
+            "expression": "$geom.areaHa(sitesOfCatchmentManaged)",
+            "dependents": {
+              "source": [
+                "sitesOfCatchmentManaged"
+              ]
+            }
+          }
         }
       ]
     }
