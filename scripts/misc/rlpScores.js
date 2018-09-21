@@ -50,13 +50,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Field day",
+               "filterValue": "Field days",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of field days"
@@ -78,13 +78,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Training / workshop event",
+               "filterValue": "Training / workshop events",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of training / workshop events"
@@ -106,13 +106,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Conference / seminar",
+               "filterValue": "Conferences / seminars",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of conferences / seminars"
@@ -134,12 +134,12 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "One-on-one technical advice interaction",
+               "filterValue": "One-on-one technical advice interactions",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
+               "property": "data.events.numberOfEvents",
                "type": "COUNT"
             }]
          }],
@@ -162,13 +162,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "On-ground trial / demonstration",
+               "filterValue": "On-ground trials / demonstrations",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of on-ground trials / demonstrations"
@@ -195,8 +195,8 @@ scores = [
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of on-ground works"
@@ -651,7 +651,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.farmManagementSurveys.numberOfFarmManagementSurveys",
             "type": "SUM"
          }],
          "label": "Number of farm management surveys conducted"
@@ -672,7 +672,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaCoveredByFaunaSurveyHa",
+            "property": "data.faunaSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area surveyed (ha) (fauna)"
@@ -693,7 +693,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.faunaSurveys.numberOfFaunaSurveys",
             "type": "SUM"
          }],
          "label": "Number of fauna surveys conducted"
@@ -714,7 +714,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaTreatedHa",
+            "property": "data.fireManagementDetails.areaTreatedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) treated by fire management action"
@@ -735,7 +735,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaCoveredByFloraSurveyHa",
+            "property": "data.floraSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area surveyed (ha) (flora)"
@@ -756,7 +756,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.floraSurveys.numberOfFloraSurveys",
             "type": "SUM"
          }],
          "label": "Number of flora surveys conducted"
