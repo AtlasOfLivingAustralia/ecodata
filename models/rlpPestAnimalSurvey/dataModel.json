@@ -162,7 +162,7 @@
                 {
                   "source": "surveyTechnique",
                   "title": "Survey technique",
-                  "type": "text",
+                  "type": "select2",
                   "width": "15%"
                 },
                 {

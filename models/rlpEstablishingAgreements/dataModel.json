@@ -126,7 +126,8 @@
 
           ],
           "type": "table",
-          "source":"agreements"
+          "source":"agreements",
+          "userAddedRows":true
         }
       ],
       "type": "section"

@@ -161,8 +161,8 @@
             {
               "title":"Area (ha) evident of improved remediation",
               "source":"offSiteBenefitAreaHa",
-              "type":"feature",
-              "width":"10%",
+              "type":"number",
+              "width":"5%",
               "readonly":"readonly"
             },
             {

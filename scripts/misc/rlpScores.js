@@ -50,13 +50,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Field day",
+               "filterValue": "Field days",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of field days"
@@ -78,13 +78,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Training / workshop event",
+               "filterValue": "Training / workshop events",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of training / workshop events"
@@ -106,13 +106,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "Conference / seminar",
+               "filterValue": "Conferences / seminars",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of conferences / seminars"
@@ -134,12 +134,12 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "One-on-one technical advice interaction",
+               "filterValue": "One-on-one technical advice interactions",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
+               "property": "data.events.numberOfEvents",
                "type": "COUNT"
             }]
          }],
@@ -162,13 +162,13 @@ scores = [
          },
          "childAggregations": [{
             "filter": {
-               "filterValue": "On-ground trial / demonstration",
+               "filterValue": "On-ground trials / demonstrations",
                "property": "data.events.eventType",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of on-ground trials / demonstrations"
@@ -195,8 +195,8 @@ scores = [
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.events.eventType",
-               "type": "COUNT"
+               "property": "data.events.numberOfEvents",
+               "type": "SUM"
             }]
          }],
          "label": "Number of on-ground works"
@@ -282,11 +282,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Initial",
-               "property": "data.pestAnimalsControlled.initialOrFollowup",
+               "property": "data.areasControlled.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.pestAnimalsControlled.areaControlledHa",
+               "property": "data.areasControlled.areaControlledHa",
                "type": "SUM"
             }]
          }],
@@ -310,11 +310,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Follow-up",
-               "property": "data.pestAnimalsControlled.initialOrFollowup",
+               "property": "data.areasControlled.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.pestAnimalsControlled.areaControlledHa",
+               "property": "data.areasControlled.areaControlledHa",
                "type": "SUM"
             }]
          }],
@@ -441,7 +441,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfAgreements",
+            "property": "data.agreements.numberOfAgreements",
             "type": "SUM"
          }],
          "label": "Number of agreements"
@@ -462,7 +462,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaCoveredByAgreementsHa",
+            "property": "data.agreements.areaCoveredByAgreementsHa",
             "type": "SUM"
          }],
          "label": "Area (ha) covered by agreements"
@@ -483,7 +483,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysMaintainingAgreements",
+            "property": "data.agreements.numberOfDaysMaintainingAgreements",
             "type": "SUM"
          }],
          "label": "Number of days maintaining agreements"
@@ -609,7 +609,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberMonitoringRegimesEstablished",
+            "property": "data.monitoringRegimes.numberMonitoringRegimesEstablished",
             "type": "SUM"
          }],
          "label": "Number of monitoring regimes established"
@@ -630,7 +630,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysMaintainingMonitoringRegimes",
+            "property": "data.monitoringRegimes.numberOfDaysMaintainingMonitoringRegimes",
             "type": "SUM"
          }],
          "label": "Number of days maintaining monitoring regimes"
@@ -651,7 +651,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.farmManagementSurveys.numberOfFarmManagementSurveys",
             "type": "SUM"
          }],
          "label": "Number of farm management surveys conducted"
@@ -672,7 +672,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaCoveredByFaunaSurveyHa",
+            "property": "data.faunaSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area surveyed (ha) (fauna)"
@@ -693,7 +693,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.faunaSurveys.numberOfFaunaSurveys",
             "type": "SUM"
          }],
          "label": "Number of fauna surveys conducted"
@@ -714,7 +714,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaTreatedHa",
+            "property": "data.fireManagementDetails.areaTreatedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) treated by fire management action"
@@ -735,7 +735,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaCoveredByFloraSurveyHa",
+            "property": "data.floraSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area surveyed (ha) (flora)"
@@ -756,7 +756,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.floraSurveys.numberOfFloraSurveys",
             "type": "SUM"
          }],
          "label": "Number of flora surveys conducted"
@@ -777,7 +777,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.habitatAugmentationDetails.areaAugmentedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) of augmentation"
@@ -798,7 +798,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfStructures",
+            "property": "data.habitatAugmentationDetails.numberOfStructuresInstalled",
             "type": "SUM"
          }],
          "label": "Number of structures or installations"
@@ -840,7 +840,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.hydrologicalRegimeDetails.numberOfActions",
+            "property": "data.hydrologicalRegimeDetails.numberOfTreatmentsImplemented",
             "type": "SUM"
          }],
          "label": "Number of treatments implemented to improve water management"
@@ -861,7 +861,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.landManagementDetails.areaImplementedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) covered by practice change"
@@ -882,7 +882,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.diseaseManagementDetails.areaTreatedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) treated for disease"
@@ -903,7 +903,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberGroupsNegotiatedWith",
+            "property": "data.negotiations.numberOfGroupsOrIndividuals",
             "type": "SUM"
          }],
          "label": "Number of groups negotiated with"
@@ -945,7 +945,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.pestAnimalSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) surveyed for pest animals"
@@ -966,7 +966,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.pestAnimalSurveys.numberOfPestAnimalSurveys",
             "type": "SUM"
          }],
          "label": "Number of pest animal surveys conducted"
@@ -987,7 +987,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.plantSurvivalSurveys.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area surveyed (ha) for plant survival"
@@ -1008,7 +1008,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.plantSurvivalSurveys.numberOfPlantSurvivalSurveys",
             "type": "SUM"
          }],
          "label": "Number of plant survival surveys conducted"
@@ -1029,7 +1029,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberPlanningDocuments",
+            "property": "data.documents.numberPlanningDocuments",
             "type": "SUM"
          }],
          "label": "Number of planning and delivery documents for delivery of the project services and monitoring"
@@ -1050,7 +1050,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysProjectPlanning",
+            "property": "data.documents.numberOfDaysAdministeringProjectPlans",
             "type": "SUM"
          }],
          "label": "Number of days project planning / preparation"
@@ -1071,7 +1071,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaRemediatedHa",
+            "property": "data.remediationDetails.areaRemediatedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) remediated"
@@ -1092,7 +1092,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.lengthRemediatedKm",
+            "property": "data.remediationDetails.lengthRemediatedKm",
             "type": "SUM"
          }],
          "label": "Length (km) remediated"
@@ -1115,11 +1115,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Initial",
-               "property": "data.weedTreatmentDetails.activityType",
+               "property": "data.weedSpeciesTreated.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedTreatmentDetails.areaHa",
+               "property": "data.weedSpeciesTreated.areaTreatedHa",
                "type": "SUM"
             }]
          }],
@@ -1143,11 +1143,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Follow-up",
-               "property": "data.weedTreatmentDetails.activityType",
+               "property": "data.weedSpeciesTreated.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedTreatmentDetails.areaHa",
+               "property": "data.weedSpeciesTreated.areaTreatedHa",
                "type": "SUM"
             }]
          }],
@@ -1169,8 +1169,15 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
-            "type": "SUM"
+            "filter": {
+               "filterValue": "Initial",
+               "property": "data.revegetationArea.initialOrMaintenance",
+               "type": "filter"
+            },
+            "childAggregations": [{
+               "property": "data.revegetationArea.areaRevegetatedHa",
+               "type": "SUM"
+            }]
          }],
          "label": "Area of habitat revegetated (ha)"
       },
@@ -1190,7 +1197,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysCollectingSeed",
+            "property": "data.revegetationArea.revegetationDetails.numberOfDaysCollectingSeed",
             "type": "SUM"
          }],
          "label": "Number of days collecting seed"
@@ -1211,7 +1218,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysPropogatingPlants",
+            "property": "data.revegetationArea.revegetationDetails.numberOfDaysPropagatingPlants",
             "type": "SUM"
          }],
          "label": "Number of days propagating plants"
@@ -1232,8 +1239,15 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaMaintainedHa",
-            "type": "SUM"
+            "filter": {
+               "filterValue": "Maintenance",
+               "property": "data.revegetationArea.initialOrMaintenance",
+               "type": "filter"
+            },
+            "childAggregations": [{
+               "property": "data.revegetationArea.areaRevegetatedHa",
+               "type": "SUM"
+            }]
          }],
          "label": "Area (ha) of revegetated habitat maintained"
       },
@@ -1253,7 +1267,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.areaHa",
+            "property": "data.sitePreparationDetails.areaPreparedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) of site preparation"
@@ -1274,7 +1288,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfDaysPreparingSites",
+            "property": "data.sitePreparationDetails.numberOfDaysPreparingSite",
             "type": "SUM"
          }],
          "label": "Number of days preparing site/s"
@@ -1295,7 +1309,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.skillsAndKnowledgeSurveys.numberOfSkillsAndKnowledgeSurveys",
             "type": "SUM"
          }],
          "label": "Number of skills and knowledge surveys conducted"
@@ -1316,7 +1330,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSoilTests",
+            "property": "data.soilTestingDetails.numberOfSoilTests",
             "type": "SUM"
          }],
          "label": "Number of soil tests conducted in targeted areas"
@@ -1337,7 +1351,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfInterventions",
+            "property": "data.interventionDetails.numberOfInterventions",
             "type": "SUM"
          }],
          "label": "Number of interventions"
@@ -1358,7 +1372,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.waterQualitySurveySites.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) surveyed for water quality"
@@ -1379,7 +1393,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.waterQualitySurveySites.numberOfSurveysConducted",
             "type": "SUM"
          }],
          "label": "Number of water quality surveys"
@@ -1400,7 +1414,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.weedDistributionSurveySites.areaSurveyedHa",
             "type": "SUM"
          }],
          "label": "Area (ha) surveyed for weeds"
@@ -1421,7 +1435,7 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.numberOfSurveys",
+            "property": "data.weedDistributionSurveySites.numberOfSurveysConducted",
             "type": "SUM"
          }],
          "label": "Number of weed distribution surveys conducted"
