@@ -50,6 +50,12 @@ class UrlMappings {
             controller = 'activity'
             action = 'deleteByProjectActivity'
         }
+
+        "/ws/activityBulkDelete" {
+            controller = 'activity'
+            action = 'bulkDelete'
+        }
+
         "/ws/listForUser/$id?" {
             controller = 'activity'
             action = 'listForUser'

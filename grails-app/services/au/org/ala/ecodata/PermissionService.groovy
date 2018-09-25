@@ -55,6 +55,26 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    Boolean canUserModerateProjects(String userId, String projectIds) {
+        Boolean userHasPermission = false
+
+        if (userId && projectIds) {
+            userHasPermission = true
+            List ids = projectIds.split(',')
+            ids.each { String projectId ->
+                def ups = getUserAccessForEntity(userId, Project, projectId)
+                ups = ups.findAll {
+                    it.accessLevel.code >= AccessLevel.moderator.code
+                }
+
+                userHasPermission &= !!ups
+            }
+        }
+
+        log.debug "userHasPermission = ${userHasPermission}"
+        return userHasPermission // bolean
+    }
+
     /**
      * Given a userId and a list of projects, check if the user has edit permission on each project.
      * The function returns a map with projectId as key and boolean for permission. Null if project is not found.
@@ -143,7 +163,7 @@ class PermissionService {
     /*
         Bulk load members of Project to improve loading perforamnce of a project which has large number of memebers
      */
-    def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
+    def getMembersForProject(String projectId, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) {
         def up = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevelInList(projectId, Project.class.name, AccessLevel.starred, roles)
         Map out = [:]
         List userIds = []
@@ -180,7 +200,7 @@ class PermissionService {
      * @param roles Member roles
      * @return One page of project member details
      */
-    def getMembersForProjectPerPage(String projectId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.editor, AccessLevel.projectParticipant]) {
+    def getMembersForProjectPerPage(String projectId, Integer offset, Integer max, List roles = [AccessLevel.admin, AccessLevel.caseManager, AccessLevel.moderator, AccessLevel.editor, AccessLevel.projectParticipant]) {
         List admins = UserPermission.findAllByEntityIdAndEntityTypeAndAccessLevelNotEqualAndAccessLevel(projectId, Project.class.name, AccessLevel.starred, AccessLevel.admin)
 
         BuildableCriteria criteria = UserPermission.createCriteria()

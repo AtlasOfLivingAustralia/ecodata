@@ -1,6 +1,8 @@
 package au.org.ala.ecodata
 
 import grails.converters.JSON
+import org.springframework.http.HttpStatus
+
 import static au.org.ala.ecodata.Status.*
 import static org.apache.http.HttpStatus.*
 
@@ -719,6 +721,24 @@ class PermissionsController {
     }
 
     /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#moderator moderator}
+     * level access or higher for a comma separated list of {@link Project projects}.
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def canUserModerateProjects() {
+        String userId = params.userId
+        String projectIds = params.projectIds
+
+        if (userId && projectIds) {
+            Map out = [userCanModerate: permissionService.canUserModerateProjects(userId, projectIds)]
+            render out as JSON
+        } else {
+            render status: HttpStatus.BAD_REQUEST, text: 'Required params not provided: userId, projectIds'
+        }
+    }
+
+    /**
      * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#editor editor}
      * level access or higher for a given {@link Project project}
      *
@@ -780,6 +800,29 @@ class PermissionsController {
             if (project) {
                 UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.caseManager)
                 render([userIsCaseManager: permission != null] as JSON)
+            } else {
+                render status: 404, text: "Project not found for projectId: ${projectId}"
+            }
+        } else {
+            render status: 400, text: 'Required params not provided: userId, projectId'
+        }
+    }
+
+    /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#moderator moderator}
+     * level access for a given {@link Project project}
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserModeratorForProject() {
+        String userId = params.userId
+        String projectId = params.projectId
+
+        if (userId && projectId) {
+            Project project = Project.findByProjectId(projectId)
+            if (project) {
+                UserPermission permission = UserPermission.findByUserIdAndEntityIdAndAccessLevel(userId, projectId, AccessLevel.moderator)
+                render([userIsModerator: permission != null] as JSON)
             } else {
                 render status: 404, text: "Project not found for projectId: ${projectId}"
             }

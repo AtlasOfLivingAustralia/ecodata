@@ -58,6 +58,20 @@ class ActivityController {
         }
     }
 
+    @RequireApiKey
+    def bulkDelete() {
+        boolean destroy = params.destroy == null ? false : params.destroy.toBoolean()
+        Map payload = request.JSON
+        List ids = payload.ids
+        if (ids) {
+            Map resp = activityService.bulkDelete(ids, destroy)
+            render (status: 200, text: [message: 'deleted', details: resp])
+        } else {
+            response.status = 404
+            render status:404, text: [message: 'Please provide property "ids" in JSON payload']
+        }
+    }
+
     /**
      * Deletes all activities associated with project activityId.
      *
