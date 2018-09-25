@@ -41,7 +41,7 @@ class PropertyAccessor {
         return false
     }
 
-    public List<Map> unroll(Map output) {
+    private List<Map> unrollSingle(Map output) {
         List<Map> unrolled = []
         int i = 0
         def value = output
@@ -70,6 +70,28 @@ class PropertyAccessor {
         }
         unrolled
     }
+
+    /**
+     * Calls unrollSingle until no more results are returned to unroll all arrays in the property path.
+     * @param toUnroll the data to unroll.
+     */
+    List<Map> unroll(Map toUnroll) {
+
+        List results = [toUnroll]
+        List tmpResults = results
+
+        while (tmpResults.size() > 0) {
+            tmpResults = []
+            results.each { item ->
+                tmpResults.addAll(unrollSingle(item))
+            }
+            if (tmpResults.size > 0) {
+                results = tmpResults
+            }
+        }
+        results
+    }
+
 
     /** Returns the value of the nested property from the supplied data object */
     def getPropertyValue(data) {
