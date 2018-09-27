@@ -25,7 +25,8 @@
         {
           "name":"dateRange",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name":"sitesSurveyed",
@@ -78,6 +79,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -89,7 +94,7 @@
               "type":"row",
               "items":[
                 {
-                  "preLabel": "Baseline survey or indicator survey?",
+                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
                   "source": "baselineOrIndicatorSurvey",
                   "type": "selectOne",
                   "css":"span3"
@@ -131,6 +136,7 @@
             {
               "type":"table",
               "userAddedRows":true,
+              "addRowText":"Add a species",
               "source":"faunaSurveyDetails",
               "columns":[
                 {
@@ -166,6 +172,16 @@
           "userAddedRows": true,
           "addRowText":"New survey site",
           "type": "repeat"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

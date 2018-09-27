@@ -63,8 +63,11 @@
           "validate": "required,max[300]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
-
   ],
   "viewModel": [
 
@@ -129,6 +132,16 @@
         }
       ],
       "type": "section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"image",
+          "source":"photographicEvidence",
+          "preLabel":"Optionally attach photos"
+        }
+      ]
     }
   ]
 }

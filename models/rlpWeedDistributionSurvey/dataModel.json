@@ -103,7 +103,7 @@
               "type": "row",
               "items": [
                 {
-                  "preLabel": "Baseline or indicator survey?",
+                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
                   "source": "baselineOrIndicator",
                   "type": "selectOne",
                   "css": "span3"

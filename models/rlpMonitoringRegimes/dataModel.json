@@ -7,6 +7,19 @@
       "dataType":"list",
       "columns":[
         {
+          "dataType":"text",
+          "name":"typeOfMonitoringRegime",
+          "validate":"required",
+          "constraints":[
+            "Ramsar",
+            "Threatened Species",
+            "World Heritage",
+            "Threatened Ecological Communities",
+            "Soil, biodiversity & vegetation",
+            "Climate change & market demands"
+          ]
+        },
+        {
           "dataType": "text",
           "name": "establishedOrMaintained",
           "validate": "required",
@@ -23,15 +36,20 @@
         {
           "dataType": "number",
           "name": "numberOfDaysMaintainingMonitoringRegimes",
-          "validate": "required,min[0]"
+          "validate": "required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType": "text",
           "name": "monitoringRegimeObjective",
           "validate": "required,maxSize[500]",
-          "description":"What information will these monitoring regimes capture and how will this information be used"
+          "description":"What type of monitoring and reporting is being established/maintained? What information will these monitoring regimes capture?"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
 
   ],
@@ -44,10 +62,16 @@
           "source":"monitoringRegimes",
           "columns": [
             {
+              "source":"typeOfMonitoringRegime",
+              "type":"selectOne",
+              "title":"Type of monitoring regime",
+              "width":"20%"
+            },
+            {
               "source":"establishedOrMaintained",
               "type":"selectOne",
               "title":"Established or maintained?",
-              "width":"25%"
+              "width":"15%"
             },
             {
               "source": "numberMonitoringRegimesEstablished",
@@ -67,6 +91,16 @@
               "type": "textarea",
               "rows": 3,
               "width":"55%"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }

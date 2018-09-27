@@ -42,7 +42,7 @@
           "source": "farmManagementSurveys",
           "columns": [
             {
-              "title": "Baseline or indicator survey?",
+              "title": "Baseline survey or indicator (follow-up) survey?",
               "source": "baselineOrIndicatorSurvey",
               "type": "selectOne",
               "width":"25%"

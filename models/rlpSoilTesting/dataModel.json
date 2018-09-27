@@ -23,7 +23,8 @@
         {
           "dataType":"text",
           "name":"dateRange",
-          "validate":"required,maxSize[100]"
+          "validate":"required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name":"sitesTested",

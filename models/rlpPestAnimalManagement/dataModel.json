@@ -119,7 +119,7 @@
           "type": "repeat",
           "source": "areasControlled",
           "userAddedRows":true,
-          "addRowText":"Add controlled area",
+          "addRowText":"Add a new controlled area",
           "items": [
             {
               "type": "row",
@@ -196,7 +196,8 @@
                     }
                   ],
                   "userAddedRows": true,
-                  "type": "table"
+                  "type": "table",
+                  "addRowText":"Add a species"
                 }
               ]
             }
