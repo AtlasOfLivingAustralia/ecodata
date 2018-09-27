@@ -54,7 +54,7 @@
               "type":"select2",
               "source":"typeOfGroup",
               "title":"Which sector does the group belong to?",
-              "width":"20%"
+              "width":"25%"
             },
             {
               "type":"selectOne",

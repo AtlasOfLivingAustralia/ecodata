@@ -70,7 +70,7 @@
               "title": "Baseline survey or indicator (follow-up) survey?",
               "source": "baselineOrIndictorSurvey",
               "type": "selectOne",
-              "width":"10%"
+              "width":"15%"
             },
             {
               "title":"Number of skills and knowledge surveys conducted",
@@ -94,13 +94,14 @@
               "title":"Survey technique",
               "type":"textarea",
               "source":"surveyTechnique",
-              "width":"15%"
+              "width":"22%",
+              "rows":3
             },
             {
               "title":"Survey objective",
               "type":"textarea",
               "source":"surveyObjective",
-              "width":"15%",
+              "width":"23%",
               "rows":3
             },
             {
@@ -113,19 +114,19 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"image",
-          "source":"photographicEvidence",
-          "preLabel":"Optionally attach photos"
-        }
-      ]
     }
   ]
 }

@@ -136,19 +136,19 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"image",
-          "source":"photographicEvidence",
-          "preLabel":"Optionally attach photos"
-        }
-      ]
     }
   ]
 }

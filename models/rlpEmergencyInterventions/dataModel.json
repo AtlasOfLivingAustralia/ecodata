@@ -214,19 +214,19 @@
           "userAddedRows": true,
           "type": "repeat",
           "addRowText":"Add intervention site"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"
-    },
-    {
-      "type":"row",
-      "items":[
-        {
-          "type":"image",
-          "source":"photographicEvidence",
-          "preLabel":"Optionally attach photos"
-        }
-      ]
     }
   ]
 }
