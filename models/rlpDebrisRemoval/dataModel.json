@@ -69,7 +69,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[300]"
         },
         {
           "dataType":"number",

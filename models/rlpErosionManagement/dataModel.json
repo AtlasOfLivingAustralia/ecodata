@@ -90,7 +90,7 @@
         {
           "dataType":"text",
           "name":"otherErosionManagementMethod",
-          "validate":"required",
+          "validate":"required,max[300]",
           "behaviour":[
             {
               "condition": "erosionManagementMethod == \"Other\"",

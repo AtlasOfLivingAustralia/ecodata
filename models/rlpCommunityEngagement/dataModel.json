@@ -60,7 +60,7 @@
         {
           "dataType": "text",
           "name": "eventPurpose",
-          "validate": "required,max[300]"
+          "validate": "required,maxSize[300]"
         }
       ]
     },

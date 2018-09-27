@@ -54,7 +54,7 @@
         {
           "name":"purposeOfIntervention",
           "dataType":"text",
-          "validate":"required",
+          "validate":"required,maxSize[500]",
           "description":"This field may be used to list What type of intervention is required. A list of multiple interventions need to be separated with a ';'."
         },
         {

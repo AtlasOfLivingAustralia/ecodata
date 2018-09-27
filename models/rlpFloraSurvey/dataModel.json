@@ -57,13 +57,14 @@
             },
             {
               "dataType": "text",
-              "name": "threatenedEcologicalCommunity"
+              "name": "threatenedEcologicalCommunity",
+              "validate":"maxSize[300]"
             },
             {
               "name":"surveyTechnique",
               "description":"What/how will the survey capture the flora data",
               "dataType":"text",
-              "validate":"required"
+              "validate":"required,maxSize[300]"
             },
             {
               "name":"individualsOrGroups",

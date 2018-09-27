@@ -97,7 +97,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[100]"
         },
         {
           "name":"treatmentObjective",

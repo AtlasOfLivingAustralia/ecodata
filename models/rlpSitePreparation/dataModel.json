@@ -94,7 +94,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required",
+          "validate":"required,maxSize[100]",
           "description":"This field may be used to list multiple preparation activities. This list of activities need to be separated with a ';'"
         },
         {

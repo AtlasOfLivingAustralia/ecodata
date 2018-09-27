@@ -50,7 +50,7 @@
           "dataType": "text",
           "description": "",
           "name": "targetDisease",
-          "validate": "required"
+          "validate": "required,maxSize[100]"
         },
         {
           "dataType": "text",
@@ -79,7 +79,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required,max[100]"
+          "validate":"required,maxSize[100]"
         },
         {
           "name":"treatmentObjective",

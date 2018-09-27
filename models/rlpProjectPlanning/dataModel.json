@@ -20,7 +20,7 @@
         {
           "dataType": "text",
           "name": "purposeOfProjectPlans",
-          "validate": "required",
+          "validate": "required,maxSize[300]",
           "description":"Please identify why these plans and/or documents were needed"
         }
       ]

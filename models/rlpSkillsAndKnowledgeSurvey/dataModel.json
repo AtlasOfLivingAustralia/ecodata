@@ -35,7 +35,7 @@
         {
           "dataType":"text",
           "name":"surveyTechnique",
-          "validate":"required",
+          "validate":"required,maxSize[300]",
           "constraints":[
             "Other"
           ],
@@ -44,7 +44,7 @@
         {
           "dataType":"text",
           "name":"surveyObjective",
-          "validate":"required",
+          "validate":"required,maxSize[300]",
           "description":"How will the information obtained from the surveys be used"
         },
         {

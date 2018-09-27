@@ -30,7 +30,7 @@
         {
           "dataType":"text",
           "name":"surveyPurpose",
-          "validate":"required,maxLength[500]",
+          "validate":"required,maxSize[500]",
           "description": "What will the survey aim to capture?"
         }
       ]

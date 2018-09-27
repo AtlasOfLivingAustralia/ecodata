@@ -74,7 +74,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[300]"
         },
         {
           "name":"treatmentObjective",
