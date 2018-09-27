@@ -23,7 +23,8 @@
         {
           "dataType":"number",
           "name":"daysSpentOnMaintenanceOfEnclosures",
-          "validate":"min[0]"
+          "validate":"min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType": "feature",
@@ -64,9 +65,15 @@
             {
               "dataType": "species",
               "description": "The threatened species protected by the enclosure",
-              "name": "targetSpecies",
+              "name": "protectedSpecies",
               "dwcAttribute": "scientificName",
               "validate": "required"
+            },
+            {
+              "dataType": "text",
+              "description": "",
+              "name": "targetFeralSpecies",
+              "validate": "required,maxSize[300]"
             },
             {
               "dataType":"text",
@@ -91,6 +98,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -153,31 +164,49 @@
               "type":"table",
               "userAddedRows": true,
               "source":"speciesProtected",
+              "addRowText":"Add a species",
               "columns":[
                 {
-                  "title": "Targeted threatened species",
-                  "source": "targetSpecies",
+                  "title": "Targeted species being protected",
+                  "source": "protectedSpecies",
                   "type": "speciesSelect",
-                  "width":"50%"
+                  "width":"35%"
+                },
+                {
+                  "title": "Targeted feral species being controlled",
+                  "source": "targetFeralSpecies",
+                  "type": "text",
+                  "width":"40%"
                 },
                 {
                   "title":"Individuals or populations?",
                   "source":"individualsOrPopulations",
                   "type":"selectOne",
-                  "width":"30%"
+                  "width":"15%"
                 },
                 {
                   "title":"Number of populations (or individuals) protected within feral free enclosures",
                   "source":"numberOfPopulationsOrIndividualsProtected",
                   "type":"number",
-                  "width":"20%"
+                  "width":"10%"
                 }
               ]
             }
 
           ],
           "userAddedRows": true,
-          "type": "repeat"
+          "type": "repeat",
+          "addRowText":"Add a new feral free area"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

@@ -24,12 +24,13 @@
         {
           "dataType":"number",
           "name":"numberOfDaysConductingSurveys",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"text",
           "name":"surveyPurpose",
-          "validate":"required,maxLength[500]",
+          "validate":"required,maxSize[500]",
           "description": "What will the survey aim to capture?"
         }
       ]
@@ -42,7 +43,7 @@
           "source": "farmManagementSurveys",
           "columns": [
             {
-              "title": "Baseline or indicator survey?",
+              "title": "Baseline survey or indicator (follow-up) survey?",
               "source": "baselineOrIndicatorSurvey",
               "type": "selectOne",
               "width":"25%"

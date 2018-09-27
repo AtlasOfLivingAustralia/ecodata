@@ -58,6 +58,15 @@
           "validate":"required,min[0]"
         },
         {
+          "name": "areaRequired",
+          "dataType": "text",
+          "validate": "required",
+          "constraints": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
           "dataType": "feature",
           "name": "sitesCoveredByPlan",
           "validate": "required"
@@ -113,25 +122,31 @@
               "title": "Number of plans developed",
               "source": "numberOfPlansDeveloped",
               "type": "number",
-              "width":"10%"
+              "width":"8%"
+            },
+            {
+              "title": "Will this report invoice for area covered?",
+              "source": "areaRequired",
+              "type": "selectOne",
+              "width": "10%"
             },
             {
               "title":"Sites/s covered by plan/s",
               "type":"feature",
               "source":"sitesCoveredByPlan",
-              "width":"10%"
+              "width":"8%"
             },
             {
               "title":"Area (ha) covered by plan/s",
               "source":"areaCoveredByPlanHa",
               "type":"number",
-              "width":"10%",
+              "width":"8%",
               "readonly":"readonly"
             },
             {
               "type":"textarea",
               "source":"speciesOrTECCoveredByPlan",
-              "width":"30%",
+              "width":"26%",
               "title":"Species and/or Threatened ecological communities covered in plan"
             }
           ],

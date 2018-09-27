@@ -41,12 +41,8 @@
         {
           "name":"numberOfDaysPreparingSite",
           "dataType":"number",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"numberOParticipantsPreparingSite",
-          "dataType":"number",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType": "stringList",
@@ -98,7 +94,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required",
+          "validate":"required,maxSize[100]",
           "description":"This field may be used to list multiple preparation activities. This list of activities need to be separated with a ';'"
         },
         {
@@ -116,6 +112,10 @@
 
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -148,12 +148,6 @@
             {
               "title":"Number of days in preparing site",
               "source":"numberOfDaysPreparingSite",
-              "width":"10%",
-              "type":"number"
-            },
-            {
-              "title":"Number of participants preparing site",
-              "source":"numberOParticipantsPreparingSite",
               "width":"10%",
               "type":"number"
             },
@@ -191,6 +185,16 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

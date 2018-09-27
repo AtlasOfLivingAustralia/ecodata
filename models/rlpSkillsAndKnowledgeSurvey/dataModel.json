@@ -24,7 +24,8 @@
         {
           "dataType":"text",
           "name":"dateRange",
-          "validate":"required,maxSize[100]"
+          "validate":"required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "dataType":"number",
@@ -32,27 +33,9 @@
           "validate":"required,min[0]"
         },
         {
-          "name":"sitesSurveyed",
-          "dataType":"feature",
-        },
-        {
-          "name":"areaSurveyedHa",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.areaHa(sitesSurveyed)",
-            "dependents": {
-              "source": [
-                "sitesSurveyed"
-              ]
-            }
-          }
-        },
-
-        {
           "dataType":"text",
           "name":"surveyTechnique",
-          "validate":"required",
+          "validate":"required,maxSize[300]",
           "constraints":[
             "Other"
           ],
@@ -61,15 +44,20 @@
         {
           "dataType":"text",
           "name":"surveyObjective",
-          "validate":"required",
+          "validate":"required,maxSize[300]",
           "description":"How will the information obtained from the surveys be used"
         },
         {
           "dataType":"number",
           "name":"numberOfDaysAdministeringSurveys",
-          "validate":"required,min[0]"
-        },
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
+        }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -79,10 +67,10 @@
           "source": "skillsAndKnowledgeSurveys",
           "columns": [
             {
-              "title": "Baseline or indicator survey?",
+              "title": "Baseline survey or indicator (follow-up) survey?",
               "source": "baselineOrIndictorSurvey",
               "type": "selectOne",
-              "width":"10%"
+              "width":"15%"
             },
             {
               "title":"Number of skills and knowledge surveys conducted",
@@ -103,29 +91,17 @@
               "width":"10%"
             },
             {
-              "type":"feature",
-              "source":"sitesSurveyed",
-              "title":"Site/s where surveys were conducted (if applicable)",
-              "width":"5%"
-            },
-            {
-              "type":"number",
-              "source":"areaSurveyedHa",
-              "title":"Area (ha) surveyed (if applicable)",
-              "readonly":"readonly",
-              "width":"5%"
-            },
-            {
               "title":"Survey technique",
               "type":"textarea",
               "source":"surveyTechnique",
-              "width":"15%"
+              "width":"22%",
+              "rows":3
             },
             {
               "title":"Survey objective",
               "type":"textarea",
               "source":"surveyObjective",
-              "width":"15%",
+              "width":"23%",
               "rows":3
             },
             {
@@ -138,6 +114,16 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

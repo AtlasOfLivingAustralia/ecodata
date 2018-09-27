@@ -12,6 +12,10 @@
       "name":"sitesPurpose",
       "description":"Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of what work/s are required to fix the area.",
       "validate":"required,maxSize[500]"
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
 
 
@@ -36,9 +40,16 @@
               "rows":5,
               "css":"span9"
             }
-
-
-
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
           ]
         }
       ],

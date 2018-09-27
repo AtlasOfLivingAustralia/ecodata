@@ -76,7 +76,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[100]"
         },
         {
           "dataType":"feature",
@@ -100,6 +100,10 @@
           "validate":"maxSize[300]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -174,6 +178,16 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

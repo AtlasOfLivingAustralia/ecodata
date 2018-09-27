@@ -79,7 +79,7 @@
         {
           "name":"areaBenefittedByFireActionHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesBenefittedByFireAction)",
             "dependents": {
@@ -92,9 +92,13 @@
         {
           "name":"evidenceOfBenefit",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"maxSize[300]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -164,6 +168,16 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

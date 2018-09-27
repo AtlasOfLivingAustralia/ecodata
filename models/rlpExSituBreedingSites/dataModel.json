@@ -32,12 +32,14 @@
         {
           "dataType":"number",
           "name":"numberOfDaysMaintainingBreedingPrograms",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"feature",
           "name":"sitesOfBreedingProgram",
-          "validate":"required"
+          "validate":"required",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"number",
@@ -99,6 +101,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -158,6 +164,7 @@
             {
               "type":"table",
               "userAddedRows":true,
+              "addRowText":"Add a species",
               "source":"speciesInBreedingProgram",
               "columns":[
                 {
@@ -197,7 +204,17 @@
           ],
           "userAddedRows": true,
           "type": "repeat",
-          "addRowText":"Add breeding program"
+          "addRowText":"Add a new breeding area"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"
