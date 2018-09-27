@@ -142,4 +142,28 @@ class PermissionServiceSpec extends Specification {
         new HashSet(users.collect{it.userId}).equals(userIds)
     }
 
+    void "A user with moderator role on a project must get access permission"() {
+
+        setup:
+        new UserPermission(entityId:'p1', entityType:Project.name, userId: '1', accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: '1', accessLevel:AccessLevel.editor.name()).save(flush:true, failOnError: true)
+        new UserPermission(entityId:'p2', entityType:Project.name, userId: '2', accessLevel:AccessLevel.moderator.name()).save(flush:true, failOnError: true)
+        when:
+        Boolean permission = service.canUserModerateProjects(userId, projectIds)
+
+        then:
+        permission == expectedReturnValue
+
+        where:
+        userId | projectIds | expectedReturnValue
+        null   | null       | false
+        ''     | ''         | false
+        '1'    | 'p1'       | true
+        '1'    | 'p1,p2'    | false
+        '1'    | 'p1,p2,p3' | false
+        '1'    | 'p2'       | false
+        '2'    | 'p1'       | false
+        '2'    | 'p2'       | true
+        '3'    | 'p1'       | false
+    }
 }

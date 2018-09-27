@@ -3,28 +3,58 @@
   "modelName": "RLP - Project planning",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberPlanningDocuments",
-      "validate": "required,min[0]"
+      "dataType":"list",
+      "name":"documents",
+      "columns":[
+        {
+          "dataType": "number",
+          "name": "numberPlanningDocuments",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfDaysAdministeringProjectPlans",
+          "validate": "required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
+        },
+        {
+          "dataType": "text",
+          "name": "purposeOfProjectPlans",
+          "validate": "required,maxSize[300]",
+          "description":"Please identify why these plans and/or documents were needed"
+        }
+      ]
     }
+
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+          "type": "table",
+          "userAddedRows":true,
+          "source":"documents",
+          "columns": [
             {
-              "type":"col",
-              "items":[
-                {
-                  "source": "numberPlanningDocuments",
-                  "preLabel": "Number of planning and delivery documents for delivery of the project services and monitoring",
-                  "type": "number"
-                }
-              ]
-            }
+              "source": "numberPlanningDocuments",
+              "title": "Number of planning and delivery documents for delivery of the project services and monitoring",
+              "type": "number",
+              "width":"15%"
+            },
+            {
+              "source": "numberOfDaysAdministeringProjectPlans",
+              "title": "Number of days administering project plans / delivery documents",
+              "type": "number",
+              "width":"15%"
 
+            },
+            {
+              "source": "purposeOfProjectPlans",
+              "title": "Purpose of these documents",
+              "type": "textarea",
+              "rows":3,
+              "width":"70%"
+            }
           ]
         }
       ],

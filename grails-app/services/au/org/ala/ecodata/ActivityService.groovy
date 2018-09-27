@@ -353,6 +353,27 @@ class ActivityService {
     }
 
     /**
+     * Deletes an activity by marking it as not 'active'.
+     *
+     * @param id
+     * @param destroy if true will really delete the object
+     * @return
+     */
+    Map bulkDelete(List activityIds, boolean destroy = false) {
+        Map result = [ success : true]
+
+        activityIds?.each { activityId ->
+            result[activityId] = delete(activityId, destroy)
+
+            if (result[activityId]?.status != 'ok') {
+                result['success'] = false
+            }
+        }
+
+        result
+    }
+
+    /**
      * Deletes each of the outputs associated with this activity.
      * @param activityId the ID of the activity to delete.
      * @param destroy whether to perform a soft delete or hard delete.

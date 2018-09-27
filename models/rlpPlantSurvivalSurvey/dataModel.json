@@ -3,30 +3,201 @@
   "modelName": "RLP - Plant survival survey",
   "dataModel": [
     {
-      "dataType": "number",
-      "name": "numberOfSurveys",
-      "validate": "required,min[0]"
+      "dataType": "list",
+      "name": "plantSurvivalSurveys",
+      "columns": [
+        {
+          "dataType": "text",
+          "description": "",
+          "name": "baselineOrIndicatorSurvey",
+          "constraints": [
+            "Baseline",
+            "Indicator"
+          ],
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "numberOfPlantSurvivalSurveys",
+          "validate": "required,min[0]"
+        },
+        {
+          "dataType": "text",
+          "name": "dateRange",
+          "validate": "required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
+        },
+        {
+          "name": "sitesSurveyed",
+          "dataType": "feature",
+          "validate": "required"
+        },
+        {
+          "name": "areaSurveyedHa",
+          "dataType": "number",
+          "validate": "required,min[1]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesSurveyed)",
+            "dependents": {
+              "source": [
+                "sitesSurveyed"
+              ]
+            }
+          }
+        },
+        {
+          "dataType":"list",
+          "name":"speciesSurveyed",
+          "columns":[
+            {
+              "dataType": "species",
+              "name": "speciesRecorded",
+              "validate": "required"
+            },
+            {
+              "dataType": "text",
+              "name": "surveyTechnique",
+              "validate": "required,maxSize[300]",
+              "description":"This field may be used to list multiple survey techniques. This list of survey techniques need to be separated with a ';'.  You may also identify 'What/how will the survey capture the plant survival data'",
+            },
+            {
+              "name": "individualsOrGroups",
+              "dataType": "text",
+              "constraints": [
+                "Individuals",
+                "Groups"
+              ],
+              "validate": "required"
+            },
+            {
+              "name": "numberOfSurvivingIndividualsOrGroups",
+              "dataType": "number",
+              "validate": "required,min[0]"
+            },
+            {
+              "name": "survivalRate",
+              "dataType": "number",
+              "validate": "required,min[0],max[100]",
+              "behaviour": [
+                {
+                  "condition": "baselineOrIndicatorSurvey == \"Indicator\"",
+                  "type": "enable"
+                }
+              ]
+            }
+          ]
+        }
+
+      ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
     {
       "items": [
         {
-          "type": "row",
-          "items": [
+
+          "items":[
             {
-              "type":"col",
+              "type":"row",
               "items":[
                 {
-                  "source": "numberOfSurveys",
+                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
+                  "source": "baselineOrIndicatorSurvey",
+                  "type": "selectOne",
+                  "css": "span3"
+                },
+                {
                   "preLabel": "Number of plant survival surveys conducted",
-                  "type": "number"
+                  "source": "numberOfPlantSurvivalSurveys",
+                  "type": "number",
+                  "css": "span3"
+                },
+                {
+                  "preLabel":"Date range",
+                  "source":"dateRange",
+                  "type":"text",
+                  "css":"span3"
+                }
+              ]
+            },
+            {
+              "type":"row",
+              "items":[
+                {
+                  "preLabel": "Site/s surveyed for plant survival",
+                  "source": "sitesSurveyed",
+                  "type": "feature",
+                  "css": "span3"
+                },
+                {
+                  "preLabel": "Area (ha) surveyed for plantSurvival",
+                  "source": "areaSurveyedHa",
+                  "readonly": "readonly",
+                  "type":"number",
+                  "css": "span3"
+                }
+              ]
+            },
+            {
+              "type":"table",
+              "source":"speciesSurveyed",
+              "userAddedRows":true,
+              "addRowText":"Add a species",
+              "columns":[
+                {
+                  "source": "speciesRecorded",
+                  "type": "speciesSelect",
+                  "width": "45%",
+                  "title":"Species recorded"
+                },
+                {
+                  "title": "Survey technique",
+                  "type": "textarea",
+                  "source": "surveyTechnique",
+                  "width": "20%"
+                },
+                {
+                  "source": "individualsOrGroups",
+                  "title": "Individuals or groups?",
+                  "type": "selectOne",
+                  "width": "15%"
+                },
+                {
+                  "source": "numberOfSurvivingIndividualsOrGroups",
+                  "title": "Number of individuals or groups surviving",
+                  "type": "number",
+                  "width": "10%"
+                },
+                {
+                  "source": "survivalRate",
+                  "title": "If follow-up (indicator) survey, what is the survival rate (%)",
+                  "type": "number",
+                  "width": "10%"
                 }
               ]
             }
 
+          ],
+          "source": "plantSurvivalSurveys",
+          "userAddedRows": true,
+          "type": "repeat",
+          "addRowText":"Add survey site"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
           ]
         }
+
       ],
       "type": "section"
     }

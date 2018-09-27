@@ -25,6 +25,7 @@ package au.org.ala.ecodata
 public enum AccessLevel {
     admin(100),
     caseManager(60),
+    moderator(50),
     editor(40),
     projectParticipant(30),
     starred(20)

@@ -64,6 +64,7 @@ class Activity {
     Date dateCreated
     Date lastUpdated
     String userId
+    Boolean embargoed
 
     /** An activity is considered complete if it's progress attribute is finished, deferred or cancelled. */
     public boolean isComplete() {
@@ -99,6 +100,7 @@ class Activity {
         projectStage nullable: true
         projectActivityId nullable: true
         userId nullable:true
+        embargoed nullable:true
     }
 
 }

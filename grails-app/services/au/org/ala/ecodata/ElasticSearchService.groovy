@@ -893,7 +893,7 @@ class ElasticSearchService {
             projectActivity.name = pActivity?.name ?: pActivity?.description
             projectActivity.endDate = pActivity.endDate
             projectActivity.projectActivityId = pActivity.projectActivityId
-            projectActivity.embargoed = pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date())
+            projectActivity.embargoed = (activity.embargoed == true) || (pActivity?.visibility?.embargoUntil && pActivity?.visibility?.embargoUntil.after(new Date()))
             projectActivity.embargoUntil = pActivity?.visibility?.embargoUntil ?: null
             projectActivity.methodType = pActivity?.methodType
             projectActivity.spatialAccuracy = pActivity?.spatialAccuracy

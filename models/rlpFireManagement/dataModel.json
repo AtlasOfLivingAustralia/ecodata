@@ -7,49 +7,43 @@
       "name": "fireManagementDetails",
       "columns": [
         {
-          "dataType": "text",
-          "name": "fireSiteId",
+          "name":"initialOrFollowup",
+          "dataType":"text",
+          "validate":"required",
+          "constraints":[
+            "Initial",
+            "Follow-up"
+          ]
+        },
+        {
+          "dataType": "feature",
+          "name": "sitesTreated",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "areaTreatedHa",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.areaHa(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
-          "dataType": "text",
-          "name": "protectedSiteId",
+          "dataType": "number",
+          "name": "lengthTreatedKm",
           "validate": "required",
-          "constraints": {
-            "config": {
-              "source": {
-                "context-path": "project.sites"
-              },
-              "mapping": [
-                {
-                  "target": "id",
-                  "source-path": "siteId"
-                },
-                {
-                  "target": "text",
-                  "source-path": "name"
-                }
+          "computed": {
+            "expression": "$geom.lengthKm(sitesTreated)",
+            "dependents": {
+              "source": [
+                "sitesTreated"
               ]
-            },
-            "type": "pre-populated"
+            }
           }
         },
         {
@@ -57,8 +51,12 @@
           "description": "",
           "name": "fireManagementType",
           "constraints": [
+            "Cultural burn",
             "Ecological burn",
+            "Grading",
             "Hazard reduction burn",
+            "Herbicide",
+            "Slashing",
             "Other"
           ],
           "validate": "required"
@@ -66,21 +64,41 @@
         {
           "dataType":"text",
           "name":"otherFireManagementType",
-          "description":"Please specify the fire management action if Other (specify in notes) was selected in the Type of fire management action column.",
           "behaviour":[
             {
               "condition": "fireManagementType == \"Other\"",
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[100]"
         },
         {
-          "name":"fireManagementObjective",
+          "name":"sitesBenefittedByFireAction",
+          "dataType":"feature"
+        },
+        {
+          "name":"areaBenefittedByFireActionHa",
+          "dataType":"number",
+          "validate":"min[0]",
+          "computed": {
+            "expression": "$geom.areaHa(sitesBenefittedByFireAction)",
+            "dependents": {
+              "source": [
+                "sitesBenefittedByFireAction"
+              ]
+            }
+          }
+        },
+        {
+          "name":"evidenceOfBenefit",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"maxSize[300]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -90,16 +108,30 @@
           "source": "fireManagementDetails",
           "columns": [
             {
-              "type":"select2",
-              "source":"fireSiteId",
-              "title":"Area (ha) fire management action was implemented",
+              "type":"selectOne",
+              "source":"initialOrFollowup",
+              "title":"Initial or follow-up control?",
               "width":"10%"
             },
             {
-              "type":"select2",
-              "source":"protectedSiteId",
-              "title":"Area (ha) protected by fire management action",
-              "width":"10%"
+              "type":"feature",
+              "source":"sitesTreated",
+              "width":"6%",
+              "title":"Site/s treated by fire management actions"
+            },
+            {
+              "type":"number",
+              "source":"areaTreatedHa",
+              "width":"6%",
+              "title":"Area (ha) treated by fire management action",
+              "readonly":"readonly"
+            },
+            {
+              "type":"number",
+              "source":"lengthTreatedKm",
+              "width":"6%",
+              "title":"Length (km) treated by fire management action",
+              "readonly":"readonly"
             },
             {
               "title": "Type of fire management action",
@@ -114,14 +146,38 @@
               "width":"20%"
             },
             {
-              "title":"Fire management action objective (300 character limit)",
-              "source":"fireManagementObjective",
+              "type":"feature",
+              "source":"sitesBenefittedByFireAction",
+              "width":"6%",
+              "title":"Please map any off-site area/s if they benefitted from this fire management action"
+            },
+            {
+              "type":"number",
+              "source":"areaBenefittedByFireActionHa",
+              "title":"Area (ha) protected by fire management action",
+              "width":"6%",
+              "readonly":"readonly"
+            },
+            {
               "type":"textarea",
-              "width":"40%"
+              "source":"evidenceOfBenefit",
+              "rows":3,
+              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+              "width":"20%"
             }
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

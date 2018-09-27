@@ -51,6 +51,10 @@
           "validate": "required,min[0]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -63,7 +67,7 @@
             {
               "type":"number",
               "source":"areaCoveredByAssessmentHa",
-              "preLabel":"Area covered by habitat assessment (Ha)",
+              "preLabel":"Area covered by habitat assessment (ha)",
               "css":"span3"
             },
             {
@@ -100,6 +104,16 @@
             {
               "type":"literal",
               "source":"<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }
