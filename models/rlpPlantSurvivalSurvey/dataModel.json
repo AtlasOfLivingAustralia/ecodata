@@ -89,6 +89,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -182,6 +186,16 @@
           "userAddedRows": true,
           "type": "repeat",
           "addRowText":"Add survey site"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
 
       ],

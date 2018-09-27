@@ -71,6 +71,10 @@
           "description":"How will the infromation obtained from the tests be used"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -135,6 +139,16 @@
         }
       ],
       "type": "section"
+    },
+    {
+      "type":"row",
+      "items":[
+        {
+          "type":"image",
+          "source":"photographicEvidence",
+          "preLabel":"Optionally attach photos"
+        }
+      ]
     }
   ]
 }

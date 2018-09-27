@@ -110,6 +110,10 @@
           ]
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -200,6 +204,16 @@
                   "addRowText":"Add a species"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }

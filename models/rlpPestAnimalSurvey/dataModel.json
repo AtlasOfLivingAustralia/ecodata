@@ -101,6 +101,10 @@
           ]
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -199,6 +203,16 @@
             {
               "type": "literal",
               "source": "<i>Note: to upload results and methodology of survey, refer to the documents tab.</i>"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }
