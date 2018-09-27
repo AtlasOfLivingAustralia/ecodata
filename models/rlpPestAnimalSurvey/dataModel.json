@@ -24,7 +24,8 @@
         {
           "dataType": "text",
           "name": "dateRange",
-          "validate": "required,maxSize[100]"
+          "validate": "required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name": "sitesSurveyed",
@@ -151,6 +152,7 @@
             {
               "type": "table",
               "userAddedRows": true,
+              "addRowText":"Add a species",
               "source":"pestAnimals",
               "columns": [
                 {
@@ -189,7 +191,7 @@
           "source": "pestAnimalSurveys",
           "userAddedRows": true,
           "type": "repeat",
-          "addRowText":"New survey"
+          "addRowText":"New survey site"
         },
         {
           "type": "row",

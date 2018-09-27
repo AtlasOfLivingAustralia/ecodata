@@ -14,7 +14,8 @@
         {
           "dataType": "number",
           "name": "numberOfDaysAdministeringProjectPlans",
-          "validate": "required,min[0]"
+          "validate": "required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType": "text",

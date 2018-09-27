@@ -33,24 +33,6 @@
           "validate":"required,min[0]"
         },
         {
-          "name":"sitesSurveyed",
-          "dataType":"feature",
-        },
-        {
-          "name":"areaSurveyedHa",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.areaHa(sitesSurveyed)",
-            "dependents": {
-              "source": [
-                "sitesSurveyed"
-              ]
-            }
-          }
-        },
-
-        {
           "dataType":"text",
           "name":"surveyTechnique",
           "validate":"required",
@@ -68,7 +50,8 @@
         {
           "dataType":"number",
           "name":"numberOfDaysAdministeringSurveys",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
       ]
     }
@@ -102,19 +85,6 @@
               "source":"numberOfParticipants",
               "type":"number",
               "width":"10%"
-            },
-            {
-              "type":"feature",
-              "source":"sitesSurveyed",
-              "title":"Site/s where surveys were conducted (if applicable)",
-              "width":"5%"
-            },
-            {
-              "type":"number",
-              "source":"areaSurveyedHa",
-              "title":"Area (ha) surveyed (if applicable)",
-              "readonly":"readonly",
-              "width":"5%"
             },
             {
               "title":"Survey technique",

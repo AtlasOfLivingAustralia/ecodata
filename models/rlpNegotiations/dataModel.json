@@ -37,7 +37,7 @@
         {
           "dataType":"text",
           "name":"negotiationObjective",
-          "description":"Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of how will the negotiations contribute to protecting the area",
+          "description":"Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of negotiations.  Separate multiples with a ';'",
           "validate":"required,maxSize[300]"
         }
       ]
@@ -53,7 +53,7 @@
             {
               "type":"select2",
               "source":"typeOfGroup",
-              "title":"Type of negotiations",
+              "title":"Which sector does the group belong to?",
               "width":"20%"
             },
             {

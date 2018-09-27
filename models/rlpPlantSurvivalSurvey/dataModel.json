@@ -24,7 +24,8 @@
         {
           "dataType": "text",
           "name": "dateRange",
-          "validate": "required,maxSize[100]"
+          "validate": "required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name": "sitesSurveyed",
@@ -141,6 +142,7 @@
               "type":"table",
               "source":"speciesSurveyed",
               "userAddedRows":true,
+              "addRowText":"Add a species",
               "columns":[
                 {
                   "source": "speciesRecorded",
@@ -179,7 +181,7 @@
           "source": "plantSurvivalSurveys",
           "userAddedRows": true,
           "type": "repeat",
-          "addRowText":"Add survey"
+          "addRowText":"Add survey site"
         }
 
       ],

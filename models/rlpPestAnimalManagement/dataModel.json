@@ -177,7 +177,7 @@
                       "width": "10%"
                     },
                     {
-                      "title": "Treatment objective (300 character limit)",
+                      "title": "Treatment objective",
                       "source": "treatmentObjective",
                       "type": "textarea",
                       "width": "20%"

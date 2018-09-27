@@ -76,17 +76,18 @@
             {
               "name":"numberOfDaysPerformingInterventions",
               "dataType":"number",
-              "validate":"required,min[0]"
+              "validate":"required,min[0]",
+              "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
             },
             {
               "name":"relocationSite",
               "dataType":"feature",
-              "validate":"required"
+              "description":"If translocation is required please map site"
             },
             {
               "name":"areaOfRelocationSiteHa",
               "dataType":"number",
-              "validate":"required,min[0]",
+              "validate":"min[0]",
               "computed": {
                 "expression": "$geom.areaHa(relocationSite)",
                 "dependents": {

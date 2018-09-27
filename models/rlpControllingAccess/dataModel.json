@@ -165,7 +165,7 @@
               "width":"17%"
             },
             {
-              "title":"Control objective (300 character limit)",
+              "title":"Control objective",
               "source":"controlObjective",
               "type":"textarea",
               "width":"22%"
