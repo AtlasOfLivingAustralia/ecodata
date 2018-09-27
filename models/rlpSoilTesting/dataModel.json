@@ -125,13 +125,13 @@
               "title": "Testing technique",
               "source": "testingTechnique",
               "type": "textarea",
-              "width":"15%"
+              "width":"18%"
             },
             {
               "title":"Testing objective",
               "source":"testingObjective",
               "type":"textarea",
-              "width":"20%"
+              "width":"22%"
             }
           ],
           "userAddedRows": true,
