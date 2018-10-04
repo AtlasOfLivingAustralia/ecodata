@@ -357,8 +357,8 @@ scores = [
             "type": "filter"
          },
          "childAggregations": [{
-            "property": "data.managementPlans.managementPlanType",
-            "type": "COUNT"
+            "property": "data.managementPlans.numberOfPlansDeveloped",
+            "type": "SUM"
          }],
          "label": "Number of farm/project/site plans developed"
       },
