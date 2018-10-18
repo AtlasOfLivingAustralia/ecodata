@@ -748,7 +748,8 @@
                     "Training and Skills Development",
                     "Vegetation Assessment - Commonwealth government methodology",
                     "Community Grants",
-                    "Regional Funding Final Report"
+                    "Regional Funding Final Report",
+                    "Stage Report"
                 ],
                 "name": "Regional Funding",
                 "speciesFieldsSettings": null,
@@ -983,6 +984,69 @@
                 "overridesProgramData": true,
                 "reportingPeriodAlignedToCalendar": false,
                 "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "20 Million Trees Grants Round 3",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "weekDaysToCompleteReport": 0,
+                "themes": [],
+                "reportingPeriod": "6",
+                "projectDatesContracted": true,
+                "endDate": "",
+                "activities": [
+                    "Indigenous Employment and Businesses",
+                    "Outcomes, Evaluation and Learning - final report",
+                    "Project Administration",
+                    "Progress, Outcomes and Learning - stage report",
+                    "Fauna Survey - general",
+                    "Flora Survey - general",
+                    "Pest Animal Survey",
+                    "Plant Survival Survey",
+                    "Site Monitoring Plan",
+                    "Water Quality Survey",
+                    "Weed Mapping & Monitoring",
+                    "Community Participation and Engagement",
+                    "Debris Removal",
+                    "Disease Management",
+                    "Erosion Management",
+                    "Fencing",
+                    "Conservation Grazing Management",
+                    "Fire Management",
+                    "Heritage Conservation",
+                    "Management Plan Development",
+                    "Management Practice Change",
+                    "Conservation Actions for Species and Communities",
+                    "Pest Management",
+                    "Plant Propagation",
+                    "Public Access and Infrastructure",
+                    "Research",
+                    "Revegetation",
+                    "Seed Collection",
+                    "Site Preparation",
+                    "Water Management",
+                    "Weed Treatment",
+                    "Works Planning and Risk",
+                    "Indigenous Knowledge Transfer",
+                    "Training and Skills Development",
+                    "Vegetation Assessment - Commonwealth government methodology",
+                    "Post revegetation site management"
+                ],
+                "name": "20 Million Trees Service Providers Tranche 3",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [
+                    "MERI Plan",
+                    "Risks and Threats"
+                ],
+                "overridesProgramData": true,
+                "reportingPeriodAlignedToCalendar": false,
+                "startDate": ""
             }
         ],
         "reportingPeriodAlignedToCalendar": true,
@@ -1103,6 +1167,15 @@
                 "speciesFieldsSettings": null,
                 "optionalProjectContent": [],
                 "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Reef Trust Phase 6 Investment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
             }
         ],
         "reportingPeriodAlignedToCalendar": true,
@@ -1193,7 +1266,34 @@
             "Echidna CSI - Other evidence",
             "Urban Bird Movements Research",
             "Urban Bird Movements Research - Incidental Sighting",
-            "Urban Bird Movements Research - Systematic Survey"
+            "Urban Bird Movements Research - Systematic Survey",
+            "Significant Trees v2",
+            "Wild Macadamia Survey",
+            "Fungi Research",
+            "Western Ringtail Possum Reporting",
+            "Blue Mountains WHI - Boardwalk Transect",
+            "Blue Mountains WHI - Photo Points",
+            "Blue Mountains WHI - Camera Traps",
+            "Single Sighting - optional photo",
+            "Single Sighting - verification + optional photo ",
+            "Ray and Shark Monitoring Survey",
+            "1000m transect x 8 quadrat bird survey",
+            "Single Bird Sighting with additional information",
+            "Dung Beetle Monitoring",
+            "Raptor Nest Monitoring (ver. 2.0)",
+            "Single Sighting - verification + mandatory photo",
+            "Water Quality Survey - with map",
+            "Simple Weed Sighting",
+            "ACT Waterwatch - Water Quality Monitoring",
+            "ACT Waterwatch - Water Bug Survey",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "Tree Dieback Survey - WSU",
+            "Single Sighting - verification + optional photo",
+            "Single Sighting - verification - optional photo",
+            "Koala Survey - Whitsundays",
+            "Beach Sand Photo Point Monitoring",
+            "Fitzroy Turtle Monitoring",
+            "Outback Waterholes"
         ],
         "name": "Citizen Science Projects",
         "speciesFieldsSettings": null,
@@ -1995,7 +2095,37 @@
             "Aerial fauna survey - distance sampler method",
             "Cape York Terrestrial Fauna Survey",
             "Cape York Incidental Sightings",
-            "Urban Bird Movements Research - Systematic Survey"
+            "Urban Bird Movements Research - Systematic Survey",
+            "Marine Turtle Monitoring Nest Presence and Depredation Survey",
+            "BDBSA Fauna observations",
+            "BDBSA Flora observations",
+            "VNPA ReefWatch Survey",
+            "Post Biodiversity-works Site Monitoring Methodology",
+            "Dunewatch Activity Summary",
+            "Dunewatch Survey - Emery Method",
+            "Dunewatch - Human Impact Assessment",
+            "Dunewatch Flora Survey",
+            "Dunewatch Fauna Survey",
+            "Nest Box Monitoring",
+            "Local Species Inventory",
+            "Froglet calls",
+            "Water Quality Survey - with map",
+            "Sea Search - Fixed Photo Points",
+            "Sea Search - Seagrass Bed Monitoring",
+            "Sea Search - Seagrass Boundary Mapping",
+            "Ray and Shark Monitoring Survey",
+            "1000m transect x 8 quadrat bird survey",
+            "Single Bird Sighting with additional information",
+            "Dung Beetle Monitoring",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "Aquatic Macro-invertebrate Assessment - ALT method",
+            "ACT Waterwatch - Water Quality Monitoring",
+            "ACT Waterwatch - Water Bug Survey",
+            "Tree Dieback Survey - WSU",
+            "Quadrat Sampling - Presence Only",
+            "Marine Metre Squared Transect Survey",
+            "Marine Metre Squared Shore Survey",
+            "Beach Sand Photo Point Monitoring"
         ],
         "name": "Ecological Science Projects",
         "speciesFieldsSettings": null,
@@ -2105,7 +2235,8 @@
             "Camera Trap Monitoring",
             "Cape York Incidental Sightings",
             "Cape York Terrestrial Fauna Survey",
-            "Nest Box Monitoring"
+            "Nest Box Monitoring",
+            "Marine Turtle Monitoring Nest Presence and Depredation Survey"
         ],
         "name": "National Environmental Science Programme",
         "speciesFieldsSettings": null,
@@ -2209,7 +2340,8 @@
             "Works Planning and Risk",
             "Post revegetation site management",
             "Indigenous Knowledge Transfer",
-            "Training and Skills Development"
+            "Training and Skills Development",
+            "Progress, Outcomes and Learning - stage report"
         ],
         "name": "Reef 2050 Plan",
         "speciesFieldsSettings": null,
@@ -2255,7 +2387,10 @@
                     "Works Planning and Risk",
                     "Post revegetation site management",
                     "Indigenous Knowledge Transfer",
-                    "Training and Skills Development"
+                    "Training and Skills Development",
+                    "Stage Report",
+                    "Annual Stage Report",
+                    "Progress, Outcomes and Learning - stage report"
                 ],
                 "name": "Reef 2050 Implementation",
                 "speciesFieldsSettings": null,
@@ -2289,8 +2424,8 @@
     {
         "weekDaysToCompleteReport": 0,
         "activities": [
-            "General Multi-species Sightings - Alternate format v2",
-            "Martu Wangka Sightings"
+            "Martu Wangka Sightings",
+            "Leonora DHS Biodiversity Surveys"
         ],
         "name": "Schools WA",
         "speciesFieldsSettings": null,
@@ -2311,116 +2446,29 @@
     },
     {
         "weekDaysToCompleteReport": 0,
-        "activities": [
-            "Fauna survey - trap and transect",
-            "Floristic survey - plot and transect",
-            "General Weed Monitoring",
-            "Camera Trap Monitoring",
-            "Significant Trees Survey",
-            "General Weed Sighting",
-            "OzAtlas Sightings",
-            "2-ha Track Plot Datasheet",
-            "Flying Fox Survey",
-            "Aerial fauna survey - distance sampler method",
-            "Pollinator Sighting",
-            "Sea Search - Seagrass Bed Monitoring",
-            "Sea Search - Intertidal Reef Survey",
-            "General Seed Collection Activity",
-            "Dunewatch Activity Summary",
-            "Dunewatch Survey - Emery Method",
-            "Dunewatch - Human Impact Assessment",
-            "Dunewatch Flora Survey",
-            "Dunewatch Fauna Survey",
-            "Nest Box Monitoring",
-            "Sea Search - Sea Search Patrol",
-            "Local Species Inventory",
-            "General Multi-species Sightings - Alternate format v2",
-            "Single Species Weed Monitoring Form",
-            "Weed Biological Control - Agent Record - Target species with canes",
-            "Weed Biological Control - Agent Record - Insect agents",
-            "Weed Biological Control - Agent Record - Non cane rust and fungi agents",
-            "Mapping Butterflies and Host Vines",
-            "Froglet calls",
-            "Water Quality Survey"
-        ],
-        "name": "WABSI",
-        "speciesFieldsSettings": null,
-        "subprograms": [
-            {
-                "themes": [
-                    {"name": "Stakeholder engagement"},
-                    {"name": "Transdisciplinary research"},
-                    {"name": "Social and economic analysis"},
-                    {"name": "Aboriginal knowledge"},
-                    {"name": "Communication and adoption"}
-                ],
-                "endDate": "",
-                "activities": [],
-                "name": "Restoration and ex-situ conservation",
-                "speciesFieldsSettings": null,
-                "optionalProjectContent": [],
-                "startDate": ""
-            },
-            {
-                "themes": [
-                    {"name": "Stakeholder engagement"},
-                    {"name": "Transdisciplinary research"},
-                    {"name": "Social and economic analysis"},
-                    {"name": "Aboriginal knowledge"},
-                    {"name": "Communication and adoption"}
-                ],
-                "endDate": "",
-                "activities": [],
-                "name": "Information management systems",
-                "speciesFieldsSettings": null,
-                "optionalProjectContent": [],
-                "startDate": ""
-            },
-            {
-                "themes": [
-                    {"name": "Stakeholder engagement"},
-                    {"name": "Transdisciplinary research"},
-                    {"name": "Social and economic analysis"},
-                    {"name": "Aboriginal knowledge"},
-                    {"name": "Communication and adoption"}
-                ],
-                "endDate": "",
-                "activities": [],
-                "name": "Biodiversity survey",
-                "speciesFieldsSettings": null,
-                "optionalProjectContent": [],
-                "startDate": ""
-            },
-            {
-                "themes": [
-                    {"name": "Stakeholder engagement"},
-                    {"name": "Transdisciplinary research"},
-                    {"name": "Social and economic analysis"},
-                    {"name": "Aboriginal knowledge"},
-                    {"name": "Communication and adoption"}
-                ],
-                "endDate": "",
-                "activities": [],
-                "name": "Processes and threat mitigation",
-                "speciesFieldsSettings": null,
-                "optionalProjectContent": [],
-                "startDate": ""
-            }
-        ],
-        "optionalProjectContent": [
-            "MERI Plan",
-            "Risks and Threats"
-        ]
-    },
-    {
-        "weekDaysToCompleteReport": 0,
         "reportingPeriod": "12",
         "projectDatesContracted": true,
         "activities": [],
         "name": "Improving Your Local Parks and Environment",
         "speciesFieldsSettings": null,
-        "subprograms": [],
-        "reportingPeriodAlignedToCalendar": true,
+        "subprograms": [{
+            "weekDaysToCompleteReport": 0,
+            "themes": [],
+            "reportingPeriod": "6",
+            "projectDatesContracted": true,
+            "endDate": "",
+            "activities": [],
+            "name": "Improving Your Local Parks and Environment sub-program",
+            "speciesFieldsSettings": null,
+            "optionalProjectContent": [
+                "Risks and Threats",
+                "MERI Plan"
+            ],
+            "overridesProgramData": true,
+            "reportingPeriodAlignedToCalendar": true,
+            "startDate": ""
+        }],
+        "reportingPeriodAlignedToCalendar": false,
         "optionalProjectContent": [
             "Risks and Threats",
             "MERI Plan"
@@ -2504,6 +2552,512 @@
             "Post Revegetation Site Management - with map"
         ],
         "name": "CSIRO NRM Interventions Programmes",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Habitat Condition Assessment Tool",
+            "Ecological Condition Score Moderation"
+        ],
+        "name": "Habitat Condition Assessment",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Demonstration/ Test Projects",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "QRWQ Program Management",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Stakeholder Engagement and Communications",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Research Development and Innovation Projects (RD&I)",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Regional Report Cards and Partnerships",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Policy Analysis and Support",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Paddock to Reef Program/ Reef Report Card",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Major Integrated Projects (MIP’s)",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Industry BMP Programs",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Bananas",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Cane",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Grain",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Grazing",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Education and Extension",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Department of Water and Environmental Regulation",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Strategic proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Scheme or scheme amendment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Native vegetation clearing permit",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Works approval and licence",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Environmental Protection Authority",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Strategic proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Scheme or scheme amendment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Native vegetation clearing permit",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Works approval and licence",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [],
+        "name": "Department of Mines, Industry Regulation and Safety",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Strategic proposal",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Scheme or scheme amendment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Native vegetation clearing permit",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Works approval and licence",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Basin Champions - Aquatic insects",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "ACT Waterwatch - Water Quality Monitoring",
+            "ACT Waterwatch - Water Bug Survey"
+        ],
+        "name": "Waterwatch ACT",
+        "speciesFieldsSettings": null,
+        "subprograms": [
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Ginninderra Catchment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Molonglo Catchment",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "ACT Southern Region",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Cooma Region",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            },
+            {
+                "themes": [],
+                "endDate": "",
+                "activities": [],
+                "name": "Yass Region",
+                "speciesFieldsSettings": null,
+                "optionalProjectContent": [],
+                "startDate": ""
+            }
+        ],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Basin Champions - Aquatic insects",
+            "Water Quality Survey - with map",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "Aquatic Macro-invertebrate Assessment - SIGNAL2"
+        ],
+        "name": "Waterwatch NSW",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Basin Champions - Aquatic insects",
+            "Water Quality Survey - with map",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "Aquatic Macro-invertebrate Assessment - ALT method"
+        ],
+        "name": "Melbourne Water",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": [
+            "MERI Plan",
+            "Risks and Threats"
+        ]
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Aquatic Macro-invertebrate Assessment - SIGNAL2",
+            "Camera Trap Monitoring",
+            "Fauna survey - trap and transect",
+            "Floristic survey - plot and transect",
+            "General Weed Monitoring",
+            "Significant Trees Survey",
+            "OzAtlas Sightings",
+            "General Seed Collection Activity",
+            "Nest Box Monitoring",
+            "Local Species Inventory",
+            "General Multi-species Sightings - Alternate format v2",
+            "Dieback Observation",
+            "Sea Search - Seagrass Bed Monitoring",
+            "Sea Search - Fixed Photo Points",
+            "Sea Search - Seagrass Boundary Mapping",
+            "Sea Search - Image Library",
+            "Fungi Research",
+            "Single Sighting - verification - optional photo",
+            "Single Sighting - verification + mandatory photo",
+            "Ray and Shark Monitoring Survey",
+            "1000m transect x 8 quadrat bird survey",
+            "Single Bird Sighting with additional information",
+            "Dung Beetle Monitoring",
+            "Simple Weed Sighting",
+            "Aquatic Macro-invertebrate Assessment - ALT method",
+            "Rapid Appraisal of Riparian Condition (RARC)",
+            "Pest Animal Survey - with map",
+            "Plant Survival Survey - with map",
+            "Site Monitoring Plan - with map",
+            "Water Quality Survey - with map",
+            "Weed Mapping and Monitoring - with map",
+            "Quadrat Sampling - Presence Only",
+            "Marine Metre Squared Transect Survey",
+            "Marine Metre Squared Shore Survey"
+        ],
+        "name": "Schools Citizen Science NZ",
+        "speciesFieldsSettings": null,
+        "subprograms": [],
+        "optionalProjectContent": []
+    },
+    {
+        "weekDaysToCompleteReport": 0,
+        "activities": [
+            "Project Administration",
+            "Progress, Outcomes and Learning - stage report",
+            "Annual Stage Report",
+            "Pest Animal Survey - with map",
+            "Plant Survival Survey - with map",
+            "Site Monitoring Plan - with map",
+            "Water Quality Survey - with map",
+            "Weed Mapping and Monitoring - with map",
+            "Debris removal - with map",
+            "Disease Management - with map",
+            "Erosion Management - with map",
+            "Fencing - with map",
+            "Conservation Grazing Management - with map",
+            "Ecological Fire Management - with map",
+            "Heritage Conservation - with map",
+            "Management Plan Development - with map",
+            "Conservation Actions for Species and Communities - with map",
+            "Pest Management - with map",
+            "Plant Propagation - with map",
+            "Public Access and Infrastructure - with map",
+            "Research - with map",
+            "Revegetation - with map",
+            "Seed Collection - with map",
+            "Site Preparation - with map",
+            "Water Management - with map",
+            "Weed Treatment - with map",
+            "Works Planning and Risk - with map",
+            "Post Revegetation Site Management - with map"
+        ],
+        "name": "Environmental Restoration NZ",
         "speciesFieldsSettings": null,
         "subprograms": [],
         "optionalProjectContent": [

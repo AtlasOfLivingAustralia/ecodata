@@ -59,7 +59,7 @@
               "name":"surveyTechnique",
               "description":"What/how will the survey capture the fauna data",
               "dataType":"text",
-              "validate":"required,max[300]"
+              "validate":"required,maxSize[500]"
             },
             {
               "name":"individualsOrGroups",

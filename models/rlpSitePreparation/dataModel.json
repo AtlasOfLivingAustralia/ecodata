@@ -15,7 +15,7 @@
         {
           "name":"areaPreparedHa",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesPrepared)",
             "dependents": {
@@ -28,7 +28,7 @@
         {
           "name":"lengthPreparedKm",
           "dataType":"number",
-          "validate":"required,min[1]",
+          "validate":"required,min[0]",
           "computed": {
             "expression": "$geom.lengthKm(sitesPrepared)",
             "dependents": {

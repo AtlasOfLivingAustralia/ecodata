@@ -14,13 +14,7 @@
         {
           "dataType": "feature",
           "name": "sitesInstalled",
-          "validate": "required",
-          "behaviour":[
-            {
-              "condition": "sitesRequired == \"Yes\"",
-              "type": "enable"
-            }
-          ]
+          "validate": "required"
         },
         {
           "dataType": "number",
