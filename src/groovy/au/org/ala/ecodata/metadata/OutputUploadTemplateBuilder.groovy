@@ -231,6 +231,9 @@ class OutputDataProcessor {
                         }
                         cell.setCellValue(value?value.join(','):'')
                         break
+                    case 'feature':
+                        cell.setCellValue("")
+                        break
                     case 'date':
                     case 'text':
                     default:
