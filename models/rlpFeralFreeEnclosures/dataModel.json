@@ -88,11 +88,6 @@
               "dataType":"number",
               "name":"numberOfPopulationsOrIndividualsProtected",
               "validate":"required,min[0]"
-            },
-            {
-              "name":"enclosureObjective",
-              "dataType":"text",
-              "validate":"required,maxSize[300]"
             }
           ]
         }
