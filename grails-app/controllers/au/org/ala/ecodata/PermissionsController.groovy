@@ -740,6 +740,27 @@ class PermissionsController {
 
     /**
      * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#editor editor}
+     * level access or higher for a list of {@link Project projects}.
+     *
+     * @params projectIds - comma separated list of projects
+     * @params userId
+     *
+     * @return JSON object with a single property representing a boolean value
+     */
+    def isUserEditorForProjects() {
+        String userId = params.userId
+        String projectIds = params.projectIds
+
+        if (userId && projectIds) {
+            Map out = [userIsEditor: permissionService.isUserEditorForProjects(userId, projectIds)]
+            render out as JSON
+        } else {
+            render status: HttpStatus.BAD_REQUEST, text: 'Required params not provided: userId, projectIds'
+        }
+    }
+
+    /**
+     * Does the request {@link UserDetails#userId userId} have {@link AccessLevel#editor editor}
      * level access or higher for a given {@link Project project}
      *
      * @return JSON object with a single property representing a boolean value
@@ -769,11 +790,11 @@ class PermissionsController {
      */
     def canUserEditProjects() {
         String userId = params.userId
-        String [] projectIds = params.projectIds?.split(',')
+        List projectIds = params.projectIds?.split(',')
 
         if (projectIds?.size()) {
             try{
-                Map out =  permissionService.isUserEditorForProjects(userId, projectIds)
+                Map out =  permissionService.isUserAdminForProjects(userId, projectIds)
                 render out as JSON
             } catch (Exception e){
                 log.error(e.message);

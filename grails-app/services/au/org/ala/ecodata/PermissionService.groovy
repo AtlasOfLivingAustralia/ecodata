@@ -55,6 +55,26 @@ class PermissionService {
         return isEditor // bolean
     }
 
+    def isUserEditorForProjects(String userId, String projectIds) {
+        Boolean userHasPermission = false
+
+        if (userId && projectIds) {
+            userHasPermission = true
+            List ids = projectIds.split(',')
+            ids.each { String projectId ->
+                def ups = getUserAccessForEntity(userId, Project, projectId)
+                ups = ups.findAll {
+                    it.accessLevel.code >= AccessLevel.editor.code
+                }
+
+                userHasPermission &= !!ups
+            }
+        }
+
+        log.debug "userHasPermission = ${userHasPermission}"
+        return userHasPermission // bolean
+    }
+
     Boolean canUserModerateProjects(String userId, String projectIds) {
         Boolean userHasPermission = false
 
@@ -82,7 +102,7 @@ class PermissionService {
      * @param projectIds []
      * @return
      */
-    Map isUserEditorForProjects(String userId, String [] projectIds) {
+    Map isUserAdminForProjects(String userId, List projectIds) {
         Map permissions =[:]
         Boolean isEditor = false
         Project project
