@@ -12,7 +12,7 @@
           "name": "agreementType",
           "constraints": [
             "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
+            "Binding agreement not on title in perpetuity (e.g. property vegetation plan)",
             "Termed agreement not on title - binding (e.g. land management agreement)",
             "Not on title - non-binding (e.g. Wildlife Refuge)",
             "No protection mechanism applicable",
@@ -49,7 +49,8 @@
         {
           "dataType": "number",
           "name": "numberOfDaysMaintainingAgreements",
-          "validate": "required,min[0]"
+          "validate": "required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"feature",

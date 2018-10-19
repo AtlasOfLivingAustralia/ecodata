@@ -18,6 +18,24 @@
         },
         {
           "dataType": "feature",
+          "name": "existingErosionSites",
+          "validate": "required"
+        },
+        {
+          "dataType": "number",
+          "name": "existingErosionAreaHa",
+          "validate": "required",
+          "computed": {
+            "expression": "$geom.areaHa(existingErosionSites)",
+            "dependents": {
+              "source": [
+                "existingErosionSites"
+              ]
+            }
+          }
+        },
+        {
+          "dataType": "feature",
           "name": "sitesManaged",
           "validate": "required"
         },
@@ -72,7 +90,7 @@
         {
           "dataType":"text",
           "name":"otherErosionManagementMethod",
-          "validate":"required",
+          "validate":"required,max[300]",
           "behaviour":[
             {
               "condition": "erosionManagementMethod == \"Other\"",
@@ -103,6 +121,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
 
   ],
@@ -119,6 +141,19 @@
               "type":"selectOne"
             },
             {
+              "title":"Site/s where erosion is evident",
+              "source":"existingErosionSites",
+              "type":"feature",
+              "width":"5%"
+            },
+            {
+              "title":"Area (ha) of erosion",
+              "source":"existingErosionAreaHa",
+              "type":"number",
+              "readonly":"readonly",
+              "width":"5%"
+            },
+            {
               "title":"Site/s of erosion control",
               "source":"sitesManaged",
               "type":"feature",
@@ -129,14 +164,14 @@
               "source":"areaOfErosionControlHa",
               "type":"number",
               "readonly":"readonly",
-              "width":"8%"
+              "width":"5%"
             },
             {
               "title":"Length (km) of stream / coastline treated for erosion",
               "source":"lengthOfErosionControlKm",
               "type":"number",
               "readonly":"readonly",
-              "width":"8%"
+              "width":"5%"
             },
             {
               "title":"Number of erosion control structures installed",
@@ -166,7 +201,7 @@
               "title": "Area (ha) benefiting from erosion management",
               "source": "areaBenefitingHa",
               "type": "number",
-              "width":"10%",
+              "width":"5%",
               "readonly":"readonly"
             },
             {
@@ -179,6 +214,16 @@
           "source":"erosionManagementDetails",
           "userAddedRows":true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

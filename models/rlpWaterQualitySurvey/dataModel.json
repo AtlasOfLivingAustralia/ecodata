@@ -24,7 +24,8 @@
         {
           "dataType":"text",
           "name":"dateRange",
-          "validate":"required,maxSize[100]"
+          "validate":"required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name": "sitesSurveyed",
@@ -75,7 +76,8 @@
             {
               "dataType": "number",
               "name": "numberOfDaysConductingSurveys",
-              "validate": "required,min[0]"
+              "validate": "required,min[0]",
+              "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
             },
             {
               "dataType": "text",
@@ -92,6 +94,10 @@
           ]
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -107,7 +113,7 @@
               "type": "row",
               "items": [
                 {
-                  "preLabel": "Baseline survey or indicator survey?",
+                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
                   "source": "baselineOrIndicator",
                   "type": "selectOne",
                   "css": "span3"
@@ -181,6 +187,16 @@
                   "width": "30%"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }

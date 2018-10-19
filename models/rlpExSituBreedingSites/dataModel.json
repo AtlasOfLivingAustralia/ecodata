@@ -32,12 +32,14 @@
         {
           "dataType":"number",
           "name":"numberOfDaysMaintainingBreedingPrograms",
-          "validate":"required,min[0]"
+          "validate":"required,min[0]",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"feature",
           "name":"sitesOfBreedingProgram",
-          "validate":"required"
+          "validate":"required",
+          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
         },
         {
           "dataType":"number",
@@ -73,8 +75,24 @@
                 "Seed nursery",
                 "Propagation",
                 "Seed viability testing",
-                "Seed genetic testing"
+                "Seed genetic testing",
+                "Fauna captive breeding program",
+                "Fauna wild breeding program",
+                "Other"
               ]
+            },
+            {
+              "dataType":"text",
+              "name":"otherBreedingTechnique",
+              "description":"",
+              "validate":"required,maxSize[300]",
+              "behaviour":[
+                {
+                  "condition": "breedingTechnique == \"Other\"",
+                  "type": "enable"
+                }
+              ]
+
             },
             {
               "dataType":"text",
@@ -99,6 +117,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -158,18 +180,25 @@
             {
               "type":"table",
               "userAddedRows":true,
+              "addRowText":"Add a species",
               "source":"speciesInBreedingProgram",
               "columns":[
                 {
                   "title": "Targeted threatened species",
                   "source": "targetSpecies",
                   "type": "speciesSelect",
-                  "width":"45%"
+                  "width":"30%"
                 },
                 {
                   "type":"select2",
                   "source":"breedingTechnique",
                   "title":"Technique of breeding program",
+                  "width":"15%"
+                },
+                {
+                  "type":"text",
+                  "source":"otherBreedingTechnique",
+                  "title":"Technique of breeding program (if Other)",
                   "width":"20%"
                 },
                 {
@@ -197,7 +226,17 @@
           ],
           "userAddedRows": true,
           "type": "repeat",
-          "addRowText":"Add breeding program"
+          "addRowText":"Add a new breeding area"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

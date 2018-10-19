@@ -16,9 +16,24 @@
           ]
         },
         {
+          "name": "areaRequired",
+          "dataType": "text",
+          "validate": "required",
+          "constraints": [
+            "Yes",
+            "No"
+          ]
+        },
+        {
           "dataType": "feature",
           "name": "sitesRevegetated",
-          "validate": "required"
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "areaRequired == \"Yes\"",
+              "type":"enable"
+            }
+          ]
         },
         {
           "dataType": "number",
@@ -30,7 +45,13 @@
               "source": [
                 "sitesRevegetated"
               ]
-            }
+            },
+            "behaviour": [
+              {
+                "condition": "areaRequired == \"Yes\"",
+                "type":"enable"
+              }
+            ]
           }
         },
         {
@@ -86,12 +107,14 @@
             {
               "dataType": "number",
               "name": "numberOfDaysCollectingSeed",
-              "validate": "required,min[0]"
+              "validate": "required,min[0]",
+              "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
             },
             {
               "dataType": "number",
               "name": "numberOfDaysPropagatingPlants",
-              "validate": "required,min[0]"
+              "validate": "required,min[0]",
+              "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
             },
             {
               "dataType": "text",
@@ -110,7 +133,7 @@
               "dataType": "text",
               "name": "threatenedEcologicalCommunity",
               "validate": "maxSize[100]",
-              "description":"This free text field allows multiple TECs to be entered. They should be written as listed in EPBC, and separated by commas",
+              "description": "This free text field allows multiple TECs to be entered. They should be written as listed in EPBC, and separated by ';'"
             },
             {
               "dataType": "text",
@@ -134,6 +157,10 @@
           ]
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -147,7 +174,7 @@
           "items": [
             {
               "type": "row",
-              "items":[
+              "items": [
                 {
                   "preLabel": "Initial or maintenance activity?",
                   "source": "initialOrMaintenance",
@@ -155,48 +182,59 @@
                   "css": "span3"
                 },
                 {
+                  "preLabel": "Will this report invoice for area revegetated?",
+                  "source": "areaRequired",
+                  "type": "selectOne",
+                  "css": "span4"
+                }
+              ]
+            },
+            {
+              "type": "row",
+              "items": [
+                {
                   "type": "feature",
                   "source": "sitesRevegetated",
                   "preLabel": "Site/s being revegetated",
-                  "css": "span2"
+                  "css": "span3"
                 },
                 {
                   "type": "number",
                   "source": "areaRevegetatedHa",
                   "preLabel": "Area (ha) of habitat revegetated",
-                  "css": "span2",
+                  "css": "span3",
                   "readonly": "readonly"
                 },
                 {
                   "type": "number",
                   "source": "lengthRevegetatedKm",
                   "preLabel": "Length (km) of habitat revegetated",
-                  "css": "span2",
+                  "css": "span3",
                   "readonly": "readonly"
                 }
               ]
             },
             {
-              "type":"row",
-              "items":[
+              "type": "row",
+              "items": [
                 {
-                  "preLabel":"Please map any off-site area/s if they benefitted from this  revegetation activity",
-                  "source":"offSiteBenefitSites",
-                  "type":"feature",
-                  "css":"span3"
+                  "preLabel": "Please map any off-site area/s if they benefitted from this  revegetation activity",
+                  "source": "offSiteBenefitSites",
+                  "type": "feature",
+                  "css": "span3"
                 },
                 {
-                  "preLabel":"Area (ha) benefitting from revegetation activity",
-                  "source":"offSiteBenefitAreaHa",
-                  "type":"number",
-                  "css":"span2",
-                  "readonly":"readonly"
+                  "preLabel": "Area (ha) benefitting from revegetation activity",
+                  "source": "offSiteBenefitAreaHa",
+                  "type": "number",
+                  "css": "span2",
+                  "readonly": "readonly"
                 },
                 {
-                  "preLabel":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit.",
-                  "source":"evidenceOfBenefit",
-                  "type":"textarea",
-                  "css":"span6"
+                  "preLabel": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit.",
+                  "source": "evidenceOfBenefit",
+                  "type": "textarea",
+                  "css": "span6"
                 }
               ]
             },
@@ -210,22 +248,16 @@
                   "width": "20%"
                 },
                 {
-                  "title":"Type of revegetation activity",
-                  "type":"text",
-                  "width":"15%",
-                  "source":"typeOfRevegetationActivity"
+                  "title": "Number of days collecting seed",
+                  "source": "numberOfDaysCollectingSeed",
+                  "width": "5%",
+                  "type": "number"
                 },
                 {
-                  "title":"Number of days collecting seed",
-                  "source":"numberOfDaysCollectingSeed",
-                  "width":"5%",
-                  "type":"number"
-                },
-                {
-                  "title":"Number of days propagating plants",
-                  "source":"numberOfDaysPropagatingPlants",
-                  "width":"5%",
-                  "type":"number"
+                  "title": "Number of days propagating plants",
+                  "source": "numberOfDaysPropagatingPlants",
+                  "width": "5%",
+                  "type": "number"
                 },
                 {
                   "title": "Planting method",
@@ -234,16 +266,22 @@
                   "width": "15%"
                 },
                 {
-                  "title":"Threatened ecological community (if applicable)",
-                  "source":"threatenedEcologicalCommunity",
-                  "type":"text",
-                  "width":"15%"
+                  "title": "Type of revegetation activity",
+                  "type": "text",
+                  "width": "15%",
+                  "source": "typeOfRevegetationActivity"
                 },
                 {
-                  "title":"Individuals / kilograms",
-                  "source":"individualsOrKilogramsOfSeed",
-                  "type":"selectOne",
-                  "width":"10%"
+                  "title": "Threatened ecological community (if applicable)",
+                  "source": "threatenedEcologicalCommunity",
+                  "type": "text",
+                  "width": "15%"
+                },
+                {
+                  "title": "Individuals / kilograms",
+                  "source": "individualsOrKilogramsOfSeed",
+                  "type": "selectOne",
+                  "width": "10%"
                 },
                 {
                   "title": "Number planted",
@@ -252,14 +290,25 @@
                   "width": "10%"
                 },
                 {
-                  "title": "Objective of revegetation (300 character limit)",
+                  "title": "Objective of revegetation activity",
                   "source": "revegetationObjective",
                   "type": "textarea",
                   "width": "20%"
                 }
               ],
               "userAddedRows": true,
-              "type": "table"
+              "type": "table",
+              "addRowText":"Add a species"
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }

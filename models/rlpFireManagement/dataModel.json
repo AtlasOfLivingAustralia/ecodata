@@ -79,7 +79,7 @@
         {
           "name":"areaBenefittedByFireActionHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesBenefittedByFireAction)",
             "dependents": {
@@ -92,9 +92,13 @@
         {
           "name":"evidenceOfBenefit",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"maxSize[300]"
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -112,20 +116,20 @@
             {
               "type":"feature",
               "source":"sitesTreated",
-              "width":"5%",
+              "width":"6%",
               "title":"Site/s treated by fire management actions"
             },
             {
               "type":"number",
               "source":"areaTreatedHa",
-              "width":"5%",
+              "width":"6%",
               "title":"Area (ha) treated by fire management action",
               "readonly":"readonly"
             },
             {
               "type":"number",
               "source":"lengthTreatedKm",
-              "width":"5%",
+              "width":"6%",
               "title":"Length (km) treated by fire management action",
               "readonly":"readonly"
             },
@@ -144,14 +148,14 @@
             {
               "type":"feature",
               "source":"sitesBenefittedByFireAction",
-              "width":"5%",
+              "width":"6%",
               "title":"Please map any off-site area/s if they benefitted from this fire management action"
             },
             {
               "type":"number",
               "source":"areaBenefittedByFireActionHa",
               "title":"Area (ha) protected by fire management action",
-              "width":"5%",
+              "width":"6%",
               "readonly":"readonly"
             },
             {
@@ -164,6 +168,16 @@
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

@@ -12,21 +12,9 @@
           "validate":"required,min[0]"
         },
         {
-          "dataType":"text",
-          "name":"sitesRequired",
-          "validate":"required",
-          "constraints":["Yes","No"]
-        },
-        {
           "dataType": "feature",
           "name": "sitesInstalled",
-          "validate": "required",
-          "behaviour":[
-            {
-              "condition": "sitesRequired == \"Yes\"",
-              "type": "enable"
-            }
-          ]
+          "validate": "required"
         },
         {
           "dataType": "number",
@@ -103,7 +91,7 @@
           "name":"controlObjective",
           "dataType":"text",
           "validate":"required,maxSize[300]",
-          "description":"How will the work contribute to protecting the area."
+          "description":"What is your access control method? and/or What do you intend to achieve by using your structure/s?"
         }
       ]
 
@@ -123,32 +111,26 @@
               "type": "number",
               "source":"numberInstalled",
               "title":"Number of structures installed",
-              "width":"6%"
-            },
-            {
-              "type":"selectOne",
-              "source":"sitesRequired",
-              "title":"Will this report invoice for area / length covered?",
-              "width":"10%"
+              "width":"8%"
             },
             {
               "type":"feature",
               "source":"sitesInstalled",
               "title":"Site/s where access has been controlled",
-              "width":"6%"
+              "width":"8%"
             },
             {
               "type":"number",
               "source":"areaInstalledHa",
               "title":"Area (ha) where access has been controlled",
-              "width":"6%",
+              "width":"8%",
               "readonly":"readonly"
             },
             {
               "type":"number",
               "source":"lengthInstalledKm",
               "title":"Length (km) installed",
-              "width":"6%",
+              "width":"8%",
               "readonly":"readonly"
             },
             {
@@ -168,7 +150,7 @@
               "title": "Type of access control installed",
               "source": "accessControlType",
               "type": "select2",
-              "width":"15%"
+              "width":"17%"
             },
             {
               "title":"Type of access control installed (if Other)",
@@ -177,7 +159,7 @@
               "width":"17%"
             },
             {
-              "title":"Control objective (300 character limit)",
+              "title":"Control objective",
               "source":"controlObjective",
               "type":"textarea",
               "width":"22%"

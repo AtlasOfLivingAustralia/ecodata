@@ -24,7 +24,8 @@
         {
           "dataType": "text",
           "name": "dateRange",
-          "validate": "required,maxSize[100]"
+          "validate": "required,maxSize[100]",
+          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
         },
         {
           "name": "sitesSurveyed",
@@ -88,6 +89,10 @@
         }
 
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -100,7 +105,7 @@
               "type":"row",
               "items":[
                 {
-                  "preLabel": "Baseline survey or indicator survey?",
+                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
                   "source": "baselineOrIndicatorSurvey",
                   "type": "selectOne",
                   "css": "span3"
@@ -141,6 +146,7 @@
               "type":"table",
               "source":"speciesSurveyed",
               "userAddedRows":true,
+              "addRowText":"Add a species",
               "columns":[
                 {
                   "source": "speciesRecorded",
@@ -179,7 +185,17 @@
           "source": "plantSurvivalSurveys",
           "userAddedRows": true,
           "type": "repeat",
-          "addRowText":"Add survey"
+          "addRowText":"Add survey site"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
 
       ],

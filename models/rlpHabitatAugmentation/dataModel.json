@@ -75,12 +75,13 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[100]"
         },
         {
           "name":"habitatAugmentationObjective",
           "dataType":"text",
-          "validate":"required,maxSize[300]"
+          "validate":"required,maxSize[300]",
+          "description":""
         },
         {
           "name":"sitesBenefittedByHabitatAugmentation",

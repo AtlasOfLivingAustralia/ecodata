@@ -74,7 +74,7 @@
               "type": "enable"
             }
           ],
-          "validate":"required"
+          "validate":"required,maxSize[300]"
         },
         {
           "name":"treatmentObjective",
@@ -101,6 +101,10 @@
           }
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -119,7 +123,7 @@
               "title":"Number of treatments implemented to improve water management",
               "type":"number",
               "source":"numberOfTreatmentsImplemented",
-              "width":"5%"
+              "width":"6%"
             },
             {
               "type":"feature",
@@ -132,14 +136,14 @@
               "readonly":"readonly",
               "source":"areaCoveringRegimeChangeHa",
               "title":"Area (ha) covering the hydrological regime change",
-              "width":"5%"
+              "width":"6%"
             },
             {
               "type":"number",
               "readonly":"readonly",
               "source":"lengthOfRegimeChangeKm",
               "title":"Length (km) covering the hydrological regime change",
-              "width":"5%"
+              "width":"6%"
             },
 
             {
@@ -158,7 +162,7 @@
               "title":"Hydrological treatment objective",
               "source":"treatmentObjective",
               "type":"textarea",
-              "width":"20%"
+              "width":"21%"
             },
             {
               "title":"Site/s of catchment being managed as a result of this management action",
@@ -170,12 +174,22 @@
               "title":"Area (ha) of catchment being managed as a result of this management action",
               "source":"areaOfCatchmentManagedHa",
               "type":"number",
-              "width":"5%",
+              "width":"6%",
               "readonly":"readonly"
             }
           ],
           "userAddedRows": true,
           "type": "table"
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
+            }
+          ]
         }
       ],
       "type": "section"

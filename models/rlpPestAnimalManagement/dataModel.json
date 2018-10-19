@@ -110,6 +110,10 @@
           ]
         }
       ]
+    },
+    {
+      "name":"photographicEvidence",
+      "dataType":"image"
     }
   ],
   "viewModel": [
@@ -119,7 +123,7 @@
           "type": "repeat",
           "source": "areasControlled",
           "userAddedRows":true,
-          "addRowText":"Add controlled area",
+          "addRowText":"Add a new controlled area",
           "items": [
             {
               "type": "row",
@@ -177,7 +181,7 @@
                       "width": "10%"
                     },
                     {
-                      "title": "Treatment objective (300 character limit)",
+                      "title": "Treatment objective",
                       "source": "treatmentObjective",
                       "type": "textarea",
                       "width": "20%"
@@ -196,9 +200,20 @@
                     }
                   ],
                   "userAddedRows": true,
-                  "type": "table"
+                  "type": "table",
+                  "addRowText":"Add a species"
                 }
               ]
+            }
+          ]
+        },
+        {
+          "type":"row",
+          "items":[
+            {
+              "type":"image",
+              "source":"photographicEvidence",
+              "preLabel":"Optionally attach photos"
             }
           ]
         }
