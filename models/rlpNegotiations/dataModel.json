@@ -70,7 +70,7 @@
             },
             {
               "source":"negotiationObjective",
-              "dataType":"textarea",
+              "type":"textarea",
               "rows":3,
               "width":"50%",
               "title":"Objective of negotiations"

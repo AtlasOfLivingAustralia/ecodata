@@ -125,6 +125,11 @@ class OutputDataPropertiesBuilder extends OutputModelProcessor implements Output
         return val ?: ""
     }
 
+    @Override
+    def feature(Object node, Value outputValue) {
+        return '' // the feature data type stores references to site data.
+    }
+
     // Implementation of Getter<String>
     @Override
     String getPropertyName() {

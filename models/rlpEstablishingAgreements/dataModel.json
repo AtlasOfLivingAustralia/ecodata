@@ -12,7 +12,7 @@
           "name": "agreementType",
           "constraints": [
             "On title in perpetuity (e.g. conservation convenant)",
-            "Blinding agreement not on title in perpetuity (e.g. property vegetation plan)",
+            "Binding agreement not on title in perpetuity (e.g. property vegetation plan)",
             "Termed agreement not on title - binding (e.g. land management agreement)",
             "Not on title - non-binding (e.g. Wildlife Refuge)",
             "No protection mechanism applicable",

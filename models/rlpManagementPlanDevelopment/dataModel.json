@@ -69,7 +69,13 @@
         {
           "dataType": "feature",
           "name": "sitesCoveredByPlan",
-          "validate": "required"
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "areaRequired == \"Yes\"",
+              "type":"enable"
+            }
+          ]
         },
         {
           "dataType":"number",
@@ -83,7 +89,13 @@
                 "sitesCoveredByPlan"
               ]
             }
-          }
+          },
+          "behaviour": [
+            {
+              "condition": "areaRequired == \"Yes\"",
+              "type":"enable"
+            }
+          ]
         },
         {
           "dataType":"text",

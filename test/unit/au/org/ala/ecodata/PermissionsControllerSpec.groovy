@@ -4,7 +4,6 @@ import com.mongodb.MongoExecutionTimeoutException
 import grails.test.mixin.Mock
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
-import grails.test.mixin.gorm.Domain
 import grails.test.mixin.support.GrailsUnitTestMixin
 import org.apache.commons.httpclient.HttpStatus
 import spock.lang.Specification
@@ -34,8 +33,8 @@ class PermissionsControllerSpec extends Specification {
 
     void "canUserEditProjects: when nothing is returned"() {
         given:
-        String [] projects = ['1']
-        permissionService.isUserEditorForProjects('1', projects) >> [:]
+        List projects = ['1']
+        permissionService.isUserAdminForProjects('1', projects) >> [:]
         when:
         params.userId = '1'
         params.projectIds = '1'
@@ -47,9 +46,9 @@ class PermissionsControllerSpec extends Specification {
 
     void "canUserEditProjects: when mongo throws exception"() {
         given:
-        String [] ids = ['1']
+        List ids = ['1']
         String userId = '1'
-        permissionService.isUserEditorForProjects(userId,ids) >> {throw new MongoExecutionTimeoutException(123,'Cannot execute query!')}
+        permissionService.isUserAdminForProjects(userId,ids) >> {throw new MongoExecutionTimeoutException(123,'Cannot execute query!')}
         when:
         params.userId = userId
         params.projectIds = '1'
@@ -61,9 +60,9 @@ class PermissionsControllerSpec extends Specification {
 
     void "canUserEditProjects: when working perfectly"() {
         given:
-        String [] ids = ['1']
+        List ids = ['1']
         String userId = '1'
-        permissionService.isUserEditorForProjects(userId, ids) >> ['1':true]
+        permissionService.isUserAdminForProjects(userId, ids) >> ['1':true]
         when:
         params.userId = userId
         params.projectIds = '1'

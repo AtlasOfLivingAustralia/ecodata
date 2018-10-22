@@ -231,6 +231,9 @@ class OutputDataProcessor {
                         }
                         cell.setCellValue(value?value.join(','):'')
                         break
+                    case 'feature':
+                        cell.setCellValue("")
+                        break
                     case 'date':
                     case 'text':
                     default:
@@ -394,5 +397,8 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
 
     @Override
     def document(node, ExcelValidationContext context) {}
+
+    @Override
+    def feature(node, ExcelValidationContext context) {}
 
 }

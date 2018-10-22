@@ -135,6 +135,7 @@ class MetadataController {
             return null
         }
 
+        Map model = metadataService.getOutputDataModelByName(outputName)
         def annotatedModel = null
         if (expandList && expandList == 'true') {
             annotatedModel = metadataService.annotatedOutputDataModel(outputName, true)
@@ -147,7 +148,7 @@ class MetadataController {
             return null
         }
 
-        def fileName = outputName
+        String fileName = model.title ?: outputName
 
         if (listName) {
             OutputMetadata outputMetadata = new OutputMetadata([dataModel:annotatedModel])

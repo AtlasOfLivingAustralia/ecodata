@@ -36,6 +36,8 @@ class OutputModelProcessor {
         def booleanType(node, T context)
 
         def document(node, T context)
+
+        def feature(node, T context)
     }
 
     def processNode(processor, node, context) {
@@ -87,9 +89,12 @@ class OutputModelProcessor {
             case 'masterDetail':
                 break // do nothing, not supported yet
             case 'geoMap':
-                processor.text(node, context);
+                processor.text(node, context)
                 break
             case 'set':
+                break
+            case 'feature':
+                processor.feature(node, context)
                 break
             default:
                 throw new RuntimeException("Unexpected data type: ${node.dataType}")

@@ -27,7 +27,13 @@
         {
           "dataType": "feature",
           "name": "sitesRevegetated",
-          "validate": "required"
+          "validate": "required",
+          "behaviour": [
+            {
+              "condition": "areaRequired == \"Yes\"",
+              "type":"enable"
+            }
+          ]
         },
         {
           "dataType": "number",
@@ -39,7 +45,13 @@
               "source": [
                 "sitesRevegetated"
               ]
-            }
+            },
+            "behaviour": [
+              {
+                "condition": "areaRequired == \"Yes\"",
+                "type":"enable"
+              }
+            ]
           }
         },
         {

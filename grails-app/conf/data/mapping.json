@@ -10,6 +10,14 @@
           "type" : "string",
           "index" : "not_analyzed"
         },
+        "projectId" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
+        "projects" : {
+          "type" : "string",
+          "index" : "not_analyzed"
+        },
         "programId" : {
           "type" : "string",
           "index": "not_analyzed"
