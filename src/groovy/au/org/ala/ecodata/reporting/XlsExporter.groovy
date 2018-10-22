@@ -143,7 +143,7 @@ class XlsExporter extends XlsxExporter {
     }
 
     private XlsExporter setHeaders(HttpServletResponse response, def filename) {
-        response.setHeader("Content-disposition", "attachment; filename=$filename;")
+        response.setHeader("Content-disposition", "attachment; filename=\"$filename\";")
         response.setHeader("Content-Type", "application/vnd.ms-excel")
         this
     }
