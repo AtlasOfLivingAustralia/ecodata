@@ -7,6 +7,10 @@
             "name":"foregoneProductionCost"
         },
         {
+            "dataType": "number",
+            "name":"monitoringAndReportingCost"
+        },
+        {
             "dataType": "text",
             "name": "reportedAgainstUncontractedManagementActions",
             "constraints": [
@@ -132,6 +136,23 @@
                 "type": "textarea"
             }],
             "type": "row"
+        },
+        {
+            "items": [{
+                "source": "<h4>Monitoring and Reporting</h4>",
+                "type": "literal"
+            }],
+            "type": "row"
+        },
+        {
+            "type":"row",
+            "items":[
+                {
+                    "source":"monitoringAndReportingCost",
+                    "preLabel":"If you would like to record a cost against the time taken to complete your monitoring and reporting, please record the dollar value below: ",
+                    "type":"currency"
+                }
+            ]
         },
         {
             "items": [{
