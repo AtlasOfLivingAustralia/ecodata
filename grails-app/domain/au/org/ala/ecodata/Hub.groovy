@@ -42,6 +42,8 @@ class Hub {
     List customBreadCrumbs = []
     /** configure facets for different data pages like all records, my records etc. */
     Map pages
+    /** on record listing pages like all records, my records etc., configure table columns using this property */
+    List dataColumns
 
     String status = 'active'
 
@@ -64,5 +66,6 @@ class Hub {
         content nullable: true
         customBreadCrumbs nullable: true
         pages nullable: true
+        dataColumns nullable: true
     }
 }
