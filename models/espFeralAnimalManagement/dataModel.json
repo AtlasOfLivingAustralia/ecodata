@@ -19,7 +19,8 @@
                         "Spring",
                         "Summer",
                         "Autumn",
-                        "Winter"
+                        "Winter",
+                        "Year round"
                     ],
                     "validate": "required"
                 },

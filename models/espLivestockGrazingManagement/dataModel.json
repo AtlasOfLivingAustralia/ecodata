@@ -1,5 +1,4 @@
 {
-  "title": "Livestock Grazing Management",
   "modelName": "ESP Livestock Grazing Management",
   "dataModel": [
     {
@@ -11,50 +10,48 @@
       ]
     },
     {
-      "dataType": "list",
-      "name": "grazingPeriods",
       "columns": [
         {
           "dataType": "number",
+          "name": "paddockNum",
           "behaviour": [
             {
               "condition": "multiplePaddocks == \"Yes\"",
               "type": "enable"
             }
-          ],
-          "name": "paddockNum"
+          ]
         },
         {
           "dataType": "date",
-          "description": "",
           "name": "startDate",
+          "description": "",
           "validate": "required"
         },
         {
           "dataType": "date",
-          "description": "",
           "name": "endDate",
+          "description": "",
           "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "typeOfStock",
+          "description": "",
           "constraints": [
             "Cattle",
             "Sheep",
             "Goats",
-            "Horses"
+            "Horses",
+            "Other"
           ],
           "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "productionType",
+          "description": "",
           "constraints": {
             "default": [],
-            "type": "computed",
             "options": [
               {
                 "condition": "typeOfStock == \"Cattle\"",
@@ -89,16 +86,16 @@
                   "Adjistment"
                 ]
               }
-            ]
+            ],
+            "type": "computed"
           }
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "growthStage",
+          "description": "",
           "constraints": {
             "default": [],
-            "type": "computed",
             "options": [
               {
                 "condition": "typeOfStock == \"Cattle\"",
@@ -146,22 +143,22 @@
                   "Yearling"
                 ]
               }
-            ]
+            ],
+            "type": "computed"
           }
         },
         {
           "dataType": "number",
-          "description": "",
           "name": "individualCount",
+          "description": "",
           "validate": "required,min[0]"
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "breed",
+          "description": "",
           "constraints": {
             "default": [],
-            "type": "computed",
             "options": [
               {
                 "condition": "typeOfStock == \"Cattle\"",
@@ -277,7 +274,8 @@
                 "condition": "typeOfStock == \"Horses\"",
                 "value": []
               }
-            ]
+            ],
+            "type": "computed"
           }
         },
         {
@@ -290,8 +288,9 @@
           "name": "groundCoverPercent",
           "validate": "min[0],max[100]"
         }
-
-      ]
+      ],
+      "dataType": "list",
+      "name": "grazingPeriods"
     },
     {
       "dataType": "number",
@@ -300,119 +299,121 @@
     },
     {
       "dataType": "text",
-      "description": "",
-      "name": "notes"
+      "name": "notes",
+      "description": ""
     }
   ],
   "viewModel": [
     {
+      "type": "row",
       "items": [
         {
           "source": "<b>Please note</b> Grazing activities are included under any or all of the following; “Conservation grazing”, “Strategic grazing”, “Monitoring and manage grazing pressure from domestic livestock” and “Monitor and manage total grazing pressure”. <br/><i>Please endeavour to record sward height and ground cover percentage after each grazing period.</i>",
           "type": "literal"
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
+          "type": "col",
           "items": [
             {
-              "source": "multiplePaddocks",
               "preLabel": "Is this site divided up into multiple paddocks?",
+              "source": "multiplePaddocks",
               "type": "selectOne"
             }
-          ],
-          "type": "col"
+          ]
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
-          "title": "<b>Please record all grazing periods for this site:</b>",
-          "source": "grazingPeriods",
           "allowHeaderWrap": true,
+          "disableTableUpload": true,
           "columns": [
             {
-              "title": "Paddock (if applicable)",
               "source": "paddockNum",
+              "title": "Paddock (if applicable)",
               "type": "number"
             },
             {
-              "title": "Start Date",
               "source": "startDate",
+              "title": "Start Date",
               "type": "simpleDate"
             },
             {
-              "title": "End Date",
               "source": "endDate",
+              "title": "End Date",
               "type": "simpleDate"
             },
             {
-              "title": "Type of Stock",
               "source": "typeOfStock",
+              "title": "Type of Stock",
               "type": "selectOne"
             },
             {
-              "title": "Production Type",
               "source": "productionType",
+              "title": "Production Type",
               "type": "selectOne"
             },
             {
-              "title": "Growth Stage",
               "source": "growthStage",
+              "title": "Growth Stage",
               "type": "selectOne"
             },
             {
-              "title": "No. Individuals",
               "source": "individualCount",
+              "title": "No. Individuals",
               "type": "number"
             },
             {
-              "title": "Breed",
               "source": "breed",
+              "title": "Breed",
               "type": "selectOne"
             },
             {
-              "title": "Sward Height (cm)",
               "source": "swardHeightCm",
+              "title": "Sward Height (cm)",
               "type": "number"
             },
             {
-              "title": "Ground cover %",
               "source": "groundCoverPercent",
+              "title": "Ground cover %",
               "type": "number"
             }
           ],
           "userAddedRows": true,
-          "disableTableUpload": true,
+          "source": "grazingPeriods",
+          "title": "<b>Please record all grazing periods for this site:</b> <br/>If your situation makes it impractical to record your grazing information in the table below, please delete any row(s) from the table below and instead provide a summary of your grazing activities in the textbox below.<p/>",
           "type": "table"
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
-          "source": "cost",
           "preLabel": "Total cost of management actions",
+          "source": "cost",
           "type": "currency"
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
-          "source": "notes",
           "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
-          "type": "textarea"
+          "source": "notes",
+          "type": "textarea",
+          "rows": 5
         }
-      ],
-      "type": "row"
+      ]
     }
-  ]
+  ],
+  "title": "Livestock Grazing Management"
 }
