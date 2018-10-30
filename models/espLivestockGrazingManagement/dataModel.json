@@ -41,8 +41,7 @@
             "Cattle",
             "Sheep",
             "Goats",
-            "Horses",
-            "Other"
+            "Horses"
           ],
           "validate": "required"
         },
@@ -202,7 +201,8 @@
                   "Simmental",
                   "South Devon",
                   "Tuli",
-                  "Unknown"
+                  "Unknown",
+                  "Other"
                 ]
               },
               {
@@ -248,7 +248,8 @@
                   "Unknown",
                   "White Suffolk",
                   "Wiltipoll",
-                  "Wiltshire Horn"
+                  "Wiltshire Horn",
+                  "Other"
                 ]
               },
               {
@@ -267,7 +268,8 @@
                   "Rangeland",
                   "Saanen",
                   "Toggenburg",
-                  "Unknown"
+                  "Unknown",
+                  "Other"
                 ]
               },
               {
