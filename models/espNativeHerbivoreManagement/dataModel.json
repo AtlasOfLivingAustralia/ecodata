@@ -1,15 +1,12 @@
 {
-    "title": "Native Herbivore Management",
     "modelName": "ESP Native Herbivore Management",
     "dataModel": [
         {
-            "dataType": "list",
-            "name": "nativeSpeciesMonitoring",
             "columns": [
                 {
                     "dataType": "text",
-                    "description": "",
                     "name": "species",
+                    "description": "",
                     "constraints": [
                         "Grey Kangaroo",
                         "Red Kangaroo",
@@ -26,7 +23,8 @@
                         "Spring",
                         "Summer",
                         "Autumn",
-                        "Winter"
+                        "Winter",
+                        "Year round"
                     ],
                     "validate": "required"
                 },
@@ -55,7 +53,9 @@
                     "name": "noCulled",
                     "validate": "min[0]"
                 }
-            ]
+            ],
+            "dataType": "list",
+            "name": "nativeSpeciesMonitoring"
         },
         {
             "dataType": "number",
@@ -68,58 +68,59 @@
             "description": ""
         }
     ],
+    "description": "When you enter the details for this activity please make sure that you only enter the number and cost details once. Either as a single total record, encompassing the details and costs of this activity across all of your sites or as separate entries for each site.",
     "viewModel": [
         {
+            "type": "row",
             "items": [
                 {
                     "source": "<b>Please note</b> Activities to monitor and/or manage native herbivores are included under any or all of the following; “Monitor and manage total grazing pressure”, “Monitor and manage grazing pressure from native species” and “Monitor and manage native herbivores”.",
                     "type": "literal"
                 }
-            ],
-            "type": "row"
+            ]
         },
         {
+            "type": "row",
             "items": [
                 {
-                    "title": "Please complete the following:",
-                    "source": "nativeSpeciesMonitoring",
+                    "disableTableUpload": true,
                     "columns": [
                         {
-                            "title": "Species",
                             "source": "species",
+                            "title": "Species",
                             "type": "selectOne"
                         },
                         {
-                            "title": "Season observed / managed",
                             "source": "season",
+                            "title": "Season observed / managed",
                             "type": "selectOne"
                         },
                         {
-                            "title": "Management Action(s)",
                             "source": "managementActions",
+                            "title": "Management Action(s)",
                             "type": "select2Many"
                         },
                         {
-                            "title": "Reason for management",
                             "source": "managementReason",
+                            "title": "Reason for management",
                             "type": "selectOne"
                         },
                         {
-                            "title": "If applicable, no. culled (if known)",
                             "source": "noCulled",
+                            "title": "If applicable, no. culled (if known)",
                             "type": "number"
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload":true,
+                    "source": "nativeSpeciesMonitoring",
+                    "title": "Please complete the following:",
                     "type": "table"
                 }
-            ],
-            "type": "row"
+            ]
         },
         {
-            "type":"row",
-            "items":[
+            "type": "row",
+            "items": [
                 {
                     "preLabel": "Total cost of management actions",
                     "source": "cost",
@@ -131,11 +132,12 @@
             "type": "row",
             "items": [
                 {
-                    "type": "textarea",
+                    "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:",
                     "source": "notes",
-                    "preLabel": "If you would like to provide further observations or comments regarding activities you have undertaken please fill out the textbox below:"
+                    "type": "textarea"
                 }
             ]
         }
-    ]
+    ],
+    "title": "Native Herbivore Management"
 }
