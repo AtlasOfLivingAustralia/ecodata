@@ -165,7 +165,7 @@ class CSProjectXlsExporter extends ProjectExporter {
         if (activityIds == null || activityIds.isEmpty()) {
             activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
         } else {
-            activities = activityService.findAllForActivityIds(activityList)
+            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId)
         }
 
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
