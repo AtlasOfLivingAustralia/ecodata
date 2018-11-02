@@ -40,7 +40,7 @@ class TabbedExporter {
         exporter.setDateCellFormat(dateFormat)
     }
 
-    boolean shouldExport(String sheetName) {
+    boolean  shouldExport(String sheetName) {
         return !tabsToExport || tabsToExport.contains(sheetName)
     }
 
@@ -147,6 +147,18 @@ class TabbedExporter {
             }
         }
         sheet.add(data, reportSummaryProperties, row + 1)
+    }
+
+    protected void exportList(String tab, Map project, List data, List headers, List properties) {
+        if (shouldExport(tab) && data) {
+            AdditionalSheet sheet = getSheet(tab, headers)
+            int row = sheet.getSheet().lastRowNum
+            List augmentedList = data?.collect {
+                it.putAll(project)
+                it
+            }
+            sheet.add(augmentedList, properties, row+1)
+        }
     }
 
     static class StringToDoublePropertyGetter extends PropertyGetter<Object, Number> {

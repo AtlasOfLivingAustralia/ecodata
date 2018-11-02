@@ -417,18 +417,6 @@ class ProjectXlsExporter extends ProjectExporter {
 
     }
 
-    private void exportList(String tab, Map project, List data, List headers, List properties) {
-        if (shouldExport(tab) && data) {
-            AdditionalSheet sheet = getSheet(tab, headers)
-            int row = sheet.getSheet().lastRowNum
-            List augmentedList = data?.collect {
-                it.putAll(project)
-                it
-            }
-            sheet.add(augmentedList, properties, row+1)
-        }
-    }
-
     private void exportProjectPartnerships(Map project) {
 
         exportList("MERI_Project Partnerships", project, project?.custom?.details?.partnership?.rows,
