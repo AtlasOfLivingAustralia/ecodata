@@ -1,7 +1,6 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.OrganisationXlsExporter
-import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
 import au.org.ala.ecodata.reporting.WorksProjectXlsExporter
@@ -12,8 +11,6 @@ import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
-
-import java.time.ZoneId
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
@@ -435,13 +432,7 @@ class SearchController {
 
                     File file = File.createTempFile("download", "xlsx")
                     XlsExporter xlsExporter = new XlsExporter(file.name)
-                    ProjectExporter projectExporter
-                    if (params.report == 'works') {
-                        projectExporter = worksProjectExporter(xlsExporter, params)
-                    }
-                    else {
-                        projectExporter = meritProjectExporter(xlsExporter, params)
-                    }
+                    ProjectXlsExporter projectExporter = meritProjectExporter(xlsExporter, params)
                     exportProjectsToXls(ids, projectExporter)
                     xlsExporter.save(outputStream)
                 }
@@ -450,7 +441,7 @@ class SearchController {
         }
     }
 
-    private ProjectExporter meritProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
+    private ProjectXlsExporter meritProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
         String ELECTORATES = 'electFacet'
         params.facets = ELECTORATES
         SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
@@ -460,12 +451,12 @@ class SearchController {
         return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
     }
 
-    private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
+    private ProjectXlsExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
         List tabsToExport = params.getList('tabs')
-        return new WorksProjectXlsExporter(xlsExporter, [:], TimeZone.getTimeZone(ZoneId.systemDefault()))
+        return new WorksProjectXlsExporter(xlsExporter, [:], TimeZone.getTimeZone())
     }
 
-    private XlsExporter exportProjectsToXls(Set<String> projectIds, ProjectExporter projectExporter) {
+    private XlsExporter exportProjectsToXls(Set<String> projectIds, ProjectXlsExporter projectExporter) {
         long start = System.currentTimeMillis()
 
         Project.withSession { session ->

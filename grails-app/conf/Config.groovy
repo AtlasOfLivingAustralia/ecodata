@@ -619,7 +619,7 @@ environments {
     development {
         grails.logging.jul.usebridge = true
         ecodata.use.uuids = false
-        app.external.model.dir = "/data/ecodata/models/"
+        app.external.model.dir = "./models/"
         grails.hostname = "devt.ala.org.au"
         app.elasticsearch.indexAllOnStartup = false
         app.elasticsearch.indexOnGormEvents = true
