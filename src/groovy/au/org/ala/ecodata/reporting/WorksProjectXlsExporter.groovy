@@ -16,11 +16,11 @@ class WorksProjectXlsExporter extends ProjectExporter {
 
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'status', 'funding', 'keywords']
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'status', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'outcome', 'outcomeType']
 
     List<String> outcomeHeaders = ['Project ID', 'Project Name', 'Program Name', 'Date', 'Interim/Final', 'Outcome']
-    List<String> outcomeProperties = ['externalId', 'name', 'assocatedProgram', 'date', 'type', 'outcome']
+    List<String> outcomeProperties = ['externalId', 'name', 'associatedProgram', 'date', 'type', 'progress']
 
     AdditionalSheet projectSheet
     Map<String, Object> documentMap
@@ -50,19 +50,20 @@ class WorksProjectXlsExporter extends ProjectExporter {
         project.allOrganisations = organisationNames(project).join(',')
         Map outcome = mostRecentOutcome(project)
         project.outcomeDate = outcome?.date ?: ''
-        project.outcome = outcome?.outcome ?: ''
+        project.outcome = outcome?.progress ?: ''
+        project.outcomeType = outcome?.type ?: ''
         projectSheet.add([project], projectProperties, row + 1)
     }
 
     private String projectStatus(Map project) {
 
-        String now = CommonService.dateFormat.format(new Date())
-        String status = 'Current'
-        if (project.startDate < now) {
-            status = 'Planned'
-        }
-        else if (project.endDate < now) {
+        long now = System.currentTimeMillis()
+        String status = 'Planned'
+        if (project.plannedEndDate && project.plannedEndDate.getTime() < now) {
             status = 'Completed'
+        }
+        else if (project.plannedStartDate.getTime() < now) {
+            status = 'Current'
         }
         status
     }
@@ -77,14 +78,14 @@ class WorksProjectXlsExporter extends ProjectExporter {
     }
 
     private Map mostRecentOutcome(Map project) {
-        List outcomes =  project?.custom?.details?.outcomes ?: []
+        List outcomes =  project?.custom?.details?.outcomeProgress ?: []
         outcomes.sort{it.date}
 
         return outcomes ? outcomes.last() : [:]
     }
 
     private void exportOutcomes(Map project) {
-        exportList("Outcomes", project, project?.custom?.details?.outcomes, outcomeHeaders, outcomeProperties)
+        exportList("Outcomes", project, project?.custom?.details?.outcomeProgress, outcomeHeaders, outcomeProperties)
     }
 
     private AdditionalSheet projectSheet() {

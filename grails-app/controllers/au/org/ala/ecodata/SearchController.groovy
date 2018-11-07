@@ -13,7 +13,6 @@ import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
 
-import java.time.ZoneId
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
@@ -454,7 +453,7 @@ class SearchController {
     }
 
     private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
-        return new WorksProjectXlsExporter(xlsExporter, [:], TimeZone.getTimeZone(ZoneId.systemDefault()))
+        return new WorksProjectXlsExporter(xlsExporter, [:], TimeZone.getDefault())
     }
 
     private XlsExporter exportProjectsToXls(Set<String> projectIds, ProjectExporter projectExporter) {
