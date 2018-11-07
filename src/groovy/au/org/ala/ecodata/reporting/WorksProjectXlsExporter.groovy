@@ -77,14 +77,14 @@ class WorksProjectXlsExporter extends ProjectExporter {
     }
 
     private Map mostRecentOutcome(Map project) {
-        List outcomes =  project?.custom.details?.outcomes ?: []
+        List outcomes =  project?.custom?.details?.outcomes ?: []
         outcomes.sort{it.date}
 
-        return outcomes.last()
+        return outcomes ? outcomes.last() : [:]
     }
 
     private void exportOutcomes(Map project) {
-        exportList("Outcomes", project, project?.custom.details?.outcomes, outcomeHeaders, outcomeProperties)
+        exportList("Outcomes", project, project?.custom?.details?.outcomes, outcomeHeaders, outcomeProperties)
     }
 
     private AdditionalSheet projectSheet() {
