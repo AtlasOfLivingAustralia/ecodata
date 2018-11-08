@@ -17,10 +17,10 @@ class WorksProjectXlsExporter extends ProjectExporter {
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
 
     List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'status', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'outcome', 'outcomeType']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'status', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType']
 
     List<String> outcomeHeaders = ['Project ID', 'Project Name', 'Program Name', 'Date', 'Interim/Final', 'Outcome']
-    List<String> outcomeProperties = ['externalId', 'name', 'associatedProgram', 'date', 'type', 'progress']
+    List<String> outcomeProperties = ['externalId', 'name', 'associatedProgram', new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
 
     AdditionalSheet projectSheet
     Map<String, Object> documentMap
