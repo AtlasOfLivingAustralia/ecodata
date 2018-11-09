@@ -16,11 +16,19 @@ class WorksProjectXlsExporter extends ProjectExporter {
 
     ProjectService projectService = Holders.grailsApplication.mainContext.getBean("projectService")
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'status', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType']
+    List<String> commonProjectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Status']
+    List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
-    List<String> outcomeHeaders = ['Project ID', 'Project Name', 'Program Name', 'Date', 'Interim/Final', 'Outcome']
-    List<String> outcomeProperties = ['externalId', 'name', 'associatedProgram', new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'projectStatus', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType']
+
+    List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
+    List<String> outcomeProperties = commonProjectProperties + [new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
+
+
+    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Payment Number', 'Funding Source', 'Payment Status', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
+    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'paymentNumber', 'fundingSource', 'paymentStatus', 'budgetDescription', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
+
 
     AdditionalSheet projectSheet
     Map<String, Object> documentMap
@@ -32,8 +40,10 @@ class WorksProjectXlsExporter extends ProjectExporter {
 
     @Override
     void export(Map project) {
+        project.projectStatus = projectStatus(project)
         exportProject(project)
         exportOutcomes(project)
+        exportBudget(project)
     }
 
     @Override
@@ -46,7 +56,6 @@ class WorksProjectXlsExporter extends ProjectExporter {
     private void exportProject(Map project) {
         projectSheet()
         int row = projectSheet.getSheet().lastRowNum
-        project.status = projectStatus(project)
         project.allOrganisations = organisationNames(project).join(',')
         Map outcome = mostRecentOutcome(project)
         project.outcomeDate = outcome?.date ?: ''
@@ -86,6 +95,35 @@ class WorksProjectXlsExporter extends ProjectExporter {
 
     private void exportOutcomes(Map project) {
         exportList("Outcomes", project, project?.custom?.details?.outcomeProgress, outcomeHeaders, outcomeProperties)
+    }
+
+    private void exportBudget(Map project) {
+
+        AdditionalSheet sheet = getSheet("Budget", budgetHeaders)
+        int row = sheet.getSheet().lastRowNum
+
+        List financialYears = project?.custom?.details?.budget?.headers?.collect {it.data}
+        List data = project?.custom?.details?.budget?.rows?.collect { Map lineItem ->
+
+            Map budgetLineItem = [
+                    investmentArea: lineItem.shortLabel,
+                    budgetDescription: lineItem.description,
+                    paymentStatus: lineItem.paymentStatus,
+                    fundingSource: lineItem.fundingSource,
+                    paymentNumber: lineItem.paymentNumber
+
+            ]
+            budgetLineItem.putAll(project)
+            financialYears.eachWithIndex { String year, int i ->
+                budgetLineItem.put(year, lineItem.costs[i].dollar)
+            }
+
+            budgetLineItem
+        }
+
+        sheet.add(data?:[], budgetProperties, row+1)
+
+
     }
 
     private AdditionalSheet projectSheet() {
