@@ -1164,6 +1164,62 @@ scores = [
    {
       "configuration": {
          "filter": {
+            "filterValue": "RLP - Weed treatment",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "filter": {
+               "filterValue": "Initial",
+               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "type": "filter"
+            },
+            "childAggregations": [{
+               "property": "data.weedSpeciesTreated.lengthTreatedKm",
+               "type": "SUM"
+            }]
+         }],
+         "label": "Length (km) treated for weeds - initial"
+      },
+      "outputType": "RLP - Weed treatment",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Length (km) treated for weeds - initial",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
+            "filterValue": "RLP - Weed treatment",
+            "property": "name",
+            "type": "filter"
+         },
+         "childAggregations": [{
+            "filter": {
+               "filterValue": "Follow-up",
+               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "type": "filter"
+            },
+            "childAggregations": [{
+               "property": "data.weedSpeciesTreated.lengthTreatedKm",
+               "type": "SUM"
+            }]
+         }],
+         "label": "Length (km) treated for weeds - follow-up"
+      },
+      "outputType": "RLP - Weed treatment",
+      "entityTypes": ["RLP Output Report"],
+      "label": "Length (km) treated for weeds - follow-up",
+      "units": "",
+      "category": "RLP",
+      "isOutputTarget": true,
+      "status": "active"
+   },
+   {
+      "configuration": {
+         "filter": {
             "filterValue": "RLP - Revegetating habitat",
             "property": "name",
             "type": "filter"
