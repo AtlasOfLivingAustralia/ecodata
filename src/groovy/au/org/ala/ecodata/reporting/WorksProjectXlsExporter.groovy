@@ -19,8 +19,8 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Status']
     List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
-    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'projectStatus', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType']
+    List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'managerEmail', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'projectStatus', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
 
     List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
     List<String> outcomeProperties = commonProjectProperties + [new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
@@ -115,7 +115,14 @@ class WorksProjectXlsExporter extends ProjectExporter {
             ]
             budgetLineItem.putAll(project)
             financialYears.eachWithIndex { String year, int i ->
-                budgetLineItem.put(year, lineItem.costs[i].dollar)
+                BigDecimal amount = null
+                try {
+                    amount = new BigDecimal(lineItem.costs[i].dollar)
+                }
+                catch (NumberFormatException e) {
+                    log.warn("Project ${project.projectId} has invalid budget amount: ${lineItem.costs[i].dollar}")
+                }
+                budgetLineItem.put(year, amount)
             }
 
             budgetLineItem
