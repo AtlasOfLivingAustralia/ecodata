@@ -8,6 +8,7 @@ import au.org.ala.ecodata.metadata.OutputDataPropertiesBuilder
 import grails.util.Holders
 import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
+import sun.security.util.Length
 
 import java.text.SimpleDateFormat
 
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat
  * Basic support for exporting data based on a selection of content.
  */
 class TabbedExporter {
+
 
     MetadataService metadataService = Holders.grailsApplication.mainContext.getBean("metadataService")
     UserService userService = Holders.grailsApplication.mainContext.getBean("userService")
@@ -40,7 +42,7 @@ class TabbedExporter {
         exporter.setDateCellFormat(dateFormat)
     }
 
-    boolean shouldExport(String sheetName) {
+    boolean  shouldExport(String sheetName) {
         return !tabsToExport || tabsToExport.contains(sheetName)
     }
 
@@ -147,6 +149,33 @@ class TabbedExporter {
             }
         }
         sheet.add(data, reportSummaryProperties, row + 1)
+    }
+
+    protected void exportList(String tab, Map project, List data, List headers, List properties) {
+        if (shouldExport(tab) && data) {
+            AdditionalSheet sheet = getSheet(tab, headers)
+            int row = sheet.getSheet().lastRowNum
+            List augmentedList = data?.collect {
+                it.putAll(project)
+                it
+            }
+            sheet.add(augmentedList, properties, row+1)
+        }
+    }
+
+    static class LengthLimitedGetter extends PropertyGetter<String, String> {
+        /** Excel cells can hold a maximum of 32767 characters */
+        static final int MAX_CELL_LENGTH = 32767
+
+        LengthLimitedGetter(String propertyName) {
+            super(propertyName)
+        }
+        String format(String value) {
+            if (value && value.length() > MAX_CELL_LENGTH) {
+                value = value.substring(0, MAX_CELL_LENGTH)
+            }
+            return value
+        }
     }
 
     static class StringToDoublePropertyGetter extends PropertyGetter<Object, Number> {

@@ -1,8 +1,10 @@
 package au.org.ala.ecodata
 
 import au.org.ala.ecodata.reporting.OrganisationXlsExporter
+import au.org.ala.ecodata.reporting.ProjectExporter
 import au.org.ala.ecodata.reporting.ProjectXlsExporter
 import au.org.ala.ecodata.reporting.SummaryXlsExporter
+import au.org.ala.ecodata.reporting.WorksProjectXlsExporter
 import au.org.ala.ecodata.reporting.XlsExporter
 import grails.converters.JSON
 import groovy.json.JsonSlurper
@@ -10,6 +12,7 @@ import groovyx.net.http.ContentType
 import org.codehaus.groovy.grails.web.servlet.mvc.GrailsParameterMap
 import org.elasticsearch.action.search.SearchResponse
 import org.elasticsearch.search.SearchHit
+
 
 import static au.org.ala.ecodata.ElasticIndex.*
 import java.text.SimpleDateFormat
@@ -403,13 +406,13 @@ class SearchController {
                 downloadService.downloadProjectData(response.outputStream, params)
             }
         } else {
-            downloadMeritData(params)
+            downloadProjectData(params)
             response.setStatus(200)
             render "OK"
         }
     }
 
-    void downloadMeritData(GrailsParameterMap params) {
+    void downloadProjectData(GrailsParameterMap params) {
         if (!params.max) {
             params.max = 5000
             params.offset = 0
@@ -417,36 +420,44 @@ class SearchController {
 
         Set ids = downloadService.getProjectIdsForDownload(params, HOMEPAGE_INDEX)
 
-        withFormat {
-            json {
-                List projects = ids.collect { projectService.get(it, ProjectService.ALL) }
-                render projects as JSON
-            }
-            xlsx {
-                if (!params.email) {
-                    params.email = userService.getCurrentUserDetails().userName
-                }
-                params.fileExtension = "xlsx"
-                Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
-                    String ELECTORATES = 'electFacet'
-                    params.facets = ELECTORATES
-                    SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
-                    List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
-                    XlsExporter exporter = exportMeritProjectsToXls(ids, params.getList('tabs'), electorates)
-                    exporter.save(outputStream)
-                }
-                downloadService.downloadProjectDataAsync(params, doDownload)
-            }
+
+        if (!params.email) {
+            params.email = userService.getCurrentUserDetails().userName
         }
+        params.fileExtension = "xlsx"
+        Closure doDownload = { OutputStream outputStream, GrailsParameterMap paramMap ->
+
+            File file = File.createTempFile("download", "xlsx")
+            XlsExporter xlsExporter = new XlsExporter(file.name)
+            ProjectExporter projectExporter
+            if (params.reportType == 'works') {
+                projectExporter = worksProjectExporter(xlsExporter, params)
+            }
+            else {
+                projectExporter = meritProjectExporter(xlsExporter, params)
+            }
+            exportProjectsToXls(ids, projectExporter)
+            xlsExporter.save(outputStream)
+        }
+        downloadService.downloadProjectDataAsync(params, doDownload)
     }
 
-    private XlsExporter exportMeritProjectsToXls(Set<String> projectIds, List<String> tabsToExport, List<String> electorates) {
+    private ProjectExporter meritProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
+        String ELECTORATES = 'electFacet'
+        params.facets = ELECTORATES
+        SearchResponse result = elasticSearchService.search(params.query, params, HOMEPAGE_INDEX)
+        List<String> electorates = result.facets.facet(ELECTORATES)?.collect{it.term.toString()}
+
+        List tabsToExport = params.getList('tabs')
+        return new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
+    }
+
+    private ProjectExporter worksProjectExporter(XlsExporter xlsExporter, GrailsParameterMap params) {
+        return new WorksProjectXlsExporter(xlsExporter, [:], TimeZone.getDefault())
+    }
+
+    private XlsExporter exportProjectsToXls(Set<String> projectIds, ProjectExporter projectExporter) {
         long start = System.currentTimeMillis()
-
-        File file = File.createTempFile("download", "xlsx")
-        XlsExporter xlsExporter = new XlsExporter(file.name)
-
-        ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, xlsExporter, tabsToExport, electorates)
 
         Project.withSession { session ->
             int batchSize = 50
@@ -464,8 +475,6 @@ class SearchController {
             }
         }
         log.info "Exporting ${projectIds.size()} projects took ${System.currentTimeMillis() - start} millis"
-
-        xlsExporter
     }
 
     def downloadOrganisationData() {
