@@ -672,18 +672,6 @@ class ElasticSearchService {
         log.debug "Clearing index first"
         deleteIndex()
 
-        log.info "Indexing all MERIT based projects in MERIT SEARCH index."
-        def list = projectService.listMeritProjects("flat", false)
-        list.each {
-            try {
-                it["className"] = Project.class.name
-                indexDoc(it, DEFAULT_INDEX)
-            }
-            catch (Exception e) {
-                log.error("Unable to index projewt: "+it?.projectId, e)
-            }
-        }
-
         // homepage index (doing some manual batching due to memory constraints)
         log.info "Indexing all MERIT and NON-MERIT projects in generic HOMEPAGE index"
         Project.withNewSession {
