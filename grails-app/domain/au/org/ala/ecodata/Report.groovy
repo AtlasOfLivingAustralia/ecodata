@@ -21,20 +21,6 @@ class Report {
      */
     public static final String TYPE_ACTIVITY = 'Activity'
 
-
-    public static class StatusChange {
-        Date dateChanged
-        String changedBy
-        String status
-        String comment
-        String category
-        static constraints = {
-            version false
-        }
-
-
-    }
-
     ObjectId id
 
     /** UUID for this report */
