@@ -144,23 +144,29 @@ class ShapefileBuilder {
     /**
      * Writes the zipped shape file to the supplied OutputStream.
      */
-    public void writeShapefile(OutputStream toWriteTo) {
-        if (featureCount > 0) {
+    void writeShapefile(OutputStream toWriteTo) {
+
+        try {
             if (writer != null) {
                 writer.close()
             }
-            buildZip(shapefile, toWriteTo)
+            if (featureCount > 0) {
 
+                buildZip(shapefile, toWriteTo)
+            }
+            else {
+                throw new RuntimeException("No features have been added to the shapefile")
+            }
+        }
+        finally {
             cleanup()
         }
-        else {
-            throw new RuntimeException("No features have been added to the shapefile")
-        }
+
     }
 
     private void createShapefile() {
 
-        FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory();
+        FileDataStoreFactorySpi factory = new ShapefileDataStoreFactory()
 
         shapefile = File.createTempFile(name, ".shp")
 
@@ -220,7 +226,7 @@ class ShapefileBuilder {
         return shapefile.getName().substring(0, shapefile.getName().indexOf(".shp"))
     }
 
-    private void cleanup() {
+    void cleanup() {
         def filePrefix = getTempFilePrefix()
         fileExtensions.each {
             File f = new File(shapefile.getParentFile(), filePrefix+it)
