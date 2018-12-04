@@ -593,7 +593,7 @@ class ProjectService {
                                 } else {
                                     // update a project just in case something has changed.
                                     updateSciStarterProject(transformedProject, importedSciStarterProject)
-                                    log.info("Updating ${importedSciStarterProject.title} ${importedSciStarterProject.projectId}.")
+                                    log.info("Updating ${importedSciStarterProject.name} ${importedSciStarterProject.projectId}.")
                                     updatedProjects++
                                 }
                             }
