@@ -68,6 +68,7 @@ class SciStarterConverter {
                 'image'       : [
                         'name'     : 'image',
                         'transform': { props, target ->
+                            String imageUrl = props.image?.toLowerCase()
                             if (Holders.grailsApplication.config.scistarter.forceHttpsUrls == 'true') {
                                 try {
                                     URL oldUrl = new URL(props.image)
@@ -76,7 +77,7 @@ class SciStarterConverter {
                                 } catch (MalformedURLException e) {
                                     "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
                                 }
-                            } else if (!props.image?.equals(null) && props.image?.contains(Holders.grailsApplication.config.scistarter.baseUrl)) {
+                            } else if (!imageUrl?.equals(null) && (imageUrl?.contains('http://') || imageUrl?.contains('https://'))) {
                                 props.image
                             } else if (!props.image?.equals(null)) {
                                 "${Holders.grailsApplication.config.scistarter.baseUrl}/${props.image}"
