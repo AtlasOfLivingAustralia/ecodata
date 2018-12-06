@@ -1,14 +1,14 @@
 // Example Activity URL: https://biocollect.ala.org.au/actwaterwatch/bioActivity/create/2318f116-ff07-4609-8d04-e978b640d0e9
 // Activity Name: ACT Water Watch - Water Quality Monitoring.
 // Output model name: actWaterwatch_waterQualitySurvey
-// jsMain: https://dl.dropbox.com/s/55ytuve6qjdi62o/waterDoPcSat.js?dl=0
-self.data.waterDoPcSat = ko.observable();
-self.data.waterDoMgl.subscribe(function(disolvedOxygen) {
+// jsMain: https://dl.dropbox.com/s/55ytuve6qjdi62o/waterDissolvedOxygenInPercentSaturation.js?dl=0
+self.data.waterDissolvedOxygenInPercentSaturation = ko.observable();
+self.data.waterDissolvedOxygenInMilligramsPerLitre.subscribe(function(disolvedOxygen) {
     var waterTemp = self.data.waterTemperatureInDegreesCelcius();
     self.transients.calculateSaturation(waterTemp, disolvedOxygen);
 });
 self.data.waterTemperatureInDegreesCelcius.subscribe(function(waterTemp) {
-    var disolvedOxygen = self.data.waterDoMgl();
+    var disolvedOxygen = self.data.waterDissolvedOxygenInMilligramsPerLitre();
     self.transients.calculateSaturation(waterTemp, disolvedOxygen);
 });
 
@@ -81,5 +81,5 @@ self.transients.calculateSaturation = function(waterTemp, disolvedOxygen){
         {
             saturation = Math.round(disolvedOxygen / saturationFactor[waterTemp] * 100);
         }
-        self.data.waterDoPcSat(saturation);
+        self.data.waterDissolvedOxygenInPercentSaturation(saturation);
 };
