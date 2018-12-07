@@ -134,7 +134,7 @@ if (!webservice.readTimeout) {
 }
 // spatial services
 if (!spatial.baseUrl) {
-    spatial.baseUrl = "http://spatial-dev.ala.org.au"
+    spatial.baseUrl = "https://spatial-beta.ala.org.au"
 }
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
