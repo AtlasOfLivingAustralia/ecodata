@@ -1,15 +1,12 @@
 {
-  "title": "Community/stakeholder engagement",
   "modelName": "RLP - Community engagement",
   "dataModel": [
     {
-      "dataType":"list",
-      "name":"events",
-      "columns":[
+      "columns": [
         {
           "dataType": "text",
           "name": "eventType",
-          "constraints":[
+          "constraints": [
             "Field days",
             "Training / workshop events",
             "Conferences / seminars",
@@ -20,9 +17,9 @@
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"numberOfEvents",
-          "validate":"required"
+          "dataType": "number",
+          "name": "numberOfEvents",
+          "validate": "required"
         },
         {
           "dataType": "number",
@@ -47,8 +44,10 @@
         {
           "dataType": "stringList",
           "name": "industryType",
-          "constraints":[
+          "constraints": [
+            "Cropping",
             "Dairy",
+            "Dryland agriculture",
             "Horticulture",
             "Grazing",
             "Fisheries",
@@ -62,87 +61,86 @@
           "name": "eventPurpose",
           "validate": "required,maxSize[300]"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "events"
     },
     {
-      "name":"photographicEvidence",
-      "dataType":"image"
+      "dataType": "image",
+      "name": "photographicEvidence"
     }
   ],
   "viewModel": [
-
     {
+      "type": "section",
       "items": [
         {
           "columns": [
             {
+              "width": "15%",
               "source": "eventType",
               "title": "Type of Community / Stakeholder engagement activity",
-              "type": "select2",
-              "width":"15%"
+              "type": "select2"
             },
             {
+              "width": "10%",
               "source": "numberOfEvents",
               "title": "Number of Community / Stakeholder engagement type events",
-              "type": "number",
-              "width":"10%"
+              "type": "number"
             },
             {
+              "width": "20%",
               "source": "eventPurpose",
               "title": "Purpose of engagement",
-              "type": "textarea",
-              "width":"20%"
+              "type": "textarea"
             },
             {
+              "width": "10%",
               "source": "numberOfGroups",
               "title": "Number of communities or groups engaged",
-              "type": "number",
-              "width":"10%"
+              "type": "number"
             },
             {
+              "width": "10%",
               "source": "numberOfParticipants",
-              "title": "Number of attendees / participants",
-              "type": "number",
-              "width":"10%"
+              "title": "Total number of attendees / participants",
+              "type": "number"
             },
             {
+              "width": "10%",
               "source": "numberOfIndigenousParticipants",
               "title": "Number of Indigenous attendees / participants",
-              "type": "number",
-              "width":"10%"
+              "type": "number"
             },
             {
+              "width": "10%",
               "source": "numberOfFarmers",
               "title": "Number of farmers attending / participating",
-              "type": "number",
-              "width":"10%"
+              "type": "number"
             },
-
             {
+              "width": "15%",
               "source": "industryType",
               "title": "Industry type engaged",
-              "type": "select2Many",
-              "width":"15%"
+              "type": "select2Many"
             }
-
           ],
-          "source":"events",
-          "userAddedRows":true,
+          "userAddedRows": true,
+          "source": "events",
           "type": "table"
         },
         {
-          "type":"row",
-          "items":[
+          "type": "row",
+          "items": [
             {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
+              "preLabel": "Optionally attach photos",
+              "source": "photographicEvidence",
+              "type": "image"
             }
           ]
         }
-      ],
-      "type": "section"
+      ]
     }
-
-  ]
+  ],
+  "title": "Community/stakeholder engagement"
 }
