@@ -19,47 +19,18 @@ function addTsToMus(programs, ts, category) {
 }
 
 var ts = [
-    'Amytornis dorotheae (Carpentarian Grasswren)'
+    'Manorina melanotis (Black-eared Miner)',
+    'Pachycephala rufogularis (Red-lored Whistler)',
+    'Polytelis anthopeplus monarchoides (Regent Parrot)',
+    'Psophodes leucogaster leucogaster (Western Whipbird)',
+    'Stipiturus mallee (Mallee Emu-wren)'
 ];
-addTsToMus(['Southern Gulf'], ts);
-
-var programs = [
-    'North East',
-    'West Gippsland',
-    'East Gippsland'
-];
-
-ts = [
-    'Litoria verreauxii alpina (Alpine Tree Frog)',
-    "Philoria frosti (Baw Baw Frog)",
-    "Lobelia gelida (Snow Pratia)",
-    "Xerochrysum palustre (Swamp Everlasting)",
-    "Epilobium brunnescens subsp. Beaugleholei (Bog Willow-herb)"
-];
-
-addTsToMus(programs, ts);
-
-addTsToMus(['Mackay Whitsunday'],['Natator depressus (Flatback Turtle)']);
-
+addTsToMus(['South Australian Murray Darling Basin'], ts);
 
 
 ts = [
- 'Caladenia gladiolata (Small bayonet spider orchid)',
-    'Hylacola pyrrhopygia parkeri (Mount Lofty Ranges Chestnut-rumped Heathwren)'];
-
-addTsToMus(['Adelaide and Mount Lofty Ranges'], ts);
-
-
-addTsToMus(['Northern and Yorke'], ['Bettongia penicillata (Woylie)']);
-
-
-ts = [
-    'Olearia microdisca (Small-flowered Daisy-bush)',
-    'Leionema equestre (Kangaroo Island Phebalium)'
+    'Elseya albagula (White-throated Snapping Turtle)',
+    'Rheodytes leukops (Fitzroy River Turtle)'
 ];
-addTsToMus(['Kangaroo Island'],ts);
 
-
-
-addTsToMus(['Glenelg Hopkins'],['Glenelg Estuary and Discovery Bay Ramsar Site'], 'Ramsar');
-
+addTsToMus(['Fitzroy'], ts);
