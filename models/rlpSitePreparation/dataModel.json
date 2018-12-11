@@ -46,10 +46,12 @@
           "constraints": [
             "Broad acre cropping",
             "Dairy",
+            "Environmental",
             "Horticulture",
             "Grazing",
             "Fisheries",
-            "Aquaculture"
+            "Aquaculture",
+            "Other"
           ]
         },
         {
@@ -69,7 +71,7 @@
             "Hand pulling",
             "Moisture and nutrient control",
             "Mowing",
-            "Other Earthworks",
+            "Other earthworks",
             "Overplanting",
             "Pushing",
             "Slashing",
