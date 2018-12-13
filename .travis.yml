@@ -6,8 +6,8 @@ branches:
   only:
   - master
   - dev
-  - hot-fix
-  - feature/works-projects-download
+  - hotfix_site_download
+  
 services:
   - mongodb
 before_install:
