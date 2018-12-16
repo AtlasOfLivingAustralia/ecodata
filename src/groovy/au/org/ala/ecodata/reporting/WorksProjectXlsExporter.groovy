@@ -26,8 +26,8 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> outcomeProperties = commonProjectProperties + [new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
 
 
-    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Payment Number', 'Funding Source', 'Payment Status', 'Description', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
-    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'paymentNumber', 'fundingSource', 'paymentStatus', 'budgetDescription', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
+    List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Payment Number', 'Funding Source', 'Payment Status', 'Description', 'Date Due', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
+    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'paymentNumber', 'fundingSource', 'paymentStatus', 'budgetDescription', new DatePropertyGetter('dueDate', DateTimeParser.Style.DATE,null, null,  timeZone), '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
 
 
     AdditionalSheet projectSheet
@@ -110,8 +110,8 @@ class WorksProjectXlsExporter extends ProjectExporter {
                     budgetDescription: lineItem.description,
                     paymentStatus: lineItem.paymentStatus,
                     fundingSource: lineItem.fundingSource,
-                    paymentNumber: lineItem.paymentNumber
-
+                    paymentNumber: lineItem.paymentNumber,
+                    dueDate: lineItem.dueDate
             ]
             budgetLineItem.putAll(project)
             financialYears.eachWithIndex { String year, int i ->
