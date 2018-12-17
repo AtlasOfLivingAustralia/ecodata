@@ -1,146 +1,142 @@
 {
-  "modelName": "RLP - Community engagement",
-  "dataModel": [
-    {
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "text",
-          "name": "eventType",
-          "constraints": [
-            "Field days",
-            "Training / workshop events",
-            "Conferences / seminars",
-            "One-on-one technical advice interactions",
-            "On-ground trials / demonstrations",
-            "On-ground works"
-          ],
-          "validate": "required"
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "eventType",
+                    "constraints": [
+                        "Field days",
+                        "Training / workshop events",
+                        "Conferences / seminars",
+                        "One-on-one technical advice interactions",
+                        "On-ground trials / demonstrations",
+                        "On-ground works"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfEvents",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfParticipants",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfIndigenousParticipants",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfFarmers",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfGroups",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "stringList",
+                    "name": "industryType",
+                    "constraints": [
+                        "Cropping",
+                        "Dairy",
+                        "Dryland agriculture",
+                        "Horticulture",
+                        "Grazing",
+                        "Fisheries",
+                        "Aquaculture",
+                        "Environmental"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "eventPurpose",
+                    "validate": "required,maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "events"
         },
         {
-          "dataType": "number",
-          "name": "numberOfEvents",
-          "validate": "required"
-        },
-        {
-          "dataType": "number",
-          "name": "numberOfParticipants",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType": "number",
-          "name": "numberOfIndigenousParticipants",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType": "number",
-          "name": "numberOfFarmers",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType": "number",
-          "name": "numberOfGroups",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType": "stringList",
-          "name": "industryType",
-          "constraints": [
-            "Cropping",
-            "Dairy",
-            "Dryland agriculture",
-            "Horticulture",
-            "Grazing",
-            "Fisheries",
-            "Aquaculture",
-            "Environmental"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "name": "eventPurpose",
-          "validate": "required,maxSize[300]"
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ],
-      "dataType": "list",
-      "name": "events"
-    },
-    {
-      "dataType": "image",
-      "name": "photographicEvidence"
-    }
-  ],
-  "viewModel": [
-    {
-      "type": "section",
-      "items": [
-        {
-          "columns": [
+    ],
+    "modelName": "RLP - Community engagement",
+    "title": "Community/stakeholder engagement",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "width": "15%",
-              "source": "eventType",
-              "title": "Type of Community / Stakeholder engagement activity",
-              "type": "select2"
+                "columns": [
+                    {
+                        "width": "15%",
+                        "source": "eventType",
+                        "title": "Type of Community / Stakeholder engagement activity",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfEvents",
+                        "title": "Number of Community / Stakeholder engagement type events",
+                        "type": "number"
+                    },
+                    {
+                        "width": "20%",
+                        "source": "eventPurpose",
+                        "title": "Purpose of engagement",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfGroups",
+                        "title": "Number of communities or groups engaged",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfParticipants",
+                        "title": "Total number of attendees / participants",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfIndigenousParticipants",
+                        "title": "Number of Indigenous attendees / participants",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "numberOfFarmers",
+                        "title": "Number of farmers attending / participating",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "industryType",
+                        "title": "Industry type engaged",
+                        "type": "select2Many"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "events",
+                "type": "table"
             },
             {
-              "width": "10%",
-              "source": "numberOfEvents",
-              "title": "Number of Community / Stakeholder engagement type events",
-              "type": "number"
-            },
-            {
-              "width": "20%",
-              "source": "eventPurpose",
-              "title": "Purpose of engagement",
-              "type": "textarea"
-            },
-            {
-              "width": "10%",
-              "source": "numberOfGroups",
-              "title": "Number of communities or groups engaged",
-              "type": "number"
-            },
-            {
-              "width": "10%",
-              "source": "numberOfParticipants",
-              "title": "Total number of attendees / participants",
-              "type": "number"
-            },
-            {
-              "width": "10%",
-              "source": "numberOfIndigenousParticipants",
-              "title": "Number of Indigenous attendees / participants",
-              "type": "number"
-            },
-            {
-              "width": "10%",
-              "source": "numberOfFarmers",
-              "title": "Number of farmers attending / participating",
-              "type": "number"
-            },
-            {
-              "width": "15%",
-              "source": "industryType",
-              "title": "Industry type engaged",
-              "type": "select2Many"
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ],
-          "userAddedRows": true,
-          "source": "events",
-          "type": "table"
-        },
-        {
-          "type": "row",
-          "items": [
-            {
-              "preLabel": "Optionally attach photos",
-              "source": "photographicEvidence",
-              "type": "image"
-            }
-          ]
-        }
-      ]
-    }
-  ],
-  "title": "Community/stakeholder engagement"
+        ]
+    }]
 }
