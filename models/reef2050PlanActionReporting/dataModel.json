@@ -1,32 +1,29 @@
 {
-  "title": "Reef 2050 Plan Action Reporting",
   "modelName": "Reef 2050 Plan Action Reporting",
   "dataModel": [
     {
-      "dataType": "list",
-      "name": "agencyContacts",
       "columns": [
         {
           "dataType": "text",
           "name": "agencyContact",
           "validate": "max[100]"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "agencyContacts"
     },
     {
-      "dataType": "list",
-      "name": "actions",
       "columns": [
         {
           "dataType": "text",
-          "description": "",
           "name": "actionId",
+          "description": "",
           "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "",
           "name": "actionDescription",
+          "description": "",
           "validate": "required"
         },
         {
@@ -45,8 +42,8 @@
         },
         {
           "dataType": "text",
-          "description": "Select the most appropriate progress against an action from the drop-down list",
           "name": "status",
+          "description": "Select the most appropriate progress against an action from the drop-down list",
           "constraints": [
             "Completed",
             "In place",
@@ -59,35 +56,33 @@
         },
         {
           "dataType": "text",
-          "description": "Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like",
           "name": "description",
+          "description": "Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like",
           "validate": "required,max[1500]"
         },
         {
           "dataType": "text",
-          "description": "Provide 2-3 sentences outlining progress in implementing the action",
           "name": "progress",
+          "description": "Provide 2-3 sentences outlining progress in implementing the action",
           "validate": "required,max[1500]"
         },
         {
           "dataType": "stringList",
-          "description": "Select organisations that are contributing to implementing the action",
           "name": "deliveryPartners",
+          "description": "Select organisations that are contributing to implementing the action",
           "constraints": [
-            "NPSR",
-            "DNRM",
+            "DNRME",
             "DATSIP",
-            "EHP",
+            "DES",
             "DOEE",
             "DAF",
             "DTMR",
             "AMSA",
             "GBRMPA",
-            "DSITI",
-            "DILGP",
+            "DSDMIP",
             "TMESBCG",
             "OGC",
-            "DSD",
+            "DSDMIP",
             "DIRD",
             "QPS",
             "DAFF",
@@ -122,32 +117,32 @@
         },
         {
           "dataType": "date",
+          "name": "timeframe",
+          "description": "Provide an indicative timeframe for when the action will be completed",
           "behaviour": [
             {
               "condition": "status != \"Completed\" and status != \"In place\"",
               "type": "enable"
             }
           ],
-          "description": "Provide an indicative timeframe for when the action will be completed",
-          "name": "timeframe",
           "validate": "required"
         },
         {
           "dataType": "text",
-          "description": "Provide an overview of milestones and deliverables for implementing the action",
           "name": "tasksAndMilestones",
+          "description": "Provide an overview of milestones and deliverables for implementing the action",
           "validate": "required,max[2000]"
         },
         {
           "dataType": "number",
-          "description": "Where possible, provide an estimate of funds expended to date on this action",
           "name": "fundsExtendedToDate",
+          "description": "Where possible, provide an estimate of funds expended to date on this action",
           "validate": "integer"
         },
         {
           "dataType": "stringList",
-          "description": "Please supply a comma separated list of URLs providing information about this action",
           "name": "webLinks",
+          "description": "Please supply a comma separated list of URLs providing information about this action",
           "validate": "required,custom[url]"
         },
         {
@@ -157,146 +152,149 @@
         },
         {
           "dataType": "text",
-          "description": "",
-          "name": "midtermReviewNotes"
+          "name": "midtermReviewNotes",
+          "description": "This field is to be completed by the mid-term review joint team only"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "actions"
     }
   ],
   "viewModel": [
     {
+      "type": "row",
       "items": [
         {
+          "type": "col",
           "items": [
             {
-              "source": "agencyContacts",
               "columns": [
                 {
-                  "title": "Agency Contact(s)",
-                  "source": "agencyContact",
                   "width": "100%",
-                  "class": "input-xxlarge",
-                  "type": "text"
+                  "source": "agencyContact",
+                  "title": "Agency Contact(s)",
+                  "type": "text",
+                  "class": "input-xxlarge"
                 }
               ],
               "userAddedRows": true,
+              "source": "agencyContacts",
               "type": "table"
             }
-          ],
-          "type": "col"
+          ]
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
           "source": "<b>Please complete a row for each action you are required to report on.</b>",
           "type": "literal"
         }
-      ],
-      "type": "row"
+      ]
     },
     {
+      "type": "row",
       "items": [
         {
-          "source": "actions",
           "columns": [
             {
-              "title": "Action ID",
+              "width": "4%",
               "readOnly": true,
               "source": "actionId",
-              "width": "4%",
+              "title": "Action ID",
               "type": "text"
             },
             {
-              "title": "Action",
+              "width": "10%",
               "readOnly": true,
               "source": "actionDescription",
-              "width": "10%",
+              "title": "Action",
               "type": "text"
             },
             {
-              "title": "Theme",
+              "width": "6%",
               "readOnly": true,
               "source": "theme",
-              "width": "6%",
+              "title": "Theme",
               "type": "text"
             },
             {
-              "title": "Status",
-              "source": "status",
               "width": "6%",
+              "source": "status",
+              "title": "Status",
               "type": "selectOne"
             },
             {
-              "title": "Description",
+              "width": "10%",
               "source": "description",
-              "width": "10%",
+              "title": "Description",
               "type": "textarea",
               "rows": 10
             },
             {
-              "title": "Progress",
+              "width": "10%",
               "source": "progress",
-              "width": "10%",
+              "title": "Progress",
               "type": "textarea",
               "rows": 10
             },
             {
-              "title": "Delivery Partners",
-              "source": "deliveryPartners",
               "width": "6%",
+              "source": "deliveryPartners",
+              "title": "Delivery Partners",
               "type": "select2Many"
             },
             {
-              "title": "Timeframe",
-              "source": "timeframe",
               "width": "6%",
+              "source": "timeframe",
+              "title": "Timeframe",
               "type": "date",
               "displayOptions": {
                 "minViewMode": "months"
               }
             },
             {
-              "title": "Tasks and milestones / deliverables",
-              "source": "tasksAndMilestones",
               "width": "10%",
+              "source": "tasksAndMilestones",
+              "title": "Tasks and milestones / deliverables",
               "type": "textarea",
               "rows": 10
             },
             {
-              "title": "Funds expended to date for action delivery",
-              "source": "fundsExtendedToDate",
               "width": "8%",
+              "source": "fundsExtendedToDate",
+              "title": "Funds expended to date for action delivery",
               "type": "currency"
             },
             {
-              "title": "Web links",
-              "source": "webLinks",
               "width": "9%",
+              "source": "webLinks",
+              "title": "Web links",
               "type": "multiInput"
             },
             {
-              "title": "Linked or related actions",
+              "width": "6%",
               "readOnly": true,
               "source": "linkedOrRelatedActions",
-              "width": "6%",
+              "title": "Linked or related actions",
               "type": "selectMany"
             },
             {
-              "title": "Midterm review notes",
-              "source": "midtermReviewNotes",
               "width": "10%",
+              "source": "midtermReviewNotes",
+              "title": " Mid-term review notes",
               "type": "textarea",
               "rows": 10
             }
           ],
           "userAddedRows": false,
+          "source": "actions",
           "type": "table"
         }
-      ],
-      "type": "row"
+      ]
     }
-  ]
+  ],
+  "title": "Reef 2050 Plan Action Reporting"
 }
