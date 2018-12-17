@@ -19,18 +19,13 @@ function addTsToMus(programs, ts, category) {
 }
 
 var ts = [
-    'Manorina melanotis (Black-eared Miner)',
-    'Pachycephala rufogularis (Red-lored Whistler)',
-    'Polytelis anthopeplus monarchoides (Regent Parrot)',
-    'Psophodes leucogaster leucogaster (Western Whipbird)',
-    'Stipiturus mallee (Mallee Emu-wren)'
+    'Litoria raniformis (Growling Grass Frog)'
 ];
-addTsToMus(['South Australian Murray Darling Basin'], ts);
+addTsToMus(['North Central'], ts);
 
 
 ts = [
-    'Elseya albagula (White-throated Snapping Turtle)',
-    'Rheodytes leukops (Fitzroy River Turtle)'
+    'Tachyglossus aculeatus multiaculeatus (Kangaroo Island echidna)'
 ];
 
-addTsToMus(['Fitzroy'], ts);
+addTsToMus(['Kangaroo Island'], ts);
