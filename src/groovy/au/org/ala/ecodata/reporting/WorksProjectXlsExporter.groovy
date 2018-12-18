@@ -36,6 +36,8 @@ class WorksProjectXlsExporter extends ProjectExporter {
     WorksProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap, TimeZone timeZone) {
         super(exporter, [], documentMap, timeZone)
         this.documentMap = documentMap
+
+        log.info("Time zone is: "+timeZone.displayName)
     }
 
     @Override
