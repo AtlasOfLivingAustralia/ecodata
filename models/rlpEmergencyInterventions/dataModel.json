@@ -22,13 +22,12 @@
         },
         {
           "name":"siteOfIntervention",
-          "dataType":"feature",
-          "validate":"required"
+          "dataType":"feature"
         },
         {
           "name":"areaOfInterventionHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(siteOfIntervention)",
             "dependents": {
@@ -41,7 +40,7 @@
         {
           "name":"lengthOfInterventionKm",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.lengthKm(siteOfIntervention)",
             "dependents": {

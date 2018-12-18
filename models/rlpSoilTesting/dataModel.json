@@ -28,13 +28,12 @@
         },
         {
           "name":"sitesTested",
-          "dataType":"feature",
-          "validate":"required"
+          "dataType":"feature"
         },
         {
           "name":"areaTestedHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesTested)",
             "dependents": {
@@ -47,7 +46,7 @@
         {
           "name":"lengthTestedKm",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.lengthKm(sitesTested)",
             "dependents": {

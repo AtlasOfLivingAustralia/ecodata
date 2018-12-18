@@ -17,13 +17,12 @@
         },
         {
           "name":"sitesRemediated",
-          "dataType":"feature",
-          "validate":"required"
+          "dataType":"feature"
         },
         {
           "name":"areaRemediatedHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesRemediated)",
             "dependents": {
@@ -36,7 +35,7 @@
         {
           "name":"lengthRemediatedKm",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.lengthKm(sitesRemediated)",
             "dependents": {

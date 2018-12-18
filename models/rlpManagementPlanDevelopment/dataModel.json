@@ -49,18 +49,8 @@
                 "validate": "required,min[0]"
             },
             {
-                "dataType": "text",
-                "name": "areaRequired",
-                "constraints": [
-                    "Yes",
-                    "No"
-                ],
-                "validate": "required"
-            },
-            {
                 "dataType": "feature",
-                "name": "sitesCoveredByPlan",
-                "validate": "required"
+                "name": "sitesCoveredByPlan"
             },
             {
                 "unit": "ha",
@@ -70,11 +60,7 @@
                 },
                 "dataType": "number",
                 "name": "areaCoveredByPlanHa",
-                "behaviour": [{
-                    "condition": "areaRequired == \"Yes\"",
-                    "type": "enable"
-                }],
-                "validate": "required,min[0]"
+                "validate": "min[0]"
             },
             {
                 "dataType": "text",

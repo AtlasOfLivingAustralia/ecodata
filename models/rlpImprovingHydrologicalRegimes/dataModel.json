@@ -23,13 +23,12 @@
         },
         {
           "name":"improvedSites",
-          "dataType":"feature",
-          "validate":"required"
+          "dataType":"feature"
         },
         {
           "name":"areaCoveringRegimeChangeHa",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(improvedSites)",
             "dependents": {
@@ -42,7 +41,7 @@
         {
           "name":"lengthOfRegimeChangeKm",
           "dataType":"number",
-          "validate":"required,min[0]",
+          "validate":"min[0]",
           "computed": {
             "expression": "$geom.areaHa(improvedSites)",
             "dependents": {

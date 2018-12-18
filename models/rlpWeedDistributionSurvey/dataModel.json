@@ -29,13 +29,12 @@
         },
         {
           "name": "sitesSurveyed",
-          "dataType": "feature",
-          "validate": "required"
+          "dataType": "feature"
         },
         {
           "name": "areaSurveyedHa",
           "dataType": "number",
-          "validate": "required,min[0]",
+          "validate": "min[0]",
           "computed": {
             "expression": "$geom.areaHa(sitesSurveyed)",
             "dependents": {

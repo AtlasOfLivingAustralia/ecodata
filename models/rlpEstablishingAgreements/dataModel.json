@@ -54,13 +54,12 @@
         },
         {
           "dataType":"feature",
-          "name":"agreementSites",
-          "validate":"required"
+          "name":"agreementSites"
         },
         {
           "dataType": "number",
           "name": "areaCoveredByAgreementsHa",
-          "validate": "required,min[0]",
+          "validate": "min[0]",
           "computed": {
             "expression": "$geom.areaHa(agreementSites)",
             "dependents": {

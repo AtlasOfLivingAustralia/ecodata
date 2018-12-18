@@ -4,8 +4,7 @@
             "columns": [
                 {
                     "dataType": "feature",
-                    "name": "sitesPrepared",
-                    "validate": "required"
+                    "name": "sitesPrepared"
                 },
                 {
                     "computed": {
@@ -14,7 +13,7 @@
                     },
                     "dataType": "number",
                     "name": "areaPreparedHa",
-                    "validate": "required,min[0]"
+                    "validate": "min[0]"
                 },
                 {
                     "computed": {
@@ -23,7 +22,7 @@
                     },
                     "dataType": "number",
                     "name": "lengthPreparedKm",
-                    "validate": "required,min[0]"
+                    "validate": "min[0]"
                 },
                 {
                     "dataType": "number",
