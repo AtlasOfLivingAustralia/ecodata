@@ -560,7 +560,7 @@ class ProjectService {
      * @return
      */
     Integer importProjectsFromSciStarter() {
-        int ignoredProjects = 0, createdProjects = 0
+        int ignoredProjects = 0, createdProjects = 0, updatedProjects = 0
         log.info("Starting SciStarter import")
         try {
             String sciStarterProjectUrl
@@ -571,39 +571,42 @@ class ProjectService {
                 Map project = pProperties
                 if (project && project.title && project.id) {
                     Project importedSciStarterProject = Project.findByExternalIdAndIsSciStarter(project.id?.toString(), true)
-                    if (!importedSciStarterProject) {
-                        // get more details about the project
-                        sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
-                        String text = webService.get(sciStarterProjectUrl, false);
-                        if(text instanceof String){
-                            ObjectMapper mapper = new ObjectMapper()
-                            Map projectDetails = mapper.readValue(text, Map.class)
-                            if (!projectDetails.error) {
+                    // get more details about the project
+                    sciStarterProjectUrl = "${grailsApplication.config.scistarter.baseUrl}${grailsApplication.config.scistarter.projectUrl}/${project.id}?key=${grailsApplication.config.scistarter.apiKey}"
+                    String text = webService.get(sciStarterProjectUrl, false);
+                    if(text instanceof String) {
+                        ObjectMapper mapper = new ObjectMapper()
+                        Map projectDetails = mapper.readValue(text, Map.class)
+                        if (!projectDetails.error) {
+                            if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
+                                // ignore projects SciStarter imported from Biocollect
+                                log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
+                                ignoredProjects++
+                            } else {
                                 projectDetails << project
-                                if (projectDetails.origin && projectDetails.origin == 'atlasoflivingaustralia') {
-                                    // ignore projects SciStarter imported from Biocollect
-                                    log.warn("Ignoring ${projectDetails.title} - ${projectDetails.id} - This is an ALA project.")
-                                    ignoredProjects++
-                                } else {
-                                    // map properties from SciStarter to Biocollect
-                                    transformedProject = SciStarterConverter.convert(projectDetails)
+                                // map properties from SciStarter to Biocollect
+                                transformedProject = SciStarterConverter.convert(projectDetails)
+                                if (!importedSciStarterProject) {
                                     // create project & document & site & organisation
                                     createSciStarterProject(transformedProject, projectDetails)
                                     createdProjects++
+                                } else {
+                                    // update a project just in case something has changed.
+                                    updateSciStarterProject(transformedProject, importedSciStarterProject)
+                                    log.info("Updating ${importedSciStarterProject.name} ${importedSciStarterProject.projectId}.")
+                                    updatedProjects++
                                 }
-                            } else {
-                                log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
-                                ignoredProjects++
                             }
+                        } else {
+                            log.error("Ignoring ${project.title} - ${project.id} - since webservice could not lookup details.")
+                            ignoredProjects++
                         }
-                    } else {
-                        log.info("Ignoring ${project.title} - ${project.id} - since it already exists.")
-                        ignoredProjects ++
+
                     }
                 }
             }
 
-            log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}")
+            log.info("Number of created projects ${createdProjects}. Number of ignored projects ${ignoredProjects}. Number of projects updated ${updatedProjects}.")
         } catch (SocketTimeoutException ste) {
             log.error(ste.message, ste)
         } catch (Exception e) {
@@ -680,6 +683,27 @@ class ProjectService {
     }
 
     /**
+     * Update a project. It updates only project properties and image. It does not change the
+     * organisation and site.
+     * @param transformedProp - mapped SciStarter project properties
+     * @param project - project instance
+     * @return
+     */
+    Map updateSciStarterProject(Map transformedProp, Project project) {
+        // remove properties
+        transformedProp.remove('projectId')
+        transformedProp.remove('organisationId')
+        transformedProp.remove('projectSiteId')
+        transformedProp.remove('manager')
+
+        String imageUrl = transformedProp.remove('image')
+        String attribution = transformedProp.remove('attribution')
+        String projectId = project.projectId
+        getCommonService().updateProperties(project, transformedProp, true)
+        updateSciStarterLogo(imageUrl, attribution, projectId)
+    }
+
+    /**
      * Create sites for a project. if a project has regions then create sites using it.
      * if project does not have region then set extent to the whole world map.
      * @return
@@ -738,6 +762,26 @@ class ProjectService {
         ]
         // create logo document
         documentService.create(props, null)
+    }
+
+    /**
+     * Update project logo.
+     * @param imageUrl
+     * @param attribution
+     * @param projectId
+     * @return
+     */
+    Map updateSciStarterLogo(String imageUrl, String attribution, String projectId) {
+        Document doc = Document.findByProjectIdAndIsPrimaryProjectImageAndRole(projectId, true, "logo")
+        if (doc) {
+            getCommonService().updateProperties(doc, [
+                    "externalUrl"                         : imageUrl,
+                    "attribution"                         : attribution
+            ])
+        } else if (imageUrl) {
+            // create if image not present
+            createSciStarterLogo(imageUrl, attribution, projectId)
+        }
     }
 
     /**
