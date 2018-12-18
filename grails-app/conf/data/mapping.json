@@ -414,6 +414,15 @@
               "index":"not_analyzed"
             }
           }
+        },
+        {
+          "due_date_template": {
+            "path_match":"custom.details.budget.rows.dueDate",
+            "mapping": {
+              "type":"string",
+              "index":"not_analyzed"
+            }
+          }
         }
       ]
     }
