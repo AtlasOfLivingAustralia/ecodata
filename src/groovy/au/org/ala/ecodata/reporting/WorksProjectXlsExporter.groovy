@@ -1,11 +1,13 @@
 package au.org.ala.ecodata.reporting
 
 import au.org.ala.ecodata.*
-import au.org.ala.ecodata.metadata.*
 import grails.util.Holders
 import org.apache.commons.logging.Log
 import org.apache.commons.logging.LogFactory
+import pl.touk.excel.export.getters.PropertyGetter
 import pl.touk.excel.export.multisheet.AdditionalSheet
+
+import java.text.SimpleDateFormat
 
 
 /**
@@ -20,24 +22,51 @@ class WorksProjectXlsExporter extends ProjectExporter {
     List<String> commonProjectProperties = ['externalId', 'name', 'associatedProgram', 'projectStatus']
 
     List<String> projectHeaders = ['Project ID', 'Project Name', 'Program Name', 'Sub-Program Name', 'Project Manager', 'Organisations', 'Description', 'Start Date', 'End Date', 'Status', 'Funding', 'P2R Reporting', 'Date of recent outcome update' ,'Progress on outcome', 'Type of outcome update', 'Overall risk rating']
-    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', new DatePropertyGetter('plannedStartDate', DateTimeParser.Style.DATE,null, null,  timeZone), new DatePropertyGetter('plannedEndDate', DateTimeParser.Style.DATE,  null, null, timeZone), 'projectStatus', 'funding', 'keywords', new DatePropertyGetter('outcomeDate', DateTimeParser.Style.DATE,  null, null, timeZone), new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
+    List<String> projectProperties = ['externalId', 'name', 'associatedProgram', 'associatedSubProgram', 'managerEmail', 'allOrganisations', 'description', 'plannedStartDate', 'plannedEndDate', 'projectStatus', 'funding', 'keywords', 'outcomeDate', new TabbedExporter.LengthLimitedGetter('outcome'), 'outcomeType', 'custom.details.risks.overallRisk']
 
     List<String> outcomeHeaders = commonProjectHeaders + ['Date', 'Interim/Final', 'Outcome']
-    List<String> outcomeProperties = commonProjectProperties + [new DatePropertyGetter('date', DateTimeParser.Style.DATE,  null, null, timeZone), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
+    List<String> outcomeProperties = commonProjectProperties + [new ISODateStringGetter('date'), 'type', new TabbedExporter.LengthLimitedGetter('progress')]
 
 
     List<String> budgetHeaders = commonProjectHeaders + ['Investment / Priority Area', 'Payment Number', 'Funding Source', 'Payment Status', 'Description', 'Date Due', '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
-    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'paymentNumber', 'fundingSource', 'paymentStatus', 'budgetDescription', new DatePropertyGetter('dueDate', DateTimeParser.Style.DATE,null, null,  timeZone), '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
+    List<String> budgetProperties = commonProjectProperties + ['investmentArea', 'paymentNumber', 'fundingSource', 'paymentStatus', 'budgetDescription', new ISODateStringGetter('dueDate'), '2011/2012', '2012/2013', '2013/2014', '2014/2015', '2015/2016', '2016/2017', '2017/2018', '2018/2019', '2019/2020', '2020/2021', '2021/2022', '2022/2023', '2023/2024', '2024/2025', '2025/2026']
 
 
     AdditionalSheet projectSheet
     Map<String, Object> documentMap
 
+
+    static class ISODateStringGetter extends PropertyGetter<String, Date> {
+        /** Excel cells can hold a maximum of 32767 characters */
+        static final int MAX_CELL_LENGTH = 32767
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ")
+
+        ISODateStringGetter(String propertyName) {
+            super(propertyName)
+        }
+        Date format(String value) {
+            if (!value) {
+                return null
+            }
+
+            Date result = null
+            try {
+                result = dateFormat.parse(value.replace("Z", "+0000"))
+            }
+            catch (Exception e) {
+                log.warn("Error parsing date for value: ${value}, property: ${propertyName}")
+            }
+
+            result
+        }
+    }
+
     WorksProjectXlsExporter(XlsExporter exporter, Map<String, Object> documentMap, TimeZone timeZone) {
+
         super(exporter, [], documentMap, timeZone)
         this.documentMap = documentMap
 
-        log.info("Time zone is: "+timeZone.displayName)
     }
 
     @Override
