@@ -101,6 +101,9 @@ class WorksProjectXlsExporter extends ProjectExporter {
 
     private void exportBudget(Map project) {
 
+        println timeZone.displayName
+        log.warn timeZone.displayName
+
         AdditionalSheet sheet = getSheet("Budget", budgetHeaders)
         int row = sheet.getSheet().lastRowNum
 
