@@ -9,6 +9,10 @@ import org.geotools.geojson.geom.GeometryJSON
 
 class Site {
 
+    static String TYPE_COMPOUND = 'compound'
+    static String TYPE_PROJECT_AREA = 'projectArea'
+    static String TYPE_WORKS_AREA = 'worksArea'
+
     def siteService
 
     /*
@@ -44,6 +48,11 @@ class Site {
     Boolean isSciStarter = false
     Map extent
     Map geoIndex
+    /**
+     * A list of geojson formatted Features.  These are used to represent internal details for this Site, such
+     * as plots and transects for a site assessment.
+     */
+    List features
 
     static constraints = {
         visibility nullable: true
@@ -59,6 +68,7 @@ class Site {
         notes nullable:true, maxSize: 40000
         isSciStarter nullable: true
         extent nullable: true
+        features nullable: true
         geoIndex nullable: true, validator: { value, site ->
             // Checks validity of GeoJSON object
             if(value){
@@ -86,5 +96,14 @@ class Site {
         if((extent?.geometry?.type != 'pid') && extent?.geometry){
             geoIndex = siteService?.geometryAsGeoJson(this)
         }
+    }
+
+    /**
+     * A compound site consists of an extent that is the convex hull of a list of features.  It is used for
+     * sites with internal details such as sites for a site assessment methodology (e.g. a site that contains
+     * nested plots and transects)
+     */
+    boolean isCompoundSite() {
+        return type == TYPE_COMPOUND
     }
 }
