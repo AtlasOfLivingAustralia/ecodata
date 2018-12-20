@@ -1,210 +1,190 @@
 {
-  "title": "Establishing and maintaining feral-free enclosures",
-  "modelName": "RLP - Maintaining feral free enclosures",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "enclosureDetails",
-      "columns": [
+    "dataModel": [
         {
-          "dataType":"text",
-          "name":"newOrMaintained",
-          "validate": "required",
-          "constraints": [
-            "Newly established",
-            "Maintained"
-          ]
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "newOrMaintained",
+                    "constraints": [
+                        "Newly established",
+                        "Maintained"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfEnclosures",
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "daysSpentOnMaintenanceOfEnclosures",
+                    "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                    "validate": "min[0]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "siteOfEnclosures"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.areaHa(siteOfEnclosures)",
+                        "dependents": {"source": ["siteOfEnclosures"]}
+                    },
+                    "dataType": "number",
+                    "name": "areaOfEnclosuresHa"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(siteOfEnclosures)",
+                        "dependents": {"source": ["siteOfEnclosures"]}
+                    },
+                    "dataType": "number",
+                    "name": "lengthOfEnclosuresKm"
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "protectedSpecies",
+                            "dwcAttribute": "scientificName",
+                            "description": "The threatened species protected by the enclosure",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "targetFeralSpecies",
+                            "description": "",
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "individualsOrPopulations",
+                            "constraints": [
+                                "Individuals",
+                                "Populations"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfPopulationsOrIndividualsProtected",
+                            "validate": "required,min[0]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "speciesProtected"
+                }
+            ],
+            "dataType": "list",
+            "name": "enclosureDetails"
         },
         {
-          "dataType": "number",
-          "name": "numberOfEnclosures",
-          "validate": "required"
-        },
-        {
-          "dataType":"number",
-          "name":"daysSpentOnMaintenanceOfEnclosures",
-          "validate":"min[0]",
-          "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
-        },
-        {
-          "dataType": "feature",
-          "name": "siteOfEnclosures",
-          "validate": "required"
-        },
-        {
-          "dataType": "number",
-          "name": "areaOfEnclosuresHa",
-          "validate": "required",
-          "computed": {
-            "expression": "$geom.areaHa(siteOfEnclosures)",
-            "dependents": {
-              "source": [
-                "siteOfEnclosures"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "number",
-          "name": "lengthOfEnclosuresKm",
-          "validate": "required",
-          "computed": {
-            "expression": "$geom.lengthKm(siteOfEnclosures)",
-            "dependents": {
-              "source": [
-                "siteOfEnclosures"
-              ]
-            }
-          }
-        },
-        {
-          "dataType":"list",
-          "name":"speciesProtected",
-          "columns":[
-
-            {
-              "dataType": "species",
-              "description": "The threatened species protected by the enclosure",
-              "name": "protectedSpecies",
-              "dwcAttribute": "scientificName",
-              "validate": "required"
-            },
-            {
-              "dataType": "text",
-              "description": "",
-              "name": "targetFeralSpecies",
-              "validate": "required,maxSize[300]"
-            },
-            {
-              "dataType":"text",
-              "name":"individualsOrPopulations",
-              "validate":"required",
-              "constraints":[
-                "Individuals",
-                "Populations"
-              ]
-            },
-            {
-              "dataType":"number",
-              "name":"numberOfPopulationsOrIndividualsProtected",
-              "validate":"required,min[0]"
-            }
-          ]
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "source": "enclosureDetails",
-          "addRowText":"Add feral-free enclousure",
-          "items": [
+    ],
+    "modelName": "RLP - Maintaining feral free enclosures",
+    "title": "Establishing and maintaining feral-free enclosures",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type":"row",
-              "items":[
-                {
-                  "preLabel": "Newly established or maintained feral free enclosure?",
-                  "source": "newOrMaintained",
-                  "type": "selectOne",
-                  "css":"span4"
-                },
-                {
-                  "type":"number",
-                  "source":"numberOfEnclosures",
-                  "preLabel":"Number of feral free enclosures",
-                  "css":"span3"
-                },
-                {
-                  "type":"number",
-                  "source":"daysSpentOnMaintenanceOfEnclosures",
-                  "preLabel":"Number of days maintaining feral-free enclosures",
-                  "css":"span3"
+                "addRowText": "Add a new feral free area",
+                "userAddedRows": true,
+                "source": "enclosureDetails",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Newly established or maintained feral free enclosure?",
+                                "css": "span4",
+                                "source": "newOrMaintained",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Number of feral free enclosures",
+                                "css": "span3",
+                                "source": "numberOfEnclosures",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Number of days maintaining feral-free enclosures",
+                                "css": "span3",
+                                "source": "daysSpentOnMaintenanceOfEnclosures",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site/s of feral free enclosures",
+                                "css": "span4",
+                                "source": "siteOfEnclosures",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) of feral-free enclosures",
+                                "css": "span3",
+                                "readonly": "readonly",
+                                "source": "areaOfEnclosuresHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Length (km) of feral-free enclosures",
+                                "css": "span3",
+                                "readonly": "readonly",
+                                "source": "lengthOfEnclosuresKm",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "addRowText": "Add a species",
+                        "columns": [
+                            {
+                                "width": "35%",
+                                "source": "protectedSpecies",
+                                "title": "Targeted species being protected",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "40%",
+                                "source": "targetFeralSpecies",
+                                "title": "Targeted feral species being controlled",
+                                "type": "text"
+                            },
+                            {
+                                "width": "15%",
+                                "source": "individualsOrPopulations",
+                                "title": "Individuals or populations?",
+                                "type": "selectOne"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfPopulationsOrIndividualsProtected",
+                                "title": "Number of populations (or individuals) protected within feral free enclosures",
+                                "type": "number"
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "speciesProtected",
+                        "type": "table"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
                 }]
-            },
-            {
-              "type":"row",
-              "items":[
-
-                {
-                  "type":"feature",
-                  "source":"siteOfEnclosures",
-                  "preLabel":"Site/s of feral free enclosures",
-                  "css":"span4"
-                },
-                {
-                  "type":"number",
-                  "source":"areaOfEnclosuresHa",
-                  "preLabel":"Area (ha) of feral-free enclosures",
-                  "readonly":"readonly",
-                  "css":"span3"
-                },
-                {
-                  "type":"number",
-                  "source":"lengthOfEnclosuresKm",
-                  "preLabel":"Length (km) of feral-free enclosures",
-                  "css":"span3",
-                  "readonly":"readonly"
-                }
-
-              ]
-            },
-            {
-              "type":"table",
-              "userAddedRows": true,
-              "source":"speciesProtected",
-              "addRowText":"Add a species",
-              "columns":[
-                {
-                  "title": "Targeted species being protected",
-                  "source": "protectedSpecies",
-                  "type": "speciesSelect",
-                  "width":"35%"
-                },
-                {
-                  "title": "Targeted feral species being controlled",
-                  "source": "targetFeralSpecies",
-                  "type": "text",
-                  "width":"40%"
-                },
-                {
-                  "title":"Individuals or populations?",
-                  "source":"individualsOrPopulations",
-                  "type":"selectOne",
-                  "width":"15%"
-                },
-                {
-                  "title":"Number of populations (or individuals) protected within feral free enclosures",
-                  "source":"numberOfPopulationsOrIndividualsProtected",
-                  "type":"number",
-                  "width":"10%"
-                }
-              ]
             }
-
-          ],
-          "userAddedRows": true,
-          "type": "repeat",
-          "addRowText":"Add a new feral free area"
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

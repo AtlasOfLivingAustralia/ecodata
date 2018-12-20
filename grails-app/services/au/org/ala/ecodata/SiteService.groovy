@@ -95,6 +95,10 @@ class SiteService {
         }
     }
 
+    List<Site> sitesForProject(String projectId) {
+        Site.findAllByProjectsAndStatusNotEqual(projectId, DELETED)
+    }
+
     boolean doesProjectHaveSite(id){
         Site.findAllByProjects(id)?.size() > 0
     }
@@ -133,6 +137,33 @@ class SiteService {
         }
 
         mapOfProperties.findAll {k,v -> v != null}
+    }
+
+    Map toGeoJson(Site site) {
+
+        Map properties = [
+                id:site.siteId,
+                name:site.name,
+                type:site.type,
+                notes:site.notes,
+        ]
+        Map geojson
+
+        if (site.isCompoundSite()) {
+            geojson = [
+                    type:'FeatureCollection',
+                    properties: properties,
+                    features: site.features
+            ]
+        }
+        else {
+            geojson = [
+                    type:"Feature",
+                    properties:properties,
+                    geometry: geometryAsGeoJson(site)
+            ]
+        }
+        geojson
     }
 
     def loadAll(list) {
@@ -407,6 +438,13 @@ class SiteService {
                 // There is a process that is recording the coordinates as strings.
                 coords = [coords[0] as Double, coords[1] as Double]
                 result = [type:'Point', coordinates:coords]
+                break
+            case 'MultiPoint':
+                if (!geometry.coordinates) {
+                    log.error("Invalid site: ${site.siteId} missing coordinates")
+                    return
+                }
+                result = [type:'MultiPoint', coordinates: geometry.coordinates]
                 break
             case 'Polygon':
                 if (!geometry.coordinates) {

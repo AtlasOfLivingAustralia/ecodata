@@ -17,13 +17,11 @@
         },
         {
           "dataType": "feature",
-          "name": "clearedSites",
-          "validate": "required"
+          "name": "clearedSites"
         },
         {
           "dataType": "number",
           "name": "debrisRemovedHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(clearedSites)",
             "dependents": {
@@ -36,7 +34,6 @@
         {
           "dataType": "number",
           "name": "debrisRemovedKm",
-          "validate": "required",
           "computed": {
             "expression": "$geom.lengthKm(clearedSites)",
             "dependents": {

@@ -17,13 +17,11 @@
         },
         {
           "dataType": "feature",
-          "name": "site",
-          "validate": "required"
+          "name": "site"
         },
         {
           "dataType": "number",
           "name": "areaControlledHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(site)",
             "dependents": {
@@ -36,7 +34,6 @@
         {
           "dataType": "number",
           "name": "lengthControlledKm",
-          "validate": "required",
           "computed": {
             "expression": "$geom.lengthKm(site)",
             "dependents": {

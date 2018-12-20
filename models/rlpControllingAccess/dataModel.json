@@ -13,13 +13,11 @@
         },
         {
           "dataType": "feature",
-          "name": "sitesInstalled",
-          "validate": "required"
+          "name": "sitesInstalled"
         },
         {
           "dataType": "number",
           "name": "areaInstalledHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(sitesInstalled)",
             "dependents": {
@@ -32,7 +30,6 @@
         {
           "dataType": "number",
           "name": "lengthInstalledKm",
-          "validate": "required",
           "computed": {
             "expression": "$geom.lengthKm(sitesInstalled)",
             "dependents": {
@@ -44,13 +41,11 @@
         },
         {
           "dataType": "feature",
-          "name": "protectedSites",
-          "validate": "required"
+          "name": "protectedSites"
         },
         {
           "dataType": "number",
           "name": "areaProtectedHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(protectedSites)",
             "dependents": {

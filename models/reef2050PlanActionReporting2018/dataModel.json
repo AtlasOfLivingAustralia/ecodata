@@ -1,5 +1,5 @@
 {
-  "modelName": "Reef 2050 Plan Action Reporting",
+  "modelName": "Reef 2050 Plan Action Reporting 2018",
   "dataModel": [
     {
       "columns": [
@@ -14,6 +14,10 @@
     },
     {
       "columns": [
+        {
+          "dataType":"number",
+          "name":"sortOrder"
+        },
         {
           "dataType": "text",
           "name": "actionId",
@@ -56,15 +60,13 @@
         },
         {
           "dataType": "text",
-          "name": "description",
-          "description": "Provide a 2-3 sentence description of the action –include detail on what the action entails and key performance indicators for what success looks like",
+          "name": "progress",
+          "description": "Provide 2-3 sentences outlining progress in implementing the action",
           "validate": "required,max[1500]"
         },
         {
           "dataType": "text",
-          "name": "progress",
-          "description": "Provide 2-3 sentences outlining progress in implementing the action",
-          "validate": "required,max[1500]"
+          "name":"reportingAgency"
         },
         {
           "dataType": "stringList",
@@ -116,45 +118,12 @@
           ]
         },
         {
-          "dataType": "date",
-          "name": "timeframe",
-          "description": "Provide an indicative timeframe for when the action will be completed",
-          "behaviour": [
-            {
-              "condition": "status != \"Completed\" and status != \"In place\"",
-              "type": "enable"
-            }
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "text",
-          "name": "tasksAndMilestones",
-          "description": "Provide an overview of milestones and deliverables for implementing the action",
-          "validate": "required,max[2000]"
-        },
-        {
-          "dataType": "number",
-          "name": "fundsExtendedToDate",
-          "description": "Where possible, provide an estimate of funds expended to date on this action",
-          "validate": "integer"
-        },
-        {
           "dataType": "stringList",
           "name": "webLinks",
           "description": "Please supply a comma separated list of URLs providing information about this action",
           "validate": "required,custom[url]"
-        },
-        {
-          "dataType": "stringList",
-          "name": "linkedOrRelatedActions",
-          "constraints": []
-        },
-        {
-          "dataType": "text",
-          "name": "midtermReviewNotes",
-          "description": "This field is to be completed by the mid-term review joint team only"
         }
+
       ],
       "dataType": "list",
       "name": "actions"
@@ -200,93 +169,65 @@
         {
           "columns": [
             {
-              "width": "4%",
+              "width":"1%",
+              "readOnly":true,
+              "source":"sortOrder",
+              "title":"",
+              "type":"number"
+            },
+            {
+              "width": "5%",
               "readOnly": true,
               "source": "actionId",
               "title": "Action ID",
               "type": "text"
             },
             {
-              "width": "10%",
+              "width": "15%",
               "readOnly": true,
               "source": "actionDescription",
               "title": "Action",
               "type": "text"
             },
             {
-              "width": "6%",
+              "width": "10%",
               "readOnly": true,
               "source": "theme",
               "title": "Theme",
               "type": "text"
             },
             {
-              "width": "6%",
+              "width": "10%",
               "source": "status",
               "title": "Status",
               "type": "selectOne"
             },
             {
-              "width": "10%",
-              "source": "description",
-              "title": "Description",
-              "type": "textarea",
-              "rows": 10
-            },
-            {
-              "width": "10%",
+              "width": "25%",
               "source": "progress",
               "title": "Progress",
               "type": "textarea",
               "rows": 10
             },
             {
-              "width": "6%",
-              "source": "deliveryPartners",
-              "title": "Delivery Partners",
-              "type": "select2Many"
-            },
-            {
-              "width": "6%",
-              "source": "timeframe",
-              "title": "Timeframe",
-              "type": "date",
-              "displayOptions": {
-                "minViewMode": "months"
-              }
+              "width": "15%",
+              "source": "reportingAgency",
+              "readOnly": true,
+              "title": "Reporting agency",
+              "type": "text"
             },
             {
               "width": "10%",
-              "source": "tasksAndMilestones",
-              "title": "Tasks and milestones / deliverables",
-              "type": "textarea",
-              "rows": 10
+              "source": "deliveryPartners",
+              "title": "Contributing agencies and partners",
+              "type": "select2Many"
             },
+
             {
-              "width": "8%",
-              "source": "fundsExtendedToDate",
-              "title": "Funds expended to date for action delivery",
-              "type": "currency"
-            },
-            {
-              "width": "9%",
+              "width": "10%",
               "source": "webLinks",
               "title": "Web links",
               "type": "multiInput"
-            },
-            {
-              "width": "6%",
-              "readOnly": true,
-              "source": "linkedOrRelatedActions",
-              "title": "Linked or related actions",
-              "type": "selectMany"
-            },
-            {
-              "width": "10%",
-              "source": "midtermReviewNotes",
-              "title": " Mid-term review notes",
-              "type": "textarea",
-              "rows": 10
             }
           ],
           "userAddedRows": false,

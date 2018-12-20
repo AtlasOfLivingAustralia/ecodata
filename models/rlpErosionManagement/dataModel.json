@@ -18,13 +18,11 @@
         },
         {
           "dataType": "feature",
-          "name": "existingErosionSites",
-          "validate": "required"
+          "name": "existingErosionSites"
         },
         {
           "dataType": "number",
           "name": "existingErosionAreaHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(existingErosionSites)",
             "dependents": {
@@ -36,13 +34,11 @@
         },
         {
           "dataType": "feature",
-          "name": "sitesManaged",
-          "validate": "required"
+          "name": "sitesManaged"
         },
         {
           "dataType": "number",
-          "name": "areaOfErosionControlHa",
-          "validate": "required",
+          "name": "areaOfErosionControlHa"
           "computed": {
             "expression": "$geom.areaHa(sitesManaged)",
             "dependents": {
@@ -55,7 +51,6 @@
         {
           "dataType": "number",
           "name": "lengthOfErosionControlKm",
-          "validate": "required",
           "computed": {
             "expression": "$geom.lengthKm(sitesManaged)",
             "dependents": {

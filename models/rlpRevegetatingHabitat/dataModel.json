@@ -16,29 +16,12 @@
           ]
         },
         {
-          "name": "areaRequired",
-          "dataType": "text",
-          "validate": "required",
-          "constraints": [
-            "Yes",
-            "No"
-          ]
-        },
-        {
           "dataType": "feature",
-          "name": "sitesRevegetated",
-          "validate": "required",
-          "behaviour": [
-            {
-              "condition": "areaRequired == \"Yes\"",
-              "type":"enable"
-            }
-          ]
+          "name": "sitesRevegetated"
         },
         {
           "dataType": "number",
           "name": "areaRevegetatedHa",
-          "validate": "required",
           "computed": {
             "expression": "$geom.areaHa(sitesRevegetated)",
             "dependents": {
@@ -57,7 +40,6 @@
         {
           "dataType": "number",
           "name": "lengthRevegetatedKm",
-          "validate": "required",
           "computed": {
             "expression": "$geom.lengthKm(sitesRevegetated)",
             "dependents": {
@@ -180,13 +162,8 @@
                   "source": "initialOrMaintenance",
                   "type": "selectOne",
                   "css": "span3"
-                },
-                {
-                  "preLabel": "Will this report invoice for area revegetated?",
-                  "source": "areaRequired",
-                  "type": "selectOne",
-                  "css": "span4"
                 }
+
               ]
             },
             {

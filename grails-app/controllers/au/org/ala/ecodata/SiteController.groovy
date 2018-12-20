@@ -298,4 +298,17 @@ class SiteController {
             render status: HttpStatus.SC_BAD_REQUEST, text: "Site id and project id must be provided."
         }
     }
+
+    /**
+     * Returns a Map with keys projectId and sites.
+     * The value of the sites key is an array of geojson Features that contains all of the sites for the supplied project.
+     * (Note that it does not return a FeatureCollection as some sites may themselves be a FeatureCollection)
+     *
+     */
+    @RequireApiKey
+    def projectSites(String id) {
+        List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(it)})
+        Map result = [projectId:id, sites: features]
+        render result as JSON
+    }
 }

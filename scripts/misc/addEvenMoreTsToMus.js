@@ -19,47 +19,13 @@ function addTsToMus(programs, ts, category) {
 }
 
 var ts = [
-    'Amytornis dorotheae (Carpentarian Grasswren)'
+    'Litoria raniformis (Growling Grass Frog)'
 ];
-addTsToMus(['Southern Gulf'], ts);
-
-var programs = [
-    'North East',
-    'West Gippsland',
-    'East Gippsland'
-];
-
-ts = [
-    'Litoria verreauxii alpina (Alpine Tree Frog)',
-    "Philoria frosti (Baw Baw Frog)",
-    "Lobelia gelida (Snow Pratia)",
-    "Xerochrysum palustre (Swamp Everlasting)",
-    "Epilobium brunnescens subsp. Beaugleholei (Bog Willow-herb)"
-];
-
-addTsToMus(programs, ts);
-
-addTsToMus(['Mackay Whitsunday'],['Natator depressus (Flatback Turtle)']);
-
+addTsToMus(['North Central'], ts);
 
 
 ts = [
- 'Caladenia gladiolata (Small bayonet spider orchid)',
-    'Hylacola pyrrhopygia parkeri (Mount Lofty Ranges Chestnut-rumped Heathwren)'];
-
-addTsToMus(['Adelaide and Mount Lofty Ranges'], ts);
-
-
-addTsToMus(['Northern and Yorke'], ['Bettongia penicillata (Woylie)']);
-
-
-ts = [
-    'Olearia microdisca (Small-flowered Daisy-bush)',
-    'Leionema equestre (Kangaroo Island Phebalium)'
+    'Tachyglossus aculeatus multiaculeatus (Kangaroo Island echidna)'
 ];
-addTsToMus(['Kangaroo Island'],ts);
 
-
-
-addTsToMus(['Glenelg Hopkins'],['Glenelg Estuary and Discovery Bay Ramsar Site'], 'Ramsar');
-
+addTsToMus(['Kangaroo Island'], ts);

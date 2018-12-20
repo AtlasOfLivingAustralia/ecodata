@@ -134,7 +134,7 @@ if (!webservice.readTimeout) {
 }
 // spatial services
 if (!spatial.baseUrl) {
-    spatial.baseUrl = "http://spatial-dev.ala.org.au"
+    spatial.baseUrl = "https://spatial-beta.ala.org.au"
 }
 if (!spatial.intersectUrl) {
     spatial.intersectUrl = spatial.baseUrl + '/ws/intersect/'
@@ -754,7 +754,7 @@ log4j = {
     ]
 
     debug 'grails.app.controllers.au.org.ala', 'grails.app.services.au.org.ala.ecodata', 'au.org.ala.ecodata' //, 'grails.plugin.cache'
-    info 'grails.app.jobs.au.org.ala.ecodata'
+    info 'grails.app.jobs.au.org.ala.ecodata', 'au.org.ala.ecodata.reporting'
 
     error 'org.codehaus.groovy.grails.web.servlet',        // controllers
             'org.codehaus.groovy.grails.web.pages',          // GSP
