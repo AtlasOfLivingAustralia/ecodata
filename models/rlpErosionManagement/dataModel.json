@@ -38,7 +38,7 @@
         },
         {
           "dataType": "number",
-          "name": "areaOfErosionControlHa"
+          "name": "areaOfErosionControlHa",
           "computed": {
             "expression": "$geom.areaHa(sitesManaged)",
             "dependents": {
@@ -95,7 +95,7 @@
         },
         {
           "dataType":"feature",
-          "name":"sitesBenefittingFromErosionControl",
+          "name":"sitesBenefittingFromErosionControl"
         },
         {
           "dataType":"number",
