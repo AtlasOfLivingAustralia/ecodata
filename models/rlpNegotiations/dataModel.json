@@ -32,7 +32,7 @@
             {
                 "dataType": "text",
                 "name": "negotiationObjective",
-                "description": "Please start with the '[RLP Service name]:' for which the site has been identified for. Then a brief description of negotiations.  Separate multiples with a ';'",
+                "description": "Please provide a brief description of negotiations. Separate multiple with a ‘,’",
                 "validate": "required,maxSize[300]"
             }
         ],
