@@ -1,39 +1,37 @@
 // Example Activity URL: https://biocollect.ala.org.au/actwaterwatch/bioActivity/create/b3efa2eb-ed40-4dc8-ae0a-0c9f0c25ab0e
 // Activity Name: Rapid Appraisal of Riparian Condition (RARC)
 // Output model name: rarc_EventAndLocationDetails
-// jsClass: https://dl.dropbox.com/s/b3vxokkwb3ntgfe/DebrisTableRow.js?dl=0
+// jsMain: https://dl.dropbox.com/s/b3vxokkwb3ntgfe/DebrisTableRow.js?dl=0
 // Minified: https://dl.dropbox.com/s/d6tr2lqnvd0jcuf/DebrisTableRow.min.js?dl=0
-var DebrisTableRow = function (data) {
+// START
+var Output_rarc_EventAndLocationDetails_debrisTableRow = function (data, dataModel, context, config) {
     var self = this;
-    if (!data) data = {};
-    this.transients = {};
-    this.debris_parameter = ko.observable(orBlank(data['debris_parameter']));
+    ecodata.forms.NestedModel.apply(self, [data, dataModel, context, config]);
+    context = _.extend(context, {parent:self});
+    self.debris_parameter = ko.observable();
 
-    var constraint1 = ["None", "1 - 30%", "31 - 60%", "> 60%"]; // Total Leaf and Native leaf.
-    var constraint2 = ["Absent", "Present"]; // Standing dead, Hallow beaering
-    var constraint3 = ["None", "Small quantities", "Abundant"]; // Fallen logs.
-    var constraint = constraint1;
-    var parameters = ['Total leaf litter', 'Native leaf litter', 'Standing dead trees', 'Hollow bearing trees (>20cm DBH)', 'Fallen logs (>10cm diameter)'];
+    self.debris_transectOne = ko.observable().extend({metadata:{metadata:self.dataModel['debris_transectOne'], context:context, config:config}});
 
-    if (this.debris_parameter() == parameters[0] || this.debris_parameter() == parameters[1]) {
-        constraint = constraint1;
-    } else if (this.debris_parameter() == parameters[2] || this.debris_parameter() == parameters[3]) {
-        constraint = constraint2;
-    } else if (this.debris_parameter() == parameters[4]) {
-        constraint = constraint3;
-    }
+    self.debris_transectTwo = ko.observable().extend({metadata:{metadata:self.dataModel['debris_transectTwo'], context:context, config:config}});
 
-    this.debris_transectOne = ko.observable(orBlank(data['debris_transectOne']));
-    this.transients.debris_transectOneConstraints = constraint;
-    this.debris_transectTwo = ko.observable(orBlank(data['debris_transectTwo']));
-    this.transients.debris_transectTwoConstraints = constraint;
-    this.debris_transectThree = ko.observable(orBlank(data['debris_transectThree']));
-    this.transients.debris_transectThreeConstraints = constraint;
-    this.debris_transectFour = ko.observable(orBlank(data['debris_transectFour']));
-    this.transients.debris_transectFourConstraints = constraint;
-    this.vegetationWidthAverageScore = ko.observable(orZero(data['vegetationWidthAverageScore']));
+    self.debris_transectThree = ko.observable().extend({metadata:{metadata:self.dataModel['debris_transectThree'], context:context, config:config}});
 
-    this.transients.convertToInt = function (parameter, value) {
+    self.debris_transectFour = ko.observable().extend({metadata:{metadata:self.dataModel['debris_transectFour'], context:context, config:config}});
+
+    self.vegetationWidthAverageScore = ko.observable();
+    self.loadData = function(data) {
+        self['debris_parameter'](ecodata.forms.orDefault(data['debris_parameter'], undefined));
+        self['debris_transectOne'](ecodata.forms.orDefault(data['debris_transectOne'], undefined));
+        self['debris_transectTwo'](ecodata.forms.orDefault(data['debris_transectTwo'], undefined));
+        self['debris_transectThree'](ecodata.forms.orDefault(data['debris_transectThree'], undefined));
+        self['debris_transectFour'](ecodata.forms.orDefault(data['debris_transectFour'], undefined));
+        self['vegetationWidthAverageScore'](ecodata.forms.orDefault(data['vegetationWidthAverageScore'], 0));
+    };
+    self.loadData(data || {});
+
+    // Custom script.
+    var parameters = ['Total leaf litter','Native leaf litter', 'Standing dead trees', 'Hollow bearing trees (>20cm DBH)', 'Fallen logs (>10cm diameter)'];
+    self.transients.convertToInt = function (parameter, value) {
         var intValue = '';
         //Leaf litter and native leaf litter cover: 0 = none, 1 = 1–30%, 2 = 31–60%, 3 = 􏰃 60%
         if (parameter == parameters[0] || parameter == parameters[1]) {
@@ -82,12 +80,13 @@ var DebrisTableRow = function (data) {
         }
         return intValue;
     };
-    this.transients.vegetationWidthAverageScore = ko.computed(function () {
+
+    self.transients.vegetationWidthAverageScore = ko.computed(function () {
         var one, two, three, four, count = 0, total = 0;
-        one = this.transients.convertToInt(this.debris_parameter(), this.debris_transectOne());
-        two = this.transients.convertToInt(this.debris_parameter(), this.debris_transectTwo());
-        three = this.transients.convertToInt(this.debris_parameter(), this.debris_transectThree());
-        four = this.transients.convertToInt(this.debris_parameter(), this.debris_transectFour());
+        one = self.transients.convertToInt(self.debris_parameter(), self.debris_transectOne());
+        two = self.transients.convertToInt(self.debris_parameter(), self.debris_transectTwo());
+        three = self.transients.convertToInt(self.debris_parameter(), self.debris_transectThree());
+        four = self.transients.convertToInt(self.debris_parameter(), self.debris_transectFour());
         if (one) {
             total = total + one;
             count++;
@@ -106,9 +105,20 @@ var DebrisTableRow = function (data) {
         }
         var average = (total / count);
         average = isNaN(average) ? 0 : average;
-        this.vegetationWidthAverageScore(average.toFixed(2));
+        self.vegetationWidthAverageScore(average.toFixed(2));
         return average;
     }, this);
 
-    this.transients.dirtyFlag = new ko.dirtyFlag(this);
 };
+
+var context = _.extend({}, context, {parent:self, listName:'debrisTable'});
+self.data.debrisTable = ko.observableArray().extend({list:{metadata:self.dataModel, constructorFunction:Output_rarc_EventAndLocationDetails_debrisTableRow, context:context, userAddedRows:false, config:config}});
+self.data.debrisTable.loadDefaults = function() {
+    self.data.debrisTable.addRow({"debris_parameter":"Total leaf litter","totalLeafLitter_T4":"","totalLeafLitter_T3":"","totalLeafLitter_T2":"","totalLeafLitter_T1":"","totalLeafLitter_averageScore":""});
+    self.data.debrisTable.addRow({"debris_parameter":"Native leaf litter","nativeLeafLitter_T1":"","nativeLeafLitter_T3":"","nativeLeafLitter_T2":"","nativeLeafLitter_T4":"","nativeLeafLitter_averageScore":""});
+    self.data.debrisTable.addRow({"deadTrees_averageScore":"","debris_parameter":"Standing dead trees","deadTrees_T3":"","deadTrees_T2":"","deadTrees_T4":"","deadTrees_T1":""});
+    self.data.debrisTable.addRow({"debris_parameter":"Hollow bearing trees (>20cm DBH)","hollowBearingTrees_T1":"","hollowBearingTrees_averageScore":"","hollowBearingTrees_T2":"","hollowBearingTrees_T3":"","hollowBearingTrees_T4":""});
+    self.data.debrisTable.addRow({"debris_parameter":"Fallen logs (>10cm diameter)","logs_averageScoreTotal":"","logs_T3_score":"","logs_T1_score":"","logs_T4_score":"","noEdit":true,"logs_T2_score":""});
+};
+
+// END
