@@ -38,3 +38,5 @@ while(documents.hasNext()) {
 
     db.document.update({documentId:document.documentId}, {$set:{status:'active'}});
 }
+
+db.userPermission.update({entityId:project.project}, {$set:{status:'active'}});
