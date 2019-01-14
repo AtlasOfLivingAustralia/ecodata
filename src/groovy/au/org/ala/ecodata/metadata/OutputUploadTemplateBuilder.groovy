@@ -337,8 +337,15 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
     @Override
     def text(Object node, ExcelValidationContext context) {
         if (node.constraints) {
+            List constraints = []
 
-            node.constraints.eachWithIndex { value, i ->
+            if (node.constraints instanceof Map && node.constraints.type == 'computed') {
+                constraints = node.constraints.options?.collect{it.value}?.flatten()?.unique()
+            }
+            else {
+                constraints = node.constraints
+            }
+            constraints.eachWithIndex { value, i ->
                 Row row = context.validationSheet.getRow(i)
                 if (!row) {
                     row = context.validationSheet.createRow(i)
@@ -347,7 +354,7 @@ class ValidationHandler implements OutputModelProcessor.Processor<ExcelValidatio
                 cell.setCellValue(value)
             }
             def colString = CellReference.convertNumToColString(context.currentColumn)
-            def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${node.constraints.length()}"
+            def rangeFormula = "'${context.validationSheet.getSheetName()}'!\$${colString}\$1:\$${colString}\$${constraints.size()}"
 
             DataValidationHelper dvHelper = context.currentSheet.getDataValidationHelper();
             DataValidationConstraint dvConstraint =
