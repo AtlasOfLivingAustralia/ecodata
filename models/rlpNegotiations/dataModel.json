@@ -45,7 +45,7 @@
         "type": "section",
         "items": [{
             "columns": [
-                {F
+                {
                     "width": "25%",
                     "source": "typeOfGroup",
                     "type": "select2",
