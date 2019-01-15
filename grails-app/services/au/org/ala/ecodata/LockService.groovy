@@ -84,7 +84,7 @@ class LockService {
         def user = userService.getCurrentUserDetails()
 
         boolean unlocked = false
-        if (force || user?.userId == lock.userId) {
+        if (lock && (force || user?.userId == lock.userId)) {
             unlocked = lock.delete(flush:true)
         }
 
