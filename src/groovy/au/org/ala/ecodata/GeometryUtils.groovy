@@ -41,6 +41,9 @@ class GeometryUtils {
             case 'Point':
                 result = pointToMultipolygon(geom)
                 break
+            case 'MultiPoint':
+                result = multiPointToMultipolygon(geom)
+                break
             case 'Polygon':
                 result = polygonToMultiPolygon(geom)
                 break
@@ -64,11 +67,14 @@ class GeometryUtils {
      * The coordinates of the supplied geometry must be in WGS84.
      */
     static MultiPolygon pointToMultipolygon(Point point) {
+        return polygonToMultiPolygon(pointToPolygon(point.x, point.y))
+    }
 
+    static Polygon pointToPolygon(double x, double y) {
         GeodeticCalculator gc = new GeodeticCalculator(sourceCRS)
         Coordinate[] triangleCoords = new Coordinate[4]
         double distance = 1d/Math.sqrt(3)
-        gc.setStartingGeographicPoint(point.x, point.y)
+        gc.setStartingGeographicPoint(x, y)
         gc.setDirection(0, distance)
         Point2D n = gc.getDestinationGeographicPoint()
         triangleCoords[0] = new Coordinate(n.x, n.y)
@@ -80,8 +86,23 @@ class GeometryUtils {
         triangleCoords[2] = new Coordinate(sw.x, sw.y)
         // Close the polygon.
         triangleCoords[3] = new Coordinate(n.x, n.y)
+        return geometryFactory.createPolygon(triangleCoords)
+    }
 
-        return polygonToMultiPolygon(geometryFactory.createPolygon(triangleCoords))
+    /**
+     * Creates an equilateral triangle with sides of length 1 metre with the point at the centroid.
+     * The coordinates of the supplied geometry must be in WGS84.
+     */
+    static MultiPolygon multiPointToMultipolygon(MultiPoint multiPoint) {
+
+        Coordinate[] coords = multiPoint.getCoordinates()
+
+        Polygon[] polygons = new Polygon[coords.length]
+        for (int i=0; i<coords.length; i++) {
+            polygons[i] = pointToPolygon(coords[i].x, coords[i].y)
+        }
+
+        return geometryFactory.createMultiPolygon(polygons)
     }
 
     static MultiPolygon multiLineStringToMultiPolygon(MultiLineString multiLineString) {
