@@ -196,7 +196,7 @@ class GeometryUtils {
         Geometry utmGeom = wgs84ToUtm(geometry)
 
         GeometricShapeFactory factory = new GeometricShapeFactory()
-        factory.size = radiusInMetres
+        factory.size = radiusInMetres*2
         factory.centre = utmGeom.coordinate
 
         Geometry circle = factory.createCircle()
