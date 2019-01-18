@@ -1115,11 +1115,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Initial",
-               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "property": "data.weedTreatmentSites.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedSpeciesTreated.areaTreatedHa",
+               "property": "data.weedTreatmentSites.areaTreatedHa",
                "type": "SUM"
             }]
          }],
@@ -1143,11 +1143,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Follow-up",
-               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "property": "data.weedTreatmentSites.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedSpeciesTreated.areaTreatedHa",
+               "property": "data.weedTreatmentSites.areaTreatedHa",
                "type": "SUM"
             }]
          }],
@@ -1171,11 +1171,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Initial",
-               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "property": "data.weedTreatmentSites.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedSpeciesTreated.lengthTreatedKm",
+               "property": "data.weedTreatmentSites.lengthTreatedKm",
                "type": "SUM"
             }]
          }],
@@ -1199,11 +1199,11 @@ scores = [
          "childAggregations": [{
             "filter": {
                "filterValue": "Follow-up",
-               "property": "data.weedSpeciesTreated.initialOrFollowup",
+               "property": "data.weedTreatmentSites.initialOrFollowup",
                "type": "filter"
             },
             "childAggregations": [{
-               "property": "data.weedSpeciesTreated.lengthTreatedKm",
+               "property": "data.weedTreatmentSites.lengthTreatedKm",
                "type": "SUM"
             }]
          }],
