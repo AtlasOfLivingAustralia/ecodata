@@ -332,7 +332,7 @@
       "items": [
         {
           "allowHeaderWrap": true,
-          "disableTableUpload": true,
+
           "columns": [
             {
               "source": "paddockNum",
