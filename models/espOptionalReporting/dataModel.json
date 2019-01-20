@@ -145,7 +145,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
@@ -174,7 +174,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
@@ -203,7 +203,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
@@ -232,7 +232,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
@@ -261,7 +261,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
@@ -309,7 +309,7 @@
                         }
                     ],
                     "userAddedRows": true,
-                    "disableTableUpload": true,
+                    "disableTableUpload": false,
                     "type": "table"
                 }
             ],
