@@ -16,7 +16,7 @@ var ProgramModel = function (prg, model) {
     self.weekDaysToCompleteReport = ko.observable(prg.weekDaysToCompleteReport);
     self.reportNamePrefix = ko.observable(prg.reportNamePrefix);
     self.projectTemplate = ko.observable(prg.projectTemplate);
-    self.activityNagivation = ko.observable(prg.activityNagivation);
+    self.activityNavigationMode = ko.observable(prg.activityNavigationMode);
     self.activities = ko.observableArray(prg.activities?prg.activities:[]);
     self.speciesFieldsSettings = ko.observable().extend({jsonText:prg.speciesFieldsSettings});
     self.select = function () {
@@ -55,7 +55,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
     self.optionalProjectContent = ko.observableArray(subProgram.optionalProjectContent || []);
     self.weekDaysToCompleteReport = ko.observable(subProgram.weekDaysToCompleteReport);
     self.projectTemplate = ko.observable(subProgram.projectTemplate);
-    self.activityNagivation = ko.observable(subProgram.activityNagivation);
+    self.activityNavigationMode = ko.observable(subProgram.activityNavigationMode);
 
     self.themes = ko.observableArray($.map(subProgram.themes, function (obj) {
         return new ThemeModel(obj, model);
@@ -98,7 +98,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
             self.projectDatesContracted(undefined);
             self.activities([]);
             self.projectTemplate(undefined);
-            self.activityNagivation(undefined);
+            self.activityNavigationMode(undefined);
         }
         else {
             self.optionalProjectContent(programModel.optionalProjectContent() || []);
@@ -108,7 +108,7 @@ var SubprogramModel = function (subProgram, programModel, model) {
             self.projectDatesContracted(programModel.projectDatesContracted());
             self.activities(programModel.activities() ? programModel.activities().slice() : []);
             self.projectTemplate(programModel.projectTemplate());
-            self.activityNagivation(programModel.activityNagivation());
+            self.activityNavigationMode(programModel.activityNavigationMode());
         }
     });
     self.toJSON = function() {
