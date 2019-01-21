@@ -67,6 +67,9 @@ class SiteController {
                     shp {
                         asShapefile s
                     }
+                    geojson {
+                        asJson(asGeoJson(s))
+                    }
                 }
 
 
@@ -85,6 +88,10 @@ class SiteController {
         builder.addSite(site.siteId)
         builder.writeShapefile(response.outputStream)
         response.outputStream.flush()
+    }
+
+    private Map asGeoJson(site) {
+        siteService.toGeoJson(site)
     }
 
     @RequireApiKey
@@ -307,7 +314,7 @@ class SiteController {
      */
     @RequireApiKey
     def projectSites(String id) {
-        List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(it)})
+        List features = siteService.sitesForProject(id).collect({siteService.toGeoJson(siteService.toMap(it))})
         Map result = [projectId:id, sites: features]
         render result as JSON
     }
