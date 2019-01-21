@@ -139,7 +139,7 @@ class SiteService {
         mapOfProperties.findAll {k,v -> v != null}
     }
 
-    Map toGeoJson(Site site) {
+    Map toGeoJson(Map site) {
 
         Map properties = [
                 id:site.siteId,
@@ -149,7 +149,7 @@ class SiteService {
         ]
         Map geojson
 
-        if (site.isCompoundSite()) {
+        if (site.type == Site.TYPE_COMPOUND) {
             geojson = [
                     type:'FeatureCollection',
                     properties: properties,
