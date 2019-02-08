@@ -7,45 +7,25 @@
       "name": "keyAchievements",
       "validate": "required,maxSize[1250]"
     },
-
     {
-      "name": "minimumAnnualTargetsMet",
       "dataType": "text",
-      "description":"Annual minimum targets are outlined in the MERI plan",
-      "validate": "required",
-      "constraints": [
-        "Yes",
-        "No"
-      ]
+      "name": "keyIssues",
+      "validate": "required,maxSize[1250]"
     },
     {
-      "name": "reasonsMinimumAnnualTargetsNotMet",
-      "dataType": "text",
-      "validate": "required,maxSize[1250]",
-      "behaviour": [
+      "name": "minimumAnnualTargetsNotMet",
+      "dataType": "list",
+      "columns": [
         {
-          "condition": "minimumAnnualTargetsMet == \"No\"",
-          "type": "enable"
-        }
-      ]
-    },
-    {
-      "name": "weatherDisturbanceOccurred",
-      "dataType": "text",
-      "validate": "required",
-      "constraints": [
-        "Yes",
-        "No"
-      ]
-    },
-    {
-      "name": "weatherDisturbanceImpact",
-      "dataType": "text",
-      "validate": "required,maxSize[1250]",
-      "behaviour": [
+          "name": "target",
+          "dataType": "text",
+          "validate": "required,maxSize[300]",
+          "description": "Annual minimum targets are outlined in the MERI plan"
+        },
         {
-          "condition": "weatherDisturbanceOccurred == \"Yes\"",
-          "type": "enable"
+          "name": "reasonTargetNotMet",
+          "dataType": "text",
+          "validate": "required,maxSize[500]"
         }
       ]
     },
@@ -65,6 +45,32 @@
       "behaviour": [
         {
           "condition": "adaptiveManagementImplemented == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "meriPlanChangesRequired",
+      "dataType": "text",
+      "validate": "required",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "behaviour": [
+        {
+          "condition": "adaptiveManagementImplemented == \"Yes\"",
+          "type": "enable"
+        }
+      ]
+    },
+    {
+      "name": "meriPlanChangesDetails",
+      "dataType": "text",
+      "validate": "required,maxSize[1250]",
+      "behaviour": [
+        {
+          "condition": "meriPlanChangesRequired == \"Yes\"",
           "type": "enable"
         }
       ]
@@ -94,57 +100,38 @@
     {
       "type":"row",
       "items":[{
-        "preLabel":"1. Please outline the project's key achievements met within the past 12 months (1250 character, [approx. 250 word] limit)",
+        "preLabel":"1. Please outline the key achievements met by the project and progress towards outcomes in the past 12 months (1250 character, [approx. 250 word] limit)",
         "source":"keyAchievements",
         "type":"textarea",
         "rows":4
       }]
     },
     {
-      "type": "row",
-      "items": [
-        {
-          "css":"span6",
-          "type": "selectOne",
-          "source": "minimumAnnualTargetsMet",
-          "preLabel": "2. Have all project minimum annual targets for projects services been met?"
-        }
-      ]
+      "type":"row",
+      "items":[{
+        "preLabel":"2. Please outline any key issues in the delivery of the project in the past 12 months and how they were managed/rectified. (1250 character, [approx. 250 word] limit)",
+        "source":"keyIssues",
+        "type":"textarea",
+        "rows":4
+      }]
     },
     {
-      "type": "row",
-      "items": [
+      "title": "<b>3. Please outline which minimum annual target services have not been met and why.</b><br/>",
+      "type": "table",
+      "source": "minimumAnnualTargetsNotMet",
+      "userAddedRows": true,
+      "columns": [
         {
-          "type": "textarea",
-          "rows":5,
-          "source": "reasonsMinimumAnnualTargetsNotMet",
-          "preLabel": "2. a) Please outline which minimum annual target services, and why they have not been met."
+          "type": "text",
+          "source": "target",
+          "title": "Target not met"
+        },
+        {
+          "type": "text",
+          "source": "reasonTargetNotMet",
+          "title": "Reasons why the target has not been met (500 character, [approx. 100 word] limit)"
         }
       ]
-
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "css":"span6",
-          "type": "selectOne",
-          "source": "weatherDisturbanceOccurred",
-          "preLabel": "3. In the past 12 months, have any disturbances or weather events occurred on, or to, any of the project sites which may hinder the project's success?"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "type": "textarea",
-          "source": "weatherDisturbanceImpact",
-          "rows":4,
-          "preLabel": "3. a) Please describe these events and degree of impact they have had on or to the project sites (1250 character, [approx. 250 word] limit)"
-        }
-      ]
-
     },
     {
       "type": "row",
@@ -175,8 +162,31 @@
         {
           "css":"span6",
           "type": "selectOne",
+          "source": "meriPlanChangesRequired",
+          "preLabel": "4. b) Are changes to the project MERI plan required?"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "type": "textarea",
+          "rows":4,
+          "source": "meriPlanChangesDetails",
+          "preLabel": "4. b) ii) Please outline changes to the project MERI plan required and why they are required. (1250 character [approx. 250 word] limit)."
+        }
+      ]
+
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "css":"span6",
+          "type": "selectOne",
           "source": "whsIncidentsOccurred",
-          "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred?"
+          "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred during the delivery of the project?"
         }
       ]
     },
@@ -187,7 +197,7 @@
           "type": "textarea",
           "rows":4,
           "source": "whsIncidentsDescription",
-          "preLabel": "5. a) Please describe the project Workplace Health and Safety incidents"
+          "preLabel": "5. a) Please describe the Workplace Health and Safety incidents, were they reported and what was the outcome of any investigation."
         }
       ]
 
