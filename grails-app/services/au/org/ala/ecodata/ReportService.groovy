@@ -129,7 +129,6 @@ class ReportService {
 
         List config = scores.collect{
             it.configuration.label = it.label
-            it.configuration.name = it.scoreId
             it.configuration
         }
         GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
