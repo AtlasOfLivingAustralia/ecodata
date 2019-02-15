@@ -422,7 +422,7 @@ class ProjectService {
      * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
      *
      */
-    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null) {
+    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
@@ -438,7 +438,7 @@ class ProjectService {
                 toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
             }
 
-            def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly)
+            def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig)
 
             // Add project output target information where it exists.
 

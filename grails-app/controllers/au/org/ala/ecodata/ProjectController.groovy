@@ -242,15 +242,33 @@ class ProjectController {
 
     def projectMetrics(String id) {
 
-        // TODO this is temporarily hardcoded, but we can maybe define a meta model for reporting
-        // Need to add targets to this also.
         def p = Project.findByProjectId(id)
 
-        boolean approvedOnly = params.getBoolean('approvedOnly')
-        List scoreIds = params.getList('scoreIds')
+        boolean approvedOnly = true
+        boolean targetsOnly = false
+        List scoreIds
+        Map aggregationConfig = null
+
+        Map paramData = request.JSON
+        if (!paramData) {
+            approvedOnly = params.getBoolean('approvedOnly')
+            scoreIds = params.getList('scoreIds')
+            targetsOnly = params.getBoolean('targetsOnly')
+        }
+        else {
+
+            if (paramData.approvedOnly != null) {
+                approvedOnly = paramData.approvedOnly
+            }
+            if (paramData.targetsOnly != null) {
+                approvedOnly = paramData.targetsOnly
+            }
+            scoreIds = paramData.scoreIds
+            aggregationConfig = paramData.aggregationConfig
+        }
 
         if (p) {
-            render projectService.projectMetrics(id, false, approvedOnly, scoreIds) as JSON
+            render projectService.projectMetrics(id, targetsOnly, approvedOnly, scoreIds, aggregationConfig) as JSON
 
         } else {
             render (status: 404, text: 'No such id')
