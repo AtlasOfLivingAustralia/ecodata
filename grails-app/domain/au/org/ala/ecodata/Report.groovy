@@ -21,6 +21,12 @@ class Report {
      */
     public static final String TYPE_ACTIVITY = 'Activity'
 
+    /**
+     * An adjustment report is created to amend the values entered into a submitted report without requiring the
+     * report to have approvals withdrawn and the report edited.
+     */
+    public static final String TYPE_ADJUSTMENT = 'Adjustment'
+
     ObjectId id
 
     /** UUID for this report */
@@ -82,6 +88,9 @@ class Report {
 
     /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
     String publicationStatus = REPORT_NOT_APPROVED
+
+    /** Only non-null for reports of type 'Adjustment' - references the id of the Report that the adjustment applies to */
+    String adjustedReportId
 
     /** active, deleted */
     String status = 'active'
@@ -194,6 +203,19 @@ class Report {
         activityType nullable:true
         type nullable:false
         category nullable:true
+        adjustedReportId nullable:true, validator: { value, report ->
+            // Adjustment reports must reference another report
+            if (report.type == TYPE_ADJUSTMENT) {
+                if (value == null) {
+                    return 'nullable'
+                }
+            }
+            else {
+                if (value != null) {
+                    return 'nullable'
+                }
+            }
+        }
     }
 
     static embedded = ['statusChangeHistory']
