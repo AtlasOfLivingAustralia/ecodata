@@ -81,6 +81,10 @@ class Report {
     Date dateReturned
     /** The user ID of the grant manager who returned this Report */
     String returnedBy
+    /** The Date the report adjustment was initiated */
+    Date dateAdjusted
+    /** The user ID of the grant manager who initiated the adjustment for this Report */
+    String adjustedBy
     /** Number of days before (-ve) or after the due date the report was submitted.  Calculated at submit time to make reporting easier. */
     Integer submissionDeltaInWeekdays
     /** Number of days after a report is submitted that it's approved.  Calculated at approval time to make reporting easier. */
@@ -121,8 +125,16 @@ class Report {
     }
 
     public boolean isSubmittedOrApproved() {
-        return  publicationStatus == REPORT_SUBMITTED ||
+        return publicationStatus == REPORT_SUBMITTED ||
                 publicationStatus == REPORT_APPROVED
+    }
+
+    public boolean isApproved() {
+        return publicationStatus == REPORT_APPROVED
+    }
+
+    public boolean isAdjusted() {
+        return dateAdjusted != null
     }
 
     public boolean isActivityReport() {
@@ -166,6 +178,18 @@ class Report {
         dateReturned = change.dateChanged
     }
 
+    public void adjust(String userId, String comment, Date changeDate = new Date()) {
+
+        if (!isApproved() || isAdjusted()) {
+            throw new IllegalArgumentException("Only approved reports can be adjusted")
+        }
+        StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
+
+        publicationStatus = REPORT_APPROVED
+        adjustedBy = change.changedBy
+        dateAdjusted = change.dateChanged
+    }
+
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
         StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, category:category)
         statusChangeHistory << change
@@ -189,6 +213,8 @@ class Report {
         approvedBy nullable:true
         dateReturned nullable:true
         returnedBy nullable:true
+        adjustedBy nullable:true
+        dateAdjusted nullable:true
         projectId nullable:true
         dueDate nullable:true
         organisationId nullable:true
@@ -220,6 +246,11 @@ class Report {
 
     static embedded = ['statusChangeHistory']
     static mapping = {
+        reportId index: true
+        projectId index: true
+        adjustedReportId index: true
+        programId index: true
+
         version false
     }
 

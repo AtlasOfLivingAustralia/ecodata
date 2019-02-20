@@ -235,6 +235,59 @@ class ReportingService {
     }
 
     /**
+     * A report adjustment can be performed to modify the results of an approved report via the creation of
+     * another report that contributes to the same scores as the original report.  This is sometimes required in
+     * MERIT if changes need to be made after a report has been approved and the original report is for some
+     * reason unable to have the approval withdrawn and the data updated via the standard workflow.
+     * This routine adds a status change to the report to indicate the adjustment and also creates a new
+     * report of the supplied type to record the required adjustments.
+     *
+     * @param id the reportId of the report that needs to be adjusted.
+     * @param comment the reason for the adjustment
+     * @param adjustmentActivityType the type of activity to be associated with the adjustment report that is to be created.
+     * @return the new adjustment report, or the original report if it is unable to be adjusted
+     */
+    Report adjust(String id, String comment = '', String adjustmentActivityType) {
+        def user = userService.getCurrentUserDetails()
+        Report toAdjust = get(id)
+        if (!toAdjust) {
+            return null
+        }
+
+        if (toAdjust.type == Report.TYPE_ADJUSTMENT || toAdjust.isAdjusted() || !toAdjust.isApproved()) {
+            toAdjust.errors.reject('report.adjustment.invalid', toAdjust.name)
+            return toAdjust
+        }
+
+        Report adjustmentReport = null
+        if (toAdjust.type != Report.TYPE_ADJUSTMENT && toAdjust.dateAdjusted == null) {
+
+            Map adjustmentReportProps = [
+                    name            : "Adjustment: " + toAdjust.name,
+                    description     : "Adjustment: " + toAdjust.description,
+                    fromDate        : toAdjust.fromDate,
+                    toDate          : toAdjust.toDate,
+                    type            : Report.TYPE_ADJUSTMENT,
+                    adjustedReportId: toAdjust.reportId,
+                    category        : "Adjustments",
+                    activityType    : adjustmentActivityType,
+                    projectId       : toAdjust.projectId,
+                    programId       : toAdjust.programId,
+                    organisationId  : toAdjust.organisationId
+            ]
+            adjustmentReport = create(adjustmentReportProps)
+
+            if (!adjustmentReport.hasErrors()) {
+                println "adjusting!"
+                toAdjust.adjust(user.userId, comment)
+                toAdjust.save()
+            }
+        }
+
+        return adjustmentReport
+    }
+
+    /**
      * @param criteria a Map of property name / value pairs.  Values may be primitive types or arrays.
      * Multiple properties will be ANDed together when producing results.
      *
