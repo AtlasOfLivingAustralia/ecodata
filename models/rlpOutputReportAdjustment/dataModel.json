@@ -28,7 +28,7 @@
                 "dataType": "number",
                 "name": "adjustment",
                 "description": "Amount of adjustment required (may be a negative number to reduce the amount reported against a target)",
-                "validate": "required"
+                "validate": "required,min[-999999999]"
             },
             {
                 "dataType": "text",
