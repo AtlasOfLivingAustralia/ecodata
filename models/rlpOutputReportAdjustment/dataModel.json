@@ -1,124 +1,141 @@
 {
-    "dataModel": [{
-        "columns": [
+  "dataModel": [
+    {
+      "columns": [
+        {
+          "dataType": "text",
+          "name": "service"
+        },
+        {
+          "dataType": "text",
+          "name": "scoreId"
+        },
+        {
+          "dataType": "text",
+          "name": "targetMeasure",
+          "description": "The output target measure to be adjusted."
+        },
+        {
+          "dataType": "number",
+          "name": "projectTarget",
+          "description": ""
+        },
+        {
+          "dataType": "number",
+          "name": "currentContribution",
+          "description": "The quantity the report being adjusted contributed to the target measure"
+        },
+        {
+          "dataType": "number",
+          "name": "adjustment",
+          "description": "Amount of adjustment required (may be a negative number to reduce the amount reported against a target)",
+          "validate": "required,min[-999999999]"
+        },
+        {
+          "dataType": "text",
+          "name": "reason",
+          "description": "The reason this value needs to be adjusted",
+          "validate": "required,maxSize[1125]",
+          "behaviour": [
             {
-                "dataType": "text",
-                "name": "service"
-            },
-            {
-                "dataType": "text",
-                "name": "scoreId"
-            },
-            {
-                "dataType": "text",
-                "name": "targetMeasure",
-                "description": "The output target measure to be adjusted."
-            },
-            {
-                "dataType": "number",
-                "name": "projectTarget",
-                "description": ""
-            },
-            {
-                "dataType": "number",
-                "name": "currentContribution",
-                "description":"The quantity the report being adjusted contributed to the target measure"
-            },
-            {
-                "dataType": "number",
-                "name": "adjustment",
-                "description": "Amount of adjustment required (may be a negative number to reduce the amount reported against a target)",
-                "validate": "required,min[-999999999]"
-            },
-            {
-                "dataType": "text",
-                "name": "reason",
-                "description": "The reason this value needs to be adjusted",
-                "validate": "required,maxSize[1125]"
+              "condition": "adjustment != \"0\"",
+              "type": "enable"
             }
-        ],
-        "dataType": "list",
-        "name": "adjustments",
-        "description": ""
-    }],
-    "modelName": "RLP Output Report Adjustment",
-    "pre-populate": [{
-        "mapping": [{
-            "mapping": [
-                {
-                    "source-path": "name",
-                    "target": "service"
-                },
-                {
-                    "source-path": "target",
-                    "target": "projectTarget"
-                },
-                {
-                    "source-path": "targetMeasure",
-                    "target": "targetMeasure"
-                },
-                {
-                    "source-path": "scoreId",
-                    "target": "scoreId"
-                },
-                {
-                    "source-path": "result",
-                    "target": "currentContribution"
-                }
-            ],
-            "source-path": "services",
-            "target": "adjustments"
-        }],
-        "merge": true,
-        "source": {"context-path": "owner"}
-    }],
-    "title": "Adjustment of target measures",
-    "viewModel": [{
-        "source": "adjustments",
-        "type": "repeat",
-        "items": [{
-            "type": "row",
-            "items": [{
-                "type": "col",
-                "items": [
-                    {
-                        "preLabel": "Service",
-                        "readonly": true,
-                        "source": "service",
-                        "type": "text"
-                    },
-                    {
-                        "preLabel": "The target measure to be adjusted",
-                        "readonly": true,
-                        "source": "targetMeasure",
-                        "type": "text"
-                    },
-                    {
-                        "preLabel": "The project target for the measure",
-                        "readonly": true,
-                        "source":"projectTarget",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Contribution to target",
-                        "readonly": true,
-                        "source": "currentContribution",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Amount to adjust the value by",
-                        "source": "adjustment",
-                        "type": "number"
-                    },
-                    {
-                        "preLabel": "Describe why the value requires to be adjusted",
-                        "source": "reason",
-                        "type": "textarea",
-                        "rows": 3
-                    }
-                ]
-            }],
-            "class": "output-section"
-        }]
-    }]
+          ]
+        }
+      ],
+      "dataType": "list",
+      "name": "adjustments",
+      "description": ""
+    }
+  ],
+  "modelName": "RLP Output Report Adjustment",
+  "pre-populate": [
+    {
+      "mapping": [
+        {
+          "mapping": [
+            {
+              "source-path": "name",
+              "target": "service"
+            },
+            {
+              "source-path": "target",
+              "target": "projectTarget"
+            },
+            {
+              "source-path": "targetMeasure",
+              "target": "targetMeasure"
+            },
+            {
+              "source-path": "scoreId",
+              "target": "scoreId"
+            },
+            {
+              "source-path": "result",
+              "target": "currentContribution"
+            }
+          ],
+          "source-path": "services",
+          "target": "adjustments"
+        }
+      ],
+      "merge": true,
+      "source": {
+        "context-path": "owner"
+      }
+    }
+  ],
+  "title": "Adjustment of target measures",
+  "viewModel": [
+    {
+      "source": "adjustments",
+      "type": "table",
+      "disableTableUpload":true,
+      "columns": [
+        {
+          "title": "Service",
+          "readonly": true,
+          "source": "service",
+          "type": "text",
+          "width": "17%"
+        },
+        {
+          "title": "The target measure to be adjusted",
+          "readonly": true,
+          "source": "targetMeasure",
+          "type": "text",
+          "width": "25%"
+        },
+        {
+          "title": "The project target for the measure",
+          "readonly": true,
+          "source": "projectTarget",
+          "type": "number",
+          "css": "input-small",
+          "width": "11%"
+        },
+        {
+          "title": "Contribution to target",
+          "readonly": true,
+          "source": "currentContribution",
+          "type": "number",
+          "width": "11%"
+        },
+        {
+          "title": "Amount to adjust the value by",
+          "source": "adjustment",
+          "type": "number",
+          "width": "11%"
+        },
+        {
+          "title": "Describe why the value requires to be adjusted",
+          "source": "reason",
+          "type": "textarea",
+          "rows": 3,
+          "width": "25%"
+        }
+      ]
+    }
+  ]
 }
