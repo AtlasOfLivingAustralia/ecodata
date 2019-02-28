@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import org.joda.time.DateTime
 import org.joda.time.DateTimeZone
 import org.joda.time.format.DateTimeFormat
 import org.joda.time.format.DateTimeFormatter
@@ -120,9 +121,10 @@ class ReportGroups {
 
         static DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis().withZone(DateTimeZone.default)
         DateTimeFormatter dateFormatter
-        def buckets
-        def bucketStartLabels
-        def bucketEndLabels
+        List buckets
+        List bucketStartLabels
+        List bucketEndLabels
+        List dateBuckets
 
         /**
          * @param nestedProperty the name of the property to use to get the value that will be sorted into a bucket.
@@ -134,18 +136,20 @@ class ReportGroups {
             super(nestedProperty)
 
             this.buckets = new ArrayList(buckets)
+
             Collections.sort(this.buckets)
 
             this.dateFormatter = DateTimeFormat.forPattern(dateFormat).withZone(DateTimeZone.default)
 
-            this.bucketStartLabels = buckets.collect{
-                this.dateFormatter.print(parser.parseDateTime(it))
+            this.dateBuckets = buckets.collect { parser.parseDateTime(it) }
+            this.bucketStartLabels = dateBuckets.collect{
+                this.dateFormatter.print(it)
             }
-            this.bucketEndLabels = buckets.collect {
+            this.bucketEndLabels = dateBuckets.collect { DateTime date ->
                 // Because the buckets are half open, we subtract one day from the end dates so
                 // that a range of 1 Jan - 1 Feb is printed as Jan (otherwise it would be Jan - Feb which is
                 // incorrect). The day is so we don't have to worry about time zone problems
-                this.dateFormatter.print(parser.parseDateTime(it).minusDays(1))
+                this.dateFormatter.print(date.minusDays(1))
             }
 
         }
@@ -153,10 +157,19 @@ class ReportGroups {
         def group(data) {
             def value = propertyAccessor.getPropertyValue(data)
 
-            int result = Collections.binarySearch(buckets, value)
+            int result = bucketIndex(value)
 
             return result >= 0 ? groupName(result) : groupName((-result)-2)
         }
+
+        int bucketIndex(String value) {
+            Collections.binarySearch(buckets, value)
+        }
+
+        int bucketIndex(Date value) {
+            Collections.binarySearch(dateBuckets, new DateTime(value))
+        }
+
 
         def groupName(index) {
 
