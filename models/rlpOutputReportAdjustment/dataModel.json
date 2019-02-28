@@ -27,9 +27,24 @@
         },
         {
           "dataType": "number",
+          "name": "correctedValue",
+          "description": "The value the report should have produced for this target measure",
+          "validate": "required,min[-999999999]"
+        },
+        {
+          "dataType": "number",
           "name": "adjustment",
           "description": "Amount of adjustment required (may be a negative number to reduce the amount reported against a target)",
-          "validate": "required,min[-999999999]"
+          "validate": "required,min[-999999999]",
+          "computed": {
+            "expression": "correctedValue - currentContribution"
+          },
+          "behaviour": [
+            {
+              "condition": "adjustment != \"0\"",
+              "type": "enable"
+            }
+          ]
         },
         {
           "dataType": "text",
@@ -74,6 +89,10 @@
             {
               "source-path": "result",
               "target": "currentContribution"
+            },
+            {
+              "source-path": "result",
+              "target": "correctedValue"
             }
           ],
           "source-path": "services",
@@ -98,14 +117,14 @@
           "readonly": true,
           "source": "service",
           "type": "text",
-          "width": "17%"
+          "width": "15%"
         },
         {
           "title": "The target measure to be adjusted",
           "readonly": true,
           "source": "targetMeasure",
           "type": "text",
-          "width": "25%"
+          "width": "20%"
         },
         {
           "title": "The project target for the measure",
@@ -123,17 +142,24 @@
           "width": "11%"
         },
         {
-          "title": "Amount to adjust the value by",
-          "source": "adjustment",
+          "title": "Corrected value",
+          "source": "correctedValue",
           "type": "number",
           "width": "11%"
+        },
+        {
+          "title": "Adjustment",
+          "source": "adjustment",
+          "type": "number",
+          "width": "11%",
+          "readonly": true
         },
         {
           "title": "Describe why the value requires to be adjusted",
           "source": "reason",
           "type": "textarea",
           "rows": 3,
-          "width": "25%"
+          "width": "20%"
         }
       ]
     }

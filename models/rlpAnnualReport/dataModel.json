@@ -1,6 +1,6 @@
 {
   "modelName": "RLP Annual Report",
-  "title":"Annual project report",
+  "title": "Annual project report",
   "dataModel": [
     {
       "dataType": "text",
@@ -17,10 +17,28 @@
       "dataType": "list",
       "columns": [
         {
-          "name": "target",
           "dataType": "text",
-          "validate": "required,maxSize[300]",
-          "description": "Annual minimum targets are outlined in the MERI plan"
+          "name": "serviceName"
+        },
+        {
+          "dataType": "text",
+          "name": "targetMeasure",
+          "description": "The output target measure to be adjusted."
+        },
+        {
+          "dataType": "text",
+          "name": "scoreId",
+          "description": "Identifier for the target measure"
+        },
+        {
+          "dataType": "text",
+          "name": "annualTarget",
+          "description": "The minimum annual target specified in the MERI plan for the target measure"
+        },
+        {
+          "dataType": "text",
+          "name": "result",
+          "description": "The actual progress towards the target this financial year"
         },
         {
           "name": "reasonTargetNotMet",
@@ -96,38 +114,114 @@
       ]
     }
   ],
-  "viewModel":[
+  "pre-populate": [
     {
-      "type":"row",
-      "items":[{
-        "preLabel":"1. Please outline the key achievements met by the project and progress towards outcomes in the past 12 months (1250 character, [approx. 250 word] limit)",
-        "source":"keyAchievements",
-        "type":"textarea",
-        "rows":4
-      }]
+      "mapping": [
+        {
+          "target": "minimumAnnualTargetsNotMet",
+          "source-path": "targets",
+          "mapping": [
+            {
+              "source-path": "service",
+              "target": "serviceName"
+            },
+            {
+              "source-path": "targetMeasure",
+              "target": "targetMeasure"
+            },
+            {
+              "source-path": "scoreId",
+              "target": "scoreId"
+            },
+            {
+              "source-path": "financialYearTarget",
+              "target": "annualTarget"
+            },
+            {
+              "source-path": "financialYearResult",
+              "target": "result"
+            }
+          ]
+        }
+      ],
+      "source": {
+        "url": "/project/scoresByFinancialYear/",
+        "params": [
+          {
+            "name": "id",
+            "type": "computed",
+            "expression": "owner.projectId"
+          },
+          {
+            "name": "financialYearEndDate",
+            "type": "computed",
+            "expression": "activity.plannedEndDate"
+          }
+        ]
+      }
+    }
+  ],
+  "viewModel": [
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "1. Please outline the key achievements met by the project and progress towards outcomes in the past 12 months (1250 character, [approx. 250 word] limit)",
+          "source": "keyAchievements",
+          "type": "textarea",
+          "rows": 4
+        }
+      ]
     },
     {
-      "type":"row",
-      "items":[{
-        "preLabel":"2. Please outline any key issues in the delivery of the project in the past 12 months and how they were managed/rectified. (1250 character, [approx. 250 word] limit)",
-        "source":"keyIssues",
-        "type":"textarea",
-        "rows":4
-      }]
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "2. Please outline any key issues in the delivery of the project in the past 12 months and how they were managed/rectified. (1250 character, [approx. 250 word] limit)",
+          "source": "keyIssues",
+          "type": "textarea",
+          "rows": 4
+        }
+      ]
     },
     {
       "title": "<b>3. Please outline which minimum annual target services have not been met and why.</b><br/>",
       "type": "table",
       "source": "minimumAnnualTargetsNotMet",
-      "userAddedRows": true,
+      "userAddedRows": false,
+      "disableTableUpload": true,
       "columns": [
         {
           "type": "text",
-          "source": "target",
-          "title": "Target not met"
+          "source": "serviceName",
+          "title": "Service",
+          "width": "15%",
+          "readonly": true
         },
         {
           "type": "text",
+          "width": "20%",
+          "source": "targetMeasure",
+          "title": "Target not met",
+          "readonly": true
+        },
+        {
+          "type": "text",
+          "source": "annualTarget",
+          "width": "13%",
+          "title": "Minimum annual target",
+          "readonly": true
+        },
+        {
+          "type": "text",
+          "source": "result",
+          "title": "Progress achieved",
+          "width": "12%",
+          "readonly": true
+        },
+        {
+          "type": "text",
+          "width": "40%",
           "source": "reasonTargetNotMet",
           "title": "Reasons why the target has not been met (500 character, [approx. 100 word] limit)"
         }
@@ -137,7 +231,7 @@
       "type": "row",
       "items": [
         {
-          "css":"span6",
+          "css": "span6",
           "type": "selectOne",
           "source": "adaptiveManagementImplemented",
           "preLabel": "4. In the past 12 months, have any adaptive management actions been implemented to improve the project?"
@@ -149,18 +243,17 @@
       "items": [
         {
           "type": "textarea",
-          "rows":4,
+          "rows": 4,
           "source": "adaptiveManagementActions",
           "preLabel": "4. a) Please describe these adaptive management actions (1250 character [approx. 250 word] limit)."
         }
       ]
-
     },
     {
       "type": "row",
       "items": [
         {
-          "css":"span6",
+          "css": "span6",
           "type": "selectOne",
           "source": "meriPlanChangesRequired",
           "preLabel": "4. b) Are changes to the project MERI plan required?"
@@ -172,18 +265,17 @@
       "items": [
         {
           "type": "textarea",
-          "rows":4,
+          "rows": 4,
           "source": "meriPlanChangesDetails",
           "preLabel": "4. b) ii) Please outline changes to the project MERI plan required and why they are required. (1250 character [approx. 250 word] limit)."
         }
       ]
-
     },
     {
       "type": "row",
       "items": [
         {
-          "css":"span6",
+          "css": "span6",
           "type": "selectOne",
           "source": "whsIncidentsOccurred",
           "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred during the delivery of the project?"
@@ -195,12 +287,11 @@
       "items": [
         {
           "type": "textarea",
-          "rows":4,
+          "rows": 4,
           "source": "whsIncidentsDescription",
           "preLabel": "5. a) Please describe the Workplace Health and Safety incidents, were they reported and what was the outcome of any investigation."
         }
       ]
-
     }
   ]
 }
