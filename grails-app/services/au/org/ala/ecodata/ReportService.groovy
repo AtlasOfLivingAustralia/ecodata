@@ -172,11 +172,11 @@ class ReportService {
      * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
      * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'project', 'site>, property: String <the entity property to group by>}, ...]
      *
-     * @return the results of the aggregration.  The results will be an array of maps, the structure of each Map is
+     * @return the results of the aggregration.  The results will be a List of Maps, the structure of each Map is
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
-    def projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
+    List projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
 
 
        // We definitely could be smarter about this query - only getting activities with outputs of particular
@@ -195,7 +195,10 @@ class ReportService {
 
         GroupedAggregationResult allResults = aggregator.result()
 
-        return postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
+        allResults.groups.each { group ->
+            group?.results = postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
+        }
+        return topLevelAggregationConfig ? allResults.groups : allResults.groups[0]?.results
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {
