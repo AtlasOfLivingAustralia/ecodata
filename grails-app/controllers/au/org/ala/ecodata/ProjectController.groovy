@@ -246,6 +246,7 @@ class ProjectController {
 
         boolean approvedOnly = true
         boolean targetsOnly = false
+        boolean includeTargets = true
         List scoreIds
         Map aggregationConfig = null
 
@@ -254,6 +255,7 @@ class ProjectController {
             approvedOnly = params.getBoolean('approvedOnly')
             scoreIds = params.getList('scoreIds')
             targetsOnly = params.getBoolean('targetsOnly')
+            includeTargets = params.getBoolean('includeTargets', true)
         }
         else {
 
@@ -263,12 +265,15 @@ class ProjectController {
             if (paramData.targetsOnly != null) {
                 approvedOnly = paramData.targetsOnly
             }
+            if (paramData.includeTargets != null) {
+                includeTargets = paramData.includeTargets
+            }
             scoreIds = paramData.scoreIds
             aggregationConfig = paramData.aggregationConfig
         }
 
         if (p) {
-            render projectService.projectMetrics(id, targetsOnly, approvedOnly, scoreIds, aggregationConfig) as JSON
+            render projectService.projectMetrics(id, targetsOnly, approvedOnly, scoreIds, aggregationConfig, includeTargets) as JSON
 
         } else {
             render (status: 404, text: 'No such id')

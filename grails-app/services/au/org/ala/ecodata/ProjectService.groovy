@@ -419,10 +419,10 @@ class ProjectService {
      * Returns the reportable metrics for a project as determined by the project output targets and activities
      * that have been undertaken.
      * @param id identifies the project.
-     * @return a Map containing the aggregated results.  TODO document me better, but it is likely this structure will change.
+     * @return a Map containing the aggregated results.
      *
      */
-    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null) {
+    def projectMetrics(String id, targetsOnly = false, approvedOnly = false, List scoreIds = null, Map aggregationConfig = null, boolean includeTargets = true) {
         def p = Project.findByProjectId(id)
         if (p) {
             def project = toMap(p, ProjectService.FLAT)
@@ -438,35 +438,37 @@ class ProjectService {
                 toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
             }
 
-            def outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig)
+            List outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig)
 
             // Add project output target information where it exists.
-
-            project.outputTargets?.each { target ->
-                // Outcome targets are text only and not mapped to a score.
-                if (target.outcomeTarget != null) {
-                    return
-                }
-                def result = outputSummary.find { it.scoreId == target.scoreId }
-                if (result) {
-                    if (!result.target || result.target == "0") {
-                        // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
-                        result.target = target.target
+            if (includeTargets) {
+                project.outputTargets?.each { target ->
+                    // Outcome targets are text only and not mapped to a score.
+                    if (target.outcomeTarget != null) {
+                        return
                     }
+                    def result = outputSummary.find { it.scoreId == target.scoreId }
+                    if (result) {
+                        if (!result.target || result.target == "0") {
+                            // Workaround for multiple outputs inputting into the same score.  Need to update how scores are defined.
+                            result.target = target.target
+                        }
 
-                } else {
-                    // If there are no Outputs recorded containing the score, the results won't be returned, so add
-                    // one in containing the target.
-                    def score = toAggregate.find { it.scoreId == target.scoreId }
-                    if (score) {
-                        outputSummary << [scoreId:score.scoreId, label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
                     } else {
-                        // This can happen if the meta-model is changed after targets have already been defined for a project.
-                        // Once the project output targets are re-edited and saved, the old targets will be deleted.
-                        log.warn "Can't find a score for existing output target: $target.outputLabel $target.scoreLabel, projectId: $project.projectId"
+                        // If there are no Outputs recorded containing the score, the results won't be returned, so add
+                        // one in containing the target.
+                        def score = toAggregate.find { it.scoreId == target.scoreId }
+                        if (score) {
+                            outputSummary << [scoreId:score.scoreId, label: score.label, target: target.target, isOutputTarget:score.isOutputTarget, description: score.description, outputType:score.outputType, category:score.category]
+                        } else {
+                            // This can happen if the meta-model is changed after targets have already been defined for a project.
+                            // Once the project output targets are re-edited and saved, the old targets will be deleted.
+                            log.warn "Can't find a score for existing output target: $target.outputLabel $target.scoreLabel, projectId: $project.projectId"
+                        }
                     }
                 }
             }
+
             return outputSummary
         } else {
             def error = "Error retrieving metrics for project - no such id ${id}"
