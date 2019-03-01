@@ -192,15 +192,17 @@
       "disableTableUpload": true,
       "columns": [
         {
-          "type": "text",
+          "type": "textarea",
+          "rows": 3,
           "source": "serviceName",
           "title": "Service",
           "width": "15%",
           "readonly": true
         },
         {
-          "type": "text",
+          "type": "textarea",
           "width": "20%",
+          "rows": 3,
           "source": "targetMeasure",
           "title": "Target not met",
           "readonly": true
@@ -220,7 +222,8 @@
           "readonly": true
         },
         {
-          "type": "text",
+          "type": "textarea",
+          "rows": 3,
           "width": "40%",
           "source": "reasonTargetNotMet",
           "title": "Reasons why the target has not been met (500 character, [approx. 100 word] limit)"

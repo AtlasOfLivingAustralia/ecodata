@@ -128,14 +128,16 @@
           "title": "Service",
           "readonly": true,
           "source": "service",
-          "type": "text",
+          "type": "textarea",
+          "rows": 3,
           "width": "15%"
         },
         {
           "title": "The target measure to be adjusted",
           "readonly": true,
           "source": "targetMeasure",
-          "type": "text",
+          "type": "textarea",
+          "rows": 3,
           "width": "20%"
         },
         {
