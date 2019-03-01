@@ -21,6 +21,12 @@ class Report {
      */
     public static final String TYPE_ACTIVITY = 'Activity'
 
+    /**
+     * An adjustment report is created to amend the values entered into a submitted report without requiring the
+     * report to have approvals withdrawn and the report edited.
+     */
+    public static final String TYPE_ADJUSTMENT = 'Adjustment'
+
     ObjectId id
 
     /** UUID for this report */
@@ -75,6 +81,10 @@ class Report {
     Date dateReturned
     /** The user ID of the grant manager who returned this Report */
     String returnedBy
+    /** The Date the report adjustment was initiated */
+    Date dateAdjusted
+    /** The user ID of the grant manager who initiated the adjustment for this Report */
+    String adjustedBy
     /** Number of days before (-ve) or after the due date the report was submitted.  Calculated at submit time to make reporting easier. */
     Integer submissionDeltaInWeekdays
     /** Number of days after a report is submitted that it's approved.  Calculated at approval time to make reporting easier. */
@@ -82,6 +92,9 @@ class Report {
 
     /** REPORT_NOT_APPROVED, REPORT_SUBMITTED, REPORT_APPROVED */
     String publicationStatus = REPORT_NOT_APPROVED
+
+    /** Only non-null for reports of type 'Adjustment' - references the id of the Report that the adjustment applies to */
+    String adjustedReportId
 
     /** active, deleted */
     String status = 'active'
@@ -112,8 +125,16 @@ class Report {
     }
 
     public boolean isSubmittedOrApproved() {
-        return  publicationStatus == REPORT_SUBMITTED ||
+        return publicationStatus == REPORT_SUBMITTED ||
                 publicationStatus == REPORT_APPROVED
+    }
+
+    public boolean isApproved() {
+        return publicationStatus == REPORT_APPROVED
+    }
+
+    public boolean isAdjusted() {
+        return dateAdjusted != null
     }
 
     public boolean isActivityReport() {
@@ -157,6 +178,18 @@ class Report {
         dateReturned = change.dateChanged
     }
 
+    public void adjust(String userId, String comment, Date changeDate = new Date()) {
+
+        if (!isApproved() || isAdjusted()) {
+            throw new IllegalArgumentException("Only approved reports can be adjusted")
+        }
+        StatusChange change = changeStatus(userId, 'adjusted', changeDate, comment)
+
+        publicationStatus = REPORT_APPROVED
+        adjustedBy = change.changedBy
+        dateAdjusted = change.dateChanged
+    }
+
     private StatusChange changeStatus(String userId, String status, Date changeDate = new Date(), String comment = '', String category = '') {
         StatusChange change = new StatusChange(changedBy:userId, dateChanged: changeDate, status: status, comment: comment, category:category)
         statusChangeHistory << change
@@ -180,6 +213,8 @@ class Report {
         approvedBy nullable:true
         dateReturned nullable:true
         returnedBy nullable:true
+        adjustedBy nullable:true
+        dateAdjusted nullable:true
         projectId nullable:true
         dueDate nullable:true
         organisationId nullable:true
@@ -194,10 +229,28 @@ class Report {
         activityType nullable:true
         type nullable:false
         category nullable:true
+        adjustedReportId nullable:true, validator: { value, report ->
+            // Adjustment reports must reference another report
+            if (report.type == TYPE_ADJUSTMENT) {
+                if (value == null) {
+                    return 'nullable'
+                }
+            }
+            else {
+                if (value != null) {
+                    return 'nullable'
+                }
+            }
+        }
     }
 
     static embedded = ['statusChangeHistory']
     static mapping = {
+        reportId index: true
+        projectId index: true
+        adjustedReportId index: true
+        programId index: true
+
         version false
     }
 

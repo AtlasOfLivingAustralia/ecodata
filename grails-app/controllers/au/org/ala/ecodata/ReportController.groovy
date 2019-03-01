@@ -86,6 +86,15 @@ class ReportController {
     }
 
     @RequireApiKey
+    def adjust(String id) {
+        Map params = request.JSON
+        if (params.comment == JSONObject.NULL) {
+            params.comment = null
+        }
+        respond reportingService.adjust(id, params.comment, params.adjustmentActivityType)
+    }
+
+    @RequireApiKey
     def runReport() {
         Map params = request.JSON
 

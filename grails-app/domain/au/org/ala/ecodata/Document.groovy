@@ -24,6 +24,7 @@ class Document {
         projectActivityId index: true
         outputId index: true
         organisationId index: true
+        programId index: true
         status index: true
         role index: true
         version false
@@ -47,6 +48,7 @@ class Document {
     String projectActivityId
     String outputId
     String organisationId
+    String programId
     String externalUrl
     Boolean isSciStarter = false
     String hosted
@@ -128,6 +130,7 @@ class Document {
         siteId nullable: true
         activityId nullable: true
         outputId nullable: true
+        programId nullable: true
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true
