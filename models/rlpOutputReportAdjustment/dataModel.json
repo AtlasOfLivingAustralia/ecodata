@@ -95,13 +95,25 @@
               "target": "correctedValue"
             }
           ],
-          "source-path": "services",
+          "source-path": "targets",
           "target": "adjustments"
         }
       ],
       "merge": true,
       "source": {
-        "context-path": "owner"
+        "url": "/project/getProjectTargetsForAdjustmentsReport/",
+        "params": [
+          {
+            "name": "id",
+            "type": "computed",
+            "expression": "owner.projectId"
+          },
+          {
+            "name": "reportId",
+            "type": "computed",
+            "expression": "reportId"
+          }
+        ]
       }
     }
   ],
