@@ -278,7 +278,7 @@ class ReportingService {
             adjustmentReport = create(adjustmentReportProps)
 
             if (!adjustmentReport.hasErrors()) {
-                println "adjusting!"
+
                 toAdjust.adjust(user.userId, comment)
                 toAdjust.save()
             }
