@@ -129,7 +129,7 @@
           "source": "targetMeasure",
           "type": "textarea",
           "rows": 3,
-          "width": "20%"
+          "width": "22%"
         },
         {
           "title": "Reported measure requiring adjustment",
@@ -156,7 +156,7 @@
           "source": "reason",
           "type": "textarea",
           "rows": 3,
-          "width": "20%"
+          "width": "30%"
         }
       ]
     }
