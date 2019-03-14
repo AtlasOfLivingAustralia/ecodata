@@ -17,11 +17,6 @@
         },
         {
           "dataType": "number",
-          "name": "projectTarget",
-          "description": ""
-        },
-        {
-          "dataType": "number",
           "name": "currentContribution",
           "description": "The quantity the report being adjusted contributed to the target measure"
         },
@@ -75,10 +70,6 @@
               "target": "service"
             },
             {
-              "source-path": "target",
-              "target": "projectTarget"
-            },
-            {
               "source-path": "targetMeasure",
               "target": "targetMeasure"
             },
@@ -125,7 +116,7 @@
       "disableTableUpload":true,
       "columns": [
         {
-          "title": "Service",
+          "title": "Project Service",
           "readonly": true,
           "source": "service",
           "type": "textarea",
@@ -133,7 +124,7 @@
           "width": "15%"
         },
         {
-          "title": "The target measure to be adjusted",
+          "title": "Output Measure",
           "readonly": true,
           "source": "targetMeasure",
           "type": "textarea",
@@ -141,22 +132,14 @@
           "width": "20%"
         },
         {
-          "title": "The project target for the measure",
-          "readonly": true,
-          "source": "projectTarget",
-          "type": "number",
-          "css": "input-small",
-          "width": "11%"
-        },
-        {
-          "title": "Contribution to target",
+          "title": "Reported measure requiring adjustment",
           "readonly": true,
           "source": "currentContribution",
           "type": "number",
           "width": "11%"
         },
         {
-          "title": "Corrected value",
+          "title": "Correct value",
           "source": "correctedValue",
           "type": "number",
           "width": "11%"
@@ -169,7 +152,7 @@
           "readonly": true
         },
         {
-          "title": "Describe why the value requires to be adjusted",
+          "title": "Describe why the value requires adjustment",
           "source": "reason",
           "type": "textarea",
           "rows": 3,
