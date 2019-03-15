@@ -326,10 +326,11 @@ class ProjectActivityService {
     }
 
     void addProjectActivityStats (Map projectActivity) {
-        projectActivity.publicAccess = isProjectActivityDataPublic(projectActivity)
-        projectActivity.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
-        projectActivity.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.stats = [:]
+        projectActivity.stats.publicAccess = isProjectActivityDataPublic(projectActivity)
+        projectActivity.stats.activityLastUpdated = getLastUpdatedActivityForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.stats.activityCount = getActivityCountForProjectActivity(projectActivity.projectActivityId)
+        projectActivity.stats.speciesRecorded = getSpeciesRecordedForProjectActivity(projectActivity.projectActivityId)
     }
 
     boolean isProjectActivityDataPublic (Map projectActivity) {

@@ -15,6 +15,10 @@ It implements a JSON/HTTP API to provide access to the data.
 * Grails framework 2.4.5
 * MongoDB
 * Elasticsearch
+* Java 7
+
+Note: 
+Java 8: use Grails_2_5_6 branch until this is released in the near future.
 
 ### Setup
 * Clone the repository to your development machine.
