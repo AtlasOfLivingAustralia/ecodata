@@ -1,0 +1,268 @@
+{
+  "adminFacets": [],
+  "availableFacets": [
+    "status",
+    "organisationFacet"
+  ],
+  "availableMapFacets": [
+    "status",
+    "organisationFacet"
+  ],
+  "bannerUrl": "",
+  "content": {
+    "hideBreadCrumbs": false,
+    "hideCancelButtonOnForm": false,
+    "showNote": false,
+    "hideProjectAndSurvey": false,
+    "industries": false,
+    "isContainer": false,
+    "recordNote": ""
+  },
+  "customBreadCrumbs": [],
+  "defaultFacetQuery": [
+    "isCitizenScience:true"
+  ],
+  "defaultProgram": "Citizen Science Projects",
+  "homePageControllerAndAction": {
+    "controller": "project",
+    "action": "citizenScience"
+  },
+  "logoUrl": "",
+  "pages": {
+    "allRecords": {
+      "facets": [
+        {
+          "isNotHistogram": true,
+          "helpText": "Name of the project",
+          "facetTermType": "Default",
+          "formattedName": "Project (projectNameFacet)",
+          "name": "projectNameFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Project"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Name of survey",
+          "facetTermType": "Default",
+          "formattedName": "Survey name (projectActivityNameFacet)",
+          "name": "projectActivityNameFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Survey name"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Organisations either running projects or associated with projects (eg. as partners).",
+          "facetTermType": "Default",
+          "formattedName": "Organisation (organisationNameFacet)",
+          "name": "organisationNameFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Organisation"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Sighting's scientific name",
+          "facetTermType": "Default",
+          "formattedName": "Species name (recordNameFacet)",
+          "name": "recordNameFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Species name"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "User who created the record",
+          "facetTermType": "Default",
+          "formattedName": "Owner (userId)",
+          "name": "userId",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Owner"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Month the sighting was observed",
+          "facetTermType": "Default",
+          "formattedName": "Month (surveyMonthFacet)",
+          "name": "surveyMonthFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Month"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Year the sighting was observed",
+          "facetTermType": "Default",
+          "formattedName": "Year (surveyYearFacet)",
+          "name": "surveyYearFacet",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Year"
+        }
+      ]
+    },
+    "userProjectActivityRecords": {
+      "facets": []
+    },
+    "myRecords": {
+      "facets": []
+    },
+    "project": {
+      "facets": []
+    },
+    "projectFinder": {
+      "facets": [
+        {
+          "isNotHistogram": true,
+          "helpText": "Active projects are still running, whereas 'completed' projects have ended and are no longer 'active'",
+          "facetTermType": "Default",
+          "formattedName": "Status (status)",
+          "name": "status",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Status"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Classifications for citizen science projects to assist decision making for participation",
+          "facetTermType": "Default",
+          "formattedName": "Tags (tags)",
+          "name": "tags",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Tags"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "A general level of difficulty for citizen science participation",
+          "facetTermType": "Default",
+          "formattedName": "Difficulty (difficulty)",
+          "name": "difficulty",
+          "interval": 10,
+          "state": "Expanded",
+          "title": "Difficulty"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Categories of science which survey-based projects are addressing.",
+          "facetTermType": "Default",
+          "formattedName": "Science Type (scienceType)",
+          "name": "scienceType",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Science Type"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Countries in which people can participate in the project.",
+          "facetTermType": "Default",
+          "formattedName": "Countries (countries)",
+          "name": "countries",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Countries"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "The continental regions in which projects occur according to the United Nations regional classification scheme.",
+          "facetTermType": "Default",
+          "formattedName": "UN Regions (uNRegions)",
+          "name": "uNRegions",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "UN Regions"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "The project catalogue system in which the project is registered.",
+          "facetTermType": "Default",
+          "formattedName": "Source System (origin)",
+          "name": "origin",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Source System"
+        },
+        {
+          "isNotHistogram": true,
+          "helpText": "Name of the project",
+          "facetTermType": "Default",
+          "formattedName": "Contributing Data to ALA (isExternal)",
+          "name": "isExternal",
+          "interval": 10,
+          "state": "Collapsed",
+          "title": "Contributing Data to ALA"
+        }
+      ]
+    },
+    "projectRecords": {
+      "facets": []
+    },
+    "myProjectRecords": {
+      "facets": []
+    }
+  },
+  "quickLinks": [],
+  "skin": "ala2",
+  "status": "active",
+  "supportedPrograms": [
+    "Citizen Science Projects",
+    "None"
+  ],
+  "templateConfiguration": {
+    "footer": {
+      "links": [],
+      "socials": [],
+      "type": ""
+    },
+    "header": {
+      "links": [],
+      "type": ""
+    },
+    "banner": {
+      "transitionSpeed": 4000,
+      "images": []
+    },
+    "styles": {
+      "bannerBackgroundColor": "#323334",
+      "titleTextColor": "#5f5d60",
+      "bodyBackgroundColor": "#ffffff",
+      "facetBackgroundColor": "#f5f5f5",
+      "defaultButtonTextColor": "#000",
+      "defaultButtonColorActive": "#fff",
+      "tileBackgroundColor": "#f5f5f5",
+      "defaultButtonBackgroundColor": "#f5f5f5",
+      "menuTextColor": "#efefef",
+      "primaryButtonBackgroundColor": "#009080",
+      "defaultButtonBackgroundColorActive": "#000",
+      "wellBackgroundColor": "#f5f5f5",
+      "navBackgroundColor": "#e5e6e7",
+      "headerBannerBackgroundColor": "#ffffff",
+      "hrefColor": "#009080",
+      "footerBackgroundColor": "#323334",
+      "breadCrumbBackGroundColour": "",
+      "navTextColor": "#5f5d60",
+      "primaryButtonTextColor": "#fff",
+      "insetTextColor": "",
+      "menuBackgroundColor": "#009080",
+      "footerTextColor": "#efefef",
+      "bodyTextColor": "#637073",
+      "socialTextColor": "#000",
+      "insetBackgroundColor": ""
+    },
+    "homePage": {
+      "homePageConfig": "projectfinder",
+      "buttonsConfig": {
+        "buttons": [],
+        "numberOfColumns": "3"
+      },
+      "projectFinderConfig": {
+        "defaultView": "grid",
+        "showProjectRegionSwitch": false
+      }
+    }
+  },
+  "title": "BioCollect",
+  "urlPath": "ala"
+}

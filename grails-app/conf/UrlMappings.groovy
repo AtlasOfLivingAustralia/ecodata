@@ -170,7 +170,7 @@ class UrlMappings {
         "/ws/$controller/findByName"{ action = [GET:"findByName"] }
 
 
-        "/"(view:"/index")
+        "/"(redirect:[controller:"documentation"])
 		"500"(view:'/error')
 	}
 }

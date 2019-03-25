@@ -17,13 +17,13 @@ class Document {
     static final String ALA_IMAGE_SERVER = 'images.ala.org.au'
 
     static mapping = {
-        name index: true
         projectId index: true
         siteId index: true
         activityId index: true
         projectActivityId index: true
         outputId index: true
         organisationId index: true
+        programId index: true
         status index: true
         role index: true
         version false
@@ -47,6 +47,7 @@ class Document {
     String projectActivityId
     String outputId
     String organisationId
+    String programId
     String externalUrl
     Boolean isSciStarter = false
     String hosted
@@ -128,6 +129,7 @@ class Document {
         siteId nullable: true
         activityId nullable: true
         outputId nullable: true
+        programId nullable: true
         filename nullable: true
         dateCreated nullable: true
         lastUpdated nullable: true

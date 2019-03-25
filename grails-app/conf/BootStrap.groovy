@@ -1,8 +1,10 @@
 import au.org.ala.ecodata.AccessLevel
 import au.org.ala.ecodata.AuditEventType
 import au.org.ala.ecodata.GormEventListener
+import au.org.ala.ecodata.Hub
 import au.org.ala.ecodata.Program
 import grails.converters.JSON
+import groovy.json.JsonSlurper
 import net.sf.json.JSONNull
 import org.bson.BSON
 import org.bson.Transformer
@@ -18,6 +20,7 @@ class BootStrap {
     def elasticSearchService
     def grailsApplication
     def auditService
+    def hubService
 
     def init = { servletContext ->
         // Add custom GORM event listener for ES indexing
@@ -72,6 +75,13 @@ class BootStrap {
         }
 
         JSON.registerObjectMarshaller(JSONNull, {return ""})
+
+        // Setup the default ALA hub if necessary as BioCollect won't load without it.
+        Hub alaHub = Hub.findByUrlPath('ala')
+        if (!alaHub) {
+            Map alaHubData = new JsonSlurper().parseText(getClass().getResourceAsStream("/data/alaHub.json").getText())
+            hubService.create(alaHubData)
+        }
 
         //Add a default project for individual sightings (unless disabled)
         def individualSightingsProject = au.org.ala.ecodata.Project.findByProjectId(grailsApplication.config.records.default.projectId)

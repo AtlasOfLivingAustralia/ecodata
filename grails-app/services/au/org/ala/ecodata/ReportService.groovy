@@ -25,11 +25,6 @@ class ReportService {
         Score.findAllByScoreIdInList(scoreIds)
     }
 
-
-    def findScoresByCategory(String category) {
-        Score.findAllByCategory(category)
-    }
-
     def runActivityReport(String searchTerm, List filters, Map reportConfig, boolean approvedActivitiesOnly) {
         AggregatorIf aggregator = new AggregatorFactory().createAggregator(reportConfig)
 
@@ -90,7 +85,7 @@ class ReportService {
 
     def aggregate(List filters, String searchTerm, List<Score> toAggregate, topLevelGrouping = null, boolean approvedActivitiesOnly = true) {
 
-        GroupingAggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
+        AggregationConfig topLevelConfig = aggregationConfigFromScores(toAggregate, topLevelGrouping)
 
         AggregatorIf aggregator = new AggregatorFactory().createAggregator(topLevelConfig)
 
@@ -127,7 +122,7 @@ class ReportService {
         processedOutputData
     }
 
-    private GroupingAggregationConfig aggregationConfigFromScores(List<Score> scores = null, Map topLevelGrouping = null) {
+    private AggregationConfig aggregationConfigFromScores(List<Score> scores = null, Map topLevelGrouping = null) {
         if (!scores) {
             scores = Score.findAll()
         }
@@ -137,80 +132,15 @@ class ReportService {
             it.configuration
         }
         GroupingConfig topLevelGroupingConfig = new GroupingConfig(topLevelGrouping?:[:])
-        new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
-    }
-
-    private def outputType(List scores) {
-        def result = scores.find{it.score.outputName != 'Output Details'}?.score?.outputName
-        if (!result) {
-            result = scores[0].score.outputName
-        }
-
-        result
-    }
-
-
-    private def generateScores(List<Map<String, Score>> toAggregate, Map topLevelGrouping = null) {
-
-        Map<String, List> groupedScores = toAggregate.groupBy { it.score.label }
 
         AggregationConfig aggregationConfig
-        groupedScores.collect { label, scores ->
-
-            List<AggregationConfig> config = scores.collect {configFor(it.score)}
-            if (config.size() > 1) {
-                aggregationConfig = new CompositeAggregationConfig(childAggregations: config, label:label)
-            }
-            else {
-                aggregationConfig = config[0]
-            }
-
-            [
-                    label:label,
-                    description:scores[0].score.description,
-                    config:aggregationConfig,
-                    isOutputTarget:scores[0].score.isOutputTarget,
-                    category:scores[0].score.category,
-                    outputType:outputType(scores),
-                    displayType:scores[0].score.displayType,
-                    entity:Activity.class.name,
-                    entityTypes:scores.collect{it.activities}.flatten()
-
-            ]
+        if (topLevelGrouping?.filterValue) {
+            aggregationConfig = new FilteredAggregationConfig(childAggregations: config, filter:topLevelGroupingConfig)
         }
-
-    }
-
-    private AggregationConfig configFor(au.org.ala.ecodata.reporting.Score score) {
-        AggregationConfig aggregationConfig
-
-        String property = 'data.'
-        if (score.listName) {
-            property+=score.listName+'.'
+        else {
+            aggregationConfig = new GroupingAggregationConfig(childAggregations: config, groups:topLevelGroupingConfig)
         }
-        property+=score.name
-
-        Aggregation aggregation = new Aggregation([type: score.aggregationType?.name(), property: property, label:score.label])
-        if (score.filterBy) {
-            Map groupingProperties = score.defaultGrouping()
-            aggregationConfig = new FilteredAggregationConfig(
-                    label: score.label,
-                    childAggregations: [aggregation],
-                    filter: new GroupingConfig([property: groupingProperties.property, filterValue: groupingProperties.filterBy, type: groupingProperties.type]))
-        } else if (score.groupBy) {
-            Map groupingProperties = score.defaultGrouping()
-            aggregationConfig = new GroupingAggregationConfig(
-                    label: score.label,
-                    childAggregations: [aggregation],
-                    groups: new GroupingConfig([property: groupingProperties.property, type: groupingProperties.type]))
-        } else {
-            aggregationConfig = aggregation
-        }
-        // All scores need to be filtered by output
-        GroupingConfig outputFilter = new GroupingConfig(property: 'name', filterValue: score.outputName, type:'filter')
-        FilteredAggregationConfig filteredConfig = new FilteredAggregationConfig([label:score.label, filter:outputFilter, childAggregations:[aggregationConfig]])
-
-        filteredConfig
+        aggregationConfig
     }
 
     private def aggregateActivity (AggregatorIf aggregator, Map activity) {
@@ -242,11 +172,11 @@ class ReportService {
      * @param aggregationSpec defines the scores to be aggregated and if any grouping needs to occur.
      * [{score:{name: , units:, aggregationType}, groupBy: {entity: <one of 'activity', 'output', 'project', 'site>, property: String <the entity property to group by>}, ...]
      *
-     * @return the results of the aggregration.  The results will be an array of maps, the structure of each Map is
+     * @return the results of the aggregration.  The results will be a List of Maps, the structure of each Map is
      * described in @see au.org.ala.ecodata.reporting.Aggregation.results()
      *
      */
-    def projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false) {
+    List projectSummary(String projectId, List aggregationSpec, boolean approvedActivitiesOnly = false, Map topLevelAggregationConfig = null) {
 
 
        // We definitely could be smarter about this query - only getting activities with outputs of particular
@@ -256,7 +186,7 @@ class ReportService {
             activities = activities.findAll{it.publicationStatus == 'published'}
         }
 
-        AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec)
+        AggregationConfig aggregationConfig = aggregationConfigFromScores(aggregationSpec, topLevelAggregationConfig)
         AggregatorIf aggregator = new AggregatorFactory().createAggregator(aggregationConfig)
 
         activities.each { activity ->
@@ -265,7 +195,10 @@ class ReportService {
 
         GroupedAggregationResult allResults = aggregator.result()
 
-        return postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
+        allResults.groups.each { group ->
+            group?.results = postProcessOutputData(allResults.groups[0]?.results?:[], aggregationSpec)
+        }
+        return topLevelAggregationConfig ? allResults.groups : allResults.groups[0]?.results
     }
 
     def outputTargetReport(List filters, String searchTerm = null) {
