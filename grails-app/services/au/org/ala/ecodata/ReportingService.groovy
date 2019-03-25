@@ -273,7 +273,8 @@ class ReportingService {
                     activityType    : adjustmentActivityType,
                     projectId       : toAdjust.projectId,
                     programId       : toAdjust.programId,
-                    organisationId  : toAdjust.organisationId
+                    organisationId  : toAdjust.organisationId,
+                    submissionDate  : toAdjust.submissionDate
             ]
             adjustmentReport = create(adjustmentReportProps)
 
