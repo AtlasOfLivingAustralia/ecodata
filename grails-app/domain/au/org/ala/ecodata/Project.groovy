@@ -77,6 +77,7 @@ class Project {
     List<String> countries = []
     List<String> industries = []
     String origin = 'atlasoflivingaustralia'
+    String baseLayer
 
     boolean alaHarvest = false
     //For embedded table, needs to conversion in controller
@@ -190,6 +191,7 @@ class Project {
         alaHarvest nullable: true
         industries nullable: true
         programId nullable: true
+        baseLayer nullable: true
     }
 }
 
