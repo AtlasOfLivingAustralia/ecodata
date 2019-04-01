@@ -1317,7 +1317,7 @@ class ElasticSearchService {
             hubFilters = getFilterList(params.hubFq)
         }
         else if (params.hub) {
-            Hub hub = hubService.findByUrlPath(params.hub)
+            Map hub = hubService.findByUrlPath(params.hub)
             if (hub && hub.defaultFacetQuery) {
                 hubFilters = hub.defaultFacetQuery
             }
