@@ -438,7 +438,7 @@ class ProjectService {
                 toAggregate = targetsOnly ? Score.findAllByIsOutputTarget(true) : Score.findAll()
             }
 
-            List outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig)
+            List outputSummary = reportService.projectSummary(id, toAggregate, approvedOnly, aggregationConfig) ?: []
 
             // Add project output target information where it exists.
             if (includeTargets) {
