@@ -1,6 +1,5 @@
 {
   "modelName": "RLP Annual Report",
-  "title": "Annual project report",
   "dataModel": [
     {
       "dataType": "text",
@@ -13,8 +12,6 @@
       "validate": "required,maxSize[1250]"
     },
     {
-      "name": "minimumAnnualTargetsNotMet",
-      "dataType": "list",
       "columns": [
         {
           "dataType": "text",
@@ -41,124 +38,99 @@
           "description": "The actual progress towards the target this financial year"
         },
         {
-          "name": "reasonTargetNotMet",
           "dataType": "text",
+          "name": "reasonTargetNotMet",
           "validate": "required,maxSize[500]"
         }
-      ]
+      ],
+      "dataType": "list",
+      "name": "minimumAnnualTargetsNotMet"
     },
     {
+      "dataType": "text",
       "name": "adaptiveManagementImplemented",
-      "dataType": "text",
-      "validate": "required",
-      "constraints": [
-        "Yes",
-        "No"
-      ]
-    },
-    {
-      "name": "adaptiveManagementActions",
-      "dataType": "text",
-      "validate": "required,maxSize[1250]",
-      "behaviour": [
-        {
-          "condition": "adaptiveManagementImplemented == \"Yes\"",
-          "type": "enable"
-        }
-      ]
-    },
-    {
-      "name": "meriPlanChangesRequired",
-      "dataType": "text",
-      "validate": "required",
       "constraints": [
         "Yes",
         "No"
       ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "adaptiveManagementActions",
       "behaviour": [
         {
           "condition": "adaptiveManagementImplemented == \"Yes\"",
           "type": "enable"
         }
-      ]
+      ],
+      "validate": "required,maxSize[1250]"
     },
     {
-      "name": "meriPlanChangesDetails",
       "dataType": "text",
-      "validate": "required,maxSize[1250]",
+      "name": "meriPlanChangesRequired",
+      "behaviour": [
+        {
+          "condition": "adaptiveManagementImplemented == \"Yes\"",
+          "type": "enable"
+        }
+      ],
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "meriPlanChangesDetails",
       "behaviour": [
         {
           "condition": "meriPlanChangesRequired == \"Yes\"",
           "type": "enable"
         }
-      ]
+      ],
+      "validate": "required,maxSize[1250]"
     },
     {
-      "name": "whsIncidentsOccurred",
       "dataType": "text",
-      "validate": "required",
+      "name": "whsIncidentsOccurred",
       "constraints": [
         "Yes",
         "No"
-      ]
+      ],
+      "validate": "required"
     },
     {
-      "name": "whsIncidentsDescription",
       "dataType": "text",
-      "validate": "required",
+      "name": "whsIncidentsDescription",
       "behaviour": [
         {
           "condition": "whsIncidentsOccurred == \"Yes\"",
           "type": "enable"
         }
-      ]
-    }
-  ],
-  "pre-populate": [
+      ],
+      "validate": "required"
+    },
     {
-      "mapping": [
+      "dataType": "text",
+      "name": "whsPlanChangesRequired",
+      "constraints": [
+        "Yes",
+        "No"
+      ],
+      "validate": "required"
+    },
+    {
+      "dataType": "text",
+      "name": "whsPlanChangesDescription",
+      "behaviour": [
         {
-          "target": "minimumAnnualTargetsNotMet",
-          "source-path": "targets",
-          "mapping": [
-            {
-              "source-path": "service",
-              "target": "serviceName"
-            },
-            {
-              "source-path": "targetMeasure",
-              "target": "targetMeasure"
-            },
-            {
-              "source-path": "scoreId",
-              "target": "scoreId"
-            },
-            {
-              "source-path": "financialYearTarget",
-              "target": "annualTarget"
-            },
-            {
-              "source-path": "financialYearResult",
-              "target": "result"
-            }
-          ]
+          "condition": "whsPlanChangesRequired == \"Yes\"",
+          "type": "enable"
         }
       ],
-      "source": {
-        "url": "/project/scoresByFinancialYear/",
-        "params": [
-          {
-            "name": "id",
-            "type": "computed",
-            "expression": "owner.projectId"
-          },
-          {
-            "name": "financialYearEndDate",
-            "type": "computed",
-            "expression": "activity.plannedEndDate"
-          }
-        ]
-      }
+      "validate": "required,maxSize[1250]"
     }
   ],
   "viewModel": [
@@ -185,59 +157,59 @@
       ]
     },
     {
-      "title": "<b>3. Please outline which minimum annual target services have not been met and why.</b><br/>",
-      "type": "table",
-      "source": "minimumAnnualTargetsNotMet",
-      "userAddedRows": false,
       "disableTableUpload": true,
       "columns": [
         {
-          "type": "textarea",
-          "rows": 3,
-          "source": "serviceName",
-          "title": "Service",
+          "readonly": true,
           "width": "15%",
-          "readonly": true
+          "source": "serviceName",
+          "type": "textarea",
+          "rows": 3,
+          "title": "Service"
         },
         {
-          "type": "textarea",
+          "readonly": true,
           "width": "20%",
-          "rows": 3,
           "source": "targetMeasure",
-          "title": "Target not met",
-          "readonly": true
-        },
-        {
-          "type": "text",
-          "source": "annualTarget",
-          "width": "13%",
-          "title": "Minimum annual target",
-          "readonly": true
-        },
-        {
-          "type": "text",
-          "source": "result",
-          "title": "Progress achieved",
-          "width": "12%",
-          "readonly": true
-        },
-        {
           "type": "textarea",
           "rows": 3,
+          "title": "Target not met"
+        },
+        {
+          "readonly": true,
+          "width": "13%",
+          "source": "annualTarget",
+          "type": "text",
+          "title": "Minimum annual target"
+        },
+        {
+          "readonly": true,
+          "width": "12%",
+          "source": "result",
+          "type": "text",
+          "title": "Progress achieved"
+        },
+        {
           "width": "40%",
           "source": "reasonTargetNotMet",
+          "type": "textarea",
+          "rows": 3,
           "title": "Reasons why the target has not been met (500 character, [approx. 100 word] limit)"
         }
-      ]
+      ],
+      "userAddedRows": false,
+      "source": "minimumAnnualTargetsNotMet",
+      "title": "<b>3. Please outline which minimum annual target services have not been met and why.</b><br/>",
+      "type": "table"
     },
     {
       "type": "row",
       "items": [
         {
+          "preLabel": "4. In the past 12 months, have any adaptive management actions been implemented to improve the project?",
           "css": "span6",
-          "type": "selectOne",
           "source": "adaptiveManagementImplemented",
-          "preLabel": "4. In the past 12 months, have any adaptive management actions been implemented to improve the project?"
+          "type": "selectOne"
         }
       ]
     },
@@ -245,10 +217,10 @@
       "type": "row",
       "items": [
         {
-          "type": "textarea",
-          "rows": 4,
+          "preLabel": "4. a) Please describe these adaptive management actions (1250 character [approx. 250 word] limit).",
           "source": "adaptiveManagementActions",
-          "preLabel": "4. a) Please describe these adaptive management actions (1250 character [approx. 250 word] limit)."
+          "type": "textarea",
+          "rows": 4
         }
       ]
     },
@@ -256,10 +228,10 @@
       "type": "row",
       "items": [
         {
+          "preLabel": "4. b) i) Are changes to the project MERI plan required?",
           "css": "span6",
-          "type": "selectOne",
           "source": "meriPlanChangesRequired",
-          "preLabel": "4. b) Are changes to the project MERI plan required?"
+          "type": "selectOne"
         }
       ]
     },
@@ -267,34 +239,104 @@
       "type": "row",
       "items": [
         {
-          "type": "textarea",
-          "rows": 4,
+          "preLabel": "4. b) ii) Please outline changes to the project MERI plan required and why they are required. (1250 character [approx. 250 word] limit).",
           "source": "meriPlanChangesDetails",
-          "preLabel": "4. b) ii) Please outline changes to the project MERI plan required and why they are required. (1250 character [approx. 250 word] limit)."
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
-          "css": "span6",
-          "type": "selectOne",
-          "source": "whsIncidentsOccurred",
-          "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred during the delivery of the project?"
-        }
-      ]
-    },
-    {
-      "type": "row",
-      "items": [
-        {
           "type": "textarea",
-          "rows": 4,
-          "source": "whsIncidentsDescription",
-          "preLabel": "5. a) Please describe the Workplace Health and Safety incidents, were they reported and what was the outcome of any investigation."
+          "rows": 4
         }
       ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "5. In the past 12 months, have any notifiable project Workplace Health and Safety incidents occurred during the delivery of the project?",
+          "css": "span6",
+          "source": "whsIncidentsOccurred",
+          "type": "selectOne"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "5. a) Please describe the Workplace Health and Safety incidents, were they reported and what was the outcome of any investigation.",
+          "source": "whsIncidentsDescription",
+          "type": "textarea",
+          "rows": 4
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "5. b) i) Are changes to the Workplace Health and Safety plan required?",
+          "css": "span6",
+          "source": "whsPlanChangesRequired",
+          "type": "selectOne"
+        }
+      ]
+    },
+    {
+      "type": "row",
+      "items": [
+        {
+          "preLabel": "5. b) ii) Please outline changes required to the Workplace Health and Safety plan and why they are required. (1250 character [approx. 250 word] limit)",
+          "source": "whsPlanChangesDescription",
+          "type": "textarea",
+          "rows": 4
+        }
+      ]
+    }
+  ],
+  "title": "Annual project report",
+  "pre-populate": [
+    {
+      "mapping": [
+        {
+          "mapping": [
+            {
+              "source-path": "service",
+              "target": "serviceName"
+            },
+            {
+              "source-path": "targetMeasure",
+              "target": "targetMeasure"
+            },
+            {
+              "source-path": "scoreId",
+              "target": "scoreId"
+            },
+            {
+              "source-path": "financialYearTarget",
+              "target": "annualTarget"
+            },
+            {
+              "source-path": "financialYearResult",
+              "target": "result"
+            }
+          ],
+          "source-path": "targets",
+          "target": "minimumAnnualTargetsNotMet"
+        }
+      ],
+      "source": {
+        "params": [
+          {
+            "expression": "owner.projectId",
+            "name": "id",
+            "type": "computed"
+          },
+          {
+            "expression": "activity.plannedEndDate",
+            "name": "financialYearEndDate",
+            "type": "computed"
+          }
+        ],
+        "url": "/project/scoresByFinancialYear/"
+      }
     }
   ]
 }
