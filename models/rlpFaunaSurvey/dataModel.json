@@ -1,16 +1,12 @@
 {
-  "title": "Fauna survey",
   "modelName": "RLP - Fauna survey",
   "dataModel": [
     {
-      "dataType": "list",
-      "name": "faunaSurveys",
-      "minSize": 1,
       "columns": [
         {
           "dataType": "text",
-          "description": "",
           "name": "baselineOrIndicatorSurvey",
+          "description": "",
           "constraints": [
             "Baseline",
             "Indicator"
@@ -18,24 +14,21 @@
           "validate": "required"
         },
         {
-          "dataType":"number",
-          "name":"numberOfFaunaSurveys",
-          "validate":"required,min[0]"
+          "dataType": "number",
+          "name": "numberOfFaunaSurveys",
+          "validate": "required,min[0]"
         },
         {
-          "name":"dateRange",
-          "dataType":"text",
-          "validate":"required,maxSize[300]",
-          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
+          "dataType": "text",
+          "name": "dateRange",
+          "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
+          "validate": "required,maxSize[300]"
         },
         {
-          "name":"sitesSurveyed",
-          "dataType":"feature"
+          "dataType": "feature",
+          "name": "sitesSurveyed"
         },
         {
-          "name":"areaSurveyedHa",
-          "dataType":"number",
-          "validate":"min[1]",
           "computed": {
             "expression": "$geom.areaHa(sitesSurveyed)",
             "dependents": {
@@ -43,147 +36,149 @@
                 "sitesSurveyed"
               ]
             }
-          }
+          },
+          "dataType": "number",
+          "name": "areaSurveyedHa",
+          "validate": "min[0]"
         },
         {
-          "dataType":"list",
-          "name":"faunaSurveyDetails",
-          "columns":[
+          "columns": [
             {
               "dataType": "species",
               "name": "species",
               "validate": "required"
             },
             {
-              "name":"surveyTechnique",
-              "description":"What/how will the survey capture the fauna data",
-              "dataType":"text",
-              "validate":"required,maxSize[500]"
+              "dataType": "text",
+              "name": "surveyTechnique",
+              "description": "What/how will the survey capture the fauna data",
+              "validate": "required,maxSize[500]"
             },
             {
-              "name":"individualsOrGroups",
-              "dataType":"text",
-              "constraints":[
+              "dataType": "text",
+              "name": "individualsOrGroups",
+              "constraints": [
                 "Individuals",
                 "Groups"
               ],
-              "validate":"required"
+              "validate": "required"
             },
             {
-              "name":"numberOfIndividualsOrGroups",
-              "dataType":"number",
-              "validate":"required,min[0]"
+              "dataType": "number",
+              "name": "numberOfIndividualsOrGroups",
+              "validate": "required,min[0]"
             }
-          ]
+          ],
+          "dataType": "list",
+          "name": "faunaSurveyDetails"
         }
-
-      ]
+      ],
+      "dataType": "list",
+      "name": "faunaSurveys",
+      "minSize": 1
     },
     {
-      "name":"photographicEvidence",
-      "dataType":"image"
+      "dataType": "image",
+      "name": "photographicEvidence"
     }
   ],
   "viewModel": [
     {
+      "type": "section",
       "items": [
         {
+          "addRowText": "New survey site",
+          "userAddedRows": true,
+          "source": "faunaSurveys",
+          "type": "repeat",
           "items": [
             {
-              "type":"row",
-              "items":[
+              "type": "row",
+              "items": [
                 {
                   "preLabel": "Baseline survey or indicator (follow-up) survey?",
+                  "css": "span3",
                   "source": "baselineOrIndicatorSurvey",
-                  "type": "selectOne",
-                  "css":"span3"
+                  "type": "selectOne"
                 },
                 {
-                  "preLabel":"Number of fauna surveys conducted",
-                  "source":"numberOfFaunaSurveys",
-                  "type":"number",
-                  "css":"span3"
+                  "preLabel": "Number of fauna surveys conducted",
+                  "css": "span3",
+                  "source": "numberOfFaunaSurveys",
+                  "type": "number"
                 },
                 {
-                  "preLabel":"Date range",
-                  "source":"dateRange",
-                  "type":"text",
-                  "css":"span3"
-
-                }
-
-              ]
-            },
-            {
-              "type":"row",
-              "items":[
-                {
-                  "preLabel":"Site/s covered by fauna surveys",
-                  "source":"sitesSurveyed",
-                  "type":"feature",
-                  "css":"span3"
-                },
-                {
-                  "preLabel":"Area (ha) covered by fauna surveys",
-                  "source":"areaSurveyedHa",
-                  "readonly":"readonly",
-                  "css":"span3",
-                  "type":"number"
+                  "preLabel": "Date range",
+                  "css": "span3",
+                  "source": "dateRange",
+                  "type": "text"
                 }
               ]
             },
             {
-              "type":"table",
-              "userAddedRows":true,
-              "addRowText":"Add a species",
-              "source":"faunaSurveyDetails",
-              "columns":[
+              "type": "row",
+              "items": [
                 {
+                  "preLabel": "Site/s covered by fauna surveys",
+                  "css": "span3",
+                  "source": "sitesSurveyed",
+                  "type": "feature"
+                },
+                {
+                  "preLabel": "Area (ha) covered by fauna surveys",
+                  "css": "span3",
+                  "readonly": "readonly",
+                  "source": "areaSurveyedHa",
+                  "type": "number"
+                }
+              ]
+            },
+            {
+              "addRowText": "Add a species",
+              "columns": [
+                {
+                  "width": "40%",
                   "source": "species",
                   "title": "Target species recorded",
-                  "type": "speciesSelect",
-                  "width": "40%"
+                  "type": "speciesSelect"
                 },
                 {
-                  "source":"surveyTechnique",
-                  "title":"Survey technique",
-                  "type":"text",
-                  "width":"35%"
+                  "width": "35%",
+                  "source": "surveyTechnique",
+                  "title": "Survey technique",
+                  "type": "text"
                 },
                 {
+                  "width": "15%",
                   "source": "individualsOrGroups",
                   "title": "Individuals or groups?",
-                  "type": "selectOne",
-                  "width": "15%"
+                  "type": "selectOne"
                 },
                 {
+                  "width": "10%",
                   "source": "numberOfIndividualsOrGroups",
                   "title": "Number of groups / individuals in fauna survey",
-                  "type": "number",
-                  "width": "10%"
+                  "type": "number"
                 }
-              ]
+              ],
+              "userAddedRows": true,
+              "source": "faunaSurveyDetails",
+              "type": "table"
             }
-
-
-          ],
-          "source": "faunaSurveys",
-          "userAddedRows": true,
-          "addRowText":"New survey site",
-          "type": "repeat"
+          ]
         },
         {
-          "type":"row",
-          "items":[
+          "type": "row",
+          "items": [
             {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
+              "preLabel": "Optionally attach photos",
+              "source": "photographicEvidence",
+              "type": "image"
             }
           ]
         }
-      ],
-      "type": "section"
+      ]
     }
-  ]
+  ],
+  "title": "Fauna survey"
 }
