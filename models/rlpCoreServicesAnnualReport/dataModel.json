@@ -360,7 +360,7 @@
       "type": "row",
       "items": [
         {
-          "preLabel": "7. b) ii)  7. B) ii) If yes, which plans have been reviewed? (1250 character [approx. 250 word] limit)",
+          "preLabel": "7. b) ii)  If yes, which plans have been reviewed? (1250 character [approx. 250 word] limit)",
           "source": "plansReviewedDetails",
           "type": "textarea",
           "rows": 4
