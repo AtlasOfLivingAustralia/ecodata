@@ -32,7 +32,7 @@
             {
                 "dataType": "text",
                 "name": "negotiationObjective",
-                "description": "Please provide a brief description of negotiations. Separate multiple with a ‘;’",
+                "description": "Please provide a brief description of negotiations. Separate multiple with a ';'",
                 "validate": "required,maxSize[300]"
             }
         ],
