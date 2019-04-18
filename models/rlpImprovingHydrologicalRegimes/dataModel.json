@@ -1,197 +1,219 @@
 {
-  "title": "Improving hydrological regimes",
-  "modelName": "RLP - Improving hydrological regimes",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "hydrologicalRegimeDetails",
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "text",
-          "description": "",
-          "name": "installedOrMaintained",
-          "constraints": [
-            "Installed",
-            "Maintained"
-          ],
-          "validate": "required"
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "installedOrMaintained",
+                    "description": "",
+                    "constraints": [
+                        "Installed",
+                        "Maintained"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfTreatmentsImplemented",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "improvedSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(improvedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "areaCoveringRegimeChangeHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(improvedSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(improvedSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(improvedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthOfRegimeChangeKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(improvedSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(improvedSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "treatmentType",
+                    "description": "",
+                    "constraints": [
+                        "Removing barriers (e.g fish barriers)",
+                        "Structure instalment or modification (e.g. weirs, flow gauging stations, fords, culverts)",
+                        "Resnagging",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherTreatmentType",
+                    "behaviour": [{
+                        "condition": "treatmentType == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "treatmentObjective",
+                    "description": "Aim of the action - e.g. hydrological regime change from X to Y",
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesOfCatchmentManaged"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesOfCatchmentManaged)"
+                    },
+                    "dataType": "number",
+                    "name": "areaOfCatchmentManagedHa",
+                    "description": "Area improved by hydrological regime change",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesOfCatchmentManaged)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesOfCatchmentManaged)*1.1"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "dataType": "list",
+            "name": "hydrologicalRegimeDetails"
         },
         {
-          "dataType":"number",
-          "name":"numberOfTreatmentsImplemented",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"improvedSites",
-          "dataType":"feature"
-        },
-        {
-          "name":"areaCoveringRegimeChangeHa",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.areaHa(improvedSites)",
-            "dependents": {
-              "source": [
-                "improvedSites"
-              ]
-            }
-          }
-        },
-        {
-          "name":"lengthOfRegimeChangeKm",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.areaHa(improvedSites)",
-            "dependents": {
-              "source": [
-                "improvedSites"
-              ]
-            }
-          }
-        },
-
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "treatmentType",
-          "constraints": [
-            "Removing barriers (e.g fish barriers)",
-            "Structure instalment or modification (e.g. weirs, flow gauging stations, fords, culverts)",
-            "Resnagging",
-            "Other"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"otherTreatmentType",
-          "behaviour":[
-            {
-              "condition": "treatmentType == \"Other\"",
-              "type": "enable"
-            }
-          ],
-          "validate":"required,maxSize[300]"
-        },
-        {
-          "name":"treatmentObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]",
-          "description":"Aim of the action - e.g. hydrological regime change from X to Y"
-        },
-        {
-          "name":"sitesOfCatchmentManaged",
-          "dataType":"feature"
-        },
-        {
-          "name":"areaOfCatchmentManagedHa",
-          "dataType":"number",
-          "validate":"required,min[0]",
-          "description":"Area improved by hydrological regime change",
-          "computed": {
-            "expression": "$geom.areaHa(sitesOfCatchmentManaged)",
-            "dependents": {
-              "source": [
-                "sitesOfCatchmentManaged"
-              ]
-            }
-          }
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "source": "hydrologicalRegimeDetails",
-          "columns": [
+    ],
+    "modelName": "RLP - Improving hydrological regimes",
+    "title": "Improving hydrological regimes",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type":"selectOne",
-              "source":"installedOrMaintained",
-              "title":"Installed or maintained?",
-              "width":"10%"
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "installedOrMaintained",
+                        "type": "selectOne",
+                        "title": "Installed or maintained?"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "numberOfTreatmentsImplemented",
+                        "title": "Number of treatments implemented to improve water management",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "improvedSites",
+                        "type": "feature",
+                        "title": "Site/s where hydrological regimes are being improved"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "areaCoveringRegimeChangeHa",
+                        "type": "number",
+                        "title": "Area (ha) covering the hydrological regime change"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "lengthOfRegimeChangeKm",
+                        "type": "number",
+                        "title": "Length (km) covering the hydrological regime change"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "treatmentType",
+                        "title": "Type of treatment implemented to improve water management",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "20%",
+                        "source": "otherTreatmentType",
+                        "title": "Type of treatment implemented (if Other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "21%",
+                        "source": "treatmentObjective",
+                        "title": "Hydrological treatment objective",
+                        "type": "textarea"
+                    },
+                    {
+                        "dataType": "feature",
+                        "width": "5%",
+                        "source": "sitesOfCatchmentManaged",
+                        "title": "Site/s of catchment being managed as a result of this management action"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "areaOfCatchmentManagedHa",
+                        "title": "Area (ha) of catchment being managed as a result of this management action",
+                        "type": "number"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "hydrologicalRegimeDetails",
+                "type": "table"
             },
             {
-              "title":"Number of treatments implemented to improve water management",
-              "type":"number",
-              "source":"numberOfTreatmentsImplemented",
-              "width":"6%"
-            },
-            {
-              "type":"feature",
-              "source":"improvedSites",
-              "title":"Site/s where hydrological regimes are being improved",
-              "width":"5%"
-            },
-            {
-              "type":"number",
-              "readonly":"readonly",
-              "source":"areaCoveringRegimeChangeHa",
-              "title":"Area (ha) covering the hydrological regime change",
-              "width":"6%"
-            },
-            {
-              "type":"number",
-              "readonly":"readonly",
-              "source":"lengthOfRegimeChangeKm",
-              "title":"Length (km) covering the hydrological regime change",
-              "width":"6%"
-            },
-
-            {
-              "title": "Type of treatment implemented to improve water management",
-              "source": "treatmentType",
-              "type": "select2",
-              "width":"15%"
-            },
-            {
-              "title":"Type of treatment implemented (if Other)",
-              "source":"otherTreatmentType",
-              "type":"text",
-              "width":"20%"
-            },
-            {
-              "title":"Hydrological treatment objective",
-              "source":"treatmentObjective",
-              "type":"textarea",
-              "width":"21%"
-            },
-            {
-              "title":"Site/s of catchment being managed as a result of this management action",
-              "dataType":"feature",
-              "source":"sitesOfCatchmentManaged",
-              "width":"5%"
-            },
-            {
-              "title":"Area (ha) of catchment being managed as a result of this management action",
-              "source":"areaOfCatchmentManagedHa",
-              "type":"number",
-              "width":"6%",
-              "readonly":"readonly"
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ],
-          "userAddedRows": true,
-          "type": "table"
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

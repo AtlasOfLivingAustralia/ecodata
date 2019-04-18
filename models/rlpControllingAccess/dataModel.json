@@ -1,180 +1,206 @@
 {
-  "title": "Controlling access",
-  "modelName": "RLP - Controlling access",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "accessControlDetails",
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "number",
-          "name":"numberInstalled",
-          "validate":"required,min[0]"
+            "columns": [
+                {
+                    "dataType": "number",
+                    "name": "numberInstalled",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesInstalled"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesInstalled)"
+                    },
+                    "dataType": "number",
+                    "name": "areaInstalledHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesInstalled)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesInstalled)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesInstalled)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthInstalledKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesInstalled)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesInstalled)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "feature",
+                    "name": "protectedSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(protectedSites)"
+                    },
+                    "dataType": "number",
+                    "name": "areaProtectedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(protectedSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(protectedSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "accessControlType",
+                    "description": "",
+                    "constraints": [
+                        "Boardwalks",
+                        "Bollards & barriers",
+                        "Constructed parking bays",
+                        "Fencing, styles, gates & grids",
+                        "Formed traffic ways",
+                        "Signage",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherAccessControlType",
+                    "description": "Please specify the type of access control if Other (specify in notes) was selected in the Type of Access Control Installed column.",
+                    "behaviour": [{
+                        "condition": "accessControlType == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "controlObjective",
+                    "description": "What is your access control method? and/or What do you intend to achieve by using your structure/s?",
+                    "validate": "required,maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "accessControlDetails"
         },
         {
-          "dataType": "feature",
-          "name": "sitesInstalled"
-        },
-        {
-          "dataType": "number",
-          "name": "areaInstalledHa",
-          "computed": {
-            "expression": "$geom.areaHa(sitesInstalled)",
-            "dependents": {
-              "source": [
-                "sitesInstalled"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "number",
-          "name": "lengthInstalledKm",
-          "computed": {
-            "expression": "$geom.lengthKm(sitesInstalled)",
-            "dependents": {
-              "source": [
-                "sitesInstalled"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "feature",
-          "name": "protectedSites"
-        },
-        {
-          "dataType": "number",
-          "name": "areaProtectedHa",
-          "computed": {
-            "expression": "$geom.areaHa(protectedSites)",
-            "dependents": {
-              "source": [
-                "protectedSites"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "accessControlType",
-          "constraints": [
-              "Boardwalks",
-              "Bollards & barriers",
-              "Constructed parking bays",
-              "Fencing, styles, gates & grids",
-              "Formed traffic ways",
-              "Signage",
-              "Other"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"otherAccessControlType",
-          "description":"Please specify the type of access control if Other (specify in notes) was selected in the Type of Access Control Installed column.",
-          "behaviour":[
-            {
-              "condition": "accessControlType == \"Other\"",
-              "type": "enable"
-            }
-          ],
-          "validate":"required"
-        },
-        {
-          "name":"controlObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]",
-          "description":"What is your access control method? and/or What do you intend to achieve by using your structure/s?"
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ]
-
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "source": "accessControlDetails",
-          "columns": [
+    ],
+    "modelName": "RLP - Controlling access",
+    "title": "Controlling access",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type": "number",
-              "source":"numberInstalled",
-              "title":"Number of structures installed",
-              "width":"8%"
+                "columns": [
+                    {
+                        "width": "8%",
+                        "source": "numberInstalled",
+                        "type": "number",
+                        "title": "Number of structures installed"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "sitesInstalled",
+                        "type": "feature",
+                        "title": "Site/s where access has been controlled"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "areaInstalledHa",
+                        "type": "number",
+                        "title": "Area (ha) where access has been controlled"
+                    },
+                    {
+                        "width": "8%",
+                        "source": "lengthInstalledKm",
+                        "type": "number",
+                        "title": "Length (km) installed"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "protectedSites",
+                        "type": "feature",
+                        "title": "Site/s protected by access control structures"
+                    },
+                    {
+                        "width": "6%",
+                        "source": "areaProtectedHa",
+                        "type": "number",
+                        "title": "Area (ha) protected by access control structures"
+                    },
+                    {
+                        "width": "17%",
+                        "source": "accessControlType",
+                        "title": "Type of access control installed",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "17%",
+                        "source": "otherAccessControlType",
+                        "title": "Type of access control installed (if Other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "22%",
+                        "source": "controlObjective",
+                        "title": "Control objective",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "accessControlDetails",
+                "type": "table"
             },
             {
-              "type":"feature",
-              "source":"sitesInstalled",
-              "title":"Site/s where access has been controlled",
-              "width":"8%"
-            },
-            {
-              "type":"number",
-              "source":"areaInstalledHa",
-              "title":"Area (ha) where access has been controlled",
-              "width":"8%",
-              "readonly":"readonly"
-            },
-            {
-              "type":"number",
-              "source":"lengthInstalledKm",
-              "title":"Length (km) installed",
-              "width":"8%",
-              "readonly":"readonly"
-            },
-            {
-              "type":"feature",
-              "source":"protectedSites",
-              "title":"Site/s protected by access control structures",
-              "width":"6%"
-            },
-            {
-              "type":"number",
-              "source":"areaProtectedHa",
-              "title":"Area (ha) protected by access control structures",
-              "width":"6%",
-              "readonly":"readonly"
-            },
-            {
-              "title": "Type of access control installed",
-              "source": "accessControlType",
-              "type": "select2",
-              "width":"17%"
-            },
-            {
-              "title":"Type of access control installed (if Other)",
-              "source":"otherAccessControlType",
-              "type":"text",
-              "width":"17%"
-            },
-            {
-              "title":"Control objective",
-              "source":"controlObjective",
-              "type":"textarea",
-              "width":"22%"
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos of the access control work performed",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ],
-          "userAddedRows": true,
-          "type": "table"
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos of the access control work performed"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

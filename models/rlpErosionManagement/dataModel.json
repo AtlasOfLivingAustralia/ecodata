@@ -16,32 +16,80 @@
                     "name": "existingErosionSites"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(existingErosionSites)",
-                        "dependents": {"source": ["existingErosionSites"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(existingErosionSites)"
                     },
                     "dataType": "number",
-                    "name": "existingErosionAreaHa"
+                    "name": "existingErosionAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(existingErosionSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(existingErosionSites)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "dataType": "feature",
                     "name": "sitesManaged"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(sitesManaged)",
-                        "dependents": {"source": ["sitesManaged"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesManaged)"
                     },
                     "dataType": "number",
-                    "name": "areaOfErosionControlHa"
+                    "name": "areaOfErosionControlHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesManaged)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesManaged)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.lengthKm(sitesManaged)",
-                        "dependents": {"source": ["sitesManaged"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesManaged)"
                     },
                     "dataType": "number",
-                    "name": "lengthOfErosionControlKm"
+                    "name": "lengthOfErosionControlKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesManaged)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesManaged)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "dataType": "number",
@@ -78,12 +126,28 @@
                     "name": "sitesBenefittingFromErosionControl"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)",
-                        "dependents": {"source": ["sitesBenefittingFromErosionControl"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)"
                     },
                     "dataType": "number",
-                    "name": "areaBenefitingHa"
+                    "name": "areaBenefitingHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesBenefittingFromErosionControl)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "dataType": "text",
@@ -120,7 +184,6 @@
                         "type": "feature"
                     },
                     {
-                        "readonly": "readonly",
                         "width": "5%",
                         "source": "existingErosionAreaHa",
                         "title": "Area (ha) of erosion",
@@ -133,14 +196,12 @@
                         "type": "feature"
                     },
                     {
-                        "readonly": "readonly",
                         "width": "5%",
                         "source": "areaOfErosionControlHa",
                         "title": "Area (ha) of erosion control",
                         "type": "number"
                     },
                     {
-                        "readonly": "readonly",
                         "width": "5%",
                         "source": "lengthOfErosionControlKm",
                         "title": "Length (km) of stream / coastline treated for erosion",
@@ -171,7 +232,6 @@
                         "type": "feature"
                     },
                     {
-                        "readonly": "readonly",
                         "width": "5%",
                         "source": "areaBenefitingHa",
                         "title": "Area (ha) benefiting from erosion management",

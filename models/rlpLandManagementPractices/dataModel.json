@@ -1,216 +1,242 @@
 {
-  "title": "Improving land management practices",
-  "modelName": "RLP - Improving land management practices",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "landManagementDetails",
-      "columns": [
+    "dataModel": [
         {
-          "name":"initialOrFollowup",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial",
-            "Follow-up"
-          ]
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "implementationSite"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(implementationSite)"
+                    },
+                    "dataType": "number",
+                    "name": "areaImplementedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(implementationSite)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(implementationSite)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(implementationSite)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthImplementedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(implementationSite)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(implementationSite)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "practiceChangeType",
+                    "description": "",
+                    "constraints": [
+                        "Fencing",
+                        "Erosion management",
+                        "Stocking rates",
+                        "Watering arrangements",
+                        "Paddock design",
+                        "Rotation grazing",
+                        "Permaculture",
+                        "Other"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "otherPracticeChangeType",
+                    "description": "Please specify the type of land management practice change if Other (specify in notes) was selected in the Type of land management practice change.",
+                    "behaviour": [{
+                        "condition": "practiceChangeType == \"Other\"",
+                        "type": "enable"
+                    }],
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "industryType",
+                    "constraints": [
+                        "Broad acre cropping",
+                        "Dairy",
+                        "Horticulture",
+                        "Grazing",
+                        "Fisheries",
+                        "Aquaculture",
+                        "Environment"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "text",
+                    "name": "practiceChangeObjective",
+                    "description": "How will the practice change/s contribute to the area",
+                    "validate": "required,maxSize[300]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "offSiteBenefitSites"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(offSiteBenefitSites)"
+                    },
+                    "dataType": "number",
+                    "name": "offSiteBenefitAreaHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "evidenceOfBenefit",
+                    "validate": "maxSize[300]"
+                }
+            ],
+            "dataType": "list",
+            "name": "landManagementDetails"
         },
         {
-          "dataType": "feature",
-          "name": "implementationSite"
-        },
-        {
-          "dataType": "number",
-          "name": "areaImplementedHa",
-          "computed": {
-            "expression": "$geom.areaHa(implementationSite)",
-            "dependents": {
-              "source": [
-                "implementationSite"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "number",
-          "name": "lengthImplementedKm",
-          "computed": {
-            "expression": "$geom.lengthKm(implementationSite)",
-            "dependents": {
-              "source": [
-                "implementationSite"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "text",
-          "description": "",
-          "name": "practiceChangeType",
-          "constraints": [
-            "Fencing",
-            "Erosion management",
-            "Stocking rates",
-            "Watering arrangements",
-            "Paddock design",
-            "Rotation grazing",
-            "Permaculture",
-            "Other"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType":"text",
-          "name":"otherPracticeChangeType",
-          "description":"Please specify the type of land management practice change if Other (specify in notes) was selected in the Type of land management practice change.",
-          "behaviour":[
-            {
-              "condition": "practiceChangeType == \"Other\"",
-              "type": "enable"
-            }
-          ],
-          "validate":"required,maxSize[100]"
-        },
-        {
-          "name":"industryType",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Broad acre cropping",
-            "Dairy",
-            "Horticulture",
-            "Grazing",
-            "Fisheries",
-            "Aquaculture",
-            "Environment"
-          ]
-        },
-        {
-          "name":"practiceChangeObjective",
-          "dataType":"text",
-          "validate":"required,maxSize[300]",
-          "description":"How will the practice change/s contribute to the area"
-        },
-        {
-          "dataType":"feature",
-          "name":"offSiteBenefitSites"
-        },
-        {
-          "dataType":"number",
-          "name":"offSiteBenefitAreaHa",
-          "computed": {
-            "expression": "$geom.areaHa(offSiteBenefitSites)",
-            "dependents": {
-              "source": [
-                "offSiteBenefitSites"
-              ]
-            }
-          }
-        },
-        {
-          "dataType":"text",
-          "name":"evidenceOfBenefit",
-          "validate":"maxSize[300]"
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "source": "landManagementDetails",
-          "columns": [
+    ],
+    "modelName": "RLP - Improving land management practices",
+    "title": "Improving land management practices",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type":"selectOne",
-              "source":"initialOrFollowup",
-              "title":"Initial or follow-up control?",
-              "width":"10%"
+                "columns": [
+                    {
+                        "width": "10%",
+                        "source": "initialOrFollowup",
+                        "type": "selectOne",
+                        "title": "Initial or follow-up control?"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "implementationSite",
+                        "type": "feature",
+                        "title": "Site/s covered by practice change"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "areaImplementedHa",
+                        "title": "Area (ha) covered by practice change",
+                        "type": "number"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "lengthImplementedKm",
+                        "title": "Length (km) covered by practice change",
+                        "type": "number"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "practiceChangeType",
+                        "title": "Type of action",
+                        "type": "select2"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "otherPracticeChangeType",
+                        "title": "Type of action (if Other)",
+                        "type": "text"
+                    },
+                    {
+                        "width": "10%",
+                        "source": "industryType",
+                        "title": "Industry type",
+                        "type": "selectOne"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "practiceChangeObjective",
+                        "title": "Purpose of improving land management practice",
+                        "type": "textarea"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitSites",
+                        "title": "Please map any off-site area/s if they benefitted from this practice change",
+                        "type": "feature"
+                    },
+                    {
+                        "width": "5%",
+                        "source": "offSiteBenefitAreaHa",
+                        "title": "Area (ha) benefitting from practice change",
+                        "type": "number"
+                    },
+                    {
+                        "width": "15%",
+                        "source": "evidenceOfBenefit",
+                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
+                        "type": "textarea"
+                    }
+                ],
+                "userAddedRows": true,
+                "source": "landManagementDetails",
+                "type": "table"
             },
             {
-              "type":"feature",
-              "source":"implementationSite",
-              "title":"Site/s covered by practice change",
-              "width":"5%"
-            },
-            {
-              "title": "Area (ha) covered by practice change",
-              "source": "areaImplementedHa",
-              "type": "number",
-              "readonly":"readonly",
-              "width":"5%"
-            },
-            {
-              "title": "Length (km) covered by practice change",
-              "source": "lengthImplementedKm",
-              "type": "number",
-              "readonly":"readonly",
-              "width":"5%"
-            },
-            {
-              "title":"Type of action",
-              "source":"practiceChangeType",
-              "type":"select2",
-              "width":"10%"
-            },
-            {
-              "title":"Type of action (if Other)",
-              "source":"otherPracticeChangeType",
-              "type":"text",
-              "width":"15%"
-            },
-            {
-              "title":"Industry type",
-              "source":"industryType",
-              "type":"selectOne",
-              "width":"10%"
-            },
-            {
-              "title":"Purpose of improving land management practice",
-              "source":"practiceChangeObjective",
-              "type":"textarea",
-              "width":"15%"
-            },
-            {
-              "title":"Please map any off-site area/s if they benefitted from this practice change",
-              "source":"offSiteBenefitSites",
-              "type":"feature",
-              "width":"5%"
-            },
-            {
-              "title":"Area (ha) benefitting from practice change",
-              "source":"offSiteBenefitAreaHa",
-              "type":"number",
-              "width":"5%",
-              "readonly":"readonly"
-            },
-            {
-              "title":"If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
-              "source":"evidenceOfBenefit",
-              "type":"textarea",
-              "width":"15%"
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ],
-          "userAddedRows": true,
-          "type": "table"
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

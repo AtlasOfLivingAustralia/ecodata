@@ -1,231 +1,250 @@
 {
-  "title": "Undertaking emergency interventions to prevent extinctions",
-  "modelName": "RLP - Emergency Interventions",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "interventionDetails",
-      "columns": [
+    "dataModel": [
         {
-          "name":"initialOrFollowup",
-          "dataType":"text",
-          "validate":"required",
-          "constraints":[
-            "Initial",
-            "Follow-up"
-          ]
-        },
-        {
-          "name":"numberOfInterventions",
-          "dataType":"number",
-          "validate":"required,min[0]"
-        },
-        {
-          "name":"siteOfIntervention",
-          "dataType":"feature"
-        },
-        {
-          "name":"areaOfInterventionHa",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.areaHa(siteOfIntervention)",
-            "dependents": {
-              "source": [
-                "siteOfIntervention"
-              ]
-            }
-          }
-        },
-        {
-          "name":"lengthOfInterventionKm",
-          "dataType":"number",
-          "validate":"min[0]",
-          "computed": {
-            "expression": "$geom.lengthKm(siteOfIntervention)",
-            "dependents": {
-              "source": [
-                "siteOfIntervention"
-              ]
-            }
-          }
-        },
-        {
-          "name":"purposeOfIntervention",
-          "dataType":"text",
-          "validate":"required,maxSize[500]",
-          "description":"This field may be used to list What type of intervention is required. A list of multiple interventions need to be separated with a ';'."
-        },
-        {
-          "dataType":"list",
-          "name":"interventionSpecies",
-          "columns":[
-
-            {
-              "name": "species",
-              "dataType": "species",
-              "validate": "required"
-            },
-
-            {
-              "name":"numberOfIndividualsInvolved",
-              "dataType":"number",
-              "validate":"required,min[0]"
-            },
-            {
-              "name":"numberOfDaysPerformingInterventions",
-              "dataType":"number",
-              "validate":"required,min[0]",
-              "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
-            },
-            {
-              "name":"relocationSite",
-              "dataType":"feature",
-              "description":"If translocation is required please map site"
-            },
-            {
-              "name":"areaOfRelocationSiteHa",
-              "dataType":"number",
-              "validate":"min[0]",
-              "computed": {
-                "expression": "$geom.areaHa(relocationSite)",
-                "dependents": {
-                  "source": [
-                    "relocationSite"
-                  ]
+            "columns": [
+                {
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfInterventions",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "siteOfIntervention"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(siteOfIntervention)"
+                    },
+                    "dataType": "number",
+                    "name": "areaOfInterventionHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteOfIntervention)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteOfIntervention)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(siteOfIntervention)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthOfInterventionKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteOfIntervention)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteOfIntervention)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "purposeOfIntervention",
+                    "description": "This field may be used to list What type of intervention is required. A list of multiple interventions need to be separated with a ';'.",
+                    "validate": "required,maxSize[500]"
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "species",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfIndividualsInvolved",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfDaysPerformingInterventions",
+                            "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "feature",
+                            "name": "relocationSite",
+                            "description": "If translocation is required please map site"
+                        },
+                        {
+                            "defaultValue": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(relocationSite)"
+                            },
+                            "dataType": "number",
+                            "name": "areaOfRelocationSiteHa",
+                            "validate": [
+                                {
+                                    "rule": "min",
+                                    "param": {
+                                        "type": "computed",
+                                        "expression": "$geom.areaHa(relocationSite)*0.9"
+                                    }
+                                },
+                                {
+                                    "rule": "max",
+                                    "param": {
+                                        "type": "computed",
+                                        "expression": "$geom.areaHa(relocationSite)*1.1"
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "comment",
+                            "validate": "maxSize[300]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "interventionSpecies"
                 }
-              }
-            },
-            {
-              "dataType":"text",
-              "name":"comment",
-              "validate":"maxSize[300]"
-            }
-          ]
+            ],
+            "dataType": "list",
+            "name": "interventionDetails"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "source": "interventionDetails",
-          "items": [
+    ],
+    "modelName": "RLP - Emergency Interventions",
+    "title": "Undertaking emergency interventions to prevent extinctions",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type":"row",
-              "items":[
-                {
-                  "preLabel":"Initial or follow-up activity?",
-                  "source":"initialOrFollowup",
-                  "type":"selectOne",
-                  "css":"span3"
-                },
-                {
-                  "type":"number",
-                  "source":"numberOfInterventions",
-                  "css":"span2",
-                  "preLabel":"Number of interventions"
-                }
-              ]
+                "addRowText": "Add intervention site",
+                "userAddedRows": true,
+                "source": "interventionDetails",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Initial or follow-up activity?",
+                                "css": "span3",
+                                "source": "initialOrFollowup",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Number of interventions",
+                                "css": "span2",
+                                "source": "numberOfInterventions",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site/s where emergency interventions were undertaken",
+                                "css": "span3",
+                                "source": "siteOfIntervention",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) where emergency interventions were undertaken",
+                                "css": "span2",
+                                "source": "areaOfInterventionHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Type and goal or intervention",
+                                "css": "span5",
+                                "source": "purposeOfIntervention",
+                                "type": "textarea",
+                                "rows": 3
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": "30%",
+                                "source": "species",
+                                "title": "Targeted species",
+                                "type": "speciesSelect"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfIndividualsInvolved",
+                                "type": "number",
+                                "title": "Number of individuals involved"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "numberOfDaysPerformingInterventions",
+                                "type": "number",
+                                "title": "Time (days) of intervention"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "relocationSite",
+                                "type": "feature",
+                                "title": "Site/s where emergency interventions were relocated to"
+                            },
+                            {
+                                "width": "10%",
+                                "source": "areaOfRelocationSiteHa",
+                                "type": "number",
+                                "title": "Area (ha) where emergency interventions were relocated to"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "comment",
+                                "type": "textarea",
+                                "title": "Comments",
+                                "rows": 3
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "interventionSpecies",
+                        "type": "table"
+                    }
+                ]
             },
             {
-              "type": "row",
-              "items": [
-                {
-                  "type": "feature",
-                  "source": "siteOfIntervention",
-                  "preLabel": "Site/s where emergency interventions were undertaken",
-                  "css": "span3"
-                },
-                {
-                  "type": "number",
-                  "source": "areaOfInterventionHa",
-                  "preLabel": "Area (ha) where emergency interventions were undertaken",
-                  "css": "span2",
-                  "readonly": "readonly"
-                },
-                {
-                  "preLabel":"Type and goal or intervention",
-                  "source":"purposeOfIntervention",
-                  "css":"span5",
-                  "type":"textarea",
-                  "rows":3
-                }
-
-              ]
-            },
-
-            {
-              "type":"table",
-              "source":"interventionSpecies",
-              "userAddedRows":true,
-              "columns":[
-                {
-                  "title": "Targeted species",
-                  "source": "species",
-                  "type": "speciesSelect",
-                  "width": "30%"
-                },
-                {
-                  "type":"number",
-                  "source":"numberOfIndividualsInvolved",
-                  "width":"10%",
-                  "title":"Number of individuals involved"
-                },
-                {
-                  "type":"number",
-                  "source":"numberOfDaysPerformingInterventions",
-                  "width":"10%",
-                  "title":"Time (days) of intervention"
-                },
-
-                {
-                  "type": "feature",
-                  "source": "relocationSite",
-                  "title": "Site/s where emergency interventions were relocated to",
-                  "width": "10%"
-                },
-                {
-                  "type": "number",
-                  "source": "areaOfRelocationSiteHa",
-                  "title": "Area (ha) where emergency interventions were relocated to",
-                  "width": "10%",
-                  "readonly": "readonly"
-                },
-                {
-                  "type":"textarea",
-                  "source":"comment",
-                  "title":"Comments",
-                  "rows":3,
-                  "width":"30%"
-                }
-
-              ]
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-
-
-          ],
-          "userAddedRows": true,
-          "type": "repeat",
-          "addRowText":"Add intervention site"
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

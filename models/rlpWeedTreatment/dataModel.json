@@ -16,20 +16,52 @@
                     "name": "sitesTreated"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(sitesTreated)",
-                        "dependents": {"source": ["sitesTreated"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesTreated)"
                     },
                     "dataType": "number",
-                    "name": "areaTreatedHa"
+                    "name": "areaTreatedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesTreated)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.lengthKm(sitesTreated)",
-                        "dependents": {"source": ["sitesTreated"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesTreated)"
                     },
                     "dataType": "number",
-                    "name": "lengthTreatedKm"
+                    "name": "lengthTreatedKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTreated)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(sitesTreated)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "columns": [
@@ -133,13 +165,11 @@
                             },
                             {
                                 "preLabel": "Area (ha) treated for weed removal",
-                                "readonly": "readonly",
                                 "source": "areaTreatedHa",
                                 "type": "number"
                             },
                             {
                                 "preLabel": "Length (km) treated for weed removal",
-                                "readonly": "readonly",
                                 "source": "lengthTreatedKm",
                                 "type": "number"
                             }

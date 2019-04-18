@@ -1,207 +1,210 @@
 {
-  "title": "Water quality survey",
-  "modelName": "RLP - Water quality survey",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "waterQualitySurveySites",
-      "columns": [
+    "dataModel": [
         {
-          "dataType": "text",
-          "description": "",
-          "name": "baselineOrIndicator",
-          "constraints": [
-            "Baseline",
-            "Indicator"
-          ],
-          "validate": "required"
-        },
-        {
-          "dataType": "number",
-          "name": "numberOfSurveysConducted",
-          "validate": "required,min[0]"
-        },
-        {
-          "dataType":"text",
-          "name":"dateRange",
-          "validate":"required,maxSize[100]",
-          "description":"What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)"
-        },
-        {
-          "name": "sitesSurveyed",
-          "dataType": "feature"
-        },
-        {
-          "name": "areaSurveyedHa",
-          "dataType": "number",
-          "validate": "min[1]",
-          "computed": {
-            "expression": "$geom.areaHa(sitesSurveyed)",
-            "dependents": {
-              "source": [
-                "sitesSurveyed"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "list",
-          "name": "waterBodyDetails",
-          "columns": [
-            {
-              "dataType": "text",
-              "name": "waterBodyType",
-              "validate": "required",
-              "constraints":[
-                "Estuary",
-                "Freshwater stream",
-                "Freshwater lake",
-                "Saline stream",
-                "Saline lake",
-                "Other"
-              ]
-            },
-            {
-              "dataType": "text",
-              "name": "otherWaterBodyType",
-              "validate": "required,maxSize[300]",
-              "behaviour":[
+            "columns": [
                 {
-                  "condition": "waterBodyType == \"Other\"",
-                  "type": "enable"
+                    "dataType": "text",
+                    "name": "baselineOrIndicator",
+                    "description": "",
+                    "constraints": [
+                        "Baseline",
+                        "Indicator"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "number",
+                    "name": "numberOfSurveysConducted",
+                    "validate": "required,min[0]"
+                },
+                {
+                    "dataType": "text",
+                    "name": "dateRange",
+                    "description": "What time of year (eg. Dates by dd/mm/yyyyy, Months, Season/s)",
+                    "validate": "required,maxSize[100]"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "sitesSurveyed"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesSurveyed)"
+                    },
+                    "dataType": "number",
+                    "name": "areaSurveyedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "text",
+                            "name": "waterBodyType",
+                            "constraints": [
+                                "Estuary",
+                                "Freshwater stream",
+                                "Freshwater lake",
+                                "Saline stream",
+                                "Saline lake",
+                                "Other"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "otherWaterBodyType",
+                            "behaviour": [{
+                                "condition": "waterBodyType == \"Other\"",
+                                "type": "enable"
+                            }],
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "numberOfDaysConductingSurveys",
+                            "description": "Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)",
+                            "validate": "required,min[0]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "surveyTechnique",
+                            "description": "What/How will these survey/s capture information",
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "surveyObjective",
+                            "description": "How will the information obtained from the surveys be used",
+                            "validate": "required,maxSize[300]"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "waterBodyDetails"
                 }
-              ]
-            },
-            {
-              "dataType": "number",
-              "name": "numberOfDaysConductingSurveys",
-              "validate": "required,min[0]",
-              "description":"Number of days should be calculated as number of days by number of people (eg. 4.5 days by 3 people is 13.5 days)"
-            },
-            {
-              "dataType": "text",
-              "name": "surveyTechnique",
-              "validate": "required,maxSize[300]",
-              "description": "What/How will these survey/s capture information"
-            },
-            {
-              "dataType": "text",
-              "name": "surveyObjective",
-              "validate": "required,maxSize[300]",
-              "description": "How will the information obtained from the surveys be used"
-            }
-          ]
+            ],
+            "dataType": "list",
+            "name": "waterQualitySurveySites"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "type": "repeat",
-          "source": "waterQualitySurveySites",
-          "userAddedRows": true,
-          "addRowText": "New survey site",
-          "items": [
+    ],
+    "modelName": "RLP - Water quality survey",
+    "title": "Water quality survey",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type": "row",
-              "items": [
-                {
-                  "preLabel": "Baseline survey or indicator (follow-up) survey?",
-                  "source": "baselineOrIndicator",
-                  "type": "selectOne",
-                  "css": "span3"
-                },
-                {
-                  "type": "number",
-                  "source": "numberOfSurveysConducted",
-                  "css": "span2",
-                  "preLabel": "Number of water quality surveys conducted"
-                },
-                {
-                  "type": "text",
-                  "source": "dateRange",
-                  "preLabel": "Date range",
-                  "css": "span4"
-                }
-              ]
+                "addRowText": "New survey site",
+                "userAddedRows": true,
+                "source": "waterQualitySurveySites",
+                "type": "repeat",
+                "items": [
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Baseline survey or indicator (follow-up) survey?",
+                                "css": "span3",
+                                "source": "baselineOrIndicator",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Number of water quality surveys conducted",
+                                "css": "span2",
+                                "source": "numberOfSurveysConducted",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Date range",
+                                "css": "span4",
+                                "source": "dateRange",
+                                "type": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Site/s where water quality surveys were conducted",
+                                "css": "span3",
+                                "source": "sitesSurveyed",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) covered by water quality surveys",
+                                "css": "span2",
+                                "source": "areaSurveyedHa",
+                                "type": "number"
+                            }
+                        ]
+                    },
+                    {
+                        "columns": [
+                            {
+                                "width": "15%",
+                                "source": "waterBodyType",
+                                "type": "select2",
+                                "title": "Type of water body"
+                            },
+                            {
+                                "width": "20%",
+                                "source": "otherWaterBodyType",
+                                "type": "textarea",
+                                "title": "Type of water body (if Other)"
+                            },
+                            {
+                                "width": "5%",
+                                "source": "numberOfDaysConductingSurveys",
+                                "type": "number",
+                                "title": "Number of days spent on administering survey/s"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "surveyTechnique",
+                                "title": "Survey technique",
+                                "type": "textarea"
+                            },
+                            {
+                                "width": "30%",
+                                "source": "surveyObjective",
+                                "title": "Survey objective",
+                                "type": "textarea",
+                                "rows": 3
+                            }
+                        ],
+                        "userAddedRows": true,
+                        "source": "waterBodyDetails",
+                        "type": "table"
+                    }
+                ]
             },
             {
-              "type": "row",
-              "items": [
-                {
-                  "type": "feature",
-                  "source": "sitesSurveyed",
-                  "preLabel": "Site/s where water quality surveys were conducted",
-                  "css": "span3"
-                },
-                {
-                  "type": "number",
-                  "source": "areaSurveyedHa",
-                  "preLabel": "Area (ha) covered by water quality surveys",
-                  "readonly": "readonly",
-                  "css": "span2"
-                }
-              ]
-            },
-            {
-              "type": "table",
-              "userAddedRows": true,
-              "source": "waterBodyDetails",
-              "columns": [
-                {
-                  "type": "select2",
-                  "source": "waterBodyType",
-                  "width": "15%",
-                  "title": "Type of water body"
-                },
-                {
-                  "type": "textarea",
-                  "source": "otherWaterBodyType",
-                  "width": "20%",
-                  "title": "Type of water body (if Other)"
-                },
-                {
-                  "type": "number",
-                  "width": "5%",
-                  "source": "numberOfDaysConductingSurveys",
-                  "title": "Number of days spent on administering survey/s"
-                },
-                {
-                  "title": "Survey technique",
-                  "source": "surveyTechnique",
-                  "type": "textarea",
-                  "width": "30%"
-                },
-                {
-                  "title": "Survey objective",
-                  "source": "surveyObjective",
-                  "type": "textarea",
-                  "rows": 3,
-                  "width": "30%"
-                }
-              ]
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ]
-        },
-        {
-          "type":"row",
-          "items":[
-            {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
-            }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
-
+        ]
+    }]
 }

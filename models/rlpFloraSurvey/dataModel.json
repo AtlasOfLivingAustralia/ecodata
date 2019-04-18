@@ -28,12 +28,28 @@
                     "name": "sitesSurveyed"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(sitesSurveyed)",
-                        "dependents": {"source": ["sitesSurveyed"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesSurveyed)"
                     },
                     "dataType": "number",
-                    "name": "areaSurveyedHa"
+                    "name": "areaSurveyedHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(sitesSurveyed)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "columns": [
@@ -127,7 +143,6 @@
                             {
                                 "preLabel": "Area (ha) covered by flora surveys",
                                 "css": "span3",
-                                "readonly": "readonly",
                                 "source": "areaSurveyedHa",
                                 "type": "number"
                             }
