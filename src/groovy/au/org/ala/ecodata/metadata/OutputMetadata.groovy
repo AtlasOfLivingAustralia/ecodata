@@ -164,12 +164,25 @@ class OutputMetadata {
         def validationRules = []
         public ValidationRules(property) {
             if (property.validate) {
-                def criteria = property.validate.tokenize(',')
-                validationRules = criteria.collect { it.trim() }
+                parseValidationRules(property.validate)
             }
 
         }
 
+        private parseValidationRules(String rules) {
+            def criteria = rules.tokenize(',')
+            validationRules = criteria.collect { it.trim() }
+        }
+
+        private parseValidationRules(List rules) {
+            validationRules = rules.collect{
+                String rule = it.rule
+                if (it.param && it.param.expression) {
+                    rule += "[${it.param.expression}]"
+                }
+                rule
+            }
+        }
 
         public boolean isMandatory() {
             return validationRules.contains('required')
@@ -208,7 +221,7 @@ class OutputMetadata {
         def minProperty(rule) {
             def min = valueInBrackets(rule)
             if (min) {
-                return [minimum: min as BigDecimal]
+                return [minimum: min]
             }
             throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }
@@ -216,7 +229,7 @@ class OutputMetadata {
         def maxProperty(rule) {
             def max = valueInBrackets(rule)
             if (max) {
-                return [maximum: max as BigDecimal]
+                return [maximum: max]
             }
             throw new IllegalArgumentException("Invalid validation rule: "+rule)
         }

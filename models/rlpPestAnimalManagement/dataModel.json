@@ -1,221 +1,235 @@
 {
-  "title": "Controlling pest animals",
-  "modelName": "RLP - Pest animal management",
-  "dataModel": [
-    {
-      "dataType": "list",
-      "name": "areasControlled",
-      "columns": [
+    "dataModel": [
         {
-          "name": "initialOrFollowup",
-          "dataType": "text",
-          "validate": "required",
-          "constraints": [
-            "Initial",
-            "Follow-up"
-          ]
-        },
-        {
-          "dataType": "feature",
-          "name": "site"
-        },
-        {
-          "dataType": "number",
-          "name": "areaControlledHa",
-          "computed": {
-            "expression": "$geom.areaHa(site)",
-            "dependents": {
-              "source": [
-                "site"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "number",
-          "name": "lengthControlledKm",
-          "computed": {
-            "expression": "$geom.lengthKm(site)",
-            "dependents": {
-              "source": [
-                "site"
-              ]
-            }
-          }
-        },
-        {
-          "dataType": "list",
-          "name": "pestAnimalsControlled",
-          "columns": [
-            {
-              "dataType": "species",
-              "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
-              "name": "pestSpecies",
-              "dwcAttribute": "scientificName",
-              "validate": "required"
-            },
-            {
-              "dataType": "text",
-              "description": "The method used in this activity to manage pests",
-              "name": "pestManagementMethod",
-              "constraints": [
-                "Aerial shoot",
-                "Bait & trap",
-                "Bait only",
-                "Feral free enclosure",
-                "Exclusion fencing",
-                "Fumigation",
-                "Ground shoot",
-                "Trap & cull",
-                "Trap & remove",
-                "Other"
-              ],
-              "dwcAttribute": "treatmentMethod",
-              "validate": "required"
-            },
-            {
-              "dataType": "text",
-              "name": "otherManagementMethod",
-              "description": "Please specify the management method used if Other was selected in the Management Method column.",
-              "behaviour": [
+            "columns": [
                 {
-                  "condition": "pestManagementMethod == \"Other\"",
-                  "type": "enable"
+                    "dataType": "text",
+                    "name": "initialOrFollowup",
+                    "constraints": [
+                        "Initial",
+                        "Follow-up"
+                    ],
+                    "validate": "required"
+                },
+                {
+                    "dataType": "feature",
+                    "name": "site"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(site)"
+                    },
+                    "dataType": "number",
+                    "name": "areaControlledHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(site)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(site)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(site)"
+                    },
+                    "dataType": "number",
+                    "name": "lengthControlledKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(site)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(site)*1.1"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "columns": [
+                        {
+                            "dataType": "species",
+                            "name": "pestSpecies",
+                            "dwcAttribute": "scientificName",
+                            "description": "Pest species targeted for treatment (start typing a  scientific or common name for a species)",
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "pestManagementMethod",
+                            "dwcAttribute": "treatmentMethod",
+                            "description": "The method used in this activity to manage pests",
+                            "constraints": [
+                                "Aerial shoot",
+                                "Bait & trap",
+                                "Bait only",
+                                "Feral free enclosure",
+                                "Exclusion fencing",
+                                "Fumigation",
+                                "Ground shoot",
+                                "Trap & cull",
+                                "Trap & remove",
+                                "Other"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "otherManagementMethod",
+                            "description": "Please specify the management method used if Other was selected in the Management Method column.",
+                            "behaviour": [{
+                                "condition": "pestManagementMethod == \"Other\"",
+                                "type": "enable"
+                            }],
+                            "validate": "required,maxSize[100]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "treatmentObjective",
+                            "validate": "required,maxSize[300]"
+                        },
+                        {
+                            "dataType": "text",
+                            "name": "individualsOrColonies",
+                            "constraints": [
+                                "Colonies",
+                                "Individuals"
+                            ],
+                            "validate": "required"
+                        },
+                        {
+                            "dataType": "number",
+                            "name": "individualsOrColoniesRemoved",
+                            "validate": "required"
+                        }
+                    ],
+                    "dataType": "list",
+                    "name": "pestAnimalsControlled"
                 }
-              ],
-              "validate": "required,maxSize[100]"
-            },
-            {
-              "name": "treatmentObjective",
-              "dataType": "text",
-              "validate": "required,maxSize[300]"
-            },
-            {
-              "name": "individualsOrColonies",
-              "dataType": "text",
-              "validate": "required",
-              "constraints": [
-                "Colonies",
-                "Individuals"
-              ]
-            },
-            {
-              "name": "individualsOrColoniesRemoved",
-              "dataType": "number",
-              "validate": "required"
-            }
-          ]
+            ],
+            "dataType": "list",
+            "name": "areasControlled"
+        },
+        {
+            "dataType": "image",
+            "name": "photographicEvidence"
         }
-      ]
-    },
-    {
-      "name":"photographicEvidence",
-      "dataType":"image"
-    }
-  ],
-  "viewModel": [
-    {
-      "items": [
-        {
-          "type": "repeat",
-          "source": "areasControlled",
-          "userAddedRows":true,
-          "addRowText":"Add a new controlled area",
-          "items": [
+    ],
+    "modelName": "RLP - Pest animal management",
+    "title": "Controlling pest animals",
+    "viewModel": [{
+        "type": "section",
+        "items": [
             {
-              "type": "row",
-              "items": [
-                {
-                  "preLabel": "Initial or follow-up control?",
-                  "source": "initialOrFollowup",
-                  "type": "selectOne",
-                  "css": "span3"
-                },
-                {
-                  "type": "feature",
-                  "source": "site",
-                  "preLabel": "Site/s where pest control was undertaken",
-                  "css": "span2"
-                },
-                {
-                  "type": "number",
-                  "source": "areaControlledHa",
-                  "preLabel": "Area (ha) treated for pest animals",
-                  "readonly": "readonly",
-                  "css": "span2"
-                },
-                {
-                  "type": "number",
-                  "source": "lengthControlledKm",
-                  "preLabel": "Length (km) treated for pest animals",
-                  "readonly": "readonly",
-                  "css": "span2"
-                }
-              ]
-            },
-            {
-              "type": "row",
-              "items": [
-                {
-                  "source": "pestAnimalsControlled",
-                  "columns": [
+                "addRowText": "Add a new controlled area",
+                "userAddedRows": true,
+                "source": "areasControlled",
+                "type": "repeat",
+                "items": [
                     {
-                      "title": "Target pest species",
-                      "source": "pestSpecies",
-                      "type": "speciesSelect",
-                      "width": "40%"
+                        "type": "row",
+                        "items": [
+                            {
+                                "preLabel": "Initial or follow-up control?",
+                                "css": "span3",
+                                "source": "initialOrFollowup",
+                                "type": "selectOne"
+                            },
+                            {
+                                "preLabel": "Site/s where pest control was undertaken",
+                                "css": "span2",
+                                "source": "site",
+                                "type": "feature"
+                            },
+                            {
+                                "preLabel": "Area (ha) treated for pest animals",
+                                "css": "span2",
+                                "source": "areaControlledHa",
+                                "type": "number"
+                            },
+                            {
+                                "preLabel": "Length (km) treated for pest animals",
+                                "css": "span2",
+                                "source": "lengthControlledKm",
+                                "type": "number"
+                            }
+                        ]
                     },
                     {
-                      "title": "Type of control",
-                      "source": "pestManagementMethod",
-                      "type": "selectOne",
-                      "width": "10%"
-                    },
-                    {
-                      "title": "Type of control (if other)",
-                      "source": "otherManagementMethod",
-                      "type": "text",
-                      "width": "10%"
-                    },
-                    {
-                      "title": "Treatment objective",
-                      "source": "treatmentObjective",
-                      "type": "textarea",
-                      "width": "20%"
-                    },
-                    {
-                      "title": "Individuals or colonies?",
-                      "source": "individualsOrColonies",
-                      "type": "selectOne",
-                      "width": "10%"
-                    },
-                    {
-                      "title": "Number of individuals or colonies removed / destroyed",
-                      "source": "individualsOrColoniesRemoved",
-                      "type": "number",
-                      "width": "10%"
+                        "type": "row",
+                        "items": [{
+                            "addRowText": "Add a species",
+                            "columns": [
+                                {
+                                    "width": "40%",
+                                    "source": "pestSpecies",
+                                    "title": "Target pest species",
+                                    "type": "speciesSelect"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "pestManagementMethod",
+                                    "title": "Type of control",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "otherManagementMethod",
+                                    "title": "Type of control (if other)",
+                                    "type": "text"
+                                },
+                                {
+                                    "width": "20%",
+                                    "source": "treatmentObjective",
+                                    "title": "Treatment objective",
+                                    "type": "textarea"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "individualsOrColonies",
+                                    "title": "Individuals or colonies?",
+                                    "type": "selectOne"
+                                },
+                                {
+                                    "width": "10%",
+                                    "source": "individualsOrColoniesRemoved",
+                                    "title": "Number of individuals or colonies removed / destroyed",
+                                    "type": "number"
+                                }
+                            ],
+                            "userAddedRows": true,
+                            "source": "pestAnimalsControlled",
+                            "type": "table"
+                        }]
                     }
-                  ],
-                  "userAddedRows": true,
-                  "type": "table",
-                  "addRowText":"Add a species"
-                }
-              ]
-            }
-          ]
-        },
-        {
-          "type":"row",
-          "items":[
+                ]
+            },
             {
-              "type":"image",
-              "source":"photographicEvidence",
-              "preLabel":"Optionally attach photos"
+                "type": "row",
+                "items": [{
+                    "preLabel": "Optionally attach photos",
+                    "source": "photographicEvidence",
+                    "type": "image"
+                }]
             }
-          ]
-        }
-      ],
-      "type": "section"
-    }
-  ]
+        ]
+    }]
 }

@@ -27,20 +27,52 @@
                     "name": "siteOfEnclosures"
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.areaHa(siteOfEnclosures)",
-                        "dependents": {"source": ["siteOfEnclosures"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(siteOfEnclosures)"
                     },
                     "dataType": "number",
-                    "name": "areaOfEnclosuresHa"
+                    "name": "areaOfEnclosuresHa",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteOfEnclosures)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.areaHa(siteOfEnclosures)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
-                    "computed": {
-                        "expression": "$geom.lengthKm(siteOfEnclosures)",
-                        "dependents": {"source": ["siteOfEnclosures"]}
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(siteOfEnclosures)"
                     },
                     "dataType": "number",
-                    "name": "lengthOfEnclosuresKm"
+                    "name": "lengthOfEnclosuresKm",
+                    "validate": [
+                        {
+                            "rule": "min",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteOfEnclosures)*0.9"
+                            }
+                        },
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "$geom.lengthKm(siteOfEnclosures)*1.1"
+                            }
+                        }
+                    ]
                 },
                 {
                     "columns": [
@@ -130,14 +162,12 @@
                             {
                                 "preLabel": "Area (ha) of feral-free enclosures",
                                 "css": "span3",
-                                "readonly": "readonly",
                                 "source": "areaOfEnclosuresHa",
                                 "type": "number"
                             },
                             {
                                 "preLabel": "Length (km) of feral-free enclosures",
                                 "css": "span3",
-                                "readonly": "readonly",
                                 "source": "lengthOfEnclosuresKm",
                                 "type": "number"
                             }

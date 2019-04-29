@@ -3622,7 +3622,7 @@
             "minOptionalSectionsCompleted": 1
         },
         {
-            "outputs": ["In Development"],
+            "outputs": ["RLP Annual Report"],
             "supportsPhotoPoints": false,
             "outputConfig": [
                 {
@@ -4036,6 +4036,151 @@
                 "collapsedByDefault": false
             }],
             "name": "Outback Waterholes",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Elm Leaf Beetle Survey"],
+            "outputConfig": [{
+                "outputName": "Elm Leaf Beetle Survey",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Elm Leaf Beetle Survey",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Reef 2050 Plan Action Reporting 2018"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "Reef 2050 Plan Action Reporting 2018",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Reef 2050 Plan Action Reporting 2018",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "Reporting",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["MagicalLandSightings"],
+            "outputConfig": [{
+                "outputName": "MagicalLandSightings",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "MagicalLandSightings",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Koala Survey - General - Victorian"],
+            "outputConfig": [
+                {
+                    "outputName": "Koala Survey - General",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Koala Survey - General - Victorian",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Koala Survey - General - Victorian",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Bird Sightings - NT"],
+            "outputConfig": [{
+                "outputName": "Bird Sightings - NT",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Bird Sightings - NT",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Inner West Microbat Monitors"],
+            "outputConfig": [{
+                "outputName": "Inner West Microbat Monitors",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Inner West Microbat Monitors",
+            "type": "Activity",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["RLP - Output Report Adjustment"],
+            "supportsPhotoPoints": false,
+            "outputConfig": [{
+                "outputName": "RLP - Output Report Adjustment",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "RLP Output Report Adjustment",
+            "supportsSites": false,
+            "type": "Report",
+            "category": "RLP",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Flying Fox - Bats in Backyards"],
+            "outputConfig": [{
+                "outputName": "Flying Fox - Bats in Backyards",
+                "optional": false,
+                "collapsedByDefault": false
+            }],
+            "name": "Flying Fox - Bats in Backyards",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Nest Box Location Form - Victoria"],
+            "outputConfig": [
+                {
+                    "outputName": "Nest Box Location Form",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Nest Box Location Form - Victoria",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Nest Box Location Form - Victoria",
+            "type": "Assessment",
+            "category": "Assessment & monitoring",
+            "minOptionalSectionsCompleted": 1
+        },
+        {
+            "outputs": ["Nest Box Monitoring & Maintenance Form - Victoria"],
+            "outputConfig": [
+                {
+                    "outputName": "Nest Box Monitoring & Maintenance Form",
+                    "optional": false,
+                    "collapsedByDefault": false
+                },
+                {
+                    "outputName": "Nest Box Monitoring & Maintenance Form - Victoria",
+                    "optional": false,
+                    "collapsedByDefault": false
+                }
+            ],
+            "name": "Nest Box Monitoring & Maintenance Form - Victoria",
             "type": "Assessment",
             "category": "Assessment & monitoring",
             "minOptionalSectionsCompleted": 1
@@ -8658,6 +8803,79 @@
             "template": "outbackWaterholes",
             "scores": [],
             "name": "Outback Waterholes"
+        },
+        {
+            "template": "elmLeafBeetleSurvey",
+            "scores": [],
+            "name": "Elm Leaf Beetle Survey"
+        },
+        {
+            "template": "reef2050PlanActionReporting2018",
+            "scores": [],
+            "name": "Reef 2050 Plan Action Reporting 2018",
+            "title": "Reef 2050 Plan Action Reporting 2018"
+        },
+        {
+            "template": "magicalLandSightings",
+            "scores": [],
+            "name": "MagicalLandSightings",
+            "title": "MagicalLandSightings"
+        },
+        {
+            "template": "koalaSurveyGeneralVictorian",
+            "scores": [],
+            "name": "Koala Survey - General - Victorian"
+        },
+        {
+            "template": "birdSightingsNt",
+            "scores": [],
+            "name": "Bird Sightings - NT"
+        },
+        {
+            "template": "InnerWestMicrobatMonitors",
+            "scores": [],
+            "name": "Inner West Microbat Monitors",
+            "title": "Inner West Microbat Monitors"
+        },
+        {
+            "template": "rlpOutputReportAdjustment",
+            "scores": [],
+            "name": "RLP - Output Report Adjustment",
+            "title": "Output Report Adjustment"
+        },
+        {
+            "template": "flyingFoxBatsInBackyards",
+            "scores": [],
+            "name": "Flying Fox - Bats in Backyards"
+        },
+        {
+            "template": "nestBoxLocationForm",
+            "scores": [],
+            "name": "Nest Box Location Form - Victoria"
+        },
+        {
+            "template": "nestBoxMonitoringAndMaintenanceForm",
+            "scores": [],
+            "name": "Nest Box Monitoring & Maintenance Form - Victoria"
         }
-    ]
+    ],
+    "selectedActivity": {
+        "outputs": ["Nest Box Location Form - Victoria"],
+        "outputConfig": [
+            {
+                "outputName": "Nest Box Location Form",
+                "optional": false,
+                "collapsedByDefault": false
+            },
+            {
+                "outputName": "Nest Box Location Form - Victoria",
+                "optional": false,
+                "collapsedByDefault": false
+            }
+        ],
+        "name": "Nest Box Location Form - Victoria",
+        "type": "Assessment",
+        "category": "Assessment & monitoring",
+        "minOptionalSectionsCompleted": 1
+    }
 }

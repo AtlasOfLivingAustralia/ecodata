@@ -54,13 +54,28 @@
             },
             {
                 "unit": "ha",
-                "computed": {
-                    "expression": "$geom.areaHa(sitesCoveredByPlan)",
-                    "dependents": {"source": ["sitesCoveredByPlan"]}
+                "defaultValue": {
+                    "type": "computed",
+                    "expression": "$geom.areaHa(sitesCoveredByPlan)"
                 },
                 "dataType": "number",
                 "name": "areaCoveredByPlanHa",
-                "validate": "min[0]"
+                "validate": [
+                    {
+                        "rule": "min",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesCoveredByPlan)*0.9"
+                        }
+                    },
+                    {
+                        "rule": "max",
+                        "param": {
+                            "type": "computed",
+                            "expression": "$geom.areaHa(sitesCoveredByPlan)*1.1"
+                        }
+                    }
+                ]
             },
             {
                 "dataType": "text",
@@ -109,7 +124,6 @@
                     "type": "feature"
                 },
                 {
-                    "readonly": "readonly",
                     "width": "8%",
                     "source": "areaCoveredByPlanHa",
                     "title": "Area (ha) covered by plan/s",
