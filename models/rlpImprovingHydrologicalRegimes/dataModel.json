@@ -48,7 +48,7 @@
                 {
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "$geom.areaHa(improvedSites)"
+                        "expression": "$geom.lengthKm(improvedSites)"
                     },
                     "dataType": "number",
                     "name": "lengthOfRegimeChangeKm",
@@ -57,14 +57,14 @@
                             "rule": "min",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(improvedSites)*0.9"
+                                "expression": "$geom.lengthKm(improvedSites)*0.9"
                             }
                         },
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(improvedSites)*1.1"
+                                "expression": "$geom.lengthKm(improvedSites)*1.1"
                             }
                         }
                     ]
