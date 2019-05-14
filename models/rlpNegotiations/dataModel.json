@@ -16,18 +16,14 @@
                 "validate": "required"
             },
             {
-                "dataType": "text",
-                "name": "groupsOrIndividuals",
-                "constraints": [
-                    "Groups",
-                    "Individuals"
-                ],
-                "validate": "required"
+                "dataType": "number",
+                "name": "numberOfGroupsNegotiatedWith",
+                "validate": "required,min[0]"
             },
             {
                 "dataType": "number",
-                "name": "numberOfGroupsOrIndividuals",
-                "validate": "required,min[0]"
+                "name": "numberOfIndividualsNegotiatedWith",
+                "validate": "min[0]"
             },
             {
                 "dataType": "text",
@@ -46,21 +42,21 @@
         "items": [{
             "columns": [
                 {
-                    "width": "25%",
+                    "width": "30%",
                     "source": "typeOfGroup",
                     "type": "select2",
                     "title": "Which sector does the group belong to?"
                 },
                 {
-                    "width": "15%",
-                    "source": "groupsOrIndividuals",
-                    "type": "selectOne",
-                    "title": "Groups / individuals"
+                    "width": "10%",
+                    "source": "numberOfGroupsNegotiatedWith",
+                    "type": "number",
+                    "title": "Groups negotiated with"
                 },
                 {
                     "width": "10%",
-                    "source": "numberOfGroupsOrIndividuals",
-                    "title": "Number of individuals / groups negotiated with",
+                    "source": "numberOfIndividualsNegotiatedWith",
+                    "title": "Individuals",
                     "type": "number"
                 },
                 {
