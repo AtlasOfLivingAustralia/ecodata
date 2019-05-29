@@ -12,28 +12,30 @@
                     "name": "sitesInstalled"
                 },
                 {
+                    "dataType": "number",
+                    "name": "sitesInstalledCalculatedAreaHa",
+                    "computed": {
+                        "expression": "$geom.areaHa(sitesInstalled)"
+                    },
+                    "units": "ha"
+                },
+                {
+                    "dataType": "number",
+                    "name": "sitesInstalledCalculatedLengthKm",
+                    "computed": {
+                        "expression": "$geom.lengthKm(sitesInstalled)"
+                    },
+                    "units": "km"
+                },
+
+                {
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.areaHa(sitesInstalled)"
                     },
                     "dataType": "number",
                     "name": "areaInstalledHa",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesInstalled)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesInstalled)*1.1"
-                            }
-                        }
-                    ]
+                    "units": "ha"
                 },
                 {
                     "defaultValue": {
@@ -42,19 +44,40 @@
                     },
                     "dataType": "number",
                     "name": "lengthInstalledKm",
+                    "units": "km"
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaInvoicedHa",
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(sitesInstalled)"
+                    },
+                    "units": "ha",
                     "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(sitesInstalled)*0.9"
-                            }
-                        },
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.lengthKm(sitesInstalled)*1.1"
+                                "expression": "areaInstalledHa"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "lengthInvoicedKm",
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(sitesInstalled)"
+                    },
+                    "units": "km",
+                    "validate": [
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "lengthInstalledKm"
                             }
                         }
                     ]
@@ -123,6 +146,35 @@
             "name": "accessControlDetails"
         },
         {
+            "dataType": "stringList",
+            "name": "mappingNotAlignedReasons",
+            "constraints": [
+                "Work was undertaken over a greater area will be invoiced for",
+                "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                "Other"
+            ],
+            "validate": "required",
+            "behaviour": [
+                {
+                    "condition": "any(accessControlDetails, \"areaInstalledHa > areaInvoicedHa or lengthInstalledKm > lengthInvoicedKm\")",
+                    "type": "enable"
+                }
+            ]
+        },
+        {
+            "dataType": "text",
+            "name": "mappingNotAlignedComments",
+            "behaviour": [
+                {
+                    "type": "enable",
+                    "condition": "\"Other\" in mappingNotAlignedReasons"
+                }]
+        },
+        {
+            "dataType": "document",
+            "name": "maps"
+        },
+        {
             "dataType": "image",
             "name": "photographicEvidence"
         }
@@ -142,21 +194,76 @@
                     },
                     {
                         "width": "8%",
-                        "source": "sitesInstalled",
-                        "type": "feature",
-                        "title": "Site/s where access has been controlled"
+                        "type": "col",
+                        "title": "Site/s where access has been controlled",
+                        "items": [
+                            {
+                                "type": "feature",
+                                "source": "sitesInstalled"
+                            },
+                            {
+                                "type": "number",
+                                "source": "sitesInstalledCalculatedAreaHa",
+                                "readonly": true,
+                                "width": "5%",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "type": "number",
+                                "source": "sitesInstalledCalculatedLengthKm",
+                                "readonly": true,
+                                "width": "5%",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            }
+                        ]
                     },
                     {
                         "width": "8%",
-                        "source": "areaInstalledHa",
-                        "type": "number",
-                        "title": "Area (ha) where access has been controlled"
+                        "type": "col",
+                        "title": "Actual length (km) / area (ha) where access has been controlled",
+                        "helpText": "May be changed manually if different to the calculated areas",
+                        "items": [
+                            {
+                                "type": "number",
+                                "source": "areaInstalledHa",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "type": "number",
+                                "source": "lengthInstalledKm",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            }
+                        ]
                     },
                     {
                         "width": "8%",
-                        "source": "lengthInstalledKm",
-                        "type": "number",
-                        "title": "Length (km) installed"
+                        "type": "col",
+                        "title": "Area (ha) / Length (km) invoiced",
+                        "helpText": "May be changed manually if different to the calculated areas",
+                        "items": [
+                            {
+                                "type": "number",
+                                "source": "areaInvoicedHa",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "type": "number",
+                                "source": "lengthInvoicedKm",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            }
+                        ]
                     },
                     {
                         "width": "6%",
@@ -192,6 +299,32 @@
                 "userAddedRows": true,
                 "source": "accessControlDetails",
                 "type": "table"
+            },
+            {
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                        "source": "mappingNotAlignedReasons",
+                        "type": "selectMany"
+                    },
+                    {
+                        "preLabel": "Please attach mapping details",
+                        "source": "maps",
+                        "type": "document"
+                    }
+                ]
+            },
+            {
+                "type": "row",
+                "items": [
+                    {
+                        "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                        "source": "mappingNotAlignedComments",
+                        "type": "textarea",
+                        "rows": 4
+                    }
+                ]
             },
             {
                 "type": "row",
