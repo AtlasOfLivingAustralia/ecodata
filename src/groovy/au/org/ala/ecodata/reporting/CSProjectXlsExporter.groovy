@@ -163,9 +163,9 @@ class CSProjectXlsExporter extends ProjectExporter {
         List<Map> activities = []
 
         if (activityIds == null || activityIds.isEmpty()) {
-            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId)
+            activities = activityService.findAllForProjectActivityId(projectActivity.projectActivityId, ActivityService.SITE)
         } else {
-            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId)
+            activities = activityService.findAllForActivityIdsInProjectActivity(activityList, projectActivity.projectActivityId, ActivityService.SITE)
         }
 
         if (activities && (activityIds == null || !activityIds.isEmpty())) {
@@ -193,6 +193,11 @@ class CSProjectXlsExporter extends ProjectExporter {
                             generalLatitudeGetter,
                             generalLongitudeGetter
                     ]
+
+                    if(activity.site) {
+                        properties << new ConstantGetter("siteObj_siteName", activity.site.name);
+                        properties << new ConstantGetter("siteObj_externalId", activity.site.externalId);
+                    }
 
                     boolean userIsProjectMember = false
                     if (userId) {
