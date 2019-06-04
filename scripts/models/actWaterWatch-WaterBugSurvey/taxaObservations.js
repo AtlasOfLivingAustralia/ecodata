@@ -99,9 +99,9 @@ self.transients.calculateSPI = function() {
 	var sumOfWeights = 0;
 	$.each(self.data.taxaObservations(), function (i, taxon) {
 		if(taxon.taxonIndexValue() > 0)
-			sumOfIndexValues = sumOfIndexValues + taxon.taxonIndexValue();
+            sumOfIndexValues = sumOfIndexValues + parseInt(taxon.taxonIndexValue());
 		if(taxon.taxonWeightFactor() > 0)
-		sumOfWeights = sumOfWeights + taxon.taxonWeightFactor();
+			sumOfWeights = sumOfWeights + taxon.taxonWeightFactor();
 	});
 
 	var spi = sumOfWeights > 0 ? (sumOfIndexValues / sumOfWeights) : 0;

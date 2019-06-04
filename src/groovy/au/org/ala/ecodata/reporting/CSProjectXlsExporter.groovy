@@ -40,7 +40,7 @@ class CSProjectXlsExporter extends ProjectExporter {
 
     List<String> siteHeaders = ['Site ID', 'Name', 'Description', 'lat', 'lon']
     List<String> siteProperties = ['siteId', 'name', 'description', 'lat', 'lon']
-    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude']
+    List<String> surveyHeaders = ['Project ID', 'Project Activity ID', 'Activity ID', 'Site IDs', 'Start date', 'End date', 'Description', 'Status','Attribution', 'Latitude', 'Longitude','Site Name', 'Site External Id']
 
     List<String> recordHeaders = ["Occurrence ID", "GUID", "Scientific Name", "Rights Holder", "Institution ID", "Access Rights", "Basis Of Record", "Data Set ID", "Data Set Name", "Recorded By", "Project Activity ID", "Event Date", "Event Time", "Event Timestamp", "Event Remarks", "Location ID", "Location Name", "Locality", "Location Remarks", "Latitude", "Longitude", "Multimedia"]
     List<String> recordProperties = ["occurrenceID", "guid", "scientificName", "rightsHolder", "institutionID", "accessRights", "basisOfRecord", "datasetID", "datasetName", "recordedBy", "projectActivityId", "eventDateCorrected", "eventTime", "eventDate", "eventRemarks", "locationID", "locationName", "locality", "localtionRemarks", "latitude", "longitude", new MultimediaGetter("multimedia", imageMapper) ]
@@ -193,11 +193,10 @@ class CSProjectXlsExporter extends ProjectExporter {
                             generalLatitudeGetter,
                             generalLongitudeGetter
                     ]
-
-                    if(activity.site) {
-                        properties << new ConstantGetter("siteObj_siteName", activity.site.name);
-                        properties << new ConstantGetter("siteObj_externalId", activity.site.externalId);
-                    }
+                    // Include user selected projectActivity site associated with the survey
+                    def site = projectActivity?.sites?.find{it.siteId == activity.siteId}
+                    properties << new ConstantGetter("siteName", site ? site.name : '');
+                    properties << new ConstantGetter("siteExternalId", site ? site.externalId : '');
 
                     boolean userIsProjectMember = false
                     if (userId) {
