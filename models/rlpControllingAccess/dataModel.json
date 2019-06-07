@@ -29,19 +29,11 @@
                 },
 
                 {
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.areaHa(sitesInstalled)"
-                    },
                     "dataType": "number",
                     "name": "areaInstalledHa",
                     "units": "ha"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(sitesInstalled)"
-                    },
                     "dataType": "number",
                     "name": "lengthInstalledKm",
                     "units": "km"
@@ -83,6 +75,35 @@
                     ]
                 },
                 {
+                    "dataType": "stringList",
+                    "name": "mappingNotAlignedReasons",
+                    "constraints": [
+                        "Work was undertaken over a greater area will be invoiced for",
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "areaInstalledHa > areaInvoicedHa or lengthInstalledKm > lengthInvoicedKm",
+                            "type": "enable"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "behaviour": [
+                        {
+                            "type": "enable",
+                            "condition": "\"Other\" in mappingNotAlignedReasons"
+                        }]
+                },
+                {
+                    "dataType": "document",
+                    "name": "maps"
+                },
+                {
                     "dataType": "feature",
                     "name": "protectedSites"
                 },
@@ -93,6 +114,7 @@
                     },
                     "dataType": "number",
                     "name": "areaProtectedHa",
+                    "units": "ha",
                     "validate": [
                         {
                             "rule": "min",
@@ -144,35 +166,6 @@
             ],
             "dataType": "list",
             "name": "accessControlDetails"
-        },
-        {
-            "dataType": "stringList",
-            "name": "mappingNotAlignedReasons",
-            "constraints": [
-                "Work was undertaken over a greater area will be invoiced for",
-                "Mapped area simplifies more complex area/s where work was undertaken during this period",
-                "Other"
-            ],
-            "validate": "required",
-            "behaviour": [
-                {
-                    "condition": "any(accessControlDetails, \"areaInstalledHa > areaInvoicedHa or lengthInstalledKm > lengthInvoicedKm\")",
-                    "type": "enable"
-                }
-            ]
-        },
-        {
-            "dataType": "text",
-            "name": "mappingNotAlignedComments",
-            "behaviour": [
-                {
-                    "type": "enable",
-                    "condition": "\"Other\" in mappingNotAlignedReasons"
-                }]
-        },
-        {
-            "dataType": "document",
-            "name": "maps"
         },
         {
             "dataType": "image",
@@ -266,65 +259,70 @@
                         ]
                     },
                     {
-                        "width": "6%",
-                        "source": "protectedSites",
-                        "type": "feature",
-                        "title": "Site/s protected by access control structures"
+                        "title": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                        "source": "mappingNotAlignedReasons",
+                        "type": "selectMany",
+                        "width": "17%"
+                    },
+                    {
+                        "title": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                        "source": "mappingNotAlignedComments",
+                        "type": "textarea",
+                        "rows": 5,
+                        "width": "16%"
+                    },
+                    {
+                        "title": "Please attach mapping details",
+                        "source": "maps",
+                        "type": "document"
                     },
                     {
                         "width": "6%",
-                        "source": "areaProtectedHa",
-                        "type": "number",
-                        "title": "Area (ha) protected by access control structures"
+
+                        "type": "col",
+                        "title": "Site/s protected by access control structures",
+                        "items": [
+                            {
+                                "source": "protectedSites",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "areaProtectedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            }
+                        ]
+
                     },
                     {
-                        "width": "17%",
-                        "source": "accessControlType",
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "accessControlType",
+                                "type": "select2"
+                            },
+                            {
+                                "source": "otherAccessControlType",
+                                "type": "text"
+                            }
+                        ],
                         "title": "Type of access control installed",
-                        "type": "select2"
+                        "width": "10%"
+
                     },
                     {
-                        "width": "17%",
-                        "source": "otherAccessControlType",
-                        "title": "Type of access control installed (if Other)",
-                        "type": "text"
-                    },
-                    {
-                        "width": "22%",
+                        "width": "16%",
                         "source": "controlObjective",
                         "title": "Control objective",
-                        "type": "textarea"
+                        "type": "textarea",
+                        "rows": 5
                     }
                 ],
                 "userAddedRows": true,
                 "source": "accessControlDetails",
                 "type": "table"
-            },
-            {
-                "type": "row",
-                "items": [
-                    {
-                        "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                        "source": "mappingNotAlignedReasons",
-                        "type": "selectMany"
-                    },
-                    {
-                        "preLabel": "Please attach mapping details",
-                        "source": "maps",
-                        "type": "document"
-                    }
-                ]
-            },
-            {
-                "type": "row",
-                "items": [
-                    {
-                        "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                        "source": "mappingNotAlignedComments",
-                        "type": "textarea",
-                        "rows": 4
-                    }
-                ]
             },
             {
                 "type": "row",
