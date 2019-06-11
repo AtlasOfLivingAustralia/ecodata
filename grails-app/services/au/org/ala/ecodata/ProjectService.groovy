@@ -77,6 +77,19 @@ class ProjectService {
         return p ? toMap(p, levelOfDetail, version) : null
     }
 
+    /**
+     * Returns a the List of services being delivered by this project with target information for each score.
+     * @param projectId the projectId of the project
+     * @return
+     */
+    List<Map> getProjectServicesWithTargets(String projectId){
+        def project = get(projectId)
+        if (project)
+            return metadataService.getProjectServicesWithTargets(project)
+        else
+            return null
+    }
+
     def getByDataResourceId(String id, String status = "active", levelOfDetail = []) {
         def project = Project.findByDataResourceIdAndStatus(id, status)
         project ? toMap(project, levelOfDetail) : null

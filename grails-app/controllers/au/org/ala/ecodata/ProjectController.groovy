@@ -77,6 +77,16 @@ class ProjectController {
             }
         }
     }
+    /**
+     * Returns a the List of services being delivered by this project with target information for each score.
+     * @param projectId the projectId of the project
+     * @return
+     */
+
+    def getProjectServicesWithTargets(String id){
+        def result = projectService.getProjectServicesWithTargets(id)
+        return asJson(result)
+    }
 
     def asXlsx(project) {
 

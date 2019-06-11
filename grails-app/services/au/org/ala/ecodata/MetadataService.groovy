@@ -831,22 +831,77 @@ class MetadataService {
         [valid : valid, errorInIndex: errorInIndex]
     }
 
-
+    /**
+     * Get services of project from configuration file
+     * services.json should be idential with fieldcapture
+     * @return
+     */
     List<Map> getProjectServices() {
         List services = JSON.parse(getClass().getResourceAsStream('/data/services.json'), 'UTF-8')
 
-        List scores = getScores(false)
+        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
         services.each { service ->
             service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
         }
-
         services
     }
 
-    List<Map> getScores(boolean includeConfig) {
-        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
-        //List<Map> scoreMaps = scores.collect{metadataService.toMap(it, views)}
+    /**
+     * Returns a the List of services being delivered by this project with target information for each score.
+     * @param  project
+     * @return a data structure similar to:
+     * [
+     *    name:<service name>,
+     *    id:<service id>,
+     *    scores:[
+     *         [
+     *             scoreId:<id>,
+     *             label:<score description>,
+     *             isOutputTarget: <true/false>,
+     *             target:<target defined for this score in the MERI plan, may be null>
+     *             periodTargets: [
+     *                 [
+     *                     period:<string of form year1/year2, eg. 2017/2018, as it appears in the MERI plan>,
+     *                     target:<minimum target for this score during the period>
+     *                 ]
+     *             ]
+     *         ]
+     *    ]
+     * ]
+     *
+     */
 
+    List<Map> getProjectServicesWithTargets(project){
+        def services =  getProjectServices()
+        List projectServices = services?.findAll {it.id in project.custom?.details?.serviceIds }
+        List targets = project.outputTargets
+
+        // Make a copy of the services as we are going to augment them with target information.
+        List results = projectServices.collect { service ->
+            [
+                    name:service.name,
+                    id: service.id,
+                    scores: service.scores?.collect { score ->
+                        [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
+                    }
+            ]
+        }
+        results.each { service ->
+            service.scores?.each  { score ->
+                Map target = targets.find {it.scoreId == score.scoreId}
+                if (target){
+                    score.valid = true // Ideally remove it, but to set it to invalid is easier
+                    score.target = target?.target
+                    score.periodTargets = target?.periodTargets
+                }
+
+            }
+        }
+
+        return results
     }
+
+
+
 
 }
