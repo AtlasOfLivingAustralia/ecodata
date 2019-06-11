@@ -687,43 +687,27 @@ class ProjectXlsExporter extends ProjectExporter {
 
         List<String> rlpSTProperties=["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
         List<String> rlpSTHeaders=["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
-
-
         def results = metadataService.getProjectServicesWithTargets(project)
-
 
         AdditionalSheet sheet = getSheet("Project services and targets", rlpSTHeaders)
         int row = sheet.getSheet().lastRowNum
 
         List data = []
-
         results.each { item ->
             def serviceName = item.name
-            item.scores.each { score ->
-                if (score.valid){
+            item.scores.each {
                     Map st = [:]
                     st['service'] = serviceName
-                    st['targetMeasure'] = score.label
-                    st['total'] = score.target
-                    score.periodTargets.each { pt ->
+                    st['targetMeasure'] = it.label
+                    st['total'] = it.target
+                    it.periodTargets.each { pt ->
                         st[pt.period] = pt.target
                     }
                     data.add(st)
-                }
-
             }
-
         }
-
         sheet.add(data?:[], rlpSTProperties, row+1)
-
-
     }
-
-
-
-
-
 
     private void exportDocuments(Map project) {
         exportList("Documents", project, project.documents, documentHeaders, documentProperties)

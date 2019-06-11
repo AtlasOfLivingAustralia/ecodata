@@ -85,7 +85,7 @@ class ProjectController {
 
     def getProjectServicesWithTargets(String id){
         def result = projectService.getProjectServicesWithTargets(id)
-        return asJson(result)
+        render result as JSON
     }
 
     def asXlsx(project) {

@@ -890,11 +890,14 @@ class MetadataService {
             service.scores?.each  { score ->
                 Map target = targets.find {it.scoreId == score.scoreId}
                 if (target){
-                    score.valid = true // Ideally remove it, but to set it to invalid is easier
                     score.target = target?.target
                     score.periodTargets = target?.periodTargets
-                }
+                }else
+                    score.delete = true //prepare for delete
+            }
 
+            service.scores?.removeAll {
+                it.delete
             }
         }
 
