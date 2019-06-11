@@ -231,7 +231,7 @@ class ProjectController {
                     ProjectXlsExporter projectExporter = new ProjectXlsExporter(projectService, exporter)
 
                     List projects = ids.collect{projectService.get(it,ProjectService.ALL)}
-                    projectExporter.exportAll(projects)
+                    projectExporter.exportAllProjects(projects)
                     exporter.sizeColumns()
 
                     exporter.save(response.outputStream)

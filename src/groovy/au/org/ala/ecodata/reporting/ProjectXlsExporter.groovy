@@ -1,5 +1,6 @@
 package au.org.ala.ecodata.reporting
 
+import au.org.ala.ecodata.MetadataService
 import au.org.ala.ecodata.ProjectService
 import au.org.ala.ecodata.Report
 import au.org.ala.ecodata.metadata.OutputMetadata
@@ -84,6 +85,20 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> blogHeaders = commonProjectHeaders + ['Type', 'Date', 'Title', 'Content', "See more URL"]
     List<String> blogProperties = commonProjectProperties + ['type', 'date', 'title', 'content', 'viewMoreUrl']
 
+    List<String> eventHeaders = commonProjectHeaders + ['Funding', 'Name', 'Description', 'Scheduled Date', 'Media', 'Grant Announcement Date', 'Type']
+    List<String> eventProperties = commonProjectProperties + ['funding', 'name', 'description', 'scheduledDate', 'media', 'grantAnnouncementDate', 'Type']
+    List<String> baselineHeaders = commonProjectHeaders + ['Baseline Method', 'Baseline']
+    List<String> baselineProperties = commonProjectProperties + ['method', 'baseline']
+
+    //Different data model   RLP outcomes show data on rows not cols
+    List<String> rlpOutcomeHeaders = ['Type of outcomes', 'Outcome','Investment Priority']
+    List<String> rlpOutcomeProperties = ['outcomeType', 'outcome','priority']
+
+    List<String> rlpProjectDetailsHeaders=["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology"]
+    List<String> rlpProjectDetailsProperties =["projectDescription", "projectRationale", "projecMethodology", "projectREI"]
+
+    List<String> rlpKeyThreatHeaders = ['Key threats and/or threatening processes', 'Interventions to address threats']
+    List<String> rlpKeyThreatProperties = ['keyThreat', 'keyTreatIntervention']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -102,6 +117,12 @@ class ProjectXlsExporter extends ProjectExporter {
 
     /** Enables us to pre-create headers for each electorate that will appear in the result set */
     List<String> distinctElectorates
+
+    public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter ) {
+        super(exporter)
+        this.projectService = projectService
+        distinctElectorates = new ArrayList()
+    }
 
     public ProjectXlsExporter(ProjectService projectService, XlsExporter exporter, List<String> tabsToExport, List<String> electorates, Map<String, Object> documentMap = [:]) {
         super(exporter, tabsToExport, documentMap, TimeZone.default)
@@ -126,7 +147,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportOutputTargets(project)
         exportSites(project)
         exportDocuments(project)
-        exportActivities(project, activitiesModel)
+        //exportActivities(project, activitiesModel)
         exportOutputs(project, activitiesModel)
         exportRisks(project)
         exportMeriPlan(project)
@@ -337,6 +358,13 @@ class ProjectXlsExporter extends ProjectExporter {
         exportPriorities(project)
         exportWHSAndCaseStudy(project)
         exportAttachments(project)
+        exportBaseline(project)
+        exportEvents(project)
+        exportRLPOutcomes(project)
+        exportRLPProjectDetails(project)
+        exportRLPKeyThreats(project)
+        exportRLPBaselinesIndicators(project)
+        exportRLPServicesTargets(project)
 
     }
 
@@ -478,6 +506,247 @@ class ProjectXlsExporter extends ProjectExporter {
         List meriPlanAttachments = project.documents?.findAll {it.role == "programmeLogic"}
         exportList("MERI_Attachments", project, meriPlanAttachments, attachmentHeaders, attachmentProperties)
     }
+
+    private void exportBaseline(Map project){
+        if (shouldExport("MERI_Baseline")) {
+            AdditionalSheet sheet = getSheet("MERI_Baseline", baselineHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = project?.custom?.details?.baseline?.rows?.collect { Map baseline ->
+                Map baseLineItem = [:]
+                baseline.each{k, v -> baseLineItem.put(k,v)}
+                baseLineItem.putAll(project)
+                baseLineItem
+            }
+            sheet.add(data?:[], baselineProperties, row+1)
+        }
+    }
+
+    private void exportEvents(Map project) {
+        if (shouldExport("MERI_Event")) {
+            AdditionalSheet sheet = getSheet("MERI_Event", eventHeaders)
+            int row = sheet.getSheet().lastRowNum
+            List data = project?.custom?.details?.events?.collect { Map event ->
+                Map eventItem = [:]
+                event.each{k, v -> eventItem.put(k,v)}
+                eventItem.putAll(project)
+                eventItem
+            }
+            sheet.add(data?:[], eventProperties, row+1)
+        }
+    }
+
+    private  void exportRLPProjectDetails(Map project){
+        if (shouldExport("MERI_RLP_ProjectDetails")) {
+            /**
+             * RLP outcome does not use HEADERs from DB
+             */
+            AdditionalSheet sheet = getSheet("RLP Project Details", rlpProjectDetailsHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List data = []
+            //["projectDescription","projectRationale","projecMethodology", "projectREI"]
+            Map item = [:]
+            if (project?.custom?.details?.description){
+                item["projectDescription"]=project?.custom?.details?.description
+            }
+
+            if (project?.custom?.details?.implementation){
+                item["projecMethodology"]=project?.custom?.details?.implementation?.description
+            }
+
+            if (project?.custom?.details?.rationale){
+                item["projectRationale"]=project?.custom?.details?.rationale
+            }
+
+            if (project?.custom?.details?.projectEvaluationApproach){
+                item["projectREI"]=project?.custom?.details?.projectEvaluationApproach
+            }
+
+            data.add(item)
+
+            sheet.add(data?:[], rlpProjectDetailsProperties, row+1)
+        }
+    }
+
+    private void exportRLPOutcomes(Map project) {
+
+        if (shouldExport("MERI_RLP_Outcomes")) {
+            /**
+             * RLP outcome does not use HEADERs from DB
+             */
+            AdditionalSheet sheet = getSheet("RLP Outcomes", rlpOutcomeHeaders)
+            int row = sheet.getSheet().lastRowNum
+            Map fields = [:]
+            fields["secondaryOutcomes"] = "Additional benefits"
+            fields["shortTermOutcomes"] = "Short-term"
+            fields["midTermOutcomes"] = "Medium-term"
+
+            List data = []
+            //['outcomeType', 'outcome','priority']
+
+            if (project?.custom?.details?.outcomes?.primaryOutcome){
+                def po = project?.custom?.details?.outcomes?.primaryOutcome
+                Map outcome = [:]
+                outcome.put('outcomeType',"Primary outcome")
+                outcome.put('outcome',po.description)
+                String assets = po.assets?.join(",")
+                outcome.put('priority',assets)
+                //Add all project item into the first row.
+                outcome.putAll(project)
+                data.add(outcome)
+            }
+
+
+
+            fields.each{ocitem, desc->
+                List oocs = project?.custom?.details?.outcomes?.get(ocitem)
+                oocs?.collect{ Map oc ->
+                    Map outcome = [:]
+                    outcome.put('outcomeType',desc)
+                    outcome.put('outcome',oc.description)
+                    String assets = oc.assets?.join(",")
+                    outcome.put('priority',assets)
+                    data.add(outcome)
+                }
+            }
+
+
+            sheet.add(data?:[], rlpOutcomeProperties, row+1)
+        }
+    }
+
+    private  void exportRLPKeyThreats(Map project){
+        if (shouldExport("MERI_RLP_KeyThreats")) {
+            /**
+             * RLP outcome does not use HEADERs from DB
+             */
+            AdditionalSheet sheet = getSheet("RLP Key Threats", rlpKeyThreatHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List data = []
+
+            if (project?.custom?.details?.threats?.rows){
+                def items = project?.custom?.details?.threats?.rows
+                items.each{ Map item ->
+                    //['keyThreat', 'keyTreatIntervention']
+                    Map threat = [:]
+                    threat["keyThreat"] = item.threat
+                    threat["keyTreatIntervention"] = item.intervention
+                    data.add(threat)
+                }
+            }
+
+            sheet.add(data?:[], rlpKeyThreatProperties, row+1)
+        }
+    }
+
+
+
+    private  void exportRLPBaselinesIndicators(Map project){
+        List<String> rlpBaseLineHeaders = ["Baseline/Indicator","Project baseline",	"Baseline method"]
+        List<String> rlpBaseLineProperties = ["biType","baseline",	"baselineMethod"]
+
+        if (shouldExport("MERI_RLP_Baselines")) {
+            /**
+             * RLP outcome does not use HEADERs from DB
+             */
+            AdditionalSheet sheet = getSheet("RLP Monitoring methodology", rlpBaseLineHeaders)
+            int row = sheet.getSheet().lastRowNum
+
+            List data = []
+
+            if (project?.custom?.details?.baseline?.rows){
+                def items = project?.custom?.details?.baseline?.rows
+                items.each{ Map item ->
+                    Map baseline = [:]
+                    baseline["biType"] = "Baseline"
+                    baseline["baseline"] = item.baseline
+                    baseline["baselineMethod"] = item.method
+                    data.add(baseline)
+                }
+            }
+            //Reuse custom.details.keq
+            if (project?.custom?.details?.keq?.rows){
+                def items = project?.custom?.details?.keq?.rows
+                items.each{ Map item ->
+                    Map baseline = [:]
+                    baseline["biType"] = "Indicator"
+                    baseline["baseline"] = item.data1
+                    baseline["baselineMethod"] = item.data2
+                    data.add(baseline)
+                }
+            }
+
+            sheet.add(data?:[], rlpBaseLineProperties, row+1)
+        }
+    }
+
+    private void exportRLPServicesTargets(project){
+        if (!shouldExport("MERI_RLP_Baselines"))
+            return
+
+        List<String> rlpSTProperties=["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
+        List<String> rlpSTHeaders=["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
+
+
+       def services =  metadataService.getProjectServices()
+        List projectServices = services?.findAll {it.id in project.custom?.details?.serviceIds }
+        List targets = project.outputTargets
+
+        // Make a copy of the services as we are going to augment them with target information.
+        List results = projectServices.collect { service ->
+            [
+                    name:service.name,
+                    id: service.id,
+                    scores: service.scores?.collect { score ->
+                        [scoreId: score.scoreId, label: score.label, isOutputTarget:score.isOutputTarget]
+                    }
+            ]
+        }
+        results.each { service ->
+            service.scores?.each  { score ->
+                Map target = targets.find {it.scoreId == score.scoreId}
+                if (target){
+                    score.valid = true
+                    score.target = target?.target
+                    score.periodTargets = target?.periodTargets
+                }
+
+            }
+        }
+
+        AdditionalSheet sheet = getSheet("Project services and targets", rlpSTHeaders)
+        int row = sheet.getSheet().lastRowNum
+
+        List data = []
+
+        results.each { item ->
+            def serviceName = item.name
+            item.scores.each { score ->
+                if (score.valid){
+                    Map st = [:]
+                    st['service'] = serviceName
+                    st['targetMeasure'] = score.label
+                    st['total'] = score.target
+                    score.periodTargets.each { pt ->
+                        st[pt.period] = pt.target
+                    }
+                    data.add(st)
+                }
+
+            }
+
+        }
+
+        sheet.add(data?:[], rlpSTProperties, row+1)
+
+
+    }
+
+
+
+
+
 
     private void exportDocuments(Map project) {
         exportList("Documents", project, project.documents, documentHeaders, documentProperties)

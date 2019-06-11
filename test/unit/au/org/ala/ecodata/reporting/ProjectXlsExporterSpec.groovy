@@ -55,6 +55,23 @@ class ProjectXlsExporterSpec extends Specification {
 
     }
 
+//    void "RLP Merit test for dev"() {
+//        setup:
+//        String sheet = 'Projects'
+//        projectXlsExporter = new ProjectXlsExporter(projectService, xlsExporter, [sheet], [], [:])
+//        projectXlsExporter.metadataService = Mock(MetadataService)
+//
+//        when:
+//        projectXlsExporter.export([projectId:'8693cbc5-6947-4614-9bd1-b22ef44bc8fd'])
+//        xlsExporter.save()
+//
+//        then:
+//        List<Map> results = readSheet(sheet, projectXlsExporter.projectProperties)
+//        results.size() == 1
+//        results[0]['projectId'] == '1234'
+//
+//    }
+
 
     private List readSheet(String sheet, List properties) {
         def columnMap = [:]

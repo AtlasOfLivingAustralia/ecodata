@@ -4,6 +4,10 @@ import au.org.ala.ecodata.Project
 
 abstract class ProjectExporter extends TabbedExporter {
 
+    public ProjectExporter(XlsExporter exporter) {
+        super(exporter, [], [:], TimeZone.default)
+    }
+
     public ProjectExporter(XlsExporter exporter, List<String> tabsToExport = [], Map<String, Object> documentMap = [:], TimeZone timeZone) {
         super(exporter, tabsToExport, documentMap, timeZone)
     }

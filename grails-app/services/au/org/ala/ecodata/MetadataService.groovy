@@ -8,6 +8,7 @@ import grails.validation.ValidationException
 import org.apache.poi.ss.usermodel.Workbook
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import org.apache.poi.ss.util.CellReference
+import org.codehaus.groovy.grails.web.json.JSONArray
 import org.grails.plugins.csv.CSVMapReader
 
 import java.text.SimpleDateFormat
@@ -829,4 +830,23 @@ class MetadataService {
 
         [valid : valid, errorInIndex: errorInIndex]
     }
+
+
+    List<Map> getProjectServices() {
+        List services = JSON.parse(getClass().getResourceAsStream('/data/services.json'), 'UTF-8')
+
+        List scores = getScores(false)
+        services.each { service ->
+            service.scores = new JSONArray(scores.findAll{it.outputType == service.output})
+        }
+
+        services
+    }
+
+    List<Map> getScores(boolean includeConfig) {
+        List<Score> scores = Score.findAllWhereStatusNotEqual(DELETED)
+        //List<Map> scoreMaps = scores.collect{metadataService.toMap(it, views)}
+
+    }
+
 }
