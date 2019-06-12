@@ -80,7 +80,6 @@
                     "dataType": "number",
                     "units": "ha",
                     "name": "areaOfErosionControlInvoicedHa",
-                    "defaultValue": "0.00",
                     "validate": [
                         {
                             "rule": "max",
@@ -95,7 +94,6 @@
                     "dataType": "number",
                     "units": "km",
                     "name": "lengthOfErosionControlInvoicedKm",
-                    "defaultValue": "0.00",
                     "validate": [
                         {
                             "rule": "max",
@@ -373,7 +371,6 @@
                                     }
                                 ]
                             }
-
                         ]
                     },
                     {
