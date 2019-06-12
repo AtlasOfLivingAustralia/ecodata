@@ -91,14 +91,12 @@ class ProjectXlsExporter extends ProjectExporter {
     List<String> baselineProperties = commonProjectProperties + ['method', 'baseline']
 
     //Different data model   RLP outcomes show data on rows not cols
-    List<String> rlpOutcomeHeaders = ['Type of outcomes', 'Outcome','Investment Priority']
-    List<String> rlpOutcomeProperties = ['outcomeType', 'outcome','priority']
+    List<String> rlpOutcomeHeaders = commonProjectHeaders + ['Type of outcomes', 'Outcome','Investment Priority']
+    List<String> rlpOutcomeProperties = commonProjectProperties +['outcomeType', 'outcome','priority']
 
-    List<String> rlpProjectDetailsHeaders=["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology"]
-    List<String> rlpProjectDetailsProperties =["projectDescription", "projectRationale", "projecMethodology", "projectREI"]
+    List<String> rlpProjectDetailsHeaders=commonProjectHeaders + ["Project description","Project rationale","Project methodology",	"Project review, evaluation and improvement methodology"]
+    List<String> rlpProjectDetailsProperties =commonProjectProperties + ["projectDescription", "projectRationale", "projecMethodology", "projectREI"]
 
-    List<String> rlpKeyThreatHeaders = ['Key threats and/or threatening processes', 'Interventions to address threats']
-    List<String> rlpKeyThreatProperties = ['keyThreat', 'keyTreatIntervention']
 
     AdditionalSheet projectSheet
     AdditionalSheet sitesSheet
@@ -562,6 +560,8 @@ class ProjectXlsExporter extends ProjectExporter {
                 item["projectREI"]=project?.custom?.details?.projectEvaluationApproach
             }
 
+            item.putAll(project)
+
             data.add(item)
 
             sheet.add(data?:[], rlpProjectDetailsProperties, row+1)
@@ -591,13 +591,8 @@ class ProjectXlsExporter extends ProjectExporter {
                 outcome.put('outcome',po.description)
                 String assets = po.assets?.join(",")
                 outcome.put('priority',assets)
-                //Add all project item into the first row.
-                outcome.putAll(project)
                 data.add(outcome)
             }
-
-
-
             fields.each{ocitem, desc->
                 List oocs = project?.custom?.details?.outcomes?.get(ocitem)
                 oocs?.collect{ Map oc ->
@@ -609,13 +604,17 @@ class ProjectXlsExporter extends ProjectExporter {
                     data.add(outcome)
                 }
             }
-
+            //Add all common project into the first row.
+            data?.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpOutcomeProperties, row+1)
         }
     }
 
     private  void exportRLPKeyThreats(Map project){
+        List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
+        List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
+
         if (shouldExport("MERI_RLP_KeyThreats")) {
             /**
              * RLP outcome does not use HEADERs from DB
@@ -632,9 +631,11 @@ class ProjectXlsExporter extends ProjectExporter {
                     Map threat = [:]
                     threat["keyThreat"] = item.threat
                     threat["keyTreatIntervention"] = item.intervention
+                    threat.putAll(project)
                     data.add(threat)
                 }
             }
+            data?.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpKeyThreatProperties, row+1)
         }
@@ -643,8 +644,8 @@ class ProjectXlsExporter extends ProjectExporter {
 
 
     private  void exportRLPBaselinesIndicators(Map project){
-        List<String> rlpBaseLineHeaders = ["Baseline/Indicator","Project baseline",	"Baseline method"]
-        List<String> rlpBaseLineProperties = ["biType","baseline",	"baselineMethod"]
+        List<String> rlpBaseLineHeaders =commonProjectHeaders + ["Baseline/Indicator","Project baseline",	"Baseline method"]
+        List<String> rlpBaseLineProperties = commonProjectProperties + ["biType","baseline",	"baselineMethod"]
 
         if (shouldExport("MERI_RLP_Baselines")) {
             /**
@@ -676,17 +677,18 @@ class ProjectXlsExporter extends ProjectExporter {
                     data.add(baseline)
                 }
             }
+            data?.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpBaseLineProperties, row+1)
         }
     }
 
     private void exportRLPServicesTargets(project){
-        if (!shouldExport("MERI_RLP_Baselines"))
+        if (!shouldExport("MERI_RLP_Services_Targets"))
             return
 
-        List<String> rlpSTProperties=["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
-        List<String> rlpSTHeaders=["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
+        List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
+        List<String> rlpSTHeaders=commonProjectHeaders +["Service", "Target measure", "Total to be delivered", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
         def results = metadataService.getProjectServicesWithTargets(project)
 
         AdditionalSheet sheet = getSheet("Project services and targets", rlpSTHeaders)
@@ -706,6 +708,8 @@ class ProjectXlsExporter extends ProjectExporter {
                     data.add(st)
             }
         }
+
+        data?.get(0)?.putAll(project)
         sheet.add(data?:[], rlpSTProperties, row+1)
     }
 
