@@ -361,7 +361,7 @@ class ProjectXlsExporter extends ProjectExporter {
         exportRLPOutcomes(project)
         exportRLPProjectDetails(project)
         exportRLPKeyThreats(project)
-        exportRLPBaselinesIndicators(project)
+        //exportRLPBaselinesIndicators(project)
         exportRLPServicesTargets(project)
 
     }
@@ -534,7 +534,7 @@ class ProjectXlsExporter extends ProjectExporter {
     }
 
     private  void exportRLPProjectDetails(Map project){
-        if (shouldExport("MERI_RLP_ProjectDetails")) {
+        if (shouldExport("RLP_Project_Details")) {
             /**
              * RLP outcome does not use HEADERs from DB
              */
@@ -570,7 +570,7 @@ class ProjectXlsExporter extends ProjectExporter {
 
     private void exportRLPOutcomes(Map project) {
 
-        if (shouldExport("MERI_RLP_Outcomes")) {
+        if (shouldExport("RLP_Outcomes")) {
             /**
              * RLP outcome does not use HEADERs from DB
              */
@@ -605,7 +605,8 @@ class ProjectXlsExporter extends ProjectExporter {
                 }
             }
             //Add all common project into the first row.
-            data?.get(0)?.putAll(project)
+            if(!data.isEmpty())
+                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpOutcomeProperties, row+1)
         }
@@ -615,7 +616,7 @@ class ProjectXlsExporter extends ProjectExporter {
         List<String> rlpKeyThreatHeaders =commonProjectHeaders + ['Key threats and/or threatening processes', 'Interventions to address threats']
         List<String> rlpKeyThreatProperties =commonProjectProperties + ['keyThreat', 'keyTreatIntervention']
 
-        if (shouldExport("MERI_RLP_KeyThreats")) {
+        if (shouldExport("RLP_Key_Threats")) {
             /**
              * RLP outcome does not use HEADERs from DB
              */
@@ -635,7 +636,8 @@ class ProjectXlsExporter extends ProjectExporter {
                     data.add(threat)
                 }
             }
-            data?.get(0)?.putAll(project)
+            if(!data.isEmpty())
+                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpKeyThreatProperties, row+1)
         }
@@ -647,7 +649,7 @@ class ProjectXlsExporter extends ProjectExporter {
         List<String> rlpBaseLineHeaders =commonProjectHeaders + ["Baseline/Indicator","Project baseline",	"Baseline method"]
         List<String> rlpBaseLineProperties = commonProjectProperties + ["biType","baseline",	"baselineMethod"]
 
-        if (shouldExport("MERI_RLP_Baselines")) {
+        if (shouldExport("RLP_Baselines")) {
             /**
              * RLP outcome does not use HEADERs from DB
              */
@@ -677,14 +679,15 @@ class ProjectXlsExporter extends ProjectExporter {
                     data.add(baseline)
                 }
             }
-            data?.get(0)?.putAll(project)
+            if(!data.isEmpty())
+                data.get(0)?.putAll(project)
 
             sheet.add(data?:[], rlpBaseLineProperties, row+1)
         }
     }
 
     private void exportRLPServicesTargets(project){
-        if (!shouldExport("MERI_RLP_Services_Targets"))
+        if (!shouldExport("RLP_Services_and_Targets"))
             return
 
         List<String> rlpSTProperties=commonProjectProperties +["service", "targetMeasure", "total", "2018/2019","2019/2020", "2020/2021", "2021/2022", "2022/2023"]
@@ -709,7 +712,8 @@ class ProjectXlsExporter extends ProjectExporter {
             }
         }
 
-        data?.get(0)?.putAll(project)
+        if(!data.isEmpty())
+            data.get(0)?.putAll(project)
         sheet.add(data?:[], rlpSTProperties, row+1)
     }
 
