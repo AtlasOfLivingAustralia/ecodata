@@ -29,8 +29,7 @@
                     "name": "sitesManaged"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.areaHa(sitesManaged)"
                     },
                     "dataType": "number",
@@ -38,8 +37,7 @@
                     "name": "calculatedAreaOfErosionControlHa"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.lengthKm(sitesManaged)"
                     },
                     "dataType": "number",
@@ -50,10 +48,10 @@
                     "dataType": "document",
                     "name": "extraMappingDetails",
                     "validate": "required",
-                    "description": "Please attach accurate mapping information in shapefile, geojson or KML format",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                     "behaviour": [
                         {
-                            "condition": "not (within(areaOfErosionControlHa, calculatedAreaOfErosionControlHa, 0.1) and within(lengthOfErosionControlKm, calculatedLengthOfErosionControlKm)) or roundTo(areaOfErosionControlHa, 2) != roundTo(areaOfErosionControlInvoicedHa, 2) or roundTo(lengthOfErosionControlKm, 2) != roundTo(lengthOfErosionControlInvoicedKm, 2)",
+                            "condition": "not (within(areaOfErosionControlHa, calculatedAreaOfErosionControlHa, 0.1) and within(lengthOfErosionControlKm, calculatedLengthOfErosionControlKm, 0.1)) or roundTo(areaOfErosionControlHa, 2) != roundTo(areaOfErosionControlInvoicedHa, 2) or roundTo(lengthOfErosionControlKm, 2) != roundTo(lengthOfErosionControlInvoicedKm, 2)",
                             "type": "visible"
                         }
                     ]
@@ -64,7 +62,7 @@
                     "name": "areaOfErosionControlHa",
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "$geom.lengthKm(sitesManaged)"
+                        "expression": "$geom.areaHa(sitesManaged)"
                     }
                 },
                 {
@@ -101,7 +99,11 @@
                                 "type": "computed",
                                 "expression": "lengthOfErosionControlKm"
                             }
+                        },
+                        {
+                            "rule": "required"
                         }
+
                     ]
                 },
                 {
@@ -114,7 +116,7 @@
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "not (within(areaOfErosionControlHa, calculatedAreaOfErosionControlHa, 0.1) and within(lengthOfErosionControlKm, calculatedLengthOfErosionControlKm))",
+                            "condition": "not (within(areaOfErosionControlHa, calculatedAreaOfErosionControlHa, 0.1) and within(lengthOfErosionControlKm, calculatedLengthOfErosionControlKm, 0.1))",
                             "type": "visible"
                         }
                     ]
@@ -246,7 +248,7 @@
                     },
 
                     {
-                        "width": "5%",
+                        "width": "6%",
                         "type": "col",
                         "title": "Site/s of erosion control",
                         "items": [
@@ -286,6 +288,7 @@
                         "width": "17%",
                         "type": "col",
                         "title": "Actual area (ha) / length (km) of erosion control",
+                        "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
                         "items": [
                             {
                                 "source": "areaOfErosionControlHa",
@@ -333,6 +336,7 @@
                         "width": "17%",
                         "type": "col",
                         "title": "Invoiced area (ha) / length (km) of erosion control",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
                         "items": [
                             {
                                 "source": "areaOfErosionControlInvoicedHa",
@@ -380,7 +384,7 @@
                         "type": "number"
                     },
                     {
-                        "width": "18%",
+                        "width": "20%",
                         "type": "col",
                         "title": "Type of treatment method",
                         "items": [
@@ -407,7 +411,7 @@
                         ]
                     },
                     {
-                        "width": "5%",
+                        "width": "20%",
                         "title": "Please map any off-site area/s if they benefitted from this erosion management activity",
                         "type": "col",
                         "items": [
@@ -421,16 +425,21 @@
                                 "displayOptions": {
                                     "displayUnits": true
                                 }
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "evidenceOfBenefit",
+                                        "placeholder": "Please describe evidence of off-site benefits",
+                                        "type": "textarea"
+                                    }
+                                ]
                             }
                         ]
-                    },
-
-                    {
-                        "width": "18%",
-                        "source": "evidenceOfBenefit",
-                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect his benefit.",
-                        "type": "textarea"
                     }
+
+
                 ],
                 "userAddedRows": true,
                 "source": "erosionManagementDetails",
