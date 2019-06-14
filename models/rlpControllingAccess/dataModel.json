@@ -31,7 +31,7 @@
                     "dataType": "document",
                     "name": "extraMappingDetails",
                     "validate": "required",
-                    "description": "Please attach accurate mapping information in shapefile, geojson or KML format",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                     "behaviour": [
                         {
                             "condition": "not (within(areaInstalledHa, sitesInstalledCalculatedAreaHa, 0.1) and within(lengthInstalledKm, sitesInstalledCalculatedLengthKm, 0.1)) or roundTo(areaInstalledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthInstalledKm, 2) != roundTo(lengthInvoicedKm, 2)",
