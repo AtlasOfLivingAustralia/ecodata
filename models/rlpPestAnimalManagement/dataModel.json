@@ -19,7 +19,7 @@
                     "dataType": "number",
                     "name": "siteCalculatedAreaHa",
                     "computed": {
-                        "expression": "$geom.areaHa(sitesInstalled)"
+                        "expression": "$geom.areaHa(site)"
                     },
                     "units": "ha"
                 },
@@ -27,7 +27,7 @@
                     "dataType": "number",
                     "name": "siteCalculatedLengthKm",
                     "computed": {
-                        "expression": "$geom.lengthKm(sitesInstalled)"
+                        "expression": "$geom.lengthKm(site)"
                     },
                     "units": "km"
                 },
@@ -35,28 +35,38 @@
                     "dataType": "number",
                     "name": "areaControlledHa",
                     "validate": "required,min[0]",
-                    "units": "ha"
+                    "units": "ha",
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.areaHa(site)"
+                    }
                 },
                 {
                     "dataType": "number",
                     "name": "lengthControlledKm",
                     "validate": "required,min[0]",
-                    "units": "km"
+                    "units": "km",
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "$geom.lengthKm(site)"
+                    }
                 },
                 {
                     "dataType": "number",
                     "name": "areaInvoicedHa",
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.areaHa(sitesInstalled)"
-                    },
                     "units": "ha",
                     "validate": [
+                        {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "areaInstalledHa"
+                                "expression": "areaControlledHa"
                             }
                         }
                     ]
@@ -64,49 +74,84 @@
                 {
                     "dataType": "number",
                     "name": "lengthInvoicedKm",
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(sitesInstalled)"
-                    },
                     "units": "km",
                     "validate": [
+                        {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "lengthInstalledKm"
+                                "expression": "lengthControlledKm"
                             }
                         }
                     ]
                 },
                 {
-                    "dataType": "stringList",
-                    "name": "mappingNotAlignedReasons",
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
                     "constraints": [
-                        "Work was undertaken over a greater area will be invoiced for",
                         "Mapped area simplifies more complex area/s where work was undertaken during this period",
                         "Other"
                     ],
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "areaInstalledHa > areaInvoicedHa or lengthInstalledKm > lengthInvoicedKm",
-                            "type": "enable"
+                            "condition": "not (within(areaControlledHa, siteCalculatedAreaHa, 0.1) and within(lengthControlledKm, siteCalculatedLengthKm, 0.1))",
+                            "type": "if"
                         }
                     ]
                 },
                 {
                     "dataType": "text",
                     "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
                     "behaviour": [
                         {
-                            "type": "enable",
-                            "condition": "\"Other\" in mappingNotAlignedReasons"
+                            "type": "if",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
                         }]
                 },
                 {
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthControlledKm, 2) != roundTo(lengthInvoicedKm, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "if",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
+                },
+                {
                     "dataType": "document",
-                    "name": "maps"
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(areaControlledHa, siteCalculatedAreaHa, 0.1) and within(lengthControlledKm, siteCalculatedLengthKm, 0.1)) or roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthControlledKm, 2) != roundTo(lengthInvoicedKm, 2)",
+                            "type": "if"
+                        }
+                    ]
                 },
                 {
                     "columns": [
@@ -204,102 +249,166 @@
                         "type": "row",
                         "items": [
                             {
-                                "preLabel": "Site/s where pest control was undertaken",
-                                "source": "site",
-                                "type": "feature"
-                            },
-                            {
-                                "css": "span2",
-                                "preLabel": "Calculated area",
-                                "source": "siteCalculatedAreaHa",
-                                "type": "number",
-                                "readonly": true,
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
-                            },
-                            {
-                                "css": "span2",
-                                "preLabel": "Calculated length",
-                                "source": "siteCalculatedLengthKm",
-                                "type": "number",
-                                "readonly": true,
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "type": "row",
-                        "items": [
-                            {
-                                "preLabel": "Area (ha) treated for pest animals",
-                                "css": "span2",
-                                "source": "areaControlledHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
-                            },
-                            {
-                                "preLabel": "Length (km) treated for pest animals",
-                                "css": "span2",
-                                "source": "lengthControlledKm",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
-                            }
-                        ]
-                    },
-                    {
-                        "type": "row",
-                        "items": [
-                            {
-                                "preLabel": "Area invoiced",
-                                "css": "span2",
-                                "source": "areaInvoicedHa",
-                                "type": "number",
-                                "validate": "required",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
+                                "type": "col",
+                                "css": "span3 col-border-right",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Site/s where pest control was undertaken",
+                                                "source": "site",
+                                                "type": "feature"
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
+                                            "source": "siteCalculatedAreaHa",
+                                            "type": "number",
+                                            "readonly": true,
+                                            "displayOptions": {
+                                                "displayUnits": true
+                                            }
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [{
 
+                                            "source": "siteCalculatedLengthKm",
+                                            "type": "number",
+                                            "readonly": true,
+                                            "displayOptions": {
+                                                "displayUnits": true
+                                            }
+                                        }]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Please attach mapping details",
+                                                "source": "extraMappingDetails",
+                                                "type": "document"
+                                            }
+                                        ]
+                                    }
+                                ]
                             },
                             {
-                                "preLabel": "Length invoiced",
-                                "css": "span2",
-                                "source": "lengthInvoicedKm",
-                                "validate": "required",
-                                "type": "number",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
+                                "type": "col",
+                                "css": "span4 col-border-right",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Actual area (ha) / length (km) treated for pest animals",
+                                                "helpText": "Manually enter correct figure for this reporting period if different to mapped value.",
+
+                                                "source": "areaControlledHa",
+                                                "type": "number",
+                                                "validate": "required",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "source": "lengthControlledKm",
+                                                "type": "number",
+                                                "validate": "required",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Reason for actual being different to mapped amount",
+                                                "source": "mappingNotAlignedReason",
+                                                "type": "selectOne"
+
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                                "source": "mappingNotAlignedComments",
+                                                "type": "textarea",
+                                                "rows": 5
+                                            }
+
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "col",
+                                "css": "span4",
+                                "items": [
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Invoiced area (ha) / length (km) treated for pest animals",
+                                                "helpText": "Enter the amount you will invoice for during this reporting period.",
+                                                "source": "areaInvoicedHa",
+                                                "type": "number",
+                                                "validate": "required",
+                                                "displayOptions": {
+                                                    "displayUnits": true
+                                                }
+                                            }
+                                        ]
+
+                                    },
+                                    {
+                                        "source": "lengthInvoicedKm",
+                                        "validate": "required",
+                                        "type": "number",
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "preLabel": "Reason for invoiced amount being different to actual amount",
+                                                "source": "invoicedNotActualReason",
+                                                "type": "selectOne"
+
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        "type": "row",
+                                        "items": [
+                                            {
+                                                "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                                "source": "invoicedNotActualComments",
+                                                "type": "textarea",
+                                                "rows": 5
+
+                                            }
+                                        ]
+                                    }
+                                ]
                             }
-                        ]
-                    },
-                    {
-                        "type": "row",
-                        "items": [
-                            {
-                                "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "mappingNotAlignedReasons",
-                                "type": "selectMany"
-                            },
-                            {
-                                "preLabel": "Please enter the reason/s the mapping didn't align with the invoiced amount",
-                                "source": "mappingNotAlignedComments",
-                                "type": "textarea",
-                                "rows": 5
-                            },
-                            {
-                                "preLabel": "Please attach mapping details",
-                                "source": "maps",
-                                "type": "document"
-                            }
+
                         ]
                     },
                     {

@@ -22,7 +22,8 @@
                     },
                     "units": "ha",
                     "dataType": "number",
-                    "name": "existingErosionAreaHa"
+                    "name": "existingErosionAreaHa",
+                    "validate": "min[0]"
                 },
                 {
                     "dataType": "feature",
@@ -63,7 +64,8 @@
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.areaHa(sitesManaged)"
-                    }
+                    },
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",
@@ -80,6 +82,12 @@
                     "name": "areaOfErosionControlInvoicedHa",
                     "validate": [
                         {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
+                        {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
@@ -94,16 +102,18 @@
                     "name": "lengthOfErosionControlInvoicedKm",
                     "validate": [
                         {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
+                        {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
                                 "expression": "lengthOfErosionControlKm"
                             }
-                        },
-                        {
-                            "rule": "required"
                         }
-
                     ]
                 },
                 {
@@ -315,7 +325,6 @@
                                     }
                                 ]
                             },
-
                             {
                                 "type": "row",
                                 "items": [
@@ -327,8 +336,6 @@
                                     }
 
                                 ]
-
-
                             }
                         ]
                     },
