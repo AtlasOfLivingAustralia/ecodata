@@ -54,10 +54,6 @@
                 {
                     "dataType": "number",
                     "name": "areaInvoicedHa",
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.areaHa(site)"
-                    },
                     "units": "ha",
                     "validate": [
                         {
@@ -78,10 +74,6 @@
                 {
                     "dataType": "number",
                     "name": "lengthInvoicedKm",
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(site)"
-                    },
                     "units": "km",
                     "validate": [
                         {
