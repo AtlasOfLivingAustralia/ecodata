@@ -22,7 +22,7 @@
                     },
                     "units": "ha",
                     "dataType": "number",
-                    "name": "existingErosionAreaHa",
+                    "name": "existingErosionAreaHa"
                 },
                 {
                     "dataType": "feature",
