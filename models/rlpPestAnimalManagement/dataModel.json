@@ -310,7 +310,6 @@
 
                                                 "source": "areaControlledHa",
                                                 "type": "number",
-                                                "validate": "required",
                                                 "displayOptions": {
                                                     "displayUnits": true
                                                 }
