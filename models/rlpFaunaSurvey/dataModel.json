@@ -290,7 +290,7 @@
                                         "type": "row",
                                         "items": [
                                             {
-                                                "preLabel": "Invoiced area (ha) / length (km) treated for pest animals",
+                                                "preLabel": "Invoiced area (ha) covered by fauna surveys",
                                                 "helpText": "Enter the amount you will invoice for during this reporting period.",
                                                 "source": "areaInvoicedHa",
                                                 "type": "number",
