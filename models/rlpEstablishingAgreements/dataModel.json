@@ -191,12 +191,23 @@
                     "type": "col",
                     "items": [
                         {
-                            "source": "agreementType",
-                            "type": "select2"
+                            "type": "row",
+                            "items":[
+                                {
+                                    "source": "agreementType",
+                                    "type": "select2"
+                                }
+                            ]
                         },
                         {
-                            "source": "otherAgreementType",
-                            "type": "textarea"
+                            "type": "row",
+                            "items":[
+                                {
+                                    "source": "otherAgreementType",
+                                    "title": "Other agreement type",
+                                    "type": "textarea"
+                                }
+                            ]
                         }
                     ]
                 },

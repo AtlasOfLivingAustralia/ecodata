@@ -22,23 +22,109 @@
                     },
                     "dataType": "number",
                     "name": "areaTreatedHa",
+                    "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "areaTreatedHa"
+                    },
+                    "dataType": "number",
+                    "name": "areaActualTreatedHa",
+                    "units": "ha",
                     "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesTreated)*0.9"
-                            }
-                        },
+                        {"rule": "min[0]"},
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(sitesTreated)*1.1"
+                                "expression": "areaTreatedHa"
                             }
                         }
                     ]
                 },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(areaTreatedHa, areaActualTreatedHa, 0.1))",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(areaTreatedHa, areaActualTreatedHa, 0.1)) or roundTo(areaActualTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+
+
+                {
+                    "dataType": "number",
+                    "name": "areaInvoicedTreatedHa",
+                    "units": "ha",
+                    "validate": [
+                        {"rule": "min[0]"},
+                        {
+                            "rule": "max",
+                            "param": {
+                                "type": "computed",
+                                "expression": "areaActualTreatedHa"
+                            }
+                        }
+                    ]
+                },
+
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "roundTo(areaActualTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
+                },
+
                 {
                     "defaultValue": {
                         "type": "computed",
@@ -46,6 +132,7 @@
                     },
                     "dataType": "number",
                     "name": "lengthTreatedKm",
+                    "units": "km",
                     "validate": [
                         {
                             "rule": "min",
@@ -143,49 +230,156 @@
                         "title": "Initial or follow-up control?"
                     },
                     {
-                        "width": "6%",
-                        "source": "sitesTreated",
-                        "type": "feature",
-                        "title": "Site/s treated by fire management actions"
+                        "width": "10%",
+                        "title": "Area (ha) treated by fire management action",
+                        "type": "col",
+                        "items":[
+                            {
+                                "source": "sitesTreated",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "areaTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Please attach mapping details",
+                                        "source": "extraMappingDetails",
+                                        "type": "document"
+                                    }
+                                ]
+                            }
+                        ]
+
                     },
-                    {
-                        "width": "6%",
-                        "source": "areaTreatedHa",
-                        "type": "number",
-                        "title": "Area (ha) treated by fire management action"
-                    },
-                    {
-                        "width": "6%",
-                        "source": "lengthTreatedKm",
-                        "type": "number",
-                        "title": "Length (km) treated by fire management action"
-                    },
+
                     {
                         "width": "20%",
-                        "source": "fireManagementType",
+                        "type": "col",
+                        "title": "Actual area (ha) treated by managment action",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
+                        "items": [
+                            {
+                                "source": "areaActualTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for actual being different to mapped amount",
+                                        "source": "mappingNotAlignedReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "mappingNotAlignedComments",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }
+
+                                ]
+
+
+                            }
+                        ]
+                    },
+
+                    {
+                        "width": "15%",
+                        "type": "col",
+                        "title": "Invoiced area (ha) treated by managment action",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
+                        "items": [
+                            {
+                                "source": "areaInvoicedTreatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for invoiced amount being different to actual amount",
+                                        "source": "invoicedNotActualReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "invoicedNotActualComments",
+                                        "type": "textarea",
+                                        "rows": 5
+
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+
+                    {
+                        "width": "15%",
                         "title": "Type of fire management action",
-                        "type": "select2"
+                        "type": "col",
+                        "items":[
+                            {
+                                "source": "fireManagementType",
+                                "type": "select2"
+                            },{
+                                "source": "otherFireManagementType",
+                                "type": "text"
+                            }
+                        ]
                     },
                     {
-                        "width": "20%",
-                        "source": "otherFireManagementType",
-                        "title": "Type of fire management action (if Other)",
-                        "type": "text"
+                        "width": "15%",
+                        "type" : "col",
+                        "title": "Please map any off-site area/s if they benefitted from this fire management action",
+                        "items" : [
+                            {
+                                "source": "sitesBenefittedByFireAction",
+                                "type": "feature",
+                                "title": "Please map any off-site area/s if they benefitted from this fire management action"
+                            },
+                            {
+                                "source": "areaBenefittedByFireActionHa",
+                                "type": "number",
+                                "readonly": "readonly",
+                                "title": "Area (ha) protected by fire management action"
+                            }
+
+                        ]
+
                     },
+
                     {
-                        "width": "6%",
-                        "source": "sitesBenefittedByFireAction",
-                        "type": "feature",
-                        "title": "Please map any off-site area/s if they benefitted from this fire management action"
-                    },
-                    {
-                        "width": "6%",
-                        "source": "areaBenefittedByFireActionHa",
-                        "type": "number",
-                        "title": "Area (ha) protected by fire management action"
-                    },
-                    {
-                        "width": "20%",
+                        "width": "15%",
                         "source": "evidenceOfBenefit",
                         "type": "textarea",
                         "rows": 3,

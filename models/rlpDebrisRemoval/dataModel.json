@@ -357,7 +357,10 @@
                         "width": "10%",
                         "source": "weightOfDebrisTonnes",
                         "title": "Weight (tonnes) of debris removed",
-                        "type": "number"
+                        "type": "number",
+                        "displayOptions": {
+                            "displayUnits": true
+                        }
                     },
                     {
                         "width": "10%",
