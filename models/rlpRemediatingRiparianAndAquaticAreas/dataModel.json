@@ -16,52 +16,133 @@
                     "name": "sitesRemediated"
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
+                    "computed": {
                         "expression": "$geom.areaHa(sitesRemediated)"
                     },
                     "dataType": "number",
+                    "name": "calculatedAreaRemediatedHa",
+                    "units": "ha"
+                },
+                {
+                    "computed": {
+                        "expression": "$geom.lengthKm(sitesRemediated)"
+                    },
+                    "dataType": "number",
+                    "name": "calculatedLengthRemediatedKm",
+                    "units": "km"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedAreaRemediatedHa"
+                    },
+                    "dataType": "number",
                     "name": "areaRemediatedHa",
-                    "validate": [
+                    "validate": "required,min[0]",
+                    "units": "ha"
+                },
+                {
+                    "defaultValue": {
+                        "type": "computed",
+                        "expression": "calculatedLengthRemediatedKm"
+                    },
+                    "dataType": "number",
+                    "name": "lengthRemediatedKm",
+                    "validate": "required,min[0]",
+                    "units": "km"
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedReason",
+                    "constraints": [
+                        "Mapped area simplifies more complex area/s where work was undertaken during this period",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
                         {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(sitesRemediated)*0.9"
-                            }
-                        },
+                            "condition": "not (within(calculatedAreaRemediatedHa, areaRemediatedHa, 0.1) and within(calculatedLengthRemediatedKm, lengthRemediatedKm, 0.1))",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "mappingNotAlignedComments",
+                    "validate": "required,maxSize[300]",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == mappingNotAlignedReason"
+                        }]
+                },
+
+                {
+                    "dataType": "document",
+                    "name": "extraMappingDetails",
+                    "validate": "required",
+                    "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
+                    "behaviour": [
+                        {
+                            "condition": "not (within(calculatedAreaRemediatedHa, areaRemediatedHa, 0.1) and within(calculatedLengthRemediatedKm, lengthRemediatedKm, 0.1)) or roundTo(areaRemediatedHa, 2) != roundTo(areaRemediatedInvoicedHa, 2) or roundTo(lengthRemediatedKm, 2) != roundTo(lengthRemediatedInvoicedKm, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "number",
+                    "name": "areaRemediatedInvoicedHa",
+                    "units": "ha",
+                    "validate": [
+                        {"rule": "min[0]"},
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.areaHa(sitesRemediated)*1.1"
+                                "expression": "areaRemediatedHa"
                             }
                         }
                     ]
                 },
                 {
-                    "defaultValue": {
-                        "type": "computed",
-                        "expression": "$geom.lengthKm(sitesRemediated)"
-                    },
                     "dataType": "number",
-                    "name": "lengthRemediatedKm",
+                    "name": "lengthRemediatedInvoicedKm",
+                    "units": "km",
                     "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.lengthKm(sitesRemediated)*0.9"
-                            }
-                        },
+                        {"rule": "min[0]"},
                         {
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "$geom.lengthKm(sitesRemediated)*1.1"
+                                "expression": "lengthRemediatedKm"
                             }
                         }
                     ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualReason",
+                    "constraints": [
+                        "Work was undertaken over a greater area than will be invoiced for",
+                        "Other"
+                    ],
+                    "validate": "required",
+                    "behaviour": [
+                        {
+                            "condition": "roundTo(areaRemediatedHa, 2) != roundTo(areaRemediatedInvoicedHa, 2) or roundTo(lengthRemediatedKm, 2) != roundTo(lengthRemediatedInvoicedKm, 2)",
+                            "type": "visible"
+                        }
+                    ]
+                },
+                {
+                    "dataType": "text",
+                    "name": "invoicedNotActualComments",
+                    "behaviour": [
+                        {
+                            "type": "visible",
+                            "condition": "\"Other\" == invoicedNotActualReason"
+                        }],
+                    "validate": "required,maxSize[300]"
                 },
                 {
                     "dataType": "number",
@@ -104,22 +185,8 @@
                     },
                     "dataType": "number",
                     "name": "offSiteBenefitAreaHa",
-                    "validate": [
-                        {
-                            "rule": "min",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(offSiteBenefitSites)*0.9"
-                            }
-                        },
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "$geom.areaHa(offSiteBenefitSites)*1.1"
-                            }
-                        }
-                    ]
+                    "validate": "min[0]",
+                    "units": "ha"
                 },
                 {
                     "dataType": "text",
@@ -149,22 +216,135 @@
                         "type": "selectOne"
                     },
                     {
-                        "width": "5%",
-                        "source": "sitesRemediated",
-                        "type": "feature",
-                        "title": "Site/s covered by remediation"
+                        "type": "col",
+                        "width": "10%",
+                        "title": "Site/s covered by remediation",
+                        "items": [
+                            {
+                                "source": "sitesRemediated",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "calculatedAreaRemediatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "source": "calculatedLengthRemediatedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                },
+                                "readonly": "readonly"
+
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Please attach mapping details",
+                                        "source": "extraMappingDetails",
+                                        "type": "document"
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
-                        "width": "10%",
-                        "source": "areaRemediatedHa",
-                        "type": "number",
-                        "title": "Area (ha) being remediated"
+                        "type": "col",
+                        "items": [
+                            {
+                                "source": "areaRemediatedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "lengthRemediatedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for actual being different to mapped amount",
+                                        "source": "mappingNotAlignedReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "mappingNotAlignedComments",
+                                        "type": "textarea",
+                                        "rows": 5
+                                    }
+
+                                ]
+                            }
+
+                        ],
+                        "width": "17%",
+                        "title": "Actual area (ha) / length (km) being remediated",
+                        "helpText": "Enter the amount you will invoice for during this reporting period."
                     },
                     {
-                        "width": "10%",
-                        "source": "lengthRemediatedKm",
-                        "type": "number",
-                        "title": "Length (km) being remediated"
+                        "width": "17%",
+                        "type": "col",
+                        "title": "Invoiced area (ha) / length (km) being remediated",
+                        "helpText": "Enter the amount you will invoice for during this reporting period.",
+                        "items": [
+                            {
+                                "source": "areaRemediatedInvoicedHa",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "lengthRemediatedInvoicedKm",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "preLabel": "Reason for invoiced amount being different to actual amount",
+                                        "source": "invoicedNotActualReason",
+                                        "type": "selectOne"
+
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "placeholder": "Please enter the reason/s the mapping didn't align with the invoiced amount",
+                                        "source": "invoicedNotActualComments",
+                                        "type": "textarea",
+                                        "rows": 5
+
+                                    }
+                                ]
+                            }
+                        ]
                     },
                     {
                         "width": "10%",
@@ -173,34 +353,49 @@
                         "title": "Number of structures installed"
                     },
                     {
-                        "width": "15%",
-                        "source": "remediationType",
-                        "title": "Type of remediation",
-                        "type": "select2"
-                    },
-                    {
-                        "width": "18%",
-                        "source": "otherRemediationType",
-                        "title": "Type of remediation (if Other)",
-                        "type": "text"
-                    },
-                    {
-                        "width": "5%",
-                        "source": "offSiteBenefitSites",
-                        "title": "Please identify any area/s that have shown evidence of off-site benefits",
-                        "type": "feature"
-                    },
-                    {
-                        "width": "5%",
-                        "source": "offSiteBenefitAreaHa",
-                        "title": "Area (ha) evident of improved remediation",
-                        "type": "number"
-                    },
-                    {
+                        "type": "col",
+                        "items": [
+                            {
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "remediationType",
+                                        "type": "select2"
+                                    }
+                                ]
+                            },
+                            {
+                                "source": "otherRemediationType",
+                                "placeholder": "Type of remediation (if Other)",
+                                "type": "text"
+                            }
+                        ],
                         "width": "17%",
-                        "source": "evidenceOfBenefit",
-                        "title": "If off-site area was mapped please provide a description on the evidence available to reflect this benefit",
-                        "type": "textarea"
+                        "title": "Type of remediation"
+                    },
+                    {
+                        "type": "col",
+                        "width": "17%",
+                        "title": "Please identify any area/s that have shown evidence of off-site benefits",
+                        "items": [
+                            {
+                                "source": "offSiteBenefitSites",
+                                "type": "feature"
+                            },
+                            {
+                                "source": "offSiteBenefitAreaHa",
+                                "title": "Area (ha) evident of improved remediation",
+                                "type": "number",
+                                "displayOptions": {
+                                    "displayUnits": true
+                                }
+                            },
+                            {
+                                "source": "evidenceOfBenefit",
+                                "placeholder": "Please provide a description on the evidence available to reflect this benefit",
+                                "type": "textarea"
+                            }
+                        ]
                     }
                 ],
                 "userAddedRows": true,

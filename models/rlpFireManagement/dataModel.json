@@ -297,7 +297,7 @@
                     {
                         "width": "15%",
                         "type": "col",
-                        "title": "Invoiced area (ha) treated by managment action",
+                        "title": "Invoiced area (ha) treated by management action",
                         "helpText": "Enter the amount you will invoice for during this reporting period.",
                         "items": [
                             {
