@@ -46,7 +46,8 @@
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.areaHa(sitesInstalled)"
-                    }
+                    },
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",
@@ -55,13 +56,20 @@
                     "defaultValue": {
                         "type": "computed",
                         "expression": "$geom.lengthKm(sitesInstalled)"
-                    }
+                    },
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "number",
                     "name": "areaInvoicedHa",
                     "units": "ha",
                     "validate": [
+                        {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
                         {
                             "rule": "max",
                             "param": {
@@ -76,6 +84,12 @@
                     "name": "lengthInvoicedKm",
                     "units": "km",
                     "validate": [
+                        {
+                            "rule": "required"
+                        },
+                        {
+                            "rule": "min[0]"
+                        },
                         {
                             "rule": "max",
                             "param": {
@@ -202,7 +216,7 @@
                         "title": "Number of structures installed"
                     },
                     {
-                        "width": "15%",
+                        "width": "10%",
                         "type": "col",
                         "title": "Site/s where access has been controlled",
                         "items": [
@@ -211,22 +225,30 @@
                                 "source": "sitesInstalled"
                             },
                             {
-                                "type": "number",
-                                "source": "sitesInstalledCalculatedAreaHa",
-                                "readonly": true,
-                                "width": "5%",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "number",
+                                        "source": "sitesInstalledCalculatedAreaHa",
+                                        "readonly": true,
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    }
+                                ]
                             },
                             {
-                                "type": "number",
-                                "source": "sitesInstalledCalculatedLengthKm",
-                                "readonly": true,
-                                "width": "5%",
-                                "displayOptions": {
-                                    "displayUnits": true
-                                }
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "type": "number",
+                                        "source": "sitesInstalledCalculatedLengthKm",
+                                        "readonly": true,
+                                        "displayOptions": {
+                                            "displayUnits": true
+                                        }
+                                    }
+                                ]
                             },
                             {
                                 "type": "row",
@@ -367,7 +389,7 @@
 
                     },
                     {
-                        "width": "20%",
+                        "width": "25%",
                         "source": "controlObjective",
                         "title": "Control objective",
                         "type": "textarea",

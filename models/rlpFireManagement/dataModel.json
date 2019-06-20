@@ -21,27 +21,18 @@
                         "expression": "$geom.areaHa(sitesTreated)"
                     },
                     "dataType": "number",
-                    "name": "areaTreatedHa",
+                    "name": "calculatedAreaTreatedHa",
                     "units": "ha"
                 },
                 {
                     "defaultValue": {
                         "type": "computed",
-                        "expression": "areaTreatedHa"
+                        "expression": "calculatedAreaTreatedHa"
                     },
                     "dataType": "number",
-                    "name": "areaActualTreatedHa",
+                    "name": "areaTreatedHa",
                     "units": "ha",
-                    "validate": [
-                        {"rule": "min[0]"},
-                        {
-                            "rule": "max",
-                            "param": {
-                                "type": "computed",
-                                "expression": "areaTreatedHa"
-                            }
-                        }
-                    ]
+                    "validate": "required,min[0]"
                 },
                 {
                     "dataType": "text",
@@ -53,7 +44,7 @@
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "not (within(areaTreatedHa, areaActualTreatedHa, 0.1))",
+                            "condition": "not (within(calculatedAreaTreatedHa, areaTreatedHa, 0.1))",
                             "type": "visible"
                         }
                     ]
@@ -76,7 +67,7 @@
                     "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                     "behaviour": [
                         {
-                            "condition": "not (within(areaTreatedHa, areaActualTreatedHa, 0.1)) or roundTo(areaActualTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
+                            "condition": "not (within(calculatedAreaTreatedHa, areaTreatedHa, 0.1)) or roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
                             "type": "visible"
                         }
                     ]
@@ -93,7 +84,7 @@
                             "rule": "max",
                             "param": {
                                 "type": "computed",
-                                "expression": "areaActualTreatedHa"
+                                "expression": "areaTreatedHa"
                             }
                         }
                     ]
@@ -109,7 +100,7 @@
                     "validate": "required",
                     "behaviour": [
                         {
-                            "condition": "roundTo(areaActualTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
+                            "condition": "roundTo(areaTreatedHa, 2) != roundTo(areaInvoicedTreatedHa, 2)",
                             "type": "visible"
                         }
                     ]
@@ -239,7 +230,7 @@
                                 "type": "feature"
                             },
                             {
-                                "source": "areaTreatedHa",
+                                "source": "calculatedAreaTreatedHa",
                                 "type": "number",
                                 "displayOptions": {
                                     "displayUnits": true
@@ -268,7 +259,7 @@
                         "helpText": "Enter the amount you will invoice for during this reporting period.",
                         "items": [
                             {
-                                "source": "areaActualTreatedHa",
+                                "source": "areaTreatedHa",
                                 "type": "number",
                                 "displayOptions": {
                                     "displayUnits": true
@@ -349,9 +340,15 @@
                         "type": "col",
                         "items":[
                             {
-                                "source": "fireManagementType",
-                                "type": "select2"
-                            },{
+                                "type": "row",
+                                "items": [
+                                    {
+                                        "source": "fireManagementType",
+                                        "type": "select2"
+                                    }
+                                ]
+                            },
+                            {
                                 "source": "otherFireManagementType",
                                 "type": "text"
                             }

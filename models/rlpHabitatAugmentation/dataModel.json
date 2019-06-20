@@ -15,50 +15,23 @@
                 "name": "sitesOfAugmentation"
             },
             {
-                "defaultValue": {
-                    "type": "computed",
+                "computed": {
                     "expression": "$geom.areaHa(sitesOfAugmentation)"
                 },
                 "dataType": "number",
-                "name": "areaAugmentedHa",
-                "units": "ha",
-                "validate": [
-                    {
-                        "rule": "min",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(sitesOfAugmentation)*0.9"
-                        }
-                    },
-                    {
-                        "rule": "max",
-                        "param": {
-                            "type": "computed",
-                            "expression": "$geom.areaHa(sitesOfAugmentation)*1.1"
-                        }
-                    }
-                ]
+                "name": "calculatedAreaAugmentedHa",
+                "units": "ha"
             },
             {
                 "defaultValue": {
                     "type": "computed",
-                    "expression": "areaAugmentedHa"
+                    "expression": "calculatedAreaAugmentedHa"
                 },
                 "dataType": "number",
-                "name": "actualAreaAugmentedHa",
+                "name": "areaAugmentedHa",
                 "units": "ha",
-                "validate": [
-                    {"rule": "min[0]"},
-                    {
-                        "rule": "max",
-                        "param": {
-                            "type": "computed",
-                            "expression": "areaAugmentedHa"
-                        }
-                    }
-                ]
+                "validate": "required,min[0]"
             },
-
             {
                 "dataType": "document",
                 "name": "extraMappingDetails",
@@ -66,7 +39,7 @@
                 "description": "This field needs to be filled when figures for Mapped/Actual/Invoice amounts differ. Please attach a map of the area that was covered by this project service during reporting period (include the scale measure for each map)",
                 "behaviour": [
                     {
-                        "condition": "not (within(areaAugmentedHa, actualAreaAugmentedHa, 0.1)) or roundTo(actualAreaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
+                        "condition": "not (within(calculatedAreaAugmentedHa, areaAugmentedHa, 0.1)) or roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
                         "type": "visible"
                     }
                 ]
@@ -81,7 +54,7 @@
                 "validate": "required",
                 "behaviour": [
                     {
-                        "condition": "not (within(areaAugmentedHa, actualAreaAugmentedHa, 0.1))",
+                        "condition": "not (within(calculatedAreaAugmentedHa, areaAugmentedHa, 0.1))",
                         "type": "visible"
                     }
                 ]
@@ -101,12 +74,13 @@
                 "name": "areaInvoicedAumentationHa",
                 "units": "ha",
                 "validate": [
+                    {"rule": "required"},
                     {"rule": "min[0]"},
                     {
                         "rule": "max",
                         "param": {
                             "type": "computed",
-                            "expression": "actualAreaAugmentedHa"
+                            "expression": "areaAugmentedHa"
                         }
                     }
                 ]
@@ -122,7 +96,7 @@
                 "validate": "required",
                 "behaviour": [
                     {
-                        "condition": "roundTo(actualAreaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
+                        "condition": "roundTo(areaAugmentedHa, 2) != roundTo(areaInvoicedAumentationHa, 2)",
                         "type": "visible"
                     }
                 ]
@@ -164,7 +138,7 @@
                 "description": "Please specify the habitat augmentation type if Other (specify in notes) was selected in the Type of habitat augmentation column.",
                 "behaviour": [{
                     "condition": "habitatAugmentationType == \"Other\"",
-                    "type": "enable"
+                    "type": "visible"
                 }],
                 "validate": "required,maxSize[100]"
             },
@@ -233,7 +207,7 @@
                             "type": "feature"
                         },
                         {
-                            "source": "areaAugmentedHa",
+                            "source": "calculatedAreaAugmentedHa",
                             "type": "number",
                             "displayOptions": {
                                 "displayUnits": true
@@ -261,7 +235,7 @@
                     "helpText": "Enter the amount you will invoice for during this reporting period.",
                     "items": [
                         {
-                            "source": "actualAreaAugmentedHa",
+                            "source": "areaAugmentedHa",
                             "type": "number",
                             "displayOptions": {
                                 "displayUnits": true
@@ -351,7 +325,6 @@
                             "type": "row",
                             "items": [
                                 {
-                                    //"preLabel": "Type of habitat augmentation / installed",
                                     "source": "habitatAugmentationType",
                                     "type": "select2"
 
@@ -362,7 +335,6 @@
                             "type": "row",
                             "items": [
                                 {
-                                    "preLabel": "Purpose of habitat augmentation",
                                     "source": "otherHabitatAugmentationType",
                                     "type": "textarea"
 

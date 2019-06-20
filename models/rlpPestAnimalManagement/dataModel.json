@@ -127,7 +127,7 @@
                     "behaviour": [
                         {
                             "condition": "roundTo(areaControlledHa, 2) != roundTo(areaInvoicedHa, 2) or roundTo(lengthControlledKm, 2) != roundTo(lengthInvoicedKm, 2)",
-                            "type": "visible"
+                            "type": "if"
                         }
                     ]
                 },
@@ -236,6 +236,7 @@
                 "items": [
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [
                             {
                                 "preLabel": "Initial or follow-up control?",
@@ -366,7 +367,6 @@
                                                 "helpText": "Enter the amount you will invoice for during this reporting period.",
                                                 "source": "areaInvoicedHa",
                                                 "type": "number",
-                                                "validate": "required",
                                                 "displayOptions": {
                                                     "displayUnits": true
                                                 }
@@ -376,7 +376,6 @@
                                     },
                                     {
                                         "source": "lengthInvoicedKm",
-                                        "validate": "required",
                                         "type": "number",
                                         "displayOptions": {
                                             "displayUnits": true
