@@ -238,6 +238,7 @@
                 "items": [
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [{
                             "preLabel": "Initial or maintenance activity?",
                             "css": "span3",
@@ -247,6 +248,7 @@
                     },
                     {
                         "type": "row",
+                        "css": "border-bottom",
                         "items": [
                             {
                                 "type": "col",
